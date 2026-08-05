@@ -28,6 +28,7 @@ from azure.core.exceptions import ServiceResponseError
 
 from .base import (
     OP_TO_BINDING_METHOD,
+    PageNotSupportedByBackendError,
     QUERY_TO_BINDING_METHOD,
     BackendResponse,
     CosmosBackend,
@@ -87,9 +88,15 @@ def _resolve_page_dispatch(op: str) -> Optional[Any]:
     return getattr(_rust_module, method, None)
 
 
-def _binding_request_from_query(prepared: PreparedQuery) -> PreparedRequest:
-    """Adapt the page contract to the binding's current request object."""
-    if prepared.op == "read_all_items":
+def _binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
+    """Adapt the page contract to the binding's current request object.
+
+    ``query_items`` carries its SQL and parameters as a JSON body;
+    ``read_all_items`` and ``list_databases`` are parameterless feeds and send
+    none. The typed paging fields become the ``x-ms-continuation`` /
+    ``x-ms-max-item-count`` headers the binding forwards to the driver.
+    """
+    if prepared.op in ("read_all_items", "list_databases"):
         body = b""
     else:
         if prepared.query is None:
@@ -100,14 +107,14 @@ def _binding_request_from_query(prepared: PreparedQuery) -> PreparedRequest:
         body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
     headers = dict(prepared.headers)
     if prepared.continuation is not None:
-        headers.setdefault("x-ms-continuation", prepared.continuation)
+        headers["x-ms-continuation"] = prepared.continuation
     if prepared.max_item_count is not None:
-        headers.setdefault("x-ms-max-item-count", str(prepared.max_item_count))
+        headers["x-ms-max-item-count"] = str(prepared.max_item_count)
     return PreparedRequest(
         op=prepared.op,
         container_link=prepared.container_link,
         body_bytes=body,
-        partition_key_header=prepared.partition_key_header or "[]",
+        partition_key_header=prepared.partition_key_header or "",
         headers=headers,
     )
 
@@ -246,21 +253,39 @@ class RustBackend(RustBackendShared, CosmosBackend):
             raise ServiceResponseError(message=str(exc)) from exc
         return build_backend_response(*raw_response)
 
-    def execute_pages(self, prepared: PreparedQuery) -> Iterator[QueryPage]:
-        """Yield the one page returned by a query/read-many binding call."""
+    def resolve_container_metadata(self, container_link: str) -> Optional[BackendResponse]:
+        """Resolve and cache container metadata through the rust driver."""
         if _rust_module is None:
             raise NotImplementedError(
+                "RustBackend.resolve_container_metadata: the compiled "
+                "azure.cosmos._rust module is not present in this environment."
+            )
+        dispatch = getattr(_rust_module, "resolve_container_metadata", None)
+        if dispatch is None:
+            return None
+        handle = self._ensure_handle()
+        try:
+            raw_response = dispatch(handle, container_link)
+        except _DRIVER_TRANSPORT_ERROR as exc:
+            raise ServiceResponseError(message=str(exc)) from exc
+        return build_backend_response(*raw_response)
+
+    def execute_pages(self, prepared: PreparedQuery) -> Iterator[QueryPage]:
+        """Yield the one page returned by a ``query_items`` / ``read_all_items``
+        / ``list_databases`` binding call."""
+        if _rust_module is None:
+            raise PageNotSupportedByBackendError(
                 "RustBackend.execute_pages: the compiled azure.cosmos._rust "
                 "module is not present in this environment. Build it with "
                 "`maturin develop` from the repo root."
             )
         dispatch = _resolve_page_dispatch(prepared.op)
         if dispatch is None:
-            raise NotImplementedError(
+            raise PageNotSupportedByBackendError(
                 "RustBackend.execute_pages does not yet support op={!r}.".format(prepared.op)
             )
         handle = self._ensure_handle()
-        binding_request = _binding_request_from_query(prepared)
+        binding_request = _binding_request_from_page(prepared)
         _LOGGER.debug(
             "cosmos backend=%s op=%s dispatch=%s",
             BACKEND_NAME_RUST,

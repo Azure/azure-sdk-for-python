@@ -391,12 +391,12 @@ def is_read_database_rust_eligible(
         return False
     if set(operation_kwargs).difference(_RUST_READ_DATABASE_SUPPORTED_KWARGS):
         return False
-    if _overrides_driver_owned_header(request_options):
+    if overrides_driver_owned_header(request_options):
         return False
     return _timeout_is_representable(operation_kwargs)
 
 
-def _overrides_driver_owned_header(request_options: Mapping[str, Any]) -> bool:
+def overrides_driver_owned_header(request_options: Mapping[str, Any]) -> bool:
     """Return whether ``initial_headers`` sets a header the driver would replace.
 
     The legacy pipeline lets the caller's value win for these names, so a read

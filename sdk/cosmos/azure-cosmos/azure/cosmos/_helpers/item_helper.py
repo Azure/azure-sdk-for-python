@@ -86,7 +86,11 @@ class ItemHelper:
         # partition-key definition) off one container read, instead of calling
         # the connection's ``_container_properties_cache`` / ``_AddPartitionKey``
         # directly.
-        self._metadata = ContainerMetadataProvider(client_connection, ensure_container_cached)
+        self._metadata = ContainerMetadataProvider(
+            client_connection,
+            ensure_container_cached,
+            self._backend.resolve_container_metadata,
+        )
 
     def _run_item_operation(
         self,
@@ -547,4 +551,3 @@ class ItemHelper:
             response_hook=kwargs.get("response_hook"),
             rust_eligible=rust_eligible,
         )
-

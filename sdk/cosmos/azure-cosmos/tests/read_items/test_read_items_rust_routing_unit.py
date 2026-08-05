@@ -33,7 +33,6 @@ _ID_IN_QUERY = {"query": "SELECT * FROM c WHERE c.id IN (@id0, @id1)"}
 def _gate(options):
     """Run the gate for the read_items query shape with the given options."""
     return can_use_rust_backend_for_query_page(
-        backend=object(),
         query_payload=_ID_IN_QUERY,
         options=options,
         kwargs={},

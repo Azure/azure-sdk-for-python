@@ -62,6 +62,7 @@ class PluginRegistryTests(unittest.TestCase):
             "read_feed_ranges",
             "feed_range_from_partition_key",
             "create_database",
+            "list_databases",
             "read_database",
         ):
             self.assertIn(op, registry)
@@ -112,6 +113,29 @@ class PluginRegistryTests(unittest.TestCase):
         self.assertEqual(result, "setup")
         self.assertEqual(emitted, [])
 
+    def test_list_databases_capture_is_deferred_until_sync_pager_is_drained(self):
+        """The audit must capture returned database rows and Rust execution, not the pager."""
+        emitted = []
+        original_emit = self.plugin._emit_block  # noqa: SLF001
+        original_nodeid = self.plugin._STATE.current_nodeid  # noqa: SLF001
+        try:
+            self.plugin._emit_block = emitted.append  # noqa: SLF001
+            self.plugin._STATE.current_nodeid = "tests/test_list.py::test_list"  # noqa: SLF001
+            wrapper = self.plugin._build_sync_wrapper(  # noqa: SLF001
+                "list_databases",
+                "sync",
+                lambda _client: iter(({"id": "db-1"}, {"id": "db-2"})),
+            )
+            pager = wrapper(object())
+            self.assertEqual(emitted, [])
+            self.assertEqual(list(pager), [{"id": "db-1"}, {"id": "db-2"}])
+        finally:
+            self.plugin._emit_block = original_emit  # noqa: SLF001
+            self.plugin._STATE.current_nodeid = original_nodeid  # noqa: SLF001
+
+        self.assertEqual(len(emitted), 1)
+        self.assertEqual(emitted[0]["return_value"], [{"id": "db-1"}, {"id": "db-2"}])
+
     def test_query_items_aio_patch_preserves_non_awaitable_signature(self):
         """The aio query_items target is sync-shaped and must stay non-coroutine after patching."""
         # The aio query_items entry point returns an async iterable but is not itself a
@@ -138,6 +162,19 @@ class PluginRegistryTests(unittest.TestCase):
         self.assertFalse(inspect.iscoroutinefunction(original))
         try:
             self.plugin._install_patches("read_feed_ranges")  # noqa: SLF001
+            patched = getattr(cls, method_name)
+            self.assertFalse(inspect.iscoroutinefunction(patched))
+        finally:
+            self.plugin._revert_patches()  # noqa: SLF001
+
+    def test_list_databases_aio_patch_preserves_non_awaitable_signature(self):
+        """The aio list_databases target must remain an async iterable, not a coroutine."""
+        module, class_name, method_name = self.plugin._aio_list_databases_target()  # noqa: SLF001
+        cls = getattr(module, class_name)
+        original = getattr(cls, method_name)
+        self.assertFalse(inspect.iscoroutinefunction(original))
+        try:
+            self.plugin._install_patches("list_databases")  # noqa: SLF001
             patched = getattr(cls, method_name)
             self.assertFalse(inspect.iscoroutinefunction(patched))
         finally:

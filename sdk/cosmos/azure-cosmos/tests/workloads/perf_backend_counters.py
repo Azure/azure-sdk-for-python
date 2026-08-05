@@ -1,16 +1,16 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Backend provenance for the perf drill, derived from the rows, not the env flag.
+"""Record the backend that ran and read the Rust binding's counters.
 
 Each results row is tagged ``config_backend`` from the ``COSMOS_BACKEND`` variable,
 which is a label, not a measurement. A row that says "rust" could have run the
 core-python path if the driver failed to load or an operation fell back. This
-module records what actually ran so the label can be checked.
+module records what actually ran so the configured label can be checked.
 
 The item helpers run an operation through the Rust driver only when
 ``backend.execute(prepared)`` returns a non-None response; otherwise they fall back
 to core-python. The harness wraps ``execute`` with a counter (see
-``workload._wrap_backend_for_provenance``), and the reporter stamps two fields on
+``workload._wrap_backend_for_counting``), and the reporter stamps two fields on
 every row:
 
   * ``runtime_backend``    -- the class name of the backend object the client built.

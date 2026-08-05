@@ -15,6 +15,7 @@ from __future__ import annotations
 from typing import Any, Awaitable, Callable, Dict, Optional
 
 from ..._helpers._pk_extract import extract_partition_key_value
+from ..._helpers._response_parse import parse_backend_response
 from ...partition_key import _Empty
 
 
@@ -29,9 +30,12 @@ class AsyncContainerMetadataProvider:
         self,
         client_connection: Any,
         ensure_container_cached: Optional[Callable[[Dict[str, Any]], Awaitable[Any]]] = None,
+        resolve_through_backend: Optional[Callable[[str], Awaitable[Any]]] = None,
     ) -> None:
         self._client_connection = client_connection
         self._ensure_container_cached = ensure_container_cached
+        self._resolve_through_backend = resolve_through_backend
+        self._resolved_properties: Dict[str, Any] = {}
 
     async def _container_properties(
         self,
@@ -41,13 +45,27 @@ class AsyncContainerMetadataProvider:
         """Return the cached container properties, awaiting the one container
         read if they are not cached yet.
         """
+        if container_link in self._resolved_properties:
+            return self._resolved_properties[container_link]
+        if self._resolve_through_backend is not None:
+            response = await self._resolve_through_backend(container_link)
+            if response is not None:
+                properties = parse_backend_response(
+                    response,
+                    client_connection=self._client_connection,
+                    response_hook=None,
+                )
+                self._resolved_properties[container_link] = properties
+                return properties
         if self._ensure_container_cached is not None:
             await self._ensure_container_cached(request_options)
         else:
             cache = self._client_connection._container_properties_cache
             if container_link not in cache:
                 await self._client_connection._refresh_container_properties_cache(container_link)
-        return self._client_connection._container_properties_cache[container_link]
+        properties = self._client_connection._container_properties_cache[container_link]
+        self._resolved_properties[container_link] = properties
+        return properties
 
     async def container_rid(
         self,
@@ -81,4 +99,3 @@ class AsyncContainerMetadataProvider:
             request_options["partitionKey"] = value
             return value
         return _Empty()
-

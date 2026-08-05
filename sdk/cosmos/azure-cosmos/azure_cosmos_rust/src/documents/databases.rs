@@ -10,8 +10,7 @@ pub(crate) fn create_database<'py>(
     handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (_container_link, _partition_key_header, modifiers) =
-        extract_common_prepared_inputs(prepared)?;
+    let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_create_database_operation(py, handle, modifiers, body_bytes, "create_database")
 }
@@ -23,8 +22,7 @@ pub(crate) fn create_database_async<'py>(
     handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (_container_link, _partition_key_header, modifiers) =
-        extract_common_prepared_inputs(prepared)?;
+    let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_create_database_operation_async(py, handle, modifiers, body_bytes, "create_database_async")
 }
@@ -63,4 +61,35 @@ pub(crate) fn read_database_async<'py>(
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, "read_database requires a database id")?;
     run_read_database_operation_async(py, handle, modifiers, database_id, "read_database_async")
+}
+
+/// Read one page of the account's databases, for `client.list_databases()`.
+///
+/// This is where a prepared Python request crosses into Rust. It reads the
+/// request options off the prepared object and hands them to the wire layer.
+/// It uses `extract_account_prepared_modifiers` rather than the extractor the
+/// container-scoped operations use, because at account scope there is no
+/// container link or partition key to read.
+///
+/// Without this entry point Python could not reach the driver's database feed,
+/// and `list_databases` would always run on the legacy path.
+#[pyfunction]
+pub(crate) fn list_databases<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let modifiers = extract_account_prepared_modifiers(prepared)?;
+    run_list_databases_operation(py, handle, modifiers, "list_databases")
+}
+
+/// Async counterpart of [`list_databases`].
+#[pyfunction]
+pub(crate) fn list_databases_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let modifiers = extract_account_prepared_modifiers(prepared)?;
+    run_list_databases_operation_async(py, handle, modifiers, "list_databases_async")
 }

@@ -49,6 +49,13 @@ from azure.cosmos.aio._global_partition_endpoint_manager_per_partition_automatic
     _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync)
 from .. import _base as base
 from .._availability_strategy_config import CrossRegionHedgingStrategy, validate_client_hedging_strategy
+from .._backend.base import (
+    OP_LIST_DATABASES,
+    OP_QUERY_ITEMS,
+    OP_READ_ALL_ITEMS,
+    LegacyOperation,
+    PageNotSupportedByBackendError,
+)
 from .._base import _build_properties_cache
 from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
@@ -73,18 +80,19 @@ from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
-from .._helpers._response_parse import parse_backend_response
 from .._query_rust_routing import (
+    build_list_databases_prepared_query,
     build_read_all_items_prepared_query,
     build_query_items_prepared_query,
+    can_use_rust_backend_for_list_databases_page,
     can_use_rust_backend_for_query_page,
     can_use_rust_backend_for_read_all_items_page,
-    finalize_rust_query_page_response,
-    query_page_to_backend_response,
-    run_query_page_on_rust_backend_async,
+    parse_and_finalize_rust_page,
 )
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
+from ._backend.base import AsyncCosmosBackend
+from ._backend.legacy import coerce_async_backend
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object
 from . import _asynchronous_request as asynchronous_request
@@ -190,6 +198,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: dict[str, RangePartitionResolver] = {}
         self.__container_properties_cache: dict[str, dict[str, Any]] = {}
+        self._backend: Optional[AsyncCosmosBackend] = None
         self.default_headers: dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -3107,7 +3116,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # This case should be interpreted as an empty array.
                 return []
 
-        initial_headers = self.default_headers.copy()
+        initial_headers = (
+            base.resolve_initial_headers(self.default_headers, options)
+            or self.default_headers.copy()
+        )
         container_property_func = kwargs.pop("containerProperties", None)
         container_property = None
         if container_property_func:
@@ -3115,60 +3127,142 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Copy to make sure that default_headers won't be changed.
         if query is None:
-            # Try the shared driver first. It owns the choice between logical-partition
-            # read-feed and whole-container query planning. Unsupported request options
-            # still fall through to the Python HTTP path below.
-            rust_result = await self.__TryReadAllItemsPageWithRustBackend(
-                path=path,
-                resource_type=resource_type,
-                resource_id=id_,
-                options=options,
-                partition_key_range_id=partition_key_range_id,
-                response_hook=response_hook,
-                response_headers=response_headers,
-                internal_headers_capture=internal_headers_capture,
-                kwargs=kwargs,
-            )
-            if rust_result is not None:
-                return __GetBodiesFromQueryResult(rust_result)
+            async def _run_legacy_read_feed() -> list[dict[str, Any]]:
+                op_type = documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed
+                headers = base.GetHeaders(
+                    self, initial_headers, "get", path, id_, resource_type, op_type,
+                    options, partition_key_range_id
+                )
+                request_params = _request_object.RequestObject(
+                    resource_type,
+                    op_type,
+                    headers,
+                    options.get("partitionKey", None),
+                )
+                request_params.set_excluded_location_from_options(options)
+                request_params.set_availability_strategy(options, self.availability_strategy)
+                request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
+                headers = base.GetHeaders(
+                    self, initial_headers, "get", path, id_, resource_type,
+                    request_params.operation_type, options, partition_key_range_id
+                )
+                await base.set_session_token_header_async(
+                    self, headers, path, request_params, options, partition_key_range_id
+                )
+                change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
+                if change_feed_state is not None:
+                    feed_options = {}
+                    if 'excludedLocations' in options:
+                        feed_options['excludedLocations'] = options['excludedLocations']
+                    await change_feed_state.populate_request_headers_async(
+                        self._routing_map_provider, headers, feed_options
+                    )
+                    request_params.headers = headers
 
-            op_type = documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed
-            # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            headers = base.GetHeaders(self, initial_headers, "get", path, id_, resource_type, op_type,
-                                      options, partition_key_range_id)
-            request_params = _request_object.RequestObject(
-                resource_type,
-                op_type,
-                headers,
-                options.get("partitionKey", None),
-            )
-            request_params.set_excluded_location_from_options(options)
-            request_params.set_availability_strategy(options, self.availability_strategy)
-            request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
-            headers = base.GetHeaders(self, initial_headers, "get", path, id_, resource_type,
-                                      request_params.operation_type, options, partition_key_range_id)
-            await base.set_session_token_header_async(self, headers, path, request_params, options,
-                                                      partition_key_range_id)
-            change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
-            if change_feed_state is not None:
-                feed_options = {}
-                if 'excludedLocations' in options:
-                    feed_options['excludedLocations'] = options['excludedLocations']
-                await change_feed_state.populate_request_headers_async(self._routing_map_provider, headers,
-                                                                       feed_options)
-                request_params.headers = headers
+                result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
+                self.last_response_headers = last_response_headers
+                if internal_headers_capture is not None:
+                    _capture_internal_headers(last_response_headers)
+                self._UpdateSessionIfRequired(headers, result, last_response_headers)
+                if response_headers is not None:
+                    response_headers.clear()
+                    response_headers.update(last_response_headers)
+                if response_hook:
+                    response_hook(self.last_response_headers, result)
+                return __GetBodiesFromQueryResult(result)
 
-            result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
-            self.last_response_headers = last_response_headers
-            if internal_headers_capture is not None:
-                _capture_internal_headers(last_response_headers)
-            self._UpdateSessionIfRequired(headers, result, last_response_headers)
-            if response_headers is not None:
-                response_headers.clear()
-                response_headers.update(last_response_headers)
-            if response_hook:
-                response_hook(self.last_response_headers, result)
-            return __GetBodiesFromQueryResult(result)
+            rust_request_headers: Mapping[str, Any] = {}
+            if resource_type == http_constants.ResourceType.Database:
+                page_op = OP_LIST_DATABASES
+                rust_eligible = can_use_rust_backend_for_list_databases_page(
+                    options=options,
+                    kwargs=kwargs,
+                    is_query_plan=is_query_plan,
+                    resource_type=resource_type,
+                )
+
+                async def _build_list_databases_page():
+                    nonlocal rust_request_headers
+                    list_headers = base.GetHeaders(
+                        self,
+                        initial_headers,
+                        "get",
+                        path,
+                        id_,
+                        resource_type,
+                        documents._OperationType.ReadFeed,
+                        options,
+                        None,
+                    )
+                    rust_request_headers = list_headers
+                    return build_list_databases_prepared_query(
+                        options=options,
+                        req_headers=list_headers,
+                    )
+                build_prepared_page = _build_list_databases_page
+            else:
+                page_op = OP_READ_ALL_ITEMS
+                rust_eligible = can_use_rust_backend_for_read_all_items_page(
+                    options=options,
+                    kwargs=kwargs,
+                    is_query_plan=is_query_plan,
+                    resource_type=resource_type,
+                    partition_key_range_id=partition_key_range_id,
+                )
+
+                async def _build_read_all_items_page():
+                    nonlocal rust_request_headers
+                    read_headers = base.GetHeaders(
+                        self,
+                        self.default_headers,
+                        "get",
+                        path,
+                        id_,
+                        resource_type,
+                        documents._OperationType.ReadFeed,
+                        options,
+                        partition_key_range_id,
+                    )
+                    session_request = _request_object.RequestObject(
+                        resource_type,
+                        documents._OperationType.ReadFeed,
+                        read_headers,
+                        options.get("partitionKey", None),
+                    )
+                    await base.set_session_token_header_async(
+                        self,
+                        read_headers,
+                        path,
+                        session_request,
+                        options,
+                        partition_key_range_id,
+                    )
+                    rust_request_headers = read_headers
+                    return build_read_all_items_prepared_query(
+                        path=path,
+                        options=options,
+                        req_headers=read_headers,
+                    )
+                build_prepared_page = _build_read_all_items_page
+
+            def _parse_rust_page(page):
+                parsed_page = parse_and_finalize_rust_page(
+                    page=page,
+                    client_connection=self,
+                    req_headers=rust_request_headers,
+                    internal_headers_capture=internal_headers_capture,
+                    response_hook=response_hook,
+                    response_headers=response_headers,
+                )
+                return __GetBodiesFromQueryResult(parsed_page.body)
+
+            return await coerce_async_backend(self._backend).run_page_operation(
+                build_prepared=build_prepared_page,
+                legacy_operation=LegacyOperation(op=page_op, invoke=_run_legacy_read_feed),
+                parse_response=_parse_rust_page,
+                rust_eligible=rust_eligible,
+                fallback_exceptions=(PageNotSupportedByBackendError,),
+            )
 
         query = self.__CheckAndUnifyQueryFormat(query)
 
@@ -3197,38 +3291,26 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             await base.set_session_token_header_async(self, req_headers, path, request_params, options,
                                                       partition_key_range_id)
 
-        # Rust path for query_items: serve this page on the rust engine instead of the
-        # Python HTTP path below. If the query does not qualify, this falls through to the
-        # usual __Post path, which returns the same rows and headers. This fork is migration
-        # scaffolding, removed once query pages are fully served by rust; the Python path is
-        # permanent.
-        if self.__CanUseRustBackendForQueryPage(
-            query=query,
+        rust_eligible = can_use_rust_backend_for_query_page(
+            query_payload=query,
             options=options,
             kwargs=kwargs,
             container_properties=container_property,
             is_query_plan=is_query_plan,
             resource_type=resource_type,
-        ):
-            rust_result = await self.__TryQueryPageWithRustBackend(
-                path=path,
-                query_payload=query,
-                options=options,
-                req_headers=req_headers,
-                response_hook=response_hook,
-                response_headers=response_headers,
-                internal_headers_capture=internal_headers_capture,
-            )
-            if rust_result is not None:
-                return __GetBodiesFromQueryResult(rust_result)
+        )
 
         # Check if the overlapping ranges can be populated
         feed_range_epk = None
         is_full_pk_scope = False
-        if "feed_range" in kwargs:
+        if not rust_eligible and "feed_range" in kwargs:
             feed_range = kwargs.pop("feed_range")
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
-        elif options.get("partitionKey") is not None and container_property is not None:
+        elif (
+            not rust_eligible
+            and options.get("partitionKey") is not None
+            and container_property is not None
+        ):
             partition_key_value = options["partitionKey"]
             partition_key_obj = _build_partition_key_from_properties(container_property)
             if partition_key_obj._is_prefix_partition_key(partition_key_value):
@@ -3576,207 +3658,55 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     return __GetBodiesFromQueryResult(results)
                 return []
 
-        result, last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
-        self.last_response_headers = last_response_headers
-        if internal_headers_capture is not None:
-            _capture_internal_headers(last_response_headers)
+        async def _run_legacy_query_page() -> list[dict[str, Any]]:
+            result, last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
+            self.last_response_headers = last_response_headers
+            if internal_headers_capture is not None:
+                _capture_internal_headers(last_response_headers)
 
-        # update session for request mutates data on server side
-        self._UpdateSessionIfRequired(req_headers, result, last_response_headers)
-        # TODO: this part might become an issue since HTTP/2 can return read-only headers
-        if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
-            INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
-            index_metrics_raw = self.last_response_headers[INDEX_METRICS_HEADER]
-            self.last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
-        if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
-            query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
-            self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = get_query_advice_info(query_advice_raw)
-        if response_headers is not None:
-            response_headers.clear()
-            response_headers.update(last_response_headers)
-        if response_hook:
-            response_hook(self.last_response_headers, result)
+            self._UpdateSessionIfRequired(req_headers, result, last_response_headers)
+            if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
+                index_metrics_header = http_constants.HttpHeaders.IndexUtilization
+                index_metrics_raw = self.last_response_headers[index_metrics_header]
+                self.last_response_headers[index_metrics_header] = _utils.get_index_metrics_info(index_metrics_raw)
+            if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+                query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
+                self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = (
+                    get_query_advice_info(query_advice_raw)
+                )
+            if response_headers is not None:
+                response_headers.clear()
+                response_headers.update(last_response_headers)
+            if response_hook:
+                response_hook(self.last_response_headers, result)
+            return __GetBodiesFromQueryResult(result)
 
-        return __GetBodiesFromQueryResult(result)
+        async def _build_prepared_query_page():
+            return build_query_items_prepared_query(
+                path=path,
+                query_payload=query,
+                options=options,
+                req_headers=req_headers,
+            )
 
-    def __CanUseRustBackendForQueryPage(
-        self,
-        *,
-        query: Optional[Union[str, dict[str, Any]]],
-        options: Mapping[str, Any],
-        kwargs: Mapping[str, Any],
-        container_properties: Optional[Mapping[str, Any]],
-        is_query_plan: bool,
-        resource_type: str,
-    ) -> bool:
-        """Return True when one query page can safely route through the rust engine.
+        def _parse_rust_query_page(page):
+            parsed_page = parse_and_finalize_rust_page(
+                page=page,
+                client_connection=self,
+                req_headers=req_headers,
+                internal_headers_capture=internal_headers_capture,
+                response_headers=response_headers,
+                response_hook=response_hook,
+            )
+            return __GetBodiesFromQueryResult(parsed_page.body)
 
-        Migration scaffolding: this per-call check narrows as rust mirrors more query
-        features and is removed once query pages are fully mirrored. It returns False
-        whenever this client is not a rust client.
-        """
-        return can_use_rust_backend_for_query_page(
-            backend=getattr(self, "_backend", None),
-            query_payload=query,
-            options=options,
-            kwargs=kwargs,
-            container_properties=container_properties,
-            is_query_plan=is_query_plan,
-            resource_type=resource_type,
+        return await coerce_async_backend(self._backend).run_page_operation(
+            build_prepared=_build_prepared_query_page,
+            legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=_run_legacy_query_page),
+            parse_response=_parse_rust_query_page,
+            rust_eligible=rust_eligible,
+            fallback_exceptions=(PageNotSupportedByBackendError,),
         )
-
-    def __CanUseRustBackendForReadAllItemsPage(
-        self,
-        *,
-        options: Mapping[str, Any],
-        kwargs: Mapping[str, Any],
-        is_query_plan: bool,
-        resource_type: str,
-        partition_key_range_id: Optional[str],
-    ) -> bool:
-        """Return True when one read_all_items page can safely route through Rust read-feed."""
-        return can_use_rust_backend_for_read_all_items_page(
-            backend=getattr(self, "_backend", None),
-            options=options,
-            kwargs=kwargs,
-            is_query_plan=is_query_plan,
-            resource_type=resource_type,
-            partition_key_range_id=partition_key_range_id,
-        )
-
-    async def __TryReadAllItemsPageWithRustBackend(
-        self,
-        *,
-        path: str,
-        resource_type: str,
-        resource_id: Optional[str],
-        options: Mapping[str, Any],
-        partition_key_range_id: Optional[str],
-        response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]],
-        response_headers: Optional[CaseInsensitiveDict],
-        internal_headers_capture: Optional[dict[str, Any]],
-        kwargs: Mapping[str, Any],
-    ) -> Optional[dict[str, Any]]:
-        """Run one read_all_items page on rust.
-
-        Cross-partition scope (`partition_key_header == "[]"`) is served through
-        the existing rust query-page path (`SELECT * FROM root r`) because the
-        current Rust driver planner rejects non-query feed-range fan-out for
-        ReadFeed operations. Partition-targeted scope stays on native read-feed.
-        If the request does not qualify, returns None and the legacy read-feed
-        path executes unchanged.
-        """
-        if not self.__CanUseRustBackendForReadAllItemsPage(
-            options=options,
-            kwargs=kwargs,
-            is_query_plan=False,
-            resource_type=resource_type,
-            partition_key_range_id=partition_key_range_id,
-        ):
-            return None
-
-        backend = getattr(self, "_backend", None)
-        if backend is None:
-            return None
-
-        req_headers = base.GetHeaders(
-            self,
-            self.default_headers,
-            "get",
-            path,
-            resource_id,
-            resource_type,
-            documents._OperationType.ReadFeed,
-            options,
-            partition_key_range_id,
-        )
-        # Python supplies the requested scope and session token. The binding uses
-        # read-feed for one partition and the legacy-compatible query rewrite for
-        # a whole-container read.
-        session_request = _request_object.RequestObject(
-            resource_type,
-            documents._OperationType.ReadFeed,
-            req_headers,
-            options.get("partitionKey", None),
-        )
-        await base.set_session_token_header_async(
-            self,
-            req_headers,
-            path,
-            session_request,
-            options,
-            partition_key_range_id,
-        )
-        prepared = build_read_all_items_prepared_query(
-            path=path,
-            options=options,
-            req_headers=req_headers,
-        )
-        page = await run_query_page_on_rust_backend_async(backend, prepared)
-        if page is None:
-            return None
-        parsed = parse_backend_response(
-            query_page_to_backend_response(page),
-            client_connection=self,
-            response_hook=None,
-        )
-        finalize_rust_query_page_response(
-            client_connection=self,
-            req_headers=req_headers,
-            parsed=cast(dict[str, Any], parsed),
-            internal_headers_capture=internal_headers_capture,
-            response_hook=response_hook,
-            response_headers=response_headers,
-        )
-        return cast(dict[str, Any], parsed)
-
-    async def __TryQueryPageWithRustBackend(
-        self,
-        *,
-        path: str,
-        query_payload: Union[str, dict[str, Any]],
-        options: Mapping[str, Any],
-        req_headers: Mapping[str, Any],
-        response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]],
-        response_headers: Optional[CaseInsensitiveDict],
-        internal_headers_capture: Optional[dict[str, Any]],
-    ) -> Optional[dict[str, Any]]:
-        """Run one query page on the rust engine, or return None to fall through.
-
-        On a match, the rust engine handles the network, request signing, and region
-        routing. finalize_rust_query_page_response then rebuilds the response headers the
-        SDK expects, because the rust reply carries only a few of them. Returning None
-        falls through to the permanent legacy __Post path.
-        """
-        backend = getattr(self, "_backend", None)
-        if backend is None:
-            return None
-
-        prepared = build_query_items_prepared_query(
-            path=path,
-            query_payload=query_payload,
-            options=options,
-            req_headers=req_headers,
-        )
-
-        page = await run_query_page_on_rust_backend_async(backend, prepared)
-        if page is None:
-            return None
-
-        parsed = parse_backend_response(
-            query_page_to_backend_response(page),
-            client_connection=self,
-            response_hook=None,
-        )
-        finalize_rust_query_page_response(
-            client_connection=self,
-            req_headers=req_headers,
-            parsed=cast(dict[str, Any], parsed),
-            internal_headers_capture=internal_headers_capture,
-            response_headers=response_headers,
-            response_hook=response_hook,
-        )
-        return cast(dict[str, Any], parsed)
 
     def __CheckAndUnifyQueryFormat(
         self,

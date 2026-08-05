@@ -26,6 +26,7 @@ from typing import Any, Callable, Dict, Optional
 
 from ..partition_key import _Empty
 from ._pk_extract import extract_partition_key_value
+from ._response_parse import parse_backend_response
 
 
 class ContainerMetadataProvider:
@@ -42,6 +43,7 @@ class ContainerMetadataProvider:
         self,
         client_connection: Any,
         ensure_container_cached: Optional[Callable[[Dict[str, Any]], Any]] = None,
+        resolve_through_backend: Optional[Callable[[str], Any]] = None,
     ) -> None:
         """Store the connection and optional cache-priming callable.
 
@@ -54,6 +56,8 @@ class ContainerMetadataProvider:
         """
         self._client_connection = client_connection
         self._ensure_container_cached = ensure_container_cached
+        self._resolve_through_backend = resolve_through_backend
+        self._resolved_properties: Dict[str, Any] = {}
 
     def _container_properties(
         self,
@@ -66,13 +70,27 @@ class ContainerMetadataProvider:
         Lookup errors (only the stub connections in unit tests raise them) are
         left to propagate so the caller keeps its best-effort policy.
         """
+        if container_link in self._resolved_properties:
+            return self._resolved_properties[container_link]
+        if self._resolve_through_backend is not None:
+            response = self._resolve_through_backend(container_link)
+            if response is not None:
+                properties = parse_backend_response(
+                    response,
+                    client_connection=self._client_connection,
+                    response_hook=None,
+                )
+                self._resolved_properties[container_link] = properties
+                return properties
         if self._ensure_container_cached is not None:
             self._ensure_container_cached(request_options)
         else:
             cache = self._client_connection._container_properties_cache
             if container_link not in cache:
                 self._client_connection._refresh_container_properties_cache(container_link)
-        return self._client_connection._container_properties_cache[container_link]
+        properties = self._client_connection._container_properties_cache[container_link]
+        self._resolved_properties[container_link] = properties
+        return properties
 
     def container_rid(
         self,
@@ -113,4 +131,3 @@ class ContainerMetadataProvider:
             request_options["partitionKey"] = value
             return value
         return _Empty()
-

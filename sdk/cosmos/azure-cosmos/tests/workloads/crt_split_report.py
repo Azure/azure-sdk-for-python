@@ -20,8 +20,8 @@ window across the run and prints both tails side by side.
 
 USAGE:
   source ./perf_env.sh                 # exports RESULTS_COSMOS_* (incl. the key)
-  python3 crt_split_report.py [--stamp YYYYMMDD-HHMMSS] [--prefix crepro-]
-      --stamp   which run to read; default = the most recent <prefix> stamp.
+  python3 crt_split_report.py [--run-id YYYYMMDD-HHMMSS] [--prefix crepro-]
+      --run-id  which run to read; default = the most recent matching run.
       --prefix  workload_id prefix identifying the run (default crepro-).
 """
 
@@ -71,21 +71,21 @@ def _connect():
 
 
 def _split_wid(workload_id: str):
-    """Return (op, backend, stamp) from ``<prefix><op>-<backend>-<YYYYMMDD-HHMMSS>``.
+    """Return (op, backend, run_id) from ``<prefix><op>-<backend>-<YYYYMMDD-HHMMSS>``.
 
-    The backend can itself contain a dash (``core-python``), so the stamp is the
-    LAST two dash fields and the backend is everything between the op and stamp.
+    The backend can itself contain a dash (``core-python``), so the run id is the
+    LAST two dash fields and the backend is everything between the op and run id.
     """
     parts = workload_id.split("-")
     if len(parts) < 5:
         return None, None, ""
-    stamp = parts[-2] + "-" + parts[-1]
+    run_id = parts[-2] + "-" + parts[-1]
     op = parts[1]
     backend = "-".join(parts[2:-2])
-    return op, backend, stamp
+    return op, backend, run_id
 
 
-def _latest_stamp(container, prefix: str) -> str:
+def _latest_run_id(container, prefix: str) -> str:
     ids = list(
         container.query_items(
             "SELECT VALUE c.workload_id FROM c WHERE STARTSWITH(c.workload_id, @p)",
@@ -93,18 +93,18 @@ def _latest_stamp(container, prefix: str) -> str:
             enable_cross_partition_query=True,
         )
     )
-    stamps = {_split_wid(i)[2] for i in ids if i}
-    stamps.discard("")
-    return max(stamps) if stamps else ""
+    run_ids = {_split_wid(i)[2] for i in ids if i}
+    run_ids.discard("")
+    return max(run_ids) if run_ids else ""
 
 
-def _aggregate(container, prefix: str, stamp: str):
+def _aggregate(container, prefix: str, run_id: str):
     """Merge every window of each (op, backend) cell into pooled client + server
     histograms. ``no_server_windows`` counts windows with no server_hist_b64 (an
     older run or a response with no x-ms-request-duration-ms header).
 
-    Scoped by BOTH prefix (STARTSWITH) and stamp (ENDSWITH): filtering on the stamp
-    alone would mix rows from any other run that shares the same-second stamp under
+    Scoped by BOTH prefix (STARTSWITH) and run id (ENDSWITH): filtering on the run id
+    alone would mix rows from any other run that shares the same-second run id under
     a different prefix.
     """
     rows = list(
@@ -112,10 +112,10 @@ def _aggregate(container, prefix: str, stamp: str):
             "SELECT c.workload_id, c.count, c.errors, c.window_seconds, "
             "c.hist_b64, c.server_hist_b64, c.server_count, c.driver_commit "
             "FROM c WHERE STARTSWITH(c.workload_id, @prefix) "
-            "AND ENDSWITH(c.workload_id, @stamp)",
+            "AND ENDSWITH(c.workload_id, @run_id)",
             parameters=[
                 {"name": "@prefix", "value": prefix},
-                {"name": "@stamp", "value": stamp},
+                {"name": "@run_id", "value": run_id},
             ],
             enable_cross_partition_query=True,
         )
@@ -177,23 +177,24 @@ def _s(a, q):
 
 def main():
     ap = argparse.ArgumentParser(description="Client-vs-server latency split report.")
-    ap.add_argument("--stamp", default=None, help="run stamp (default: latest)")
+    ap.add_argument("--run-id", default=None, help="run id (default: latest)")
+    ap.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
     ap.add_argument("--prefix", default="crepro-", help="workload_id prefix (default crepro-)")
     _prov.add_cli_flag(ap)
     args = ap.parse_args()
 
     container = _connect()
-    stamp = args.stamp or _latest_stamp(container, args.prefix)
-    if not stamp:
+    run_id = args.run_id or _latest_run_id(container, args.prefix)
+    if not run_id:
         print(f"ERROR: no {args.prefix}* runs found in the results container.", file=sys.stderr)
         sys.exit(2)
 
-    agg, prov_info = _aggregate(container, args.prefix, stamp)
+    agg, prov_info = _aggregate(container, args.prefix, run_id)
     if not agg:
-        print(f"ERROR: no result rows found for stamp {stamp}.", file=sys.stderr)
+        print(f"ERROR: no result rows found for run id {run_id}.", file=sys.stderr)
         sys.exit(2)
 
-    print(f"=== Client-vs-server latency split (prefix {args.prefix}, stamp {stamp}) ===")
+    print(f"=== Client-vs-server latency split (prefix {args.prefix}, run id {run_id}) ===")
     print("    CLIENT = wall clock at caller; SERVER = x-ms-request-duration-ms.")
     print("    gap = CLIENT - SERVER = network + transport + binding bridge (client-side).")
     print()

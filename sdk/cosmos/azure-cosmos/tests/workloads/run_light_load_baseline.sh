@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Phase 0: light-load latency baseline probe. conc=1, arrival=0, 1 client, no proxy.
+# Light-load latency baseline. conc=1, arrival=0, 1 client, no proxy.
 # At concurrency 1 there is no client-side queue, so measured latency = one round trip
 # (service latency), NOT the saturated closed-loop residence time Phase A reported.
 #
@@ -8,12 +8,12 @@
 # from the loaded phases are not meaningful as an SLA reference.
 #
 # Backend is selectable so the same probe runs both engines:
-#   ./run_phase0_probe.sh 480                         # core-python + rust (default)
-#   PHASE0_BACKENDS=rust ./run_phase0_probe.sh 480    # rust
+#   ./run_light_load_baseline.sh 480                         # core-python + rust (default)
+#   BASELINE_BACKENDS=rust ./run_light_load_baseline.sh 480  # rust
 # Operations are selectable so a profiling run can isolate one call path:
-#   PHASE0_OPERATIONS=read PHASE0_BACKENDS=rust ./run_phase0_probe.sh 480
-# Results land in perfdb/perfresults tagged PERF_WORKLOAD_ID=lat0-<op>-<backend>-<stamp>;
-# read them back with phase0_report.py.
+#   BASELINE_OPERATIONS=read BASELINE_BACKENDS=rust ./run_light_load_baseline.sh 480
+# Results land in perfdb/perfresults tagged
+# PERF_WORKLOAD_ID=baseline-<op>-<backend>-<run-id>; read them with latency_report.py.
 set -uo pipefail
 cd "$(dirname "$0")"
 source ~/perf_secrets.env
@@ -21,13 +21,13 @@ source ./perf_env.sh >/dev/null 2>&1 || exit 1
 source ~/venvs/perfdrill/bin/activate
 
 DURATION="${1:-480}"
-OPERATIONS=(${PHASE0_OPERATIONS:-read create upsert replace delete patch})
-BACKENDS=(${PHASE0_BACKENDS:-core-python rust})
+OPERATIONS=(${BASELINE_OPERATIONS:-read create upsert replace delete patch})
+BACKENDS=(${BASELINE_BACKENDS:-core-python rust})
 
 _ns="$(date +%N 2>/dev/null || echo 000000000)"
 [[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
-STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
-LOG_DIR="logs/phase0-${STAMP}"
+RUN_ID="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
+LOG_DIR="logs/light-load-baseline-${RUN_ID}"
 mkdir -p "$LOG_DIR"
 
 # The isolated probe container keeps this off the loaded phases' data. Seed it
@@ -41,17 +41,17 @@ export WORKLOAD_ARRIVAL_RATE=0
 export WORKLOAD_USE_PROXY=false
 export COSMOS_REQUEST_TIMEOUT=30
 export PERF_REPORT_INTERVAL=60
-write_run_manifest "${LOG_DIR}" "${STAMP}" "phase0"
+write_run_manifest "${LOG_DIR}" "${RUN_ID}" "light-load-baseline"
 
-echo "=== Phase 0: light-load latency probe (conc=1) ==="
-echo "    stamp=${STAMP} dur=${DURATION}s ops=${OPERATIONS[*]} backends=${BACKENDS[*]}"
-echo "    container=lat_probe_db/lat_probe_cont  results -> perfdb/perfresults (workload_id LIKE lat0-%)"
+echo "=== Light-load latency baseline (conc=1) ==="
+echo "    run_id=${RUN_ID} dur=${DURATION}s ops=${OPERATIONS[*]} backends=${BACKENDS[*]}"
+echo "    container=lat_probe_db/lat_probe_cont  results -> perfdb/perfresults (workload_id LIKE baseline-%)"
 echo
 overall_rc=0
 
 for op in "${OPERATIONS[@]}"; do
   for bk in "${BACKENDS[@]}"; do
-    wid="lat0-${op}-${bk}-${STAMP}"
+    wid="baseline-${op}-${bk}-${RUN_ID}"
     log="${LOG_DIR}/${wid}.log"
     echo ">>> op=${op} backend=${bk} -> ${wid}"
     # timeout sends SIGINT so the workload stops the same way a Ctrl-C would,
@@ -73,12 +73,12 @@ for op in "${OPERATIONS[@]}"; do
     esac
   done
 done
-echo "=== Phase 0 complete. stamp=${STAMP} ==="
-echo "=== Running post-run integrity gate (Phase 0) ==="
-if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "lat0-"; then
+echo "=== Light-load baseline complete. run_id=${RUN_ID} ==="
+echo "=== Checking the light-load baseline results ==="
+if python3 perf_validate.py --run-id "${RUN_ID}" --log-dir "${LOG_DIR}" --prefix "baseline-"; then
   echo "=== integrity gate PASSED ==="
 else
-  echo "!! integrity gate FAILED -- inspect rows/logs before trusting Phase 0." >&2
+  echo "!! integrity gate FAILED -- inspect rows/logs before trusting the baseline." >&2
   overall_rc=1
 fi
 exit "${overall_rc}"

@@ -29,12 +29,12 @@ import argparse
 import sys
 
 import perf_provenance_gate as _prov
-from phase0_report import (
+from latency_report import (
     HdrHistogram,
     MAX_US,
     MIN_US,
     _connect,
-    _latest_stamp,
+    _latest_run_id,
     _split_wid,
 )
 
@@ -171,7 +171,7 @@ def main():
     args = ap.parse_args()
 
     container = _connect()
-    stamp = args.stamp or _latest_stamp(container, args.prefix)
+    stamp = args.stamp or _latest_run_id(container, args.prefix)
     if not stamp:
         print(f"ERROR: no {args.prefix}* runs found in the results container.", file=sys.stderr)
         sys.exit(2)

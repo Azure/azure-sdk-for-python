@@ -23,6 +23,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 from azure.cosmos._helpers._metadata_provider import ContainerMetadataProvider
 from azure.cosmos._helpers._pk_extract import extract_partition_key_value
+from azure.cosmos._backend.base import build_backend_response
 from azure.cosmos.aio._helpers._metadata_provider import AsyncContainerMetadataProvider
 from azure.cosmos.partition_key import _Empty, _Undefined
 
@@ -77,6 +78,26 @@ def _cc_with_props(props):
 
 
 class TestSyncProvider(unittest.TestCase):
+    def test_rust_metadata_response_bypasses_legacy_container_cache(self):
+        cc = MagicMock()
+        cc._container_properties_cache = {}
+        resolver = MagicMock(
+            return_value=build_backend_response(
+                200,
+                0,
+                {},
+                b'{"_rid":"rust-rid","partitionKey":{"paths":["/pk"],"kind":"Hash","version":2}}',
+            )
+        )
+        provider = ContainerMetadataProvider(cc, resolve_through_backend=resolver)
+        options = {}
+
+        self.assertEqual(provider.container_rid(_LINK, options), "rust-rid")
+        self.assertEqual(provider.extract_partition_key(_LINK, {"pk": "value"}, options), "value")
+
+        resolver.assert_called_once_with(_LINK)
+        cc._refresh_container_properties_cache.assert_not_called()
+
     def test_container_rid_from_cache_hit(self):
         provider = ContainerMetadataProvider(_cc_with_props({"_rid": "R", "partitionKey": _HASH_DEF}))
         self.assertEqual(provider.container_rid(_LINK, {}), "R")
@@ -124,6 +145,33 @@ class TestSyncProvider(unittest.TestCase):
 # ---------------------------------------------------------------------------
 
 class TestAsyncProvider(unittest.TestCase):
+    def test_async_rust_metadata_response_bypasses_legacy_container_cache(self):
+        cc = MagicMock()
+        cc._container_properties_cache = {}
+        resolver = AsyncMock(
+            return_value=build_backend_response(
+                200,
+                0,
+                {},
+                b'{"_rid":"rust-rid","partitionKey":{"paths":["/a","/b"],"kind":"MultiHash","version":2}}',
+            )
+        )
+        provider = AsyncContainerMetadataProvider(cc, resolve_through_backend=resolver)
+
+        async def run():
+            options = {}
+            rid = await provider.container_rid(_LINK, options)
+            value = await provider.extract_partition_key(
+                _LINK, {"a": "x", "b": "y"}, options
+            )
+            return rid, value
+
+        rid, value = asyncio.run(run())
+        self.assertEqual(rid, "rust-rid")
+        self.assertEqual(value, ["x", "y"])
+        resolver.assert_awaited_once_with(_LINK)
+        cc._refresh_container_properties_cache.assert_not_called()
+
     def test_async_container_rid_cache_miss_awaits_refresh(self):
         cc = MagicMock()
         cache = {}
@@ -151,4 +199,3 @@ class TestAsyncProvider(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

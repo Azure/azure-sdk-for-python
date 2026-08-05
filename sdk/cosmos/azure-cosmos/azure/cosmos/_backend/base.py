@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import abc
 from dataclasses import dataclass, field
+from threading import Lock
 from typing import Any, Callable, Iterator, Mapping, Optional, Union
 
 from azure.core.utils import CaseInsensitiveDict
@@ -60,6 +61,7 @@ OP_REPLACE_ITEM = "replace_item"
 OP_PATCH_ITEM = "patch_item"
 OP_QUERY_ITEMS = "query_items"
 OP_READ_ALL_ITEMS = "read_all_items"
+OP_LIST_DATABASES = "list_databases"
 OP_READ_FEED_RANGES = "read_feed_ranges"
 OP_FEED_RANGE_FROM_PARTITION_KEY = "feed_range_from_partition_key"
 OP_IS_FEED_RANGE_SUBSET = "is_feed_range_subset"
@@ -70,10 +72,10 @@ OP_REPLACE_OFFER = "replace_offer"
 # ``PreparedRequest.op`` -> binding function name. Shared by the sync and
 # async backends so a new operation is wired in one place, not two.
 #
-# ``query_items`` / ``read_all_items`` are deliberately NOT here: they are
-# multi-page feeds, not single-reply operations, so they are registered in
-# ``QUERY_TO_BINDING_METHOD`` below and dispatched through ``execute_pages``,
-# never through ``execute``.
+# ``query_items`` / ``read_all_items`` / ``list_databases`` are deliberately NOT
+# here: they are multi-page feeds, not single-reply operations, so they are
+# registered in ``QUERY_TO_BINDING_METHOD`` below and dispatched through
+# ``execute_pages``, never through ``execute``.
 OP_TO_BINDING_METHOD = {
     OP_CREATE_DATABASE: "create_database",
     OP_READ_DATABASE: "read_database",
@@ -92,12 +94,15 @@ OP_TO_BINDING_METHOD = {
 
 
 # ``PreparedQuery.op`` -> binding function name, matching ``OP_TO_BINDING_METHOD``
-# for the query and read-many operations. A backend's ``execute_pages`` reads this
-# (never ``OP_TO_BINDING_METHOD``) so a query op can never be reached through the
-# single-reply ``execute`` path by accident.
+# for the paged operations: the two container-scoped feeds (``query_items``,
+# ``read_all_items``) and the account-scoped one (``list_databases``). A
+# backend's ``execute_pages`` reads this (never ``OP_TO_BINDING_METHOD``) so a
+# paged op can never be reached through the single-reply ``execute`` path by
+# accident.
 QUERY_TO_BINDING_METHOD = {
     OP_QUERY_ITEMS: "query_items",
     OP_READ_ALL_ITEMS: "read_all_items",
+    OP_LIST_DATABASES: "list_databases",
 }
 # Reserved lookup for the batch operation, matching ``OP_TO_BINDING_METHOD``.
 # Empty until that operation is added; adding a row does not change the
@@ -105,8 +110,27 @@ QUERY_TO_BINDING_METHOD = {
 BATCH_TO_BINDING_METHOD: dict[str, str] = {}
 
 
-class QueryNotSupportedByBackendError(RuntimeError):
+class PageNotSupportedByBackendError(RuntimeError):
+    """Raised before dispatch when a backend cannot execute a paged operation.
+
+    The signal that means "hand this page to legacy instead", as opposed to a
+    real failure. Without a distinct type, a backend refusing a page and a
+    backend hitting a genuine error would look the same, and one of the two
+    would be handled wrongly.
+    """
+
+
+class QueryNotSupportedByBackendError(PageNotSupportedByBackendError):
     """Raised when the selected backend cannot execute a planned query."""
+
+
+class BackendProtocolError(RuntimeError):
+    """Raised when a backend violates the reply-shape contract.
+
+    A bug on our side, not a customer error, so it is never retried or fallen
+    back from. Without it a malformed reply would be silently retried on the
+    legacy path and the underlying defect would go unnoticed.
+    """
 
 
 @dataclass(frozen=True)
@@ -310,9 +334,9 @@ class BackendResponse:
 # reserved objects for the transactional-batch operation
 # ---------------------------------------------------------------------------
 #
-# ``PreparedQuery`` / ``QueryPage`` describe the request and reply for
-# ``query_items`` and ``read_all_items``: a query (or read-many) request, and
-# one page of its results. They are frozen like their single-reply siblings.
+# ``PreparedQuery`` / ``QueryPage`` describe the request and reply for paged
+# operations such as ``query_items``, ``read_all_items``, and ``list_databases``.
+# They are frozen like their single-reply siblings.
 # ``PreparedBatch`` / ``BatchResponse`` are the same shape for the
 # transactional-batch operation, defined now so the contract is fixed before
 # that operation is built, but nothing produces or consumes them yet.
@@ -320,16 +344,18 @@ class BackendResponse:
 
 @dataclass(frozen=True)
 class PreparedQuery:
-    """A query (or read-many) request, fully prepared.
+    """A paged query or read-feed request, fully prepared.
 
     The backend returns the results a page at a time (see ``execute_pages``),
     so a large result is never held in memory all at once.
     """
 
-    #: A ``QUERY_TO_BINDING_METHOD`` key naming the query op.
+    #: A ``QUERY_TO_BINDING_METHOD`` key naming the paged operation.
     op: str
 
-    #: e.g. ``"dbs/{db}/colls/{coll}"`` -- the resource being queried.
+    #: e.g. ``"dbs/{db}/colls/{coll}"`` -- the resource being queried. Empty for
+    #: the account-scoped paged ops (``list_databases``), which have no
+    #: container; the binding ignores the field for those.
     container_link: str
 
     #: Query text (``"SELECT * FROM c WHERE c.k = @k"``), or ``None`` for the
@@ -443,11 +469,19 @@ class BatchResponse:
 BackendReply = Union[BackendResponse, QueryPage, BatchResponse]
 
 _RUST_COMPATIBILITY_FALLBACK_COUNT = 0
+_RUST_COMPATIBILITY_FALLBACK_COUNT_LOCK = Lock()
 
 
 def rust_compatibility_fallback_count() -> int:
     """Return Rust attempts retried through a legacy compatibility operation."""
-    return _RUST_COMPATIBILITY_FALLBACK_COUNT
+    with _RUST_COMPATIBILITY_FALLBACK_COUNT_LOCK:
+        return _RUST_COMPATIBILITY_FALLBACK_COUNT
+
+
+def _record_rust_compatibility_fallback() -> None:
+    global _RUST_COMPATIBILITY_FALLBACK_COUNT  # pylint: disable=global-statement
+    with _RUST_COMPATIBILITY_FALLBACK_COUNT_LOCK:
+        _RUST_COMPATIBILITY_FALLBACK_COUNT += 1
 
 
 class CosmosBackend(abc.ABC):
@@ -457,21 +491,22 @@ class CosmosBackend(abc.ABC):
     :class:`~azure.cosmos._helpers.throughput_helper.ThroughputHelper`,
     :class:`~azure.cosmos._helpers.feed_range_helper.FeedRangeHelper`) holds one of
     these by interface and drives its operations through :meth:`run_operation`
-    without knowing which concrete backend it has. Engine selection and legacy
-    fallback happen behind this interface: a rust-backed client holds a
+    or :meth:`run_page_operation` without knowing which concrete backend it
+    has. Engine selection and legacy fallback happen behind this interface: a
+    rust-backed client holds a
     :class:`RustBackend` and a core-python client holds a
     :class:`~azure.cosmos._backend.legacy.LegacyBackend`, and every coordinator
     treats both the same -- none of them branch on ``None``, on which concrete
-    backend they hold, or on ``execute`` returning ``None``. The operation kind is
-    on ``prepared.op``; the backend branches on it.
+    backend they hold, or on a wire primitive returning ``None``. The operation
+    kind is on ``prepared.op``; the backend branches on it.
 
-    ``execute`` is the wire-level primitive (build one prepared request, send
-    it, return the raw reply) that the rust path uses; the query/feed-range/
-    offer routing helpers call it directly. The core-python
+    ``execute`` and ``execute_pages`` are the wire-level primitives used behind
+    those two coordinator methods. The core-python
     :class:`~azure.cosmos._backend.legacy.LegacyBackend` is **not**
     ``PreparedRequest``-driven -- its work is the original public call arguments,
-    not a wire request -- so it does not implement ``execute`` and instead
-    overrides :meth:`run_operation` to run the legacy operation.
+    not a wire request -- so it does not implement the wire primitives and
+    instead overrides :meth:`run_operation` and :meth:`run_page_operation` to
+    run the legacy operation.
     """
 
     #: Short identifier used in the startup INFO log line. Subclasses
@@ -488,6 +523,10 @@ class CosmosBackend(abc.ABC):
         implement it.
         """
         ...
+
+    def resolve_container_metadata(self, container_link: str) -> Optional[BackendResponse]:
+        """Resolve container metadata through this backend when supported."""
+        return None
 
     def run_operation(
         self,
@@ -570,9 +609,46 @@ class CosmosBackend(abc.ABC):
         except fallback_exceptions:
             if not allow_legacy_fallback:
                 raise
-            global _RUST_COMPATIBILITY_FALLBACK_COUNT  # pylint: disable=global-statement
-            _RUST_COMPATIBILITY_FALLBACK_COUNT += 1
+            _record_rust_compatibility_fallback()
             return legacy_operation.invoke()
+
+    def run_page_operation(  # pylint: disable=too-many-arguments
+        self,
+        *,
+        build_prepared: Callable[[], PreparedQuery],
+        legacy_operation: LegacyOperation,
+        parse_response: Callable[[QueryPage], Any],
+        rust_eligible: bool = True,
+        fallback_exceptions: tuple[type[BaseException], ...] = (),
+    ) -> Any:
+        """Run one backend-selected page without exposing fallback sentinels.
+
+        An ineligible request or an explicit capability exception runs the
+        supplied legacy operation. An empty page iterator is a backend contract
+        violation and propagates as ``BackendProtocolError``; it never replays
+        the request through legacy.
+
+        Without this method each caller would repeat the same try/except and
+        fallback bookkeeping, and a caller that got it slightly wrong could run
+        the same feed twice -- once on Rust and again on legacy.
+        """
+        if not rust_eligible:
+            return legacy_operation.invoke()
+        page: Optional[QueryPage] = None
+        try:
+            pages = self.execute_pages(build_prepared())
+            try:
+                page = next(pages)
+            except StopIteration:
+                pass
+        except fallback_exceptions:
+            _record_rust_compatibility_fallback()
+            return legacy_operation.invoke()
+        if page is None:
+            raise BackendProtocolError(
+                f"{type(self).__name__} returned no page for {legacy_operation.op!r}"
+            )
+        return parse_response(page)
 
     # --- execute_pages is implemented by RustBackend; execute_batch is
     # reserved for the not-yet-built batch operation ----------------------
@@ -582,14 +658,14 @@ class CosmosBackend(abc.ABC):
     # the method; this class does not change.
 
     def execute_pages(self, prepared: PreparedQuery) -> Iterator[QueryPage]:
-        """Return a query (or read-many) result one ``QueryPage`` at a time.
+        """Return a paged query or read-feed result one ``QueryPage`` at a time.
 
         The default here raises; :class:`~azure.cosmos._backend.rust.RustBackend`
         overrides it (using ``QUERY_TO_BINDING_METHOD``) to dispatch
-        ``query_items`` / ``read_all_items``. A backend that does not implement
-        this -- ``LegacyBackend`` never reaches it, since its coordinators drive
-        it through :meth:`run_operation` / the legacy call directly, not through
-        ``execute_pages`` -- keeps this raising default.
+        ``query_items`` / ``read_all_items`` / ``list_databases``. A backend
+        that does not implement this -- ``LegacyBackend`` never reaches it, since
+        :meth:`run_page_operation` invokes the legacy call directly -- keeps
+        this raising default.
         """
         raise NotImplementedError(
             "execute_pages is not implemented by this backend."

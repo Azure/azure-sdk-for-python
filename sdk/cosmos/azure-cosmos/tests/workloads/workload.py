@@ -21,7 +21,7 @@ from azure.cosmos.aio import CosmosClient as AsyncClient
 from azure.cosmos import CosmosClient as SyncClient, documents
 from azure.core.pipeline.transport import AioHttpTransport
 
-import perf_provenance
+import perf_backend_counters as backend_counters
 from workload_configs import (
     CLIENT_EXCLUDED_LOCATIONS,
     CONCURRENT_QUERIES,
@@ -101,7 +101,7 @@ def _start_reporter():
     return None, None
 
 
-def _wrap_backend_for_provenance(client, is_async, client_logger):
+def _wrap_backend_for_counting(client, is_async, client_logger):
     """Record which backend the client actually built, instead of trusting COSMOS_BACKEND.
 
     A row tagged "rust" that actually ran core-python would mislabel every number,
@@ -119,7 +119,7 @@ def _wrap_backend_for_provenance(client, is_async, client_logger):
 
     backend = getattr(client, "_backend", None)
     runtime_name = "core-python" if backend is None else type(backend).__name__
-    perf_provenance.set_runtime_backend(runtime_name)
+    backend_counters.set_runtime_backend(runtime_name)
 
     labeled = os.environ.get("COSMOS_BACKEND", "core-python").strip().lower()
     if labeled in ("", "core_python", "core-python", "python"):
@@ -127,14 +127,14 @@ def _wrap_backend_for_provenance(client, is_async, client_logger):
     actual = "core-python" if backend is None else "rust"
     if labeled != actual:
         raise RuntimeError(
-            "backend provenance mismatch: COSMOS_BACKEND="
+            "backend mismatch: COSMOS_BACKEND="
             f"{labeled!r} but the client actually built {actual!r} "
             f"({runtime_name}). Refusing to run -- the results would be "
             "mislabeled. Check the _rust extension is built/importable on this "
             "host and COSMOS_BACKEND is set correctly."
         )
     client_logger.info(
-        "backend provenance: label=%s runtime_backend=%s", labeled, runtime_name
+        "backend check: label=%s runtime_backend=%s", labeled, runtime_name
     )
     if backend is None:
         return  # core-python: no backend object to wrap; counter stays 0.
@@ -144,13 +144,13 @@ def _wrap_backend_for_provenance(client, is_async, client_logger):
         async def _counting_execute(prepared):
             response = await orig_execute(prepared)
             if response is not None:
-                perf_provenance.record_execute()
+                backend_counters.record_execute()
             return response
     else:
         def _counting_execute(prepared):
             response = orig_execute(prepared)
             if response is not None:
-                perf_provenance.record_execute()
+                backend_counters.record_execute()
             return response
     backend.execute = _counting_execute
 
@@ -239,7 +239,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
             db = client.get_database_client(COSMOS_DATABASE)
             cont = db.get_container_client(COSMOS_CONTAINER)
             await asyncio.sleep(1)
-            _wrap_backend_for_provenance(client, is_async=True, client_logger=client_logger)
+            _wrap_backend_for_counting(client, is_async=True, client_logger=client_logger)
             _maybe_freeze_gc(client_logger)
 
             # One loop-lag monitor per process. Only the single-client path starts
@@ -384,7 +384,7 @@ def run_workload_sync(client_id, client_logger):
             db = client.get_database_client(COSMOS_DATABASE)
             cont = db.get_container_client(COSMOS_CONTAINER)
             time.sleep(1)
-            _wrap_backend_for_provenance(client, is_async=False, client_logger=client_logger)
+            _wrap_backend_for_counting(client, is_async=False, client_logger=client_logger)
 
             # Sync mode is fully serial: each op runs its CONCURRENT_REQUESTS calls
             # one at a time, so real concurrency is 1 and throughput is about

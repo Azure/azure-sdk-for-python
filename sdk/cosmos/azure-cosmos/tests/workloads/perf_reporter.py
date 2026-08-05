@@ -18,7 +18,7 @@ from azure.identity import DefaultAzureCredential
 
 from perf_config import _safe_int_env
 from perf_stats import Stats
-import perf_provenance
+import perf_backend_counters as backend_counters
 
 try:
     from azure.cosmos import __version__ as _AZURE_COSMOS_VERSION
@@ -145,14 +145,14 @@ class PerfReporter:
         self._last_gc_collections, self._last_gc_collected, self._last_gc_uncollectable = (
             _get_gc_stats()
         )
-        # Provenance baselines, advanced like the CPU/GC baselines so each row
+        # Backend-counter baselines, advanced like the CPU/GC baselines so each row
         # carries the per-window count of operations the Rust path handled
         # (rust_execute_calls) and that the Rust binding counted (binding_calls).
         # None for binding means the extension has no counter; we store -1 then.
-        self._last_execute_calls = perf_provenance.execute_count()
-        self._last_binding_calls = perf_provenance.binding_operation_count() or 0
-        self._last_attempt_calls = perf_provenance.binding_attempt_count() or 0
-        self._last_retry_calls = perf_provenance.binding_retry_count() or 0
+        self._last_execute_calls = backend_counters.execute_count()
+        self._last_binding_calls = backend_counters.binding_operation_count() or 0
+        self._last_attempt_calls = backend_counters.binding_attempt_count() or 0
+        self._last_retry_calls = backend_counters.binding_retry_count() or 0
 
     def start(self):
         """Start the background reporting thread (daemon)."""
@@ -210,12 +210,12 @@ class PerfReporter:
         self._last_gc_collections, self._last_gc_collected, self._last_gc_uncollectable = (
             _get_gc_stats()
         )
-        # Re-prime the provenance baselines at the same instant, so the first
+        # Reset the backend-counter baselines at the same instant, so the first
         # post-warmup window's execute/binding deltas line up with window_seconds.
-        self._last_execute_calls = perf_provenance.execute_count()
-        self._last_binding_calls = perf_provenance.binding_operation_count() or 0
-        self._last_attempt_calls = perf_provenance.binding_attempt_count() or 0
-        self._last_retry_calls = perf_provenance.binding_retry_count() or 0
+        self._last_execute_calls = backend_counters.execute_count()
+        self._last_binding_calls = backend_counters.binding_operation_count() or 0
+        self._last_attempt_calls = backend_counters.binding_attempt_count() or 0
+        self._last_retry_calls = backend_counters.binding_retry_count() or 0
 
         while not self._stop_event.wait(timeout=self._config["report_interval"]):
             try:
@@ -326,15 +326,15 @@ class PerfReporter:
         # Worst event-loop scheduling delay this window (ms); 0 on the sync path or
         # when the monitor is off. A large value means the loop is the bottleneck.
         loop_lag_max_ms = round(self._stats.drain_loop_lag(), 3)
-        # Per-window provenance deltas. rust_execute_calls: ops the Rust path
+        # Per-window backend-counter deltas. rust_execute_calls: ops the Rust path
         # handled this window; binding_calls: ops the Rust binding counted (-1 when
         # the extension has no counter, so 0 is not read as proof it was skipped).
         # Both are 0 for a core-python run. The post-run gate checks these against
         # `count` to confirm a row tagged "rust" really ran on Rust.
-        cur_execute_calls = perf_provenance.execute_count()
+        cur_execute_calls = backend_counters.execute_count()
         rust_execute_calls = max(0, cur_execute_calls - self._last_execute_calls)
         self._last_execute_calls = cur_execute_calls
-        cur_binding_raw = perf_provenance.binding_operation_count()
+        cur_binding_raw = backend_counters.binding_operation_count()
         if cur_binding_raw is None:
             binding_calls = -1
         else:
@@ -346,19 +346,19 @@ class PerfReporter:
         # reads/creates, ~= 2*count for PATCH's Read-Modify-Write); retry_calls:
         # driver-issued retries/failovers/hedges (nonzero even at 0 terminal errors
         # when a write retried then succeeded). Both 0 for a core-python run.
-        cur_attempt_raw = perf_provenance.binding_attempt_count()
+        cur_attempt_raw = backend_counters.binding_attempt_count()
         if cur_attempt_raw is None:
             attempt_calls = -1
         else:
             attempt_calls = max(0, cur_attempt_raw - self._last_attempt_calls)
             self._last_attempt_calls = cur_attempt_raw
-        cur_retry_raw = perf_provenance.binding_retry_count()
+        cur_retry_raw = backend_counters.binding_retry_count()
         if cur_retry_raw is None:
             retry_calls = -1
         else:
             retry_calls = max(0, cur_retry_raw - self._last_retry_calls)
             self._last_retry_calls = cur_retry_raw
-        runtime_backend = perf_provenance.runtime_backend()
+        runtime_backend = backend_counters.runtime_backend()
         # Earliest-N per-op durations since process start (not reset per window), so
         # a cold-start analyzer can pool the first calls across processes. Same for
         # every summary row of this flush; keyed per op below.

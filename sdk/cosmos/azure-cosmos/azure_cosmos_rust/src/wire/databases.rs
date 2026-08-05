@@ -18,42 +18,51 @@ use azure_data_cosmos_driver::{
 
 use super::diagnostics::BINDING_OP_COUNT;
 use super::request::{build_operation_options, OpModifiers};
-use super::response::tuple_from_result;
+use super::response::{tuple_from_database_feed_result, tuple_from_result};
 use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
 
-fn run_database_sync<'py, F, Fut>(
+type ResponseTupleConverter<R> = for<'py> fn(Python<'py>, R) -> PyResult<Bound<'py, PyTuple>>;
+
+fn run_database_sync<'py, R, F, Fut>(
     py: Python<'py>,
     handle: &str,
-    op_name: &str,
-    make_future: F,
+    operation_name: &str,
+    operation_future_factory: F,
+    convert_response: ResponseTupleConverter<R>,
 ) -> PyResult<Bound<'py, PyTuple>>
 where
     F: FnOnce(Arc<CosmosDriver>) -> Fut + Send,
-    Fut: Future<Output = Result<CosmosResponse, CosmosError>>,
+    Fut: Future<Output = R>,
+    R: Send,
 {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(handle)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-    let response_result: Result<CosmosResponse, CosmosError> =
-        py.allow_threads(|| runtime_ctx.tokio_rt.block_on(make_future(driver)));
-    tuple_from_result(py, response_result)
+    let runtime_ctx = require_runtime_context(operation_name)?;
+    let response_result = py.allow_threads(|| {
+        runtime_ctx
+            .tokio_rt
+            .block_on(operation_future_factory(driver))
+    });
+    convert_response(py, response_result)
 }
 
-fn run_database_async<'py, F, Fut>(
+fn run_database_async<'py, R, F, Fut>(
     py: Python<'py>,
     handle: &str,
-    op_name: &str,
-    make_future: F,
+    operation_name: &str,
+    operation_future_factory: F,
+    convert_response: ResponseTupleConverter<R>,
 ) -> PyResult<Bound<'py, PyAny>>
 where
     F: FnOnce(Arc<CosmosDriver>) -> Fut + Send + 'static,
-    Fut: Future<Output = Result<CosmosResponse, CosmosError>> + Send + 'static,
+    Fut: Future<Output = R> + Send + 'static,
+    R: Send + 'static,
 {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(handle)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-    let join = runtime_ctx.tokio_rt.spawn(make_future(driver));
+    let runtime_ctx = require_runtime_context(operation_name)?;
+    let join = runtime_ctx.tokio_rt.spawn(operation_future_factory(driver));
     let abort_guard = AbortOnDrop(join.abort_handle());
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let _abort_guard = abort_guard;
@@ -65,7 +74,7 @@ where
             }
         })?;
         Python::with_gil(|py| {
-            tuple_from_result(py, response_result).map(|tuple| tuple.into_any().unbind())
+            convert_response(py, response_result).map(|tuple| tuple.into_any().unbind())
         })
     })
 }
@@ -75,11 +84,15 @@ pub(crate) fn run_create_database_operation<'py>(
     handle: &str,
     modifiers: OpModifiers,
     body_bytes: Vec<u8>,
-    op_name: &str,
+    operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    run_database_sync(py, handle, op_name, move |driver| {
-        run_create_database_future(driver, modifiers, body_bytes)
-    })
+    run_database_sync(
+        py,
+        handle,
+        operation_name,
+        move |driver| run_create_database_future(driver, modifiers, body_bytes),
+        tuple_from_result,
+    )
 }
 
 pub(crate) fn run_create_database_operation_async<'py>(
@@ -87,11 +100,15 @@ pub(crate) fn run_create_database_operation_async<'py>(
     handle: &str,
     modifiers: OpModifiers,
     body_bytes: Vec<u8>,
-    op_name: &str,
+    operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
-    run_database_async(py, handle, op_name, move |driver| {
-        run_create_database_future(driver, modifiers, body_bytes)
-    })
+    run_database_async(
+        py,
+        handle,
+        operation_name,
+        move |driver| run_create_database_future(driver, modifiers, body_bytes),
+        tuple_from_result,
+    )
 }
 
 pub(crate) fn run_read_database_operation<'py>(
@@ -99,11 +116,15 @@ pub(crate) fn run_read_database_operation<'py>(
     handle: &str,
     modifiers: OpModifiers,
     database_id: String,
-    op_name: &str,
+    operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    run_database_sync(py, handle, op_name, move |driver| {
-        run_read_database_future(driver, modifiers, database_id)
-    })
+    run_database_sync(
+        py,
+        handle,
+        operation_name,
+        move |driver| run_read_database_future(driver, modifiers, database_id),
+        tuple_from_result,
+    )
 }
 
 pub(crate) fn run_read_database_operation_async<'py>(
@@ -111,11 +132,55 @@ pub(crate) fn run_read_database_operation_async<'py>(
     handle: &str,
     modifiers: OpModifiers,
     database_id: String,
-    op_name: &str,
+    operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
-    run_database_async(py, handle, op_name, move |driver| {
-        run_read_database_future(driver, modifiers, database_id)
-    })
+    run_database_async(
+        py,
+        handle,
+        operation_name,
+        move |driver| run_read_database_future(driver, modifiers, database_id),
+        tuple_from_result,
+    )
+}
+
+/// Run one `list_databases` page and return the reply as a Python tuple.
+///
+/// Finds the caller's driver, runs the request to completion on this thread, and
+/// converts whatever comes back -- a page, a service error, or a transport
+/// failure -- into the tuple shape Python expects. Without it the entry point
+/// above would have to do driver lookup, blocking, and error conversion itself,
+/// and so would every other operation in this file.
+pub(crate) fn run_list_databases_operation<'py>(
+    py: Python<'py>,
+    handle: &str,
+    modifiers: OpModifiers,
+    operation_name: &str,
+) -> PyResult<Bound<'py, PyTuple>> {
+    run_database_sync(
+        py,
+        handle,
+        operation_name,
+        move |driver| run_list_databases_future(driver, modifiers),
+        tuple_from_database_feed_result,
+    )
+}
+
+/// Async counterpart of [`run_list_databases_operation`]: returns an awaitable
+/// instead of blocking, so an async caller's event loop keeps running while the
+/// page is in flight.
+pub(crate) fn run_list_databases_operation_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    modifiers: OpModifiers,
+    operation_name: &str,
+) -> PyResult<Bound<'py, PyAny>> {
+    run_database_async(
+        py,
+        handle,
+        operation_name,
+        move |driver| run_list_databases_future(driver, modifiers),
+        tuple_from_database_feed_result,
+    )
 }
 
 async fn run_create_database_future(
@@ -166,4 +231,32 @@ async fn run_read_database_future(
         modifiers.custom_headers,
     );
     driver.execute_singleton_operation(op, options).await
+}
+
+/// Ask the driver for one page of databases.
+///
+/// Note the return type. `create_database` and `read_database` above call
+/// `execute_singleton_operation`, which always yields exactly one response. A
+/// feed can run out of pages, so this calls `execute_operation` and gets back an
+/// `Option`, where `None` means "no page left". It is the only operation in this
+/// file on the feed-shaped driver call.
+async fn run_list_databases_future(
+    driver: Arc<CosmosDriver>,
+    modifiers: OpModifiers,
+) -> Result<Option<CosmosResponse>, CosmosError> {
+    let mut op = CosmosOperation::read_all_databases(driver.account().clone());
+    if let Some(activity) = modifiers.activity_header {
+        op = op.with_activity_id(ActivityId::from(activity));
+    }
+    if let Some(session) = modifiers.session_header {
+        op = op.with_session_token(SessionToken::from(session));
+    }
+    let options = build_operation_options(
+        None,
+        modifiers.excluded_regions_value,
+        modifiers.end_to_end_timeout,
+        modifiers.availability_strategy,
+        modifiers.custom_headers,
+    );
+    driver.execute_operation(op, options).await
 }

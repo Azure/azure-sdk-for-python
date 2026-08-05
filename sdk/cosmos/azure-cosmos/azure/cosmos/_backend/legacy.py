@@ -35,7 +35,14 @@ from __future__ import annotations
 
 from typing import Any, Callable, Optional
 
-from .base import BackendResponse, CosmosBackend, LegacyOperation, PreparedRequest
+from .base import (
+    BackendResponse,
+    CosmosBackend,
+    LegacyOperation,
+    PreparedQuery,
+    PreparedRequest,
+    QueryPage,
+)
 from .constants import BACKEND_NAME_CORE_PYTHON
 
 
@@ -56,7 +63,8 @@ class LegacyBackend(CosmosBackend):
         the raw reply). The legacy path reconstructs its call from the original
         public arguments, which a ``PreparedRequest`` does not carry, so there is
         nothing meaningful to do here. Every coordinator drives this backend
-        through :meth:`run_operation`, never ``execute``; this method exists
+        through :meth:`run_operation` or :meth:`run_page_operation`, never
+        a wire primitive; this method exists
         only to satisfy the abstract base and guards against a wrong call site.
         """
         raise NotImplementedError(
@@ -84,6 +92,24 @@ class LegacyBackend(CosmosBackend):
         ``legacy_operation`` (never ``build_prepared`` / ``rust_eligible``) is
         this backend's whole "always fall back to legacy" behavior -- no ``None``
         or backend-type check anywhere in this method.
+        """
+        return legacy_operation.invoke()
+
+    def run_page_operation(  # pylint: disable=too-many-arguments
+        self,
+        *,
+        build_prepared: Callable[[], PreparedQuery],
+        legacy_operation: LegacyOperation,
+        parse_response: Callable[[QueryPage], Any],
+        rust_eligible: bool = True,
+        fallback_exceptions: tuple[type[BaseException], ...] = (),
+    ) -> Any:
+        """Run the paged operation on the legacy core-python path.
+
+        Mirrors :meth:`run_operation` for feeds: ``build_prepared`` /
+        ``parse_response`` / ``rust_eligible`` / ``fallback_exceptions`` are
+        ignored because this backend never builds a wire request, so
+        ``execute_pages`` is never reached.
         """
         return legacy_operation.invoke()
 

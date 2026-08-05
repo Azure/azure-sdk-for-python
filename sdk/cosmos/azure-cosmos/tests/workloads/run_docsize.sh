@@ -17,7 +17,7 @@
 #   DOCSIZE_BACKENDS=rust ./run_docsize.sh 600     # rust
 #   DOCSIZE_BACKENDS="core-python rust" ./run_docsize.sh 600
 # Results land in perfdb/perfresults tagged docsize-create-<backend>-<profile>-<stamp>;
-# read them back with phase0_report.py --prefix docsize- (backend column shows
+# read them back with latency_report.py --prefix docsize- (backend column shows
 # <backend>-<profile>, e.g. core-python-large).
 set -uo pipefail
 cd "$(dirname "$0")"
@@ -63,7 +63,7 @@ overall_rc=0
 
 for prof in "${PROFILES[@]}"; do
   for bk in "${BACKENDS[@]}"; do
-    # op field is the real op (create) so phase0_report's _OP_ORDER matches; the
+    # op field is the real op (create) so latency_report's _OP_ORDER matches; the
     # profile is folded into the backend segment, so _split_wid reads
     # backend="<bk>-<profile>" (e.g. core-python-large) and shows one row per
     # backend/profile. "rust" stays inside the backend string so the provenance
@@ -89,7 +89,7 @@ echo
 echo "=== Running doc-size report + provenance gate ==="
 # Lightweight post-run gate for this mini-phase: validate Rust driver provenance
 # and print pooled create latency per backend/profile for this stamp.
-if python3 phase0_report.py --prefix "docsize-" --stamp "${STAMP}"; then
+if python3 latency_report.py --prefix "docsize-" --run-id "${STAMP}"; then
   echo "=== doc-size report provenance gate PASSED ==="
 else
   echo "!! doc-size report provenance gate FAILED -- inspect rows before trusting payload-size metrics." >&2

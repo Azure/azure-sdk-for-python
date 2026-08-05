@@ -12,7 +12,7 @@ concrete :class:`~azure.cosmos._backend.base.CosmosBackend` /
 ``execute() -> None`` sentinel. No coordinator or public helper branches on
 ``None``, on backend type, or on ``execute`` returning ``None`` to decide
 whether to run the legacy path -- that selection lives entirely behind
-``run_operation``'s polymorphism, exercised directly here.
+``run_operation`` / ``run_page_operation`` polymorphism, exercised directly here.
 
 These tests run in milliseconds: no network, no emulator, no compiled rust
 binding required.
@@ -78,6 +78,17 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
 
         self.assertEqual(build_prepared_calls, [])
         self.assertEqual(parse_response_calls, [])
+
+    def test_run_page_operation_always_invokes_the_legacy_operation(self):
+        result = LEGACY_BACKEND.run_page_operation(
+            build_prepared=lambda: self.fail("build_prepared must not run"),
+            legacy_operation=LegacyOperation(
+                op="query_items", invoke=lambda: "legacy-page"
+            ),
+            parse_response=lambda _response: self.fail("parse_response must not run"),
+            rust_eligible=True,
+        )
+        self.assertEqual(result, "legacy-page")
 
     def test_legacy_operation_is_a_typed_frozen_port_not_a_bare_callable(self):
         """``LegacyOperation`` carries a named ``op`` alongside ``invoke``, and is
@@ -167,6 +178,24 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
                 self.assertEqual(result, "async-legacy-result")
 
             self.assertEqual(build_prepared_calls, [])
+
+        asyncio.run(_run())
+
+    def test_async_run_page_operation_always_invokes_the_legacy_operation(self):
+        async def _run():
+            async def build_prepared():
+                self.fail("build_prepared must not run")
+
+            async def invoke():
+                return "async-legacy-page"
+
+            result = await ASYNC_LEGACY_BACKEND.run_page_operation(
+                build_prepared=build_prepared,
+                legacy_operation=LegacyOperation(op="query_items", invoke=invoke),
+                parse_response=lambda _response: self.fail("parse_response must not run"),
+                rust_eligible=True,
+            )
+            self.assertEqual(result, "async-legacy-page")
 
         asyncio.run(_run())
 

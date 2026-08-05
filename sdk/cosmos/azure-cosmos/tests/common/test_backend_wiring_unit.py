@@ -40,8 +40,10 @@ import azure.cosmos.cosmos_client as sync_cosmos_client_module
 from azure.cosmos._backend.base import (
     BackendResponse,
     CosmosBackend,
+    LegacyOperation,
     OP_TO_BINDING_METHOD,
     OP_FEED_RANGE_FROM_PARTITION_KEY,
+    OP_LIST_DATABASES,
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
     OP_READ_FEED_RANGES,
@@ -449,6 +451,42 @@ def test_rust_backend_dispatches_to_binding(monkeypatch):
     assert resp.body == b'{"id":"x"}'
 
 
+def test_rust_backend_resolves_container_metadata_through_binding(monkeypatch):
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.resolve_container_metadata.return_value = (
+        200,
+        0,
+        {},
+        b'{"_rid":"rid-1","partitionKey":{"paths":["/pk"],"kind":"Hash","version":2}}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    response = backend.resolve_container_metadata("dbs/d/colls/c")
+
+    fake_module.resolve_container_metadata.assert_called_once_with(
+        "handle-1", "dbs/d/colls/c"
+    )
+    assert response is not None
+    assert response.status_code == 200
+    assert b'"rid-1"' in response.body
+
+
+def test_rust_backend_metadata_resolution_allows_older_binding(monkeypatch):
+    class OlderBinding:
+        @staticmethod
+        def init_client(*_args):
+            return "handle-1"
+
+    monkeypatch.setattr(
+        "azure.cosmos._backend.rust._rust_module", OlderBinding()
+    )
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+
+    assert backend.resolve_container_metadata("dbs/d/colls/c") is None
+
+
 # The next two tests cover the newly-migrated query_items and read_feed_ranges on
 # the sync Rust backend: each proves a prepared request is handed to the matching
 # binding entry point and the binding's reply is returned unchanged. Without them a
@@ -484,16 +522,19 @@ def test_rust_backend_dispatches_query_items_to_binding(monkeypatch):
     assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
 
 
-def test_query_operations_are_not_single_response_operations():
-    """query_items/read_all_items are kept out of the single-reply
-    ``OP_TO_BINDING_METHOD`` and live only in ``QUERY_TO_BINDING_METHOD``, so a query
-    can never be dispatched through the single-reply ``execute`` path by accident.
+def test_paged_operations_are_not_single_response_operations():
+    """Feed operations live only in the paged dispatch map.
+
+    This keeps query, read-all, and database-list pages out of the single-reply
+    ``execute`` path.
     """
     assert OP_QUERY_ITEMS not in OP_TO_BINDING_METHOD
     assert OP_READ_ALL_ITEMS not in OP_TO_BINDING_METHOD
+    assert OP_LIST_DATABASES not in OP_TO_BINDING_METHOD
     assert QUERY_TO_BINDING_METHOD == {
         OP_QUERY_ITEMS: "query_items",
         OP_READ_ALL_ITEMS: "read_all_items",
+        OP_LIST_DATABASES: "list_databases",
     }
 
 
@@ -824,6 +865,53 @@ def test_async_rust_backend_dispatches_to_binding(monkeypatch):
         fake_module.create_item_async.assert_awaited_once_with("handle-1", prepared)
         assert resp.status_code == 201
         assert resp.body == b'{"id":"x"}'
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_resolves_container_metadata_through_binding(monkeypatch):
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.resolve_container_metadata_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"_rid":"rid-1","partitionKey":{"paths":["/pk"],"kind":"Hash","version":2}}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncRustBackend(
+            endpoint="https://x.documents.azure.com", master_key="k"
+        )
+        response = await backend.resolve_container_metadata("dbs/d/colls/c")
+        assert response is not None
+        assert response.status_code == 200
+        assert b'"rid-1"' in response.body
+
+    asyncio.run(_run())
+    fake_module.resolve_container_metadata_async.assert_awaited_once_with(
+        "handle-1", "dbs/d/colls/c"
+    )
+
+
+def test_async_rust_backend_metadata_resolution_allows_older_binding(monkeypatch):
+    class OlderBinding:
+        @staticmethod
+        def init_client(*_args):
+            return "handle-1"
+
+    monkeypatch.setattr(
+        "azure.cosmos.aio._backend.rust._rust_module", OlderBinding()
+    )
+
+    async def _run():
+        backend = AsyncRustBackend(
+            endpoint="https://x.documents.azure.com", master_key="k"
+        )
+        assert await backend.resolve_container_metadata("dbs/d/colls/c") is None
+
     asyncio.run(_run())
 
 
@@ -3922,3 +4010,66 @@ def test_async_backend_maps_transport_error_to_service_response_error(monkeypatc
         assert isinstance(excinfo.value.__cause__, transport_exc_type)
 
     asyncio.run(run())
+
+
+def test_sync_list_databases_transport_error_does_not_replay_legacy(monkeypatch):
+    """A response-less list_databases failure is translated, not replayed."""
+    from azure.core.exceptions import ServiceResponseError
+    import azure.cosmos._backend.rust as rust_mod
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    backend._handle = "handle"
+    monkeypatch.setattr(rust_mod, "_rust_module", object())
+    transport_exc_type = rust_mod._DRIVER_TRANSPORT_ERROR
+
+    def boom(_handle, _prepared):
+        raise transport_exc_type("driver list_databases failed: transport closed")
+
+    monkeypatch.setattr(rust_mod, "_resolve_page_dispatch", lambda _op: boom)
+    legacy_calls = []
+
+    with pytest.raises(ServiceResponseError):
+        backend.run_page_operation(
+            build_prepared=lambda: PreparedQuery(op=OP_LIST_DATABASES, container_link="", headers={}),
+            legacy_operation=LegacyOperation(
+                op=OP_LIST_DATABASES,
+                invoke=lambda: legacy_calls.append("legacy"),
+            ),
+            parse_response=lambda page: page,
+        )
+
+    assert legacy_calls == []
+
+
+def test_async_list_databases_transport_error_does_not_replay_legacy(monkeypatch):
+    """The async list_databases transport mapping also avoids legacy replay."""
+    from azure.core.exceptions import ServiceResponseError
+    import azure.cosmos.aio._backend.rust as async_rust_mod
+
+    backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    backend._handle = "handle"
+    monkeypatch.setattr(async_rust_mod, "_rust_module", object())
+    transport_exc_type = async_rust_mod._DRIVER_TRANSPORT_ERROR
+
+    async def boom(_handle, _prepared):
+        raise transport_exc_type("driver list_databases failed: transport closed")
+
+    monkeypatch.setattr(async_rust_mod, "_resolve_async_page_dispatch", lambda _op: boom)
+    legacy_calls = []
+
+    async def run():
+        async def build_prepared():
+            return PreparedQuery(op=OP_LIST_DATABASES, container_link="", headers={})
+
+        with pytest.raises(ServiceResponseError):
+            await backend.run_page_operation(
+                build_prepared=build_prepared,
+                legacy_operation=LegacyOperation(
+                    op=OP_LIST_DATABASES,
+                    invoke=lambda: legacy_calls.append("legacy"),
+                ),
+                parse_response=lambda page: page,
+            )
+
+    asyncio.run(run())
+    assert legacy_calls == []

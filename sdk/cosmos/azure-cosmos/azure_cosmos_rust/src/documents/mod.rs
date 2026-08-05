@@ -47,12 +47,14 @@ use pyo3::types::PyTuple;
 use azure_data_cosmos_driver::models::CosmosOperation;
 
 use crate::wire::{
-    extract_body_bytes, extract_common_prepared_inputs, extract_create_item_id,
-    extract_database_prepared_inputs, extract_read_feed_ranges_force_refresh,
-    extract_required_item_id, run_create_database_operation, run_create_database_operation_async,
+    extract_account_prepared_modifiers, extract_body_bytes, extract_common_prepared_inputs,
+    extract_create_item_id, extract_database_prepared_inputs,
+    extract_read_feed_ranges_force_refresh, extract_required_item_id,
+    run_create_database_operation, run_create_database_operation_async,
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
-    run_item_operation, run_item_operation_async, run_query_operation, run_query_operation_async,
+    run_item_operation, run_item_operation_async, run_list_databases_operation,
+    run_list_databases_operation_async, run_query_operation, run_query_operation_async,
     run_read_all_items_operation, run_read_all_items_operation_async, run_read_database_operation,
     run_read_database_operation_async, run_read_feed_ranges_operation,
     run_read_feed_ranges_operation_async, run_read_offer_operation, run_read_offer_operation_async,
@@ -210,14 +212,17 @@ fn extract_feed_range_from_partition_key_inputs(
 //         -> [request runs on the runtime; no Python thread held]
 //         -> await resolves with the BackendResponse tuple
 
+mod containers;
 mod databases;
 mod feed_range;
 mod items;
 mod offers;
 mod query;
 
+pub(crate) use containers::{resolve_container_metadata, resolve_container_metadata_async};
 pub(crate) use databases::{
-    create_database, create_database_async, read_database, read_database_async,
+    create_database, create_database_async, list_databases, list_databases_async, read_database,
+    read_database_async,
 };
 pub(crate) use feed_range::{
     feed_range_from_partition_key, feed_range_from_partition_key_async, is_feed_range_subset,

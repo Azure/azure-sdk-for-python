@@ -895,8 +895,7 @@ def _binding_operation_count() -> int:
 
 def _rust_fallback_count() -> int:
     from azure.cosmos._backend.base import rust_compatibility_fallback_count
-    from azure.cosmos._query_rust_routing import rust_query_fallback_count
-    return rust_compatibility_fallback_count() + rust_query_fallback_count()
+    return rust_compatibility_fallback_count()
 
 
 def run_target_operation(

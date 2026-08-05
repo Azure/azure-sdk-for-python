@@ -23,6 +23,7 @@ import abc
 from typing import Any, AsyncIterator, Awaitable, Callable, Optional
 
 from azure.cosmos._backend.base import (
+    BackendProtocolError,
     BackendReply,
     BackendResponse,
     BatchResponse,
@@ -31,10 +32,12 @@ from azure.cosmos._backend.base import (
     PreparedQuery,
     PreparedRequest,
     QueryPage,
+    _record_rust_compatibility_fallback,
 )
 
 __all__ = [
     "AsyncCosmosBackend",
+    "BackendProtocolError",
     "BackendReply",
     "BackendResponse",
     "BatchResponse",
@@ -51,21 +54,23 @@ class AsyncCosmosBackend(abc.ABC):
 
     A per-family async coordinator (``AsyncItemHelper``, ``AsyncThroughputHelper``,
     ``AsyncFeedRangeHelper``) holds one of these by interface and drives its
-    operations through :meth:`run_operation` without knowing which concrete
-    backend it has. Engine selection and legacy fallback happen behind this
+    operations through :meth:`run_operation` or :meth:`run_page_operation`
+    without knowing which concrete backend it has. Engine selection and legacy
+    fallback happen behind this
     interface: a rust-backed client holds an :class:`AsyncRustBackend` and a
     core-python client holds an
     :class:`~azure.cosmos.aio._backend.legacy.AsyncLegacyBackend`, and every
     coordinator treats both the same -- none of them branch on ``None``, on
-    which concrete backend they hold, or on ``execute`` returning ``None``. The
-    operation kind is on ``prepared.op``; the backend branches on it.
+    which concrete backend they hold, or on a wire primitive returning
+    ``None``. The operation kind is on ``prepared.op``; the backend branches on
+    it.
 
-    ``execute`` is the wire-level primitive (send one prepared request, return
-    the raw reply) that the rust path uses; the async query/feed-range/offer
-    routing helpers await it directly. The core-python
+    ``execute`` and ``execute_pages`` are the wire-level primitives used behind
+    those two coordinator methods. The core-python
     :class:`~azure.cosmos.aio._backend.legacy.AsyncLegacyBackend` is **not**
     ``PreparedRequest``-driven, so it does not implement ``execute`` and instead
-    overrides :meth:`run_operation` to await the legacy operation.
+    overrides :meth:`run_operation` and :meth:`run_page_operation` to await the
+    legacy operation.
     """
 
     #: Short identifier surfaced in the startup INFO log and the
@@ -83,6 +88,12 @@ class AsyncCosmosBackend(abc.ABC):
         implement it.
         """
         ...
+
+    async def resolve_container_metadata(
+        self, container_link: str
+    ) -> Optional[BackendResponse]:
+        """Resolve container metadata through this backend when supported."""
+        return None
 
     async def run_operation(
         self,
@@ -155,7 +166,44 @@ class AsyncCosmosBackend(abc.ABC):
         except fallback_exceptions:
             if not allow_legacy_fallback:
                 raise
+            _record_rust_compatibility_fallback()
             return await legacy_operation.invoke()
+
+    async def run_page_operation(  # pylint: disable=too-many-arguments
+        self,
+        *,
+        build_prepared: Callable[[], Awaitable[PreparedQuery]],
+        legacy_operation: LegacyOperation,
+        parse_response: Callable[[QueryPage], Any],
+        rust_eligible: bool = True,
+        fallback_exceptions: tuple[type[BaseException], ...] = (),
+    ) -> Any:
+        """Run one backend-selected page without exposing fallback sentinels.
+
+        Async twin of
+        :meth:`azure.cosmos._backend.base.CosmosBackend.run_page_operation`.
+        An ineligible request or an explicit capability exception runs the
+        supplied legacy operation. An empty page iterator is a backend contract
+        violation and propagates as ``BackendProtocolError``; it never replays
+        the request through legacy.
+        """
+        if not rust_eligible:
+            return await legacy_operation.invoke()
+        page: Optional[QueryPage] = None
+        try:
+            pages = self.execute_pages(await build_prepared())
+            try:
+                page = await anext(pages)
+            except StopAsyncIteration:
+                pass
+        except fallback_exceptions:
+            _record_rust_compatibility_fallback()
+            return await legacy_operation.invoke()
+        if page is None:
+            raise BackendProtocolError(
+                f"{type(self).__name__} returned no page for {legacy_operation.op!r}"
+            )
+        return parse_response(page)
 
     # --- execute_pages is implemented by AsyncRustBackend; execute_batch is
     # reserved for the not-yet-built batch operation ----------------------
@@ -165,11 +213,14 @@ class AsyncCosmosBackend(abc.ABC):
     # the method; this class does not change.
 
     def execute_pages(self, prepared: PreparedQuery) -> AsyncIterator[QueryPage]:
-        """Return a query (or read-many) result one ``QueryPage`` at a time.
+        """Return a paged query or read-feed result one ``QueryPage`` at a time.
 
         The default here raises; ``AsyncRustBackend`` overrides it (using
         ``QUERY_TO_BINDING_METHOD``) as an async iterator of ``QueryPage`` that
-        dispatches ``query_items`` / ``read_all_items``.
+        dispatches ``query_items`` / ``read_all_items`` / ``list_databases``. A
+        backend that does not implement this -- ``AsyncLegacyBackend`` never
+        reaches it, since :meth:`run_page_operation` invokes the legacy call
+        directly -- keeps this raising default.
         """
         raise NotImplementedError(
             "execute_pages is not implemented by this backend."

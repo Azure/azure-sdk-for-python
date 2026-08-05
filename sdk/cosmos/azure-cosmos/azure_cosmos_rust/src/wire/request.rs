@@ -90,6 +90,15 @@ pub(crate) fn extract_database_prepared_inputs<'py>(
     Ok((database_id, modifiers))
 }
 
+/// Read request modifiers for an account-level operation with no resource id.
+pub(crate) fn extract_account_prepared_modifiers<'py>(
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<OpModifiers> {
+    let headers_obj = prepared.getattr("headers")?;
+    let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
+    extract_op_modifiers(headers_dict)
+}
+
 pub(crate) fn extract_body_bytes<'py>(prepared: &Bound<'py, PyAny>) -> PyResult<Vec<u8>> {
     prepared.getattr("body_bytes")?.extract()
 }
@@ -682,8 +691,8 @@ pub(crate) fn extract_create_item_id<'py>(
 #[cfg(test)]
 mod tests {
     use super::{
-        extract_database_prepared_inputs, extract_item_id, extract_op_modifiers,
-        is_intentionally_ignored_option_key, json_value_to_pk_component,
+        extract_account_prepared_modifiers, extract_database_prepared_inputs, extract_item_id,
+        extract_op_modifiers, is_intentionally_ignored_option_key, json_value_to_pk_component,
         parse_availability_strategy, parse_container_link, parse_feed_range_partition_key_header,
         parse_partition_key_header, parse_query_target_header,
         parse_read_feed_ranges_force_refresh, FeedRangePartitionKeySource, QueryTarget,
@@ -968,6 +977,36 @@ mod tests {
 
             assert_eq!(database_id, "db1");
             assert!(modifiers.custom_headers.is_empty());
+        });
+    }
+
+    #[test]
+    fn account_input_extraction_only_requires_headers() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let attributes = PyDict::new_bound(py);
+            let headers = PyDict::new_bound(py);
+            headers.set_item("throughputBucket", 7).unwrap();
+            attributes.set_item("headers", headers).unwrap();
+            let prepared = py
+                .import_bound("types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap()
+                .call((), Some(&attributes))
+                .unwrap();
+
+            let modifiers = extract_account_prepared_modifiers(&prepared)
+                .expect("account extraction must succeed");
+
+            assert_eq!(
+                modifiers
+                    .custom_headers
+                    .get(&HeaderName::from_static("x-ms-cosmos-throughput-bucket"))
+                    .expect("throughput bucket must be forwarded")
+                    .as_str(),
+                "7"
+            );
         });
     }
 

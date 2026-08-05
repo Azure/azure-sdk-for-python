@@ -85,7 +85,11 @@ class AsyncItemHelper:
         # read (async version of the sync provider), instead of calling the
         # connection's ``_container_properties_cache`` / ``_AddPartitionKey``
         # directly.
-        self._metadata = AsyncContainerMetadataProvider(client_connection, ensure_container_cached)
+        self._metadata = AsyncContainerMetadataProvider(
+            client_connection,
+            ensure_container_cached,
+            self._backend.resolve_container_metadata,
+        )
 
     async def _run_item_operation(
         self,

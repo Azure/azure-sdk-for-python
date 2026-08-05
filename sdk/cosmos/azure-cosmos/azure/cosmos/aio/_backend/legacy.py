@@ -21,9 +21,9 @@ client.
 """
 from __future__ import annotations
 
-from typing import Any, Callable, Optional
+from typing import Any, Awaitable, Callable, Optional
 
-from azure.cosmos._backend.base import LegacyOperation
+from azure.cosmos._backend.base import LegacyOperation, PreparedQuery, QueryPage
 from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
 
 from .base import AsyncCosmosBackend, BackendResponse, PreparedRequest
@@ -43,8 +43,9 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
         """Not supported: the legacy engine is not ``PreparedRequest``-driven.
 
         See :meth:`azure.cosmos._backend.legacy.LegacyBackend.execute`. Every
-        async coordinator drives this backend through :meth:`run_operation`,
-        never ``execute``; this exists only to satisfy the abstract base.
+        async coordinator drives this backend through :meth:`run_operation` or
+        :meth:`run_page_operation`, never a wire primitive; this exists only to
+        satisfy the abstract base.
         """
         raise NotImplementedError(
             "AsyncLegacyBackend does not send prepared requests on the wire; the "
@@ -69,6 +70,24 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
         already-parsed result; ``build_prepared`` / ``parse_response`` /
         ``rust_eligible`` are ignored because this backend never builds a wire
         request.
+        """
+        return await legacy_operation.invoke()
+
+    async def run_page_operation(  # pylint: disable=too-many-arguments
+        self,
+        *,
+        build_prepared: Callable[[], Awaitable[PreparedQuery]],
+        legacy_operation: LegacyOperation,
+        parse_response: Callable[[QueryPage], Any],
+        rust_eligible: bool = True,
+        fallback_exceptions: tuple[type[BaseException], ...] = (),
+    ) -> Any:
+        """Run the paged operation on the legacy core-python path.
+
+        Mirrors :meth:`run_operation` for feeds: ``build_prepared`` /
+        ``parse_response`` / ``rust_eligible`` / ``fallback_exceptions`` are
+        ignored because this backend never builds a wire request, so
+        ``execute_pages`` is never reached.
         """
         return await legacy_operation.invoke()
 

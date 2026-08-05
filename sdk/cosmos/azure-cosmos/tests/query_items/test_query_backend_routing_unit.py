@@ -18,30 +18,56 @@ from __future__ import annotations
 import asyncio
 import base64
 import json
+from unittest.mock import MagicMock
 
+import pytest
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import http_constants
 from azure.cosmos import _base as base_helpers
 from azure.cosmos._backend.base import (
+    BackendProtocolError,
     BackendResponse,
+    CosmosBackend,
+    LegacyOperation,
+    OP_LIST_DATABASES,
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
     PreparedQuery,
+    PageNotSupportedByBackendError,
     QueryNotSupportedByBackendError,
     QueryPage,
+    rust_compatibility_fallback_count,
 )
+from azure.cosmos._backend.rust import _binding_request_from_page as _sync_binding_request_from_page
+from azure.cosmos.aio._backend.rust import (
+    _binding_request_from_page as _async_binding_request_from_page,
+)
+from azure.cosmos.aio._backend.base import AsyncCosmosBackend
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection as SyncConnection
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection as AsyncConnection
+from azure.cosmos.documents import ConnectionPolicy
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import _Empty
 from azure.cosmos._query_rust_routing import (
-    run_query_page_on_rust_backend,
-    run_query_page_on_rust_backend_async,
+    _build_prepared_headers_for_rust_feed_dispatch,
+    can_use_rust_backend_for_list_databases_page,
+    can_use_rust_backend_for_query_page,
+    can_use_rust_backend_for_read_all_items_page,
 )
 
 
-class _CapturingSyncBackend:
+class _CapturingSyncBackend(CosmosBackend):
+    """A stand-in for the Rust backend that records the request and replies once.
+
+    These tests never talk to a real Cosmos account. This class keeps whatever
+    ``PreparedQuery`` the routing code built, so a test can check exactly what
+    would have gone on the wire, and hands back one canned page. ``execute``
+    raises because a paged operation must never be dispatched through the
+    single-reply path.
+    """
+
     def __init__(self, response: BackendResponse) -> None:
         self._response = response
         self.prepared = None
@@ -61,8 +87,13 @@ class _CapturingSyncBackend:
             diagnostics=self._response.diagnostics,
         )
 
+    def execute(self, prepared):
+        raise AssertionError("single-response execution is not expected")
 
-class _CapturingAsyncBackend:
+
+class _CapturingAsyncBackend(AsyncCosmosBackend):
+    """Async twin of ``_CapturingSyncBackend``, so both surfaces get the same checks."""
+
     def __init__(self, response: BackendResponse) -> None:
         self._response = response
         self.prepared = None
@@ -82,14 +113,89 @@ class _CapturingAsyncBackend:
             diagnostics=self._response.diagnostics,
         )
 
+    async def execute(self, prepared):
+        raise AssertionError("single-response execution is not expected")
+
+
+class _SequencedSyncBackend(CosmosBackend):
+    """A stand-in backend that serves two pages instead of one.
+
+    An account with more databases than fit in one page returns a continuation
+    token, and the caller is expected to send it back to get the rest. This fake
+    reproduces that: the first call (no continuation) returns ``db-1`` plus a
+    token, and any call carrying a token returns ``db-2`` and no token. It also
+    records every request, so a test can prove the token really made the round
+    trip rather than the second page being fetched from scratch.
+    """
+
+    def __init__(self) -> None:
+        self.prepared = []
+
+    def execute_pages(self, prepared):
+        self.prepared.append(prepared)
+        if prepared.continuation is None:
+            yield QueryPage(
+                status_code=200,
+                continuation="next-db-page",
+                headers=CaseInsensitiveDict({"x-ms-continuation": "next-db-page"}),
+                body=b'{"Databases":[{"id":"db-1"}]}',
+            )
+
+        else:
+            yield QueryPage(
+                status_code=200,
+                headers=CaseInsensitiveDict(),
+                body=b'{"Databases":[{"id":"db-2"}]}',
+            )
+
+    def execute(self, prepared):
+        raise AssertionError("single-response execution is not expected")
+
+
+class _SequencedAsyncBackend(AsyncCosmosBackend):
+    """Async twin of ``_SequencedSyncBackend``."""
+
+    def __init__(self) -> None:
+        self.prepared = []
+
+    async def execute_pages(self, prepared):
+        self.prepared.append(prepared)
+        if prepared.continuation is None:
+            yield QueryPage(
+                status_code=200,
+                continuation="next-db-page",
+                headers=CaseInsensitiveDict({"x-ms-continuation": "next-db-page"}),
+                body=b'{"Databases":[{"id":"db-1"}]}',
+            )
+
+        else:
+            yield QueryPage(
+                status_code=200,
+                headers=CaseInsensitiveDict(),
+                body=b'{"Databases":[{"id":"db-2"}]}',
+            )
+
+    async def execute(self, prepared):
+        raise AssertionError("single-response execution is not expected")
+
 
 def _new_sync_connection() -> SyncConnection:
     conn = SyncConnection.__new__(SyncConnection)
     conn._backend = None
     conn._query_compatibility_mode = SyncConnection._QueryCompatibilityMode.Query
     conn.default_headers = {}
+    conn.connection_policy = ConnectionPolicy()
+    conn._global_endpoint_manager = MagicMock()
+    conn._routing_map_provider = MagicMock()
+    conn.pipeline_client = MagicMock()
+    conn._CosmosClientConnection__container_properties_cache = {}
     conn.last_response_headers = CaseInsensitiveDict()
     conn.session = None
+    conn.UseMultipleWriteLocations = False
+    conn.master_key = None
+    conn.resource_tokens = None
+    conn.aad_credentials = None
+    conn.client_id = None
     conn.availability_strategy = None
     conn.availability_strategy_executor = None
     return conn
@@ -100,11 +206,217 @@ def _new_async_connection() -> AsyncConnection:
     conn._backend = None
     conn._query_compatibility_mode = AsyncConnection._QueryCompatibilityMode.Query
     conn.default_headers = {}
+    conn.connection_policy = ConnectionPolicy()
+    conn._global_endpoint_manager = MagicMock()
+    conn._routing_map_provider = MagicMock()
+    conn.pipeline_client = MagicMock()
+    conn._CosmosClientConnection__container_properties_cache = {}
     conn.last_response_headers = CaseInsensitiveDict()
     conn.session = None
+    conn.UseMultipleWriteLocations = False
+    conn.master_key = None
+    conn.resource_tokens = None
+    conn.aad_credentials = None
+    conn.client_id = None
     conn.availability_strategy = None
     conn.availability_strategy_max_concurrency = None
     return conn
+
+
+def _run_sync_query_feed(
+    conn,
+    *,
+    query,
+    options,
+    response_hook=None,
+    response_headers=None,
+    **kwargs,
+):
+    return conn._CosmosClientConnection__QueryFeed(
+        "/dbs/db/colls/c/docs/",
+        http_constants.ResourceType.Document,
+        "collection-rid",
+        lambda result: result["Documents"],
+        None,
+        query,
+        options,
+        response_hook=response_hook,
+        response_headers=response_headers,
+        **kwargs,
+    )
+
+
+async def _run_async_query_feed(
+    conn,
+    *,
+    query,
+    options,
+    response_hook=None,
+    response_headers=None,
+    **kwargs,
+):
+    return await conn._CosmosClientConnection__QueryFeed(
+        "/dbs/db/colls/c/docs/",
+        http_constants.ResourceType.Document,
+        "collection-rid",
+        lambda result: result["Documents"],
+        None,
+        query,
+        options,
+        response_hook=response_hook,
+        response_headers=response_headers,
+        **kwargs,
+    )
+
+
+def _run_sync_read_feed(
+    conn,
+    *,
+    resource_type,
+    options,
+    response_hook=None,
+    response_headers=None,
+    **kwargs,
+):
+    """Call the shared read-feed with either resource type.
+
+    ``list_databases`` and ``read_all_items`` run through the same code inside
+    the client connection and are told apart only by resource type. This helper
+    fills in the three things that differ -- the URL path, the resource id, and
+    the name of the JSON list in the reply -- so a test can switch between the
+    two by changing one argument.
+    """
+    path = "/dbs/" if resource_type == http_constants.ResourceType.Database else "/dbs/db/colls/c/docs/"
+    resource_id = None if resource_type == http_constants.ResourceType.Database else "collection-rid"
+    envelope = "Databases" if resource_type == http_constants.ResourceType.Database else "Documents"
+    return conn._CosmosClientConnection__QueryFeed(
+        path,
+        resource_type,
+        resource_id,
+        lambda result: result[envelope],
+        lambda _connection, body: body,
+        None,
+        options,
+        response_hook=response_hook,
+        response_headers=response_headers,
+        **kwargs,
+    )
+
+
+async def _run_async_read_feed(
+    conn,
+    *,
+    resource_type,
+    options,
+    response_hook=None,
+    response_headers=None,
+    **kwargs,
+):
+    """Async twin of ``_run_sync_read_feed``."""
+    path = "/dbs/" if resource_type == http_constants.ResourceType.Database else "/dbs/db/colls/c/docs/"
+    resource_id = None if resource_type == http_constants.ResourceType.Database else "collection-rid"
+    envelope = "Databases" if resource_type == http_constants.ResourceType.Database else "Documents"
+    return await conn._CosmosClientConnection__QueryFeed(
+        path,
+        resource_type,
+        resource_id,
+        lambda result: result[envelope],
+        lambda _connection, body: body,
+        None,
+        options,
+        response_hook=response_hook,
+        response_headers=response_headers,
+        **kwargs,
+    )
+
+
+@pytest.mark.parametrize(
+    "adapter",
+    [_sync_binding_request_from_page, _async_binding_request_from_page],
+)
+def test_rust_page_adapter_preserves_zero_max_item_count(adapter):
+    """Typed paging fields are authoritative, including an explicit zero."""
+    prepared = PreparedQuery(
+        op=OP_READ_ALL_ITEMS,
+        container_link="dbs/db/colls/c",
+        continuation="typed-continuation",
+        max_item_count=0,
+        headers={
+            "x-ms-continuation": "stale-header",
+            "x-ms-max-item-count": "99",
+        },
+    )
+
+    request = adapter(prepared)
+
+    assert request.headers["x-ms-continuation"] == "typed-continuation"
+    assert request.headers["x-ms-max-item-count"] == "0"
+
+
+def test_rust_feed_prep_strips_only_driver_owned_generated_headers():
+    """Only headers the driver writes itself are removed; everything else is kept.
+
+    Shared by all three paged operations. The first case drops the six headers
+    the driver generates, plus page size and continuation because those are
+    already carried as typed fields -- keeping a customer header and an
+    operation header. The second case shows the paging headers are only dropped
+    when the typed fields actually hold those values; with no options set, the
+    headers are the only copy and must survive.
+    """
+    prepared_headers = _build_prepared_headers_for_rust_feed_dispatch(
+        options={
+            "continuation": "typed-continuation",
+            "maxItemCount": 0,
+        },
+        req_headers={
+            "Accept": "application/json",
+            "AUTHORIZATION": "legacy-signature",
+            "Cache-Control": "no-cache",
+            "User-Agent": "legacy-agent",
+            "X-MS-DATE": "legacy-date",
+            "x-ms-version": "legacy-version",
+            "X-MS-CONTINUATION": "generated-continuation",
+            "x-ms-max-item-count": "0",
+            "x-ms-documentdb-isquery": "true",
+            "x-customer-header": "preserved",
+        },
+    )
+
+    assert prepared_headers == {
+        "x-ms-documentdb-isquery": "true",
+        "x-customer-header": "preserved",
+    }
+    assert _build_prepared_headers_for_rust_feed_dispatch(
+        options={},
+        req_headers={
+            "x-ms-continuation": "customer-continuation",
+            "x-ms-max-item-count": "7",
+        },
+    ) == {
+        "x-ms-continuation": "customer-continuation",
+        "x-ms-max-item-count": "7",
+    }
+
+
+@pytest.mark.parametrize(
+    ("options", "is_query_plan"),
+    [
+        ({}, True),
+        ({"changeFeedState": object()}, False),
+    ],
+)
+def test_list_databases_gate_rejects_non_read_feed_shapes(options, is_query_plan):
+    """The gate refuses shapes the Rust database page does not serve yet.
+
+    A query-plan request and a change-feed read both reach this code but are not
+    plain "list the databases" calls, so they stay on the old path.
+    """
+    assert not can_use_rust_backend_for_list_databases_page(
+        options=options,
+        kwargs={},
+        is_query_plan=is_query_plan,
+        resource_type=http_constants.ResourceType.Database,
+    )
 
 
 def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepresentable_options():
@@ -115,12 +427,10 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
     MultiHash partition key, ``read_timeout``, ``availability_strategy``, full-text
     score scope, query advice) still block it and keep the query on the legacy path.
     """
-    conn = _new_sync_connection()
-    conn._backend = object()
-    eligibility = conn._CosmosClientConnection__CanUseRustBackendForQueryPage
+    eligibility = can_use_rust_backend_for_query_page
 
     assert eligibility(
-        query={"query": "SELECT * FROM c"},
+        query_payload={"query": "SELECT * FROM c"},
         options={"partitionKey": ["tenant-a"]},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -129,7 +439,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
     )
 
     assert eligibility(
-        query={"query": "SELECT * FROM c"},
+        query_payload={"query": "SELECT * FROM c"},
         options={},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -137,8 +447,17 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
         resource_type=http_constants.ResourceType.Document,
     )
 
+    assert not eligibility(
+        query_payload={"query": "SELECT * FROM c"},
+        options={"initialHeaders": {"Accept": "application/custom"}},
+        kwargs={},
+        container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
+        is_query_plan=False,
+        resource_type=http_constants.ResourceType.Document,
+    )
+
     assert eligibility(
-        query={"query": "SELECT * FROM c"},
+        query_payload={"query": "SELECT * FROM c"},
         options={"partitionKey": _Empty()},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -152,7 +471,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
     # text is no longer inspected here, so these are now eligible and the driver's
     # own reply is authoritative for whether it can actually run them.
     assert eligibility(
-        query={"query": "SELECT VALUE COUNT(1) FROM c"},
+        query_payload={"query": "SELECT VALUE COUNT(1) FROM c"},
         options={},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -161,7 +480,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
     )
 
     assert eligibility(
-        query={"query": "SELECT * FROM c ORDER BY c.ts DESC"},
+        query_payload={"query": "SELECT * FROM c ORDER BY c.ts DESC"},
         options={},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -170,7 +489,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
     )
 
     assert not eligibility(
-        query={"query": "SELECT * FROM c"},
+        query_payload={"query": "SELECT * FROM c"},
         options={"enableCrossPartitionQuery": False},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -179,7 +498,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
     )
 
     assert eligibility(
-        query={"query": "SELECT * FROM c ORDER BY c.ts DESC"},
+        query_payload={"query": "SELECT * FROM c ORDER BY c.ts DESC"},
         options={"partitionKey": ["tenant-a"]},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -188,7 +507,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
     )
 
     assert not eligibility(
-        query={"query": "SELECT * FROM c"},
+        query_payload={"query": "SELECT * FROM c"},
         options={"partitionKey": ["tenant-a"]},
         kwargs={"feed_range": {"min": "AA", "max": "FF"}},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -197,7 +516,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
     )
 
     assert not eligibility(
-        query={"query": "SELECT * FROM c"},
+        query_payload={"query": "SELECT * FROM c"},
         options={"partitionKey": ["tenant-a"]},
         kwargs={},
         container_properties={
@@ -207,7 +526,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
         resource_type=http_constants.ResourceType.Document,
     )
     assert not eligibility(
-        query={"query": "SELECT * FROM c"},
+        query_payload={"query": "SELECT * FROM c"},
         options={"partitionKey": ["tenant-a"], "read_timeout": 0.2},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -215,7 +534,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
         resource_type=http_constants.ResourceType.Document,
     )
     assert not eligibility(
-        query={"query": "SELECT * FROM c"},
+        query_payload={"query": "SELECT * FROM c"},
         options={"partitionKey": ["tenant-a"], Constants.Kwargs.AVAILABILITY_STRATEGY: False},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -223,7 +542,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
         resource_type=http_constants.ResourceType.Document,
     )
     assert not eligibility(
-        query={"query": "SELECT * FROM c"},
+        query_payload={"query": "SELECT * FROM c"},
         options={"partitionKey": ["tenant-a"], "fullTextScoreScope": "Local"},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -231,7 +550,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
         resource_type=http_constants.ResourceType.Document,
     )
     assert not eligibility(
-        query={"query": "SELECT * FROM c"},
+        query_payload={"query": "SELECT * FROM c"},
         options={"partitionKey": ["tenant-a"], "populateQueryAdvice": True},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -267,9 +586,9 @@ def test_sync_query_backend_page_builds_prepared_request_and_updates_headers():
 
     response_headers = CaseInsensitiveDict()
     hook_calls = []
-    page = conn._CosmosClientConnection__TryQueryPageWithRustBackend(
-        path="/dbs/db/colls/c/docs/",
-        query_payload={"query": "SELECT * FROM c"},
+    result, headers = _run_sync_query_feed(
+        conn,
+        query={"query": "SELECT * FROM c"},
         options={
             "partitionKey": ["tenant-a"],
             "continuation": "ct-in",
@@ -277,18 +596,12 @@ def test_sync_query_backend_page_builds_prepared_request_and_updates_headers():
             Constants.Kwargs.EXCLUDED_LOCATIONS: ["West US"],
             Constants.Kwargs.TIMEOUT: 9,
         },
-        req_headers={
-            http_constants.HttpHeaders.PartitionKey: '["tenant-a"]',
-            http_constants.HttpHeaders.IsQuery: "true",
-        },
         response_hook=lambda h, b: hook_calls.append((dict(h), b)),
         response_headers=response_headers,
-        internal_headers_capture=None,
+        container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
     )
 
-    assert page is not None
-    result, headers = page
-    assert result["Documents"][0]["id"] == "1"
+    assert result[0]["id"] == "1"
     assert headers["x-ms-continuation"] == "ct-1"
     assert response_headers["x-ms-continuation"] == "ct-1"
     assert headers[http_constants.HttpHeaders.IndexUtilization] == {"indexUsed": True}
@@ -325,17 +638,13 @@ def test_sync_query_backend_page_defaults_partition_header_to_cross_partition_fo
     )
     conn._backend = backend
 
-    page = conn._CosmosClientConnection__TryQueryPageWithRustBackend(
-        path="/dbs/db/colls/c/docs/",
-        query_payload={"query": "SELECT * FROM c"},
+    result, _ = _run_sync_query_feed(
+        conn,
+        query={"query": "SELECT * FROM c"},
         options={},
-        req_headers={http_constants.HttpHeaders.IsQuery: "true"},
-        response_hook=None,
-        response_headers=None,
-        internal_headers_capture=None,
     )
 
-    assert page is not None
+    assert result[0]["id"] == "x"
     prepared = backend.prepared
     assert prepared is not None
     assert prepared.partition_key_header == "[]"
@@ -364,25 +673,24 @@ def test_async_query_backend_page_builds_prepared_request_and_updates_headers():
 
         response_headers = CaseInsensitiveDict()
         hook_calls = []
-        result = await conn._CosmosClientConnection__TryQueryPageWithRustBackend(
-            path="/dbs/db/colls/c/docs/",
-            query_payload={"query": "SELECT * FROM c"},
+
+        async def _container_properties(_options):
+            return {"partitionKey": {"paths": ["/pk"], "kind": "Hash"}}
+
+        result = await _run_async_query_feed(
+            conn,
+            query={"query": "SELECT * FROM c"},
             options={
                 "partitionKey": ["tenant-a"],
                 Constants.Kwargs.EXCLUDED_LOCATIONS: ["East US"],
                 Constants.Kwargs.TIMEOUT: 11,
             },
-            req_headers={
-                http_constants.HttpHeaders.PartitionKey: '["tenant-a"]',
-                http_constants.HttpHeaders.IsQuery: "true",
-            },
             response_hook=lambda h, b: hook_calls.append((dict(h), b)),
             response_headers=response_headers,
-            internal_headers_capture=None,
+            containerProperties=_container_properties,
         )
 
-        assert result is not None
-        assert result["Documents"][0]["id"] == "2"
+        assert result[0]["id"] == "2"
         assert conn.last_response_headers["x-ms-continuation"] == "ct-async"
         assert response_headers["x-ms-continuation"] == "ct-async"
         assert conn.last_response_headers[http_constants.HttpHeaders.IndexUtilization] == {"indexUsed": True}
@@ -406,12 +714,10 @@ def test_async_query_backend_eligibility_honors_unsupported_request_options():
     """Async query eligibility gate: an unrepresentable option (``populateQueryAdvice``)
     blocks the rust page path on the async connection too.
     """
-    conn = _new_async_connection()
-    conn._backend = object()
-    eligibility = conn._CosmosClientConnection__CanUseRustBackendForQueryPage
+    eligibility = can_use_rust_backend_for_query_page
 
     assert not eligibility(
-        query={"query": "SELECT * FROM c"},
+        query_payload={"query": "SELECT * FROM c"},
         options={"partitionKey": ["tenant-a"], "populateQueryAdvice": True},
         kwargs={},
         container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
@@ -426,12 +732,17 @@ def test_sync_read_all_backend_eligibility_falls_back_for_unsupported_knobs():
     ``availability_strategy``, ``read_timeout``, change-feed state, a ``feed_range``,
     a specific partition-key-range id, query-plan calls, and non-document resources.
     """
-    conn = _new_sync_connection()
-    conn._backend = object()
-    eligibility = conn._CosmosClientConnection__CanUseRustBackendForReadAllItemsPage
+    eligibility = can_use_rust_backend_for_read_all_items_page
 
     assert eligibility(
         options={},
+        kwargs={},
+        is_query_plan=False,
+        resource_type=http_constants.ResourceType.Document,
+        partition_key_range_id=None,
+    )
+    assert not eligibility(
+        options={"initialHeaders": {"User-Agent": "customer-agent"}},
         kwargs={},
         is_query_plan=False,
         resource_type=http_constants.ResourceType.Document,
@@ -497,9 +808,7 @@ def test_sync_read_all_backend_eligibility_falls_back_for_unsupported_knobs():
 
 def test_async_read_all_backend_eligibility_falls_back_for_unsupported_knobs():
     """Async twin of the read_all_items eligibility gate."""
-    conn = _new_async_connection()
-    conn._backend = object()
-    eligibility = conn._CosmosClientConnection__CanUseRustBackendForReadAllItemsPage
+    eligibility = can_use_rust_backend_for_read_all_items_page
 
     assert eligibility(
         options={},
@@ -588,21 +897,15 @@ def test_sync_read_all_backend_delegates_cross_partition_scope(monkeypatch):
 
     response_headers = CaseInsensitiveDict()
     hook_calls = []
-    page = conn._CosmosClientConnection__TryReadAllItemsPageWithRustBackend(
-        path="/dbs/db/colls/c/docs/",
+    result, headers = _run_sync_read_feed(
+        conn,
         resource_type=http_constants.ResourceType.Document,
-        resource_id="coll-rid",
         options={Constants.Kwargs.EXCLUDED_LOCATIONS: ["West US"]},
-        partition_key_range_id=None,
         response_hook=lambda h, b: hook_calls.append((dict(h), b)),
         response_headers=response_headers,
-        internal_headers_capture=None,
-        kwargs={},
     )
 
-    assert page is not None
-    result, headers = page
-    assert result["Documents"][0]["id"] == "doc-1"
+    assert result[0]["id"] == "doc-1"
     assert headers["x-ms-continuation"] == "ct-read-all"
     assert response_headers["x-ms-continuation"] == "ct-read-all"
     assert len(hook_calls) == 1
@@ -640,20 +943,15 @@ def test_async_read_all_backend_delegates_cross_partition_scope(monkeypatch):
 
         response_headers = CaseInsensitiveDict()
         hook_calls = []
-        result = await conn._CosmosClientConnection__TryReadAllItemsPageWithRustBackend(
-            path="/dbs/db/colls/c/docs/",
+        result = await _run_async_read_feed(
+            conn,
             resource_type=http_constants.ResourceType.Document,
-            resource_id="coll-rid",
             options={Constants.Kwargs.EXCLUDED_LOCATIONS: ["East US"]},
-            partition_key_range_id=None,
             response_hook=lambda h, b: hook_calls.append((dict(h), b)),
             response_headers=response_headers,
-            internal_headers_capture=None,
-            kwargs={},
         )
 
-        assert result is not None
-        assert result["Documents"][0]["id"] == "doc-2"
+        assert result[0]["id"] == "doc-2"
         assert conn.last_response_headers["x-ms-continuation"] == "ct-read-all-async"
         assert response_headers["x-ms-continuation"] == "ct-read-all-async"
         assert len(hook_calls) == 1
@@ -666,6 +964,528 @@ def test_async_read_all_backend_delegates_cross_partition_scope(monkeypatch):
         assert http_constants.HttpHeaders.PartitionKey not in prepared.headers
         assert prepared.headers[Constants.Kwargs.EXCLUDED_LOCATIONS] == ["East US"]
         assert prepared.query is None
+
+    asyncio.run(_run())
+
+
+# ---------------------------------------------------------------------------
+# list_databases
+#
+# The customer call is ``client.list_databases()`` -- "tell me every database in
+# this account". It is worth its own group of tests because it is the first
+# operation that pages *and* is scoped to the whole account rather than to one
+# container, so parts of the request that every other paged call fills in are
+# empty here.
+#
+# The call crosses three layers. Python decides whether the request shape can go
+# to Rust and builds the request; the binding (our .rs files) carries it across;
+# the Rust driver, which we do not own, sends it and returns the reply. Any of
+# the three could change what the customer sees, so the tests below pin down the
+# handoffs rather than the internals of any one layer.
+#
+# What this group checks, in order:
+#   * the gate says no to shapes Rust does not serve yet
+#   * the request is built correctly -- empty container link, no partition key,
+#     page size and continuation as typed fields, customer headers kept
+#   * headers Python generated are not sent again as custom driver headers
+#   * an unsupported option quietly runs on the old path instead, unchanged
+#   * an error from the service is raised once, not retried on the old path
+#   * paging works across two pages, with the token making the round trip
+#
+# Every check is written twice, once for the sync client and once for async,
+# because a customer can use either and they must behave the same.
+# ---------------------------------------------------------------------------
+
+
+def test_sync_list_databases_backend_delegates_account_feed(monkeypatch):
+    """A normal ``client.list_databases()`` reaches Rust with the right request.
+
+    Checks the parts that are specific to account scope: the container link is
+    empty and there is no partition key, because there is no container to name.
+    Page size and continuation travel as typed fields rather than as headers.
+    A Cosmos header the customer set (throughput bucket) is passed through, and
+    a non-Cosmos one is forwarded separately for the driver to send as-is.
+    """
+    conn = _new_sync_connection()
+    backend = _CapturingSyncBackend(
+        BackendResponse(
+            status_code=200,
+            headers=CaseInsensitiveDict({"x-ms-continuation": "db-ct"}),
+            body=b'{"Databases":[{"id":"db-1"}]}',
+        )
+    )
+    conn._backend = backend
+    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: dict(args[1]))
+
+    result, headers = _run_sync_read_feed(
+        conn,
+        resource_type=http_constants.ResourceType.Database,
+        options={
+            "maxItemCount": 1,
+            "continuation": "start",
+            "initialHeaders": {
+                "x-test-header": "yes",
+                "x-ms-cosmos-throughput-bucket": "7",
+            },
+        },
+    )
+
+    assert result == [{"id": "db-1"}]
+    assert headers["x-ms-continuation"] == "db-ct"
+    assert backend.prepared.op == OP_LIST_DATABASES
+    assert backend.prepared.container_link == ""
+    assert backend.prepared.partition_key_header is None
+    assert backend.prepared.max_item_count == 1
+    assert backend.prepared.continuation == "start"
+    assert backend.prepared.headers["x-ms-cosmos-throughput-bucket"] == "7"
+    assert "x-test-header" not in backend.prepared.headers
+    assert backend.prepared.headers["initialHeaders"] == {"x-test-header": "yes"}
+
+
+def test_list_databases_prepared_request_drops_driver_owned_headers(monkeypatch):
+    """Headers Python already built are not handed to the driver a second time.
+
+    The driver writes its own authorization, date, version, user-agent, accept,
+    and cache-control headers. If we passed ours along too, the request would
+    carry the same information twice and the two copies could disagree. Only the
+    throughput-bucket header, which the driver does not generate, survives.
+    """
+    conn = _new_sync_connection()
+    backend = _CapturingSyncBackend(
+        BackendResponse(status_code=200, body=b'{"Databases":[]}')
+    )
+    conn._backend = backend
+    monkeypatch.setattr(
+        base_helpers,
+        "GetHeaders",
+        lambda *args, **kwargs: {
+            "authorization": "python-signature",
+            "x-ms-date": "python-date",
+            "Accept": "application/json",
+            "Cache-Control": "no-cache",
+            "User-Agent": "python-agent",
+            "x-ms-version": "2020-07-15",
+            "x-ms-cosmos-throughput-bucket": "7",
+        },
+    )
+
+    result, _ = _run_sync_read_feed(
+        conn,
+        resource_type=http_constants.ResourceType.Database,
+        options={},
+    )
+
+    assert result == []
+    assert backend.prepared.headers == {"x-ms-cosmos-throughput-bucket": "7"}
+
+
+def test_async_list_databases_backend_delegates_account_feed(monkeypatch):
+    """Same as the sync test above, for ``async for db in client.list_databases()``."""
+    async def _run() -> None:
+        conn = _new_async_connection()
+        backend = _CapturingAsyncBackend(
+            BackendResponse(
+                status_code=200,
+                headers=CaseInsensitiveDict({"x-ms-continuation": "db-ct-async"}),
+                body=b'{"Databases":[{"id":"db-2"}]}',
+            )
+        )
+        conn._backend = backend
+        monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: dict(args[1]))
+
+        result = await _run_async_read_feed(
+            conn,
+            resource_type=http_constants.ResourceType.Database,
+            options={"maxItemCount": 2},
+        )
+
+        assert result == [{"id": "db-2"}]
+        assert conn.last_response_headers["x-ms-continuation"] == "db-ct-async"
+        assert backend.prepared.op == OP_LIST_DATABASES
+        assert backend.prepared.max_item_count == 2
+
+    asyncio.run(_run())
+
+
+def test_list_databases_backend_uses_default_headers_without_initial_headers(monkeypatch):
+    """A plain ``client.list_databases()`` with no options still carries the client's headers.
+
+    Headers set once when the client was built (for example a user agent suffix)
+    have to reach Rust even when the call itself passes nothing.
+    """
+    conn = _new_sync_connection()
+    conn.default_headers = {"x-default-header": "yes"}
+    backend = _CapturingSyncBackend(
+        BackendResponse(
+            status_code=200,
+            body=b'{"Databases":[]}',
+        )
+    )
+    conn._backend = backend
+    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: dict(args[1]))
+
+    result, _ = _run_sync_read_feed(
+        conn,
+        resource_type=http_constants.ResourceType.Database,
+        options={},
+    )
+
+    assert result == []
+    assert backend.prepared.headers["x-default-header"] == "yes"
+
+
+def test_async_list_databases_backend_uses_default_headers_without_initial_headers(monkeypatch):
+    """Same as the sync test above, on the async client."""
+    async def _run() -> None:
+        conn = _new_async_connection()
+        conn.default_headers = {"x-default-header": "yes"}
+        backend = _CapturingAsyncBackend(
+            BackendResponse(status_code=200, body=b'{"Databases":[]}')
+        )
+        conn._backend = backend
+        monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: dict(args[1]))
+
+        result = await _run_async_read_feed(
+            conn,
+            resource_type=http_constants.ResourceType.Database,
+            options={},
+        )
+
+        assert result == []
+        assert backend.prepared.headers["x-default-header"] == "yes"
+
+    asyncio.run(_run())
+
+
+def test_list_databases_legacy_path_sends_initial_headers(monkeypatch):
+    """When the call runs on the old path, ``initial_headers`` still works.
+
+    A customer passing ``initial_headers`` can override one of the client's own
+    headers for that one call. This checks the override is applied to the
+    request and that the client's stored headers are left alone afterwards, so
+    the next call is unaffected.
+    """
+    conn = _new_sync_connection()
+    conn.default_headers = {"x-default-header": "default", "x-override": "default"}
+    captured_headers = []
+
+    monkeypatch.setattr(
+        base_helpers,
+        "GetHeaders",
+        lambda _conn, initial_headers, *args, **kwargs: dict(initial_headers),
+    )
+    monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
+
+    def _get(_path, _request_params, headers, **kwargs):
+        captured_headers.append(dict(headers))
+        return {"Databases": []}, CaseInsensitiveDict()
+
+    monkeypatch.setattr(conn, "_CosmosClientConnection__Get", _get)
+    monkeypatch.setattr(conn, "_UpdateSessionIfRequired", lambda *args, **kwargs: None)
+
+    conn._CosmosClientConnection__QueryFeed(
+        "/dbs",
+        http_constants.ResourceType.Database,
+        "",
+        lambda result: result["Databases"],
+        lambda _, body: body,
+        None,
+        {
+            "initialHeaders": {
+                "x-customer-header": "sent",
+                "x-override": "customer",
+            }
+        },
+    )
+
+    assert captured_headers == [
+        {
+            "x-default-header": "default",
+            "x-customer-header": "sent",
+            "x-override": "customer",
+        }
+    ]
+    assert conn.default_headers == {"x-default-header": "default", "x-override": "default"}
+
+
+def test_async_list_databases_legacy_path_sends_initial_headers(monkeypatch):
+    """The async legacy database feed honors the same initial_headers contract."""
+    async def _run() -> None:
+        conn = _new_async_connection()
+        conn.default_headers = {"x-default-header": "default", "x-override": "default"}
+        captured_headers = []
+
+        async def _set_session_token_header(*args, **kwargs):
+            return None
+
+        monkeypatch.setattr(
+            base_helpers,
+            "GetHeaders",
+            lambda _conn, initial_headers, *args, **kwargs: dict(initial_headers),
+        )
+        monkeypatch.setattr(
+            base_helpers,
+            "set_session_token_header_async",
+            _set_session_token_header,
+        )
+
+        async def _capturing_get(_path, _request_params, headers, **kwargs):
+            captured_headers.append(dict(headers))
+            return {"Databases": []}, CaseInsensitiveDict()
+
+        monkeypatch.setattr(conn, "_CosmosClientConnection__Get", _capturing_get)
+        monkeypatch.setattr(conn, "_UpdateSessionIfRequired", lambda *args, **kwargs: None)
+
+        await conn._CosmosClientConnection__QueryFeed(
+            "/dbs",
+            http_constants.ResourceType.Database,
+            "",
+            lambda result: result["Databases"],
+            lambda _, body: body,
+            None,
+            {
+                "initialHeaders": {
+                    "x-customer-header": "sent",
+                    "x-override": "customer",
+                }
+            },
+        )
+
+        assert captured_headers == [
+            {
+                "x-default-header": "default",
+                "x-customer-header": "sent",
+                "x-override": "customer",
+            }
+        ]
+        assert conn.default_headers == {"x-default-header": "default", "x-override": "default"}
+
+    asyncio.run(_run())
+
+
+@pytest.mark.parametrize(
+    "options, kwargs",
+    [
+        ({"initialHeaders": {"user-agent": "custom"}}, {}),
+        ({Constants.Kwargs.READ_TIMEOUT: 0.5}, {}),
+        ({}, {Constants.Kwargs.READ_TIMEOUT: 0.5}),
+        ({Constants.Kwargs.TIMEOUT: 0.5}, {Constants.Kwargs.TIMEOUT: 0.5}),
+        ({Constants.Kwargs.TIMEOUT: 0}, {Constants.Kwargs.TIMEOUT: 0}),
+        ({Constants.Kwargs.TIMEOUT: "invalid"}, {Constants.Kwargs.TIMEOUT: "invalid"}),
+        ({Constants.Kwargs.AVAILABILITY_STRATEGY: False}, {}),
+        ({}, {"raw_request_hook": lambda _request: None}),
+    ],
+)
+def test_async_list_databases_backend_falls_back_for_unrepresentable_options(monkeypatch, options, kwargs):
+    """Same as the sync fallback test below, on the async client."""
+    async def _run() -> None:
+        conn = _new_async_connection()
+        backend = _CapturingAsyncBackend(BackendResponse(status_code=200))
+        conn._backend = backend
+        monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
+
+        async def _set_session(*_args, **_kwargs):
+            return None
+
+        async def _get(*_args, **_kwargs):
+            return {"Databases": []}, CaseInsensitiveDict()
+
+        monkeypatch.setattr(base_helpers, "set_session_token_header_async", _set_session)
+        monkeypatch.setattr(conn, "_CosmosClientConnection__Get", _get)
+        monkeypatch.setattr(conn, "_UpdateSessionIfRequired", lambda *args, **kwargs: None)
+
+        result = await _run_async_read_feed(
+            conn,
+            resource_type=http_constants.ResourceType.Database,
+            options=options,
+            **kwargs,
+        )
+
+        assert result == []
+        assert backend.prepared is None
+
+    asyncio.run(_run())
+
+
+@pytest.mark.parametrize(
+    "options, kwargs",
+    [
+        ({"initialHeaders": {"user-agent": "custom"}}, {}),
+        ({}, {Constants.Kwargs.READ_TIMEOUT: 0.5}),
+        ({Constants.Kwargs.TIMEOUT: 0.5}, {Constants.Kwargs.TIMEOUT: 0.5}),
+        ({Constants.Kwargs.TIMEOUT: 0}, {Constants.Kwargs.TIMEOUT: 0}),
+        ({Constants.Kwargs.TIMEOUT: "invalid"}, {Constants.Kwargs.TIMEOUT: "invalid"}),
+        ({Constants.Kwargs.AVAILABILITY_STRATEGY: False}, {}),
+        ({}, {"raw_request_hook": lambda _request: None}),
+    ],
+)
+def test_list_databases_backend_falls_back_for_unrepresentable_options(monkeypatch, options, kwargs):
+    """An option Rust cannot honor yet sends the call down the old path instead.
+
+    Each row is an option the Rust page does not support today: a custom user
+    agent, a read or overall timeout, an availability strategy, or an internal
+    hook. The result the customer gets is the same either way; what must not
+    happen is Rust running the call and quietly ignoring the option. Asserting
+    the fake backend was never handed a request is how we know it did not.
+    """
+    conn = _new_sync_connection()
+    backend = _CapturingSyncBackend(BackendResponse(status_code=200))
+    conn._backend = backend
+    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
+    monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
+    monkeypatch.setattr(
+        conn,
+        "_CosmosClientConnection__Get",
+        lambda *args, **kwargs: ({"Databases": []}, CaseInsensitiveDict()),
+    )
+    monkeypatch.setattr(conn, "_UpdateSessionIfRequired", lambda *args, **kwargs: None)
+
+    result, _ = _run_sync_read_feed(
+        conn,
+        resource_type=http_constants.ResourceType.Database,
+        options=options,
+        **kwargs,
+    )
+
+    assert result == []
+    assert backend.prepared is None
+
+
+@pytest.mark.parametrize("status_code", [403, 404, 429])
+def test_sync_list_databases_rust_service_errors_do_not_replay_legacy(monkeypatch, status_code):
+    """An error from the service is raised once and the call is not retried on the old path.
+
+    Rust returning a 403, 404, or 429 means the service answered. That is a real
+    answer, not a sign that Rust cannot do the job, so running the whole request
+    again on the old path would bill the customer twice and slow down the error.
+    The old path is wired to fail the test if it is reached. The status,
+    substatus, headers, and message all have to survive so error handling the
+    customer already wrote keeps working.
+    """
+    conn = _new_sync_connection()
+    backend = _CapturingSyncBackend(
+        BackendResponse(
+            status_code=status_code,
+            sub_status=1002,
+            headers=CaseInsensitiveDict({"x-ms-substatus": "1002"}),
+            body=b'{"code":"SyntheticError","message":"database feed failed"}',
+        )
+    )
+    conn._backend = backend
+    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
+    monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
+    monkeypatch.setattr(
+        conn,
+        "_CosmosClientConnection__Get",
+        lambda *args, **kwargs: (_ for _ in ()).throw(AssertionError("legacy replay")),
+    )
+
+    with pytest.raises(CosmosHttpResponseError) as excinfo:
+        _run_sync_read_feed(
+            conn,
+            resource_type=http_constants.ResourceType.Database,
+            options={},
+        )
+
+    assert excinfo.value.status_code == status_code
+    assert excinfo.value.sub_status == 1002
+    assert excinfo.value.headers["x-ms-substatus"] == "1002"
+    assert "database feed failed" in str(excinfo.value)
+    assert backend.prepared.op == OP_LIST_DATABASES
+
+
+@pytest.mark.parametrize("status_code", [403, 404, 429])
+def test_async_list_databases_rust_service_errors_do_not_replay_legacy(monkeypatch, status_code):
+    """Same as the sync error test above, on the async client."""
+    async def _run() -> None:
+        conn = _new_async_connection()
+        backend = _CapturingAsyncBackend(
+            BackendResponse(
+                status_code=status_code,
+                sub_status=1002,
+                headers=CaseInsensitiveDict({"x-ms-substatus": "1002"}),
+                body=b'{"code":"SyntheticError","message":"database feed failed"}',
+            )
+        )
+        conn._backend = backend
+        monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
+
+        async def _set_session(*_args, **_kwargs):
+            return None
+
+        async def _legacy_replay(*_args, **_kwargs):
+            raise AssertionError("legacy replay")
+
+        monkeypatch.setattr(base_helpers, "set_session_token_header_async", _set_session)
+        monkeypatch.setattr(conn, "_CosmosClientConnection__Get", _legacy_replay)
+
+        with pytest.raises(CosmosHttpResponseError) as excinfo:
+            await _run_async_read_feed(
+                conn,
+                resource_type=http_constants.ResourceType.Database,
+                options={},
+            )
+
+        assert excinfo.value.status_code == status_code
+        assert excinfo.value.sub_status == 1002
+        assert excinfo.value.headers["x-ms-substatus"] == "1002"
+        assert "database feed failed" in str(excinfo.value)
+        assert backend.prepared.op == OP_LIST_DATABASES
+
+    asyncio.run(_run())
+
+
+def test_sync_read_databases_keeps_python_paging_and_rust_fetches_each_page(monkeypatch):
+    """Looping over two pages of databases works, and the page token is carried over.
+
+    An account with more databases than one page holds is returned in pieces.
+    Python still owns the loop the customer writes; Rust just fetches one page
+    each time it is asked. This checks the customer sees both databases in
+    order, that the second request carried the token the first page returned,
+    and that the requested page size was applied to both. The old path is wired
+    to fail the test if it is reached.
+    """
+    conn = _new_sync_connection()
+    backend = _SequencedSyncBackend()
+    conn._backend = backend
+    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
+    monkeypatch.setattr(
+        conn,
+        "_CosmosClientConnection__Get",
+        lambda *args, **kwargs: pytest.fail("legacy HTTP database feed was called"),
+    )
+
+    assert list(conn.ReadDatabases(options={"maxItemCount": 1})) == [
+        {"id": "db-1"},
+        {"id": "db-2"},
+    ]
+    assert [request.continuation for request in backend.prepared] == [
+        None,
+        "next-db-page",
+    ]
+    assert all(request.max_item_count == 1 for request in backend.prepared)
+
+
+def test_async_read_databases_keeps_python_paging_and_rust_fetches_each_page(monkeypatch):
+    """Same as the sync paging test above, on the async client."""
+    async def _run() -> None:
+        conn = _new_async_connection()
+        backend = _SequencedAsyncBackend()
+        conn._backend = backend
+        monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
+
+        async def _legacy_get(*_args, **_kwargs):
+            pytest.fail("legacy async HTTP database feed was called")
+
+        monkeypatch.setattr(conn, "_CosmosClientConnection__Get", _legacy_get)
+        results = [item async for item in conn.ReadDatabases(options={"maxItemCount": 1})]
+
+        assert results == [{"id": "db-1"}, {"id": "db-2"}]
+        assert [request.continuation for request in backend.prepared] == [
+            None,
+            "next-db-page",
+        ]
+        assert all(request.max_item_count == 1 for request in backend.prepared)
 
     asyncio.run(_run())
 
@@ -689,19 +1509,13 @@ def test_sync_read_all_backend_page_with_partition_key_uses_native_read_feed(mon
     monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
     monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
 
-    page = conn._CosmosClientConnection__TryReadAllItemsPageWithRustBackend(
-        path="/dbs/db/colls/c/docs/",
+    result, _ = _run_sync_read_feed(
+        conn,
         resource_type=http_constants.ResourceType.Document,
-        resource_id="coll-rid",
         options={"partitionKey": ["tenant-a"]},
-        partition_key_range_id=None,
-        response_hook=None,
-        response_headers=None,
-        internal_headers_capture=None,
-        kwargs={},
     )
 
-    assert page is not None
+    assert result[0]["id"] == "doc-pk"
     prepared = backend.prepared
     assert prepared is not None
     assert prepared.op == OP_READ_ALL_ITEMS
@@ -730,19 +1544,13 @@ def test_async_read_all_backend_page_with_partition_key_uses_native_read_feed(mo
 
         monkeypatch.setattr(base_helpers, "set_session_token_header_async", _noop_set_session)
 
-        result = await conn._CosmosClientConnection__TryReadAllItemsPageWithRustBackend(
-            path="/dbs/db/colls/c/docs/",
+        result = await _run_async_read_feed(
+            conn,
             resource_type=http_constants.ResourceType.Document,
-            resource_id="coll-rid",
             options={"partitionKey": ["tenant-a"]},
-            partition_key_range_id=None,
-            response_hook=None,
-            response_headers=None,
-            internal_headers_capture=None,
-            kwargs={},
         )
 
-        assert result is not None
+        assert result[0]["id"] == "doc-pk-async"
         prepared = backend.prepared
         assert prepared is not None
         assert prepared.op == OP_READ_ALL_ITEMS
@@ -774,21 +1582,15 @@ def test_sync_read_all_backend_page_empty_container(monkeypatch):
 
     response_headers = CaseInsensitiveDict()
     hook_calls = []
-    page = conn._CosmosClientConnection__TryReadAllItemsPageWithRustBackend(
-        path="/dbs/db/colls/c/docs/",
+    result, headers = _run_sync_read_feed(
+        conn,
         resource_type=http_constants.ResourceType.Document,
-        resource_id="coll-rid",
         options={},
-        partition_key_range_id=None,
         response_hook=lambda h, b: hook_calls.append((dict(h), b)),
         response_headers=response_headers,
-        internal_headers_capture=None,
-        kwargs={},
     )
 
-    assert page is not None
-    result, headers = page
-    assert result["Documents"] == []
+    assert result == []
     assert headers["x-ms-session-token"] == "st-empty"
     assert response_headers["x-ms-session-token"] == "st-empty"
     assert len(hook_calls) == 1
@@ -819,20 +1621,15 @@ def test_async_read_all_backend_page_empty_container(monkeypatch):
 
         response_headers = CaseInsensitiveDict()
         hook_calls = []
-        result = await conn._CosmosClientConnection__TryReadAllItemsPageWithRustBackend(
-            path="/dbs/db/colls/c/docs/",
+        result = await _run_async_read_feed(
+            conn,
             resource_type=http_constants.ResourceType.Document,
-            resource_id="coll-rid",
             options={},
-            partition_key_range_id=None,
             response_hook=lambda h, b: hook_calls.append((dict(h), b)),
             response_headers=response_headers,
-            internal_headers_capture=None,
-            kwargs={},
         )
 
-        assert result is not None
-        assert result["Documents"] == []
+        assert result == []
         assert conn.last_response_headers["x-ms-session-token"] == "st-empty-async"
         assert response_headers["x-ms-session-token"] == "st-empty-async"
         assert len(hook_calls) == 1
@@ -843,11 +1640,11 @@ def test_async_read_all_backend_page_empty_container(monkeypatch):
 
 
 def test_sync_driver_unsupported_query_falls_back():
-    """Sync: when the backend raises ``QueryNotSupportedByBackendError`` (the driver
-    rejects a query plan it cannot run), ``run_query_page_on_rust_backend`` returns
-    ``None`` so the caller falls back to the legacy path instead of failing.
-    """
-    class _UnsupportedBackend:
+    """Typed page capability failures are handled by the backend boundary."""
+    class _UnsupportedBackend(CosmosBackend):
+        def execute(self, prepared):
+            raise AssertionError("single-response execution is not expected")
+
         def execute_pages(self, prepared):
             del prepared
             raise QueryNotSupportedByBackendError("unsupported query plan")
@@ -859,14 +1656,23 @@ def test_sync_driver_unsupported_query_falls_back():
         query="SELECT VALUE COUNT(1) FROM c",
     )
 
-    assert run_query_page_on_rust_backend(_UnsupportedBackend(), prepared) is None
+    fallback_count_before = rust_compatibility_fallback_count()
+    result = _UnsupportedBackend().run_page_operation(
+        build_prepared=lambda: prepared,
+        legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=lambda: "legacy"),
+        parse_response=lambda _page: "rust",
+        fallback_exceptions=(PageNotSupportedByBackendError,),
+    )
+    assert result == "legacy"
+    assert rust_compatibility_fallback_count() == fallback_count_before + 1
 
 
 def test_async_driver_unsupported_query_falls_back():
-    """Async twin: ``run_query_page_on_rust_backend_async`` returns ``None`` when the
-    backend rejects the query, so the caller falls back to legacy.
-    """
-    class _UnsupportedBackend:
+    """Async typed page capability failures are handled by the backend boundary."""
+    class _UnsupportedBackend(AsyncCosmosBackend):
+        async def execute(self, prepared):
+            raise AssertionError("single-response execution is not expected")
+
         async def execute_pages(self, prepared):
             del prepared
             raise QueryNotSupportedByBackendError("unsupported query plan")
@@ -878,9 +1684,169 @@ def test_async_driver_unsupported_query_falls_back():
             container_link="dbs/db/colls/c",
             query="SELECT * FROM c ORDER BY c.ts",
         )
-        assert await run_query_page_on_rust_backend_async(
-            _UnsupportedBackend(), prepared
-        ) is None
+        async def _build_prepared():
+            return prepared
+
+        async def _run_legacy():
+            return "legacy"
+
+        fallback_count_before = rust_compatibility_fallback_count()
+        result = await _UnsupportedBackend().run_page_operation(
+            build_prepared=_build_prepared,
+            legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=_run_legacy),
+            parse_response=lambda _page: "rust",
+            fallback_exceptions=(PageNotSupportedByBackendError,),
+        )
+        assert result == "legacy"
+        assert rust_compatibility_fallback_count() == fallback_count_before + 1
+
+    asyncio.run(_run())
+
+
+def test_sync_unrelated_not_implemented_error_is_not_replayed():
+    """Unexpected backend errors propagate instead of triggering a second request."""
+    class _BrokenBackend(CosmosBackend):
+        def execute(self, prepared):
+            raise AssertionError("single-response execution is not expected")
+
+        def execute_pages(self, prepared):
+            del prepared
+            raise NotImplementedError("unexpected parser failure")
+            yield  # pragma: no cover
+
+    prepared = PreparedQuery(
+        op=OP_QUERY_ITEMS,
+        container_link="dbs/db/colls/c",
+        query="SELECT * FROM c",
+    )
+    fallback_count_before = rust_compatibility_fallback_count()
+
+    with pytest.raises(NotImplementedError, match="unexpected parser failure"):
+        _BrokenBackend().run_page_operation(
+            build_prepared=lambda: prepared,
+            legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=lambda: "legacy"),
+            parse_response=lambda _page: "rust",
+            fallback_exceptions=(PageNotSupportedByBackendError,),
+        )
+
+    assert rust_compatibility_fallback_count() == fallback_count_before
+
+
+def test_async_unrelated_not_implemented_error_is_not_replayed():
+    """Async unexpected backend errors also propagate without fallback."""
+    class _BrokenBackend(AsyncCosmosBackend):
+        async def execute(self, prepared):
+            raise AssertionError("single-response execution is not expected")
+
+        async def execute_pages(self, prepared):
+            del prepared
+            raise NotImplementedError("unexpected async parser failure")
+            yield  # pragma: no cover
+
+    async def _run():
+        prepared = PreparedQuery(
+            op=OP_QUERY_ITEMS,
+            container_link="dbs/db/colls/c",
+            query="SELECT * FROM c",
+        )
+        async def _build_prepared():
+            return prepared
+
+        async def _run_legacy():
+            return "legacy"
+
+        fallback_count_before = rust_compatibility_fallback_count()
+
+        with pytest.raises(NotImplementedError, match="unexpected async parser failure"):
+            await _BrokenBackend().run_page_operation(
+                build_prepared=_build_prepared,
+                legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=_run_legacy),
+                parse_response=lambda _page: "rust",
+                fallback_exceptions=(PageNotSupportedByBackendError,),
+            )
+
+        assert rust_compatibility_fallback_count() == fallback_count_before
+
+    asyncio.run(_run())
+
+
+def test_sync_empty_page_iterator_is_not_replayed():
+    class _EmptyBackend(CosmosBackend):
+        def execute(self, prepared):
+            raise AssertionError("single-response execution is not expected")
+
+        def execute_pages(self, prepared):
+            del prepared
+            return iter(())
+
+    legacy_calls = []
+    with pytest.raises(BackendProtocolError, match="returned no page"):
+        _EmptyBackend().run_page_operation(
+            build_prepared=lambda: PreparedQuery(op=OP_QUERY_ITEMS, container_link="dbs/db/colls/c"),
+            legacy_operation=LegacyOperation(
+                op=OP_QUERY_ITEMS,
+                invoke=lambda: legacy_calls.append(1),
+            ),
+            parse_response=lambda _page: "rust",
+            fallback_exceptions=(RuntimeError,),
+        )
+    assert legacy_calls == []
+
+
+def test_async_empty_page_iterator_is_not_replayed():
+    class _EmptyBackend(AsyncCosmosBackend):
+        async def execute(self, prepared):
+            raise AssertionError("single-response execution is not expected")
+
+        async def execute_pages(self, prepared):
+            del prepared
+            if False:
+                yield QueryPage(status_code=200)
+
+    async def _run():
+        legacy_calls = []
+
+        async def _build_prepared():
+            return PreparedQuery(op=OP_QUERY_ITEMS, container_link="dbs/db/colls/c")
+
+        async def _run_legacy():
+            legacy_calls.append(1)
+
+        with pytest.raises(BackendProtocolError, match="returned no page"):
+            await _EmptyBackend().run_page_operation(
+                build_prepared=_build_prepared,
+                legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=_run_legacy),
+                parse_response=lambda _page: "rust",
+                fallback_exceptions=(RuntimeError,),
+            )
+        assert legacy_calls == []
+
+    asyncio.run(_run())
+
+
+def test_sync_missing_backend_attribute_is_not_silently_treated_as_legacy():
+    conn = _new_sync_connection()
+    del conn._backend
+
+    with pytest.raises(AttributeError, match="_backend"):
+        _run_sync_read_feed(
+            conn,
+            resource_type=http_constants.ResourceType.Database,
+            options={},
+        )
+
+
+def test_async_missing_backend_attribute_is_not_silently_treated_as_legacy():
+    async def _run():
+        conn = _new_async_connection()
+        del conn._backend
+
+        with pytest.raises(AttributeError, match="_backend"):
+            await _run_async_read_feed(
+                conn,
+                resource_type=http_constants.ResourceType.Database,
+                options={},
+            )
 
     asyncio.run(_run())
 

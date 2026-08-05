@@ -9,7 +9,7 @@ use serde::Serialize;
 
 use azure_data_cosmos_driver::{
     error::{CosmosError, CosmosStatus},
-    models::{CosmosResponse, ResponseBody},
+    models::{ContainerReference, CosmosResponse, ResponseBody},
 };
 
 use super::diagnostics::record_diagnostics;
@@ -49,6 +49,45 @@ pub(super) fn tuple_from_result<'py>(
     }
 }
 
+#[derive(Serialize)]
+struct ContainerMetadataPayload<'a> {
+    #[serde(rename = "_rid")]
+    rid: &'a str,
+    #[serde(rename = "partitionKey")]
+    partition_key: &'a azure_data_cosmos_driver::models::PartitionKeyDefinition,
+}
+
+/// Return cached container metadata through the same response tuple contract as
+/// normal operations, so Python preserves its existing typed HTTP-error mapping.
+pub(super) fn tuple_from_container_metadata_result<'py>(
+    py: Python<'py>,
+    result: Result<ContainerReference, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    match result {
+        Ok(container) => {
+            let payload = ContainerMetadataPayload {
+                rid: container.rid(),
+                partition_key: container.partition_key_definition(),
+            };
+            let body = serde_json::to_vec(&payload)
+                .map_err(|error| PyRuntimeError::new_err(error.to_string()))?;
+            backend_response_tuple(py, 200, 0, PyDict::new_bound(py), &body, None)
+        }
+        Err(cosmos_error) => {
+            if let Some(raw_http_error) =
+                backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
+            {
+                Ok(raw_http_error)
+            } else {
+                record_diagnostics_for_responseless(&cosmos_error);
+                Err(DriverTransportError::new_err(format!(
+                    "driver resolve_container failed: {cosmos_error}"
+                )))
+            }
+        }
+    }
+}
+
 /// Turn the driver's query reply into the tuple the Python parser reads. Handles
 /// the three outcomes: a page of rows becomes a success reply; `None` (no rows)
 /// becomes an empty `{"Documents":[]}` page; an error carrying a real service
@@ -79,6 +118,42 @@ pub(super) fn tuple_from_feed_result<'py>(
                 record_diagnostics_for_responseless(&cosmos_error);
                 Err(DriverTransportError::new_err(format!(
                     "driver execute_operation failed: {cosmos_error}"
+                )))
+            }
+        }
+    }
+}
+
+/// Database-feed variant of [`tuple_from_feed_result`].
+///
+/// Turns the driver's reply into the same `{"Databases":[...]}` shape the legacy
+/// path returns, so the Python code that reads the page cannot tell which path
+/// produced it. Service errors keep their wire status, substatus, headers, and
+/// body; a failure with no wire response at all becomes
+/// [`DriverTransportError`].
+///
+/// Without this the Rust page would hand back driver-shaped rows, and a customer
+/// looping over `client.list_databases()` would see different keys depending on
+/// which backend served the call.
+pub(super) fn tuple_from_database_feed_result<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    match response_result {
+        Ok(Some(response)) => backend_response_tuple_from_database_feed_success(py, response),
+        Ok(None) => {
+            let response_headers = PyDict::new_bound(py);
+            backend_response_tuple(py, 200, 0, response_headers, br#"{"Databases":[]}"#, None)
+        }
+        Err(cosmos_error) => {
+            if let Some(raw_http_error) =
+                backend_response_tuple_from_cosmos_error_feed(py, &cosmos_error)?
+            {
+                Ok(raw_http_error)
+            } else {
+                record_diagnostics_for_responseless(&cosmos_error);
+                Err(DriverTransportError::new_err(format!(
+                    "driver list_databases failed: {cosmos_error}"
                 )))
             }
         }
@@ -291,21 +366,7 @@ fn backend_response_tuple_from_feed_success<'py>(
     py: Python<'py>,
     response: azure_data_cosmos_driver::models::CosmosResponse,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let status = response.status();
-    let status_code = u16::from(status.status_code()) as i64;
-    let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
-    let diagnostics = record_diagnostics(response.diagnostics());
-    let response_headers = PyDict::new_bound(py);
-    write_response_headers(&response_headers, response.headers())?;
-    let body_vec = query_response_body_to_vec(response.into_body())?;
-    backend_response_tuple(
-        py,
-        status_code,
-        sub_status,
-        response_headers,
-        &body_vec,
-        Some(diagnostics.as_str()),
-    )
+    backend_response_tuple_from_named_feed_success(py, response, b"Documents")
 }
 
 /// Map the driver's typed `ResponseBody` to a flat `Vec<u8>` suitable for the
@@ -335,22 +396,16 @@ fn response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
 /// can read a Rust-served page without knowing it came from Rust. No rows becomes
 /// `{"Documents":[]}`.
 fn query_response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
-    match body {
-        ResponseBody::NoPayload => Ok(br#"{"Documents":[]}"#.to_vec()),
-        ResponseBody::Bytes(b) => Ok(b.to_vec()),
-        ResponseBody::Items(items) => {
-            let mut out = Vec::with_capacity(16 + items.iter().map(|i| i.len()).sum::<usize>());
-            out.extend_from_slice(br#"{"Documents":["#);
-            for (index, item) in items.iter().enumerate() {
-                if index > 0 {
-                    out.push(b',');
-                }
-                out.extend_from_slice(item.as_ref());
-            }
-            out.extend_from_slice(b"]}");
-            Ok(out)
-        }
-    }
+    named_feed_response_body_to_vec(body, b"Documents")
+}
+
+/// Convert a successful database feed response into the Python backend tuple,
+/// wrapping item rows in the legacy `{"Databases":[...]}` envelope.
+fn backend_response_tuple_from_database_feed_success<'py>(
+    py: Python<'py>,
+    response: azure_data_cosmos_driver::models::CosmosResponse,
+) -> PyResult<Bound<'py, PyTuple>> {
+    backend_response_tuple_from_named_feed_success(py, response, b"Databases")
 }
 
 /// Offer version of `backend_response_tuple_from_feed_success`: identical status /
@@ -360,35 +415,65 @@ fn backend_response_tuple_from_offer_feed_success<'py>(
     py: Python<'py>,
     response: azure_data_cosmos_driver::models::CosmosResponse,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    backend_response_tuple_from_named_feed_success(py, response, b"Offers")
+}
+
+fn backend_response_tuple_from_named_feed_success<'py>(
+    py: Python<'py>,
+    response: azure_data_cosmos_driver::models::CosmosResponse,
+    envelope_name: &[u8],
+) -> PyResult<Bound<'py, PyTuple>> {
     let status = response.status();
     let status_code = u16::from(status.status_code()) as i64;
     let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
     let diagnostics = record_diagnostics(response.diagnostics());
     let response_headers = PyDict::new_bound(py);
     write_response_headers(&response_headers, response.headers())?;
-    let body_vec = offer_response_body_to_vec(response.into_body())?;
-    backend_response_tuple(
-        py,
-        status_code,
-        sub_status,
-        response_headers,
-        &body_vec,
-        Some(diagnostics.as_str()),
-    )
+    match response.into_body() {
+        // Pass existing bytes straight to Python without allocating a Vec. The
+        // helper keeps its Bytes arm for callers that require an owned body.
+        ResponseBody::Bytes(body) => backend_response_tuple(
+            py,
+            status_code,
+            sub_status,
+            response_headers,
+            body.as_ref(),
+            Some(diagnostics.as_str()),
+        ),
+        body => {
+            let body_vec = named_feed_response_body_to_vec(body, envelope_name)?;
+            backend_response_tuple(
+                py,
+                status_code,
+                sub_status,
+                response_headers,
+                &body_vec,
+                Some(diagnostics.as_str()),
+            )
+        }
+    }
 }
 
-/// Response side: wrap the driver's offer rows in the `{"Offers":[...]}` envelope the
-/// Python parser expects (same key the REST service returns). The query text went OUT
-/// in `run_read_offer_future`; here we shape the rows on the way back. No rows becomes
-/// `{"Offers":[]}`; a raw pre-built body (`Bytes`) passes through unchanged.
-fn offer_response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
+/// Wrap feed items in the REST envelope named by `envelope_name`.
+///
+/// A raw pre-built [`ResponseBody::Bytes`] body passes through unchanged.
+fn named_feed_response_body_to_vec(body: ResponseBody, envelope_name: &[u8]) -> PyResult<Vec<u8>> {
     match body {
-        ResponseBody::NoPayload => Ok(br#"{"Offers":[]}"#.to_vec()),
+        ResponseBody::NoPayload => {
+            let mut out = Vec::with_capacity(envelope_name.len() + 7);
+            out.extend_from_slice(b"{\"");
+            out.extend_from_slice(envelope_name);
+            out.extend_from_slice(b"\":[]}");
+            Ok(out)
+        }
         ResponseBody::Bytes(b) => Ok(b.to_vec()),
         ResponseBody::Items(items) => {
-            // Envelope overhead: `{"Offers":[` (11 bytes) + `]}` (2 bytes) = 13.
-            let mut out = Vec::with_capacity(13 + items.iter().map(|i| i.len()).sum::<usize>());
-            out.extend_from_slice(br#"{"Offers":["#);
+            let item_bytes = items.iter().map(|item| item.len()).sum::<usize>();
+            let separators = items.len().saturating_sub(1);
+            let mut out = Vec::with_capacity(envelope_name.len() + 7 + item_bytes + separators);
+            out.extend_from_slice(b"{\"");
+            out.extend_from_slice(envelope_name);
+            out.extend_from_slice(b"\":[");
             for (index, item) in items.iter().enumerate() {
                 if index > 0 {
                     out.push(b',');
@@ -532,22 +617,38 @@ fn backend_response_tuple_from_cosmos_error_feed<'py>(
         None => return Ok(None),
     };
 
-    let status = response.status();
+    let diagnostics = record_diagnostics(response.diagnostics());
+    Ok(Some(backend_response_tuple_from_feed_error_parts(
+        py,
+        response.status(),
+        response.headers(),
+        response.body().clone(),
+        diagnostics.as_str(),
+    )?))
+}
+
+/// Build the Python tuple for a feed error after the driver has exposed its
+/// typed wire status, headers, body, and diagnostics.
+fn backend_response_tuple_from_feed_error_parts<'py>(
+    py: Python<'py>,
+    status: CosmosStatus,
+    driver_headers: &azure_data_cosmos_driver::models::CosmosResponseHeaders,
+    body: ResponseBody,
+    diagnostics: &str,
+) -> PyResult<Bound<'py, PyTuple>> {
     let status_code = u16::from(status.status_code()) as i64;
     let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
-    let diagnostics = record_diagnostics(response.diagnostics());
-
     let response_headers = PyDict::new_bound(py);
-    write_response_headers(&response_headers, response.headers())?;
-    let body_vec = query_response_body_to_vec(response.body().clone())?;
-    Ok(Some(backend_response_tuple(
+    write_response_headers(&response_headers, driver_headers)?;
+    let body_vec = query_response_body_to_vec(body)?;
+    backend_response_tuple(
         py,
         status_code,
         sub_status,
         response_headers,
         &body_vec,
-        Some(diagnostics.as_str()),
-    )?))
+        Some(diagnostics),
+    )
 }
 
 /// Copy every populated field on the driver's `CosmosResponseHeaders` into a
@@ -637,9 +738,9 @@ fn write_response_headers(
     // resource quota and usage, gateway and service version, script log
     // results, the tentative-writes flag, and index-transformation /
     // lazy-indexing progress.
-    // x-ms-alt-content-path / x-ms-content-path are still pub(crate) on the
-    // driver (owner_full_name / owner_id) and will appear here once the
-    // driver makes them public.
+    // x-ms-alt-content-path / x-ms-content-path / x-ms-schemaversion are still
+    // pub(crate) on the driver (owner_full_name / owner_id / schema_version) and
+    // will appear here once the driver makes them public.
     if let Some(v) = h.gateway_version.as_ref() {
         out.set_item("x-ms-gatewayversion", v.as_str())?;
     }
@@ -679,10 +780,11 @@ fn write_response_headers(
 #[cfg(test)]
 mod tests {
     use super::{
-        feed_range_to_response_body, record_diagnostics_for_responseless, response_body_to_vec,
-        tuple_from_feed_result, tuple_from_partition_key_ranges_result, tuple_from_result,
-        write_response_headers, DriverTransportError, FeedRangeFromPartitionKeyPayload,
-        UnsupportedQueryFeatureError,
+        backend_response_tuple_from_feed_error_parts, feed_range_to_response_body,
+        named_feed_response_body_to_vec, record_diagnostics_for_responseless, response_body_to_vec,
+        tuple_from_database_feed_result, tuple_from_feed_result,
+        tuple_from_partition_key_ranges_result, tuple_from_result, write_response_headers,
+        DriverTransportError, FeedRangeFromPartitionKeyPayload, UnsupportedQueryFeatureError,
     };
     use azure_core::Bytes;
     use azure_data_cosmos_driver::error::{CosmosError, CosmosStatus};
@@ -694,6 +796,81 @@ mod tests {
 
     use super::super::diagnostics::{BINDING_ATTEMPT_COUNT, BINDING_RETRY_COUNT};
     use std::sync::atomic::Ordering;
+
+    #[test]
+    fn database_feed_items_use_databases_envelope() {
+        let body = named_feed_response_body_to_vec(
+            ResponseBody::Items(vec![
+                Bytes::from_static(br#"{"id":"db-1"}"#),
+                Bytes::from_static(br#"{"id":"db-2"}"#),
+            ]),
+            b"Databases",
+        )
+        .expect("database feed items should serialize");
+
+        assert_eq!(body, br#"{"Databases":[{"id":"db-1"},{"id":"db-2"}]}"#);
+    }
+
+    #[test]
+    fn database_feed_service_errors_preserve_wire_tuple_fields() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            for status_code in [
+                azure_core::http::StatusCode::Forbidden,
+                azure_core::http::StatusCode::NotFound,
+                azure_core::http::StatusCode::TooManyRequests,
+            ] {
+                let status = CosmosStatus::new(status_code).with_sub_status(1002);
+                let mut headers = CosmosResponseHeaders::default();
+                headers.continuation = Some("error-continuation".to_string());
+                headers.retry_after_ms = Some(17);
+                let tuple = backend_response_tuple_from_feed_error_parts(
+                    py,
+                    status,
+                    &headers,
+                    ResponseBody::Bytes(Bytes::from_static(
+                        br#"{"code":"SyntheticError","message":"database feed failed"}"#,
+                    )),
+                    "synthetic diagnostics",
+                )
+                .expect("service error should map to a Python backend tuple");
+
+                assert_eq!(
+                    tuple.get_item(0).unwrap().extract::<u16>().unwrap(),
+                    u16::from(status_code)
+                );
+                assert_eq!(tuple.get_item(1).unwrap().extract::<u16>().unwrap(), 1002);
+                let tuple_headers = tuple.get_item(2).unwrap();
+                let tuple_headers = tuple_headers.downcast::<PyDict>().unwrap();
+                assert_eq!(
+                    tuple_headers
+                        .get_item("x-ms-continuation")
+                        .unwrap()
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                    "error-continuation"
+                );
+                assert_eq!(
+                    tuple_headers
+                        .get_item("x-ms-retry-after-ms")
+                        .unwrap()
+                        .unwrap()
+                        .extract::<u64>()
+                        .unwrap(),
+                    17
+                );
+                assert_eq!(
+                    tuple.get_item(3).unwrap().extract::<Vec<u8>>().unwrap(),
+                    br#"{"code":"SyntheticError","message":"database feed failed"}"#
+                );
+                assert_eq!(
+                    tuple.get_item(4).unwrap().extract::<String>().unwrap(),
+                    "synthetic diagnostics"
+                );
+            }
+        });
+    }
 
     #[test]
     fn unsupported_query_feature_uses_typed_binding_error() {
@@ -921,6 +1098,26 @@ mod tests {
                 py_error.is_instance_of::<DriverTransportError>(py),
                 "response-less feed CosmosError must raise DriverTransportError"
             );
+        });
+    }
+
+    #[test]
+    fn responseless_database_feed_error_surfaces_transport_error() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let error = CosmosError::builder()
+                .with_status(CosmosStatus::new(
+                    azure_core::http::StatusCode::RequestTimeout,
+                ))
+                .with_message("database feed transport failed")
+                .build();
+
+            let py_error = tuple_from_database_feed_result(py, Err(error)).unwrap_err();
+
+            assert!(py_error.is_instance_of::<DriverTransportError>(py));
+            assert!(py_error
+                .to_string()
+                .contains("driver list_databases failed"));
         });
     }
 }

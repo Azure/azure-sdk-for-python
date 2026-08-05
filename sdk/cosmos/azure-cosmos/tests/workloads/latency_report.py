@@ -15,9 +15,9 @@ falls back to a count-weighted average, which understates the tail.
 
 USAGE:
   source ./perf_env.sh                 # exports RESULTS_COSMOS_* (incl. the key)
-  python3 phase0_report.py [--stamp YYYYMMDD-HHMMSS] [--prefix lat0-]
-      --stamp   which run to read; default = the most recent lat0- stamp.
-      --prefix  workload_id prefix identifying the run (default lat0-).
+  python3 latency_report.py [--run-id YYYYMMDD-HHMMSS] [--prefix baseline-]
+      --run-id  which run to read; default = the most recent matching run.
+      --prefix  workload_id prefix identifying the run (default baseline-).
 """
 
 import argparse
@@ -70,22 +70,22 @@ def _connect():
 
 
 def _split_wid(workload_id: str):
-    """Return (op, backend, stamp) from ``lat0-<op>-<backend>-<YYYYMMDD-HHMMSS>``.
+    """Return (op, backend, run_id) from ``prefix-<op>-<backend>-<run-id>``.
 
-    The backend itself can contain a dash (``core-python``), so the stamp is the
-    LAST two dash fields and the backend is everything between the op and stamp —
+    The backend itself can contain a dash (``core-python``), so the run id is the
+    LAST two dash fields and the backend is everything between the op and run id —
     never taken positionally from a fixed index.
     """
     parts = workload_id.split("-")
     if len(parts) < 5:
         return None, None, ""
-    stamp = parts[-2] + "-" + parts[-1]
+    run_id = parts[-2] + "-" + parts[-1]
     op = parts[1]
     backend = "-".join(parts[2:-2])
-    return op, backend, stamp
+    return op, backend, run_id
 
 
-def _latest_stamp(container, prefix: str) -> str:
+def _latest_run_id(container, prefix: str) -> str:
     ids = list(
         container.query_items(
             "SELECT VALUE c.workload_id FROM c WHERE STARTSWITH(c.workload_id, @p)",
@@ -93,21 +93,21 @@ def _latest_stamp(container, prefix: str) -> str:
             enable_cross_partition_query=True,
         )
     )
-    stamps = {_split_wid(i)[2] for i in ids if i}
-    stamps.discard("")
-    return max(stamps) if stamps else ""
+    run_ids = {_split_wid(i)[2] for i in ids if i}
+    run_ids.discard("")
+    return max(run_ids) if run_ids else ""
 
 
-def _aggregate(container, prefix: str, stamp: str):
+def _aggregate(container, prefix: str, run_id: str):
     """Merge all windows of each (op, backend) cell into one pooled histogram.
 
     Returns a dict keyed (op, backend) -> stats. ``hist`` is the merged
     HdrHistogram; ``no_hist_windows`` counts windows that had no hist_b64 (older
     runs), which is what makes exact pooling impossible for that cell.
 
-    The query is scoped by BOTH the prefix (STARTSWITH) and the stamp (ENDSWITH):
-    filtering on the stamp alone would mix rows from any other run that happened to
-    land on the same-second stamp under a different prefix.
+    The query is scoped by BOTH the prefix (STARTSWITH) and the run id (ENDSWITH):
+    filtering on the run id alone would mix rows from another workload that happened
+    to start in the same millisecond under a different prefix.
     """
     rows = list(
         container.query_items(
@@ -117,7 +117,7 @@ def _aggregate(container, prefix: str, stamp: str):
             "AND ENDSWITH(c.workload_id, @stamp)",
             parameters=[
                 {"name": "@prefix", "value": prefix},
-                {"name": "@stamp", "value": stamp},
+                {"name": "@stamp", "value": run_id},
             ],
             enable_cross_partition_query=True,
         )
@@ -200,24 +200,25 @@ def main():
     ap = argparse.ArgumentParser(
         description="Low-load latency report (pooled percentiles)."
     )
-    ap.add_argument("--stamp", default=None, help="run stamp YYYYMMDD-HHMMSS (default: latest)")
-    ap.add_argument("--prefix", default="lat0-", help="workload_id prefix (default lat0-)")
+    ap.add_argument("--run-id", default=None, help="run id YYYYMMDD-HHMMSSmmm (default: latest)")
+    ap.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
+    ap.add_argument("--prefix", default="baseline-", help="workload_id prefix (default baseline-)")
     _prov.add_cli_flag(ap)
     args = ap.parse_args()
 
     container = _connect()
-    stamp = args.stamp or _latest_stamp(container, args.prefix)
-    if not stamp:
+    run_id = args.run_id or _latest_run_id(container, args.prefix)
+    if not run_id:
         print(f"ERROR: no {args.prefix}* runs found in the results container.", file=sys.stderr)
         sys.exit(2)
 
-    agg, prov_info = _aggregate(container, args.prefix, stamp)
+    agg, prov_info = _aggregate(container, args.prefix, run_id)
     if not agg:
-        print(f"ERROR: no result rows found for stamp {stamp}.", file=sys.stderr)
+        print(f"ERROR: no result rows found for run id {run_id}.", file=sys.stderr)
         sys.exit(2)
 
     backends = sorted({b for (_, b) in agg})
-    print(f"=== Low-load latency baseline (prefix {args.prefix}, stamp {stamp}) ===")
+    print(f"=== Low-load latency baseline (prefix {args.prefix}, run id {run_id}) ===")
     print("    conc=1, arrival=0, 1 client, no proxy -> latency = one round trip.")
     print("    Percentiles are POOLED across windows from merged HdrHistograms (exact).")
     print()

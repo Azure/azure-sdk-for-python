@@ -7,7 +7,7 @@ logged on failure, so under pressure a window's data can silently vanish. A
 vanished bad window would make the run look healthier than it was. This script
 catches that with two checks at the end of a run:
 
-  1. Row-continuity -- each row stamps ``window_seconds`` (how long it covers) and
+  1. Row-continuity -- each row records ``window_seconds`` (how long it covers) and
      ``elapsed_seconds`` (seconds since post-warmup start). In a healthy run the
      jump in elapsed_seconds between two rows equals the later row's
      window_seconds; a larger jump means a window was dropped.
@@ -20,8 +20,8 @@ as a hard gate.
 
 USAGE:
   source ./perf_env.sh            # exports RESULTS_COSMOS_* (incl. the key)
-  python3 perf_validate.py [--stamp YYYYMMDD-HHMMSS] [--log-dir logs/latency-...]
-      --stamp    which run to check; default = the most recent lat-* stamp.
+  python3 perf_validate.py [--run-id YYYYMMDD-HHMMSS] [--log-dir logs/latency-...]
+      --run-id   which run to check; default = the most recent matching run.
       --log-dir  per-cell logs to scan for reporter warnings; optional.
 """
 
@@ -46,9 +46,9 @@ def _gap_tolerance_s(report_interval_s: float) -> float:
     return max(60.0, 0.5 * report_interval_s)
 
 
-def _stamp_of(workload_id: str) -> str:
+def _run_id_of(workload_id: str) -> str:
     # workload_id = lat-{op}-{backend}-r{r}-{YYYYMMDD-HHMMSS}. The backend can
-    # itself contain a dash (core-python), so the stamp is always the LAST two
+    # itself contain a dash (core-python), so the run id is always the LAST two
     # dash-separated fields joined -- never positional from the front.
     parts = workload_id.split("-")
     if len(parts) < 2:
@@ -71,7 +71,7 @@ def _connect():
     return CosmosClient(uri, key).get_database_client(db).get_container_client(cont)
 
 
-def _latest_stamp(container, prefix: str) -> str:
+def _latest_run_id(container, prefix: str) -> str:
     ids = list(
         container.query_items(
             "SELECT VALUE c.workload_id FROM c WHERE STARTSWITH(c.workload_id, @p)",
@@ -79,12 +79,12 @@ def _latest_stamp(container, prefix: str) -> str:
             enable_cross_partition_query=True,
         )
     )
-    stamps = {_stamp_of(i) for i in ids if i}
-    stamps.discard("")
-    if not stamps:
+    run_ids = {_run_id_of(i) for i in ids if i}
+    run_ids.discard("")
+    if not run_ids:
         return ""
     # YYYYMMDD-HHMMSS sorts correctly as a plain string.
-    return max(stamps)
+    return max(run_ids)
 
 
 # A latency row is only trustworthy if the cell actually did work. An empty or
@@ -94,7 +94,7 @@ def _latest_stamp(container, prefix: str) -> str:
 _MAX_ERROR_FRACTION = 0.01
 
 
-def check_quality(container, prefix: str, stamp: str):
+def check_quality(container, prefix: str, run_id: str):
     """Every cell must have real work (count > 0) and near-zero errors, and every
     operation must have both backends present, before any latency number is
     believed. This runs first: a "fast" p50 means nothing if the cell did nothing.
@@ -106,16 +106,16 @@ def check_quality(container, prefix: str, stamp: str):
     rows = list(
         container.query_items(
             "SELECT c.workload_id, c.operation, c.config_backend, c.count, c.errors "
-            "FROM c WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @stamp)",
+            "FROM c WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @run_id)",
             parameters=[
                 {"name": "@prefix", "value": prefix},
-                {"name": "@stamp", "value": stamp},
+                {"name": "@run_id", "value": run_id},
             ],
             enable_cross_partition_query=True,
         )
     )
     if not rows:
-        return False, [f"  (no result rows found for stamp {stamp})"]
+        return False, [f"  (no result rows found for run id {run_id})"]
 
     # Aggregate per cell (workload_id), and remember which op/backend it is.
     agg = {}
@@ -162,23 +162,23 @@ def check_quality(container, prefix: str, stamp: str):
     return all_ok, lines
 
 
-def check_continuity(container, prefix: str, stamp: str, report_interval_s: float):
-    """Return (ok, lines) for the row-continuity check across all cells in `stamp`."""
+def check_continuity(container, prefix: str, run_id: str, report_interval_s: float):
+    """Return (ok, lines) for the row-continuity check across all cells in `run_id`."""
     rows = list(
         container.query_items(
             "SELECT c.workload_id, c.elapsed_seconds, c.window_seconds, c.count, "
             "c.errors, c.operation, c.config_backend FROM c "
-            "WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @stamp)",
+            "WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @run_id)",
             parameters=[
                 {"name": "@prefix", "value": prefix},
-                {"name": "@stamp", "value": stamp},
+                {"name": "@run_id", "value": run_id},
             ],
             enable_cross_partition_query=True,
         )
     )
     lines = []
     if not rows:
-        return False, [f"  (no result rows found for stamp {stamp})"]
+        return False, [f"  (no result rows found for run id {run_id})"]
 
     # One results row may carry several operations? No -- one row per op per
     # window, all sharing a workload_id (which is per op+backend already). Group
@@ -251,7 +251,7 @@ def check_warnings(log_dir: str):
     return False, lines
 
 
-def check_provenance(container, prefix: str, stamp: str):
+def check_backend_execution(container, prefix: str, run_id: str):
     """Prove every cell ran on the engine its label claims, from counters in the
     rows rather than COSMOS_BACKEND.
 
@@ -272,16 +272,16 @@ def check_provenance(container, prefix: str, stamp: str):
         container.query_items(
             "SELECT c.workload_id, c.config_backend, c.runtime_backend, "
             "c.rust_execute_calls, c.binding_calls, c.count, c.errors "
-            "FROM c WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @stamp)",
+            "FROM c WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @run_id)",
             parameters=[
                 {"name": "@prefix", "value": prefix},
-                {"name": "@stamp", "value": stamp},
+                {"name": "@run_id", "value": run_id},
             ],
             enable_cross_partition_query=True,
         )
     )
     if not rows:
-        return False, [f"  (no result rows found for stamp {stamp})"]
+        return False, [f"  (no result rows found for run id {run_id})"]
 
     agg = {}
     for r in rows:
@@ -356,36 +356,37 @@ def check_provenance(container, prefix: str, stamp: str):
 
 def main():
     ap = argparse.ArgumentParser(description="Post-run integrity gate for the perf drill.")
-    ap.add_argument("--stamp", default=None, help="run stamp YYYYMMDD-HHMMSS (default: latest)")
+    ap.add_argument("--run-id", default=None, help="run id YYYYMMDD-HHMMSSmmm (default: latest)")
+    ap.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
     ap.add_argument("--log-dir", default=None, help="per-cell log dir to scan for reporter warnings")
     ap.add_argument(
         "--prefix",
         default="lat-",
         help="workload_id prefix identifying the run. Used to find the latest "
-        "stamp and to label the report.",
+        "run id and to label the report.",
     )
     args = ap.parse_args()
 
     report_interval_s = float(os.environ.get("PERF_REPORT_INTERVAL", "300") or "300")
     container = _connect()
 
-    stamp = args.stamp or _latest_stamp(container, args.prefix)
-    if not stamp:
+    run_id = args.run_id or _latest_run_id(container, args.prefix)
+    if not run_id:
         print(f"ERROR: no {args.prefix}* runs found in the results container.", file=sys.stderr)
         sys.exit(2)
 
-    print(f"=== integrity gate (prefix {args.prefix}, stamp {stamp}) ===")
+    print(f"=== integrity gate (prefix {args.prefix}, run id {run_id}) ===")
     print("-- 0. work-done: count > 0, near-zero errors, both backends present --")
-    qual_ok, qual_lines = check_quality(container, args.prefix, stamp)
+    qual_ok, qual_lines = check_quality(container, args.prefix, run_id)
     print("\n".join(qual_lines))
     print("-- 1. row-continuity (no dropped windows) --")
-    cont_ok, cont_lines = check_continuity(container, args.prefix, stamp, report_interval_s)
+    cont_ok, cont_lines = check_continuity(container, args.prefix, run_id, report_interval_s)
     print("\n".join(cont_lines))
     print("-- 2. reporter dropped-write warnings --")
     warn_ok, warn_lines = check_warnings(args.log_dir)
     print("\n".join(warn_lines))
-    print("-- 3. backend provenance: each row ran on the engine it claims --")
-    prov_ok, prov_lines = check_provenance(container, args.prefix, stamp)
+    print("-- 3. backend check: each row ran on the engine it claims --")
+    prov_ok, prov_lines = check_backend_execution(container, args.prefix, run_id)
     print("\n".join(prov_lines))
 
     ok = qual_ok and cont_ok and warn_ok and prov_ok

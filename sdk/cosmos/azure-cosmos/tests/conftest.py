@@ -13,16 +13,28 @@ from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
 # anything.
 pytest_plugins = ["common.parity_capture_plugin"]
 
-# This client only sets up shared test data -- it reads the account's
-# regions and creates the databases and containers the tests share. Force
-# it to the core-python backend so a run started with COSMOS_BACKEND=rust
-# still works here: the rust backend can't read the account yet, and that
-# read runs before any test starts. Tests that need rust still ask for it.
-cosmos_sync_client = CosmosSyncClient(
-    test_config.TestConfig.host,
-    test_config.TestConfig.masterKey,
-    _backend=BACKEND_NAME_CORE_PYTHON,
-)
+cosmos_sync_client = None
+_live_resources_initialized = False
+
+
+def _get_setup_client():
+    """Build the shared setup client the first time something actually needs it.
+
+    Creating a client used to happen when this file was imported, which meant
+    every test run tried to reach a Cosmos account -- including runs of the
+    unit tests, which do not talk to a service at all and would just hang when
+    no account was reachable. Building it on demand keeps those runs offline.
+    """
+    global cosmos_sync_client  # pylint: disable=global-statement
+    if cosmos_sync_client is None:
+        # Shared test-data setup must remain on core Python because it reads
+        # account metadata before Rust-specific tests choose their own backend.
+        cosmos_sync_client = CosmosSyncClient(
+            test_config.TestConfig.host,
+            test_config.TestConfig.masterKey,
+            _backend=BACKEND_NAME_CORE_PYTHON,
+        )
+    return cosmos_sync_client
 
 
 def pytest_configure(config):
@@ -33,26 +45,37 @@ def pytest_configure(config):
     """
 
 
-def pytest_sessionstart(session):
+def pytest_collection_finish(session):
+    """Create the shared databases and containers only if the run needs them.
+
+    Runs after pytest has worked out which tests it is about to run. If every
+    one of them is a unit test (files named ``*_unit.py``), there is nothing to
+    set up and no account to reach, so this returns immediately. That is what
+    lets the routing tests for ``list_databases`` and the other operations run
+    with no Cosmos account and no emulator.
     """
-    Called after the Session object has been created and
-    before performing collection and entering the run test loop.
-    """
+    if not session.items or all(item.path.name.endswith("_unit.py") for item in session.items):
+        return
+
+    global _live_resources_initialized  # pylint: disable=global-statement
+    client = _get_setup_client()
     config = test_config.TestConfig
-    config.get_account_info(cosmos_sync_client)
-    config.create_database_if_not_exist(cosmos_sync_client)
-    config.create_single_partition_container_if_not_exist(cosmos_sync_client)
-    config.create_multi_partition_container_if_not_exist(cosmos_sync_client)
-    config.create_single_partition_prefix_pk_container_if_not_exist(cosmos_sync_client)
-    config.create_multi_partition_prefix_pk_container_if_not_exist(cosmos_sync_client)
+    config.get_account_info(client)
+    config.create_database_if_not_exist(client)
+    config.create_single_partition_container_if_not_exist(client)
+    config.create_multi_partition_container_if_not_exist(client)
+    config.create_single_partition_prefix_pk_container_if_not_exist(client)
+    config.create_multi_partition_prefix_pk_container_if_not_exist(client)
+    _live_resources_initialized = True
+
 
 def pytest_sessionfinish(session, exitstatus):
     """
     Called after whole test run finished, right before
     returning the exit status to the system.
     """
-    config = test_config.TestConfig
-    config.try_delete_database(cosmos_sync_client)
+    if _live_resources_initialized:
+        test_config.TestConfig.try_delete_database(cosmos_sync_client)
 
 
 def pytest_unconfigure(config):

@@ -132,7 +132,7 @@ import pytest
 #:   v2 -- (June 2026) added ``test_doc``; sentinels gained per-session
 #:         random token (see ``SENTINEL_TOKEN`` below); ``response_headers``
 #:         on the raised path is now guarded against the stale-headers
-#:         carry-over bug (Bug 3 of the principal-engineer review).
+#:         carry-over described below.
 #:   v3 -- records the Rust binding operation-count delta so backend selection
 #:         cannot be mistaken for actual Rust execution.
 PLUGIN_VERSION = "v3"
@@ -159,7 +159,7 @@ ENV_BACKEND_LABEL_OVERRIDE = "COSMOS_PARITY_CAPTURE_BACKEND_LABEL"
 #: synthetic transcripts. In normal use, a fresh 8-hex token is
 #: generated at session start and embedded in the sentinels so any
 #: stray ``===PARITY-CAPTURE-START===`` literal in test stdout cannot
-#: confuse the reporter (Bug 6 of the principal-engineer review).
+#: confuse the reporter.
 ENV_SENTINEL_TOKEN_OVERRIDE = "COSMOS_PARITY_CAPTURE_SENTINEL_TOKEN"
 
 #: Per-session sentinel token. Built at first emit (or at
@@ -239,6 +239,25 @@ _register_op(
     "create_database",
     sync=_sync_create_database_target,
     aio=_aio_create_database_target,
+)
+
+
+# list_databases ---------------------------------------------------------------
+
+def _sync_list_databases_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import cosmos_client as _sync_client_mod
+    return _sync_client_mod, "CosmosClient", "list_databases"
+
+
+def _aio_list_databases_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _cosmos_client as _aio_client_mod
+    return _aio_client_mod, "CosmosClient", "list_databases"
+
+
+_register_op(
+    "list_databases",
+    sync=_sync_list_databases_target,
+    aio=_aio_list_databases_target,
 )
 
 
@@ -625,8 +644,7 @@ def _rust_operation_count() -> Optional[int]:
 
 def _rust_fallback_count() -> int:
     from azure.cosmos._backend.base import rust_compatibility_fallback_count
-    from azure.cosmos._query_rust_routing import rust_query_fallback_count
-    return rust_compatibility_fallback_count() + rust_query_fallback_count()
+    return rust_compatibility_fallback_count()
 
 
 def _execution_evidence(before: Optional[int], fallback_before: int) -> Dict[str, Any]:
@@ -661,7 +679,7 @@ def _snapshot_headers_identity(container_self: Any) -> int:
     before and after means no HTTP call happened on this invocation
     -- e.g. the wrapper's input validation raised client-side and
     the headers we'd be about to snapshot are a stale carry-over
-    from a previous call. (Bug 3 of the principal-engineer review.)
+    from a previous call.
     """
     try:
         cc = container_self.client_connection
@@ -714,7 +732,7 @@ def _emit_block(payload: Dict[str, Any]) -> None:
 # not fire. For ``read_item`` today every test goes through
 # ``ContainerProxy.read_item`` directly so this is not a current
 # issue; flag it as a known limitation for future ops with multiple
-# entry points (Bug 9 of the principal-engineer review).
+# entry points.
 #
 # Thread-safety note: ``_STATE`` is accessed without locking inside
 # the wrappers. pytest-xdist multi-process is fine (each worker has
@@ -722,7 +740,9 @@ def _emit_block(payload: Dict[str, Any]) -> None:
 # inside a single pytest worker would race on
 # ``_STATE.current_nodeid`` and the ordinal counter. The current
 # cosmos test suite is single-threaded per worker so this is not a
-# concrete issue (Bug 10 of the principal-engineer review).
+# concrete issue.
+
+_LAZY_CAPTURE_OPS = frozenset(("read_feed_ranges", "list_databases"))
 
 def _build_sync_wrapper(op_name: str, surface: str,
                         original: Callable[..., Any]) -> Callable[..., Any]:
@@ -746,15 +766,15 @@ def _build_sync_wrapper(op_name: str, surface: str,
         # ``max_integrated_cache_staleness_in_ms``) leaves the
         # PREVIOUS call's headers in ``last_response_headers`` and
         # the audit doc misleadingly displays them as if they were
-        # this test's. (Bug 3 of the principal-engineer review.)
+        # this test's.
         headers_id_before = _snapshot_headers_identity(self_container)
         try:
             result = original(self_container, *args, **kwargs)
-            # ``read_feed_ranges`` is lazy on both sync and aio surfaces:
-            # the method returns a pager, and the HTTP call happens when
-            # the pager is drained. Capture at drain-time so request/headers
-            # reflect the actual operation, not the pre-call account probe.
-            if op_name == "read_feed_ranges" and hasattr(result, "__aiter__"):
+            # These operations are lazy on both sync and aio surfaces: the
+            # method returns a pager, and the HTTP call happens when the pager
+            # is drained. Capture at drain-time so the evidence covers the
+            # actual operation rather than only pager construction.
+            if op_name in _LAZY_CAPTURE_OPS and hasattr(result, "__aiter__"):
                 async def _captured_async_iterable():
                     try:
                         materialized = [item async for item in result]
@@ -802,7 +822,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
 
                 return _captured_async_iterable()
 
-            if op_name == "read_feed_ranges" and hasattr(result, "__iter__"):
+            if op_name in _LAZY_CAPTURE_OPS and hasattr(result, "__iter__"):
                 def _captured_sync_iterable():
                     try:
                         materialized = list(result)
@@ -845,7 +865,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                     }
                     payload.update(_execution_evidence(rust_count_before, fallback_count_before))
                     _emit_block(payload)
-                    return iter(materialized)
+                    yield from materialized
 
                 return _captured_sync_iterable()
 
@@ -875,7 +895,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                 # did not refresh ``last_response_headers``, anything
                 # there is a stale carry-over from a previous call.
                 # Emit an empty dict so the audit doc doesn't display
-                # stale headers (Bug 3).
+                # stale headers.
                 response_headers = {}
             payload = {
                 "nodeid": nodeid,
