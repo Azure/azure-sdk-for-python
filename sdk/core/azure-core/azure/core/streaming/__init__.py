@@ -25,9 +25,13 @@
 # --------------------------------------------------------------------------
 
 from ._stream import Stream, AsyncStream
+from ._jsonl import JSONLEvent
+from ._sse import ServerSentEvent
 
 
 __all__ = [
     "Stream",
     "AsyncStream",
+    "JSONLEvent",
+    "ServerSentEvent",
 ]

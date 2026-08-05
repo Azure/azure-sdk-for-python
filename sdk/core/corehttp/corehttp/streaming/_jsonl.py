@@ -113,7 +113,7 @@ class JSONLDecoder:
 
         :param iter_bytes: An iterator of byte chunks.
         :type iter_bytes: Iterator[bytes]
-        :rtype: Iterator[~corehttp.streaming._jsonl.JSONLEvent]
+        :rtype: Iterator[~corehttp.streaming.JSONLEvent]
         :return: An iterator of JSONL events.
         """
 
@@ -129,7 +129,7 @@ class AsyncJSONLDecoder:
 
         :param iter_bytes: An asynchronous iterator of byte chunks.
         :type iter_bytes: AsyncIterator[bytes]
-        :rtype: AsyncIterator[~corehttp.streaming._jsonl.JSONLEvent]
+        :rtype: AsyncIterator[~corehttp.streaming.JSONLEvent]
         :return: An asynchronous iterator of JSONL events.
         """
 

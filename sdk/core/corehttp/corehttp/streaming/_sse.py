@@ -181,7 +181,7 @@ class _SSEEventBuilder:
         :type line: str
         :return: A :class:`ServerSentEvent` when ``line`` is blank and an event is
             pending, otherwise ``None``.
-        :rtype: ~corehttp.streaming._sse.ServerSentEvent or None
+        :rtype: ~corehttp.streaming.ServerSentEvent or None
         """
         if line == "":
             return self._dispatch()
@@ -238,7 +238,7 @@ class SSEDecoder:
 
         :param iter_bytes: An iterator of byte chunks.
         :type iter_bytes: Iterator[bytes]
-        :rtype: Iterator[~corehttp.streaming._sse.ServerSentEvent]
+        :rtype: Iterator[~corehttp.streaming.ServerSentEvent]
         :return: An iterator of server-sent events.
         """
         builder = _SSEEventBuilder()
@@ -260,7 +260,7 @@ class AsyncSSEDecoder:
 
         :param iter_bytes: An asynchronous iterator of byte chunks.
         :type iter_bytes: AsyncIterator[bytes]
-        :rtype: AsyncIterator[~corehttp.streaming._sse.ServerSentEvent]
+        :rtype: AsyncIterator[~corehttp.streaming.ServerSentEvent]
         :return: An asynchronous iterator of server-sent events.
         """
         builder = _SSEEventBuilder()
