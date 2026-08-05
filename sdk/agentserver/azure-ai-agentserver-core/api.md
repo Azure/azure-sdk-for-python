@@ -129,6 +129,7 @@ namespace azure.ai.agentserver.core
 
         def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
 
+
     class azure.ai.agentserver.core.FoundryAgentRequestContext:
         call_id: str | None
         session_id: str | None
