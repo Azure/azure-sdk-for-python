@@ -24,9 +24,6 @@ from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
 )
 
 
-# Mimics callable TaskMetadata for fixtures (see test_resilient_orchestrator.py).
-
-
 def _resilient_input_from(ctx_params):
     """Build a typed ResilientResponseInput from a legacy ctx_params dict (test helper)."""
     from azure.ai.agentserver.responses.hosting._resilient_input import ResilientResponseInput
@@ -49,24 +46,6 @@ def _empty_refs():
     from azure.ai.agentserver.responses.hosting._resilient_input import RuntimeRefs
 
     return RuntimeRefs()
-
-
-class _FakeTaskMetadata(dict):
-    def __init__(self, *args: object, **kwargs: object) -> None:
-        super().__init__(*args, **kwargs)
-        self._namespaces: dict[str, "_FakeTaskMetadata"] = {}
-
-    def __call__(self, name: str | None = None) -> "_FakeTaskMetadata":
-        if name is None:
-            return self
-        ns = self._namespaces.get(name)
-        if ns is None:
-            ns = _FakeTaskMetadata()
-            self._namespaces[name] = ns
-        return ns
-
-    async def flush(self) -> None:
-        return None
 
 
 class TestConflictHandling:
@@ -174,9 +153,7 @@ class TestNonBackgroundRecovery:
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx._cancellation_signal = asyncio.Event()
         ctx.task_id = "non-bg-task-1"
-        # (Spec 039 R1) background=False is sourced from the request on the
-        # durable task input — no framework metadata namespace.
-        ctx.metadata = _FakeTaskMetadata()
+        # background=False is sourced from the durable task input.
         ctx.input = {
             "response_id": "resp_nonbg",
             "request": {"input": "hi", "store": True, "background": False},

@@ -16,19 +16,10 @@ recovery, ``stream.last_cursor()`` rehydrates the in-process sequence
 counter from disk so we resume numbering from where we left off — no
 gap, no duplicate cursor value.
 
-Per the resilient-task primitive's persistence model (see
-``core/docs/tasks-guide.md``), ``ctx.metadata`` is a
-*small-watermark* store — never a bulk-data store. This handler
-keeps only three small integer watermarks in ``ctx.metadata``
-(``completed_phases``, ``in_progress_phase``, ``completed_subcalls``)
-and parks the in-flight subcall text (potentially several KB) in a
-separate file-backed :class:`CheckpointStore` keyed by the per-turn
-``invocation_id``. The checkpoint-store entry, the wire stream, and
-the metadata watermarks are all reset together at every turn-
-completion boundary (normal completion AND wind-down-via-suspend) so
-the next turn — steered re-entry or otherwise — starts cleanly. We
-explicitly do NOT reset on crash paths: the watermarks left behind
-are exactly what the recovery re-entry needs to resume mid-turn.
+The handler explicitly persists its recovery watermarks and in-flight text
+in Foundry State Store under the per-turn ``invocation_id``. Task metadata
+is not used as application storage. The checkpoint item and wire stream are
+reset together at every turn-completion boundary and retained on crash paths.
 
 Steering is transparent: a new POST while a turn is running enqueues
 the input on the framework's steering queue and sets ``ctx.cancel``.
@@ -62,8 +53,9 @@ import logging
 import os
 import time
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any, Awaitable, Callable
+
+from typing_extensions import TypedDict
 
 from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
@@ -140,10 +132,9 @@ def _get_client() -> Any:
     return _openai_client
 
 
-# --- File-backed checkpoint store (heavy artifacts live here) --------------
+# --- Explicit application checkpoint store ---------------------------------
 
-_CHECKPOINT_DIR = Path.home() / ".agentserver" / "_checkpoints"
-_checkpoint_store = CheckpointStore(_CHECKPOINT_DIR)
+_checkpoint_store = CheckpointStore("resilient-research")
 
 
 # --- Research phase plan ---------------------------------------------------
@@ -209,42 +200,52 @@ def _phase_title(i: int) -> str:
 EmitFn = Callable[[dict], Awaitable[None]]
 
 
-async def _finish_turn(stream: Any, ctx: TaskContext, inv_id: str) -> None:
+class TaskInput(TypedDict):
+    """Persisted input required to run or recover one research turn."""
+
+    topic: str
+    invocation_id: str
+    session_id: str
+    call_id: str
+
+
+async def _finish_turn(
+    stream: Any,
+    inv_id: str,
+    session_id: str,
+    terminal_status: str,
+    *,
+    error: str | None = None,
+) -> None:
     """Tear down per-turn resources at every non-crash exit.
 
     Steered re-entries, operator cancels, timeouts, and normal
     completions all flow through here. We:
 
-    1. Close the wire stream so SSE subscribers see the terminator
-       before the framework reports the turn as suspended / completed.
-    2. Wipe ``ctx.metadata`` watermarks so the NEXT turn — steered
-       re-entry on the same task, or a fresh ``start()`` — naturally
-       starts at phase 0 without any "is this a steered turn?"
-       branching.
-    3. Delete this invocation's checkpoint-store entry so disk
-       usage doesn't grow with completed turns.
+    1. Persist a terminal marker so a crash before the framework records the
+       return cannot restart the completed invocation.
+    2. Close the wire stream so SSE subscribers see the terminator before the
+       framework reports the turn as suspended / completed.
 
     We explicitly do NOT call this on crash paths: the wire stream
-    must stay OPEN (per the orchestrator's
-    ``leave_stream_open_for_recovery`` contract) and the watermarks
-    must remain so the recovery re-entry can resume mid-turn.
+    must stay OPEN (per the orchestrator's ``leave_stream_open_for_recovery``
+    contract) and the watermarks must remain so the recovery re-entry can
+    resume mid-turn.
     """
+    checkpoint = {"terminal_status": terminal_status}
+    if error is not None:
+        checkpoint["error"] = error
+    await _checkpoint_store.put(inv_id, checkpoint, session_id=session_id)
     await stream.close()
-    ctx.metadata.pop("completed_phases", None)
-    ctx.metadata.pop("in_progress_phase", None)
-    ctx.metadata.pop("completed_subcalls", None)
-    _checkpoint_store.delete(inv_id)
 
 
 @multi_turn_task(name="deep_research", steerable=True)
-async def deep_research(ctx: TaskContext[dict]) -> None:
+async def deep_research(ctx: TaskContext[TaskInput]) -> None:
     """Long-running deep-research task: crash-resilient, steerable.
 
     Checkpointing is **per subcall**, not just per phase. After each
-    LLM subcall finishes we (a) advance the three small integer
-    watermarks on ``ctx.metadata`` and (b) write the in-flight phase
-    text to the file-backed checkpoint store keyed by the
-    per-invocation id. On recovery we resume the in-progress phase at
+    LLM subcall finishes we update one State Store item containing the
+    recovery watermarks and in-flight phase text. On recovery we resume at
     the next un-finished subcall, re-using the text we had streamed
     before the crash — so the worst case is one wasted subcall (the
     one that was actively streaming when the container died).
@@ -258,8 +259,17 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
     """
     topic: str = ctx.input["topic"]
     inv_id: str = ctx.input["invocation_id"]
+    session_id: str = ctx.input["session_id"]
 
     stream = await streams.get_or_create(inv_id)
+    checkpoint = await _checkpoint_store.get(inv_id)
+    terminal_status = checkpoint.get("terminal_status")
+    if terminal_status is not None:
+        await stream.close()
+        if terminal_status == "failed":
+            raise RuntimeError(checkpoint.get("error", "Previous task attempt failed"))
+        return
+
     # On crash recovery, last_cursor() returns the highest
     # sequence_number that made it to disk before the crash.
     last_cursor = await stream.last_cursor()
@@ -273,7 +283,7 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
     await _emit_run_start(emit, ctx, topic=topic)
 
     try:
-        completed: int = ctx.metadata.get("completed_phases", 0)
+        completed = int(checkpoint.get("completed_phases", 0) or 0)
 
         if ctx.entry_mode == "recovered" and completed > 0:
             await emit(
@@ -304,14 +314,27 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
                 }
             )
 
-            await _run_phase(emit, ctx, inv_id, phase_idx, topic, title)
+            await _run_phase(
+                emit,
+                ctx,
+                inv_id,
+                session_id,
+                checkpoint,
+                phase_idx,
+                topic,
+                title,
+            )
 
             # --- PHASE-COMPLETE CHECKPOINT ---
-            ctx.metadata["completed_phases"] = phase_idx + 1
-            ctx.metadata["in_progress_phase"] = None
-            ctx.metadata["completed_subcalls"] = 0
-            _checkpoint_store.delete(inv_id)
-            await ctx.metadata.flush()
+            checkpoint.update(
+                {
+                    "completed_phases": phase_idx + 1,
+                    "in_progress_phase": None,
+                    "completed_subcalls": 0,
+                    "current_text": "",
+                }
+            )
+            await _checkpoint_store.put(inv_id, checkpoint, session_id=session_id)
 
             phase_duration = round(time.monotonic() - phase_started_mono, 1)
             await emit(
@@ -349,11 +372,11 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
                 "phases_completed": NUM_PHASES,
             }
         )
-        # Normal completion: close stream + wipe watermarks + clear
-        # checkpoint entry. Skipped on crash (the handler exits via an
+        # Normal completion: persist a terminal marker and close the stream.
+        # Skipped on crash (the handler exits via an
         # exception and the orchestrator's leave_stream_open_for_recovery
         # path keeps the stream open for the next-lifetime recovery).
-        await _finish_turn(stream, ctx, inv_id)
+        await _finish_turn(stream, inv_id, session_id, "completed")
     except Exception as exc:  # pylint: disable=broad-except
         # Logical-failure path: a downstream call (e.g. the LLM) raised.
         # Emit a terminal SSE frame so subscribers fast-fail instead of
@@ -379,7 +402,13 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
                     "server_uptime_sec": _server_uptime_sec(),
                 }
             )
-            await _finish_turn(stream, ctx, inv_id)
+            await _finish_turn(
+                stream,
+                inv_id,
+                session_id,
+                "failed",
+                error=f"{type(exc).__name__}: {str(exc)[:2000]}",
+            )
         except Exception:  # pylint: disable=broad-except
             # If terminal-frame emission itself fails (e.g. stream is
             # already gone) we still want to surface the original task
@@ -414,12 +443,11 @@ async def _wind_down(
 ):
     """Cooperative wind-down at a phase boundary.
 
-    Tears down per-turn resources (stream close + metadata wipe +
-    checkpoint-store clear) via :func:`_finish_turn` BEFORE the handler
-    returns. The multi-turn ``return`` is the
+    Persists a terminal marker and closes the stream via :func:`_finish_turn`
+    BEFORE the handler returns. The multi-turn ``return`` is the
     implicit-suspend signal — so the SSE subscriber observes a clean
     terminator before the framework reports the turn as suspended, and
-    the steered re-entry (or any future ``start()``) finds metadata wiped.
+    a crash between cleanup and return cannot restart the old invocation.
     """
     if ctx.timeout_exceeded:
         cause = "timeout"
@@ -440,7 +468,7 @@ async def _wind_down(
         }
     )
 
-    await _finish_turn(stream, ctx, inv_id)
+    await _finish_turn(stream, inv_id, ctx.input["session_id"], "suspended")
     # multi-turn `return` is the implicit-suspend signal.
     # The chain stays alive across turns; ctx.suspend() is not part of
     # the public surface.
@@ -483,6 +511,8 @@ async def _run_phase(
     emit: EmitFn,
     ctx: TaskContext,
     inv_id: str,
+    session_id: str,
+    checkpoint: dict[str, Any],
     phase_idx: int,
     topic: str,
     phase_title: str,
@@ -492,20 +522,23 @@ async def _run_phase(
     Checkpoints after each completed subcall so a crash mid-phase
     recovers at the next un-finished subcall (loses at most the one
     that was actively streaming). The in-flight phase text lives in
-    the file-backed checkpoint store keyed by ``inv_id``; the
-    subcall index lives in ``ctx.metadata`` as a small watermark.
+    one State Store item keyed by ``inv_id``.
     """
-    in_progress = ctx.metadata.get("in_progress_phase")
+    in_progress = checkpoint.get("in_progress_phase")
     if in_progress == phase_idx:
-        start_sub = int(ctx.metadata.get("completed_subcalls", 0) or 0)
-        current_text = _checkpoint_store.get(inv_id)
+        start_sub = int(checkpoint.get("completed_subcalls", 0) or 0)
+        current_text = str(checkpoint.get("current_text", "") or "")
     else:
         start_sub = 0
         current_text = ""
-        ctx.metadata["in_progress_phase"] = phase_idx
-        ctx.metadata["completed_subcalls"] = 0
-        _checkpoint_store.delete(inv_id)
-        await ctx.metadata.flush()
+        checkpoint.update(
+            {
+                "in_progress_phase": phase_idx,
+                "completed_subcalls": 0,
+                "current_text": "",
+            }
+        )
+        await _checkpoint_store.put(inv_id, checkpoint, session_id=session_id)
 
     for sub_idx in range(start_sub, CALLS_PER_PHASE):
         role_name, role_prompt = _SUB_CALL_ROLES[sub_idx]
@@ -549,9 +582,9 @@ async def _run_phase(
 
         current_text = sub_text
 
-        _checkpoint_store.put(inv_id, current_text)
-        ctx.metadata["completed_subcalls"] = sub_idx + 1
-        await ctx.metadata.flush()
+        checkpoint["current_text"] = current_text
+        checkpoint["completed_subcalls"] = sub_idx + 1
+        await _checkpoint_store.put(inv_id, checkpoint, session_id=session_id)
 
         if sub_idx + 1 < CALLS_PER_PHASE and INTRA_PHASE_COOLDOWN_SEC > 0:
             await _cooldown(

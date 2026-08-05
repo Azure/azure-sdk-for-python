@@ -46,6 +46,11 @@ from azure.ai.agentserver.responses import (
 )
 from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
+try:
+    from _state_store import ConversationStateStore
+except ModuleNotFoundError:
+    from samples._state_store import ConversationStateStore
+
 options = ResponsesServerOptions(
     resilient_background=True,
     steerable_conversations=False,
@@ -57,6 +62,7 @@ app = ResponsesAgentServerHost(options=options)
 # internal durable tasks at host construction (so recovery runs regardless);
 # this call just makes the opt-in intent explicit.
 set_resilient_tasks_enabled(True)
+_state_store = ConversationStateStore("resilient-multiturn")
 
 
 @app.response_handler
@@ -67,12 +73,30 @@ async def handler(
 ):
     """Multi-turn handler with perpetual task lifecycle."""
     input_text = await context.get_input_text()
-    turn_count = context.conversation_chain_metadata.get("turn_count", 0) + 1
+    state = await _state_store.load(context.conversation_chain_id)
+    if state.get("terminated") and state.get("last_response_id") != context.response_id:
+        state = {}
+    if state.get("last_response_id") == context.response_id:
+        turn_count = int(state.get("turn_count", 1))
+    else:
+        turn_count = int(state.get("turn_count", 0)) + 1
 
     # Explicit session termination
     if input_text.strip().lower() == "done":
-        context.conversation_chain_metadata.clear()
-        return TextResponse(context, request, text=f"Done! Session complete after {turn_count - 1} turns. Goodbye!")
+        if state.get("last_response_id") == context.response_id and state.get("terminated"):
+            completed_turns = int(state.get("completed_turns", 0))
+        else:
+            completed_turns = max(turn_count - 1, 0)
+            await _state_store.save(
+                context.conversation_chain_id,
+                {
+                    "turn_count": completed_turns,
+                    "last_response_id": context.response_id,
+                    "terminated": True,
+                    "completed_turns": completed_turns,
+                },
+            )
+        return TextResponse(context, request, text=f"Done! Session complete after {completed_turns} turns. Goodbye!")
 
     # Get conversation history from framework store
     history_items = await context.get_history()
@@ -82,7 +106,10 @@ async def handler(
         f"Turn {turn_count}: You said '{input_text}'. " f"I have {len(history_items)} items of conversation context."
     )
 
-    context.conversation_chain_metadata["turn_count"] = turn_count
+    await _state_store.save(
+        context.conversation_chain_id,
+        {"turn_count": turn_count, "last_response_id": context.response_id},
+    )
     return TextResponse(context, request, text=reply)
 
 

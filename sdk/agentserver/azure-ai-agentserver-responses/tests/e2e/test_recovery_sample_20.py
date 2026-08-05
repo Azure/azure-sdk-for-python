@@ -12,7 +12,7 @@ Pins:
 4. Pre-entry CLIENT_CANCELLED returns without terminal (framework
    forces ``cancelled``).
 5. Mid-stream SHUTTING_DOWN closes builders, returns without terminal.
-6. ``turn_count`` metadata watermark persists across simulated turns.
+6. ``turn_count`` persists in the application-owned State Store.
 """
 
 from __future__ import annotations
@@ -28,21 +28,32 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
 )
 from azure.ai.agentserver.responses._id_generator import IdGenerator
-from azure.ai.agentserver.responses._resilience_context import _DeveloperMetadataFacade
+
+
+class _FakeConversationStateStore:
+    def __init__(self, state: dict[str, Any] | None = None) -> None:
+        self.state = dict(state or {})
+
+    async def load(self, conversation_chain_id: str) -> dict[str, Any]:
+        del conversation_chain_id
+        return dict(self.state)
+
+    async def save(self, conversation_chain_id: str, value: dict[str, Any]) -> None:
+        del conversation_chain_id
+        self.state = dict(value)
 
 
 def _make_context(
     *,
     response_id: str,
     entry_mode: str = "fresh",
-    metadata: dict[str, Any] | None = None,
 ) -> ResponseContext:
     context = MagicMock(spec=ResponseContext)
     context.response_id = response_id
     context.is_recovery = entry_mode == "recovered"
     context.is_steered_turn = False
     context.pending_input_count = 0
-    context.conversation_chain_metadata = _DeveloperMetadataFacade(metadata or {})
+    context.conversation_chain_id = "conv-test"
     context._cancellation_signal = asyncio.Event()
     context.shutdown = asyncio.Event()
     context.client_cancelled = False
@@ -79,10 +90,12 @@ def _event_type(e: Any) -> str | None:
 @pytest.mark.asyncio
 class TestSample20FreshEntry:
     async def test_fresh_entry_produces_message_and_completed(self) -> None:
-        from samples.sample_20_resilient_steering import handler  # type: ignore[import-not-found]
+        from samples import sample_20_resilient_steering as sample  # type: ignore[import-not-found]
 
+        state_store = _FakeConversationStateStore()
+        sample._state_store = state_store
         ctx = _make_context(response_id=IdGenerator.new_response_id())
-        events = await _drive(handler, _make_request(), ctx)
+        events = await _drive(sample.handler, _make_request(), ctx)
         types = [_event_type(e) for e in events]
 
         assert "response.created" in types
@@ -90,7 +103,7 @@ class TestSample20FreshEntry:
         assert "response.completed" in types
         assert types.count("response.output_item.added") == 1
         assert types.count("response.output_item.done") == 1
-        assert ctx.conversation_chain_metadata.get("turn_count") == 1
+        assert state_store.state["turn_count"] == 1
 
 
 @pytest.mark.asyncio
@@ -98,15 +111,15 @@ class TestSample20Recovery:
     async def test_recovered_entry_emits_reset_in_progress_then_fresh_content(
         self,
     ) -> None:
-        from samples.sample_20_resilient_steering import handler  # type: ignore[import-not-found]
+        from samples import sample_20_resilient_steering as sample  # type: ignore[import-not-found]
 
-        # Recovery: turn_count carried over from a prior attempt.
+        state_store = _FakeConversationStateStore({"turn_count": 1})
+        sample._state_store = state_store
         ctx = _make_context(
             response_id=IdGenerator.new_response_id(),
             entry_mode="recovered",
-            metadata={"turn_count": 1},
         )
-        events = await _drive(handler, _make_request(), ctx)
+        events = await _drive(sample.handler, _make_request(), ctx)
 
         # in_progress carries an empty resumption response (single-turn
         # handler can't safely carry partial token output forward).
@@ -117,8 +130,7 @@ class TestSample20Recovery:
 
         # The recovered attempt re-streams a single message item fresh.
         assert sum(1 for e in events if _event_type(e) == "response.output_item.added") == 1
-        # turn_count incremented from carry-over watermark.
-        assert ctx.conversation_chain_metadata.get("turn_count") == 2
+        assert state_store.state["turn_count"] == 2
 
 
 @pytest.mark.asyncio
@@ -175,3 +187,61 @@ class TestSample20Shutdown:
                 events.append(event)
         types = [_event_type(e) for e in events]
         assert types == ["response.created"]
+
+
+@pytest.mark.asyncio
+async def test_sample_22_done_marker_is_idempotent_across_recovery() -> None:
+    from samples import sample_22_resilient_multiturn as sample  # type: ignore[import-not-found]
+
+    state_store = _FakeConversationStateStore(
+        {
+            "turn_count": 2,
+            "last_response_id": "resp_previous",
+        }
+    )
+    sample._state_store = state_store
+    ctx = _make_context(response_id="resp_done")
+
+    async def _get_done_input() -> str:
+        return "done"
+
+    ctx.get_input_text = _get_done_input
+    request = _make_request()
+
+    await sample.handler(request, ctx, ctx._cancellation_signal)
+    assert state_store.state == {
+        "turn_count": 2,
+        "last_response_id": "resp_done",
+        "terminated": True,
+        "completed_turns": 2,
+    }
+
+    await sample.handler(request, ctx, ctx._cancellation_signal)
+    assert state_store.state["completed_turns"] == 2
+
+
+@pytest.mark.asyncio
+async def test_sample_22_new_response_resets_terminated_state() -> None:
+    from samples import sample_22_resilient_multiturn as sample  # type: ignore[import-not-found]
+
+    state_store = _FakeConversationStateStore(
+        {
+            "turn_count": 2,
+            "last_response_id": "resp_done",
+            "terminated": True,
+            "completed_turns": 2,
+        }
+    )
+    sample._state_store = state_store
+    ctx = _make_context(response_id="resp_new")
+
+    async def _get_input() -> str:
+        return "start again"
+
+    ctx.get_input_text = _get_input
+    await sample.handler(_make_request(), ctx, ctx._cancellation_signal)
+
+    assert state_store.state == {
+        "turn_count": 1,
+        "last_response_id": "resp_new",
+    }

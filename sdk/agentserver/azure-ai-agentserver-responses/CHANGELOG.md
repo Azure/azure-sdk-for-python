@@ -4,6 +4,10 @@
 
 ### Other Changes
 
+- Removed `ResponseContext.conversation_chain_metadata` and the
+  `ConversationChainMetadataNamespace` protocol. Resilient response
+  applications now persist cross-turn state explicitly with
+  `FoundryStateStore`.
 - Cleaned up the public API surface by moving validation-only error helpers to a private implementation module and renaming runtime terminal/replay helpers as private.
 - Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10`, which adds an opt-in gate for resilient-task startup recovery. The resilient Responses samples now call `set_resilient_tasks_enabled(True)` to explicitly opt in, mirroring the invocations resilient samples.
 
@@ -51,10 +55,6 @@
   available on recovery) and is always stripped before any client-facing
   HTTP/SSE payload, and on ingress. Distinct from the public
   `ResponseObject.metadata`.
-
-- **`context.conversation_chain_metadata`.** Cross-turn, named-scope,
-  explicit-`flush()` resilient metadata over a conversation chain, typed by the
-  public `ConversationChainMetadataNamespace` Protocol.
 
 - **`await context.exit_for_recovery()`.** A single uniform graceful-shutdown
   recovery primitive that works in every handler shape (coroutine, async

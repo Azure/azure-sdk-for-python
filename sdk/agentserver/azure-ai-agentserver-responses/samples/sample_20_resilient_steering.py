@@ -68,6 +68,11 @@ from azure.ai.agentserver.responses import (
 )
 from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
+try:
+    from _state_store import ConversationStateStore
+except ModuleNotFoundError:
+    from samples._state_store import ConversationStateStore
+
 options = ResponsesServerOptions(
     resilient_background=True,
     steerable_conversations=True,
@@ -81,6 +86,7 @@ app = ResponsesAgentServerHost(options=options)
 set_resilient_tasks_enabled(True)
 
 _SIMULATE_SHUTDOWN_MS = int(os.environ.get("SIMULATE_SHUTDOWN_MS", "0"))
+_state_store = ConversationStateStore("resilient-steering")
 
 
 async def _simulate_llm_stream(prompt: str):
@@ -128,10 +134,16 @@ async def handler(
 
     yield stream.emit_in_progress()
 
-    # Cross-turn state: bump the turn counter. This survives crashes
-    # and turn boundaries since it lives in `context.conversation_chain_metadata`.
-    turn_count = int(context.conversation_chain_metadata.get("turn_count", 0)) + 1
-    context.conversation_chain_metadata["turn_count"] = turn_count
+    # Cross-turn state lives in an explicit application-owned State Store.
+    state = await _state_store.load(context.conversation_chain_id)
+    if state.get("last_response_id") == context.response_id:
+        turn_count = int(state.get("turn_count", 1))
+    else:
+        turn_count = int(state.get("turn_count", 0)) + 1
+        await _state_store.save(
+            context.conversation_chain_id,
+            {"turn_count": turn_count, "last_response_id": context.response_id},
+        )
 
     # Optional local shutdown simulation.
     shutdown_timer: asyncio.Task | None = None

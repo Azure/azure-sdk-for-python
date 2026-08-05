@@ -4,55 +4,6 @@ namespace azure.ai.agentserver.responses
     def azure.ai.agentserver.responses.get_input_expanded(request: CreateResponse) -> list[Item]: ...
 
 
-    class azure.ai.agentserver.responses.ConversationChainMetadataNamespace(Protocol): implements Collection 
-
-        def __call__(self, name: Optional[str] = None) -> ConversationChainMetadataNamespace: ...
-
-        def __delitem__(self, key: str) -> None: ...
-
-        def __getitem__(self, key: str) -> Any: ...
-
-        def __setitem__(
-                self, 
-                key: str, 
-                value: Any
-            ) -> None: ...
-
-        def clear(self) -> None: ...
-
-        async def flush(self) -> None: ...
-
-        def get(
-                self, 
-                key: str, 
-                default: Any = None
-            ) -> Any: ...
-
-        def items(self) -> Any: ...
-
-        def keys(self) -> Any: ...
-
-        def pop(
-                self, 
-                key: str, 
-                *default: Any
-            ) -> Any: ...
-
-        def setdefault(
-                self, 
-                key: str, 
-                default: Any = None
-            ) -> Any: ...
-
-        def update(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def values(self) -> Any: ...
-
-
     class azure.ai.agentserver.responses.CreateResponse(TypedDict, total=False):
         key "agent_reference": ForwardRef('AgentReference', module='types')
         key "background": Optional[bool]
@@ -442,7 +393,6 @@ namespace azure.ai.agentserver.responses
         property conversation_chain_id: str    # Read-only
         client_cancelled: bool
         client_headers: dict[str, str]
-        conversation_chain_metadata: ConversationChainMetadataNamespace
         conversation_id: str | None
         created_at: datetime
         is_recovery: bool

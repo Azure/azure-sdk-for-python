@@ -3,9 +3,8 @@
 """End-to-end test for the ``resilient_multiturn`` sample.
 
 The multi-turn sample is **fully self-contained** (no Azure OpenAI, no
-Copilot CLI, no Foundry endpoint) — it demonstrates the resilient
-primitive's named-namespace metadata feature with an in-process
-``LocalFileTaskProvider`` rooted at the test's ``tmp_path``.
+Copilot CLI, no Foundry endpoint). The task and its explicit application
+state both use local file-backed storage rooted at the test's ``tmp_path``.
 
 This file is *not* a live test: it imports the sample's task directly
 and drives it through three turns + a recovery boundary in the same
@@ -15,10 +14,10 @@ the files exist; this file proves the task actually works).
 
 Coverage:
 
-- Turn 1 → suspend → metadata.flush persistence
-- Turn 2 → session.history accumulates from turn 1
-- Recovery (``entry_mode == "recovered"``) round-trip
+- Turn 1 persists session and invocation state
+- Turn 2 accumulates session history from turn 1
 - "done" terminator clears session history
+- Invocation status and output are stored separately
 """
 
 from __future__ import annotations
@@ -85,7 +84,7 @@ async def test_session_workflow_runs_two_turns_and_accumulates_history(
 ) -> None:
     """Two consecutive turns share the same session namespace."""
     _ensure_sample_importable()
-    from resilient_multiturn.agent import session_workflow  # noqa: WPS433
+    from resilient_multiturn.agent import session_workflow, state_store  # noqa: WPS433
 
     task_id = "session-turn-accumulate"
 
@@ -95,6 +94,7 @@ async def test_session_workflow_runs_two_turns_and_accumulates_history(
             "session_id": task_id,
             "message": "I want to plan a vacation to Japan",
             "invocation_id": "inv-1",
+            "call_id": "call-1",
         },
     )
     result1 = await run1.result()
@@ -106,14 +106,14 @@ async def test_session_workflow_runs_two_turns_and_accumulates_history(
             "session_id": task_id,
             "message": "Budget is $5000, 2 weeks",
             "invocation_id": "inv-2",
+            "call_id": "call-2",
         },
     )
     result2 = await run2.result()
     assert result2["turn"] == 2
 
-    info = await task_manager.provider.get(task_id)
-    assert info is not None
-    session = info.payload.get("metadata:session", {})
+    session = await state_store.load(f"session/{task_id}")
+    assert session is not None
     history = session.get("history", [])
     assert len(history) == 4, f"Expected 4 messages, got {history}"
     assert "Japan" in history[0]["content"]
@@ -126,7 +126,7 @@ async def test_session_workflow_done_clears_history(
 ) -> None:
     """Sending ``"done"`` terminates the session and clears history."""
     _ensure_sample_importable()
-    from resilient_multiturn.agent import session_workflow  # noqa: WPS433
+    from resilient_multiturn.agent import session_workflow, state_store  # noqa: WPS433
 
     task_id = "session-done"
 
@@ -136,6 +136,7 @@ async def test_session_workflow_done_clears_history(
             "session_id": task_id,
             "message": "First turn",
             "invocation_id": "inv-1",
+            "call_id": "call-1",
         },
     )
     await run1.result()
@@ -146,30 +147,26 @@ async def test_session_workflow_done_clears_history(
             "session_id": task_id,
             "message": "done",
             "invocation_id": "inv-2",
+            "call_id": "call-2",
         },
     )
     result2 = await run2.result()
     assert result2.get("finished") is True
     assert "Session complete" in result2["reply"]
 
-    info = await task_manager.provider.get(task_id)
-    # After a completed (non-suspended) return, the task record may
-    # either be retained with status="completed" or already reaped —
-    # both are valid for this sample. If retained, the session
-    # namespace MUST be cleared.
-    if info is not None:
-        session = info.payload.get("metadata:session", {})
-        assert session.get("history", []) == []
-        assert session.get("turn_count", 0) == 0
+    session = await state_store.load(f"session/{task_id}")
+    assert session is not None
+    assert session.get("history", []) == []
+    assert session.get("turn_count", 0) == 0
 
 
 @pytest.mark.asyncio
 async def test_invocation_status_persisted_to_default_namespace(
     task_manager,
 ) -> None:
-    """Default namespace records this-invocation status + output."""
+    """A separate State Store item records invocation status and output."""
     _ensure_sample_importable()
-    from resilient_multiturn.agent import session_workflow  # noqa: WPS433
+    from resilient_multiturn.agent import session_workflow, state_store  # noqa: WPS433
 
     task_id = "session-statuses"
     run = await session_workflow.start(
@@ -178,14 +175,12 @@ async def test_invocation_status_persisted_to_default_namespace(
             "session_id": task_id,
             "message": "Hello",
             "invocation_id": "inv-status",
+            "call_id": "call-status",
         },
     )
     await run.result()
 
-    info = await task_manager.provider.get(task_id)
-    if info is not None:
-        payload = info.payload
-        default_ns = payload.get("metadata", {})
-        assert default_ns.get("status") == "completed"
-        assert default_ns.get("invocation_id") == "inv-status"
-        assert default_ns.get("output", {}).get("turn") == 1
+    invocation = await state_store.load("invocation/inv-status")
+    assert invocation is not None
+    assert invocation.get("status") == "completed"
+    assert invocation.get("output", {}).get("turn") == 1

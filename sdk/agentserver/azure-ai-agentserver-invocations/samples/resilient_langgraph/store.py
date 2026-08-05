@@ -1,57 +1,92 @@
-"""File-based key→JSON store for powering the invocation API.
-
-This module provides a minimal persistence layer that the HTTP host uses to
-store per-invocation results.  It is **not** part of the resilient task
-framework — it is the developer's own persistence for powering the API
-contract (``GET /invocations/{invocation_id}``).
-
-.. warning::
-
-    For demonstration only.  In production, use a database (Redis, Cosmos DB,
-    PostgreSQL, etc.).
-"""
+"""Foundry State Store persistence for LangGraph sample state."""
 
 from __future__ import annotations
 
+import asyncio
+import hashlib
 import json
-import tempfile
+import os
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
+
+from azure.ai.agentserver.core.storage import FoundryStateStore, FoundryStorageNotFoundError
 
 
-class FileStore:
-    """Minimal file-backed key→JSON store.
+class StateStore:
+    """Lazy client for one explicit Foundry state store."""
 
-    Each entry is a single JSON file.  Writes are atomic (temp + rename).
-    """
+    def __init__(self, name: str) -> None:
+        self._name = name
+        self._store: FoundryStateStore | None = None
+        self._lock = asyncio.Lock()
 
-    def __init__(self, base_dir: Path) -> None:
-        self._base = base_dir
-        self._base.mkdir(parents=True, exist_ok=True)
+    def _local_path(self, key: str) -> Path | None:
+        root = os.environ.get("AGENTSERVER_STATE_ROOT")
+        if not root or os.environ.get("FOUNDRY_PROJECT_ENDPOINT"):
+            return None
+        identity = f"{self._name}\0{key}".encode()
+        return Path(root) / "sample-state" / f"{hashlib.sha256(identity).hexdigest()}.json"
 
-    def save(self, key: str, data: dict[str, Any]) -> None:
-        """Atomically write *data* as JSON — temp file + rename."""
-        target = self._base / f"{key}.json"
-        fd, tmp_path = tempfile.mkstemp(dir=str(self._base), suffix=".tmp", prefix=f"{key}_")
+    async def _get_store(self) -> FoundryStateStore:
+        if self._store is None:
+            async with self._lock:
+                if self._store is None:
+                    self._store = await FoundryStateStore.get_or_create(
+                        self._name,
+                        user_isolation=True,
+                        description="LangGraph session checkpoints and invocation results",
+                    )
+        return self._store
+
+    async def save(self, key: str, data: dict[str, Any], *, session_id: str) -> None:
+        """Persist one JSON object."""
+        local_path = self._local_path(key)
+        if local_path is not None:
+            await asyncio.to_thread(self._save_local, local_path, data)
+            return
+        store = await self._get_store()
+        await store.set_item(key, data, tags={"session_id": session_id})
+
+    async def load(self, key: str) -> dict[str, Any] | None:
+        """Load one JSON object."""
+        local_path = self._local_path(key)
+        if local_path is not None:
+            return await asyncio.to_thread(self._load_local, local_path)
+        store = await self._get_store()
+        item = await store.get_item(key)
+        return dict(item.value) if item is not None and isinstance(item.value, dict) else None
+
+    async def delete(self, key: str) -> None:
+        """Delete one item."""
+        local_path = self._local_path(key)
+        if local_path is not None:
+            await asyncio.to_thread(self._delete_local, local_path)
+            return
+        store = await self._get_store()
         try:
-            with open(fd, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=2)
-            Path(tmp_path).replace(target)
-        except BaseException:
-            Path(tmp_path).unlink(missing_ok=True)
-            raise
+            await store.delete_item(key)
+        except FoundryStorageNotFoundError:
+            pass
 
-    def load(self, key: str) -> dict[str, Any] | None:
-        """Return the stored dict, or ``None`` if the key does not exist."""
-        path = self._base / f"{key}.json"
-        if path.exists():
-            return json.loads(path.read_text())
-        return None
+    @staticmethod
+    def _load_local(path: Path) -> dict[str, Any] | None:
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            return None
+        return dict(value) if isinstance(value, dict) else None
 
-    def delete(self, key: str) -> bool:
-        """Remove the entry for *key*.  Returns ``True`` if it existed."""
-        path = self._base / f"{key}.json"
-        if path.exists():
-            path.unlink()
-            return True
-        return False
+    @staticmethod
+    def _save_local(path: Path, data: dict[str, Any]) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary_path = path.with_name(f"{path.name}.{os.getpid()}.{uuid4().hex}.tmp")
+        try:
+            temporary_path.write_text(json.dumps(data), encoding="utf-8")
+            os.replace(temporary_path, path)
+        finally:
+            temporary_path.unlink(missing_ok=True)
+
+    @staticmethod
+    def _delete_local(path: Path) -> None:
+        path.unlink(missing_ok=True)

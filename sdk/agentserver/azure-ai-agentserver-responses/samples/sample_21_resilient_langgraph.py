@@ -79,6 +79,11 @@ from azure.ai.agentserver.responses import (
 )
 from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
+try:
+    from _state_store import ConversationStateStore
+except ModuleNotFoundError:
+    from samples._state_store import ConversationStateStore
+
 
 # ─── Graph state ────────────────────────────────────────────────────────────
 
@@ -198,6 +203,7 @@ options = ResponsesServerOptions(
     steerable_conversations=True,
 )
 app = ResponsesAgentServerHost(options=options)
+_state_store = ConversationStateStore("resilient-langgraph")
 
 # Explicitly opt into resilient-task startup recovery, for parity with the
 # invocations resilient samples. The Responses framework already registers its
@@ -244,12 +250,15 @@ async def _fork_from_checkpoint(graph: Any, config: dict[str, Any], checkpoint_i
     return True
 
 
-def _record_stable(context: ResponseContext, state: Any) -> None:
+async def _record_stable(context: ResponseContext, state: Any) -> None:
     """Record the current graph checkpoint as the stable fork point for steering."""
     cfg = getattr(state, "config", None) or {}
     checkpoint_id = cfg.get("configurable", {}).get("checkpoint_id")
     if checkpoint_id:
-        context.conversation_chain_metadata["stable_checkpoint_id"] = checkpoint_id
+        await _state_store.save(
+            context.conversation_chain_id,
+            {"stable_checkpoint_id": checkpoint_id},
+        )
 
 
 @app.response_handler
@@ -305,7 +314,8 @@ async def handler(
         graph_input: Any = None
     else:
         input_text = await context.get_input_text()
-        stable_cp = context.conversation_chain_metadata.get("stable_checkpoint_id")
+        conversation_state = await _state_store.load(chain_id)
+        stable_cp = conversation_state.get("stable_checkpoint_id")
         state = await graph.aget_state(thread_config)
         run_config = thread_config
         parked_at_interrupt = "wait_for_user" in (state.next or ())
@@ -388,7 +398,7 @@ async def handler(
         return
 
     # ── Turn complete — record the stable fork point for steering ────
-    _record_stable(context, await graph.aget_state(thread_config))
+    await _record_stable(context, await graph.aget_state(thread_config))
     yield stream.emit_completed()
 
 

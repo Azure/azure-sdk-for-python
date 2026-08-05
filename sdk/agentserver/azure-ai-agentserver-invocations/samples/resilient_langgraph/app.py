@@ -66,7 +66,6 @@ from azure.ai.agentserver.core.streaming import (
     EventStreamNotFoundError,
     streams,
 )
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
@@ -82,12 +81,6 @@ logger = logging.getLogger(__name__)
 streams.use_in_memory_replay(ttl_seconds=600)
 
 app = InvocationAgentServerHost()
-
-# Opt into resilient-task startup recovery. This sample declares a durable
-# task, so the framework would enable recovery automatically; we set the switch
-# explicitly to make the intent clear and to keep recovery working even if the
-# task is ever registered lazily (after startup).
-set_resilient_tasks_enabled(True)
 
 
 async def _sse_from_stream(
@@ -134,9 +127,14 @@ async def handle_invoke(request: Request) -> Response:
         "session_id": session_id,
         "message": message,
         "invocation_id": invocation_id,
+        "call_id": request.state.call_id,
     }
 
-    invocation_store.save(invocation_id, {"status": "queued"})
+    await invocation_store.save(
+        f"invocation/{invocation_id}",
+        {"status": "queued"},
+        session_id=session_id,
+    )
 
     # Subscribe-before-start (streaming.md §5.1): attach SSE subscriber
     # BEFORE starting the task. Handler reads invocation_id from
@@ -154,7 +152,7 @@ async def handle_invoke(request: Request) -> Response:
         )
 
     # Standard async mode — return 202 with status from store
-    stored = invocation_store.load(invocation_id)
+    stored = await invocation_store.load(f"invocation/{invocation_id}")
     status = stored["status"] if stored else "queued"
 
     return JSONResponse(
@@ -173,7 +171,7 @@ async def poll_invocation(request: Request) -> Response:
     """
     invocation_id: str = request.state.invocation_id
 
-    result = invocation_store.load(invocation_id)
+    result = await invocation_store.load(f"invocation/{invocation_id}")
     if result is None:
         return JSONResponse({"error": "Invocation not found"}, status_code=404)
 

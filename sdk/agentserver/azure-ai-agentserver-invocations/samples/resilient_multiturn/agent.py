@@ -4,19 +4,8 @@ Defines the resilient task that powers a sticky conversation session.
 Each invocation runs this function from the top — ``ctx.entry_mode``
 tells us whether this is a fresh start, a resume, or a crash recovery.
 
-This sample demonstrates the **named-namespace metadata** facility:
-
-- ``ctx.metadata`` (default namespace) holds invocation-level state —
-  the most-recent reply and turn count for the *current* invocation.
-- ``ctx.metadata("session")`` (named namespace) holds session-level
-  state — the full conversation history that persists across many
-  invocations of the same session.
-
-Both namespaces are resilient. On ``ctx.entry_mode == "recovered"`` the
-handler reads the session history out of the named namespace (it was
-already flushed by a prior lifetime), appends the current turn, and
-flushes again before suspending. There is no external file-store
-involved — the resilient primitive owns the persistence.
+The sample explicitly stores both session history and per-invocation results
+in Foundry State Store. Task metadata is not used as application storage.
 """
 
 from __future__ import annotations
@@ -24,9 +13,26 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from typing_extensions import TypedDict
+
 from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 
+try:
+    from .store import StateStore
+except ImportError:  # allows running the app as a script from inside this directory
+    from store import StateStore
+
 logger = logging.getLogger(__name__)
+state_store = StateStore("resilient-multiturn")
+
+
+class TaskInput(TypedDict):
+    """Persisted input required to run or recover one conversation turn."""
+
+    session_id: str
+    message: str
+    invocation_id: str
+    call_id: str
 
 
 def _generate_reply(turn: int, last_msg: str) -> str:
@@ -43,32 +49,40 @@ def _generate_reply(turn: int, last_msg: str) -> str:
 
 
 @multi_turn_task(name="session_workflow")
-async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
+async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
     """Single resilient function for the entire session.
 
     Each invocation runs this function from the top.
     ``ctx.entry_mode`` tells us why we were entered.
 
-    Two metadata namespaces are used:
-
-    - default (``ctx.metadata``) — per-invocation state.
-    - ``"session"`` — conversation history that survives across many
-      invocations of the same session.
+    Session and invocation state are stored as separate State Store items.
     """
 
     session_id: str = ctx.input["session_id"]
     message: str = ctx.input["message"]
     invocation_id: str = ctx.input["invocation_id"]
 
-    # Session-level state (history + turn count) lives in a named namespace
-    # so it is logically separated from per-invocation state.
-    session = ctx.metadata("session")
+    session_key = f"session/{session_id}"
+    invocation_key = f"invocation/{invocation_id}"
+    session = await state_store.load(session_key) or {}
     history: list[dict[str, str]] = session.get("history", [])
     turn_count: int = session.get("turn_count", 0)
 
-    ctx.metadata["invocation_id"] = invocation_id
-    ctx.metadata["status"] = "running"
-    await ctx.metadata.flush()
+    if ctx.entry_mode == "recovered" and session.get("last_applied_invocation_id") == invocation_id:
+        output = session.get("last_output")
+        if isinstance(output, dict):
+            await state_store.save(
+                invocation_key,
+                {"status": "completed", "output": output},
+                session_id=session_id,
+            )
+            return output
+
+    await state_store.save(
+        invocation_key,
+        {"status": "running"},
+        session_id=session_id,
+    )
 
     if ctx.entry_mode == "recovered":
         logger.warning("Recovered stale task for session %s", session_id)
@@ -76,15 +90,24 @@ async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
     # Handle explicit session end
     if message.strip().lower() == "done":
         summary = f"Session complete after {turn_count} turns. " f"Total messages exchanged: {len(history)}."
-        # Clear the session history so a future session_id reuse starts clean.
-        session["history"] = []
-        session["turn_count"] = 0
-        await session.flush()
-
         result = {"reply": summary, "turn": turn_count, "finished": True}
-        ctx.metadata["status"] = "completed"
-        ctx.metadata["output"] = result
-        await ctx.metadata.flush()
+        # Clear the session history so a future session_id reuse starts clean.
+        await state_store.save(
+            session_key,
+            {
+                "history": [],
+                "turn_count": 0,
+                "last_applied_invocation_id": invocation_id,
+                "last_output": result,
+            },
+            session_id=session_id,
+        )
+
+        await state_store.save(
+            invocation_key,
+            {"status": "completed", "output": result},
+            session_id=session_id,
+        )
         return result
 
     # Process this turn
@@ -93,17 +116,24 @@ async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
 
     reply = _generate_reply(turn_count, message)
     history.append({"role": "assistant", "content": reply})
-
-    # Checkpoint session state — survives crash.
-    session["history"] = history
-    session["turn_count"] = turn_count
-    await session.flush()
-
-    # Persist invocation result BEFORE suspending (inside resilient boundary).
     output = {"reply": reply, "turn": turn_count}
-    ctx.metadata["status"] = "completed"
-    ctx.metadata["output"] = output
-    await ctx.metadata.flush()
+
+    await state_store.save(
+        session_key,
+        {
+            "history": history,
+            "turn_count": turn_count,
+            "last_applied_invocation_id": invocation_id,
+            "last_output": output,
+        },
+        session_id=session_id,
+    )
+
+    await state_store.save(
+        invocation_key,
+        {"status": "completed", "output": output},
+        session_id=session_id,
+    )
 
     # Suspend — the client will resume with the next turn.
     # multi-turn `return X` is the implicit-suspend signal.

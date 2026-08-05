@@ -41,11 +41,11 @@ you want it; see [Choosing a resume strategy](#choosing-a-resume-strategy).
 
 ## Decision Tree
 
-### What is `context.conversation_chain_metadata` for?
+### Where should durable application state live?
 
-`context.conversation_chain_metadata` is a **small key-value store of references
-and watermarks** — it is NOT a place to keep your application's
-checkpoint data.
+Use an explicit `FoundryStateStore` for references, watermarks, and
+JSON checkpoint state. Include `context.conversation_chain_id` in the
+store name so every turn resolves to the same application-owned scope.
 
 Use it for things like:
 
@@ -64,26 +64,23 @@ metadata pointer is what lets the recovered handler find that data.
 ```python
 @app.response_handler
 async def handler(request, context, cancellation_signal):
-    # Small watermark: which workflow step is next?
-    step = int(context.conversation_chain_metadata.get("workflow_step", 0))
+    store = await FoundryStateStore.get_or_create(
+        f"responses/my-agent/{context.conversation_chain_id}",
+        user_isolation=True,
+    )
+    item = await store.get_item("workflow")
+    state = dict(item.value) if item else {}
+    step = int(state.get("workflow_step", 0))
 
     for i in range(step, total_steps):
         # Do work — write any bulk data to your upstream store directly,
-        # NOT to context.conversation_chain_metadata.
         await upstream_store.write_step_result(i, result)
-        # Advance the watermark, then explicitly flush so the next
-        # process lifetime (after a crash) skips the already-committed
-        # step. Persistence is not implicit — flush before any side
-        # effect whose effect must survive a crash.
-        context.conversation_chain_metadata["workflow_step"] = i + 1
-        await context.conversation_chain_metadata.flush()
+        state["workflow_step"] = i + 1
+        await store.set_item("workflow", state)
 ```
 
-Why this distinction matters: metadata is persisted alongside the
-resilient task — small writes are cheap and fast, but bulk writes will
-hit task-store payload limits and slow down recovery. Treating metadata
-as a checkpoint *index* (not a checkpoint *store*) keeps it fast and
-keeps your actual resilient data in the storage system best suited to it.
+State Store writes are independent from task lifecycle PATCHes and lease
+renewal.
 
 ### Do you need multi-turn conversations?
 
@@ -260,7 +257,7 @@ async def handler(request, context, cancellation_signal):
     if context.is_recovery:
         # Recovery code path — build a resumption response, emit a
         # reset response.in_progress event, continue from the last
-        # checkpoint your handler's metadata watermark recorded.
+        # checkpoint your application State Store recorded.
         ...
 
     # True only on the drain re-entry that follows a steering input
@@ -273,18 +270,11 @@ async def handler(request, context, cancellation_signal):
     # Live count — decreases as the framework drains the queue.
     print(f"{context.pending_input_count} turns waiting")
 
-    # Persistent metadata namespace. Safe across crashes and turns.
-    # The default namespace is `context.conversation_chain_metadata["key"]`;
-    # named namespaces are `context.conversation_chain_metadata("name")["key"]`.
-    # Call `await context.conversation_chain_metadata.flush()` before any side
-    # effect that depends on the write surviving a crash. Snapshots
-    # also happen at lifecycle boundaries automatically.
-    context.conversation_chain_metadata["my_checkpoint_id"] = "abc-123"
+    # Persist cross-turn state in an explicit FoundryStateStore keyed by
+    # context.conversation_chain_id.
 ```
 
-These fields are always present on the context (even for `store=false`
-Row 4 responses, where the metadata facade is backed by an in-memory
-mapping that evaporates on restart).
+These recovery and steering fields are always present on the context.
 
 ### Conversation chain identity
 
@@ -327,22 +317,12 @@ Either way, the library never keeps a *running* snapshot of in-flight items
 between persistence points; what it persists is the SSE event stream (for
 client replay) plus the snapshot at each of the points above.
 
-### Notes on `context.conversation_chain_metadata`
+### Notes on `FoundryStateStore`
 
-- The metadata API is a **callable namespace facade**. Use
-  `context.conversation_chain_metadata["key"] = value` for the default namespace;
-  use `context.conversation_chain_metadata("name")["key"] = value` for a sibling
-  namespace (each namespace tracks dirty state independently and can be
-  `await context.conversation_chain_metadata("name").flush()`-ed in isolation).
-- Persistence is **explicit**, not auto-flushed. Call
-  `await context.conversation_chain_metadata.flush()` (or
-  `await context.conversation_chain_metadata("name").flush()`) before any side
-  effect that depends on a metadata write surviving a crash. The
-  framework also snapshots all touched namespaces at lifecycle
-  boundaries (start/suspend/complete/fail/cancel/terminate), so values
-  written and forgotten will still be visible on a clean recovery — but
-  the fence for at-most-once side-effect patterns is your explicit
-  `flush()`.
+- Choose a stable store name that includes `context.conversation_chain_id`.
+- Use `user_isolation=True` when the naming scheme is shared across users.
+- Persist a watermark before a non-idempotent side effect and update it
+  after the downstream system commits.
 - Keys and namespace names **starting with `_` are rejected** (raise `ValueError`). Those prefixes are reserved for framework-internal use — pick your own prefix-free names.
 - Metadata survives crashes — use it for small watermarks (session IDs, checkpoint references, "side effect issued" flags).
 - Keep values JSON-serializable (strings, numbers, lists, dicts).
@@ -382,14 +362,12 @@ stream = ResponseEventStream(response=resumption, response_id=context.response_i
 **Watermark overlay (composable — not a fourth strategy).** Independently of the
 strategy you pick: if your handler makes a **non-idempotent side effect** (sending
 a user message upstream, charging a card) that the upstream can't dedup for you,
-fence it with a metadata watermark so a recovered attempt doesn't repeat it:
+fence it with a State Store watermark so a recovered attempt doesn't repeat it:
 
 ```python
-context.conversation_chain_metadata["sent_msg"] = True
-await context.conversation_chain_metadata.flush()   # resilient BEFORE the side effect
-await upstream.send_message(...)                    # the non-idempotent call
-del context.conversation_chain_metadata["sent_msg"]
-await context.conversation_chain_metadata.flush()   # clear AFTER it persisted
+await state_store.set_item("effect", {"sent_msg": True})
+await upstream.send_message(...)
+await state_store.delete_item("effect")
 ```
 
 These compose: a handler may checkpoint its response output **and** watermark a
@@ -407,7 +385,7 @@ configuration / decision context.
 - `context.is_recovery == True`, plus `context.persisted_response` — the last
   resiliently-persisted snapshot (last `stream.checkpoint()`, else the
   `response.created` snapshot, else `None`).
-- `context.conversation_chain_metadata` carrying whatever watermarks you stamped.
+- Application watermarks loaded from your explicit State Store.
 - The cancellation contract from the [Cancellation guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the cancel surface is pre-set with the appropriate cause-boolean (`context.client_cancelled` for explicit cancel / non-bg disconnect; `context.shutdown.is_set()` for graceful shutdown; neither for steering pressure) on re-entry.
 - The framework persists the response object at `response.created`, at **each
   successful `stream.checkpoint()`**, and at the terminal event; the
@@ -502,14 +480,12 @@ completes. See the handler guide's
 the full semantics and `resilience-contract.md` Row 11 for the conformance
 contract.
 
-### Which metadata facility?
+### Which state facility?
 
-There are **two** internal-metadata facilities at **different scopes**:
+There are two persistence facilities at different scopes:
 
-- **`context.conversation_chain_metadata`** — **cross-turn**, named-scope,
-  explicit-`flush()` resilient state over the whole conversation chain. Use it
-  for state a *later turn* needs from an earlier one, or for coordination
-  between layers/parallel nodes spanning the chain.
+- **`FoundryStateStore`** — application-owned cross-turn JSON state. Use it
+  for state a later turn needs from an earlier one.
 - **`internal_metadata`** (on items via `item.internal_metadata`, and on the
   response via `stream.internal_metadata`) — a **single-turn** live
   `MutableMapping[str, Any]` that rides on the response/items, is persisted
@@ -518,7 +494,7 @@ There are **two** internal-metadata facilities at **different scopes**:
   payload** (egress and ingress). Use it for lightweight per-turn watermarks,
   id mappings, or in-turn stale-message detection.
 
-**Rule of thumb:** need it in a *later turn* → `conversation_chain_metadata`;
+**Rule of thumb:** need it in a *later turn* → `FoundryStateStore`;
 need it only to reconstruct *this* response on crash →
 `internal_metadata` + `stream.checkpoint()`. Both are distinct from the
 *public* `ResponseObject.metadata` (the client's own metadata — never
@@ -607,8 +583,8 @@ that compose to give you resilient response handlers:
 
 - **The resilient background runtime** provides the runtime primitives
   (flat recovery + steering fields on `ResponseContext` —
-  `is_recovery`, `is_steered_turn`, `pending_input_count`,
-  `conversation_chain_metadata` — task store wiring, steerable conversation
+  `is_recovery`, `is_steered_turn`, `pending_input_count` — task store wiring,
+  steerable conversation
   orchestration).
 - **The cancellation contract** provides two distinct surfaces — the
   3rd positional handler arg `cancellation_signal: asyncio.Event`
@@ -645,7 +621,7 @@ point; and clients supporting resilient streams treat any later
 2. **Prefer your upstream framework's own resume facility** when you have one.
    Copilot SDK has `create_session(session_id=...)` / `resume_session(...)`;
    LangGraph has `AsyncSqliteSaver` checkpoints. Reconstructing upstream state from
-   your own metadata is usually more work and more fragile. **When the upstream
+   your own state is usually more work and more fragile. **When the upstream
    is a durable engine with its own checkpointer, follow the
    [Composing an External Durable Engine](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#composing-an-external-durable-engine-eg-langgraph)
    pattern**: checkpoint 1:1 with the engine, store the engine's resume checkpoint
@@ -655,13 +631,12 @@ point; and clients supporting resilient streams treat any later
 3. **Watermark non-idempotent side effects — when the upstream can't dedup them.**
    If a recovered attempt could repeat an observable side effect (sending a user
    message, charging a card) and the upstream offers no idempotency key or
-   "already done?" query, fence it: stamp + `flush()` `context.conversation_chain_metadata`
-   BEFORE the call, clear + `flush()` AFTER it resiliently commits. If the upstream is
+   "already done?" query, persist a State Store watermark before the call and
+   clear it after the downstream system commits. If the upstream is
    already idempotent, or you use the framework-checkpoint model where the snapshot
    is your side-effect boundary, you may not need this.
 
-4. **Keep metadata small.** Watermarks, session IDs, checkpoint references —
-   never bulk data (it hits task-store payload limits and slows recovery).
+4. **Keep State Store values focused.** Use blob storage for large artifacts.
 
 5. **Honour the cancellation contract on recovery.** Recovery doesn't change the
    cancellation contract from the [Cancellation guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#cancellation):

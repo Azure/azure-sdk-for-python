@@ -37,20 +37,18 @@ from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
 try:
-    from .store import FileStore
+    from .store import StateStore
 except ImportError:  # allows running the app as a script from inside this directory
-    from store import FileStore
+    from store import StateStore
 
 logger = logging.getLogger(__name__)
 
-# Co-locate all durable state (LangGraph checkpoints + invocation snapshots) with
-# the deployment's state root when one is configured, so it lives together and
-# survives a crash/restart; fall back to a per-user dir for local runs.
+# Explicit application state store for invocation results and checkpoint pointers.
+invocation_store = StateStore("resilient-langgraph")
+
+# LangGraph's internal SQLite checkpointer remains local to this sample.
 _STATE_ROOT = os.environ.get("AGENTSERVER_STATE_ROOT")
 _DATA_DIR = Path(_STATE_ROOT) / "langgraph-invocations" if _STATE_ROOT else Path.home() / ".agentserver-sessions"
-
-# Invocation result store — written inside the resilient task so it survives crashes
-invocation_store = FileStore(_DATA_DIR / "invocations")
 
 
 # ---------------------------------------------------------------------------
@@ -67,6 +65,15 @@ class ConversationState(TypedDict):
 
     messages: typing.Annotated[list, add_messages]
     is_complete: bool
+
+
+class TaskInput(TypedDict):
+    """Persisted input required to run or recover one conversation turn."""
+
+    session_id: str
+    message: str
+    invocation_id: str
+    call_id: str
 
 
 # ---------------------------------------------------------------------------
@@ -299,24 +306,30 @@ def _build_session_output(state: Any) -> dict[str, Any]:
 
 
 async def _finalize_invocation(
-    ctx: TaskContext[dict],
     thread_config: dict[str, Any],
     invocation_id: str,
+    session_id: str,
 ) -> dict[str, Any] | Any:
     """Save results and suspend/return after a graph invoke completes."""
     state = await asyncio.to_thread(_graph.get_state, thread_config)
 
     new_cp_id = state.config["configurable"]["checkpoint_id"]
-    ctx.metadata.set("stable_checkpoint_id", new_cp_id)
-    ctx.metadata.set("last_applied_invocation_id", invocation_id)
-
-    if state.next:
-        output = _build_turn_output(state)
-        invocation_store.save(invocation_id, {"status": "completed", "output": output})
-        return output
-    result = _build_session_output(state)
-    invocation_store.save(invocation_id, {"status": "completed", "output": result})
-    return result
+    output = _build_turn_output(state) if state.next else _build_session_output(state)
+    await invocation_store.save(
+        f"session/{session_id}",
+        {
+            "stable_checkpoint_id": new_cp_id,
+            "last_applied_invocation_id": invocation_id,
+            "last_output": output,
+        },
+        session_id=session_id,
+    )
+    await invocation_store.save(
+        f"invocation/{invocation_id}",
+        {"status": "completed", "output": output},
+        session_id=session_id,
+    )
+    return output
 
 
 # ---------------------------------------------------------------------------
@@ -325,10 +338,11 @@ async def _finalize_invocation(
 
 
 @multi_turn_task(name="langgraph_session", steerable=True)
-async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any] | None:
+async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | None:
     """Run one LangGraph conversation turn with steering + crash recovery.
 
-    Input schema: ``{"session_id": str, "message": str, "invocation_id": str}``
+    Input schema includes ``session_id``, ``message``, ``invocation_id``, and
+    the opaque Foundry ``call_id`` required by outbound State Store calls.
 
     LangGraph integration (applying the responses-sample learnings):
 
@@ -352,8 +366,23 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any] | None:
     session_id: str = ctx.input["session_id"]
     message: str = ctx.input["message"]
     invocation_id: str = ctx.input["invocation_id"]
+    session_state = await invocation_store.load(f"session/{session_id}") or {}
 
-    invocation_store.save(invocation_id, {"status": "running"})
+    if ctx.entry_mode == "recovered" and session_state.get("last_applied_invocation_id") == invocation_id:
+        output = session_state.get("last_output")
+        if isinstance(output, dict):
+            await invocation_store.save(
+                f"invocation/{invocation_id}",
+                {"status": "completed", "output": output},
+                session_id=session_id,
+            )
+            return output
+
+    await invocation_store.save(
+        f"invocation/{invocation_id}",
+        {"status": "running"},
+        session_id=session_id,
+    )
     stream = await streams.get_or_create(invocation_id)
     await stream.emit({"type": "lifecycle", "status": "running"})
 
@@ -361,13 +390,17 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any] | None:
 
     # ── Pre-entry cancel (steering supersede / client cancel) ───────
     if ctx.cancel.is_set():
-        invocation_store.save(invocation_id, {"status": "cancelled", "reason": "steered"})
+        await invocation_store.save(
+            f"invocation/{invocation_id}",
+            {"status": "cancelled", "reason": "steered"},
+            session_id=session_id,
+        )
         await stream.close()
         return None
 
     # ── Resolve how this turn runs ──────────────────────────────────
     recovered = ctx.entry_mode == "recovered"
-    stable_cp = ctx.metadata.get("stable_checkpoint_id")
+    stable_cp = session_state.get("stable_checkpoint_id")
     state = await asyncio.to_thread(_graph.get_state, thread_config)
     parked_at_interrupt = bool(state.next) and "wait_for_user" in state.next
 
@@ -396,22 +429,31 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any] | None:
         graph_input = {"messages": [HumanMessage(content=message)], "is_complete": False}
 
     # ── Run the graph with inter-node cancellation ──────────────────
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
+    pending_updates: list[Any] = []
 
     def _on_node(chunk: dict) -> None:
         """Stream node progress events from the sync graph thread."""
         node_names = list(chunk.keys())
         for name in node_names:
+            pending_updates.append(
+                asyncio.run_coroutine_threadsafe(
+                    stream.emit({"type": "node_progress", "node": name}),
+                    loop,
+                )
+            )
+        pending_updates.append(
             asyncio.run_coroutine_threadsafe(
-                stream.emit({"type": "node_progress", "node": name}),
+                invocation_store.save(
+                    f"invocation/{invocation_id}",
+                    {
+                        "status": "streaming",
+                        "last_node": node_names[-1] if node_names else None,
+                    },
+                    session_id=session_id,
+                ),
                 loop,
             )
-        invocation_store.save(
-            invocation_id,
-            {
-                "status": "streaming",
-                "last_node": node_names[-1] if node_names else None,
-            },
         )
 
     completed = await asyncio.to_thread(
@@ -422,13 +464,18 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any] | None:
         ctx.cancel,
         _on_node,
     )
+    await asyncio.gather(*(asyncio.wrap_future(update) for update in pending_updates))
 
     # ── Post-run cancel check ───────────────────────────────────────
     if not completed or ctx.cancel.is_set():
-        invocation_store.save(invocation_id, {"status": "cancelled", "reason": "steered"})
+        await invocation_store.save(
+            f"invocation/{invocation_id}",
+            {"status": "cancelled", "reason": "steered"},
+            session_id=session_id,
+        )
         await stream.close()
         return None
 
     # ── Normal completion ───────────────────────────────────────────
     await stream.close()
-    return await _finalize_invocation(ctx, thread_config, invocation_id)
+    return await _finalize_invocation(thread_config, invocation_id, session_id)
