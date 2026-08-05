@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-01-01/VirtualNetworkRules/RelayNetworkRuleSetGet.json
+# x-ms-original-file: 2026-07-01-preview/VirtualNetworkRules/RelayNetworkRuleSetGet.json
 if __name__ == "__main__":
     main()

@@ -38,6 +38,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2024-01-01/Relay/RelayAuthorizationRuleDelete.json
+# x-ms-original-file: 2026-07-01-preview/Relay/RelayAuthorizationRuleDelete.json
 if __name__ == "__main__":
     main()
