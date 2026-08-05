@@ -4,11 +4,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, MutableMapping
+from collections.abc import Mapping
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
-from azure.ai.agentserver.core._platform_headers import REQUEST_ID  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core.platform_headers import REQUEST_ID
 
 if TYPE_CHECKING:
     from ._execution_context import _ExecutionContext
@@ -115,7 +115,7 @@ class CreateSpan:
         self._ended = True
         if self._hook is None:
             return
-        self._hook.on_span_end(self.name, dict(self.tags), error)
+        self._hook.on_span_end(self.name, self.tags.copy(), error)
 
 
 def start_create_span(name: str, tags: dict[str, Any], hook: CreateSpanHook | None = None) -> CreateSpan:
@@ -130,9 +130,9 @@ def start_create_span(name: str, tags: dict[str, Any], hook: CreateSpanHook | No
     :return: The started ``CreateSpan`` instance.
     :rtype: CreateSpan
     """
-    span = CreateSpan(name=name, tags=dict(tags), _hook=hook)
+    span = CreateSpan(name=name, tags=tags.copy(), _hook=hook)
     if hook is not None:
-        hook.on_span_start(name, dict(span.tags))
+        hook.on_span_start(name, span.tags.copy())
     return span
 
 
@@ -218,16 +218,16 @@ def extract_request_id(headers: Mapping[str, str]) -> str | None:
 
 
 def _resolve_agent_fields(
-    agent_reference: MutableMapping[str, Any] | dict[str, Any] | None,
+    agent_reference: Mapping[str, Any] | None,
 ) -> tuple[str | None, str | None, str | None]:
     """Return ``(agent_name, agent_version, agent_id)`` from *agent_reference*.
 
     :param agent_reference: Agent reference mapping containing name and version fields.
-    :type agent_reference: MutableMapping[str, Any] | dict[str, Any] | None
+    :type agent_reference: Mapping[str, Any] | None
     :return: A tuple of (agent_name, agent_version, agent_id).
     :rtype: tuple[str | None, str | None, str | None]
     """
-    if agent_reference is None or not isinstance(agent_reference, (dict, MutableMapping)):
+    if agent_reference is None:
         return None, None, None
     name = agent_reference.get("name") or None
     version = agent_reference.get("version") or None
@@ -316,7 +316,7 @@ class InMemoryCreateSpanHook:
         self.spans.append(
             RecordedSpan(
                 name=name,
-                tags=dict(tags),
+                tags=tags.copy(),
                 started_at=datetime.now(timezone.utc),
             )
         )
@@ -337,6 +337,6 @@ class InMemoryCreateSpanHook:
             self.on_span_start(name, tags)
 
         span = self.spans[-1]
-        span.tags = dict(tags)
+        span.tags = tags.copy()
         span.error = error
         span.ended_at = datetime.now(timezone.utc)

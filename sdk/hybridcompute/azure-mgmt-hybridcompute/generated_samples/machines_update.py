@@ -49,8 +49,8 @@ def main():
                         }
                     },
                 },
-                "parentClusterResourceId": "/subscriptions/{subscriptionId}/resourceGroups/myResourceGroup/providers/Microsoft.AzureStackHCI/clusters/myAzureStackHCICluster",
-                "privateLinkScopeResourceId": "/subscriptions/{subscriptionId}/resourceGroups/myResourceGroup/providers/Microsoft.HybridCompute/privateLinkScopes/privateLinkScopeName",
+                "parentClusterResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.AzureStackHCI/clusters/myAzureStackHCICluster",
+                "privateLinkScopeResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.HybridCompute/privateLinkScopes/privateLinkScopeName",
                 "tpmEkCertificate": "string",
             },
         },
@@ -58,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-16-preview/machine/Machines_Update.json
+# x-ms-original-file: 2026-06-16-preview/machine/Machines_Update.json
 if __name__ == "__main__":
     main()

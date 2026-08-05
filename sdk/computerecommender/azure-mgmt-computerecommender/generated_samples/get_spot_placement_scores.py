@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-05/GetSpotPlacementScores.json
+# x-ms-original-file: 2026-05-05-preview/GetSpotPlacementScores.json
 if __name__ == "__main__":
     main()

@@ -1,5 +1,12 @@
 # Release History
 
+## 17.1.0 (2026-07-22)
+
+### Features Added
+
+  - Model `VolumeProperties` added property `breakthrough_mode`
+  - Added enum `BreakthroughMode`
+
 ## 18.0.0b1 (2026-06-29)
 
 ### Features Added

@@ -1,10 +1,11 @@
 # Release History
 
-## 7.15.0 (Unreleased)
+## 7.15.0b1 (Unreleased)
 
 ### Features Added
 
 - Added `ServiceBusReceivedMessage.from_bytes()` classmethod to construct a `ServiceBusReceivedMessage` from raw AMQP payload bytes without requiring the deprecated `uamqp` library. ([#43979](https://github.com/Azure/azure-sdk-for-python/issues/43979))
+- Added `ServiceBusClient.list_queue_sessions()` and `ServiceBusClient.list_subscription_sessions()` (sync and async) to list session IDs for entities with active messages, with optional filtering by session-state update timestamp. The methods return an `ItemPaged[str]` (`AsyncItemPaged[str]` on the async client) so callers can iterate every session transparently or page with `by_page()`. Implements the `com.microsoft:get-message-sessions` management operation. ([#46575](https://github.com/Azure/azure-sdk-for-python/pull/46575))
 
 ### Bugs Fixed
 
@@ -12,6 +13,15 @@
 - Read `com.microsoft:max-message-batch-size` vendor property from the AMQP sender link to correctly limit batch size on Premium large-message entities, where `max-message-size` can be up to 100 MB but the batch limit is 1 MB.
 - Fixed a bug where sending a batched or multi-message payload with `uamqp_transport=True` raised `TypeError: 'BatchMessage' object is not subscriptable` (and a masked `AttributeError` on the list path) when the first message carried a `message_id`, `session_id`, or `partition_key`. The batch envelope properties are now set through the transport-appropriate code path. (regression from [#42598](https://github.com/Azure/azure-sdk-for-python/pull/42598))
 - Fixed a bug where the async receiver factory methods on `azure.servicebus.aio.ServiceBusClient` (`get_queue_receiver`, `get_subscription_receiver`) and the async `ServiceBusReceiver` annotated the `auto_lock_renewer` keyword with the synchronous `AutoLockRenewer`, causing static type checkers to reject the documented `azure.servicebus.aio.AutoLockRenewer` usage. The annotation now references the async `AutoLockRenewer`, matching the docstrings and runtime behavior. ([#47948](https://github.com/Azure/azure-sdk-for-python/issues/47948))
+- Fixed a bug where closing a `PEEK_LOCK` receiver did not release messages that had been prefetched into the client buffer or were still in flight, so they remained locked at the broker until lock expiry — delaying their redelivery and inflating their delivery count. On close, a non-session `PEEK_LOCK` receiver now drains the link (stopping the broker and flushing in-flight transfers) and releases the buffered messages (`released` disposition), so the broker can redeliver them immediately without incrementing the delivery count. ([#42917](https://github.com/Azure/azure-sdk-for-python/issues/42917))
+- Fixed a bug where the async pure-Python AMQP transport failed to connect with `[Errno 22] Invalid argument` (`amqp:socket-error`) inside containerized/virtualized environments such as Docker Desktop on macOS. The transport no longer reads back and re-applies platform-negotiated TCP options (e.g. `TCP_MAXSEG`) that some platforms reject via `setsockopt`. ([#45394](https://github.com/Azure/azure-sdk-for-python/issues/45394))
+- Fixed a bug where passing a `fully_qualified_namespace` that included a port and/or trailing path (for example the `https://<namespace>.servicebus.windows.net:443/` form that Azure returns when provisioning a namespace) raised `ServiceBusAuthenticationError`. The namespace is now normalized to its bare host, matching the .NET and JavaScript SDKs. ([#44034](https://github.com/Azure/azure-sdk-for-python/issues/44034))
+- Fixed a bug where iterating over a `ServiceBusReceiver` suppressed automatic HTTP instrumentation (e.g. from `opentelemetry-instrumentation-httpx`/`requests`) while user code processed a received message, causing the user's own outbound HTTP spans to be dropped. The receive tracing span is now closed before the message is yielded to the caller, so suppression no longer leaks into message processing. ([#42755](https://github.com/Azure/azure-sdk-for-python/issues/42755))
+- Fixed a bug in the pyAMQP transport where decoding an incoming performative whose trailing null fields were omitted by the sender (permitted by AMQP 1.0 section 1.4) raised `IndexError`/`TypeError`. The decoded field list is now padded to the performative's full field count so omitted trailing fields read back as their AMQP-defined default, including the compact `list0` encoding where every field is omitted. A field encoded as an explicit null but whose declared default is non-null (for example a `max_frame_size` set to null so the connection would compare `None < 512`) now also reads back as that default.
+
+### Other Changes
+
+- When using the async `AmqpOverWebsocket` transport on Python 3.10 or later, `aiohttp>=3.14.0` is now recommended. Earlier `aiohttp` versions have a WebSocket heartbeat bug ([aio-libs/aiohttp#12030](https://github.com/aio-libs/aiohttp/pull/12030)) that can cause the connection to be dropped during long message processing, surfacing as a `SocketError` ("Cannot write to closing transport"). Python 3.9 users must upgrade Python to install an `aiohttp` release containing this fix. ([#44028](https://github.com/Azure/azure-sdk-for-python/issues/44028))
 
 ## 7.14.3 (2025-11-11)
 

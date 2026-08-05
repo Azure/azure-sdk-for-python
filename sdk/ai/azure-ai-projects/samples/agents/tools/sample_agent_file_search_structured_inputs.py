@@ -22,10 +22,11 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT (preferred) or AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 
 NOTES:
     This sample is intentionally kept very close to `sample_agent_file_search.py`.
-    It does not include fallback logic.
+    It demonstrates the same `FOUNDRY_AGENT_NAME` fallback behavior with structured inputs.
 """
 
 import os
@@ -83,7 +84,7 @@ with (
 
     # Create agent with file search tool
     agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+        agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"),
         definition=agent_definition,
         description="File search agent for product information queries.",
     )
