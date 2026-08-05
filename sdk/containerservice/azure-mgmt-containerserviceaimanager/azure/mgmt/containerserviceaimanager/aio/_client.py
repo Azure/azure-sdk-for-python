@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import ContainerServiceAIManagerClientConfiguration
+from ._configuration import ContainerServiceAIManagerMgmtClientConfiguration
 from .operations import (
     AIManagerNamespacesOperations,
     AIManagersOperations,
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ContainerServiceAIManagerClient:
+class ContainerServiceAIManagerMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Kubernetes AI Manager api client.
 
     :ivar operations: Operations operations
@@ -89,7 +89,7 @@ class ContainerServiceAIManagerClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = ContainerServiceAIManagerClientConfiguration(
+        self._config = ContainerServiceAIManagerMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

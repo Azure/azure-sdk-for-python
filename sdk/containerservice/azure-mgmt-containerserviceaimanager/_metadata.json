@@ -3,9 +3,9 @@
   "apiVersions": {
     "Microsoft.ContainerService": "2026-05-02-preview"
   },
-  "commit": "358882ad707dcc3b0d1de9df6ba4dfba7e85da1a",
+  "commit": "2033d41c6a7c6de6702be5387024bf1ff417e2de",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/containerservice/resource-manager/Microsoft.ContainerService/aimanager",
   "emitterVersion": "0.63.3",
-  "httpClientPythonVersion": "^0.34.2"
+  "httpClientPythonVersion": "^0.35.1"
 }

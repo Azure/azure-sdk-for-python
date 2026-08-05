@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerserviceaimanager.aio import ContainerServiceAIManagerClient
+from azure.mgmt.containerserviceaimanager.aio import ContainerServiceAIManagerMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,17 +15,18 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerServiceAIManagerModelSourcesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestContainerServiceAIManagerMgmtModelDeploymentsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerServiceAIManagerClient, is_async=True)
+        self.client = self.create_mgmt_client(ContainerServiceAIManagerMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_model_sources_get(self, resource_group):
-        response = await self.client.model_sources.get(
+    async def test_model_deployments_get(self, resource_group):
+        response = await self.client.model_deployments.get(
             resource_group_name=resource_group.name,
             ai_manager_name="str",
-            model_source_name="str",
+            namespace_name="str",
+            model_deployment_name="str",
         )
 
         # please add some check logic here by yourself
@@ -33,21 +34,36 @@ class TestContainerServiceAIManagerModelSourcesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_model_sources_begin_create_or_update(self, resource_group):
+    async def test_model_deployments_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.model_sources.begin_create_or_update(
+            await self.client.model_deployments.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 ai_manager_name="str",
-                model_source_name="str",
+                namespace_name="str",
+                model_deployment_name="str",
                 resource={
                     "eTag": "str",
                     "id": "str",
                     "name": "str",
                     "properties": {
-                        "sourceType": "str",
-                        "credential": {"inline": {"value": "str"}},
-                        "description": "str",
+                        "modelResourceId": "str",
+                        "vmSize": "str",
+                        "modelSourceResourceId": "str",
+                        "overrides": {"values": {"str": "str"}},
+                        "performanceMode": "str",
                         "provisioningState": "str",
+                        "scale": {"autoscale": {"minReplicas": 0, "maxReplicas": 0}, "manual": {"replicas": 0}},
+                        "status": {
+                            "currentReplicas": 0,
+                            "desiredReplicas": 0,
+                            "endpoint": "str",
+                            "engine": "str",
+                            "engineVersion": "str",
+                            "estimatedProvisionTimeSeconds": 0,
+                            "maxModelLen": 0,
+                            "peakTokensPerMinute": 0,
+                            "quantization": "str",
+                        },
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -67,12 +83,13 @@ class TestContainerServiceAIManagerModelSourcesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_model_sources_begin_delete(self, resource_group):
+    async def test_model_deployments_begin_delete(self, resource_group):
         response = await (
-            await self.client.model_sources.begin_delete(
+            await self.client.model_deployments.begin_delete(
                 resource_group_name=resource_group.name,
                 ai_manager_name="str",
-                model_source_name="str",
+                namespace_name="str",
+                model_deployment_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -81,10 +98,11 @@ class TestContainerServiceAIManagerModelSourcesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_model_sources_list(self, resource_group):
-        response = self.client.model_sources.list(
+    async def test_model_deployments_list_by_ai_manager_namespace(self, resource_group):
+        response = self.client.model_deployments.list_by_ai_manager_namespace(
             resource_group_name=resource_group.name,
             ai_manager_name="str",
+            namespace_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

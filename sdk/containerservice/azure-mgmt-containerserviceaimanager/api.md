@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.containerserviceaimanager
 
-    class azure.mgmt.containerserviceaimanager.ContainerServiceAIManagerClient: implements ContextManager 
+    class azure.mgmt.containerserviceaimanager.ContainerServiceAIManagerMgmtClient: implements ContextManager 
         ai_manager_namespaces: AIManagerNamespacesOperations
         ai_managers: AIManagersOperations
         ai_models: AIModelsOperations
@@ -34,7 +34,7 @@ namespace azure.mgmt.containerserviceaimanager
 
 namespace azure.mgmt.containerserviceaimanager.aio
 
-    class azure.mgmt.containerserviceaimanager.aio.ContainerServiceAIManagerClient: implements AsyncContextManager 
+    class azure.mgmt.containerserviceaimanager.aio.ContainerServiceAIManagerMgmtClient: implements AsyncContextManager 
         ai_manager_namespaces: AIManagerNamespacesOperations
         ai_managers: AIManagersOperations
         ai_models: AIModelsOperations
@@ -1598,13 +1598,13 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "properties": ForwardRef('AIManagerProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         identity: ManagedServiceIdentity
         location: str
         name: str
         properties: AIManagerProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -1616,11 +1616,11 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "properties": ForwardRef('AIManagerNamespaceProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         name: str
         properties: AIManagerNamespaceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1628,7 +1628,7 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "provisioningState": Union[str, AIManagerNamespaceProvisioningState]
         annotations: dict[str, str]
         labels: dict[str, str]
-        provisioning_state: Union[str, AIManagerNamespaceProvisioningState]
+        provisioningState: Union[str, AIManagerNamespaceProvisioningState]
 
 
     class azure.mgmt.containerserviceaimanager.types.AIManagerPatch(TypedDict, total=False):
@@ -1641,16 +1641,16 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "deletePolicy": Union[str, DeletePolicy]
         key "managedResourceGroupName": str
         key "provisioningState": Union[str, AIManagerProvisioningState]
-        delete_policy: Union[str, DeletePolicy]
-        managed_resource_group_name: str
-        provisioning_state: Union[str, AIManagerProvisioningState]
+        deletePolicy: Union[str, DeletePolicy]
+        managedResourceGroupName: str
+        provisioningState: Union[str, AIManagerProvisioningState]
 
 
     class azure.mgmt.containerserviceaimanager.types.AutoscaleProfile(TypedDict, total=False):
         key "maxReplicas": int
         key "minReplicas": Required[int]
-        max_replicas: int
-        min_replicas: int
+        maxReplicas: int
+        minReplicas: int
 
 
     class azure.mgmt.containerserviceaimanager.types.CalculateCostRequest(TypedDict, total=False):
@@ -1670,11 +1670,10 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.containerserviceaimanager.types.ManualScalingProfile(TypedDict, total=False):
@@ -1689,17 +1688,16 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "properties": ForwardRef('ModelDeploymentProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         name: str
         properties: ModelDeploymentProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.containerserviceaimanager.types.ModelDeploymentOverrides(TypedDict, total=False):
         values: dict[str, str]
-        values_property: dict[str, str]
 
 
     class azure.mgmt.containerserviceaimanager.types.ModelDeploymentProperties(TypedDict, total=False):
@@ -1711,14 +1709,14 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "scale": ForwardRef('ScalingProfile', module='types')
         key "status": ForwardRef('ModelDeploymentStatus', module='types')
         key "vmSize": Required[str]
-        model_resource_id: str
-        model_source_resource_id: str
+        modelResourceId: str
+        modelSourceResourceId: str
         overrides: ModelDeploymentOverrides
-        performance_mode: Union[str, ModelDeploymentPerformanceMode]
-        provisioning_state: Union[str, ModelDeploymentProvisioningState]
+        performanceMode: Union[str, ModelDeploymentPerformanceMode]
+        provisioningState: Union[str, ModelDeploymentProvisioningState]
         scale: ScalingProfile
         status: ModelDeploymentStatus
-        vm_size: str
+        vmSize: str
 
 
     class azure.mgmt.containerserviceaimanager.types.ModelDeploymentStatus(TypedDict, total=False):
@@ -1731,14 +1729,14 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "maxModelLen": int
         key "peakTokensPerMinute": int
         key "quantization": str
-        current_replicas: int
-        desired_replicas: int
+        currentReplicas: int
+        desiredReplicas: int
         endpoint: str
         engine: str
-        engine_version: str
-        estimated_provision_time_seconds: int
-        max_model_len: int
-        peak_tokens_per_minute: int
+        engineVersion: str
+        estimatedProvisionTimeSeconds: int
+        maxModelLen: int
+        peakTokensPerMinute: int
         quantization: str
 
 
@@ -1749,11 +1747,11 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "properties": ForwardRef('ModelSourceProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         name: str
         properties: ModelSourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1764,8 +1762,8 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "sourceType": Required[Union[str, ModelSourceType]]
         credential: CredentialValue
         description: str
-        provisioning_state: Union[str, ResourceProvisioningState]
-        source_type: Union[str, ModelSourceType]
+        provisioningState: Union[str, ResourceProvisioningState]
+        sourceType: Union[str, ModelSourceType]
 
 
     class azure.mgmt.containerserviceaimanager.types.ProxyResource(Resource):
@@ -1775,7 +1773,7 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1786,7 +1784,7 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1804,12 +1802,12 @@ namespace azure.mgmt.containerserviceaimanager.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.containerserviceaimanager.types.TrackedResource(Resource):
@@ -1821,7 +1819,7 @@ namespace azure.mgmt.containerserviceaimanager.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -1829,8 +1827,8 @@ namespace azure.mgmt.containerserviceaimanager.types
     class azure.mgmt.containerserviceaimanager.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
 ```

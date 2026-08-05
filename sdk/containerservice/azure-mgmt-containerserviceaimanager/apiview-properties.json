@@ -104,5 +104,5 @@
         "azure.mgmt.containerserviceaimanager.operations.ModelDeploymentsOperations.list_by_ai_manager_namespace": "Microsoft.ContainerService.ModelDeployments.listByAIManagerNamespace",
         "azure.mgmt.containerserviceaimanager.aio.operations.ModelDeploymentsOperations.list_by_ai_manager_namespace": "Microsoft.ContainerService.ModelDeployments.listByAIManagerNamespace"
     },
-    "CrossLanguageVersion": "c276e2cf232d"
+    "CrossLanguageVersion": "ae807844ef97"
 }

@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.containerserviceaimanager import ContainerServiceAIManagerClient
+from azure.mgmt.containerserviceaimanager import ContainerServiceAIManagerMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.containerserviceaimanager import ContainerServiceAIManagerClient
 
 
 def main():
-    client = ContainerServiceAIManagerClient(
+    client = ContainerServiceAIManagerMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

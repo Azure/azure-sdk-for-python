@@ -35,9 +35,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -63,9 +63,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -90,20 +90,20 @@ class AIManager(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "AIManagerProperties"
-    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
      (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
-    :vartype e_tag: str
+    :vartype eTag: str
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: "ManagedServiceIdentity"
     """
@@ -130,9 +130,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -147,16 +147,16 @@ class AIManagerNamespace(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "AIManagerNamespaceProperties"
-    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
      (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
-    :vartype e_tag: str
+    :vartype eTag: str
     """
 
     properties: "AIManagerNamespaceProperties"
@@ -171,9 +171,9 @@ class AIManagerNamespace(ProxyResource):
 class AIManagerNamespaceProperties(TypedDict, total=False):
     """AI Manager namespace properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "AIManagerNamespaceProvisioningState"]
+    :vartype provisioningState: Union[str, "AIManagerNamespaceProvisioningState"]
     :ivar labels: Labels applied to the Kubernetes namespace.
     :vartype labels: dict[str, str]
     :ivar annotations: Annotations applied to the Kubernetes namespace.
@@ -207,15 +207,15 @@ class AIManagerPatch(TypedDict, total=False):
 class AIManagerProperties(TypedDict, total=False):
     """AI Manager properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "AIManagerProvisioningState"]
-    :ivar delete_policy: Delete options of the AI Manager. Defaults to ``Delete`` if not specified.
+    :vartype provisioningState: Union[str, "AIManagerProvisioningState"]
+    :ivar deletePolicy: Delete options of the AI Manager. Defaults to ``Delete`` if not specified.
      Known values are: "Keep" and "Delete".
-    :vartype delete_policy: Union[str, "DeletePolicy"]
-    :ivar managed_resource_group_name: The name of the managed resource group created by the AI
+    :vartype deletePolicy: Union[str, "DeletePolicy"]
+    :ivar managedResourceGroupName: The name of the managed resource group created by the AI
      Manager to hold underlying infrastructure resources.
-    :vartype managed_resource_group_name: str
+    :vartype managedResourceGroupName: str
     """
 
     provisioningState: Union[str, "AIManagerProvisioningState"]
@@ -232,12 +232,12 @@ class AIManagerProperties(TypedDict, total=False):
 class AutoscaleProfile(TypedDict, total=False):
     """Autoscaling configuration: scale replica count between a minimum and maximum.
 
-    :ivar min_replicas: The minimum number of replicas. Must be at least ``1``; scale-to-zero is
-     not supported in autoscale mode (see ``ScalingProfile``). Required.
-    :vartype min_replicas: int
-    :ivar max_replicas: The maximum number of replicas. If not specified, the service derives a
+    :ivar minReplicas: The minimum number of replicas. Must be at least ``1``; scale-to-zero is not
+     supported in autoscale mode (see ``ScalingProfile``). Required.
+    :vartype minReplicas: int
+    :ivar maxReplicas: The maximum number of replicas. If not specified, the service derives a
      default from the subscription GPU quota.
-    :vartype max_replicas: int
+    :vartype maxReplicas: int
     """
 
     minReplicas: Required[int]
@@ -282,17 +282,17 @@ class InlineCredential(TypedDict, total=False):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -337,16 +337,16 @@ class ModelDeployment(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "ModelDeploymentProperties"
-    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
      (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
-    :vartype e_tag: str
+    :vartype eTag: str
     """
 
     properties: "ModelDeploymentProperties"
@@ -361,10 +361,10 @@ class ModelDeployment(ProxyResource):
 class ModelDeploymentOverrides(TypedDict, total=False):
     """User overrides for a model deployment.
 
-    :ivar values_property: Experimental free-form override key/value pairs. Subject to change
-     without notice; not part of the stable contract. Recognized keys are documented per release and
-     may be added, renamed, or removed at any time.
-    :vartype values_property: dict[str, str]
+    :ivar values: Experimental free-form override key/value pairs. Subject to change without
+     notice; not part of the stable contract. Recognized keys are documented per release and may be
+     added, renamed, or removed at any time.
+    :vartype values: dict[str, str]
     """
 
     values: dict[str, str]
@@ -376,21 +376,21 @@ class ModelDeploymentOverrides(TypedDict, total=False):
 class ModelDeploymentProperties(TypedDict, total=False):
     """Model deployment properties.
 
-    :ivar provisioning_state: The status of the last reconciliation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last reconciliation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "ModelDeploymentProvisioningState"]
-    :ivar model_resource_id: Full ARM resource id of the model to deploy. Phase 1 accepts an
+    :vartype provisioningState: Union[str, "ModelDeploymentProvisioningState"]
+    :ivar modelResourceId: Full ARM resource id of the model to deploy. Phase 1 accepts an
      ``AIModel`` resource id only. Immutable after creation. Required.
-    :vartype model_resource_id: str
-    :ivar model_source_resource_id: Full ARM resource id of a ``ModelSource`` to use when pulling
+    :vartype modelResourceId: str
+    :ivar modelSourceResourceId: Full ARM resource id of a ``ModelSource`` to use when pulling
      artifacts for this deployment. Immutable after creation.
-    :vartype model_source_resource_id: str
-    :ivar performance_mode: Runtime performance mode. Known values are: "Balanced", "Latency", and
+    :vartype modelSourceResourceId: str
+    :ivar performanceMode: Runtime performance mode. Known values are: "Balanced", "Latency", and
      "Throughput".
-    :vartype performance_mode: Union[str, "ModelDeploymentPerformanceMode"]
-    :ivar vm_size: Azure VM SKU used to host the deployment, e.g. "Standard_NC96ads_A100_v4".
+    :vartype performanceMode: Union[str, "ModelDeploymentPerformanceMode"]
+    :ivar vmSize: Azure VM SKU used to host the deployment, e.g. "Standard_NC96ads_A100_v4".
      Immutable after creation. Required.
-    :vartype vm_size: str
+    :vartype vmSize: str
     :ivar scale: Scaling configuration for the deployment. Provide either ``manual`` (fixed replica
      count) or ``autoscale`` (autoscaling between min/max replicas), but not both.
     :vartype scale: "ScalingProfile"
@@ -431,25 +431,24 @@ class ModelDeploymentStatus(TypedDict, total=False):
     :vartype endpoint: str
     :ivar engine: The inference engine used to serve the model, e.g. "vllm".
     :vartype engine: str
-    :ivar engine_version: The version of the inference engine, e.g. "0.17".
-    :vartype engine_version: str
-    :ivar max_model_len: The maximum model context length, in tokens, configured for this
-     deployment.
-    :vartype max_model_len: int
+    :ivar engineVersion: The version of the inference engine, e.g. "0.17".
+    :vartype engineVersion: str
+    :ivar maxModelLen: The maximum model context length, in tokens, configured for this deployment.
+    :vartype maxModelLen: int
     :ivar quantization: The quantization level applied to the model weights, e.g. "fp16",
      "awq-int4".
     :vartype quantization: str
-    :ivar desired_replicas: The desired replica count reported by the controller. Equals
+    :ivar desiredReplicas: The desired replica count reported by the controller. Equals
      ``properties.scale.manual.replicas`` when manual scaling is used; current target replica count
      derived from autoscaler otherwise.
-    :vartype desired_replicas: int
-    :ivar current_replicas: The current number of ready replicas serving traffic.
-    :vartype current_replicas: int
-    :ivar peak_tokens_per_minute: The peak tokens per minute measured by live stress test.
-    :vartype peak_tokens_per_minute: int
-    :ivar estimated_provision_time_seconds: Estimated total time, in seconds, for the deployment to
+    :vartype desiredReplicas: int
+    :ivar currentReplicas: The current number of ready replicas serving traffic.
+    :vartype currentReplicas: int
+    :ivar peakTokensPerMinute: The peak tokens per minute measured by live stress test.
+    :vartype peakTokensPerMinute: int
+    :ivar estimatedProvisionTimeSeconds: Estimated total time, in seconds, for the deployment to
      become ready end-to-end (GPU vm provisioning, image/weight pull, engine warm-up).
-    :vartype estimated_provision_time_seconds: int
+    :vartype estimatedProvisionTimeSeconds: int
     """
 
     endpoint: str
@@ -487,16 +486,16 @@ class ModelSource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "ModelSourceProperties"
-    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
      (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
-    :vartype e_tag: str
+    :vartype eTag: str
     """
 
     properties: "ModelSourceProperties"
@@ -511,12 +510,12 @@ class ModelSource(ProxyResource):
 class ModelSourceProperties(TypedDict, total=False):
     """Model source properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ResourceProvisioningState"]
-    :ivar source_type: Model source type. Constrains the legal authentication kinds. Immutable
-     after creation. Required. "HuggingFace"
-    :vartype source_type: Union[str, "ModelSourceType"]
+    :vartype provisioningState: Union[str, "ResourceProvisioningState"]
+    :ivar sourceType: Model source type. Constrains the legal authentication kinds. Immutable after
+     creation. Required. "HuggingFace"
+    :vartype sourceType: Union[str, "ModelSourceType"]
     :ivar description: An optional, free-form description of the source.
     :vartype description: str
     :ivar credential: Credential the platform uses to authenticate to the source. Optional for
@@ -579,20 +578,20 @@ class ScalingProfile(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -614,10 +613,10 @@ class SystemData(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str

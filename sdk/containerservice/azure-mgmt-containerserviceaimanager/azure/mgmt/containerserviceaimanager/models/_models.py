@@ -45,7 +45,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -89,7 +89,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AIManager(TrackedResource):
+class AIManager(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AI Manager resource. For more information, see `https://aka.ms/aks/aimanager
     <https://aka.ms/aks/aimanager>`_.
 
@@ -171,7 +171,7 @@ class ProxyResource(Resource):
     """
 
 
-class AIManagerNamespace(ProxyResource):
+class AIManagerNamespace(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AI Manager namespace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -222,7 +222,7 @@ class AIManagerNamespace(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AIManagerNamespaceProperties(_Model):
+class AIManagerNamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AI Manager namespace properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -264,7 +264,7 @@ class AIManagerNamespaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AIManagerPatch(_Model):
+class AIManagerPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AI Manager resource patch model.
 
     :ivar tags: Resource tags.
@@ -299,7 +299,7 @@ class AIManagerPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AIManagerProperties(_Model):
+class AIManagerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AI Manager properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -346,7 +346,7 @@ class AIManagerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AIModel(ProxyResource):
+class AIModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An AI model exposed by Microsoft.ContainerService. Read-only, globally-shared catalog entry
     that is platform-maintained and auto-provisioned by the resource provider. Can be referenced by
     ``ModelDeployment`` resources.
@@ -412,7 +412,7 @@ class AIModelProperties(_Model):
     """Specification of the model. Required."""
 
 
-class AutoscaleProfile(_Model):
+class AutoscaleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Autoscaling configuration: scale replica count between a minimum and maximum.
 
     :ivar min_replicas: The minimum number of replicas. Must be at least ``1``; scale-to-zero is
@@ -575,7 +575,7 @@ class CredentialResults(_Model):
     """Array of credential results."""
 
 
-class CredentialValue(_Model):
+class CredentialValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A credential value. Exactly one variant must be set.
 
     In the current API version, only the ``inline`` variant is supported. Future
@@ -655,7 +655,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -701,7 +701,7 @@ class InfeasibilityReason(_Model):
     """Human-readable message accompanying ``code``. Required."""
 
 
-class InlineCredential(_Model):
+class InlineCredential(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A credential provided inline.
 
     :ivar value: The access token, password, or other secret value. Required.
@@ -729,7 +729,7 @@ class InlineCredential(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -781,7 +781,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManualScalingProfile(_Model):
+class ManualScalingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Manual scaling configuration: fixed replica count.
 
     :ivar replicas: Fixed number of replicas. May be ``0`` to stop serving traffic while keeping
@@ -811,7 +811,7 @@ class ManualScalingProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelDeployment(ProxyResource):
+class ModelDeployment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A running deployment of a model in an AI Manager namespace.
 
     PUT (create or update) on this resource is a full replace: the request body
@@ -867,7 +867,7 @@ class ModelDeployment(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ModelDeploymentOverrides(_Model):
+class ModelDeploymentOverrides(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User overrides for a model deployment.
 
     :ivar values_property: Experimental free-form override key/value pairs. Subject to change
@@ -901,7 +901,7 @@ class ModelDeploymentOverrides(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelDeploymentProperties(_Model):
+class ModelDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model deployment properties.
 
     :ivar provisioning_state: The status of the last reconciliation. Known values are: "Succeeded",
@@ -1035,7 +1035,7 @@ class ModelDeploymentStatus(_Model):
      provisioning, image/weight pull, engine warm-up)."""
 
 
-class ModelSource(ProxyResource):
+class ModelSource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A model source registered with an AI Manager. Describes an external model registry (e.g.
     Hugging Face) and the credentials the platform uses to pull artifacts from it.
 
@@ -1087,7 +1087,7 @@ class ModelSource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ModelSourceProperties(_Model):
+class ModelSourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model source properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -1198,7 +1198,7 @@ class NamespaceAccessInfo(_Model):
      can use this to detect rotation and refresh cached credentials."""
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1286,7 +1286,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class ScalingProfile(_Model):
+class ScalingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scaling configuration for a model deployment. Exactly one of ``manual`` or
     ``autoscale`` must be set.
 
@@ -1370,7 +1370,7 @@ class ServingPerformanceEstimation(_Model):
      best-performing SKU's throughput for this model). Required."""
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
