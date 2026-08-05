@@ -9,10 +9,12 @@ coexistence with the HTTP routes, and rejection of mismatched paths.
 import pytest
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
+from starlette.routing import Route, WebSocketRoute
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from azure.ai.agentserver.invocations.voice import VoiceAgentServerHost
 
 from conftest import _make_echo_ws_app
 
@@ -37,6 +39,37 @@ def test_ws_route_is_not_registered_without_handler():
     assert "/invocations_ws" not in paths
     # HTTP routes still registered.
     assert "/invocations" in paths
+
+
+def test_voice_host_rejects_preexisting_invocations_ws_route():
+    """The typed host must not silently run an unrelated endpoint at its owned route."""
+
+    async def preexisting_endpoint(_websocket):
+        return None
+
+    with pytest.raises(RuntimeError, match="cannot own /invocations_ws"):
+        VoiceAgentServerHost(
+            routes=[WebSocketRoute("/invocations_ws", preexisting_endpoint)],
+            configure_observability=None,
+        )
+
+
+def test_voice_host_allows_http_route_at_same_path():
+    """HTTP and WebSocket routes may share a path because ASGI scopes differ."""
+
+    async def http_endpoint(_request):
+        return Response("ok")
+
+    app = VoiceAgentServerHost(
+        routes=[Route("/invocations_ws", http_endpoint, methods=["GET"])],
+        configure_observability=None,
+    )
+
+    websocket_routes = [
+        route for route in app.routes if isinstance(route, WebSocketRoute) and route.path == "/invocations_ws"
+    ]
+    assert len(websocket_routes) == 1
+    assert getattr(websocket_routes[0].endpoint, "__self__", None) is app
 
 
 def test_readiness_still_works_with_ws_registered():

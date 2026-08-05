@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import datetime
 import json
+import math
 import re
 import uuid
 from collections.abc import Mapping, Sequence
@@ -37,6 +38,7 @@ from ._models import (
 
 PROTOCOL_VERSION = "1.0"
 MAX_ERROR_MESSAGE_LENGTH = 1024
+MAX_JSON_DEPTH = 128
 _SAFE_CODE = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
 _VOICE_TYPE_ALIASES = {"azure-platform": "azure-standard", "custom": "azure-custom"}
 _VOICE_TYPES = {
@@ -159,10 +161,11 @@ def decode_frame(frame: str) -> dict[str, Any]:
     """Decode one JSON object and validate its common envelope."""
     try:
         raw_payload: Any = json.loads(frame, parse_constant=_reject_json_constant)
-    except (json.JSONDecodeError, ValueError) as exc:
+    except (json.JSONDecodeError, RecursionError, ValueError) as exc:
         raise VoiceBridgeProtocolError("Bridge frame is not valid JSON") from exc
     if not isinstance(raw_payload, dict):
         raise VoiceBridgeProtocolError("Bridge frame must be a JSON object")
+    _validate_json_tree(raw_payload)
     payload = cast(dict[str, Any], raw_payload)
     require_string(payload, "type", non_empty=True)
     require_string(payload, "id", non_empty=True)
@@ -172,6 +175,27 @@ def decode_frame(frame: str) -> dict[str, Any]:
 
 def _reject_json_constant(value: str) -> Any:
     raise ValueError(f"Non-standard JSON constant: {value}")
+
+
+def _validate_json_tree(value: Any) -> None:
+    """Reject values that cannot be represented safely by the wire codec."""
+    pending: list[tuple[Any, int]] = [(value, 0)]
+    while pending:
+        current, depth = pending.pop()
+        if depth > MAX_JSON_DEPTH:
+            raise VoiceBridgeProtocolError("Bridge frame exceeds the maximum JSON depth")
+        if isinstance(current, str):
+            try:
+                current.encode("utf-8")
+            except UnicodeEncodeError as exc:
+                raise VoiceBridgeProtocolError("Bridge frame contains invalid Unicode") from exc
+        elif isinstance(current, float):
+            if not math.isfinite(current):
+                raise VoiceBridgeProtocolError("Bridge frame contains a non-finite number")
+        elif isinstance(current, dict):
+            pending.extend((item, depth + 1) for pair in current.items() for item in pair)
+        elif isinstance(current, list):
+            pending.extend((item, depth + 1) for item in current)
 
 
 def encode_frame(message_type: str, **fields: Any) -> str:
@@ -184,12 +208,12 @@ def encode_frame(message_type: str, **fields: Any) -> str:
         "ts": new_timestamp(),
         **fields,
     }
-    return json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
+    return json.dumps(payload, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
 
 
 def canonical_payload(payload: Mapping[str, Any]) -> str:
     """Return a stable representation used for exact decoded-payload dedupe."""
-    return json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
 
 
 def parse_session_start(payload: Mapping[str, Any]) -> SessionStartEvent:

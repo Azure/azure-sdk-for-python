@@ -4,6 +4,7 @@
 """End-to-end tests for the typed Voice Live bridge host."""
 
 import asyncio
+import json
 import threading
 import time
 from unittest import mock
@@ -13,11 +14,13 @@ from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from azure.ai.agentserver.invocations.voice import (
+    HandoffFailedEvent,
     ResponseCancellationOutcome,
     ResponseTimeoutEvent,
     SessionStartEvent,
     UserMessageEvent,
     VoiceAgentServerHost,
+    VoiceBridgeConnectionClosedError,
     VoiceProactiveResponseDroppedError,
     VoiceResponse,
     VoiceSession,
@@ -65,6 +68,98 @@ def _activate(websocket, **overrides):
     assert ready["type"] == "session.ready"
     assert "protocol_version" not in ready
     return ready
+
+
+def _connection(websocket, **callbacks):
+    callback_values = {
+        "on_session_start": None,
+        "on_user_message": None,
+        "on_user_no_input": None,
+        "on_user_speech_started": None,
+        "on_dtmf_key": None,
+        "on_dtmf_collected": None,
+        "on_dtmf_collection_rejected": None,
+        "on_dtmf_collection_cancelled": None,
+        "on_handoff_failed": None,
+        "on_conversation_item_create": None,
+        "on_conversation_item_delete": None,
+        "on_barge_in": None,
+        "on_response_timeout": None,
+        "on_session_end": None,
+    }
+    callback_values.update(callbacks)
+    return voice_host._VoiceConnection(websocket=websocket, **callback_values)  # pylint: disable=protected-access
+
+
+class _QueueWebSocket:
+    def __init__(self) -> None:
+        self.inbound: asyncio.Queue[dict] = asyncio.Queue()
+        self.sent: list[dict] = []
+        self.closes: list[dict] = []
+        self.ready_started = asyncio.Event()
+
+    async def receive(self) -> dict:
+        return await self.inbound.get()
+
+    async def send_text(self, data: str) -> None:
+        payload = json.loads(data)
+        self.sent.append(payload)
+        if payload["type"] == "session.ready":
+            self.ready_started.set()
+
+    async def close(self, **fields) -> None:
+        self.closes.append(fields)
+
+
+def _receive_message(payload: dict) -> dict:
+    return {"type": "websocket.receive", "text": json.dumps(payload)}
+
+
+def test_voice_host_configures_one_mib_websocket_limit() -> None:
+    config = _app()._build_hypercorn_config("127.0.0.1", 8088)  # pylint: disable=protected-access
+
+    assert config.websocket_max_message_size == 1024 * 1024
+
+
+def test_ready_gate_accepts_frame_sent_immediately_after_ready() -> None:
+    async def scenario() -> None:
+        websocket = _QueueWebSocket()
+        await websocket.inbound.put(_receive_message(_start()))
+
+        async def on_user_message(_session, _event, response) -> None:
+            await response.decline()
+
+        connection = _connection(websocket, on_user_message=on_user_message)
+
+        async def compliant_peer() -> None:
+            await websocket.ready_started.wait()
+            await websocket.inbound.put(_receive_message(_user_message()))
+
+        peer_task = asyncio.create_task(compliant_peer())
+        assert await connection._activate()  # pylint: disable=protected-access
+        await peer_task
+        payload = await connection._receive_with_worker_supervision()  # pylint: disable=protected-access
+
+        assert payload is not None
+        assert payload["type"] == "user.message"
+        assert [message["type"] for message in websocket.sent] == ["session.ready"]
+        await connection._shutdown_runtime(drain_callbacks=False)  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_ready_gate_rejects_unambiguously_early_frame() -> None:
+    async def scenario() -> None:
+        websocket = _QueueWebSocket()
+        connection = _connection(websocket)
+        await websocket.inbound.put(_receive_message(_user_message()))
+
+        assert not await connection._send_ready_with_receive_gate()  # pylint: disable=protected-access
+        assert [message["type"] for message in websocket.sent] == ["session.rejected"]
+        assert websocket.closes[-1]["code"] == 1008
+        await connection._shutdown_runtime(drain_callbacks=False)  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
 
 
 def test_non_streaming_response_opens_sdk_owned_response() -> None:
@@ -150,6 +245,38 @@ def test_streamed_multi_item_response_frames() -> None:
     assert all("output_index" not in message for message in (delta, first_done, second_done))
 
 
+def test_first_output_item_is_owned_while_wire_send_is_in_flight() -> None:
+    async def scenario() -> None:
+        ownership_seen: list[bool] = []
+
+        class Sender:
+            ending = False
+            response: VoiceResponse
+
+            async def open_response(self, _response_id, _in_reply_to) -> bool:
+                return True
+
+            async def send(self, message_type, **fields) -> None:
+                if message_type == "response.output_text.delta":
+                    ownership_seen.append(
+                        self.response._owns_item_id(fields["item_id"])  # pylint: disable=protected-access
+                    )
+
+        sender = Sender()
+        response = VoiceResponse._create(  # pylint: disable=protected-access
+            sender,
+            response_id="r_1",
+            in_reply_to=("in_1",),
+        )
+        sender.response = response
+
+        await response.send_text_delta("first")
+
+        assert ownership_seen == [True]
+
+    asyncio.run(scenario())
+
+
 def test_oversized_output_is_rejected_before_response_open() -> None:
     app = _app()
 
@@ -163,6 +290,53 @@ def test_oversized_output_is_rejected_before_response_open() -> None:
         _activate(websocket)
         websocket.send_json(_user_message())
         assert websocket.receive_json()["type"] == "response.none"
+
+
+def test_json_escape_expansion_is_rejected_by_final_wire_budget(monkeypatch) -> None:
+    monkeypatch.setattr(voice_host, "_MAX_FRAME_BYTES", 300)
+    app = _app()
+
+    @app.on_user_message
+    async def on_message(_session, _event, response: VoiceResponse) -> None:
+        with pytest.raises(ValueError, match="frame exceeds"):
+            await response.send_text("\x00" * 50)
+        await response.fail(code="output_too_large", message="Output was too large")
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        _activate(websocket)
+        websocket.send_json(_user_message())
+        assert websocket.receive_json()["type"] == "response.created"
+        assert websocket.receive_json()["type"] == "error"
+
+
+def test_oversized_non_text_field_is_rejected_before_json_encoding(monkeypatch) -> None:
+    async def scenario() -> None:
+        monkeypatch.setattr(voice_host, "_MAX_FRAME_BYTES", 100)
+        connection = _connection(None)
+
+        with pytest.raises(ValueError, match="fields exceed"):
+            await connection.send("handoff", target="x" * 101)
+
+        assert not connection.ending
+
+    asyncio.run(scenario())
+
+
+def test_oversized_inbound_frame_closes_1009(monkeypatch) -> None:
+    app = _app()
+
+    @app.on_user_message
+    async def on_message(_session, _event, response: VoiceResponse) -> None:
+        await response.decline()
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        _activate(websocket)
+        monkeypatch.setattr(voice_host, "_MAX_FRAME_BYTES", 200)
+        websocket.send_json(_user_message(text="x" * 256))
+        with pytest.raises(WebSocketDisconnect) as exc_info:
+            websocket.receive_json()
+
+    assert exc_info.value.code == 1009
 
 
 def test_explicit_decline_emits_response_none_without_response_id() -> None:
@@ -633,6 +807,42 @@ def test_late_timeout_can_cover_resolved_prefix_and_inflight_input() -> None:
         assert websocket.receive_json()["type"] == "response.created"
         assert websocket.receive_json()["type"] == "response.output_text.done"
         assert websocket.receive_json()["type"] == "response.done"
+
+
+def test_batch_timeout_completes_every_cancel_waiter() -> None:
+    async def scenario() -> None:
+        connection = _connection(None)
+        first = VoiceResponse._create(  # pylint: disable=protected-access
+            connection,
+            response_id="r_1",
+            in_reply_to=("in_1",),
+            wire_opened=True,
+        )
+        second = VoiceResponse._create(  # pylint: disable=protected-access
+            connection,
+            response_id="r_2",
+            in_reply_to=("in_2",),
+            wire_opened=True,
+        )
+        connection._resolved_input_prefixes[("in_1",)] = (first, True)  # pylint: disable=protected-access
+        connection._resolved_input_prefixes[("in_2",)] = (second, True)  # pylint: disable=protected-access
+        first_waiter = asyncio.get_running_loop().create_future()
+        second_waiter = asyncio.get_running_loop().create_future()
+        connection._cancel_waiters.update(  # pylint: disable=protected-access
+            {"r_1": first_waiter, "r_2": second_waiter}
+        )
+
+        await connection._handle_response_timeout(  # pylint: disable=protected-access
+            ResponseTimeoutEvent(stage="first_output", item_ids=("in_1", "in_2"))
+        )
+
+        assert first_waiter.done()
+        assert second_waiter.done()
+        assert isinstance(first_waiter.exception(), VoiceBridgeConnectionClosedError)
+        assert isinstance(second_waiter.exception(), VoiceBridgeConnectionClosedError)
+        assert not connection._cancel_waiters  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
 
 
 def test_pre_response_timeout_after_local_decline_is_reconciled() -> None:
@@ -1163,6 +1373,59 @@ def test_late_barge_in_after_response_done_is_dispatched() -> None:
             }
         )
         assert barge_notified.wait(timeout=1.0)
+
+
+def test_cancel_send_failure_restores_local_writability() -> None:
+    async def scenario() -> None:
+        class Sender:
+            ending = False
+
+            async def begin_cancel(self, _response_id, _reason):
+                raise RuntimeError("failed before wire attempt")
+
+        response = VoiceResponse._create(  # pylint: disable=protected-access
+            Sender(),
+            response_id="r_1",
+            in_reply_to=("in_1",),
+            wire_opened=True,
+        )
+
+        with pytest.raises(RuntimeError, match="before wire attempt"):
+            await response.cancel()
+
+        assert not response.is_cancel_pending
+
+    asyncio.run(scenario())
+
+
+def test_cancelled_ambiguous_proactive_send_terminates_connection() -> None:
+    async def scenario() -> None:
+        committed = asyncio.Event()
+
+        class BlockingWebSocket:
+            async def send_text(self, data: str) -> None:
+                if json.loads(data)["type"] == "response.created":
+                    committed.set()
+                    await asyncio.Event().wait()
+
+        connection = _connection(BlockingWebSocket())
+        connection._ready = True  # pylint: disable=protected-access
+        admission = asyncio.create_task(  # pylint: disable=protected-access
+            connection.start_proactive_response(admission_timeout_ms=1000, supersede_key=None)
+        )
+        await committed.wait()
+        admission.cancel()
+
+        with pytest.raises(asyncio.CancelledError):
+            await admission
+
+        assert connection.ending
+        assert len(connection._pending_proactive) == 1  # pylint: disable=protected-access
+        _, future = next(iter(connection._pending_proactive.values()))  # pylint: disable=protected-access
+        assert future.cancelled()
+        connection._fail_helper_waiters("closed")  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
 
 
 def test_self_cancel_resolves_from_response_cancelled() -> None:
@@ -1950,6 +2213,194 @@ def test_session_end_is_delivered_before_graceful_teardown() -> None:
             }
         )
         assert ended.wait(timeout=1.0)
+
+
+def test_terminal_tombstone_suppresses_auto_done_race() -> None:
+    async def scenario() -> None:
+        connection = _connection(None)
+        connection._ready = True  # pylint: disable=protected-access
+        response = VoiceResponse._create(  # pylint: disable=protected-access
+            connection,
+            response_id="r_1",
+            in_reply_to=("in_1",),
+            wire_opened=True,
+        )
+        item = voice_runtime.VoiceTextItem._create(response, "it_1")  # pylint: disable=protected-access
+        item._started = True  # pylint: disable=protected-access
+        item._done = True  # pylint: disable=protected-access
+        response._items.append(item)  # pylint: disable=protected-access
+        connection._active_response = response  # pylint: disable=protected-access
+        connection._terminal_response_ids.add("r_1")  # pylint: disable=protected-access
+        release_task = asyncio.create_task(asyncio.Event().wait())
+        try:
+            await connection._finalize_turn_response(  # pylint: disable=protected-access
+                response,
+                release_task,
+                failed=False,
+            )
+        finally:
+            release_task.cancel()
+            await asyncio.gather(release_task, return_exceptions=True)
+
+    asyncio.run(scenario())
+
+
+def test_auto_finalization_that_ignores_cancel_is_bounded(monkeypatch) -> None:
+    async def scenario() -> None:
+        monkeypatch.setattr(voice_host, "_CLEANUP_TIMEOUT_SECONDS", 0.01)
+        connection = _connection(None)
+        release = asyncio.Event()
+        release.set()
+        release_task = asyncio.create_task(release.wait())
+        unblock = asyncio.Event()
+
+        class ResistantResponse:
+            response_id = "r_1"
+            is_terminal = True
+
+            async def _complete_callback(self) -> None:
+                try:
+                    await asyncio.Event().wait()
+                except asyncio.CancelledError:
+                    await unblock.wait()
+
+        await connection._finalize_turn_response(  # type: ignore[arg-type]  # pylint: disable=protected-access
+            ResistantResponse(),
+            release_task,
+            failed=False,
+        )
+
+        assert connection.ending
+        assert connection._resource_limit_reached.done()  # pylint: disable=protected-access
+        finalizers = [
+            task
+            for task in voice_host._GLOBAL_CUSTOMER_TASKS  # pylint: disable=protected-access
+            if task.get_name() == "voice_response_callback_finalize"
+        ]
+        assert len(finalizers) == 1
+        unblock.set()
+        await asyncio.gather(*finalizers, return_exceptions=True)
+
+    asyncio.run(scenario())
+
+
+def test_callback_queue_byte_budget_covers_signal_events(monkeypatch) -> None:
+    async def scenario() -> None:
+        monkeypatch.setattr(voice_host, "_MAX_CALLBACK_QUEUE_BYTES", 16)
+        connection = _connection(None)
+        work = voice_host._CallbackWork(  # pylint: disable=protected-access
+            kind="handoff.failed",
+            event=HandoffFailedEvent(
+                item_id="in_recovery",
+                target="billing",
+                code="target_unavailable",
+                message="x" * 32,
+            ),
+            callback=None,
+        )
+
+        with pytest.raises(voice_host.VoiceBridgeProtocolError, match="byte limit"):
+            connection._put_work(work)  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_shutdown_releases_queued_callback_payloads() -> None:
+    async def scenario() -> None:
+        connection = _connection(None)
+        work = voice_host._CallbackWork(  # pylint: disable=protected-access
+            kind="handoff.failed",
+            event=HandoffFailedEvent(
+                item_id="in_recovery",
+                target="billing",
+                code="target_unavailable",
+                message="x" * 1024,
+            ),
+            callback=None,
+        )
+        connection._put_work(work)  # pylint: disable=protected-access
+        assert connection._callback_queue_bytes > 0  # pylint: disable=protected-access
+
+        await connection._shutdown_runtime(drain_callbacks=False)  # pylint: disable=protected-access
+
+        assert connection._callback_queue.empty()  # pylint: disable=protected-access
+        assert connection._callback_queue_bytes == 0  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_global_customer_task_admission_failure_cleans_activation_receive(monkeypatch) -> None:
+    async def scenario() -> None:
+        monkeypatch.setattr(voice_host, "_MAX_GLOBAL_CUSTOMER_TASKS", 0)
+
+        class BlockingWebSocket:
+            async def receive(self) -> dict:
+                await asyncio.Event().wait()
+                raise AssertionError("unreachable")
+
+        connection = _connection(BlockingWebSocket())
+        with pytest.raises(RuntimeError, match="global customer task limit"):
+            await connection._run_session_start_callback(None, None)  # type: ignore[arg-type]  # pylint: disable=protected-access
+
+        assert not any(task.get_name() == "voice_activation_receive" for task in asyncio.all_tasks())
+
+    asyncio.run(scenario())
+
+
+def test_global_customer_task_limit_is_shared_across_connections(monkeypatch) -> None:
+    async def scenario() -> None:
+        monkeypatch.setattr(voice_host, "_MAX_GLOBAL_CUSTOMER_TASKS", 1)
+        first_connection = _connection(None)
+        second_connection = _connection(None)
+        first_task = first_connection._create_customer_task(  # pylint: disable=protected-access
+            asyncio.Event().wait(),
+            name="first_connection_customer",
+        )
+
+        with pytest.raises(RuntimeError, match="global customer task limit"):
+            second_connection._create_customer_task(  # pylint: disable=protected-access
+                asyncio.Event().wait(),
+                name="second_connection_customer",
+            )
+
+        assert second_connection.ending
+        first_task.cancel()
+        await asyncio.gather(first_task, return_exceptions=True)
+
+    asyncio.run(scenario())
+
+
+def test_eager_customer_task_completion_releases_global_slot(monkeypatch) -> None:
+    eager_task_factory = getattr(asyncio, "eager_task_factory", None)
+    if eager_task_factory is None:
+        pytest.skip("asyncio.eager_task_factory requires Python 3.12+")
+
+    async def scenario() -> None:
+        monkeypatch.setattr(voice_host, "_MAX_GLOBAL_CUSTOMER_TASKS", 1)
+        loop = asyncio.get_running_loop()
+        original_factory = loop.get_task_factory()
+        loop.set_task_factory(eager_task_factory)
+        connection = _connection(None)
+
+        async def complete_immediately() -> None:
+            return None
+
+        try:
+            first = connection._create_customer_task(  # pylint: disable=protected-access
+                complete_immediately(),
+                name="first_eager_customer",
+            )
+            second = connection._create_customer_task(  # pylint: disable=protected-access
+                complete_immediately(),
+                name="second_eager_customer",
+            )
+            assert first.done()
+            assert second.done()
+            assert not connection.ending
+        finally:
+            loop.set_task_factory(original_factory)
+
+    asyncio.run(scenario())
 
 
 def test_cancellation_resistant_signal_does_not_block_teardown(monkeypatch) -> None:

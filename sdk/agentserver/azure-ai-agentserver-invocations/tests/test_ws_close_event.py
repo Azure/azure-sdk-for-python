@@ -109,6 +109,25 @@ def test_ws_close_event_records_application_selected_code(caplog):
     assert getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code") == 1008
 
 
+def test_ws_close_event_records_peer_code_when_iter_text_swallows_disconnect(caplog):
+    """The SDK tracks peer disconnects below Starlette's swallowing iterators."""
+    app = InvocationAgentServerHost(configure_observability=None)
+
+    @app.ws_handler
+    async def handler(websocket):
+        async for _ in websocket.iter_text():
+            pass
+
+    client = TestClient(app)
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        with client.websocket_connect("/invocations_ws") as websocket:
+            websocket.close(code=1008)
+
+    matches = _records_with_ws_extras(caplog.records)
+    assert matches
+    assert getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code") == 1008
+
+
 def test_ws_close_event_preserves_sent_code_when_handler_then_raises(caplog):
     """A successful application close remains the wire code after a later error."""
     app = InvocationAgentServerHost(configure_observability=None)

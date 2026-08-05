@@ -55,6 +55,7 @@ else:
 logger = logging.getLogger("azure.ai.agentserver")
 
 _APPLICATION_CLOSE_CODE = "azure.ai.agentserver.invocations_ws.application_close_code"
+_PEER_CLOSE_CODE = "azure.ai.agentserver.invocations_ws.peer_close_code"
 
 
 WSHandler = Callable[[WebSocket], Awaitable[None]]
@@ -232,13 +233,21 @@ class _WSHandlerMixin(_MixinBase):
         close_code: int = InvocationsWSConstants.CLOSE_NORMAL
         handler_exc: Optional[BaseException] = None
         original_send = websocket.send
+        original_receive = websocket.receive
 
         async def _tracked_send(message: MutableMapping[str, Any]) -> None:
             await original_send(message)
             if message.get("type") == "websocket.close":
                 websocket.scope[_APPLICATION_CLOSE_CODE] = int(message.get("code", InvocationsWSConstants.CLOSE_NORMAL))
 
+        async def _tracked_receive() -> MutableMapping[str, Any]:
+            message = await original_receive()
+            if message.get("type") == "websocket.disconnect":
+                websocket.scope[_PEER_CLOSE_CODE] = int(message.get("code") or InvocationsWSConstants.CLOSE_NORMAL)
+            return message
+
         websocket.send = _tracked_send  # type: ignore[method-assign]
+        websocket.receive = _tracked_receive  # type: ignore[method-assign]
         try:
             close_code, handler_exc = await self._invoke_user_handler(websocket, session_id)
         except BaseException as exc:  # pylint: disable=broad-exception-caught
@@ -250,7 +259,7 @@ class _WSHandlerMixin(_MixinBase):
             close_code = int(
                 websocket.scope.get(
                     _APPLICATION_CLOSE_CODE,
-                    InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
+                    websocket.scope.get(_PEER_CLOSE_CODE, InvocationsWSConstants.CLOSE_INTERNAL_ERROR),
                 )
             )
             handler_exc = exc
@@ -304,7 +313,7 @@ class _WSHandlerMixin(_MixinBase):
                 int(
                     websocket.scope.get(
                         _APPLICATION_CLOSE_CODE,
-                        InvocationsWSConstants.CLOSE_NORMAL,
+                        websocket.scope.get(_PEER_CLOSE_CODE, InvocationsWSConstants.CLOSE_NORMAL),
                     )
                 ),
                 None,
@@ -326,7 +335,7 @@ class _WSHandlerMixin(_MixinBase):
                 int(
                     websocket.scope.get(
                         _APPLICATION_CLOSE_CODE,
-                        InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
+                        websocket.scope.get(_PEER_CLOSE_CODE, InvocationsWSConstants.CLOSE_INTERNAL_ERROR),
                     )
                 ),
                 exc,

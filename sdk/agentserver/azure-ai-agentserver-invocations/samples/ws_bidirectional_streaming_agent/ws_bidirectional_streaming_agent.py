@@ -161,11 +161,10 @@ async def _stream_tokens(
         logger.exception("_stream_tokens failed for prompt %s", prompt_id)
 
 
-def _remove_completed_task(
-    in_flight: dict[str, asyncio.Task[None]], prompt_id: str, _task: asyncio.Task[None]
-) -> None:
+def _remove_completed_task(in_flight: dict[str, asyncio.Task[None]], prompt_id: str, task: asyncio.Task[None]) -> None:
     """Remove a completed generation task from the connection-local registry."""
-    in_flight.pop(prompt_id, None)
+    if in_flight.get(prompt_id) is task:
+        in_flight.pop(prompt_id, None)
 
 
 async def _reader(

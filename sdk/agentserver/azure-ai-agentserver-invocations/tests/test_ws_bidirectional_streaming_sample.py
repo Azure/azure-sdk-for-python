@@ -8,6 +8,7 @@ per-token sleep down to 0 so the test runs in milliseconds, and drives the
 ``ready`` / ``prompt`` / ``cancel`` / ``bye`` wire protocol over Starlette's
 ``TestClient.websocket_connect``.
 """
+import asyncio
 import importlib.util
 import json
 import pathlib
@@ -162,6 +163,24 @@ def test_ws_bidirectional_cancel_unknown_id_is_noop(sample):
         _, terminal = _drain_until_done(ws, "p3")
         ws.send_text(json.dumps({"type": "bye"}))
         assert terminal == {"type": "done", "id": "p3"}
+
+
+def test_completed_old_prompt_does_not_remove_replacement_task(sample):
+    """A reused prompt ID cannot let the old task unregister its replacement."""
+
+    async def scenario() -> None:
+        old_task = asyncio.create_task(asyncio.sleep(0))
+        replacement_task = asyncio.create_task(asyncio.Event().wait())
+        in_flight = {"p1": replacement_task}
+        await old_task
+
+        sample._remove_completed_task(in_flight, "p1", old_task)
+
+        assert in_flight["p1"] is replacement_task
+        replacement_task.cancel()
+        await asyncio.gather(replacement_task, return_exceptions=True)
+
+    asyncio.run(scenario())
 
 
 # ---------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 """Tests for strict Voice Live Bridge Protocol 1.0 helpers."""
 
+import json
 from types import MappingProxyType
 
 import pytest
@@ -91,6 +92,26 @@ def test_decode_requires_common_envelope() -> None:
 def test_decode_rejects_non_standard_json_numbers() -> None:
     with pytest.raises(VoiceBridgeProtocolError, match="not valid JSON"):
         decode_frame('{"type":"future","id":"m_1","ts":"2026-07-24T12:34:56.789Z","value":NaN}')
+
+
+def test_decode_rejects_non_finite_number_from_valid_json_syntax() -> None:
+    with pytest.raises(VoiceBridgeProtocolError, match="non-finite"):
+        decode_frame('{"type":"future","id":"m_1","ts":"2026-07-24T12:34:56.789Z","value":1e400}')
+
+
+def test_decode_rejects_unpaired_unicode_surrogate() -> None:
+    with pytest.raises(VoiceBridgeProtocolError, match="invalid Unicode"):
+        decode_frame(r'{"type":"future","id":"m_1","ts":"2026-07-24T12:34:56.789Z","value":"\ud800"}')
+
+
+def test_decode_rejects_excessive_json_depth() -> None:
+    value: object = "leaf"
+    for _ in range(130):
+        value = [value]
+    frame = json.dumps({"type": "future", "id": "m_1", "ts": _TS, "value": value})
+
+    with pytest.raises(VoiceBridgeProtocolError, match="maximum JSON depth"):
+        decode_frame(frame)
 
 
 def test_canonical_payload_ignores_object_key_order() -> None:
