@@ -2,6 +2,12 @@
 
 ## 2.0.0 (2026-08-05)
 
+### Other Changes
+
+- Promoted `azure-ai-agentserver-core` to GA.
+
+## 2.0.0b11 (2026-08-05)
+
 ### Features Added
 
 - Added a shared `experimental` decorator for marking Agent Server preview feature surfaces with docstring notes and one-time runtime warnings. The resilient task primitive and Foundry storage public APIs are now marked experimental.
