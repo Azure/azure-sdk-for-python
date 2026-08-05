@@ -2272,14 +2272,14 @@ def test_auto_finalization_that_ignores_cancel_is_bounded(monkeypatch) -> None:
 
         assert connection.ending
         assert connection._resource_limit_reached.done()  # pylint: disable=protected-access
-        finalizers = [
+        finalizer_tasks = [
             task
             for task in voice_host._GLOBAL_CUSTOMER_TASKS  # pylint: disable=protected-access
             if task.get_name() == "voice_response_callback_finalize"
         ]
-        assert len(finalizers) == 1
+        assert len(finalizer_tasks) == 1
         unblock.set()
-        await asyncio.gather(*finalizers, return_exceptions=True)
+        await asyncio.gather(*finalizer_tasks, return_exceptions=True)
 
     asyncio.run(scenario())
 
