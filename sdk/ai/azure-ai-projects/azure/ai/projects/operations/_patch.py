@@ -19,7 +19,14 @@ from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
-from ._patch_rle import OpenEnvClient, OpenEnvInstance, RLEOperations
+from ._patch_rle import (
+    OpenEnvClient,
+    OpenEnvInstance,
+    RLEOperations,
+    RLEError,
+    RLEQuotaExceededError,
+    RLEAtCapacityError,
+)
 from ._operations import (
     BetaAgentsOperations,
     BetaDatasetsOperations,
@@ -159,6 +166,9 @@ __all__: List[str] = [
     "OpenEnvClient",
     "OpenEnvInstance",
     "RLEOperations",
+    "RLEError",
+    "RLEQuotaExceededError",
+    "RLEAtCapacityError",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

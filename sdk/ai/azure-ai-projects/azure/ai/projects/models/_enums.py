@@ -45,8 +45,6 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MODELS_V1_PREVIEW."""
     AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
     """AGENTS_OPTIMIZATION_V2_PREVIEW."""
-    RL_ENVIRONMENT_V1_PREVIEW = "RLEnvironment=V1Preview"
-    """RL_ENVIRONMENT_V1_PREVIEW."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1282,11 +1280,6 @@ class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FIXED_RATIO."""
 
 
-# RLE (reinforcement learning) enums grafted from generated code
-
-
-# RLE (reinforcement learning) grafted from generated code
-
 class RLEnvironmentDiskImageConversionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the asynchronous ACR image to disk image conversion. Serialized as its string name."""
 
@@ -1299,16 +1292,49 @@ class RLEnvironmentDiskImageConversionStatus(str, Enum, metaclass=CaseInsensitiv
     FAILED = "Failed"
     """Disk image conversion failed. See ``diskImageConversionError`` for details."""
 
-class RLESandboxStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Lifecycle status of an RLE sandbox."""
+
+class RLEInstanceGroupStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allocation lifecycle status of an RLE instance group. This tracks allocation, not ML outcome:
+    RLE does not run the training, so there is no group-level ``Succeeded`` status. ``Closed`` is the
+    normal (success-equivalent) terminal and ``Failed`` is an infrastructure/allocation verdict only
+    (RLE could not serve the environment)."""
+
+    CREATED = "Created"
+    """Instance-group record exists; no instance has been leased yet."""
+    ACTIVE = "Active"
+    """At least one instance has been leased for the group."""
+    CLOSED = "Closed"
+    """Ended normally; all instances released. Success-equivalent terminal state."""
+    FAILED = "Failed"
+    """RLE could not serve the environment (invalid version, broken image, or all instances failed).
+    Infrastructure verdict only."""
+    CANCELLED = "Cancelled"
+    """Aborted early by an explicit cancel or delete."""
+
+
+class RLEInstanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Runtime status of an RLE instance, as observed by RLE from the backing runtime."""
 
     CREATING = "Creating"
-    """RLESandbox is being provisioned."""
+    """The backing runtime is being provisioned."""
     RUNNING = "Running"
-    """RLESandbox is ready to accept runtime requests at ``url``."""
+    """The instance is up and serving data-plane calls."""
     STOPPED = "Stopped"
-    """RLESandbox is stopped but retained and may be resumed."""
-    RELEASED = "Released"
-    """RLESandbox has been released and can no longer be used."""
+    """The instance's task finished and RLE stopped the backing runtime. Not reused in this version."""
     FAILED = "Failed"
-    """RLESandbox entered a terminal failure state. See ``error`` for details."""
+    """The instance errored during provisioning or at runtime. See ``error`` for details."""
+    DELETED = "Deleted"
+    """The backing runtime has been torn down / removed."""
+    CANCELLED = "Cancelled"
+    """The instance was released before its task completed (e.g. the instance group was cancelled)."""
+
+
+class RLEInstanceLeaseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allocation (lease) state of an RLE instance, orthogonal to its runtime ``status``."""
+
+    LEASED = "Leased"
+    """The instance is actively leased and counts against the group's reserved quota."""
+    IDLE = "Idle"
+    """Reserved for future instance reuse. Not used in this version."""
+    RELEASED = "Released"
+    """The lease has been released; the instance no longer counts against quota and is not reused."""

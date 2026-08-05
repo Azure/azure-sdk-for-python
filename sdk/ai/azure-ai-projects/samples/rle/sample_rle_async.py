@@ -66,13 +66,14 @@ async def run(args):
         authentication_policy=AzureKeyCredentialPolicy(key_credential, "api-key"),
     ) as project_client:
         # get_openenv_client is a plain (non-awaited) factory: it does no I/O. Entering the async
-        # context resolves the environment and reserves quota (a missing environment fails on entry).
-        # get_instance() stays a plain (non-awaited) accessor.
+        # context resolves the environment and creates the instance group that reserves quota (a
+        # missing environment fails on entry). get_instance() leases a running instance on demand, so
+        # it is awaited on the async surface.
         async with project_client.rle.get_openenv_client(
             name=args.name,
             version=args.version,
         ) as openenv_client:
-            async with openenv_client.get_instance() as instance:
+            async with await openenv_client.get_instance() as instance:
                 reset_result = await instance.reset(seed=args.seed)
                 observation = reset_result.observation or {}
                 prompt = observation.get("prompt", "")

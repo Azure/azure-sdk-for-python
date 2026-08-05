@@ -16128,43 +16128,134 @@ class CreateRLEnvironmentRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateRLESandboxRequest(_Model):
-    """Request body for leasing a new sandbox from an RLE environment.
+class RLEInstanceGroupResourceProfile(_Model):
+    """Forward-compatible resource allocation hints for an instance group. Recorded but not scheduled
+    against in this version.
 
-    :ivar version: Optional environment image version to lease. Defaults to the latest version.
-    :vartype version: str
-    :ivar cpu: Requested CPU allocation. Encoded as a string (e.g. "1", "2", "500m").
+    :ivar cpu: Requested CPU allocation hint, encoded as a string (e.g. "1", "2", "500m").
     :vartype cpu: str
-    :ivar memory: Requested memory allocation, for example "2Gi".
+    :ivar memory: Requested memory allocation hint, for example "2Gi".
     :vartype memory: str
-    :ivar disk: Requested disk allocation, for example "10Gi".
+    :ivar disk: Requested disk allocation hint, for example "10Gi".
     :vartype disk: str
-    :ivar env_vars: Environment variables to inject into the sandbox.
-    :vartype env_vars: dict[str, str]
     """
 
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional environment image version to lease. Defaults to the latest version."""
     cpu: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Requested CPU allocation. Encoded as a string (e.g. \"1\", \"2\", \"500m\")."""
+    """Requested CPU allocation hint, encoded as a string (e.g. \"1\", \"2\", \"500m\")."""
     memory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Requested memory allocation, for example \"2Gi\"."""
+    """Requested memory allocation hint, for example \"2Gi\"."""
     disk: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Requested disk allocation, for example \"10Gi\"."""
-    env_vars: Optional[dict[str, str]] = rest_field(
-        name="envVars", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Environment variables to inject into the sandbox."""
+    """Requested disk allocation hint, for example \"10Gi\"."""
 
     @overload
     def __init__(
         self,
         *,
-        version: Optional[str] = None,
         cpu: Optional[str] = None,
         memory: Optional[str] = None,
         disk: Optional[str] = None,
-        env_vars: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CreateRLEInstanceGroupRequest(_Model):
+    """Request body for creating an RLE instance group.
+
+    :ivar environment_name: Name of the registered RLE environment to lease instances from. Required.
+    :vartype environment_name: str
+    :ivar environment_version: Version of the registered RLE environment to lease instances from.
+     Required.
+    :vartype environment_version: str
+    :ivar instance_count: Reserved quota: the maximum number of concurrently-active instances.
+     Optional; defaults to 1 when omitted.
+    :vartype instance_count: int
+    :ivar name: Optional caller-provided display name. The service generates one when omitted.
+    :vartype name: str
+    :ivar metadata: Optional free-form correlation/tag key-values. ``external_job_id`` is a reserved
+     well-known key for the upstream Training API job / AML run.
+    :vartype metadata: dict[str, str]
+    :ivar resource_profile: Optional forward-compatible resource allocation hints. Recorded only in
+     this version.
+    :vartype resource_profile: ~azure.ai.projects.models.RLEInstanceGroupResourceProfile
+    """
+
+    environment_name: str = rest_field(
+        name="environment_name", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the registered RLE environment to lease instances from. Required."""
+    environment_version: str = rest_field(
+        name="environment_version", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Version of the registered RLE environment to lease instances from. Required."""
+    instance_count: Optional[int] = rest_field(
+        name="instance_count", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reserved quota: the maximum number of concurrently-active instances. Optional; defaults to 1
+     when omitted."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional caller-provided display name. The service generates one when omitted."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional free-form correlation/tag key-values. ``external_job_id`` is a reserved well-known key
+     for the upstream Training API job / AML run."""
+    resource_profile: Optional["_models.RLEInstanceGroupResourceProfile"] = rest_field(
+        name="resource_profile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional forward-compatible resource allocation hints. Recorded only in this version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        environment_name: str,
+        environment_version: str,
+        instance_count: Optional[int] = None,
+        name: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        resource_profile: Optional["_models.RLEInstanceGroupResourceProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpdateRLEInstanceGroupRequest(_Model):
+    """Request body for updating an RLE instance group. Used to signal completion by setting
+    ``status`` to ``Closed``.
+
+    :ivar status: New allocation lifecycle status. Setting ``Closed`` signals normal completion and
+     releases all owned instances. Known values are: "Created", "Active", "Closed", "Failed", and
+     "Cancelled".
+    :vartype status: str or ~azure.ai.projects.models.RLEInstanceGroupStatus
+    """
+
+    status: Optional[Union[str, "_models.RLEInstanceGroupStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """New allocation lifecycle status. Setting ``Closed`` signals normal completion and releases all
+     owned instances. Known values are: \"Created\", \"Active\", \"Closed\", \"Failed\", and
+     \"Cancelled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.RLEInstanceGroupStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -16211,25 +16302,25 @@ class ListRLEnvironmentsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListRLESandboxesResponse(_Model):
-    """Response for listing sandboxes leased for an RLE environment.
+class ListRLEInstanceGroupsResponse(_Model):
+    """Response for listing RLE instance groups.
 
-    :ivar value: Sandboxes on this page. Required.
-    :vartype value: list[~azure.ai.projects.models.RLESandbox]
-    :ivar count: Number of sandboxes returned on this page. Required.
+    :ivar value: Instance groups on this page. Required.
+    :vartype value: list[~azure.ai.projects.models.RLEInstanceGroup]
+    :ivar count: Number of instance groups returned on this page. Required.
     :vartype count: int
     """
 
-    value: list["_models.RLESandbox"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Sandboxes on this page. Required."""
+    value: list["_models.RLEInstanceGroup"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Instance groups on this page. Required."""
     count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Number of sandboxes returned on this page. Required."""
+    """Number of instance groups returned on this page. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        value: list["_models.RLESandbox"],
+        value: list["_models.RLEInstanceGroup"],
         count: int,
     ) -> None: ...
 
@@ -16242,6 +16333,118 @@ class ListRLESandboxesResponse(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ListRLEInstancesResponse(_Model):
+    """Response for listing instances owned by an RLE instance group.
+
+    :ivar value: Instances on this page. Required.
+    :vartype value: list[~azure.ai.projects.models.RLEInstance]
+    :ivar count: Number of instances returned on this page. Required.
+    :vartype count: int
+    """
+
+    value: list["_models.RLEInstance"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Instances on this page. Required."""
+    count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of instances returned on this page. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.RLEInstance"],
+        count: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RLEInstanceGroup(_Model):
+    """A first-class group of RLE instances leased for a single reinforcement-learning training job.
+    Created from a registered environment (referenced by name and version); the environment does not
+    appear in the instance-group URI.
+
+    :ivar instance_group_id: Instance group identifier, assigned by the service. Required.
+    :vartype instance_group_id: str
+    :ivar project_id: Foundry project identifier that owns this instance group. Required.
+    :vartype project_id: str
+    :ivar name: Display name for the instance group. Supplied by the caller or generated by the
+     service. Required.
+    :vartype name: str
+    :ivar environment_name: Name of the registered RLE environment the group's instances are leased
+     from. Required.
+    :vartype environment_name: str
+    :ivar environment_version: Version of the registered RLE environment the group's instances are
+     leased from. Required.
+    :vartype environment_version: str
+    :ivar instance_count: Reserved quota: the maximum number of concurrently-active instances the
+     group may hold. Defaults to 1 when omitted on create. Required.
+    :vartype instance_count: int
+    :ivar status: Allocation lifecycle status of the instance group. Required. Known values are:
+     "Created", "Active", "Closed", "Failed", and "Cancelled".
+    :vartype status: str or ~azure.ai.projects.models.RLEInstanceGroupStatus
+    :ivar error: Failure detail when the instance group enters the ``Failed`` state.
+    :vartype error: str
+    :ivar metadata: Free-form correlation/tag key-values, persisted opaquely by RLE and echoed on
+     responses. ``external_job_id`` is a reserved well-known key that carries the upstream Training
+     API job / AML run this group backs.
+    :vartype metadata: dict[str, str]
+    :ivar resource_profile: Forward-compatible resource allocation hints. Recorded but not scheduled
+     against in this version.
+    :vartype resource_profile: ~azure.ai.projects.models.RLEInstanceGroupResourceProfile
+    :ivar priority: Forward-compatible scheduling priority hint. Recorded but not scheduled against
+     in this version.
+    :vartype priority: int
+    :ivar created_at_utc: Timestamp the instance group was created, in UTC. Required.
+    :vartype created_at_utc: ~datetime.datetime
+    :ivar updated_at_utc: Timestamp the instance group was last updated, in UTC. Required.
+    :vartype updated_at_utc: ~datetime.datetime
+    """
+
+    instance_group_id: str = rest_field(name="instance_group_id", visibility=["read"])
+    """Instance group identifier, assigned by the service. Required."""
+    project_id: str = rest_field(name="project_id", visibility=["read"])
+    """Foundry project identifier that owns this instance group. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Display name for the instance group. Supplied by the caller or generated by the service.
+     Required."""
+    environment_name: str = rest_field(name="environment_name", visibility=["read"])
+    """Name of the registered RLE environment the group's instances are leased from. Required."""
+    environment_version: str = rest_field(name="environment_version", visibility=["read"])
+    """Version of the registered RLE environment the group's instances are leased from. Required."""
+    instance_count: int = rest_field(name="instance_count", visibility=["read"])
+    """Reserved quota: the maximum number of concurrently-active instances the group may hold.
+     Defaults to 1 when omitted on create. Required."""
+    status: Union[str, "_models.RLEInstanceGroupStatus"] = rest_field(visibility=["read"])
+    """Allocation lifecycle status of the instance group. Required. Known values are: \"Created\",
+     \"Active\", \"Closed\", \"Failed\", and \"Cancelled\"."""
+    error: Optional[str] = rest_field(visibility=["read"])
+    """Failure detail when the instance group enters the ``Failed`` state."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Free-form correlation/tag key-values, persisted opaquely by RLE and echoed on responses.
+     ``external_job_id`` is a reserved well-known key that carries the upstream Training API job / AML
+     run this group backs."""
+    resource_profile: Optional["_models.RLEInstanceGroupResourceProfile"] = rest_field(
+        name="resource_profile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Forward-compatible resource allocation hints. Recorded but not scheduled against in this
+     version."""
+    priority: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Forward-compatible scheduling priority hint. Recorded but not scheduled against in this
+     version."""
+    created_at_utc: datetime.datetime = rest_field(name="created_at_utc", visibility=["read"], format="rfc3339")
+    """Timestamp the instance group was created, in UTC. Required."""
+    updated_at_utc: datetime.datetime = rest_field(name="updated_at_utc", visibility=["read"], format="rfc3339")
+    """Timestamp the instance group was last updated, in UTC. Required."""
 
 
 class RLEnvironment(_Model):
@@ -16418,56 +16621,89 @@ class RLEResetRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RLESandbox(_Model):
-    """A sandbox leased from a hosted RLE environment.
+class RLEInstance(_Model):
+    """A leased runtime unit owned by an RLE instance group (replaces the former "sandbox" concept).
+    Combines the owning instance-group identity, the runtime identity, internal backing details,
+    runtime status, and lease bookkeeping.
 
-    :ivar id: RLESandbox identifier, assigned by the service. Required.
-    :vartype id: str
-    :ivar project_id: Foundry project identifier that owns the sandbox. Required.
-    :vartype project_id: str
-    :ivar environment_id: Identifier of the parent RLE environment from which the sandbox was
-     leased. Required.
-    :vartype environment_id: str
-    :ivar disk_image_id: Identifier of the disk image backing the sandbox. Required.
-    :vartype disk_image_id: str
-    :ivar adc_sandbox_id: Underlying ADC sandbox identifier, when one has been provisioned.
+    :ivar instance_id: Instance identifier, assigned by the service. Globally unique. Required.
+    :vartype instance_id: str
+    :ivar instance_group_id: Identifier of the owning RLE instance group. Required.
+    :vartype instance_group_id: str
+    :ivar adc_sandbox_id: Internal identifier of the backing runtime sandbox. Surfaced for
+     diagnostics only.
     :vartype adc_sandbox_id: str
-    :ivar base_url: Base URL for the sandbox runtime API. Present once the sandbox is ``Running``.
-    :vartype base_url: str
-    :ivar status: RLESandbox lifecycle status. The SDK treats ``Running`` as ready and ``Failed``
-     as failed; ``Stopped`` is a non-terminal pause and ``Released`` is terminal. Required. Known
-     values are: "Creating", "Running", "Stopped", "Released", and "Failed".
-    :vartype status: str or ~azure.ai.projects.models.RLESandboxStatus
-    :ivar error: Failure detail when the sandbox enters a failed state.
+    :ivar status: Runtime status of the instance. Required. Known values are: "Creating", "Running",
+     "Stopped", "Failed", "Deleted", and "Cancelled".
+    :vartype status: str or ~azure.ai.projects.models.RLEInstanceStatus
+    :ivar lease_state: Allocation (lease) state of the instance. Required. Known values are:
+     "Leased", "Idle", and "Released".
+    :vartype lease_state: str or ~azure.ai.projects.models.RLEInstanceLeaseState
+    :ivar leased_at_utc: Timestamp the instance was leased, in UTC.
+    :vartype leased_at_utc: ~datetime.datetime
+    :ivar released_at_utc: Timestamp the instance was released, in UTC.
+    :vartype released_at_utc: ~datetime.datetime
+    :ivar last_activity_utc: Timestamp of the most recent data-plane activity on the instance, in
+     UTC. Bumped on every data-plane call.
+    :vartype last_activity_utc: ~datetime.datetime
+    :ivar lease_expires_at_utc: Idle-timeout deadline, in UTC. Computed as ``last_activity_utc`` plus
+     the idle TTL.
+    :vartype lease_expires_at_utc: ~datetime.datetime
+    :ivar cpu: CPU allocation of the instance, encoded as a string.
+    :vartype cpu: str
+    :ivar memory: Memory allocation of the instance, for example "2Gi".
+    :vartype memory: str
+    :ivar disk: Disk allocation of the instance, for example "10Gi".
+    :vartype disk: str
+    :ivar error: Failure detail when the instance enters the ``Failed`` state.
     :vartype error: str
-    :ivar created_at_utc: Timestamp the sandbox was first leased, in UTC. Required.
+    :ivar created_at_utc: Timestamp the instance was created, in UTC. Required.
     :vartype created_at_utc: ~datetime.datetime
-    :ivar updated_at_utc: Timestamp the sandbox was last updated, in UTC. Required.
+    :ivar updated_at_utc: Timestamp the instance was last updated, in UTC. Required.
     :vartype updated_at_utc: ~datetime.datetime
     """
 
-    id: str = rest_field(name="id", visibility=["read"])
-    """RLESandbox identifier, assigned by the service. Required."""
-    project_id: str = rest_field(name="projectId", visibility=["read"])
-    """Foundry project identifier that owns the sandbox. Required."""
-    environment_id: str = rest_field(name="environmentId", visibility=["read"])
-    """Identifier of the parent RLE environment from which the sandbox was leased. Required."""
-    disk_image_id: str = rest_field(name="diskImageId", visibility=["read"])
-    """Identifier of the disk image backing the sandbox. Required."""
-    adc_sandbox_id: Optional[str] = rest_field(name="adcSandboxId", visibility=["read"])
-    """Underlying ADC sandbox identifier, when one has been provisioned."""
-    base_url: Optional[str] = rest_field(name="baseUrl", visibility=["read"])
-    """Base URL for the sandbox runtime API. Present once the sandbox is ``Running``."""
-    status: Union[str, "_models.RLESandboxStatus"] = rest_field(visibility=["read"])
-    """RLESandbox lifecycle status. The SDK treats ``Running`` as ready and ``Failed`` as failed;
-     ``Stopped`` is a non-terminal pause and ``Released`` is terminal. Required. Known values are:
-     \"Creating\", \"Running\", \"Stopped\", \"Released\", and \"Failed\"."""
+    instance_id: str = rest_field(name="instance_id", visibility=["read"])
+    """Instance identifier, assigned by the service. Globally unique. Required."""
+    instance_group_id: str = rest_field(name="instance_group_id", visibility=["read"])
+    """Identifier of the owning RLE instance group. Required."""
+    adc_sandbox_id: Optional[str] = rest_field(name="adc_sandbox_id", visibility=["read"])
+    """Internal identifier of the backing runtime sandbox. Surfaced for diagnostics only."""
+    status: Union[str, "_models.RLEInstanceStatus"] = rest_field(visibility=["read"])
+    """Runtime status of the instance. Required. Known values are: \"Creating\", \"Running\",
+     \"Stopped\", \"Failed\", \"Deleted\", and \"Cancelled\"."""
+    lease_state: Union[str, "_models.RLEInstanceLeaseState"] = rest_field(name="lease_state", visibility=["read"])
+    """Allocation (lease) state of the instance. Required. Known values are: \"Leased\", \"Idle\", and
+     \"Released\"."""
+    leased_at_utc: Optional[datetime.datetime] = rest_field(
+        name="leased_at_utc", visibility=["read"], format="rfc3339"
+    )
+    """Timestamp the instance was leased, in UTC."""
+    released_at_utc: Optional[datetime.datetime] = rest_field(
+        name="released_at_utc", visibility=["read"], format="rfc3339"
+    )
+    """Timestamp the instance was released, in UTC."""
+    last_activity_utc: Optional[datetime.datetime] = rest_field(
+        name="last_activity_utc", visibility=["read"], format="rfc3339"
+    )
+    """Timestamp of the most recent data-plane activity on the instance, in UTC. Bumped on every
+     data-plane call."""
+    lease_expires_at_utc: Optional[datetime.datetime] = rest_field(
+        name="lease_expires_at_utc", visibility=["read"], format="rfc3339"
+    )
+    """Idle-timeout deadline, in UTC. Computed as ``last_activity_utc`` plus the idle TTL."""
+    cpu: Optional[str] = rest_field(visibility=["read"])
+    """CPU allocation of the instance, encoded as a string."""
+    memory: Optional[str] = rest_field(visibility=["read"])
+    """Memory allocation of the instance, for example \"2Gi\"."""
+    disk: Optional[str] = rest_field(visibility=["read"])
+    """Disk allocation of the instance, for example \"10Gi\"."""
     error: Optional[str] = rest_field(visibility=["read"])
-    """Failure detail when the sandbox enters a failed state."""
-    created_at_utc: datetime.datetime = rest_field(name="createdAtUtc", visibility=["read"], format="rfc3339")
-    """Timestamp the sandbox was first leased, in UTC. Required."""
-    updated_at_utc: datetime.datetime = rest_field(name="updatedAtUtc", visibility=["read"], format="rfc3339")
-    """Timestamp the sandbox was last updated, in UTC. Required."""
+    """Failure detail when the instance enters the ``Failed`` state."""
+    created_at_utc: datetime.datetime = rest_field(name="created_at_utc", visibility=["read"], format="rfc3339")
+    """Timestamp the instance was created, in UTC. Required."""
+    updated_at_utc: datetime.datetime = rest_field(name="updated_at_utc", visibility=["read"], format="rfc3339")
+    """Timestamp the instance was last updated, in UTC. Required."""
 
 
 class RLEStepRequest(_Model):

@@ -33,7 +33,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ...models._enums import _FoundryFeaturesOptInKeys
 from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
@@ -44,18 +43,21 @@ from ...operations._operations import (
     build_rl_environments_get_environment_version_request,
     build_rl_environments_delete_environment_version_request,
     build_rl_environments_list_rl_environment_versions_request,
-    build_rle_sandboxes_lease_request,
-    build_rle_sandboxes_list_sandboxes_request,
-    build_rle_sandboxes_get_sandbox_request,
-    build_rle_sandboxes_stop_request,
-    build_rle_sandboxes_resume_request,
-    build_rle_sandboxes_release_request,
-    build_rle_sandboxes_reset_request,
-    build_rle_sandboxes_step_request,
-    build_rle_sandboxes_state_request,
-    build_rle_sandboxes_health_request,
-    build_rle_sandboxes_get_metadata_request,
-    build_rle_sandboxes_schema_request,
+    build_rle_instance_groups_create_instance_group_request,
+    build_rle_instance_groups_list_instance_groups_request,
+    build_rle_instance_groups_get_instance_group_request,
+    build_rle_instance_groups_update_instance_group_request,
+    build_rle_instance_groups_delete_instance_group_request,
+    build_rle_instances_create_instance_request,
+    build_rle_instances_list_instances_request,
+    build_rle_instances_get_instance_request,
+    build_rle_instances_release_instance_request,
+    build_rle_instance_runtime_reset_request,
+    build_rle_instance_runtime_step_request,
+    build_rle_instance_runtime_state_request,
+    build_rle_instance_runtime_health_request,
+    build_rle_instance_runtime_get_metadata_request,
+    build_rle_instance_runtime_schema_request,
     build_agents_create_session_request,
     build_agents_create_version_from_code_request,
     build_agents_create_version_from_manifest_request,
@@ -13796,7 +13798,6 @@ class RLEnvironmentsOperations:
         self,
         body: _models.CreateRLEnvironmentRequest,
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.RLEnvironment:
@@ -13804,9 +13805,6 @@ class RLEnvironmentsOperations:
 
         :param body: The environment to create. Required.
         :type body: ~azure.ai.projects.models.CreateRLEnvironmentRequest
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13820,7 +13818,6 @@ class RLEnvironmentsOperations:
         self,
         body: IO[bytes],
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.RLEnvironment:
@@ -13828,9 +13825,6 @@ class RLEnvironmentsOperations:
 
         :param body: The environment to create. Required.
         :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13843,8 +13837,6 @@ class RLEnvironmentsOperations:
     async def create_environment(
         self,
         body: Union[_models.CreateRLEnvironmentRequest, IO[bytes]],
-        *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
         **kwargs: Any,
     ) -> _models.RLEnvironment:
         """Create a new hosted RLE environment.
@@ -13852,9 +13844,6 @@ class RLEnvironmentsOperations:
         :param body: The environment to create. Is either a CreateRLEnvironmentRequest type or a
          IO[bytes] type. Required.
         :type body: ~azure.ai.projects.models.CreateRLEnvironmentRequest or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
         :return: RLEnvironment. The RLEnvironment is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13881,7 +13870,6 @@ class RLEnvironmentsOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_rl_environments_create_environment_request(
-            foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -13928,7 +13916,6 @@ class RLEnvironmentsOperations:
     async def list_environments(
         self,
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
         name: Optional[str] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
@@ -13936,9 +13923,6 @@ class RLEnvironmentsOperations:
     ) -> _models.ListRLEnvironmentsResponse:
         """List all hosted RLE environments in the project.
 
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
         :keyword name: Optional environment name filter. When set, returns at most a single matching
          environment. Default value is None.
         :paramtype name: str
@@ -13966,7 +13950,6 @@ class RLEnvironmentsOperations:
         cls: ClsType[_models.ListRLEnvironmentsResponse] = kwargs.pop("cls", None)
 
         _request = build_rl_environments_list_environments_request(
-            foundry_features=foundry_features,
             name=name,
             skip=skip,
             top=top,
@@ -14012,15 +13995,12 @@ class RLEnvironmentsOperations:
 
     @distributed_trace_async
     async def get_environment(
-        self, name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], **kwargs: Any
+        self, name: str, **kwargs: Any
     ) -> _models.RLEnvironment:
         """Get a hosted RLE environment by name. Returns the latest version of the environment.
 
         :param name: Environment name. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
         :return: RLEnvironment. The RLEnvironment is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14040,7 +14020,6 @@ class RLEnvironmentsOperations:
 
         _request = build_rl_environments_get_environment_request(
             name=name,
-            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -14086,8 +14065,6 @@ class RLEnvironmentsOperations:
         self,
         name: str,
         version: str,
-        *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
         **kwargs: Any,
     ) -> _models.RLEnvironment:
         """Get a specific version of a hosted RLE environment by name and version.
@@ -14096,9 +14073,6 @@ class RLEnvironmentsOperations:
         :type name: str
         :param version: Environment version identifier. Required.
         :type version: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
         :return: RLEnvironment. The RLEnvironment is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14119,7 +14093,6 @@ class RLEnvironmentsOperations:
         _request = build_rl_environments_get_environment_version_request(
             name=name,
             version=version,
-            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -14165,8 +14138,6 @@ class RLEnvironmentsOperations:
         self,
         name: str,
         version: str,
-        *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
         **kwargs: Any,
     ) -> None:
         """Delete a specific version of a hosted RLE environment.
@@ -14175,9 +14146,6 @@ class RLEnvironmentsOperations:
         :type name: str
         :param version: Environment version identifier. Required.
         :type version: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14198,7 +14166,6 @@ class RLEnvironmentsOperations:
         _request = build_rl_environments_delete_environment_version_request(
             name=name,
             version=version,
-            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -14228,15 +14195,12 @@ class RLEnvironmentsOperations:
 
     @distributed_trace_async
     async def list_rl_environment_versions(
-        self, name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], **kwargs: Any
+        self, name: str, **kwargs: Any
     ) -> list[_models.RLEnvironmentVersion]:
         """List historical versions of a hosted RLE environment.
 
         :param name: Environment name. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
         :return: list of RLEnvironmentVersion
         :rtype: list[~azure.ai.projects.models.RLEnvironmentVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14256,7 +14220,6 @@ class RLEnvironmentsOperations:
 
         _request = build_rl_environments_list_rl_environment_versions_request(
             name=name,
-            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -14297,7 +14260,7 @@ class RLEnvironmentsOperations:
 
         return deserialized  # type: ignore
 
-class RLESandboxesOperations:
+class RLEInstanceGroupsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14315,80 +14278,39 @@ class RLESandboxesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def lease(
+    async def create_instance_group(
         self,
-        environment_id: str,
-        body: _models.CreateRLESandboxRequest,
+        body: _models.CreateRLEInstanceGroupRequest,
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.RLESandbox:
-        """Lease a fresh sandbox from a hosted RLE environment.
-
-        :param environment_id: Environment identifier to lease the sandbox from. Required.
-        :type environment_id: str
-        :param body: RLESandbox lease request. Required.
-        :type body: ~azure.ai.projects.models.CreateRLESandboxRequest
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RLESandbox. The RLESandbox is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLESandbox
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.RLEInstanceGroup: ...
 
     @overload
-    async def lease(
+    async def create_instance_group(
         self,
-        environment_id: str,
         body: IO[bytes],
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.RLESandbox:
-        """Lease a fresh sandbox from a hosted RLE environment.
-
-        :param environment_id: Environment identifier to lease the sandbox from. Required.
-        :type environment_id: str
-        :param body: RLESandbox lease request. Required.
-        :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RLESandbox. The RLESandbox is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLESandbox
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.RLEInstanceGroup: ...
 
     @distributed_trace_async
-    async def lease(
+    async def create_instance_group(
         self,
-        environment_id: str,
-        body: Union[_models.CreateRLESandboxRequest, IO[bytes]],
-        *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        body: Union[_models.CreateRLEInstanceGroupRequest, IO[bytes]],
         **kwargs: Any,
-    ) -> _models.RLESandbox:
-        """Lease a fresh sandbox from a hosted RLE environment.
+    ) -> _models.RLEInstanceGroup:
+        """Create a new RLE instance group.
 
-        :param environment_id: Environment identifier to lease the sandbox from. Required.
-        :type environment_id: str
-        :param body: RLESandbox lease request. Is either a CreateRLESandboxRequest type or a IO[bytes]
-         type. Required.
-        :type body: ~azure.ai.projects.models.CreateRLESandboxRequest or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
-        :return: RLESandbox. The RLESandbox is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLESandbox
+        The service mints ``instance_group_id`` and reserves ``instance_count`` slots of quota.
+        Returns ``403`` with code ``QuotaExceeded`` when the requested quota cannot be reserved.
+
+        :param body: The instance group to create. Is either a CreateRLEInstanceGroupRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.ai.projects.models.CreateRLEInstanceGroupRequest or IO[bytes]
+        :return: RLEInstanceGroup. The RLEInstanceGroup is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEInstanceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -14403,7 +14325,7 @@ class RLESandboxesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RLESandbox] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RLEInstanceGroup] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -14412,9 +14334,7 @@ class RLESandboxesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_rle_sandboxes_lease_request(
-            environment_id=environment_id,
-            foundry_features=foundry_features,
+        _request = build_rle_instance_groups_create_instance_group_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -14450,7 +14370,7 @@ class RLESandboxesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.RLESandbox, response.json())
+            deserialized = _deserialize(_models.RLEInstanceGroup, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14458,30 +14378,30 @@ class RLESandboxesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def list_sandboxes(
+    async def list_instance_groups(
         self,
-        environment_id: str,
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        status: Optional[Union[str, _models.RLEInstanceGroupStatus]] = None,
+        environment_name: Optional[str] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
         **kwargs: Any,
-    ) -> _models.ListRLESandboxesResponse:
-        """List sandboxes currently leased for an environment.
+    ) -> _models.ListRLEInstanceGroupsResponse:
+        """List RLE instance groups in the project.
 
-        :param environment_id: Environment identifier whose sandboxes to list. Required.
-        :type environment_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
-        :keyword skip: Number of sandboxes to skip. Defaults to 0. Default value is None.
+        :keyword status: Optional instance group status filter. Known values are: "Created", "Active",
+         "Closed", "Failed", and "Cancelled". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.RLEInstanceGroupStatus
+        :keyword environment_name: Optional environment name filter. Default value is None.
+        :paramtype environment_name: str
+        :keyword skip: Number of instance groups to skip. Defaults to 0. Default value is None.
         :paramtype skip: int
-        :keyword top: Maximum number of sandboxes to return. Defaults to 50; valid range is [1, 200].
-         Default value is None.
+        :keyword top: Maximum number of instance groups to return. Defaults to 50; valid range is
+         [1, 200]. Default value is None.
         :paramtype top: int
-        :return: ListRLESandboxesResponse. The ListRLESandboxesResponse is compatible with
+        :return: ListRLEInstanceGroupsResponse. The ListRLEInstanceGroupsResponse is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.models.ListRLESandboxesResponse
+        :rtype: ~azure.ai.projects.models.ListRLEInstanceGroupsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -14495,11 +14415,11 @@ class RLESandboxesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ListRLESandboxesResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ListRLEInstanceGroupsResponse] = kwargs.pop("cls", None)
 
-        _request = build_rle_sandboxes_list_sandboxes_request(
-            environment_id=environment_id,
-            foundry_features=foundry_features,
+        _request = build_rle_instance_groups_list_instance_groups_request(
+            status=status,
+            environment_name=environment_name,
             skip=skip,
             top=top,
             api_version=self._config.api_version,
@@ -14535,7 +14455,7 @@ class RLESandboxesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ListRLESandboxesResponse, response.json())
+            deserialized = _deserialize(_models.ListRLEInstanceGroupsResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14543,25 +14463,17 @@ class RLESandboxesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_sandbox(
+    async def get_instance_group(
         self,
-        environment_id: str,
-        sandbox_id: str,
-        *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        instance_group_id: str,
         **kwargs: Any,
-    ) -> _models.RLESandbox:
-        """Fetch the latest lifecycle state for a leased sandbox.
+    ) -> _models.RLEInstanceGroup:
+        """Get an RLE instance group by identifier.
 
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
-        :return: RLESandbox. The RLESandbox is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLESandbox
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
+        :return: RLEInstanceGroup. The RLEInstanceGroup is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEInstanceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -14575,12 +14487,10 @@ class RLESandboxesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.RLESandbox] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RLEInstanceGroup] = kwargs.pop("cls", None)
 
-        _request = build_rle_sandboxes_get_sandbox_request(
-            environment_id=environment_id,
-            sandbox_id=sandbox_id,
-            foundry_features=foundry_features,
+        _request = build_rle_instance_groups_get_instance_group_request(
+            instance_group_id=instance_group_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -14614,33 +14524,52 @@ class RLESandboxesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.RLESandbox, response.json())
+            deserialized = _deserialize(_models.RLEInstanceGroup, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def stop(
+    @overload
+    async def update_instance_group(
         self,
-        environment_id: str,
-        sandbox_id: str,
+        instance_group_id: str,
+        body: _models.UpdateRLEInstanceGroupRequest,
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.RLESandbox:
-        """Stop a running sandbox. The sandbox enters the ``Stopped`` state and may be resumed.
+    ) -> _models.RLEInstanceGroup: ...
 
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
-        :return: RLESandbox. The RLESandbox is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLESandbox
+    @overload
+    async def update_instance_group(
+        self,
+        instance_group_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.RLEInstanceGroup: ...
+
+    @distributed_trace_async
+    async def update_instance_group(
+        self,
+        instance_group_id: str,
+        body: Union[_models.UpdateRLEInstanceGroupRequest, IO[bytes]],
+        **kwargs: Any,
+    ) -> _models.RLEInstanceGroup:
+        """Update an RLE instance group.
+
+        Setting ``status`` to ``Closed`` signals normal completion and releases all instances owned by
+        the group.
+
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
+        :param body: The update to apply. Is either an UpdateRLEInstanceGroupRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.ai.projects.models.UpdateRLEInstanceGroupRequest or IO[bytes]
+        :return: RLEInstanceGroup. The RLEInstanceGroup is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEInstanceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -14651,16 +14580,24 @@ class RLESandboxesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.RLESandbox] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RLEInstanceGroup] = kwargs.pop("cls", None)
 
-        _request = build_rle_sandboxes_stop_request(
-            environment_id=environment_id,
-            sandbox_id=sandbox_id,
-            foundry_features=foundry_features,
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_rle_instance_groups_update_instance_group_request(
+            instance_group_id=instance_group_id,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -14693,7 +14630,7 @@ class RLESandboxesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.RLESandbox, response.json())
+            deserialized = _deserialize(_models.RLEInstanceGroup, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14701,102 +14638,17 @@ class RLESandboxesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def resume(
+    async def delete_instance_group(
         self,
-        environment_id: str,
-        sandbox_id: str,
-        *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
-        **kwargs: Any,
-    ) -> _models.RLESandbox:
-        """Resume a previously stopped sandbox. The sandbox transitions back toward ``Running``.
-
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
-        :return: RLESandbox. The RLESandbox is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLESandbox
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.RLESandbox] = kwargs.pop("cls", None)
-
-        _request = build_rle_sandboxes_resume_request(
-            environment_id=environment_id,
-            sandbox_id=sandbox_id,
-            foundry_features=foundry_features,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.RLESandbox, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def release(
-        self,
-        environment_id: str,
-        sandbox_id: str,
-        *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        instance_group_id: str,
         **kwargs: Any,
     ) -> None:
-        """Release a leased sandbox. The SDK treats this as best-effort teardown.
+        """Cancel an RLE instance group.
 
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
+        The group is marked ``Cancelled`` and all owned instances are released.
+
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14814,10 +14666,8 @@ class RLESandboxesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_rle_sandboxes_release_request(
-            environment_id=environment_id,
-            sandbox_id=sandbox_id,
-            foundry_features=foundry_features,
+        _request = build_rle_instance_groups_delete_instance_group_request(
+            instance_group_id=instance_group_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -14835,6 +14685,11 @@ class RLESandboxesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ApiErrorResponse,
@@ -14845,88 +14700,374 @@ class RLESandboxesOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+
+class RLEInstancesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
+        :attr:`rle` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def create_instance(
+        self,
+        instance_group_id: str,
+        **kwargs: Any,
+    ) -> _models.RLEInstance:
+        """Lease a new RLE instance under the instance group.
+
+        Synchronous and non-LRO: returns ``201`` with the new instance, ``429`` (with ``Retry-After``)
+        at the group's reserved capacity, ``202`` (with ``Retry-After``, status ``Pending``) when under
+        cap but no warm instance is available yet, or ``503`` on a hard backend failure. A ``202``
+        response body is the pending instance; higher-level polling belongs to the ``rle`` operation
+        group.
+
+        :param instance_group_id: Instance group identifier to lease the instance under. Required.
+        :type instance_group_id: str
+        :return: RLEInstance. The RLEInstance is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEInstance
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RLEInstance] = kwargs.pop("cls", None)
+
+        _request = build_rle_instances_create_instance_request(
+            instance_group_id=instance_group_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201, 202]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEInstance, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def list_instances(
+        self,
+        instance_group_id: str,
+        *,
+        lease_state: Optional[Union[str, _models.RLEInstanceLeaseState]] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
+        **kwargs: Any,
+    ) -> _models.ListRLEInstancesResponse:
+        """List instances owned by an RLE instance group.
+
+        :param instance_group_id: Instance group identifier whose instances to list. Required.
+        :type instance_group_id: str
+        :keyword lease_state: Optional lease-state filter. Known values are: "Leased", "Idle", and
+         "Released". Default value is None.
+        :paramtype lease_state: str or ~azure.ai.projects.models.RLEInstanceLeaseState
+        :keyword skip: Number of instances to skip. Defaults to 0. Default value is None.
+        :paramtype skip: int
+        :keyword top: Maximum number of instances to return. Defaults to 50; valid range is [1, 200].
+         Default value is None.
+        :paramtype top: int
+        :return: ListRLEInstancesResponse. The ListRLEInstancesResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ListRLEInstancesResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListRLEInstancesResponse] = kwargs.pop("cls", None)
+
+        _request = build_rle_instances_list_instances_request(
+            instance_group_id=instance_group_id,
+            lease_state=lease_state,
+            skip=skip,
+            top=top,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ListRLEInstancesResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_instance(
+        self,
+        instance_group_id: str,
+        instance_id: str,
+        **kwargs: Any,
+    ) -> _models.RLEInstance:
+        """Get an RLE instance by identifier.
+
+        :param instance_group_id: Instance group identifier the instance belongs to. Required.
+        :type instance_group_id: str
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :return: RLEInstance. The RLEInstance is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEInstance
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RLEInstance] = kwargs.pop("cls", None)
+
+        _request = build_rle_instances_get_instance_request(
+            instance_group_id=instance_group_id,
+            instance_id=instance_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEInstance, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def release_instance(
+        self,
+        instance_group_id: str,
+        instance_id: str,
+        **kwargs: Any,
+    ) -> _models.RLEInstance:
+        """Release an RLE instance (soft delete).
+
+        The backing runtime is stopped and the instance is marked ``Stopped``/``Released`` while the
+        ledger row is retained. Idempotent -- re-releasing an already-released instance is a no-op.
+        Returns the final instance state.
+
+        :param instance_group_id: Instance group identifier the instance belongs to. Required.
+        :type instance_group_id: str
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :return: RLEInstance. The RLEInstance is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEInstance
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RLEInstance] = kwargs.pop("cls", None)
+
+        _request = build_rle_instances_release_instance_request(
+            instance_group_id=instance_group_id,
+            instance_id=instance_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEInstance, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     @overload
     async def reset(
         self,
-        environment_id: str,
-        sandbox_id: str,
+        instance_id: str,
         body: _models.RLEResetRequest,
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        session_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.RLEStepResult:
-        """Start a new episode and return the initial observation.
-
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :param body: Reset request body. Required.
-        :type body: ~azure.ai.projects.models.RLEResetRequest
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RLEStepResult. The RLEStepResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLEStepResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.RLEStepResult: ...
 
     @overload
     async def reset(
         self,
-        environment_id: str,
-        sandbox_id: str,
+        instance_id: str,
         body: IO[bytes],
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        session_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.RLEStepResult:
-        """Start a new episode and return the initial observation.
-
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :param body: Reset request body. Required.
-        :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RLEStepResult. The RLEStepResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLEStepResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.RLEStepResult: ...
 
     @distributed_trace_async
     async def reset(
         self,
-        environment_id: str,
-        sandbox_id: str,
+        instance_id: str,
         body: Union[_models.RLEResetRequest, IO[bytes]],
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        session_id: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.RLEStepResult:
         """Start a new episode and return the initial observation.
 
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :param body: Reset request body. Is either a RLEResetRequest type or a IO[bytes] type.
-         Required.
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :param body: Reset request body. Is either a RLEResetRequest type or a IO[bytes] type. Required.
         :type body: ~azure.ai.projects.models.RLEResetRequest or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
         :return: RLEStepResult. The RLEStepResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RLEStepResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14952,10 +15093,9 @@ class RLESandboxesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_rle_sandboxes_reset_request(
-            environment_id=environment_id,
-            sandbox_id=sandbox_id,
-            foundry_features=foundry_features,
+        _request = build_rle_instance_runtime_reset_request(
+            instance_id=instance_id,
+            session_id=session_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -15001,85 +15141,43 @@ class RLESandboxesOperations:
     @overload
     async def step(
         self,
-        environment_id: str,
-        sandbox_id: str,
+        instance_id: str,
         body: _models.RLEStepRequest,
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        session_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.RLEStepResult:
-        """Apply an action and return the resulting transition.
-
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :param body: Step request body. Required.
-        :type body: ~azure.ai.projects.models.RLEStepRequest
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RLEStepResult. The RLEStepResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLEStepResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.RLEStepResult: ...
 
     @overload
     async def step(
         self,
-        environment_id: str,
-        sandbox_id: str,
+        instance_id: str,
         body: IO[bytes],
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        session_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.RLEStepResult:
-        """Apply an action and return the resulting transition.
-
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :param body: Step request body. Required.
-        :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RLEStepResult. The RLEStepResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLEStepResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.RLEStepResult: ...
 
     @distributed_trace_async
     async def step(
         self,
-        environment_id: str,
-        sandbox_id: str,
+        instance_id: str,
         body: Union[_models.RLEStepRequest, IO[bytes]],
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        session_id: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.RLEStepResult:
         """Apply an action and return the resulting transition.
 
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
         :param body: Step request body. Is either a RLEStepRequest type or a IO[bytes] type. Required.
-        :type body: ~azure.ai.projects.models.RLEStepRequest or ~azure.ai.projects.types.RLEStepRequest
-         or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
+        :type body: ~azure.ai.projects.models.RLEStepRequest or IO[bytes]
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
         :return: RLEStepResult. The RLEStepResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RLEStepResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15105,10 +15203,9 @@ class RLESandboxesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_rle_sandboxes_step_request(
-            environment_id=environment_id,
-            sandbox_id=sandbox_id,
-            foundry_features=foundry_features,
+        _request = build_rle_instance_runtime_step_request(
+            instance_id=instance_id,
+            session_id=session_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -15154,21 +15251,18 @@ class RLESandboxesOperations:
     @distributed_trace_async
     async def state(
         self,
-        environment_id: str,
-        sandbox_id: str,
+        instance_id: str,
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        session_id: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.RLEnvironmentState:
         """Return the current environment state.
 
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
         :return: RLEnvironmentState. The RLEnvironmentState is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RLEnvironmentState
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15186,10 +15280,9 @@ class RLESandboxesOperations:
 
         cls: ClsType[_models.RLEnvironmentState] = kwargs.pop("cls", None)
 
-        _request = build_rle_sandboxes_state_request(
-            environment_id=environment_id,
-            sandbox_id=sandbox_id,
-            foundry_features=foundry_features,
+        _request = build_rle_instance_runtime_state_request(
+            instance_id=instance_id,
+            session_id=session_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -15233,21 +15326,18 @@ class RLESandboxesOperations:
     @distributed_trace_async
     async def health(
         self,
-        environment_id: str,
-        sandbox_id: str,
+        instance_id: str,
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        session_id: Optional[str] = None,
         **kwargs: Any,
     ) -> dict[str, Any]:
         """Return environment health details.
 
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
         :return: dict mapping str to any
         :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15265,10 +15355,9 @@ class RLESandboxesOperations:
 
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
-        _request = build_rle_sandboxes_health_request(
-            environment_id=environment_id,
-            sandbox_id=sandbox_id,
-            foundry_features=foundry_features,
+        _request = build_rle_instance_runtime_health_request(
+            instance_id=instance_id,
+            session_id=session_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -15312,21 +15401,18 @@ class RLESandboxesOperations:
     @distributed_trace_async
     async def get_metadata(
         self,
-        environment_id: str,
-        sandbox_id: str,
+        instance_id: str,
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        session_id: Optional[str] = None,
         **kwargs: Any,
     ) -> dict[str, Any]:
         """Return environment metadata.
 
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
         :return: dict mapping str to any
         :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15344,10 +15430,9 @@ class RLESandboxesOperations:
 
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
-        _request = build_rle_sandboxes_get_metadata_request(
-            environment_id=environment_id,
-            sandbox_id=sandbox_id,
-            foundry_features=foundry_features,
+        _request = build_rle_instance_runtime_get_metadata_request(
+            instance_id=instance_id,
+            session_id=session_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -15391,21 +15476,18 @@ class RLESandboxesOperations:
     @distributed_trace_async
     async def schema(
         self,
-        environment_id: str,
-        sandbox_id: str,
+        instance_id: str,
         *,
-        foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW],
+        session_id: Optional[str] = None,
         **kwargs: Any,
     ) -> dict[str, Any]:
         """Return environment-provided action and observation schemas.
 
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: RLESandbox identifier. Required.
-        :type sandbox_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RL_ENVIRONMENT_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RL_ENVIRONMENT_V1_PREVIEW
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
         :return: dict mapping str to any
         :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15423,10 +15505,9 @@ class RLESandboxesOperations:
 
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
-        _request = build_rle_sandboxes_schema_request(
-            environment_id=environment_id,
-            sandbox_id=sandbox_id,
-            foundry_features=foundry_features,
+        _request = build_rle_instance_runtime_schema_request(
+            instance_id=instance_id,
+            session_id=session_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

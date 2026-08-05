@@ -14,148 +14,195 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import time
-from typing import IO, Any, Dict, List, Mapping, Optional, Union
+from typing import IO, Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ...models import (
+    CreateRLEInstanceGroupRequest,
     CreateRLEnvironmentRequest,
-    CreateRLESandboxRequest,
     ListRLEnvironmentsResponse,
+    RLEInstance,
+    RLEInstanceStatus,
     RLEnvironment,
     RLEnvironmentState,
     RLEnvironmentVersion,
     RLEResetRequest,
-    RLESandbox,
     RLEStepRequest,
     RLEStepResult,
-    RLESandboxStatus,
 )
 from ...operations._patch_rle import (
     _DEFAULT_CREATE_TIMEOUT_S,
     _DEFAULT_POLL_INTERVAL_S,
-    _MAX_INSTANCES,
-    _RLE_FEATURE,
+    _parse_retry_after,
     _status_matches,
     coerce_action,
+    RLEAtCapacityError,
     RLEError,
+    RLEQuotaExceededError,
 )
 from ._operations import (
     RLEnvironmentsOperations as _RLEnvironmentsOperationsGenerated,
-    RLESandboxesOperations,
+    RLEInstanceGroupsOperations,
+    RLEInstancesOperations,
 )
 
 
-async def _lease_running_sandbox(
-    sandboxes: RLESandboxesOperations,
-    environment_id: str,
-    lease_request: CreateRLESandboxRequest,
+async def _create_running_instance(
+    instances: RLEInstancesOperations,
+    instance_group_id: str,
     *,
     create_timeout_s: float,
     poll_interval_s: float,
-) -> RLESandbox:
-    """Lease a sandbox and poll until it reports the ``Running`` status.
+) -> RLEInstance:
+    """Create an instance under a group and poll until it reports the ``Running`` status.
 
-    :param sandboxes: Generated async sandbox operations bound to the project client.
-    :type sandboxes: ~azure.ai.projects.aio.operations.RLESandboxesOperations
-    :param environment_id: The hosted RLE environment ID to lease from.
-    :type environment_id: str
-    :param lease_request: The sandbox lease request body.
-    :type lease_request: ~azure.ai.projects.models.CreateRLESandboxRequest
-    :keyword create_timeout_s: Maximum time to wait for the sandbox to become ready, in seconds.
+    The service may answer the create request with ``202`` (accepted, no warm instance yet) and a
+    ``Retry-After`` hint; in that case the request is re-issued until an instance is provisioned or
+    the timeout elapses. A ``429`` response surfaces as :class:`RLEAtCapacityError`.
+
+    :param instances: Generated async instance operations bound to the project client.
+    :type instances: ~azure.ai.projects.aio.operations.RLEInstancesOperations
+    :param instance_group_id: The instance group to lease an instance from.
+    :type instance_group_id: str
+    :keyword create_timeout_s: Maximum time to wait for the instance to become ready, in seconds.
     :paramtype create_timeout_s: float
-    :keyword poll_interval_s: Interval between sandbox readiness polls, in seconds.
+    :keyword poll_interval_s: Interval between instance readiness polls, in seconds.
     :paramtype poll_interval_s: float
-    :return: The leased sandbox, once it reports ``Running``.
-    :rtype: ~azure.ai.projects.models.RLESandbox
+    :return: The leased instance, once it reports ``Running``.
+    :rtype: ~azure.ai.projects.models.RLEInstance
     """
-    sandbox = await sandboxes.lease(environment_id, lease_request, foundry_features=_RLE_FEATURE)
-    if not sandbox.id:
-        raise RLEError("service did not return a sandbox id")
-    sandbox_id = sandbox.id
-    try:
-        deadline = time.monotonic() + create_timeout_s
-        while not _status_matches(sandbox.status, RLESandboxStatus.RUNNING):
-            if _status_matches(sandbox.status, RLESandboxStatus.FAILED):
-                raise RLEError(f"sandbox {sandbox_id} failed to start: {sandbox.error or 'unknown error'}")
+    deadline = time.monotonic() + create_timeout_s
+    captured: Dict[str, Any] = {}
+
+    def _capture(pipeline_response: Any, deserialized: Any, _response_headers: Any) -> Any:
+        captured["response"] = pipeline_response.http_response
+        return deserialized
+
+    instance: Optional[RLEInstance] = None
+    while True:
+        try:
+            instance = await instances.create_instance(instance_group_id, cls=_capture)
+        except HttpResponseError as exc:
+            code = getattr(exc.response, "status_code", None)
+            if code == 429:
+                raise RLEAtCapacityError(
+                    f"instance group {instance_group_id} is at capacity",
+                    retry_after=_parse_retry_after(exc.response),
+                ) from exc
+            raise
+        status_code = getattr(captured.get("response"), "status_code", None)
+        if status_code == 202:
             if time.monotonic() >= deadline:
                 raise RLEError(
-                    f"sandbox {sandbox_id} not ready after {create_timeout_s:.0f}s "
-                    f"(last status: {sandbox.status or 'unknown'})"
+                    f"instance group {instance_group_id} did not provision an instance "
+                    f"within {create_timeout_s:.0f}s"
+                )
+            await asyncio.sleep(_parse_retry_after(captured.get("response")) or poll_interval_s)
+            continue
+        break
+
+    if instance is None or not instance.instance_id:
+        raise RLEError("service did not return an instance id")
+    instance_id = instance.instance_id
+    try:
+        while not _status_matches(instance.status, RLEInstanceStatus.RUNNING):
+            if _status_matches(instance.status, RLEInstanceStatus.FAILED) or _status_matches(
+                instance.status, RLEInstanceStatus.CANCELLED
+            ):
+                raise RLEError(f"instance {instance_id} failed to start: {instance.error or 'unknown error'}")
+            if time.monotonic() >= deadline:
+                raise RLEError(
+                    f"instance {instance_id} not ready after {create_timeout_s:.0f}s "
+                    f"(last status: {instance.status or 'unknown'})"
                 )
             await asyncio.sleep(poll_interval_s)
-            sandbox = await sandboxes.get_sandbox(environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
+            instance = await instances.get_instance(instance_group_id, instance_id)
     except BaseException:
-        # The sandbox was leased but never became usable; release it so it does not leak quota.
+        # The instance was leased but never became usable; release it so it does not leak quota.
         try:
-            await sandboxes.release(environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
+            await instances.release_instance(instance_group_id, instance_id)
         except Exception:  # pylint: disable=broad-except
             pass
         raise
-    return sandbox
+    return instance
 
 
 class AsyncOpenEnvInstance:
-    """Async leased RLE sandbox ("instance"), addressable via its data-plane URI.
+    """A leased RLE instance that runs episodes, addressable by its flat ``instance_id``.
 
     An instance is obtained from :meth:`AsyncOpenEnvClient.get_instance`. It wraps a single leased
-    sandbox and drives the OpenEnv / Gymnasium runtime operations (``reset``/``step``/``state``)
-    against it. Each :meth:`reset` starts a new episode, so an instance may be reused across
-    multiple episodes (shared) or scoped to a single episode (exclusive). Runtime requests flow
-    through the owning project client's pipeline; :attr:`dataplane_uri` exposes the sandbox's
-    data-plane base URL.
+    :class:`~azure.ai.projects.models.RLEInstance` and drives the OpenEnv / Gymnasium runtime
+    operations (``reset``/``step``/``state``) against it. Each :meth:`reset` starts a new episode, so
+    an instance may run one or more episodes while it is checked out. v1 does not reuse instances:
+    exiting the instance's ``async with`` block releases the underlying instance immediately. Runtime
+    requests flow through the owning project client's pipeline.
+
+    :param instance_group_id: The instance group the instance was leased from. Required.
+    :type instance_group_id: str
+    :keyword instance: The leased, running instance that backs this object. Required.
+    :paramtype instance: ~azure.ai.projects.models.RLEInstance
+    :keyword instances: Generated async instance operations bound to the project client. Required.
+    :paramtype instances: ~azure.ai.projects.aio.operations.RLEInstancesOperations
+    :keyword owner: The :class:`AsyncOpenEnvClient` that owns the instance, if any. When set, exiting
+     the instance context (or calling :meth:`release`) releases the instance and returns its quota
+     slot to the owner.
+    :paramtype owner: ~azure.ai.projects.aio.operations.AsyncOpenEnvClient or None
     """
 
     def __init__(
         self,
-        environment_id: str,
+        instance_group_id: str,
         *,
-        sandbox: RLESandbox,
-        sandboxes: RLESandboxesOperations,
+        instance: RLEInstance,
+        instances: RLEInstancesOperations,
         owner: Optional["AsyncOpenEnvClient"] = None,
     ) -> None:
-        if not environment_id:
-            raise ValueError("environment_id is required")
-        if not sandbox.id:
-            raise RLEError("sandbox is missing an id")
-        self._environment_id = environment_id
-        self._sandbox = sandbox
-        self._sandbox_id: str = sandbox.id
-        self._sandboxes = sandboxes
+        if not instance_group_id:
+            raise ValueError("instance_group_id is required")
+        if not instance.instance_id:
+            raise RLEError("instance is missing an id")
+        self._instance_group_id = instance_group_id
+        self._instance = instance
+        self._instance_id: str = instance.instance_id
+        self._instances = instances
         self._owner = owner
 
     @property
     def id(self) -> str:
-        """Identifier of the leased sandbox that backs this instance."""
-        return self._sandbox_id
+        """Identifier of the leased instance that backs this object."""
+        return self._instance_id
 
     @property
-    def environment_id(self) -> str:
-        """The hosted RLE environment ID the instance was leased from."""
-        return self._environment_id
+    def instance_group_id(self) -> str:
+        """The instance group the instance was leased from."""
+        return self._instance_group_id
 
     @property
-    def dataplane_uri(self) -> Optional[str]:
-        """Data-plane base URL for the instance runtime, present once the sandbox is running."""
-        return self._sandbox.base_url
-
-    @property
-    def sandbox(self) -> RLESandbox:
-        """The underlying leased sandbox model."""
-        return self._sandbox
+    def instance(self) -> RLEInstance:
+        """The underlying leased instance model."""
+        return self._instance
 
     async def __aenter__(self) -> "AsyncOpenEnvInstance":
         return self
 
     async def __aexit__(self, *exc: Any) -> None:
-        await self.checkin()
+        await self.release()
 
-    async def checkin(self) -> None:
-        """Return the instance to its owning :class:`AsyncOpenEnvClient` pool, best effort."""
+    async def release(self) -> None:
+        """Release this leased instance on the service, best effort.
+
+        Invoked automatically on context exit. v1 does not reuse instances: once an instance leaves
+        its ``async with`` block the underlying instance is released immediately and its quota slot is
+        returned to the owning :class:`AsyncOpenEnvClient`. For an instance without an owner this
+        releases the instance directly.
+        """
         owner = self._owner
         if owner is not None:
-            await owner._return_instance(self)  # pylint: disable=protected-access
+            await owner._release_instance(self)  # pylint: disable=protected-access
+        else:
+            await self._release()
 
     @distributed_trace_async
     async def reset(self, seed: Optional[int] = None, episode_id: Optional[str] = None, **kwargs: Any) -> RLEStepResult:
@@ -168,11 +215,9 @@ class AsyncOpenEnvInstance:
         :return: The initial step result for the new episode.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
-        return await self._sandboxes.reset(
-            self._environment_id,
-            self._sandbox_id,
+        return await self._instances.reset(
+            self._instance_id,
             RLEResetRequest(seed=seed, episode_id=episode_id),
-            foundry_features=_RLE_FEATURE,
             **kwargs,
         )
 
@@ -185,11 +230,9 @@ class AsyncOpenEnvInstance:
         :return: The step result after applying the action.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
-        return await self._sandboxes.step(
-            self._environment_id,
-            self._sandbox_id,
+        return await self._instances.step(
+            self._instance_id,
             RLEStepRequest(action=coerce_action(action, action_kwargs)),
-            foundry_features=_RLE_FEATURE,
         )
 
     @distributed_trace_async
@@ -199,7 +242,7 @@ class AsyncOpenEnvInstance:
         :return: The current environment state.
         :rtype: ~azure.ai.projects.models.RLEnvironmentState
         """
-        return await self._sandboxes.state(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
+        return await self._instances.state(self._instance_id)
 
     @distributed_trace_async
     async def health(self) -> Dict[str, Any]:
@@ -208,7 +251,7 @@ class AsyncOpenEnvInstance:
         :return: Instance health information.
         :rtype: dict[str, any]
         """
-        return await self._sandboxes.health(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
+        return await self._instances.health(self._instance_id)
 
     @distributed_trace_async
     async def metadata(self) -> Dict[str, Any]:
@@ -217,9 +260,7 @@ class AsyncOpenEnvInstance:
         :return: Instance metadata.
         :rtype: dict[str, any]
         """
-        return await self._sandboxes.get_metadata(
-            self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE
-        )
+        return await self._instances.get_metadata(self._instance_id)
 
     @distributed_trace_async
     async def schema(self) -> Dict[str, Any]:
@@ -228,37 +269,60 @@ class AsyncOpenEnvInstance:
         :return: The instance action and observation schema.
         :rtype: dict[str, any]
         """
-        return await self._sandboxes.schema(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
-
+        return await self._instances.schema(self._instance_id)
 
     async def _release(self) -> None:
-        """Release the underlying sandbox, best effort."""
+        """Release the underlying instance, best effort."""
         try:
-            await self._sandboxes.release(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
+            await self._instances.release_instance(self._instance_group_id, self._instance_id)
         except HttpResponseError:
             pass
 
 
 class AsyncOpenEnvClient:
-    """Async client over a hosted RLE (OpenEnv) environment with a reserved concurrency quota.
+    """An async client over a hosted RLE (OpenEnv) environment with a reserved concurrency quota.
 
     Created via :meth:`RLEOperations.get_openenv_client`. The environment is resolved lazily by
     ``name`` (optionally pinned to ``version``) when the client is first entered. On entering its
-    context (or calling :meth:`reserve`) the client leases its reserved instances up front and fails
-    immediately if they cannot be provisioned -- there is no queueing.
+    context the client creates a single instance group that reserves ``num_instances`` concurrent
+    instances on the service and fails immediately if that quota cannot be granted -- there is no
+    queueing. The service owns the reservation and the pool of instances; this client keeps no local
+    pool. Future revisions may relax this with queueing and elastic scaling.
 
-    :meth:`get_instance` hands out one of the reserved :class:`AsyncOpenEnvInstance` objects. Closing the
-    client releases every leased instance.
+    :meth:`get_instance` leases a running :class:`AsyncOpenEnvInstance` from the group on demand.
+    Because each :meth:`AsyncOpenEnvInstance.reset` starts a fresh episode, an instance may run one or
+    more episodes while checked out; exiting its context releases the underlying instance immediately
+    (v1 does not reuse instances). Leasing more than ``num_instances`` at once fails until an
+    outstanding instance is released. Closing the client releases every leased instance and tears down
+    the group.
+
+    :keyword environments: Generated async environment operations used to resolve the environment. Required.
+    :paramtype environments: ~azure.ai.projects.aio.operations.RLEnvironmentsOperations
+    :keyword instance_groups: Generated async instance group operations bound to the project client. Required.
+    :paramtype instance_groups: ~azure.ai.projects.aio.operations.RLEInstanceGroupsOperations
+    :keyword instances: Generated async instance operations bound to the project client. Required.
+    :paramtype instances: ~azure.ai.projects.aio.operations.RLEInstancesOperations
+    :keyword name: The hosted RLE environment name to resolve. Required.
+    :paramtype name: str
+    :keyword version: Optional environment image version to resolve and lease against.
+    :paramtype version: str or None
+    :keyword num_instances: Concurrency to reserve on the group. Defaults to 1.
+    :paramtype num_instances: int
+    :keyword create_timeout_s: Maximum time to wait for each leased instance to become ready, in
+     seconds. Default value is 300.
+    :paramtype create_timeout_s: float
+    :keyword poll_interval_s: Interval between instance readiness polls, in seconds. Default value is 2.
+    :paramtype poll_interval_s: float
     """
 
     def __init__(
         self,
         *,
         environments: _RLEnvironmentsOperationsGenerated,
-        sandboxes: RLESandboxesOperations,
+        instance_groups: RLEInstanceGroupsOperations,
+        instances: RLEInstancesOperations,
         name: str,
         version: Optional[str] = None,
-        env_vars: Optional[Mapping[str, str]] = None,
         num_instances: int = 1,
         create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S,
         poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
@@ -267,157 +331,165 @@ class AsyncOpenEnvClient:
             raise ValueError("name is required")
         if num_instances < 1:
             raise ValueError("num_instances must be >= 1")
-        if num_instances > _MAX_INSTANCES:
-            raise ValueError(f"num_instances must be <= {_MAX_INSTANCES}")
         self._environments = environments
-        self._sandboxes = sandboxes
+        self._instance_groups = instance_groups
+        self._instances = instances
         self._name = name
         self._version = version
-        self._env_vars = dict(env_vars) if env_vars else None
         self._num_instances = num_instances
         self._create_timeout_s = create_timeout_s
         self._poll_interval_s = poll_interval_s
-        self._environment_id: Optional[str] = None
-        self._lease_request: Optional[CreateRLESandboxRequest] = None
-        self._pool: List[AsyncOpenEnvInstance] = []
-        self._available: List[AsyncOpenEnvInstance] = []
+        self._environment_name: Optional[str] = None
+        self._environment_version: Optional[str] = None
+        self._instance_group_id: Optional[str] = None
+        self._outstanding: List[AsyncOpenEnvInstance] = []
         self._lock = asyncio.Lock()
-        self._reserved = False
         self._closed = False
 
     @property
-    def environment_id(self) -> Optional[str]:
-        """The hosted RLE environment ID instances are leased from, once resolved (else ``None``)."""
-        return self._environment_id
+    def instance_group_id(self) -> Optional[str]:
+        """The instance group id backing this client, once created (else ``None``)."""
+        return self._instance_group_id
 
     @property
     def num_instances(self) -> int:
-        """Number of instances reserved in advance for this client."""
+        """Concurrency the instance group reserves on the service for this client."""
         return self._num_instances
 
     @property
     def instances(self) -> List[AsyncOpenEnvInstance]:
-        """The reserved instances owned by this client."""
-        return list(self._pool)
+        """The instances currently leased from the group by this client."""
+        return list(self._outstanding)
 
     async def __aenter__(self) -> "AsyncOpenEnvClient":
         await self._resolve_environment()
-        await self._reserve()
+        await self._ensure_group()
         return self
 
     async def __aexit__(self, *exc: Any) -> None:
         await self.close()
 
     async def _resolve_environment(self) -> None:
-        """Resolve ``name``/``version`` to a hosted environment id and build the lease request.
+        """Resolve ``name``/``version`` to a concrete environment name and version.
 
-        Awaited on context entry (``__aenter__``) before reservation, so a missing environment
-        surfaces when the client is entered. Idempotent: a second call is a no-op once resolved.
+        Invoked on context entry (``__aenter__``) before reservation, so a missing environment
+        surfaces when the client is entered. Idempotent: a second call is a no-op once resolved. The
+        instance group create request requires a pinned environment version, so the latest version is
+        resolved when the caller did not supply one.
         """
-        if self._environment_id is not None:
+        if self._environment_name is not None:
             return
         if self._version is not None:
-            environment = await self._environments.get_environment_version(
-                self._name, self._version, foundry_features=_RLE_FEATURE
-            )
+            environment = await self._environments.get_environment_version(self._name, self._version)
         else:
-            environment = await self._environments.get_environment(self._name, foundry_features=_RLE_FEATURE)
-        environment_id = getattr(environment, "id", None)
-        if not environment_id:
-            raise RLEError(f"environment '{self._name}' did not resolve to an environment id")
-        self._environment_id = environment_id
-        self._lease_request = CreateRLESandboxRequest(
-            version=self._version,
-            env_vars=dict(self._env_vars) if self._env_vars else None,
-        )
+            environment = await self._environments.get_environment(self._name)
+        environment_name = getattr(environment, "name", None) or self._name
+        environment_version = self._version or getattr(environment, "version", None)
+        if not environment_version:
+            raise RLEError(f"environment '{self._name}' did not resolve to a version")
+        self._environment_name = environment_name
+        self._environment_version = environment_version
 
-    async def _reserve(self) -> None:
-        """Resolve the environment and lease ``num_instances`` running instances in advance.
+    async def _ensure_group(self) -> None:
+        """Create the instance group that reserves this client's concurrency on the service.
 
-        Idempotent. If the quota cannot be satisfied, any partially-leased instances are released
-        and an error is raised (v1 fails fast rather than queueing).
+        Idempotent: a second call is a no-op once the group exists. The group reserves capacity for
+        ``num_instances`` concurrent instances; the service owns that reservation and the pool, and
+        hands instances out (tracking how many remain) as :meth:`get_instance` leases them. If the
+        quota cannot be satisfied the service returns ``403`` and this raises
+        :class:`RLEQuotaExceededError` (v1 fails fast rather than queueing).
         """
-        # TODO: Temporary client-side reservation. This leases each instance individually and fails
-        # fast when the requested quota cannot be met. Going forward we will rely on the service to
-        # reserve quota and guarantee that ``num_instances`` are provisioned (with queueing and
-        # other flexibility), at which point this per-instance leasing loop can be removed.
         async with self._lock:
-            if self._reserved:
+            if self._instance_group_id is not None:
                 return
             if self._closed:
                 raise RLEError("OpenEnv client is closed")
-            if self._environment_id is None:
+            if self._environment_name is None:
                 await self._resolve_environment()
-            environment_id = self._environment_id
-            lease_request = self._lease_request
             try:
-                for _ in range(self._num_instances):
-                    sandbox = await _lease_running_sandbox(
-                        self._sandboxes,
-                        environment_id,
-                        lease_request,
-                        create_timeout_s=self._create_timeout_s,
-                        poll_interval_s=self._poll_interval_s,
-                    )
-                    instance = AsyncOpenEnvInstance(
-                        environment_id, sandbox=sandbox, sandboxes=self._sandboxes, owner=self
-                    )
-                    self._pool.append(instance)
-                    self._available.append(instance)
-            except BaseException:
-                await self._release_all_locked()
+                group = await self._instance_groups.create_instance_group(
+                    CreateRLEInstanceGroupRequest(
+                        environment_name=self._environment_name,
+                        environment_version=self._environment_version,
+                        instance_count=self._num_instances,
+                    ),
+                )
+            except HttpResponseError as exc:
+                if getattr(exc.response, "status_code", None) == 403:
+                    raise RLEQuotaExceededError(
+                        f"quota exceeded creating an instance group for environment '{self._name}'"
+                    ) from exc
                 raise
-            self._reserved = True
+            if not group.instance_group_id:
+                raise RLEError("service did not return an instance group id")
+            self._instance_group_id = group.instance_group_id
 
-    def get_instance(self) -> AsyncOpenEnvInstance:
-        """Check out a reserved instance for one or more episodes.
+    async def get_instance(self) -> AsyncOpenEnvInstance:
+        """Lease a running instance from the group for one or more episodes.
+
+        This leases an instance from the service on demand: it creates an instance under the group and
+        waits (up to ``create_timeout_s``) for it to report ``Running``. The service owns the pool and
+        the reservation -- there is no client-side pool. Because the group reserves ``num_instances``
+        concurrent instances, leasing more than that at once fails with :class:`RLEAtCapacityError`
+        (``429``) until an outstanding instance is released; v1 does not queue for additional quota.
 
         The returned :class:`AsyncOpenEnvInstance` is an async context manager; exiting its context
-        returns it to the pool. In v1 the pool is bounded by ``num_instances`` and this method
-        fails when every reserved instance is already checked out -- it does not queue.
+        releases the underlying instance back to the service immediately (v1 does not reuse instances).
 
-        This is a plain accessor (no awaiting) so callers can write
-        ``async with client.get_instance() as instance:`` symmetrically with the sync surface. In v1
-        it checks out an instance already leased into an in-memory pool on context entry, so it
-        performs no ``await``. If a future revision leases on demand from the service, that I/O will
-        move into the instance's context entry (``__aenter__``), not this accessor -- so this
-        signature is expected to stay stable across that change.
-
-        :return: A reserved instance ready to run episodes.
+        :return: A leased instance ready to run episodes.
         :rtype: ~azure.ai.projects.aio.operations.AsyncOpenEnvInstance
         """
-        if self._closed:
-            raise RLEError("OpenEnv client is closed")
-        if not self._reserved:
-            raise RLEError("reserve quota first: enter the AsyncOpenEnvClient context before get_instance()")
-        if not self._available:
-            raise RLEError(
-                f"no instance available within the reserved quota (num_instances={self._num_instances}); "
-                "v1 does not queue for additional quota"
-            )
-        return self._available.pop()
-
-    async def _return_instance(self, instance: AsyncOpenEnvInstance) -> None:
         async with self._lock:
             if self._closed:
+                raise RLEError("OpenEnv client is closed")
+            group_id = self._instance_group_id
+        if group_id is None:
+            raise RLEError("reserve quota first: enter the AsyncOpenEnvClient context before get_instance()")
+        instance = await _create_running_instance(
+            self._instances,
+            group_id,
+            create_timeout_s=self._create_timeout_s,
+            poll_interval_s=self._poll_interval_s,
+        )
+        openenv_instance = AsyncOpenEnvInstance(group_id, instance=instance, instances=self._instances, owner=self)
+        async with self._lock:
+            if self._closed:
+                await openenv_instance._release()  # pylint: disable=protected-access
+                raise RLEError("OpenEnv client is closed")
+            self._outstanding.append(openenv_instance)
+        return openenv_instance
+
+    async def _release_instance(self, instance: AsyncOpenEnvInstance) -> None:
+        async with self._lock:
+            if instance not in self._outstanding:
                 return
-            if instance in self._pool and instance not in self._available:
-                self._available.append(instance)
+            self._outstanding.remove(instance)
+        await instance._release()  # pylint: disable=protected-access
 
     async def close(self) -> None:
-        """Release every reserved instance, best effort."""
+        """Release every leased instance and tear down the instance group, best effort."""
         async with self._lock:
             if self._closed:
                 return
             self._closed = True
             await self._release_all_locked()
+            await self._close_group_locked()
 
     async def _release_all_locked(self) -> None:
-        pool = list(self._pool)
-        self._pool.clear()
-        self._available.clear()
-        for instance in pool:
+        outstanding = list(self._outstanding)
+        self._outstanding.clear()
+        for instance in outstanding:
             await instance._release()  # pylint: disable=protected-access
+
+    async def _close_group_locked(self) -> None:
+        group_id = self._instance_group_id
+        if group_id is None:
+            return
+        self._instance_group_id = None
+        try:
+            await self._instance_groups.delete_instance_group(group_id)
+        except HttpResponseError:
+            pass
 
 
 class RLEOperations:
@@ -433,7 +505,8 @@ class RLEOperations:
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
-        self._sandboxes = RLESandboxesOperations(*args, **kwargs)
+        self._instance_groups = RLEInstanceGroupsOperations(*args, **kwargs)
+        self._instances = RLEInstancesOperations(*args, **kwargs)
 
     @distributed_trace_async
     async def create_environment(
@@ -448,7 +521,7 @@ class RLEOperations:
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._environments.create_environment(body, foundry_features=_RLE_FEATURE, **kwargs)
+        return await self._environments.create_environment(body, **kwargs)
 
     @distributed_trace_async
     async def list_environments(
@@ -473,9 +546,7 @@ class RLEOperations:
         :rtype: ~azure.ai.projects.models.ListRLEnvironmentsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._environments.list_environments(
-            foundry_features=_RLE_FEATURE, name=name, skip=skip, top=top, **kwargs
-        )
+        return await self._environments.list_environments(name=name, skip=skip, top=top, **kwargs)
 
     @distributed_trace_async
     async def get_environment(self, name: str, **kwargs: Any) -> RLEnvironment:
@@ -487,7 +558,7 @@ class RLEOperations:
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._environments.get_environment(name, foundry_features=_RLE_FEATURE, **kwargs)
+        return await self._environments.get_environment(name, **kwargs)
 
     @distributed_trace_async
     async def get_environment_version(self, name: str, version: str, **kwargs: Any) -> RLEnvironment:
@@ -501,9 +572,7 @@ class RLEOperations:
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._environments.get_environment_version(
-            name, version, foundry_features=_RLE_FEATURE, **kwargs
-        )
+        return await self._environments.get_environment_version(name, version, **kwargs)
 
     @distributed_trace_async
     async def list_environment_versions(self, name: str, **kwargs: Any) -> List[RLEnvironmentVersion]:
@@ -515,9 +584,7 @@ class RLEOperations:
         :rtype: list[~azure.ai.projects.models.RLEnvironmentVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._environments.list_rl_environment_versions(
-            name, foundry_features=_RLE_FEATURE, **kwargs
-        )
+        return await self._environments.list_rl_environment_versions(name, **kwargs)
 
     @distributed_trace_async
     async def delete_environment_version(self, name: str, version: str, **kwargs: Any) -> None:
@@ -531,16 +598,13 @@ class RLEOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        await self._environments.delete_environment_version(
-            name, version, foundry_features=_RLE_FEATURE, **kwargs
-        )
+        await self._environments.delete_environment_version(name, version, **kwargs)
 
     def get_openenv_client(
         self,
         *,
         name: str,
         version: Optional[str] = None,
-        env_vars: Optional[Mapping[str, str]] = None,
         num_instances: int = 1,
         create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S,
         poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
@@ -550,24 +614,21 @@ class RLEOperations:
         This constructs the client without any network I/O (no awaiting needed), so callers can write
         ``async with client.rle.get_openenv_client(...) as openenv_client:``. The returned client is an
         async context manager: entering it resolves the environment by ``name`` (and ``version`` when
-        supplied) -- so a missing or invalid environment fails on entry -- then reserves its instances
-        up front and fails fast if that quota cannot be satisfied (v1 does not queue).
-        :meth:`AsyncOpenEnvClient.get_instance` then hands out reserved :class:`AsyncOpenEnvInstance`
-        objects to run episodes on. Runtime calls (reset/step/state/...) target each instance's
-        data-plane URI.
+        supplied) -- so a missing or invalid environment fails on entry -- then creates an instance
+        group that reserves its concurrency on the service and fails fast if that quota cannot be
+        granted (v1 does not queue). :meth:`AsyncOpenEnvClient.get_instance` then leases running
+        :class:`AsyncOpenEnvInstance` objects from the group on demand to run episodes on.
 
         :keyword name: The hosted RLE environment name to resolve. Required.
         :paramtype name: str
         :keyword version: Optional environment image version. When set, the environment is resolved at
-         that version and every instance is leased against it; otherwise the latest version is used.
+         that version and the instance group is pinned to it; otherwise the latest version is used.
         :paramtype version: str or None
-        :keyword env_vars: Environment variables to inject into each instance.
-        :paramtype env_vars: mapping[str, str] or None
-        :keyword num_instances: Number of instances (leased sandboxes) to reserve in advance, so that
-         several episodes can run concurrently on the event loop. Defaults to 1 and may not exceed 10.
+        :keyword num_instances: Concurrency to reserve on the group, so that several episodes can run
+         concurrently on the event loop. Defaults to 1.
         :paramtype num_instances: int
-        :keyword create_timeout_s: Maximum time to wait for each instance to become ready, in seconds.
-         Default value is 300.
+        :keyword create_timeout_s: Maximum time to wait for each leased instance to become ready, in
+         seconds. Default value is 300.
         :paramtype create_timeout_s: float
         :keyword poll_interval_s: Interval between instance readiness polls, in seconds. Default value is 2.
         :paramtype poll_interval_s: float
@@ -578,10 +639,10 @@ class RLEOperations:
             raise ValueError("name is required")
         return AsyncOpenEnvClient(
             environments=self._environments,
-            sandboxes=self._sandboxes,
+            instance_groups=self._instance_groups,
+            instances=self._instances,
             name=name,
             version=version,
-            env_vars=env_vars,
             num_instances=num_instances,
             create_timeout_s=create_timeout_s,
             poll_interval_s=poll_interval_s,
