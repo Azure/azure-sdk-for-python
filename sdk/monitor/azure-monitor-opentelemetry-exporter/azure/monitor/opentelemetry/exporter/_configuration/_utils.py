@@ -137,6 +137,7 @@ def make_onesettings_request(
         return OneSettingsResponse(has_exception=True)
 
 
+
 def _parse_onesettings_response(response: requests.Response) -> OneSettingsResponse:
     """Parse an HTTP response from OneSettings into a structured response object.
 
