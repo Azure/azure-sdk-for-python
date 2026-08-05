@@ -412,7 +412,6 @@ namespace azure.ai.projects.aio.operations
 
     class azure.ai.projects.aio.operations.AsyncOpenEnvClient: implements AsyncContextManager
         property instance_group_id: Optional[str]    # Read-only
-        property instances: List[AsyncOpenEnvInstance]    # Read-only
         property num_instances: int    # Read-only
 
         def __init__(
@@ -443,8 +442,7 @@ namespace azure.ai.projects.aio.operations
                 instance_group_id: str,
                 *,
                 instance: RLEInstance,
-                instances: RLEInstancesOperations,
-                owner: Optional[AsyncOpenEnvClient] = ...
+                instances: RLEInstancesOperations
             ) -> None: ...
 
         @distributed_trace_async
@@ -12274,7 +12272,6 @@ namespace azure.ai.projects.operations
 
     class azure.ai.projects.operations.OpenEnvClient: implements ContextManager
         property instance_group_id: Optional[str]    # Read-only
-        property instances: List[OpenEnvInstance]    # Read-only
         property num_instances: int    # Read-only
 
         def __init__(
@@ -12305,8 +12302,7 @@ namespace azure.ai.projects.operations
                 instance_group_id: str,
                 *,
                 instance: RLEInstance,
-                instances: RLEInstancesOperations,
-                owner: Optional[OpenEnvClient] = ...
+                instances: RLEInstancesOperations
             ) -> None: ...
 
         @distributed_trace

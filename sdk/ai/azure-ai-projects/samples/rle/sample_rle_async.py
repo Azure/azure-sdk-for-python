@@ -67,13 +67,15 @@ async def run(args):
     ) as project_client:
         # get_openenv_client is a plain (non-awaited) factory: it does no I/O. Entering the async
         # context resolves the environment and creates the instance group that reserves quota (a
-        # missing environment fails on entry). get_instance() leases a running instance on demand, so
-        # it is awaited on the async surface.
+        # missing environment fails on entry).
         async with project_client.rle.get_openenv_client(
             name=args.name,
             version=args.version,
         ) as openenv_client:
-            async with await openenv_client.get_instance() as instance:
+            # get_instance() leases a running instance on demand (create + poll to Running), so on the
+            # async surface it is awaited; the returned instance is then an async context manager.
+            instance = await openenv_client.get_instance()
+            async with instance:
                 reset_result = await instance.reset(seed=args.seed)
                 observation = reset_result.observation or {}
                 prompt = observation.get("prompt", "")

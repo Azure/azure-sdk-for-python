@@ -238,22 +238,22 @@ def test_openenv_client_creates_group_on_enter():
         assert client.instance_group_id == "grp-1"
         assert len(groups.created) == 1
         assert groups.created[0].instance_count == 3
-        assert client.instances == []
         assert instances.released == []
     # Closing tears down the group.
     assert groups.deleted == ["grp-1"]
 
 
 def test_openenv_get_instance_leases_on_demand():
-    client, _groups, instances = _make_openenv_client(num_instances=2)
+    client, groups, instances = _make_openenv_client(num_instances=2)
     with client:
         first = client.get_instance()
         second = client.get_instance()
         assert isinstance(first, OpenEnvInstance)
         assert {first.id, second.id} == {"inst-0", "inst-1"}
-        assert len(client.instances) == 2
-    # Closing the client releases every leased instance and tears down the group.
-    assert sorted(instances.released) == ["inst-0", "inst-1"]
+    # Closing deletes the group; the service releases any still-leased instances when the group is
+    # deleted, so the client does not release them individually.
+    assert groups.deleted == ["grp-1"]
+    assert instances.released == []
 
 
 def test_openenv_get_instance_maps_at_capacity():
@@ -290,7 +290,6 @@ def test_openenv_instance_context_releases_on_exit():
             first_id = instance.id
         # Exiting the instance context released it immediately (no reuse in v1).
         assert instances.released == [first_id]
-        assert client.instances == []
 
 
 def test_openenv_instance_runtime_uses_flat_instance_id():
@@ -443,7 +442,6 @@ def test_async_openenv_client_creates_group_and_runs():
         async with client:
             assert client.instance_group_id == "grp-1"
             # Entering only creates the group; instances are leased on demand.
-            assert client.instances == []
             async with await client.get_instance() as instance:
                 assert isinstance(instance, AsyncOpenEnvInstance)
                 assert instance.id.startswith("inst-")
@@ -462,16 +460,18 @@ def test_async_openenv_client_creates_group_and_runs():
 
 def test_async_openenv_get_instance_leases_on_demand():
     async def run():
-        client, _groups, instances = _make_async_openenv_client(num_instances=2)
+        client, groups, instances = _make_async_openenv_client(num_instances=2)
         async with client:
             first = await client.get_instance()
             second = await client.get_instance()
             assert {first.id, second.id} == {"inst-0", "inst-1"}
-            assert len(client.instances) == 2
             # Releasing frees the instance immediately; v1 does not reuse instances.
             await first.release()
             assert instances.released == [first.id]
-        assert sorted(instances.released) == ["inst-0", "inst-1"]
+        # Closing deletes the group; the service releases the still-leased ``second`` instance when
+        # the group is deleted, so the client only released ``first`` explicitly.
+        assert instances.released == [first.id]
+        assert groups.deleted == ["grp-1"]
 
     asyncio.run(run())
 

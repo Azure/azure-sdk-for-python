@@ -128,14 +128,14 @@ def coerce_action(action: Any, action_kwargs: Mapping[str, Any]) -> dict:
     raise TypeError(f"action must be a mapping or keyword fields, got {type(action).__name__}")
 
 
-def _create_running_instance(
+def _acquire_instance(
     instances: RLEInstancesOperations,
     instance_group_id: str,
     *,
     create_timeout_s: float,
     poll_interval_s: float,
 ) -> RLEInstance:
-    """Create an instance under a group and poll until it reports the ``Running`` status.
+    """Acquire an instance under a group and poll until it reports the ``Running`` status.
 
     The service may answer the create request with ``202`` (accepted, no warm instance yet) and a
     ``Retry-After`` hint; in that case the request is re-issued until an instance is provisioned or
@@ -224,10 +224,6 @@ class OpenEnvInstance:
     :paramtype instance: ~azure.ai.projects.models.RLEInstance
     :keyword instances: Generated instance operations bound to the project client. Required.
     :paramtype instances: ~azure.ai.projects.operations.RLEInstancesOperations
-    :keyword owner: The :class:`OpenEnvClient` that owns the instance, if any. When set, exiting the
-     instance context (or calling :meth:`release`) releases the instance and returns its quota slot
-     to the owner.
-    :paramtype owner: ~azure.ai.projects.operations.OpenEnvClient or None
     """
 
     def __init__(
@@ -236,7 +232,6 @@ class OpenEnvInstance:
         *,
         instance: RLEInstance,
         instances: RLEInstancesOperations,
-        owner: Optional["OpenEnvClient"] = None,
     ) -> None:
         if not instance_group_id:
             raise ValueError("instance_group_id is required")
@@ -246,7 +241,6 @@ class OpenEnvInstance:
         self._instance = instance
         self._instance_id: str = instance.instance_id
         self._instances = instances
-        self._owner = owner
 
     @property
     def id(self) -> str:
@@ -273,15 +267,10 @@ class OpenEnvInstance:
         """Release this leased instance on the service, best effort.
 
         Invoked automatically on context exit. v1 does not reuse instances: once an instance leaves
-        its ``with`` block the underlying instance is released immediately and its quota slot is
-        returned to the owning :class:`OpenEnvClient`. For an instance without an owner this releases
-        the instance directly.
+        its ``with`` block the underlying instance is released immediately, which frees its slot in
+        the group's reservation so another instance can be leased.
         """
-        owner = self._owner
-        if owner is not None:
-            owner._release_instance(self)  # pylint: disable=protected-access
-        else:
-            self._release()
+        self._release()
 
     @distributed_trace
     def reset(self, seed: Optional[int] = None, episode_id: Optional[str] = None, **kwargs: Any) -> RLEStepResult:
@@ -372,7 +361,8 @@ class OpenEnvClient:
     each :meth:`OpenEnvInstance.reset` starts a fresh episode, an instance may run one or more
     episodes while checked out; exiting its context releases the underlying instance immediately (v1
     does not reuse instances). Leasing more than ``num_instances`` at once fails until an outstanding
-    instance is released. Closing the client releases every leased instance and tears down the group.
+    instance is released. Closing the client deletes the group, which releases any instances still
+    leased on the service; the client keeps no local list of leased instances.
 
     :keyword environments: Generated environment operations used to resolve the environment. Required.
     :paramtype environments: ~azure.ai.projects.operations.RLEnvironmentsOperations
@@ -420,7 +410,6 @@ class OpenEnvClient:
         self._environment_name: Optional[str] = None
         self._environment_version: Optional[str] = None
         self._instance_group_id: Optional[str] = None
-        self._outstanding: List[OpenEnvInstance] = []
         self._lock = threading.Lock()
         self._closed = False
 
@@ -433,11 +422,6 @@ class OpenEnvClient:
     def num_instances(self) -> int:
         """Concurrency the instance group reserves on the service for this client."""
         return self._num_instances
-
-    @property
-    def instances(self) -> List[OpenEnvInstance]:
-        """The instances currently leased from the group by this client."""
-        return list(self._outstanding)
 
     def __enter__(self) -> "OpenEnvClient":
         self._resolve_environment()
@@ -512,7 +496,9 @@ class OpenEnvClient:
         (``429``) until an outstanding instance is released; v1 does not queue for additional quota.
 
         The returned :class:`OpenEnvInstance` is a context manager; exiting its context releases the
-        underlying instance back to the service immediately (v1 does not reuse instances).
+        underlying instance back to the service immediately (v1 does not reuse instances). The service
+        owns the pool and the reservation, so this client keeps no local bookkeeping of leased
+        instances; closing the client deletes the group, which releases any instances still leased.
 
         :return: A leased instance ready to run episodes.
         :rtype: ~azure.ai.projects.operations.OpenEnvInstance
@@ -523,41 +509,30 @@ class OpenEnvClient:
             group_id = self._instance_group_id
         if group_id is None:
             raise RLEError("reserve quota first: enter the OpenEnvClient context before get_instance()")
-        instance = _create_running_instance(
+        instance = _acquire_instance(
             self._instances,
             group_id,
             create_timeout_s=self._create_timeout_s,
             poll_interval_s=self._poll_interval_s,
         )
-        openenv_instance = OpenEnvInstance(group_id, instance=instance, instances=self._instances, owner=self)
+        openenv_instance = OpenEnvInstance(group_id, instance=instance, instances=self._instances)
         with self._lock:
             if self._closed:
                 openenv_instance._release()  # pylint: disable=protected-access
                 raise RLEError("OpenEnv client is closed")
-            self._outstanding.append(openenv_instance)
         return openenv_instance
 
-    def _release_instance(self, instance: OpenEnvInstance) -> None:
-        with self._lock:
-            if instance not in self._outstanding:
-                return
-            self._outstanding.remove(instance)
-        instance._release()  # pylint: disable=protected-access
-
     def close(self) -> None:
-        """Release every leased instance and tear down the instance group, best effort."""
+        """Tear down the instance group, best effort.
+
+        The service releases any instances still leased under the group when it is deleted, so this
+        client does not release them individually.
+        """
         with self._lock:
             if self._closed:
                 return
             self._closed = True
-            self._release_all_locked()
             self._close_group_locked()
-
-    def _release_all_locked(self) -> None:
-        outstanding = list(self._outstanding)
-        self._outstanding.clear()
-        for instance in outstanding:
-            instance._release()  # pylint: disable=protected-access
 
     def _close_group_locked(self) -> None:
         group_id = self._instance_group_id
