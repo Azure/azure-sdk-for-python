@@ -1,11 +1,24 @@
 # Release History
 
-## 2.0.0b9 (Unreleased)
+## 2.0.0b10 (2026-07-31)
 
 ### Features Added
 
-- Task-record schema cleanup: framework-reserved wire keys in the persisted task record no longer carry a leading `_` (e.g. the `task_name` tag; the `schema_version` / `last_input_id` / `turn_started_at` / `retry_attempt` / `steering` payload keys; the `input` / `steering_input_<seq>` / `output` attachment keys) — only the `__attachment_ref__` discriminator keeps its marker. The `source` stamp now includes `hosting_environment` (from `FOUNDRY_HOSTING_ENVIRONMENT`), and the payload now carries a `schema_version` (currently `"1"`). Tasks persisted before this change (lacking `payload.schema_version`) are deleted rather than recovered by the recovery scan.
+- Added a shared `experimental` decorator for marking Agent Server preview feature surfaces with docstring notes and one-time runtime warnings. The resilient task primitive and Foundry storage public APIs are now marked experimental.
+- Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
+- Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — a process-global switch (default off) that force-enables the resilient `TaskManager`'s startup recovery scan even before any durable task is declared (useful when tasks are registered lazily after startup).
 
+### Bugs Fixed
+
+- `AgentServerHost` no longer makes a blocking hosted task-store `list()` round-trip (plus credential-token acquisition) at startup unless resilient tasks are actually in use. The `TaskManager` is still constructed so `get_task_manager()` and `.run()` / `.start()` keep working, but its network-backed **startup recovery scan** now runs only when **either** at least one durable task (`@task` / `@multi_turn_task`) has been declared **or** `set_resilient_tasks_enabled(True)` was called. Apps that use tasks keep automatic crash recovery with no code change; plain servers (e.g. invocations-only hosts) no longer pay tens of seconds of startup latency for a scan that has nothing to recover.
+- Cleaned up `AgentServerHost` public signatures so inherited middleware typing does not expose Starlette private type aliases.
+
+## 2.0.0b9 (2026-07-28)
+
+### Features Added
+
+- Added Agent Server-managed OTLP/gRPC export when `OTEL_EXPORTER_OTLP_PROTOCOL=grpc` is configured.
+- Task-record schema cleanup: framework-reserved wire keys in the persisted task record no longer carry a leading `_` (e.g. the `task_name` tag; the `schema_version` / `last_input_id` / `turn_started_at` / `retry_attempt` / `steering` payload keys; the `input` / `steering_input_<seq>` / `output` attachment keys) — only the `__attachment_ref__` discriminator keeps its marker. The `source` stamp now includes `hosting_environment` (from `FOUNDRY_HOSTING_ENVIRONMENT`), and the payload now carries a `schema_version` (currently `"1"`). Tasks persisted before this change (lacking `payload.schema_version`) are deleted rather than recovered by the recovery scan.
 - Added a **resilient task primitive** for building long-running agents that survive container restarts, out-of-memory kills, and redeployments. Decorate an async function with `@task` (one-shot) or `@multi_turn_task` (multi-turn conversations); the framework persists task state to a task store and automatically recovers and re-invokes in-flight work after a crash. Available from `azure.ai.agentserver.core.tasks`, with `TaskContext`, `TaskRun`, configurable retries (`RetryPolicy`), cancellation, steering, and a typed exception set (`TaskFailed`, `TaskCancelled`, `TaskConflictError`, `TaskManagerNotInitialized`, and others). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md).
 - Added an **event streaming** API (`azure.ai.agentserver.core.streaming`) for publishing incremental task output to one or more subscribers, with in-memory and file-backed buffering and live or replay delivery. This makes it straightforward to serve Server-Sent Events (SSE) responses that a client can disconnect from and resume. See the [Streaming Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md).
 - Exposed `resolve_state_subdir(name)` on the public `azure.ai.agentserver.core` surface. It resolves an on-disk state subdirectory (e.g. `"tasks"`, `"streams"`, `"responses"`) under the shared agent-server state root (`AGENTSERVER_STATE_ROOT`, or `~/.agentserver` when unset), so protocol packages persist state under the same operator-controlled root.
@@ -51,6 +64,7 @@
 
 - Populated agent metadata when operation IDs are zeroed so agent metadata remains available for telemetry and downstream processing.
 - Suppressed noisy observability/exporter INFO logs by default in tracing setup while preserving DEBUG visibility when explicitly enabled.
+
 ## 2.0.0b5 (2026-05-25)
 
 ### Bugs Fixed

@@ -7,9 +7,15 @@ try:
     from io import BytesIO
 except ImportError:
     from cStringIO import StringIO as BytesIO
-import sys
 from unittest.mock import Mock
+import tempfile
+import os
+import asyncio
+from itertools import product
+
 import pytest
+from utils import HTTP_REQUESTS
+
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     AzureError,
@@ -27,12 +33,6 @@ from azure.core.pipeline.transport import (
     HttpResponse,
     AsyncHttpTransport,
 )
-import tempfile
-import os
-import time
-import asyncio
-from itertools import product
-from utils import HTTP_REQUESTS
 
 
 def test_retry_code_class_variables():
@@ -59,7 +59,9 @@ def test_retry_types():
     assert backoff_time == 4
 
 
-@pytest.mark.parametrize("retry_after_input,http_request", product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS))
+@pytest.mark.parametrize(
+    "retry_after_input,http_request", list(product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS))
+)
 def test_retry_after(retry_after_input, http_request):
     retry_policy = AsyncRetryPolicy()
     request = http_request("GET", "http://localhost")
@@ -78,7 +80,9 @@ def test_retry_after(retry_after_input, http_request):
     assert retry_after == float(retry_after_input)
 
 
-@pytest.mark.parametrize("retry_after_input,http_request", product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS))
+@pytest.mark.parametrize(
+    "retry_after_input,http_request", list(product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS))
+)
 def test_x_ms_retry_after(retry_after_input, http_request):
     retry_policy = AsyncRetryPolicy()
     request = http_request("GET", "http://localhost")
@@ -295,7 +299,7 @@ combinations = [(ServiceRequestError, ServiceRequestTimeoutError), (ServiceRespo
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "combinations,http_request",
-    product(combinations, HTTP_REQUESTS),
+    list(product(combinations, HTTP_REQUESTS)),
 )
 async def test_does_not_sleep_after_timeout(combinations, http_request):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.

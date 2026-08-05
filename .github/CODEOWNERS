@@ -78,7 +78,7 @@
 
 # ServiceLabel: %Cognitive - Content Safety
 # PRLabel: %Cognitive - Content Safety
-/sdk/contentsafety/    @mengaims
+/sdk/contentsafety/    @Azure/azure-sdk-write-contentsafety
 
 # PRLabel: %Cognitive - Content Understanding
 /sdk/contentunderstanding/    @bojunehsu @yungshinlintw
@@ -226,6 +226,13 @@
 # PRLabel: %Digital Twins
 /sdk/digitaltwins/    @Aashish93-stack @johngallardo @Satya-Kolluri @sjiherzig
 
+# AzureSdkOwners: @ahall-msft
+# ServiceLabel: %Discovery
+# ServiceOwners: @ahall-msft
+
+# PRLabel: %Discovery
+/sdk/discovery/    @ahall-msft
+
 # PRLabel: %Document Intelligence
 /sdk/documentintelligence/    @bojunehsu @yungshinlintw
 
@@ -249,7 +256,7 @@
 # AzureSdkOwners: @rajeshka @shankarsama
 # ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
-/sdk/eventgrid/    @rajeshka @shankarsama
+/sdk/eventgrid/    @shankarsama @Nishanth-MS
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/    @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak

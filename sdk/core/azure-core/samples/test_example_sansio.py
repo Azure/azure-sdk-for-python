@@ -24,13 +24,11 @@
 #
 # --------------------------------------------------------------------------
 
-import sys
 from azure.core.pipeline import PipelineRequest
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core import PipelineClient
 from azure.core.pipeline.policies import RedirectPolicy
 from azure.core.pipeline.policies import UserAgentPolicy
-from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.policies import RequestIdPolicy
 
 
@@ -62,8 +60,6 @@ def test_example_request_id_policy():
     policies = [UserAgentPolicy("myuseragent"), RedirectPolicy()]
 
     # [START request_id_policy]
-    from azure.core.pipeline.policies import HeadersPolicy
-
     request_id_policy = RequestIdPolicy()
     request_id_policy.set_request_id("azconfig-test")
 

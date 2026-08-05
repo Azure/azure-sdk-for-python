@@ -1,10 +1,11 @@
 # Release History
 
-## 7.15.0 (Unreleased)
+## 7.15.0b1 (Unreleased)
 
 ### Features Added
 
 - Added `ServiceBusReceivedMessage.from_bytes()` classmethod to construct a `ServiceBusReceivedMessage` from raw AMQP payload bytes without requiring the deprecated `uamqp` library. ([#43979](https://github.com/Azure/azure-sdk-for-python/issues/43979))
+- Added `ServiceBusClient.list_queue_sessions()` and `ServiceBusClient.list_subscription_sessions()` (sync and async) to list session IDs for entities with active messages, with optional filtering by session-state update timestamp. The methods return an `ItemPaged[str]` (`AsyncItemPaged[str]` on the async client) so callers can iterate every session transparently or page with `by_page()`. Implements the `com.microsoft:get-message-sessions` management operation. ([#46575](https://github.com/Azure/azure-sdk-for-python/pull/46575))
 
 ### Bugs Fixed
 
@@ -16,6 +17,7 @@
 - Fixed a bug where the async pure-Python AMQP transport failed to connect with `[Errno 22] Invalid argument` (`amqp:socket-error`) inside containerized/virtualized environments such as Docker Desktop on macOS. The transport no longer reads back and re-applies platform-negotiated TCP options (e.g. `TCP_MAXSEG`) that some platforms reject via `setsockopt`. ([#45394](https://github.com/Azure/azure-sdk-for-python/issues/45394))
 - Fixed a bug where passing a `fully_qualified_namespace` that included a port and/or trailing path (for example the `https://<namespace>.servicebus.windows.net:443/` form that Azure returns when provisioning a namespace) raised `ServiceBusAuthenticationError`. The namespace is now normalized to its bare host, matching the .NET and JavaScript SDKs. ([#44034](https://github.com/Azure/azure-sdk-for-python/issues/44034))
 - Fixed a bug where iterating over a `ServiceBusReceiver` suppressed automatic HTTP instrumentation (e.g. from `opentelemetry-instrumentation-httpx`/`requests`) while user code processed a received message, causing the user's own outbound HTTP spans to be dropped. The receive tracing span is now closed before the message is yielded to the caller, so suppression no longer leaks into message processing. ([#42755](https://github.com/Azure/azure-sdk-for-python/issues/42755))
+- Fixed a bug in the pyAMQP transport where decoding an incoming performative whose trailing null fields were omitted by the sender (permitted by AMQP 1.0 section 1.4) raised `IndexError`/`TypeError`. The decoded field list is now padded to the performative's full field count so omitted trailing fields read back as their AMQP-defined default, including the compact `list0` encoding where every field is omitted. A field encoded as an explicit null but whose declared default is non-null (for example a `max_frame_size` set to null so the connection would compare `None < 512`) now also reads back as that default.
 
 ### Other Changes
 

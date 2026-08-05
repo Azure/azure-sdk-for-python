@@ -33,6 +33,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+otlp-grpc = [
+    "opentelemetry-exporter-otlp-proto-grpc>=1.43.0",
+]
 hosted = [
     "azure-identity>=1.16.0",
 ]

@@ -2,19 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import requests
-from azure.core.pipeline.transport import (
-    HttpTransport,
-    RequestsTransport,
-)
-from azure.core.pipeline import Pipeline, PipelineResponse
-from azure.core.pipeline.transport._requests_basic import StreamDownloadGenerator
-from azure.core.exceptions import ServiceResponseError
-
 try:
     from unittest import mock
 except ImportError:
     import mock
+
+import requests
 import pytest
 from utils import (
     HTTP_RESPONSES,
@@ -23,6 +16,14 @@ from utils import (
     create_transport_response,
     request_and_responses_product,
 )
+
+from azure.core.pipeline.transport import (
+    HttpTransport,
+    RequestsTransport,
+)
+from azure.core.pipeline import Pipeline, PipelineResponse
+from azure.core.pipeline.transport._requests_basic import StreamDownloadGenerator
+from azure.core.exceptions import ServiceResponseError
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
