@@ -51,10 +51,14 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         assert database is not None
         database2 = await self.client.create_database_if_not_exists(test_config.unique_database_id("backcompat"), session_token=str(uuid.uuid4()))
         assert database2 is not None
-        database_list = [db async for db in self.client.list_databases(session_token=str(uuid.uuid4()))]
-        database_list2 = [db async for db in self.client.query_databases(query="select * from c", session_token=str(uuid.uuid4()))]
-        assert len(database_list) > 0
-        assert len(database_list2) > 0
+        # Assert this run's own database is present rather than that the account is
+        # non-empty: the account is shared with other runs and other language SDKs, so a
+        # non-zero count says nothing about the database under test.
+        database_ids = {db['id'] async for db in self.client.list_databases(session_token=str(uuid.uuid4()))}
+        database_ids2 = {db['id'] async for db in
+                         self.client.query_databases(query="select * from c", session_token=str(uuid.uuid4()))}
+        assert database.id in database_ids
+        assert database.id in database_ids2
         database_read = await database.read(session_token=str(uuid.uuid4()))
         assert database_read is not None
         await self.client.delete_database(database2.id, session_token=str(uuid.uuid4()))
@@ -69,10 +73,12 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         assert container is not None
         container2 = await self.created_database.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()))
         assert container2 is not None
-        container_list = [cont async for cont in self.created_database.list_containers(session_token=str(uuid.uuid4()))]
-        container_list2 = [cont async for cont in self.created_database.query_containers(query="select * from c", session_token=str(uuid.uuid4()))]
-        assert len(container_list) > 0
-        assert len(container_list2) > 0
+        container_ids = {c['id'] async for c in self.created_database.list_containers(session_token=str(uuid.uuid4()))}
+        container_ids2 = {c['id'] async for c in
+                          self.created_database.query_containers(query="select * from c",
+                                                                 session_token=str(uuid.uuid4()))}
+        assert container.id in container_ids
+        assert container.id in container_ids2
         container2_read = await container2.read(session_token=str(uuid.uuid4()))
         assert container2_read is not None
         replace_container = await self.created_database.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30, session_token=str(uuid.uuid4()))

@@ -94,6 +94,65 @@ def restore_environment_variables(previous):
             os.environ[name] = value
 
 
+# The live-test accounts are long lived and shared with concurrent runs of this suite and
+# with other language SDKs' CI, so the account control plane is a contended resource:
+# creating or deleting a database or container can fail purely because someone else is
+# busy on the same account. The SDK's own throttle retry gives up after ~30s, which is not
+# enough headroom for suite setup and teardown on a busy account.
+CONTROL_PLANE_MAX_ATTEMPTS = 20
+CONTROL_PLANE_MAX_BACKOFF_SECONDS = 15
+# Retried: request timeout, throttled, retry-with, internal error, service unavailable.
+# Deliberately absent: 400, 401, 403, 404, 409. Those describe the request itself, so
+# negative tests that assert on them must keep failing fast.
+CONTROL_PLANE_RETRY_STATUS_CODES = frozenset({408, 429, 449, 500, 503})
+
+
+def _control_plane_backoff(attempt, error):
+    """Seconds to wait before retrying, preferring the service's own hint."""
+    headers = getattr(error, "headers", None) or {}
+    for header in (HttpHeaders.RetryAfterInMilliseconds, HttpHeaders.RetryAfter):
+        raw = headers.get(header)
+        if raw is None:
+            continue
+        try:
+            hinted = float(raw) / 1000 if header == HttpHeaders.RetryAfterInMilliseconds else float(raw)
+        except (TypeError, ValueError):
+            continue
+        return min(max(hinted, 0.1), CONTROL_PLANE_MAX_BACKOFF_SECONDS)
+    backoff = min(0.5 * (2 ** attempt), CONTROL_PLANE_MAX_BACKOFF_SECONDS)
+    # Jitter so that parallel matrix legs retrying the same account don't stay in lockstep.
+    return backoff * (0.5 + random.random() / 2)
+
+
+def _should_retry_control_plane(error, attempt):
+    return (error.status_code in CONTROL_PLANE_RETRY_STATUS_CODES
+            and attempt < CONTROL_PLANE_MAX_ATTEMPTS - 1)
+
+
+def retry_control_plane(operation, *args, **kwargs):
+    """Run a control-plane operation, retrying transient service-side failures."""
+    for attempt in range(CONTROL_PLANE_MAX_ATTEMPTS):
+        try:
+            return operation(*args, **kwargs)
+        except exceptions.CosmosHttpResponseError as error:
+            if not _should_retry_control_plane(error, attempt):
+                raise
+            time.sleep(_control_plane_backoff(attempt, error))
+    raise AssertionError("unreachable")  # pragma: no cover
+
+
+async def retry_control_plane_async(operation, *args, **kwargs):
+    """Async counterpart of :func:`retry_control_plane`."""
+    for attempt in range(CONTROL_PLANE_MAX_ATTEMPTS):
+        try:
+            return await operation(*args, **kwargs)
+        except exceptions.CosmosHttpResponseError as error:
+            if not _should_retry_control_plane(error, attempt):
+                raise
+            await asyncio.sleep(_control_plane_backoff(attempt, error))
+    raise AssertionError("unreachable")  # pragma: no cover
+
+
 class TestConfig(object):
     local_host = 'https://localhost:8081/'
     # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
@@ -259,15 +318,17 @@ class TestConfig(object):
     @classmethod
     def create_database_if_not_exist(cls, client):
         # type: (CosmosClient) -> DatabaseProxy
-        test_database = client.create_database_if_not_exists(cls.TEST_DATABASE_ID,
-                                                             offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
+        test_database = retry_control_plane(client.create_database_if_not_exists,
+                                            cls.TEST_DATABASE_ID,
+                                            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
         return test_database
 
     @classmethod
     def create_single_partition_container_if_not_exist(cls, client):
         # type: (CosmosClient) -> ContainerProxy
         database = cls.create_database_if_not_exist(client)
-        document_collection = database.create_container_if_not_exists(
+        document_collection = retry_control_plane(
+            database.create_container_if_not_exists,
             id=cls.TEST_SINGLE_PARTITION_CONTAINER_ID,
             partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
             offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
@@ -277,7 +338,8 @@ class TestConfig(object):
     def create_multi_partition_container_if_not_exist(cls, client):
         # type: (CosmosClient) -> ContainerProxy
         database = cls.create_database_if_not_exist(client)
-        document_collection = database.create_container_if_not_exists(
+        document_collection = retry_control_plane(
+            database.create_container_if_not_exists,
             id=cls.TEST_MULTI_PARTITION_CONTAINER_ID,
             partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
             offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
@@ -287,7 +349,8 @@ class TestConfig(object):
     def create_single_partition_prefix_pk_container_if_not_exist(cls, client):
         # type: (CosmosClient) -> ContainerProxy
         database = cls.create_database_if_not_exist(client)
-        document_collection = database.create_container_if_not_exists(
+        document_collection = retry_control_plane(
+            database.create_container_if_not_exists,
             id=cls.TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID,
             partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
             offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
@@ -297,7 +360,8 @@ class TestConfig(object):
     def create_multi_partition_prefix_pk_container_if_not_exist(cls, client):
         # type: (CosmosClient) -> ContainerProxy
         database = cls.create_database_if_not_exist(client)
-        document_collection = database.create_container_if_not_exists(
+        document_collection = retry_control_plane(
+            database.create_container_if_not_exists,
             id=cls.TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID,
             partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
             offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
@@ -306,17 +370,13 @@ class TestConfig(object):
     @classmethod
     def try_delete_database(cls, client):
         # type: (CosmosClient) -> None
-        try:
-            client.delete_database(cls.TEST_DATABASE_ID)
-        except exceptions.CosmosHttpResponseError as e:
-            if e.status_code != StatusCodes.NOT_FOUND:
-                raise e
+        cls.try_delete_database_with_id(client, cls.TEST_DATABASE_ID)
 
     @classmethod
     def try_delete_database_with_id(cls, client, database_id):
         # type: (CosmosClient, str) -> None
         try:
-            client.delete_database(database_id)
+            retry_control_plane(client.delete_database, database_id)
         except exceptions.CosmosHttpResponseError as e:
             if e.status_code != StatusCodes.NOT_FOUND:
                 raise e
