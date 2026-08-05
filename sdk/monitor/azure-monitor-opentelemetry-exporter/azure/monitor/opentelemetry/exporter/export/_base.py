@@ -60,7 +60,11 @@ from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
     _get_sha256_hash,
     _get_retry_delay_from_headers,
+    _get_os_name,
+    _get_rp_name,
+    _get_attach_type_name,
 )
+from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter.export._rate_limiter import (
     _TokenBucketRateLimiter,
     _DEFAULT_MAX_ENVELOPES_PER_SECOND,
@@ -117,11 +121,6 @@ class BaseExporter:
         :rtype: None
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
-
-        # TODO: Uncomment configuration changes once testing is completed
-        # Get the configuration manager
-        # from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
-        # self._configuration_manager = get_configuration_manager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
         # We do not need to use entra Id if this is a sdkStats exporter
@@ -202,24 +201,6 @@ class BaseExporter:
             policies=policies,
             **kwargs,
         )
-        # TODO: Uncomment configuration changes once testing is completed
-        # from azure.monitor.opentelemetry.exporter._utils import (
-        #     _get_os_name,
-        #     _get_rp_name,
-        #     _get_attach_type_name,
-        # )
-        # from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
-
-        # if self._configuration_manager:
-        #     self._configuration_manager.initialize(
-        #         os=_get_os_name(),
-        #         rp=_get_rp_name(),
-        #         attach=_get_attach_type_name(),
-        #         component="ext",
-        #         version=ext_version,
-        #         region=self._region,
-        #         ikey=self._instrumentation_key,
-        #     )
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
             self._enable_local_storage()
@@ -231,11 +212,23 @@ class BaseExporter:
         # disable_offline_storage, and the callback's hard gate never re-enables a user opt-out. The
         # statsbeat exporter is skipped: it never persists to disk (isolated Microsoft-ikey folder) and
         # does not participate in the remote toggle.
-        # register_callback is a NoOp if the control plane worker never starts, and
-        # get_configuration_manager() returns None when the control plane is disabled via env var.
+        # get_configuration_manager() returns None when the control plane is disabled via env var,
+        # in which case OneSettings is skipped entirely and storage keeps its statically configured
+        # state.
         if not self._is_stats_exporter():
             config_manager = get_configuration_manager()
             if config_manager:
+                # Start the control-plane worker (idempotent) and describe this process to OneSettings
+                # so feature flags can be targeted (os/rp/attach/component/version/region/ikey).
+                config_manager.initialize(
+                    os=_get_os_name(),
+                    rp=_get_rp_name(),
+                    attach=_get_attach_type_name(),
+                    component="ext",
+                    version=ext_version,
+                    region=self._region,
+                    ikey=self._instrumentation_key,
+                )
                 # register_callback also replays any already-cached configuration to this callback,
                 # so a late-created exporter immediately honors an existing kill-switch. The replay is
                 # centralized in the configuration manager; no feature-specific handling is needed here.
