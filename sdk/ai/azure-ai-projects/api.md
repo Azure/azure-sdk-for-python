@@ -405,7 +405,7 @@ namespace azure.ai.projects.aio.operations
             ) -> SessionFileWriteResult: ...
 
 
-    class azure.ai.projects.aio.operations.BetaAgentsOperations:
+    class azure.ai.projects.aio.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -421,7 +421,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[OptimizationJobResult]: ...
+            ) -> AsyncAgentOptimizationLROPoller: ...
 
         @overload
         async def begin_create_optimization_job(
@@ -431,7 +431,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[OptimizationJobResult]: ...
+            ) -> AsyncAgentOptimizationLROPoller: ...
 
         @overload
         async def begin_create_optimization_job(
@@ -441,7 +441,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[OptimizationJobResult]: ...
+            ) -> AsyncAgentOptimizationLROPoller: ...
 
         @distributed_trace_async
         async def cancel_optimization_job(
@@ -477,7 +477,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[OptimizationJobListItem]: ...
 
 
-    class azure.ai.projects.aio.operations.BetaDatasetsOperations:
+    class azure.ai.projects.aio.operations.BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -493,7 +493,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
+            ) -> AsyncDatasetGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
@@ -503,7 +503,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
+            ) -> AsyncDatasetGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
@@ -513,7 +513,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
+            ) -> AsyncDatasetGenerationLROPoller: ...
 
         @distributed_trace_async
         async def cancel_generation_job(
@@ -639,7 +639,7 @@ namespace azure.ai.projects.aio.operations
             ) -> EvaluationTaxonomy: ...
 
 
-    class azure.ai.projects.aio.operations.BetaEvaluatorsOperations:
+    class azure.ai.projects.aio.operations.BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -655,7 +655,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[EvaluatorVersion]: ...
+            ) -> AsyncEvaluatorGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
@@ -665,7 +665,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[EvaluatorVersion]: ...
+            ) -> AsyncEvaluatorGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
@@ -675,7 +675,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[EvaluatorVersion]: ...
+            ) -> AsyncEvaluatorGenerationLROPoller: ...
 
         @distributed_trace_async
         async def cancel_generation_job(
@@ -2684,6 +2684,26 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.AgentOptimizationLROPoller(LROPoller[OptimizationJobResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: PollingMethod[OptimizationJobResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AgentOptimizationLROPoller: ...
+
+
     class azure.ai.projects.models.AgentSessionResource(_Model):
         agent_session_id: str
         created_at: datetime
@@ -2888,6 +2908,66 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AsyncAgentOptimizationLROPoller(AsyncLROPoller[OptimizationJobResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: AsyncPollingMethod[OptimizationJobResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AsyncAgentOptimizationLROPoller: ...
+
+
+    class azure.ai.projects.models.AsyncDatasetGenerationLROPoller(AsyncLROPoller[DataGenerationJobResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: AsyncPollingMethod[DataGenerationJobResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AsyncDatasetGenerationLROPoller: ...
+
+
+    class azure.ai.projects.models.AsyncEvaluatorGenerationLROPoller(AsyncLROPoller[EvaluatorVersion]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: AsyncPollingMethod[EvaluatorVersion], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AsyncEvaluatorGenerationLROPoller: ...
 
 
     class azure.ai.projects.models.AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResult]):
@@ -4310,6 +4390,26 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.DatasetGenerationLROPoller(LROPoller[DataGenerationJobResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: PollingMethod[DataGenerationJobResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> DatasetGenerationLROPoller: ...
+
+
     class azure.ai.projects.models.DatasetReference(_Model):
         name: str
         version: str
@@ -5056,6 +5156,26 @@ namespace azure.ai.projects.models
         DATASET = "dataset"
         PROMPT = "prompt"
         TRACES = "traces"
+
+
+    class azure.ai.projects.models.EvaluatorGenerationLROPoller(LROPoller[EvaluatorVersion]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: PollingMethod[EvaluatorVersion], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> EvaluatorGenerationLROPoller: ...
 
 
     class azure.ai.projects.models.EvaluatorGenerationTokenUsage(_Model):
@@ -9796,7 +9916,7 @@ namespace azure.ai.projects.operations
             ) -> SessionFileWriteResult: ...
 
 
-    class azure.ai.projects.operations.BetaAgentsOperations:
+    class azure.ai.projects.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -9812,7 +9932,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[OptimizationJobResult]: ...
+            ) -> AgentOptimizationLROPoller: ...
 
         @overload
         def begin_create_optimization_job(
@@ -9822,7 +9942,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[OptimizationJobResult]: ...
+            ) -> AgentOptimizationLROPoller: ...
 
         @overload
         def begin_create_optimization_job(
@@ -9832,7 +9952,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[OptimizationJobResult]: ...
+            ) -> AgentOptimizationLROPoller: ...
 
         @distributed_trace
         def cancel_optimization_job(
@@ -9868,7 +9988,7 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[OptimizationJobListItem]: ...
 
 
-    class azure.ai.projects.operations.BetaDatasetsOperations:
+    class azure.ai.projects.operations.BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -9884,7 +10004,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[DataGenerationJobResult]: ...
+            ) -> DatasetGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
@@ -9894,7 +10014,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[DataGenerationJobResult]: ...
+            ) -> DatasetGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
@@ -9904,7 +10024,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[DataGenerationJobResult]: ...
+            ) -> DatasetGenerationLROPoller: ...
 
         @distributed_trace
         def cancel_generation_job(
@@ -10030,7 +10150,7 @@ namespace azure.ai.projects.operations
             ) -> EvaluationTaxonomy: ...
 
 
-    class azure.ai.projects.operations.BetaEvaluatorsOperations:
+    class azure.ai.projects.operations.BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -10046,7 +10166,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[EvaluatorVersion]: ...
+            ) -> EvaluatorGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
@@ -10056,7 +10176,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[EvaluatorVersion]: ...
+            ) -> EvaluatorGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
@@ -10066,7 +10186,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[EvaluatorVersion]: ...
+            ) -> EvaluatorGenerationLROPoller: ...
 
         @distributed_trace
         def cancel_generation_job(
