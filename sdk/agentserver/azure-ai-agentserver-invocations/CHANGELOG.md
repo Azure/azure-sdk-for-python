@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0 (2026-08-06)
+
+### Features Added
+
+- First stable release of the Azure AI Agent Server Invocations client library.
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to the stable `2.0.0` release.
+
 ## 1.0.0b8 (2026-08-03)
 
 ### Samples
