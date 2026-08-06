@@ -763,10 +763,10 @@
 # ServiceOwners: @amber-yujueWang @rhurey @xitzhang @pankopon @emilyjiji
 
 # PRLabel: %Storage
-/sdk/storage/    @jalauzon-msft @vincenttran-msft @weirongw23-msft
+/sdk/storage/    @jalauzon-msft @vincenttran-msft @weirongw23-msft @anjaliratnam-msft
 
 # ServiceLabel: %Storage
-# ServiceOwners: @jalauzon-msft @vincenttran-msft
+# ServiceOwners: @jalauzon-msft @vincenttran-msft @weirongw23-msft @anjaliratnam-msft
 
 # PRLabel: %Synapse
 /sdk/synapse/    @wanyang7 @yanjungao718
