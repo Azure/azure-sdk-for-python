@@ -1,5 +1,19 @@
 # Release History
 
+## 2.1.0b1 (2026-08-06)
+
+### Features Added
+
+- `FoundryStateStore` now uses a file-backed local fallback when AgentServer is not hosted, and item operations accept an explicit `call_id` for forwarding recovered durable work outside the original request context.
+
+### Breaking Changes
+
+- Removed `TaskMetadata`, `TaskContext.metadata`, and `TaskRun.metadata`.
+  Durable application state now belongs in an explicit `FoundryStateStore`
+  and no longer shares task lifecycle PATCHes or lease renewal. Typed task
+  inputs may carry a top-level `call_id`, which the framework restores in
+  `FoundryAgentRequestContext` for every handler attempt.
+
 ## 2.0.0 (2026-08-05)
 
 ### Other Changes
@@ -18,11 +32,6 @@
 
 ### Other Changes
 
-- Removed `TaskMetadata`, `TaskContext.metadata`, and `TaskRun.metadata`.
-  Durable application state now belongs in an explicit `FoundryStateStore`
-  and no longer shares task lifecycle PATCHes or lease renewal. Typed task
-  inputs may carry a top-level `call_id`, which the framework restores in
-  `FoundryAgentRequestContext` for every handler attempt.
 - The per-turn task `timeout` hard ceiling was raised from **1 day** to **7 days**. The default when unset is still **1 day**; a supplied value may now raise the per-turn budget up to 7 days. A value greater than 7 days (or a negative value) is still rejected at registration (`ValueError`, fail-fast, not clamped). This remains a per-turn cap only — multi-turn chains still live indefinitely across turns (the budget resets each turn).
 
 ## 2.0.0b10 (2026-07-31)
@@ -31,7 +40,6 @@
 
 - Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
 - Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — a process-global switch (default off) that force-enables the resilient `TaskManager`'s startup recovery scan even before any durable task is declared (useful when tasks are registered lazily after startup).
-- `FoundryStateStore` now uses a file-backed local fallback when AgentServer is not hosted, and item operations accept an explicit `call_id` for forwarding recovered durable work outside the original request context.
 
 ### Bugs Fixed
 

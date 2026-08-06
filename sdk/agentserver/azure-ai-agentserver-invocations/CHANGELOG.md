@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0b9 (2026-08-06)
+
+### Samples
+
+- Simplified the resilient samples to use `FoundryStateStore` directly for application state and explicitly forward persisted call IDs during recovered task execution.
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.1.0b1` so package tests and consumers use the Core release containing the local State Store fallback and explicit call-ID item APIs.
+
 ## 1.0.0b8 (2026-08-03)
 
 ### Samples
