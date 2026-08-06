@@ -404,7 +404,9 @@ class DatasetGenerationLROPoller(LROPoller[DataGenerationJobResult]):
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the data generation job operation.
 
-        :return: A mapping containing the created data generation job ID.
+        The mapping contains a ``job_id`` key whose value is the created data generation job ID.
+
+        :return: A mapping containing the ``job_id`` key.
         :rtype: Mapping[str, Any]
         """
         return {"job_id": self._job_id}
@@ -439,7 +441,9 @@ class AsyncDatasetGenerationLROPoller(AsyncLROPoller[DataGenerationJobResult]):
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the data generation job operation.
 
-        :return: A mapping containing the created data generation job ID.
+        The mapping contains a ``job_id`` key whose value is the created data generation job ID.
+
+        :return: A mapping containing the ``job_id`` key.
         :rtype: Mapping[str, Any]
         """
         return {"job_id": self._job_id}
@@ -477,7 +481,9 @@ class EvaluatorGenerationLROPoller(LROPoller[EvaluatorVersion]):
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the evaluator generation job operation.
 
-        :return: A mapping containing the created evaluator generation job ID.
+        The mapping contains a ``job_id`` key whose value is the created evaluator generation job ID.
+
+        :return: A mapping containing the ``job_id`` key.
         :rtype: Mapping[str, Any]
         """
         return {"job_id": self._job_id}
@@ -512,7 +518,9 @@ class AsyncEvaluatorGenerationLROPoller(AsyncLROPoller[EvaluatorVersion]):
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the evaluator generation job operation.
 
-        :return: A mapping containing the created evaluator generation job ID.
+        The mapping contains a ``job_id`` key whose value is the created evaluator generation job ID.
+
+        :return: A mapping containing the ``job_id`` key.
         :rtype: Mapping[str, Any]
         """
         return {"job_id": self._job_id}
@@ -550,7 +558,9 @@ class AgentOptimizationLROPoller(LROPoller[OptimizationJobResult]):
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the agent optimization job operation.
 
-        :return: A mapping containing the created agent optimization job ID.
+        The mapping contains a ``job_id`` key whose value is the created agent optimization job ID.
+
+        :return: A mapping containing the ``job_id`` key.
         :rtype: Mapping[str, Any]
         """
         return {"job_id": self._job_id}
@@ -585,7 +595,9 @@ class AsyncAgentOptimizationLROPoller(AsyncLROPoller[OptimizationJobResult]):
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the agent optimization job operation.
 
-        :return: A mapping containing the created agent optimization job ID.
+        The mapping contains a ``job_id`` key whose value is the created agent optimization job ID.
+
+        :return: A mapping containing the ``job_id`` key.
         :rtype: Mapping[str, Any]
         """
         return {"job_id": self._job_id}
