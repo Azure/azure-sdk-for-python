@@ -395,7 +395,7 @@ task_group = models.BatchTaskGroup(task_values=[task1, task2, task3])
 result = client.create_task_collection(job_id="my-job", task_collection=task_group)
 ```
 
-Finally, you can use `create_tasks` for creating multiple tasks with no limit. This method will package up the list of `BatchTaskCreateOptions` tasks passed in and repeatly call the `create_task_collection` method with groups of tasks bundled into `BatchTaskGroup` objects. This utility method allows you to select the number of parallel calls to the `create_task_collection` method.
+Finally, you can use `create_tasks` for creating multiple tasks with no limit. This method will package up the list of `BatchTaskCreateOptions` tasks passed in and repeatedly call the `create_task_collection` method with groups of tasks bundled into `BatchTaskGroup` objects. This utility method allows you to select the number of parallel calls to the `create_task_collection` method.
 
 ```python
 tasks_to_add = []

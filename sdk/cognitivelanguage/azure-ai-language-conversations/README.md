@@ -186,7 +186,7 @@ def sample_conversation_prediction():
 
 ### Analyze Text with an Orchestration App
 
-If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversation()` method with your orchestration's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Conversation, and Question Answering) to get the best response according to the user intent. See the next example:
+If you would like to pass the user utterance to your orchestrator (workflow) app, you can call the `client.analyze_conversation()` method with your orchestration's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Conversation, and Question Answering) to get the best response according to the user intent. See the next example:
 
 <!-- SNIPPET:sample_orchestration_prediction.orchestration_prediction -->
 

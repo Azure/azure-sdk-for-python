@@ -766,7 +766,7 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
   - Added a `connection_string` argument that, if specified, overrides all other endpoint arguments.
   - The `lease_container_name` argument now defaults to `"eph-leases"` if not specified.
 
-- Fix for clients failing to start if run called multipled times (issue #64).
+- Fix for clients failing to start if run called multiple times (issue #64).
 - Added convenience methods `body_as_str` and `body_as_json` to EventData object for easier processing of message data.
 
 

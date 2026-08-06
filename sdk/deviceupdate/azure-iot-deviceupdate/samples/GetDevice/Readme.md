@@ -64,7 +64,7 @@ for item in response:
 
 ### Get best updates for all devices within a specific device group
 
-Finally, lets find out all best updates for all devices in a specific group, groupped by their device class identifier:
+Finally, lets find out all best updates for all devices in a specific group, grouped by their device class identifier:
 
 ``` python
 group = os.environ["DEVICEUPDATE_DEVICE_GROUP"]

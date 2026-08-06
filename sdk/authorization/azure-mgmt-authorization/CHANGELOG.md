@@ -519,7 +519,7 @@ This version uses a next-generation code generator that introduces important bre
 
 **General breaking changes**
 
-- Credential system has been completly revamped:
+- Credential system has been completely revamped:
 
   - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
   - `credentials` parameter has been renamed `credential`
@@ -622,7 +622,7 @@ Role Assignments API version is now 2018-09-01-preview
 
 **Features**
 
-  - Support Azure Stack (multi API versionning)
+  - Support Azure Stack (multi API versioning)
   - Client class can be used as a context manager to keep the underlying
     HTTP session open for performance
 

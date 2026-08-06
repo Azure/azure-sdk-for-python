@@ -320,7 +320,7 @@ This version and all future versions will require Python 3.9+.
 * Added endpoint health check logic during database account calls. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
 
 #### Bugs Fixed
-* Fixed unnecessary retries on the wrong region for timout retry policy. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390).
+* Fixed unnecessary retries on the wrong region for timeout retry policy. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390).
 * All client connection errors from aiohttp will be retried. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390).
 
 #### Other Changes
@@ -382,7 +382,7 @@ For more information on this, see our README section [here](https://github.com/A
 * Batch requests will now be properly considered as Write operation. See [PR 38365](https://github.com/Azure/azure-sdk-for-python/pull/38365).
 
 #### Other Changes
-* Getting offer thoughput when it has not been defined in a container will now give a 404/10004 instead of just a 404. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043).
+* Getting offer throughput when it has not been defined in a container will now give a 404/10004 instead of just a 404. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043).
 * Incomplete Partition Key Extractions in documents for Subpartitioning now gives 400/1001 instead of just a 400. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043).
 * SDK will now make database account calls every 5 minutes to refresh location cache. See [PR 36514](https://github.com/Azure/azure-sdk-for-python/pull/36514).
 

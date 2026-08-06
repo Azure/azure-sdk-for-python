@@ -104,7 +104,7 @@
 - Users can now purchase Denmark (DK) toll free and geographic phone numbers for PSTN Calling
 
 ### Features Added
-- Adds support for API verion `2022-01-11-preview2`
+- Adds support for API version `2022-01-11-preview2`
 
 ### Other Changes
 - Updates dependency `azure-core` to `1.20.0`

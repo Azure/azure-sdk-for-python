@@ -1213,7 +1213,7 @@
   - Model DiagnosticSettingsCategoryResource has a new parameter system_data
   - Model DiagnosticSettingsCategoryResource has a new parameter category_groups
   - Model BaselineResponse has a new parameter internal_operation_id
-  - Model BaselineResponse has a new parameter metdata
+  - Model BaselineResponse has a new parameter metadata
   - Model BaselineResponse has a new parameter error_type
   - Model BaselineResponse has a new parameter prediction_result_type
   - Model ActionGroupResource has a new parameter event_hub_receivers
@@ -1326,7 +1326,7 @@ This version uses a next-generation code generator that introduces important bre
 
 **General breaking changes**
 
-- Credential system has been completly revamped:
+- Credential system has been completely revamped:
 
   - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
   - `credentials` parameter has been renamed `credential`
@@ -1518,7 +1518,7 @@ introduce breaking changes.
       - "is" should not be used at all.
       - "format" will return the string value, where "%s" string
         formatting will return `NameOfEnum.stringvalue`. Format syntax
-        should be prefered.
+        should be preferred.
   - New Long Running Operation:
       - Return type changes from
         `msrestazure.azure_operation.AzureOperationPoller` to

@@ -104,7 +104,7 @@ Each page is treated as a separate document. Each empty page is kept as its own 
 ### Base endpoint updates
 Updates all REST API operation paths from `{endpoint}/formrecognizer` to `{endpoint}/documentintelligence`. SDK would handle this change automatically, users would not have to do additional work to support this.
 
-### Not backword compatible with azure-ai-formrecognizer
+### Not backward compatible with azure-ai-formrecognizer
 `azure-ai-documentintelligence` is a new package, it is not compatible with the previous `azure-ai-formrecognizer` package without necessary changes to your code.
 
 ### API shape changes

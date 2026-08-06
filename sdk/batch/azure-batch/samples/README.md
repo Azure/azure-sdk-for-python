@@ -20,6 +20,6 @@ pip install azure-batch
 
 ## Running the samples
 
-1. Open a termianl window and `cd` into the directory that the samples are saved in.
+1. Open a terminal window and `cd` into the directory that the samples are saved in.
 2. Edit the `samples.cfg` file to include the correct credentials to access the Azure service and run the samples. The sample programs are set up to read this file automatically.
 3. Follow the usage directions in the file, e.g. `python batch_samples_hello_world.py`

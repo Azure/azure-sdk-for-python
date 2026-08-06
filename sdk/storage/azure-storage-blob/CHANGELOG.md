@@ -338,7 +338,7 @@ all APIs that accept `version_id` will operate on the version ID provided to the
 - Added support for `AsyncIterable` as data type for async blob upload.
 
 ### Bugs Fixed
-- Changed how async streams are detected on async `upload_blob` to increase compatiblity with different types.
+- Changed how async streams are detected on async `upload_blob` to increase compatibility with different types.
 
 ### Other Changes
 - Removed `msrest` dependency.
@@ -683,7 +683,7 @@ of using the existing one in the `ContainerClient`.
   - `name` (str): The name of the blob.
   - `container` (str): The container the blob is being downloaded from.
   - `properties` (`BlobProperties`): The properties of the blob.
-  - `size` (int): The size of the download. Either the total blob size, or the length of a subsection if sepcified. Previously called `download_size`.
+  - `size` (int): The size of the download. Either the total blob size, or the length of a subsection if specified. Previously called `download_size`.
 - `StorageStreamDownloader` now has new functions:
   - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
   - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.

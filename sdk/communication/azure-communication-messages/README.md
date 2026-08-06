@@ -11,7 +11,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 ## Getting started
 
-### Prequisites
+### Prerequisites
 
 - Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
@@ -21,7 +21,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 Azure Communication Services enables you to send and receive WhatsApp messages using the Azure Communication Services Messages SDK. It can be used to send out messages like appointment reminders, shipping updates, two-factor authentication, and other notification scenarios.
 
-### Installating the package
+### Installing the package
 
 ```bash
 python -m pip install azure-communication-messages

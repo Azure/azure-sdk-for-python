@@ -5,7 +5,7 @@
 
 ## Getting started
 
-### Prequisites
+### Prerequisites
 
 - [Python 3.8+][python] is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.

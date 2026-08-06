@@ -9,7 +9,7 @@ Microsoft Purview Data Map provides the foundation for data discovery and data g
 python -m pip install azure-purview-datamap
 ```
 
-#### Prequisites
+#### Prerequisites
 
 - Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.

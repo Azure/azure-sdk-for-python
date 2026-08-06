@@ -20,7 +20,7 @@ For guidance on the samples README, visit the [sample guide](https://github.com/
 |[logging/basic.py][logging_basic] | Produce logs using basic logging configurations |
 |[logging/correlated_logs.py][correlated_logs] | Produce logs correlated with spans |
 |[logging/custom_event.py][custom_event] | Produce custom events using logs |
-|[logging/custom_properties.py][custom_properties] | Add custom propterties to logs |
+|[logging/custom_properties.py][custom_properties] | Add custom properties to logs |
 |[logging/exception_logs.py][exception_logs] | Produce exception logs |
 |[logging/logs_with_traces.py][logs_with_traces] | Produce correlated logs inside an instrumented http library's distributed tracing |
 |[metrics/attributes.py][attributes] | Add attributes to custom metrics counters |

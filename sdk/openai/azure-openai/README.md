@@ -2,7 +2,7 @@
 
  > Note: This is not a real package. Its purpose is to run tests/validate Azure OpenAI endpoints with the official [Python SDK](https://github.com/openai/openai-python).
 
-## Prequisites
+## Prerequisites
 
 - Python >= 3.9
 - pip install -r dev_requirements.txt

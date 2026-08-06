@@ -102,7 +102,7 @@ This version and all future versions will require Python 3.8+. Python 3.7 is no 
 
 
 ### Breaking Changes
-- Changed subclients `load_test_runs` and `load_test_adminsitration` to `test_run` and `adminsitrative` respectively
+- Changed subclients `load_test_runs` and `load_test_adminsitration` to `test_run` and `administration` respectively
 - Removed `continuation_token` as a parameter for method `azure.developer.loadtesting.aio.LoadTestingClient.test_run.list_test_runs`
 - Removed `continuation_token` as a parameter for method `azure.developer.loadtesting.LoadTestingClient.test_run.list_test_runs`,
 - Removed `continuation_token` as a parameter for method `azure.developer.loadtesting.aio.LoadTestingClient.administration.list_test_files`

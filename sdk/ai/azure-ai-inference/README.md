@@ -197,7 +197,7 @@ Entra ID authentication is also supported by the `load_client` function. Replace
 
 ### Get AI model information
 
-If you are using Serverless API or Managed Compute endpoints, you can call the client method `get_model_info` to retrive AI model information. This makes a REST call to the `/info` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-info). This call will not work for GitHub Models or Azure OpenAI endpoints.
+If you are using Serverless API or Managed Compute endpoints, you can call the client method `get_model_info` to retrieve AI model information. This makes a REST call to the `/info` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-info). This call will not work for GitHub Models or Azure OpenAI endpoints.
 
 <!-- SNIPPET:sample_get_model_info.get_model_info -->
 
@@ -211,7 +211,7 @@ print(f"Model type: {model_info.model_type}")
 
 <!-- END SNIPPET -->
 
-AI model information is cached in the client, and futher calls to `get_model_info` will access the cached value and wil not result in a REST API call. Note that if you created the client using `load_client` function, model information will already be cached in the client.
+AI model information is cached in the client, and further calls to `get_model_info` will access the cached value and will not result in a REST API call. Note that if you created the client using `load_client` function, model information will already be cached in the client.
 
 AI model information is displayed (if available) when you `print(client)`.
 
@@ -245,7 +245,7 @@ In the following sections you will find simple examples of:
 * [Image Embeddings](#image-embeddings-example)
 
 The examples create a synchronous client assuming a Serverless API or Managed Compute endpoint. Modify client
-construction code as descirbed in [Key concepts](#key-concepts) to have it work with GitHub Models endpoint or Azure OpenAI
+construction code as described in [Key concepts](#key-concepts) to have it work with GitHub Models endpoint or Azure OpenAI
 endpoint. Only mandatory input settings are shown for simplicity.
 
 See the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder for full working samples for synchronous and asynchronous clients.
@@ -408,7 +408,7 @@ In the above example, this will be the JSON payload in the HTTP request:
 
 Note that by default, the service will reject any request payload that includes extra parameters. In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"extra-parameters": "pass-through"`.
 
-Use the same method to add additional paramaters in the request of other clients in this package.
+Use the same method to add additional parameters in the request of other clients in this package.
 
 ### Adding HTTP request headers
 

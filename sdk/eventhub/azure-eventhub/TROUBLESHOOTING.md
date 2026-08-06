@@ -153,7 +153,7 @@ If enabling client logging is not enough to diagnose your issues. You can enable
 
 ### Logging required for filing Github issues
 
-When filing issues on Github please make sure that `DEBUG` level logs are enabled along with transport logging. You can find instructions on enabling logging [here](#enable-and-configure-logging). This provides the team with the information necessary best help you further. Ideally the time period spans at least +/- 10 minutes from when the issue occured as it can show patterns leading up to/after the issue that help in diagnosis and troubleshooting. Take a look at [Get Additional Help](#get-additional-help) for more information.
+When filing issues on GitHub please make sure that `DEBUG` level logs are enabled along with transport logging. You can find instructions on enabling logging [here](#enable-and-configure-logging). This provides the team with the information necessary to best help you further. Ideally the time period spans at least +/- 10 minutes from when the issue occurred as it can show patterns leading up to/after the issue that help in diagnosis and troubleshooting. Take a look at [Get Additional Help](#get-additional-help) for more information.
 
 ## Troubleshoot EventHubProducerClient (Sync/Async) issues
 

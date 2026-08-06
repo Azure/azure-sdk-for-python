@@ -496,7 +496,7 @@ This version uses a next-generation code generator that introduces important bre
 
 **General breaking changes**
 
-- Credential system has been completly revamped:
+- Credential system has been completely revamped:
 
   - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
   - `credentials` parameter has been renamed `credential`
@@ -701,7 +701,7 @@ available only in the 2.1.0rc1 for now:
   - Input mapping/Delivery Schema.
   - "label" filtering parameter in all operations
 
-All other features are now considerd stable to use in production. This
+All other features are now considered stable to use in production. This
 includes:
 
   - Domains, which include all domain related operation including
@@ -736,7 +736,7 @@ available only in the 2.0.0rc2 for now:
   - Event subscription expiration date
   - Input mapping and event delivery schema.
 
-All other features are now considerd stable to use in production. This
+All other features are now considered stable to use in production. This
 includes:
 
   - Deadletter destination.
@@ -794,7 +794,7 @@ introduce breaking changes.
       - "is" should not be used at all.
       - "format" will return the string value, where "%s" string
         formatting will return `NameOfEnum.stringvalue`. Format syntax
-        should be prefered.
+        should be preferred.
   - New Long Running Operation:
       - Return type changes from
         `msrestazure.azure_operation.AzureOperationPoller` to

@@ -87,7 +87,7 @@ This version uses a next-generation code generator that introduces important bre
 
 **General breaking changes**
 
-- Credential system has been completly revamped:
+- Credential system has been completely revamped:
 
   - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
   - `credentials` parameter has been renamed `credential`
@@ -145,7 +145,7 @@ use no more than one client per process.
 
 This version was incorrectly released with breaking changes inside. You
 should use 1.0 or directly move to 2.0 if want to follow semantic
-versionning closely.
+versioning closely.
 
 **Breaking changes**
 

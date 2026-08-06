@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Updated `chat_attachment.attachment_type`to include type `file` to support ACS users to recieve files shared by Teams user.
+- Updated `chat_attachment.attachment_type` to include type `file` to support ACS users to receive files shared by Teams user.
 - Added support for a new communication identifier `MicrosoftTeamsAppIdentifier`.
 
 ## 1.2.0 (2023-12-04)
@@ -81,7 +81,7 @@ Python 2.7 is no longer supported. Please use Python version 3.7 or later. For m
 - Support for CreateChatThreadResult and AddChatParticipantsResult to handle partial errors in batch calls.
 - Added idempotency identifier parameter for chat creation calls.
 - Added support for readreceipts and getparticipants pagination.
-- Added new model for messages anc ontent types : Text, Html, ParticipantAdded, ParticipantRemoved, TopicUpdated.
+- Added new model for messages and content types : Text, Html, ParticipantAdded, ParticipantRemoved, TopicUpdated.
 - Added new model for errors (CommunicationError).
 - Added `MicrosoftTeamsUserIdentifier`.
 

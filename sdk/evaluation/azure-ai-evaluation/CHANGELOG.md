@@ -687,7 +687,7 @@ outputs = asyncio.run(custom_simulator(
 - Changed package extra name from "pf-azure" to "remote".
 
 ### Bugs Fixed
-- Adversarial Conversation simulations would fail with `Forbidden`. Added logic to re-fetch token in the exponential retry logic to retrive RAI Service response.
+- Adversarial Conversation simulations would fail with `Forbidden`. Added logic to re-fetch token in the exponential retry logic to retrieve RAI Service response.
 - Fixed an issue where the Evaluate API did not fail due to missing inputs when the target did not return columns required by the evaluators.
 
 ### Other Changes
@@ -756,7 +756,7 @@ azure_ai_project = {
     "resource_group_name": os.environ.get("RESOURCE_GROUP"),
     "project_name": os.environ.get("PROJECT_NAME"),
 }
-sim = Simulator(azure_ai_project=azure_ai_project, credentails=DefaultAzureCredentials())
+sim = Simulator(azure_ai_project=azure_ai_project, credentials=DefaultAzureCredentials())
 ```
 After:
 ```python

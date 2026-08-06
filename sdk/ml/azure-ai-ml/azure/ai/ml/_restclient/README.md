@@ -10,7 +10,7 @@ Auto-generated REST clients for the Azure Machine Learning service, generated fr
 python -m pip install arm_ml_service
 ```
 
-#### Prequisites
+#### Prerequisites
 
 - Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.

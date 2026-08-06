@@ -165,7 +165,7 @@ directive:
 
         var oldName = property;
         // For service operations (where the path is just '/') we need to
-        // remove the '/' at the begining to avoid having an extra '/' in
+        // remove the '/' at the beginning to avoid having an extra '/' in
         // the final URL.
         if (property === '/' || property.startsWith('/?'))
         {

@@ -10,7 +10,7 @@
 python -m pip install test
 ```
 
-#### Prequisites
+#### Prerequisites
 
 - Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.

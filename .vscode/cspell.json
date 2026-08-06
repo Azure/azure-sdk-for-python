@@ -332,6 +332,8 @@
     "mgmt",
     "mhsm",
     "mros",
+    "mycontainer",
+    "myeventhub",
     "Nify",
     "mipsle",
     "mktime",

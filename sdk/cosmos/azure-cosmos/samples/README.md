@@ -10,7 +10,7 @@ urlFragment: cosmos-db-samples
 
 # Azure Cosmos DB SQL API client library for Python Samples
 
-The following are code samples that show common scenario operations with the Azure Cosmos DB SQL API client library. Note that the samples use the terms 'Document' and 'Item' interchangably.
+The following are code samples that show common scenario operations with the Azure Cosmos DB SQL API client library. Note that the samples use the terms 'Document' and 'Item' interchangeably.
 
 * [examples.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/examples.py) - Examples of common tasks:
     * Create Database

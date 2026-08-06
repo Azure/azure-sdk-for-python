@@ -89,7 +89,7 @@
 
 ### Bugs Fixed
 
-* Fixed formating of `MetadataFilter.metadata`
+* Fixed formatting of `MetadataFilter.metadata`
 
 ## 1.0.0b2 (2021-10-06)
 
