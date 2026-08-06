@@ -1,5 +1,6 @@
 import pydash
 import pytest
+import yaml
 from marshmallow import ValidationError
 
 from azure.ai.ml._utils.utils import load_yaml
@@ -12,6 +13,28 @@ from .._util import _SCHEDULE_TIMEOUT_SECOND
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestScheduleSchema:
+    @pytest.mark.parametrize(
+        "create_job",
+        [
+            "./missing-pipeline.yml",
+            {"type": "pipeline", "job": "./missing-pipeline.yml"},
+        ],
+    )
+    def test_missing_local_job_has_concise_error(self, tmp_path, create_job):
+        schedule_data = load_yaml("./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml")
+        schedule_data["create_job"] = create_job
+        schedule_path = tmp_path / "schedule.yml"
+        schedule_path.write_text(yaml.safe_dump(schedule_data), encoding="utf-8")
+
+        with pytest.raises(ValidationError) as error:
+            load_schedule(schedule_path)
+
+        error_message = str(error.value)
+        assert "No such file or directory" in error_message
+        assert "In order to specify an existing jobs" not in error_message
+        assert "Not supporting non file for create_job" not in error_message
+        assert "Value 'pipeline' passed is not in set" not in error_message
+
     def test_load_cron_schedule_with_file_reference(self):
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
         schedule = load_schedule(test_path)
