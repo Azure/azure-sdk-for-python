@@ -184,8 +184,9 @@ await store.set_item(
 )
 ```
 
-When `call_id` is omitted, hosted requests use the call ID from the current
-AgentServer request context. The local file backend accepts but ignores it.
+`call_id` defaults to `False`. With that default, hosted requests use the call
+ID from the current AgentServer request context. The local file backend accepts
+but ignores it.
 
 ### Create a new item
 

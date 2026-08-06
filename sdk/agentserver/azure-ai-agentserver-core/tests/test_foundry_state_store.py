@@ -738,6 +738,32 @@ def test_explicit_call_id_overrides_ambient_request_context() -> None:
     assert request.headers["x-agent-foundry-call-id"] == "explicit-call"
 
 
+@pytest.mark.asyncio
+async def test_false_call_id_uses_ambient_request_context() -> None:
+    store = _make_store(
+        _make_response(
+            200,
+            {
+                "id": "it_1",
+                "object": "state_store.item",
+                "key": "step/1",
+                "value": {"done": True},
+                "etag": '"0x8DD"',
+                "created_at": 1,
+                "updated_at": 2,
+            },
+        )
+    )
+    token = set_request_context(FoundryAgentRequestContext(call_id="ambient-call"))
+    try:
+        await store.get_item("step/1")
+    finally:
+        reset_request_context(token)
+
+    request = store._client.send_request.await_args.args[0]
+    assert request.headers["x-agent-foundry-call-id"] == "ambient-call"
+
+
 # ---------------------------------------------------------------------------
 # Local filesystem fallback
 # ---------------------------------------------------------------------------

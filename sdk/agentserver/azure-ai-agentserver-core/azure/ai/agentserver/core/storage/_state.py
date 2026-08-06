@@ -10,7 +10,7 @@ from __future__ import annotations
 import base64
 import os
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Literal
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.rest import HttpRequest
@@ -215,11 +215,11 @@ class FoundryStateStore(FoundryStorageClient):
         content: bytes | None = None,
         include_user_id: bool = False,
         if_match: str | None = None,
-        call_id: str | None = None,
+        call_id: str | Literal[False] = False,
         query: Mapping[str, str] | None = None,
     ) -> HttpRequest:
         headers: dict[str, str] = get_request_context().platform_headers()
-        if call_id is not None:
+        if call_id is not False:
             headers[FOUNDRY_CALL_ID] = call_id
         if content is not None:
             headers["Content-Type"] = JSON_CONTENT_TYPE
@@ -372,7 +372,7 @@ class FoundryStateStore(FoundryStorageClient):
         value: JSONObject,
         *,
         tags: Mapping[str, str] | None = None,
-        call_id: str | None = None,
+        call_id: str | Literal[False] = False,
     ) -> StateStoreItemRef:
         """Create a new item and fail on duplicate keys.
 
@@ -383,9 +383,9 @@ class FoundryStateStore(FoundryStorageClient):
         :keyword tags: Optional string labels stored with the item and used to
             filter :meth:`list_keys`.
         :paramtype tags: ~collections.abc.Mapping[str, str] or None
-        :keyword call_id: Explicit Foundry call ID to forward. When omitted,
-            the current request context is used.
-        :paramtype call_id: str or None
+        :keyword call_id: Explicit Foundry call ID to forward. The default
+            ``False`` uses the current request context.
+        :paramtype call_id: str or False
         :return: A reference to the created item.
         :rtype: ~azure.ai.agentserver.core.storage.StateStoreItemRef
         """
@@ -412,7 +412,7 @@ class FoundryStateStore(FoundryStorageClient):
         tags: Mapping[str, str] | None = None,
         if_match: str | None = None,
         require_exists: bool = False,
-        call_id: str | None = None,
+        call_id: str | Literal[False] = False,
     ) -> StateStoreItemRef:
         """Create or replace one item by key.
 
@@ -430,9 +430,9 @@ class FoundryStateStore(FoundryStorageClient):
         :keyword require_exists: When ``True``, only replace an existing item and
             fail if the key is absent. Mutually exclusive with ``if_match``.
         :paramtype require_exists: bool
-        :keyword call_id: Explicit Foundry call ID to forward. When omitted,
-            the current request context is used.
-        :paramtype call_id: str or None
+        :keyword call_id: Explicit Foundry call ID to forward. The default
+            ``False`` uses the current request context.
+        :paramtype call_id: str or False
         :return: A reference to the created or replaced item.
         :rtype: ~azure.ai.agentserver.core.storage.StateStoreItemRef
         """
@@ -469,15 +469,15 @@ class FoundryStateStore(FoundryStorageClient):
         return await self._fetch_properties()
 
     async def get_item(
-        self, key: str, *, call_id: str | None = None
+        self, key: str, *, call_id: str | Literal[False] = False
     ) -> StateStoreItem | None:
         """Fetch one item by key.
 
         :param key: The item key to fetch.
         :type key: str
-        :keyword call_id: Explicit Foundry call ID to forward. When omitted,
-            the current request context is used.
-        :paramtype call_id: str or None
+        :keyword call_id: Explicit Foundry call ID to forward. The default
+            ``False`` uses the current request context.
+        :paramtype call_id: str or False
         :return: The item, or ``None`` if it does not exist.
         :rtype: ~azure.ai.agentserver.core.storage.StateStoreItem or None
         """
@@ -513,7 +513,7 @@ class FoundryStateStore(FoundryStorageClient):
         key: str,
         *,
         if_match: str | None = None,
-        call_id: str | None = None,
+        call_id: str | Literal[False] = False,
     ) -> DeletedStateStoreItem:
         """Delete one item by key.
 
@@ -521,9 +521,9 @@ class FoundryStateStore(FoundryStorageClient):
         :type key: str
         :keyword if_match: Optional concurrency token.
         :paramtype if_match: str or None
-        :keyword call_id: Explicit Foundry call ID to forward. When omitted,
-            the current request context is used.
-        :paramtype call_id: str or None
+        :keyword call_id: Explicit Foundry call ID to forward. The default
+            ``False`` uses the current request context.
+        :paramtype call_id: str or False
         :return: The deleted-item marker.
         :rtype: ~azure.ai.agentserver.core.storage.DeletedStateStoreItem
         """
@@ -549,7 +549,7 @@ class FoundryStateStore(FoundryStorageClient):
         after: str | None = None,
         before: str | None = None,
         order: Order = "desc",
-        call_id: str | None = None,
+        call_id: str | Literal[False] = False,
     ) -> StateStoreItemKeyPage:
         """List keys within the bound store.
 
@@ -566,9 +566,9 @@ class FoundryStateStore(FoundryStorageClient):
         :paramtype before: str or None
         :keyword order: Sort order, ``"asc"`` or ``"desc"`` (default ``"desc"``).
         :paramtype order: str
-        :keyword call_id: Explicit Foundry call ID to forward. When omitted,
-            the current request context is used.
-        :paramtype call_id: str or None
+        :keyword call_id: Explicit Foundry call ID to forward. The default
+            ``False`` uses the current request context.
+        :paramtype call_id: str or False
         :return: A page of item keys.
         :rtype: ~azure.ai.agentserver.core.storage.StateStoreItemKeyPage
         """

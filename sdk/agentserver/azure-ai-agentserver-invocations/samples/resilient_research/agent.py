@@ -219,7 +219,7 @@ async def _finish_turn(
     inv_id: str,
     session_id: str,
     terminal_status: str,
-    call_id: str | None,
+    call_id: str,
     *,
     error: str | None = None,
 ) -> None:
@@ -274,7 +274,7 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
     topic: str = ctx.input["topic"]
     inv_id: str = ctx.input["invocation_id"]
     session_id: str = ctx.input["session_id"]
-    call_id: str | None = ctx.input.get("call_id")
+    call_id: str = ctx.input["call_id"]
     store = await FoundryStateStore.get_or_create(
         STATE_STORE_NAME,
         user_isolation=True,
@@ -481,7 +481,7 @@ async def _wind_down(
     ctx: TaskContext,
     inv_id: str,
     completed_phases: int,
-    call_id: str | None,
+    call_id: str,
 ):
     """Cooperative wind-down at a phase boundary.
 
@@ -562,7 +562,7 @@ async def _run_phase(
     ctx: TaskContext,
     inv_id: str,
     session_id: str,
-    call_id: str | None,
+    call_id: str,
     checkpoint: dict[str, Any],
     phase_idx: int,
     topic: str,

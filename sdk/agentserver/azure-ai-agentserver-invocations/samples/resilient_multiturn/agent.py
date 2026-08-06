@@ -63,7 +63,7 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
     session_id: str = ctx.input["session_id"]
     message: str = ctx.input["message"]
     invocation_id: str = ctx.input["invocation_id"]
-    call_id: str | None = ctx.input.get("call_id")
+    call_id: str = ctx.input["call_id"]
 
     session_key = f"session/{session_id}"
     invocation_key = f"invocation/{invocation_id}"

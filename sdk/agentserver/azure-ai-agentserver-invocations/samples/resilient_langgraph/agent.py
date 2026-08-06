@@ -316,7 +316,7 @@ async def _finalize_invocation(
     thread_config: dict[str, Any],
     invocation_id: str,
     session_id: str,
-    call_id: str | None,
+    call_id: str,
 ) -> dict[str, Any] | Any:
     """Save results and suspend/return after a graph invoke completes."""
     state = await asyncio.to_thread(_graph.get_state, thread_config)
@@ -376,7 +376,7 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
     session_id: str = ctx.input["session_id"]
     message: str = ctx.input["message"]
     invocation_id: str = ctx.input["invocation_id"]
-    call_id: str | None = ctx.input.get("call_id")
+    call_id: str = ctx.input["call_id"]
     store = await FoundryStateStore.get_or_create(
         STATE_STORE_NAME,
         user_isolation=True,
