@@ -140,17 +140,17 @@ def get_dict(*keys, **extras):
     except (ValueError, TypeError):
         _json = None
 
-    d = dict(
-        url=get_url(request),
-        args=semiflatten(request.args),
-        form=form,
-        data=json_safe(data),
-        origin=request.headers.get("X-Forwarded-For", request.remote_addr),
-        headers=get_headers(),
-        files=get_files(),
-        json=_json,
-        method=request.method,
-    )
+    d = {
+        "url": get_url(request),
+        "args": semiflatten(request.args),
+        "form": form,
+        "data": json_safe(data),
+        "origin": request.headers.get("X-Forwarded-For", request.remote_addr),
+        "headers": get_headers(),
+        "files": get_files(),
+        "json": _json,
+        "method": request.method,
+    }
 
     out_d = {}
 
