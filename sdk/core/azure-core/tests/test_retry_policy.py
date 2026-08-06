@@ -233,9 +233,8 @@ def test_retry_seekable_file(http_request, http_response):
                     response.status_code = 400
                     return response
 
-    file = tempfile.NamedTemporaryFile(delete=False)
-    file.write(b"Lots of dataaaa")
-    file.close()
+    with tempfile.NamedTemporaryFile(delete=False) as file:
+        file.write(b"Lots of dataaaa")
     http_request = http_request("GET", "http://localhost/")
     headers = {"Content-Type": "multipart/form-data"}
     http_request.headers = headers
