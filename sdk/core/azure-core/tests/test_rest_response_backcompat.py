@@ -9,6 +9,7 @@ import pytest
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
 from azure.core.rest import HttpRequest as RestHttpRequest
 from azure.core.pipeline import Pipeline
+
 # pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import RequestsTransport
 

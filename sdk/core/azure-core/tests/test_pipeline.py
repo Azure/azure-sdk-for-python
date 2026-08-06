@@ -52,6 +52,7 @@ from azure.core.pipeline.policies import (
     SensitiveHeaderCleanupPolicy,
 )
 from azure.core.pipeline.transport._base import PipelineClientBase, _format_url_section
+
 # pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import (
     HttpTransport,

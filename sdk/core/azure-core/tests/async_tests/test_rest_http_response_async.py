@@ -12,6 +12,7 @@ import pytest
 from utils import readonly_checks
 
 from azure.core.rest import HttpRequest, AsyncHttpResponse
+
 # pylint: disable=no-name-in-module
 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from azure.core.exceptions import HttpResponseError
