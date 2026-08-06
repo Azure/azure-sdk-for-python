@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class EkmConnection(_Model):
+class EkmConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A EkmConnection model object.
 
     :ivar host: EKM proxy FQDN (Fully Qualified Domain Name). Only allowed characters are a-z, A-Z,
@@ -32,6 +32,11 @@ class EkmConnection(_Model):
     :ivar server_subject_common_name: The subject common name of the server certificate of EKM
      Proxy.
     :vartype server_subject_common_name: str
+    :ivar connectivity_mode: The connectivity mode used to reach the EKM proxy. Defaults to
+     "Public". In "PrivateEndpoint" mode, the host field holds the name of a private endpoint
+     (peName) instead of a DNS name or IP address. Known values are: "Public" and "PrivateEndpoint".
+    :vartype connectivity_mode: str or
+     ~azure.keyvault.administration._generated.models.EkmConnectivityMode
     """
 
     host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -46,6 +51,12 @@ class EkmConnection(_Model):
      certificates in the certificate chain, each in DER format and base64 encoded. Required."""
     server_subject_common_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The subject common name of the server certificate of EKM Proxy."""
+    connectivity_mode: Optional[Union[str, "_models.EkmConnectivityMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connectivity mode used to reach the EKM proxy. Defaults to \"Public\". In
+     \"PrivateEndpoint\" mode, the host field holds the name of a private endpoint (peName) instead
+     of a DNS name or IP address. Known values are: \"Public\" and \"PrivateEndpoint\"."""
 
     @overload
     def __init__(
@@ -55,6 +66,7 @@ class EkmConnection(_Model):
         server_ca_certificates: list[bytes],
         path_prefix: Optional[str] = None,
         server_subject_common_name: Optional[str] = None,
+        connectivity_mode: Optional[Union[str, "_models.EkmConnectivityMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -66,6 +78,216 @@ class EkmConnection(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class EkmPrivateEndpoint(_Model):
+    """An EKM proxy private endpoint.
+
+    :ivar name: The name of the private endpoint (peName).
+    :vartype name: str
+    :ivar location: The Azure region where the private endpoint is provisioned.
+    :vartype location: str
+    :ivar provisioning_state: The provisioning state of the private endpoint. Known values are:
+     "Succeeded", "Failed", "Updating", and "Deleting".
+    :vartype provisioning_state: str or
+     ~azure.keyvault.administration._generated.models.EkmPrivateEndpointProvisioningState
+    :ivar properties: The properties of the private endpoint.
+    :vartype properties:
+     ~azure.keyvault.administration._generated.models.EkmPrivateEndpointProperties
+    :ivar private_link_service_connection_state: The state of the connection between the private
+     endpoint and the Private Link Service.
+    :vartype private_link_service_connection_state:
+     ~azure.keyvault.administration._generated.models.EkmPrivateEndpointConnectionState
+    """
+
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the private endpoint (peName)."""
+    location: Optional[str] = rest_field(visibility=["read"])
+    """The Azure region where the private endpoint is provisioned."""
+    provisioning_state: Optional[Union[str, "_models.EkmPrivateEndpointProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the private endpoint. Known values are: \"Succeeded\", \"Failed\",
+     \"Updating\", and \"Deleting\"."""
+    properties: Optional["_models.EkmPrivateEndpointProperties"] = rest_field(visibility=["read"])
+    """The properties of the private endpoint."""
+    private_link_service_connection_state: Optional["_models.EkmPrivateEndpointConnectionState"] = rest_field(
+        name="privateLinkServiceConnectionState", visibility=["read"]
+    )
+    """The state of the connection between the private endpoint and the Private Link Service."""
+
+
+class EkmPrivateEndpointConnectionState(_Model):
+    """The state of the connection between the private endpoint and the Private Link Service.
+
+    :ivar status: The status of the private link service connection. Known values are: "Pending",
+     "Approved", "Rejected", and "Disconnected".
+    :vartype status: str or
+     ~azure.keyvault.administration._generated.models.EkmPrivateEndpointConnectionStatus
+    :ivar description: A description of the current connection state.
+    :vartype description: str
+    :ivar actions_required: Any actions required from the customer to maintain the connection.
+    :vartype actions_required: str
+    """
+
+    status: Optional[Union[str, "_models.EkmPrivateEndpointConnectionStatus"]] = rest_field(visibility=["read"])
+    """The status of the private link service connection. Known values are: \"Pending\", \"Approved\",
+     \"Rejected\", and \"Disconnected\"."""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """A description of the current connection state."""
+    actions_required: Optional[str] = rest_field(name="actionsRequired", visibility=["read"])
+    """Any actions required from the customer to maintain the connection."""
+
+
+class EkmPrivateEndpointCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters to create an EKM proxy private endpoint.
+
+    :ivar private_link_service_id: Alias of the Private Link Service that the private endpoint
+     connects to. Required.
+    :vartype private_link_service_id: str
+    :ivar request_message: An optional message shown to the Private Link Service owner when
+     approving the private endpoint connection.
+    :vartype request_message: str
+    """
+
+    private_link_service_id: str = rest_field(
+        name="privateLinkServiceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Alias of the Private Link Service that the private endpoint connects to. Required."""
+    request_message: Optional[str] = rest_field(
+        name="requestMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional message shown to the Private Link Service owner when approving the private endpoint
+     connection."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_link_service_id: str,
+        request_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EkmPrivateEndpointListResult(_Model):
+    """The result of a request to list EKM proxy private endpoints.
+
+    :ivar value: The list of EKM proxy private endpoints.
+    :vartype value: list[~azure.keyvault.administration._generated.models.EkmPrivateEndpoint]
+    """
+
+    value: Optional[list["_models.EkmPrivateEndpoint"]] = rest_field(visibility=["read"])
+    """The list of EKM proxy private endpoints."""
+
+
+class EkmPrivateEndpointOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A long-running operation on an EKM proxy private endpoint.
+
+    :ivar job_id: Identifier for the private endpoint operation.
+    :vartype job_id: str
+    :ivar private_endpoint_name: The name of the private endpoint (peName) the operation applies
+     to.
+    :vartype private_endpoint_name: str
+    :ivar operation_type: The type of the operation. Known values are: "Create" and "Delete".
+    :vartype operation_type: str or
+     ~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperationType
+    :ivar status: The status of the operation. Known values are: "NotStarted", "Running",
+     "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or ~azure.keyvault.administration._generated.models.OperationState
+    :ivar status_details: The status details of the operation.
+    :vartype status_details: str
+    :ivar start_time: The start time of the operation in UTC.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation in UTC.
+    :vartype end_time: ~datetime.datetime
+    :ivar error: Error encountered, if any, during the operation.
+    :vartype error: ~azure.keyvault.administration._generated.models.FullBackupOperationError
+    """
+
+    job_id: Optional[str] = rest_field(name="jobId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier for the private endpoint operation."""
+    private_endpoint_name: Optional[str] = rest_field(
+        name="privateEndpointName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the private endpoint (peName) the operation applies to."""
+    operation_type: Optional[Union[str, "_models.EkmPrivateEndpointOperationType"]] = rest_field(
+        name="operationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the operation. Known values are: \"Create\" and \"Delete\"."""
+    status: Optional[Union[str, "_models.OperationState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the operation. Known values are: \"NotStarted\", \"Running\", \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+    status_details: Optional[str] = rest_field(
+        name="statusDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status details of the operation."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The start time of the operation in UTC."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The end time of the operation in UTC."""
+    error: Optional["_models.FullBackupOperationError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Error encountered, if any, during the operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: Optional[str] = None,
+        private_endpoint_name: Optional[str] = None,
+        operation_type: Optional[Union[str, "_models.EkmPrivateEndpointOperationType"]] = None,
+        status: Optional[Union[str, "_models.OperationState"]] = None,
+        status_details: Optional[str] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        error: Optional["_models.FullBackupOperationError"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EkmPrivateEndpointProperties(_Model):
+    """The properties of an EKM proxy private endpoint.
+
+    :ivar private_link_service_id: Alias of the Private Link Service that the private endpoint
+     connects to.
+    :vartype private_link_service_id: str
+    :ivar private_link_service_connection_name: The name of the private link service connection,
+     generated by the service.
+    :vartype private_link_service_connection_name: str
+    """
+
+    private_link_service_id: Optional[str] = rest_field(name="privateLinkServiceId", visibility=["read"])
+    """Alias of the Private Link Service that the private endpoint connects to."""
+    private_link_service_connection_name: Optional[str] = rest_field(
+        name="privateLinkServiceConnectionName", visibility=["read"]
+    )
+    """The name of the private link service connection, generated by the service."""
 
 
 class EkmProxyClientCertificateInfo(_Model):
@@ -88,7 +310,7 @@ class EkmProxyClientCertificateInfo(_Model):
      Required."""
 
 
-class EkmProxyInfo(_Model):
+class EkmProxyInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EKM proxy information.
 
     :ivar api_version: The highest version of proxy interface API supported by the EKM Proxy.
@@ -137,7 +359,7 @@ class EkmProxyInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FullBackupOperation(_Model):
+class FullBackupOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Full backup operation.
 
     :ivar status: Status of the backup operation. Known values are: "InProgress", "Succeeded",
@@ -240,7 +462,7 @@ class KeyVaultError(_Model):
     """The key vault server error."""
 
 
-class Permission(_Model):
+class Permission(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role definition permissions.
 
     :ivar actions: Action permissions that are granted.
@@ -294,7 +516,7 @@ class Permission(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreBackupOperationParameters(_Model):
+class PreBackupOperationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication method and location for the backup operation.
 
     :ivar storage_resource_uri: Azure Blob storage container Uri.
@@ -340,7 +562,7 @@ class PreBackupOperationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreRestoreOperationParameters(_Model):
+class PreRestoreOperationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication method and location for the restore operation.
 
     :ivar sas_token_parameters: A user-provided SAS token to an Azure blob storage container.
@@ -379,7 +601,7 @@ class PreRestoreOperationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreOperation(_Model):
+class RestoreOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore operation.
 
     :ivar status: Status of the restore operation. Known values are: "InProgress", "Succeeded",
@@ -444,7 +666,7 @@ class RestoreOperation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreOperationParameters(_Model):
+class RestoreOperationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication method and location for the restore operation.
 
     :ivar sas_token_parameters: A user-provided SAS token to an Azure blob storage container.
@@ -484,7 +706,7 @@ class RestoreOperationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleAssignment(_Model):
+class RoleAssignment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role Assignments.
 
     :ivar id: The role assignment ID.
@@ -527,7 +749,7 @@ class RoleAssignment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleAssignmentCreateParameters(_Model):
+class RoleAssignmentCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role assignment create parameters.
 
     :ivar properties: Role assignment properties. Required.
@@ -557,7 +779,7 @@ class RoleAssignmentCreateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleAssignmentProperties(_Model):
+class RoleAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role assignment properties.
 
     :ivar role_definition_id: The role definition ID used in the role assignment. Required.
@@ -594,7 +816,7 @@ class RoleAssignmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleAssignmentPropertiesWithScope(_Model):
+class RoleAssignmentPropertiesWithScope(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role assignment properties with scope.
 
     :ivar scope: The role scope. Known values are: "/" and "/keys".
@@ -638,7 +860,7 @@ class RoleAssignmentPropertiesWithScope(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleDefinition(_Model):
+class RoleDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role definition.
 
     :ivar id: The role definition ID.
@@ -700,7 +922,7 @@ class RoleDefinition(_Model):
             super().__setattr__(key, value)
 
 
-class RoleDefinitionCreateParameters(_Model):
+class RoleDefinitionCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role definition create parameters.
 
     :ivar properties: Role definition properties. Required.
@@ -730,7 +952,7 @@ class RoleDefinitionCreateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleDefinitionProperties(_Model):
+class RoleDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role definition properties.
 
     :ivar role_name: The role name.
@@ -785,7 +1007,7 @@ class RoleDefinitionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SASTokenParameter(_Model):
+class SASTokenParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An authentication method and location for the operation.
 
     :ivar storage_resource_uri: Azure Blob storage container Uri. Required.
@@ -831,7 +1053,7 @@ class SASTokenParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SelectiveKeyRestoreOperation(_Model):
+class SelectiveKeyRestoreOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Selective Key Restore operation.
 
     :ivar status: Status of the restore operation. Known values are: "InProgress", "Succeeded",
@@ -896,7 +1118,7 @@ class SelectiveKeyRestoreOperation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SelectiveKeyRestoreOperationParameters(_Model):
+class SelectiveKeyRestoreOperationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication method and location for the selective key restore operation.
 
     :ivar sas_token_parameters: A user-provided SAS token to an Azure blob storage container.
@@ -934,7 +1156,7 @@ class SelectiveKeyRestoreOperationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Setting(_Model):
+class Setting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Key Vault account setting.
 
     :ivar name: The account setting to be updated. Required.
@@ -986,7 +1208,7 @@ class SettingsListResult(_Model):
     """A response message containing a list of account settings with their associated value."""
 
 
-class UpdateSettingRequest(_Model):
+class UpdateSettingRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The update settings request object.
 
     :ivar value: The value of the pool setting. Required.
