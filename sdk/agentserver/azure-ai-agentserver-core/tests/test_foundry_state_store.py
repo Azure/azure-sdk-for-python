@@ -739,7 +739,7 @@ def test_explicit_call_id_overrides_ambient_request_context() -> None:
 
 
 @pytest.mark.asyncio
-async def test_false_call_id_uses_ambient_request_context() -> None:
+async def test_default_call_id_uses_ambient_request_context() -> None:
     store = _make_store(
         _make_response(
             200,
