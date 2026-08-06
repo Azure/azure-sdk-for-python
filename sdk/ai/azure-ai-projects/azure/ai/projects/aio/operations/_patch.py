@@ -11,6 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, List
 from ._patch_agents_async import AgentsOperations
 from ._patch_datasets_async import BetaDatasetsOperations, DatasetsOperations
+from ._patch_evaluators_async import BetaEvaluatorsOperations
 from ._patch_evaluation_rules_async import EvaluationRulesOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
@@ -20,7 +21,6 @@ from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMeth
 from ._operations import (
     BetaAgentsOperations,
     BetaEvaluationTaxonomiesOperations,
-    BetaEvaluatorsOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
@@ -65,7 +65,7 @@ class BetaOperations(GeneratedBetaOperations):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Replace with patched class that includes upload()
+        # Replace with patched class that returns AsyncEvaluatorGenerationLROPoller
         self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that adds file-path overload to upload_session_file
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
