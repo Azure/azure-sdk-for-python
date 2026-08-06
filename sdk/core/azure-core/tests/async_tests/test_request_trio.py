@@ -26,8 +26,8 @@ async def test_async_gen_data(port, http_request):
         async def __anext__(self):
             try:
                 return next(self._range)
-            except StopIteration:
-                raise StopAsyncIteration
+            except StopIteration as exc:
+                raise StopAsyncIteration from exc
 
     async with TrioRequestsTransport() as transport:
         req = http_request("GET", "http://localhost:{}/basic/anything".format(port), data=AsyncGen())
