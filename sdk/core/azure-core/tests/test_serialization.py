@@ -1723,7 +1723,7 @@ class TestTypeHandlerRegistry:
         deserialized = _deserialize(TestTypeHandlerRegistry.FooModel, json_dict)
         # If no deserializer is registered, the input should be returned as-is
         assert deserialized == json_dict
-        assert type(deserialized) is dict
+        assert isinstance(deserialized, dict)
 
     def test_serialize_external_model(self):
 
