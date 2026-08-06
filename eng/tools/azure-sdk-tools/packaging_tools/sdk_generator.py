@@ -233,6 +233,18 @@ def main(generate_input, generate_output):
             _LOGGER.info(
                 f"[CODEGEN]({readme_or_tsp})codegen end and new package '{folder_name}/{package_name}' generated"
             )
+            
+            # update `setuptools>=77.0.3` to `setuptools>=83.0.0` of pyproject.toml
+            pyproject_path = Path(sdk_folder, folder_name, "pyproject.toml")
+            if pyproject_path.exists():
+                with open(pyproject_path, "r") as f:
+                    pyproject_content = f.read()
+                pyproject_content = pyproject_content.replace("setuptools>=77.0.3", "setuptools>=83.0.0")
+                with open(pyproject_path, "w") as f:
+                    f.write(pyproject_content)
+                _LOGGER.info(f"update setuptools version in {pyproject_path} to >=83.0.0")
+            else:
+                _LOGGER.warning(f"pyproject.toml not found in {pyproject_path}, cannot update setuptools version")
 
             # remove additional files when we roll back generation to Swagger
             # NOTE: After we convert to Typespec completely, we could remove this logic block
