@@ -31,7 +31,7 @@ dependencies = [
 [dependency-groups]
 # keep in sync with dev_requirements.txt
 dev = [
-    "azure-identity",
+    "azure-identity>=1.17.0",
     "azure-monitor-query",
     "azure-sdk-tools",
     "httpx",
