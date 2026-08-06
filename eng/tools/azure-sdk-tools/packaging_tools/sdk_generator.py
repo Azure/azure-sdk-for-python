@@ -235,7 +235,7 @@ def main(generate_input, generate_output):
             )
             
             # update `setuptools>=77.0.3` to `setuptools>=83.0.0` of pyproject.toml
-            pyproject_path = Path(sdk_folder, folder_name, "pyproject.toml")
+            pyproject_path = Path(sdk_folder, folder_name, package_name, "pyproject.toml")
             if pyproject_path.exists():
                 with open(pyproject_path, "r") as f:
                     pyproject_content = f.read()
