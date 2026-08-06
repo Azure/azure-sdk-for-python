@@ -73,13 +73,6 @@ async def main() -> None:
         # 1. Create an optimization job without SDK polling.
         # ------------------------------------------------------------------
         print("Creating optimization job...")
-        pipeline_responses = []
-
-        def raw_response_hook(response):
-            # The raw_response_hook is called synchronously before the generated LRO method
-            # awaits read() on the initial response.  Capture the pipeline response object here
-            # and parse the body afterwards, when read() has already been awaited.
-            pipeline_responses.append(response)
 
         job = OptimizationJob(
             inputs=OptimizationJobInputs(
@@ -97,16 +90,16 @@ async def main() -> None:
             )
         )
 
-        await project_client.beta.agents.begin_create_optimization_job(
+        poller = await project_client.beta.agents.begin_create_optimization_job(
             job=job,
             polling=False,
-            raw_response_hook=raw_response_hook,
         )
-        # Alternatively, have the SDK handle polling by removing `polling=False`, assigning the awaited call
-        # to a poller, and then awaiting `poller.result()`.
-        if not pipeline_responses:
-            raise RuntimeError("The create operation did not return an optimization job.")
-        job = OptimizationJob(pipeline_responses[0].http_response.json())
+        job_id = poller.details["job_id"]
+        if not job_id:
+            raise RuntimeError(
+                "The create operation did not return an optimization job ID."
+            )
+        job = await project_client.beta.agents.get_optimization_job(job_id=job_id)
         print(f"Created job: id={job.id}, status={job.status}")
 
         # ------------------------------------------------------------------
@@ -134,7 +127,9 @@ async def main() -> None:
         # 3. Inspect the results.
         # ------------------------------------------------------------------
         if job.result is None:
-            raise RuntimeError(f"Optimization job `{job.id}` completed without a result.")
+            raise RuntimeError(
+                f"Optimization job `{job.id}` completed without a result."
+            )
 
         result = job.result
         print(f"\nBaseline candidate: {result.baseline}")

@@ -33,7 +33,13 @@ from ._patch_evaluation_typeddicts import (
     TracesPreviewEvalRunDataSource,
 )
 from ._models import CustomCredential as CustomCredentialGenerated
-from ..models import DataGenerationJobResult, EvaluatorVersion, MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
+from ..models import (
+    DataGenerationJobResult,
+    EvaluatorVersion,
+    MemoryStoreUpdateCompletedResult,
+    MemoryStoreUpdateResult,
+    OptimizationJobResult,
+)
 from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
 
 _FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
@@ -533,7 +539,82 @@ class AsyncEvaluatorGenerationLROPoller(AsyncLROPoller[EvaluatorVersion]):
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
+class AgentOptimizationLROPoller(LROPoller[OptimizationJobResult]):
+    """Custom LROPoller for agent optimization job operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the agent optimization job operation.
+
+        :return: A mapping containing the created agent optimization job ID.
+        :rtype: Mapping[str, Any]
+        """
+        return {"job_id": self._job_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[OptimizationJobResult], continuation_token: str, **kwargs: Any
+    ) -> "AgentOptimizationLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AgentOptimizationLROPoller.
+        :rtype: AgentOptimizationLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class AsyncAgentOptimizationLROPoller(AsyncLROPoller[OptimizationJobResult]):
+    """Custom AsyncLROPoller for agent optimization job operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+        self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the agent optimization job operation.
+
+        :return: A mapping containing the created agent optimization job ID.
+        :rtype: Mapping[str, Any]
+        """
+        return {"job_id": self._job_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls,
+        polling_method: AsyncPollingMethod[OptimizationJobResult],
+        continuation_token: str,
+        **kwargs: Any,
+    ) -> "AsyncAgentOptimizationLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.AsyncPollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AsyncAgentOptimizationLROPoller.
+        :rtype: AsyncAgentOptimizationLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
 __all__: List[str] = [
+    "AgentOptimizationLROPoller",
+    "AsyncAgentOptimizationLROPoller",
     "AsyncDatasetGenerationLROPoller",
     "AsyncEvaluatorGenerationLROPoller",
     "AsyncUpdateMemoriesLROPoller",
