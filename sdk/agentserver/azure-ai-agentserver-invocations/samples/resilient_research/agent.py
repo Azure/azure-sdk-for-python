@@ -5,9 +5,9 @@ This is the standalone-sample shape of the larger
 demo. The reference demo includes deployment scaffolding (Dockerfile,
 agent.yaml) for the Foundry hosting platform; this sample strips all
 of that away and ships only the three files every invocations sample
-ships: ``agent.py``, ``app.py``, and ``requirements.txt`` (plus a
-small co-located ``store.py``). The reference demo remains in tree
-for users who want to see the full hosting layout.
+ships: ``agent.py``, ``app.py``, and ``requirements.txt``. The
+reference demo remains in tree for users who want to see the full
+hosting layout.
 
 Streaming uses the SDK ``streams`` registry: events for a given turn
 are emitted to ``streams.get_or_create(invocation_id)``. The HTTP
@@ -57,13 +57,9 @@ from typing import Any, Awaitable, Callable
 
 from typing_extensions import TypedDict
 
+from azure.ai.agentserver.core.storage import FoundryStateStore
 from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
-
-try:
-    from .store import CheckpointStore
-except ImportError:  # allows running the app as a script from inside this directory
-    from store import CheckpointStore
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +97,9 @@ def _get_client() -> Any:
     if _openai_client is not None:
         return _openai_client
     if not _endpoint:
-        raise EnvironmentError("FOUNDRY_PROJECT_ENDPOINT is required to run the deep-research sample.")
+        raise EnvironmentError(
+            "FOUNDRY_PROJECT_ENDPOINT is required to run the deep-research sample."
+        )
     from azure.ai.projects.aio import (  # pylint: disable=import-outside-toplevel
         AIProjectClient,
     )
@@ -134,7 +132,7 @@ def _get_client() -> Any:
 
 # --- Explicit application checkpoint store ---------------------------------
 
-_checkpoint_store = CheckpointStore("resilient-research")
+STATE_STORE_NAME = "resilient-research"
 
 
 # --- Research phase plan ---------------------------------------------------
@@ -183,14 +181,20 @@ _SUB_CALL_ROLES = [
 ]
 
 NUM_PHASES = max(1, int(os.environ.get("NUM_PHASES", str(len(PHASE_TITLES)))))
-CALLS_PER_PHASE = max(1, min(len(_SUB_CALL_ROLES), int(os.environ.get("CALLS_PER_PHASE", "4"))))
+CALLS_PER_PHASE = max(
+    1, min(len(_SUB_CALL_ROLES), int(os.environ.get("CALLS_PER_PHASE", "4")))
+)
 TARGET_OUTPUT_TOKENS = int(os.environ.get("TARGET_OUTPUT_TOKENS", "1500"))
 INTRA_PHASE_COOLDOWN_SEC = float(os.environ.get("INTRA_PHASE_COOLDOWN_SEC", "10"))
 INTER_PHASE_COOLDOWN_SEC = float(os.environ.get("INTER_PHASE_COOLDOWN_SEC", "20"))
 
 
 def _phase_title(i: int) -> str:
-    return PHASE_TITLES[i] if i < len(PHASE_TITLES) else f"Continued research (phase {i + 1})"
+    return (
+        PHASE_TITLES[i]
+        if i < len(PHASE_TITLES)
+        else f"Continued research (phase {i + 1})"
+    )
 
 
 # --- The resilient task ------------------------------------------------------
@@ -210,10 +214,12 @@ class TaskInput(TypedDict):
 
 
 async def _finish_turn(
+    store: FoundryStateStore,
     stream: Any,
     inv_id: str,
     session_id: str,
     terminal_status: str,
+    call_id: str | None,
     *,
     error: str | None = None,
 ) -> None:
@@ -235,8 +241,16 @@ async def _finish_turn(
     checkpoint = {"terminal_status": terminal_status}
     if error is not None:
         checkpoint["error"] = error
-    await _checkpoint_store.put(inv_id, checkpoint, session_id=session_id)
-    await stream.close()
+    try:
+        await store.set_item(
+            inv_id,
+            checkpoint,
+            tags={"session_id": session_id},
+            call_id=call_id,
+        )
+        await stream.close()
+    finally:
+        await store.aclose()
 
 
 @multi_turn_task(name="deep_research", steerable=True)
@@ -260,16 +274,27 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
     topic: str = ctx.input["topic"]
     inv_id: str = ctx.input["invocation_id"]
     session_id: str = ctx.input["session_id"]
+    call_id: str | None = ctx.input.get("call_id")
+    store = await FoundryStateStore.get_or_create(
+        STATE_STORE_NAME,
+        user_isolation=True,
+        description="Deep-research recovery checkpoints",
+    )
 
     stream = await streams.get_or_create(inv_id)
-    checkpoint = await _checkpoint_store.get(inv_id)
+    checkpoint_item = await store.get_item(inv_id, call_id=call_id)
+    checkpoint = (
+        dict(checkpoint_item.value)
+        if checkpoint_item is not None and isinstance(checkpoint_item.value, dict)
+        else {}
+    )
     terminal_status = checkpoint.get("terminal_status")
     if terminal_status is not None:
         await stream.close()
+        await store.aclose()
         if terminal_status == "failed":
             raise RuntimeError(checkpoint.get("error", "Previous task attempt failed"))
         return
-
     # On crash recovery, last_cursor() returns the highest
     # sequence_number that made it to disk before the crash.
     last_cursor = await stream.last_cursor()
@@ -298,7 +323,9 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
 
         for phase_idx in range(completed, NUM_PHASES):
             if ctx.cancel.is_set():
-                return await _wind_down(emit, stream, ctx, inv_id, phase_idx)
+                return await _wind_down(
+                    store, emit, stream, ctx, inv_id, phase_idx, call_id
+                )
 
             phase_started_mono = time.monotonic()
             title = _phase_title(phase_idx)
@@ -315,10 +342,12 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
             )
 
             await _run_phase(
+                store,
                 emit,
                 ctx,
                 inv_id,
                 session_id,
+                call_id,
                 checkpoint,
                 phase_idx,
                 topic,
@@ -334,7 +363,12 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
                     "current_text": "",
                 }
             )
-            await _checkpoint_store.put(inv_id, checkpoint, session_id=session_id)
+            await store.set_item(
+                inv_id,
+                checkpoint,
+                tags={"session_id": session_id},
+                call_id=call_id,
+            )
 
             phase_duration = round(time.monotonic() - phase_started_mono, 1)
             await emit(
@@ -350,7 +384,9 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
             )
 
             if ctx.cancel.is_set():
-                return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
+                return await _wind_down(
+                    store, emit, stream, ctx, inv_id, phase_idx + 1, call_id
+                )
 
             if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
                 await _cooldown(
@@ -362,7 +398,9 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
                     total=NUM_PHASES,
                 )
                 if ctx.cancel.is_set():
-                    return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
+                    return await _wind_down(
+                        store, emit, stream, ctx, inv_id, phase_idx + 1, call_id
+                    )
 
         await emit(
             {
@@ -376,7 +414,7 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
         # Skipped on crash (the handler exits via an
         # exception and the orchestrator's leave_stream_open_for_recovery
         # path keeps the stream open for the next-lifetime recovery).
-        await _finish_turn(stream, inv_id, session_id, "completed")
+        await _finish_turn(store, stream, inv_id, session_id, "completed", call_id)
     except Exception as exc:  # pylint: disable=broad-except
         # Logical-failure path: a downstream call (e.g. the LLM) raised.
         # Emit a terminal SSE frame so subscribers fast-fail instead of
@@ -403,10 +441,12 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
                 }
             )
             await _finish_turn(
+                store,
                 stream,
                 inv_id,
                 session_id,
                 "failed",
+                call_id,
                 error=f"{type(exc).__name__}: {str(exc)[:2000]}",
             )
         except Exception:  # pylint: disable=broad-except
@@ -435,11 +475,13 @@ async def _emit_run_start(emit: EmitFn, ctx: TaskContext, *, topic: str) -> None
 
 
 async def _wind_down(
+    store: FoundryStateStore,
     emit: EmitFn,
     stream,
     ctx: TaskContext,
     inv_id: str,
     completed_phases: int,
+    call_id: str | None,
 ):
     """Cooperative wind-down at a phase boundary.
 
@@ -468,7 +510,14 @@ async def _wind_down(
         }
     )
 
-    await _finish_turn(stream, inv_id, ctx.input["session_id"], "suspended")
+    await _finish_turn(
+        store,
+        stream,
+        inv_id,
+        ctx.input["session_id"],
+        "suspended",
+        call_id,
+    )
     # multi-turn `return` is the implicit-suspend signal.
     # The chain stays alive across turns; ctx.suspend() is not part of
     # the public surface.
@@ -508,10 +557,12 @@ async def _cooldown(
 
 
 async def _run_phase(
+    store: FoundryStateStore,
     emit: EmitFn,
     ctx: TaskContext,
     inv_id: str,
     session_id: str,
+    call_id: str | None,
     checkpoint: dict[str, Any],
     phase_idx: int,
     topic: str,
@@ -538,7 +589,12 @@ async def _run_phase(
                 "current_text": "",
             }
         )
-        await _checkpoint_store.put(inv_id, checkpoint, session_id=session_id)
+        await store.set_item(
+            inv_id,
+            checkpoint,
+            tags={"session_id": session_id},
+            call_id=call_id,
+        )
 
     for sub_idx in range(start_sub, CALLS_PER_PHASE):
         role_name, role_prompt = _SUB_CALL_ROLES[sub_idx]
@@ -549,7 +605,8 @@ async def _run_phase(
         )
         if current_text:
             user_input = (
-                "Topic: " + topic + "\nPhase: " + phase_title + "\n\n" "Previous sub-step output:\n" + current_text
+                "Topic: " + topic + "\nPhase: " + phase_title + "\n\n"
+                "Previous sub-step output:\n" + current_text
             )
         else:
             user_input = "Topic: " + topic + "\nPhase: " + phase_title
@@ -584,7 +641,12 @@ async def _run_phase(
 
         checkpoint["current_text"] = current_text
         checkpoint["completed_subcalls"] = sub_idx + 1
-        await _checkpoint_store.put(inv_id, checkpoint, session_id=session_id)
+        await store.set_item(
+            inv_id,
+            checkpoint,
+            tags={"session_id": session_id},
+            call_id=call_id,
+        )
 
         if sub_idx + 1 < CALLS_PER_PHASE and INTRA_PHASE_COOLDOWN_SEC > 0:
             await _cooldown(

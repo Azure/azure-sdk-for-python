@@ -36,13 +36,14 @@ from __future__ import annotations
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
+from azure.ai.agentserver.core.storage import FoundryStateStore
 from azure.ai.agentserver.core.tasks import TaskConflictError
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import session_workflow, state_store
+    from .agent import STATE_STORE_NAME, session_workflow
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import session_workflow, state_store
+    from agent import STATE_STORE_NAME, session_workflow
 
 app = InvocationAgentServerHost()
 
@@ -63,11 +64,13 @@ async def handle_invoke(request: Request) -> Response:
     message: str = data.get("message", "")
     task_id = f"session-{session_id}"
 
-    await state_store.save(
-        f"invocation/{invocation_id}",
-        {"status": "queued"},
-        session_id=session_id,
-    )
+    store = await FoundryStateStore.get_or_create(STATE_STORE_NAME)
+    async with store:
+        await store.set_item(
+            f"invocation/{invocation_id}",
+            {"status": "queued"},
+            tags={"session_id": session_id},
+        )
 
     try:
         await session_workflow.start(
@@ -80,11 +83,13 @@ async def handle_invoke(request: Request) -> Response:
             },
         )
     except TaskConflictError as e:
-        await state_store.save(
-            f"invocation/{invocation_id}",
-            {"status": "failed", "error": str(e)},
-            session_id=session_id,
-        )
+        store = await FoundryStateStore.get_or_create(STATE_STORE_NAME)
+        async with store:
+            await store.set_item(
+                f"invocation/{invocation_id}",
+                {"status": "failed", "error": str(e)},
+                tags={"session_id": session_id},
+            )
         return JSONResponse({"error": str(e)}, status_code=409)
 
     return JSONResponse(
@@ -100,9 +105,12 @@ async def poll_invocation(request: Request) -> Response:
     Reads the per-invocation result from the sample's explicit State Store.
     """
     invocation_id: str = request.state.invocation_id
-    result = await state_store.load(f"invocation/{invocation_id}")
-    if result is None:
+    store = await FoundryStateStore.get_or_create(STATE_STORE_NAME)
+    async with store:
+        item = await store.get_item(f"invocation/{invocation_id}")
+    if item is None or not isinstance(item.value, dict):
         return JSONResponse({"error": "Invocation not found"}, status_code=404)
+    result = item.value
 
     return JSONResponse(
         {

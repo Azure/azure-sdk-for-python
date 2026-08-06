@@ -31,6 +31,7 @@
 
 - Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
 - Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — a process-global switch (default off) that force-enables the resilient `TaskManager`'s startup recovery scan even before any durable task is declared (useful when tasks are registered lazily after startup).
+- `FoundryStateStore` now uses a file-backed local fallback when AgentServer is not hosted, and item operations accept an explicit `call_id` for forwarding recovered durable work outside the original request context.
 
 ### Bugs Fixed
 
