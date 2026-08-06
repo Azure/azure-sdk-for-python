@@ -613,12 +613,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         perform an ad-hoc receive as a single call.
 
         `max_message_count` bounds what this call returns, while `prefetch_count` governs what the
-        receiver holds ahead of the call, so they are separate settings rather than two names for
-        the same one. When `prefetch_count` is 0, the receiver requests `max_message_count` (if
-        provided) messages from the service on this call. When `prefetch_count` is greater than 0,
-        the call is served first from what the receiver already holds, and if that is fewer than
-        `max_message_count` it continues receiving on the receiver's standing prefetch credit until
-        the count is met or the wait time elapses.
+        receiver holds ahead of the call. When `prefetch_count` is 0, the receiver requests
+        `max_message_count` (unless it is None) messages from the service on this call. When
+        `prefetch_count` is greater than 0, the call is served first from what the receiver already
+        holds, and if that is fewer than `max_message_count` it keeps receiving until the count is
+        met or the wait time elapses.
 
         This call will prioritize returning quickly over meeting a specified batch size, and so will
         return as soon as at least one message is received and there is a gap in incoming messages regardless
@@ -626,9 +625,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
 
         :param Optional[int] max_message_count: Maximum number of messages in the batch. This is an upper
          bound: the call returns fewer messages when fewer are available, when the wait time elapses, or
-         when a gap in incoming messages ends the batch early. Setting to None falls back to
-         `prefetch_count`, so at the default `prefetch_count` of 0 the call returns an empty list
-         without waiting for messages. The default value is 1.
+         when a gap in incoming messages ends the batch early. Setting to None uses `prefetch_count`
+         as the bound instead, so at the default `prefetch_count` of 0 the call requests no messages
+         and returns an empty list without waiting, even when `max_wait_time` is set. The default
+         value is 1.
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If messages are requested, no messages arrive, and no timeout is specified, this call will not
          return until the connection is closed. If specified, and no messages arrive within the
