@@ -177,9 +177,11 @@ except ImportError:
 
 This was to prevent some difficult update scenario 6 years ago, and can be safely removed from your setup.py
 
-# Note on Python 2
+# Note on Python 2 (Historical — Do Not Follow)
 
-The "extras_requires" section MUST include a conditional dependency on "azure-nspkg" for Python 2. Example:
+> **Python 2 support has been dropped.** The following section is preserved for historical reference only. Do not add `azure-nspkg` dependencies to new packages.
+
+The `extras_require` section previously included a conditional dependency on `azure-nspkg` for Python 2. Example:
 
 ```python
     extras_require={
@@ -187,4 +189,4 @@ The "extras_requires" section MUST include a conditional dependency on "azure-ns
     }
 ```
 
-An additional verification is that wheels installs `azure-nspkg` ONLY on Python 2.
+An additional verification was that wheels install `azure-nspkg` ONLY on Python 2.
