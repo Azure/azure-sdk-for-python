@@ -32,7 +32,7 @@ from __future__ import annotations
 
 import base64
 import json
-from typing import Any, AsyncIterator, Dict, List, Mapping, Optional, Type, TYPE_CHECKING, Union
+from typing import Any, AsyncIterator, cast, Dict, List, Mapping, Optional, Type, TYPE_CHECKING, Union
 
 from .. import models as _models
 from .._utils.model_base import Model as _Model, SdkJSONEncoder
@@ -268,9 +268,9 @@ class SessionResource(_BaseResource):
         :paramtype event_id: str or None
         """
         await self._send(
-            _models.VoiceAgentClientEventSessionUpdate(
+            cast(Any, _models.VoiceAgentClientEventSessionUpdate)(
                 type=_models.RealtimeClientEventType.SESSION_UPDATE,
-                session=session,  # type: ignore[arg-type]
+                session=session,
                 event_id=event_id,
             )
         )
@@ -373,9 +373,9 @@ class ConversationItemResource(_BaseResource):
         :paramtype event_id: str or None
         """
         await self._send(
-            _models.VoiceAgentClientEventConversationItemCreate(
+            cast(Any, _models.VoiceAgentClientEventConversationItemCreate)(
                 type=_models.RealtimeClientEventType.CONVERSATION_ITEM_CREATE,
-                item=item,  # type: ignore[arg-type]
+                item=item,
                 previous_item_id=previous_item_id,
                 event_id=event_id,
             )
@@ -454,9 +454,9 @@ class ResponseResource(_BaseResource):
         :paramtype event_id: str or None
         """
         await self._send(
-            _models.VoiceAgentClientEventResponseCreate(
+            cast(Any, _models.VoiceAgentClientEventResponseCreate)(
                 type=_models.RealtimeClientEventType.RESPONSE_CREATE,
-                response=response,  # type: ignore[arg-type]
+                response=response,
                 event_id=event_id,
             )
         )
@@ -655,7 +655,7 @@ class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attri
         except BaseException:
             await session.close()
             raise
-        self._connection = AsyncRealtimeConnection(connection, session)
+        self._connection = AsyncRealtimeConnection(cast("ClientWebSocketResponse", connection), session)
         return self._connection
 
     async def __aexit__(self, *exc_details: Any) -> None:

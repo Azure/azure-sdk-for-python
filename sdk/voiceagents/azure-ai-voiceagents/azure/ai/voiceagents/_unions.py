@@ -9,6 +9,7 @@
 from typing import Literal, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
+    from . import _unions as _unions
     from . import models as _models
 VoiceResponseVoice = Union["_models.OpenAIVoice", "_models.AzureVoice", "_models.AzureRealtimeNativeVoice"]
 VoiceAgentVoice = Union["_models.OpenAIVoice", "_models.AzureVoice", "_models.AzureRealtimeNativeVoice"]

@@ -60,7 +60,7 @@ _CHUNK_SAMPLES: Final = 1200
 try:
     import pyaudio  # type: ignore[import-not-found]
 except ImportError:  # pragma: no cover - required audio dependency
-    pyaudio: Any = None
+    pyaudio: Any = None  # type: ignore[no-redef]
 
 
 class _AudioProcessor:
