@@ -192,8 +192,9 @@ class FoundryStateStore(FoundryStorageClient):
         try:
             await super().aclose()
         finally:
-            if self._owns_credential and hasattr(self._credential, "close"):
-                await self._credential.close()
+            credential = self._credential
+            if self._owns_credential and credential is not None and hasattr(credential, "close"):
+                await credential.close()
 
     @property
     def name(self) -> str:

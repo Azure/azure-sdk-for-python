@@ -75,4 +75,7 @@ type_check_samples = false
 # apistub crashes on Generic[Input, Output] classes (Python 3.10 inspect.getsource bug)
 apistub = false
 
+[tool.azure-sdk-conda]
+in_bundle = false
+
 [tool.uv.sources]

@@ -138,7 +138,7 @@ namespace azure.ai.agentserver.core
         def __init__(
                 self, 
                 *, 
-                call_id: str | None = ...,
+                call_id: str | None = ..., 
                 session_id: str | None = ..., 
                 user_id: str | None = ...
             ) -> None: ...
@@ -254,26 +254,26 @@ namespace azure.ai.agentserver.core.storage
                 key: str, 
                 value: JSONObject, 
                 *, 
-                call_id: str | None = ...,
+                call_id: str | None = ..., 
                 tags: Mapping[str, str] | None = ...
             ) -> StateStoreItemRef: ...
 
         async def delete(self) -> DeletedStateStore: ...
 
         async def delete_item(
-                self,
-                key: str,
-                *,
-                call_id: str | None = ...,
+                self, 
+                key: str, 
+                *, 
+                call_id: str | None = ..., 
                 if_match: str | None = ...
             ) -> DeletedStateStoreItem: ...
 
         async def get(self) -> StateStore: ...
 
         async def get_item(
-                self,
-                key: str,
-                *,
+                self, 
+                key: str, 
+                *, 
                 call_id: str | None = ...
             ) -> StateStoreItem | None: ...
 
@@ -282,7 +282,7 @@ namespace azure.ai.agentserver.core.storage
                 *, 
                 after: str | None = ..., 
                 before: str | None = ..., 
-                call_id: str | None = ...,
+                call_id: str | None = ..., 
                 limit: int | None = ..., 
                 order: Order = "desc", 
                 tags: Mapping[str, str] | None = ...
@@ -293,7 +293,7 @@ namespace azure.ai.agentserver.core.storage
                 key: str, 
                 value: JSONObject, 
                 *, 
-                call_id: str | None = ...,
+                call_id: str | None = ..., 
                 if_match: str | None = ..., 
                 require_exists: bool = False, 
                 tags: Mapping[str, str] | None = ...
