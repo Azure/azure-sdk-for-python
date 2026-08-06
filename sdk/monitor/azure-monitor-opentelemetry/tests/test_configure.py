@@ -28,7 +28,7 @@ from azure.monitor.opentelemetry._configure import (
     configure_azure_monitor,
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _DISTRO_DETECTS_ATTACH
-
+from azure.monitor.opentelemetry._version import VERSION
 
 TEST_RESOURCE = Resource({"foo": "bar"})
 
@@ -53,8 +53,12 @@ class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._setup_tracing",
     )
+    @patch(
+        "azure.monitor.opentelemetry._configure.get_configuration_manager",
+    )
     def test_configure_azure_monitor(
         self,
+        get_config_manager_mock,
         tracing_mock,
         logging_mock,
         metrics_mock,
@@ -72,6 +76,85 @@ class TestConfigure(unittest.TestCase):
         live_metrics_mock.assert_called_once()
         instrumentation_mock.assert_called_once()
         detect_attach_mock.assert_called_once()
+
+    @patch(
+        "azure.monitor.opentelemetry._configure._send_attach_warning",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_instrumentations",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_live_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_logging",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_tracing",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.get_configuration_manager",
+    )
+    def test_configure_azure_monitor_initializes_config_manager(
+        self,
+        get_config_manager_mock,
+        tracing_mock,
+        logging_mock,
+        metrics_mock,
+        live_metrics_mock,
+        instrumentation_mock,
+        detect_attach_mock,
+    ):
+        config_manager_mock = Mock()
+        get_config_manager_mock.return_value = config_manager_mock
+        configure_azure_monitor(connection_string="test_cs")
+        # Distro contributes component="dst" and its version before any exporter is created.
+        config_manager_mock.initialize.assert_called_once_with(
+            component="dst",
+            version=VERSION,
+        )
+
+    @patch(
+        "azure.monitor.opentelemetry._configure._send_attach_warning",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_instrumentations",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_live_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_logging",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_tracing",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.get_configuration_manager",
+    )
+    def test_configure_azure_monitor_config_manager_disabled(
+        self,
+        get_config_manager_mock,
+        tracing_mock,
+        logging_mock,
+        metrics_mock,
+        live_metrics_mock,
+        instrumentation_mock,
+        detect_attach_mock,
+    ):
+        # When the control plane is disabled, get_configuration_manager returns None and the distro
+        # skips initialize() without raising.
+        get_config_manager_mock.return_value = None
+        configure_azure_monitor(connection_string="test_cs")
+        tracing_mock.assert_called_once()
+        logging_mock.assert_called_once()
+        metrics_mock.assert_called_once()
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
