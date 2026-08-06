@@ -1,6 +1,6 @@
 {
   "AssetsRepo": "Azure/azure-sdk-assets",
   "AssetsRepoPrefixPath": "python",
-  "TagPrefix": "python/ai/azure-ai-voiceagents",
-  "Tag": "python/ai/azure-ai-voiceagents_367084ae9e"
+  "TagPrefix": "python/voiceagents/azure-ai-voiceagents",
+  "Tag": "python/voiceagents/azure-ai-voiceagents_fe28a40ed9"
 }

@@ -56,3 +56,45 @@ class TestVoiceAgentsClient(AzureRecordedTestCase):
         # See the note in test_get_voice_agent about not asserting on "id"/"name".
         assert conversation["object"] == "voice.conversation"
         assert conversation["status"] is not None
+
+    @VoiceAgentsPreparer()
+    @recorded_by_proxy
+    def test_list_agent_conversation_items(
+        self, azure_voice_agents_endpoint, azure_voice_agents_agent_name, azure_voice_agents_conversation_id
+    ):
+        with self.create_client(azure_voice_agents_endpoint) as client:
+            items = list(
+                client.agent_endpoint_conversations.list_agent_conversation_items(
+                    azure_voice_agents_agent_name, azure_voice_agents_conversation_id, foundry_features=PREVIEW
+                )
+            )
+
+        assert items
+
+    @VoiceAgentsPreparer()
+    @recorded_by_proxy
+    def test_list_agent_conversation_responses(
+        self, azure_voice_agents_endpoint, azure_voice_agents_agent_name, azure_voice_agents_conversation_id
+    ):
+        with self.create_client(azure_voice_agents_endpoint) as client:
+            responses = list(
+                client.agent_endpoint_conversations.list_agent_conversation_responses(
+                    azure_voice_agents_agent_name, azure_voice_agents_conversation_id, foundry_features=PREVIEW
+                )
+            )
+
+        assert responses
+        assert responses[0]["object"] == "realtime.response"
+
+    @VoiceAgentsPreparer()
+    @recorded_by_proxy
+    def test_get_agent_conversation_audio_metadata(
+        self, azure_voice_agents_endpoint, azure_voice_agents_agent_name, azure_voice_agents_conversation_id
+    ):
+        with self.create_client(azure_voice_agents_endpoint) as client:
+            recording = client.agent_endpoint_conversations.get_agent_conversation_audio(
+                azure_voice_agents_agent_name, azure_voice_agents_conversation_id, foundry_features=PREVIEW
+            )
+
+        assert recording["format"] is not None
+        assert recording["sample_rate"] is not None
