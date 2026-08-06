@@ -24,7 +24,7 @@ VoiceAgentRequestConversationItem = Union[
     "_models.RealtimeConversationItemFunctionCallOutput",
 ]
 VoiceAgentCreateConversationItem = Union[
-    "_unions.VoiceAgentRequestConversationItem", "_models.RealtimeMCPApprovalResponse"
+    "VoiceAgentRequestConversationItem", "_models.RealtimeMCPApprovalResponse"
 ]
 VoiceAgentInterimResponse = Union[
     "_models.VoiceAgentStaticInterimResponseConfig", "_models.VoiceAgentLlmInterimResponseConfig"
@@ -56,7 +56,7 @@ VoiceAgentWebSearchAction = Union[
 ]
 VoiceAgentFileSearchAttributeValue = Union[str, float, bool]
 VoiceAgentResponseItem = Union[
-    "_unions.VoiceAgentResponseMessageItem",
+    "VoiceAgentResponseMessageItem",
     "_models.VoiceFunctionCallItem",
     "_models.VoiceFunctionCallOutputItem",
     "_models.VoiceMcpListToolsItem",

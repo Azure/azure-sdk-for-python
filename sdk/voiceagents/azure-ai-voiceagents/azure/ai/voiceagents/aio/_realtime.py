@@ -65,6 +65,7 @@ ClientEvent = Union[
     _models.VoiceAgentClientEventResponseCreate,
     _models.VoiceAgentClientEventSessionAvatarConnect,
     _models.VoiceAgentClientEventSessionUpdate,
+    str,
     Mapping[str, Any],
 ]
 
