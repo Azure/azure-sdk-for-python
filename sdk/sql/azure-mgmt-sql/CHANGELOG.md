@@ -1,6 +1,6 @@
 # Release History
 
-## 5.0.0b1 (2026-08-05)
+## 5.0.0b1 (2026-08-06)
 
 ### Features Added
 
@@ -29,11 +29,11 @@
   - Added model `EndpointTrustedRootCertificateInfo`
   - Added enum `LinkModeType`
   - Added enum `ManagedInstanceAdministratorPrincipalType`
-  - Operation group `DataMaskingRulesOperations` added parameter `skip` in method `list_by_database`
-  - Operation group `DatabasesOperations` added parameter `filter` in method `list_by_server`
-  - Operation group `DatabasesOperations` added parameter `orderby` in method `list_by_server`
-  - Operation group `DatabasesOperations` added parameter `skip` in method `list_by_server`
-  - Operation group `DatabasesOperations` added parameter `top` in method `list_by_server`
+  - Model `DataMaskingRulesOperations` added parameter `skip` in method `list_by_database`
+  - Model `DatabasesOperations` added parameter `filter` in method `list_by_server`
+  - Model `DatabasesOperations` added parameter `orderby` in method `list_by_server`
+  - Model `DatabasesOperations` added parameter `skip` in method `list_by_server`
+  - Model `DatabasesOperations` added parameter `top` in method `list_by_server`
 
 ### Breaking Changes
 
