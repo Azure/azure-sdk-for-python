@@ -64,6 +64,9 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 [tool.setuptools.package-data]
 "azure.ai.agentserver.core" = ["py.typed"]
 
+[tool.azure-sdk-conda]
+in_bundle = false
+
 [tool.azure-sdk-build]
 breaking = false
 mypy = true
