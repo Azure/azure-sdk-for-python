@@ -38,6 +38,7 @@ from azure.core.exceptions import (
     SerializationError,
     DeserializationError,
 )
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.transport._base import _HttpResponseBase as PipelineTransportHttpResponseBase
 from azure.core.rest._http_response_impl import _HttpResponseBaseImpl as RestHttpResponseBase

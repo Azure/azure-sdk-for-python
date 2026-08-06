@@ -28,6 +28,7 @@ import trio
 import pytest
 from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response
 
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import (
     AioHttpTransport,
     AsyncioRequestsTransport,

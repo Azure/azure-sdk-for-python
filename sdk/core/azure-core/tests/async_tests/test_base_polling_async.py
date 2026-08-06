@@ -40,6 +40,7 @@ from azure.core.polling import async_poller, AsyncLROPoller
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, AsyncPipeline, PipelineContext
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, AsyncHttpTransport
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.polling.async_base_polling import (

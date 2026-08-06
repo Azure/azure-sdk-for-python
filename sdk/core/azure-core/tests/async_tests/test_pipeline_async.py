@@ -44,6 +44,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     SensitiveHeaderCleanupPolicy,
 )
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
     AsyncioRequestsTransport,

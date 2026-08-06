@@ -14,6 +14,7 @@ from packaging.version import Version
 import aiohttp
 from utils import HTTP_REQUESTS, request_and_responses_product
 
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import (
     AsyncHttpResponse as PipelineTransportAsyncHttpResponse,
     AsyncHttpTransport,

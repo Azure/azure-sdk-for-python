@@ -8,6 +8,7 @@ import json
 import pytest
 from utils import HTTP_REQUESTS
 
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import TrioRequestsTransport
 from azure.core.pipeline._tools import is_rest
 

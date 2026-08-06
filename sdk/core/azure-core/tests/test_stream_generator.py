@@ -17,6 +17,7 @@ from utils import (
     request_and_responses_product,
 )
 
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import (
     HttpTransport,
     RequestsTransport,

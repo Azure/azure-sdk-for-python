@@ -23,6 +23,7 @@ from utils import (
 
 from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
 from azure.core.pipeline._tools import is_rest
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse, RequestsTransport
 from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy

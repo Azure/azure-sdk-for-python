@@ -12,6 +12,7 @@ from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.core import PipelineClient, AsyncPipelineClient
 from azure.core.pipeline import Pipeline, AsyncPipeline
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import (
     RequestsTransport,
     AioHttpTransport,
