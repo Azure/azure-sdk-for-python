@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from urllib.parse import urlparse, urlunparse
+import base64
 import json
 
 from flask import (

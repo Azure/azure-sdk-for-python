@@ -111,6 +111,7 @@ def test_response_streaming_error_behavior(http_response):
                 data = b"X" * min(chunk_size, self.total_response_size)
                 self.total_response_size -= len(data)
                 return data
+            return b""
 
         def close(self):
             pass
