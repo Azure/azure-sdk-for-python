@@ -19,16 +19,30 @@
 
 - Preserved an application-selected WebSocket close code in structured close
   diagnostics when the handler returns or raises after successfully sending the close frame.
+- Preserved application-selected close codes when cancellation races an in-flight
+  WebSocket close, without treating pre-I/O failures as committed closes, and
+  added a first-terminal-wins close-code source classification.
 - Propagated `x-platform-server` and incoming W3C trace context through the
-  WebSocket upgrade and connection lifetime.
+  WebSocket upgrade and connection lifetime directly in Invocations, without
+  changing Core middleware behavior.
 - Rejected malformed Voice history insertion predecessors before invoking
   application mutation callbacks.
+- Prepared and validated Voice terminal frames before committing local terminal
+  state, and completed post-wire response bookkeeping before propagating cancellation.
+- Replaced eviction-based Voice message and identity tombstones with exact,
+  byte-bounded fail-closed ledgers of binary SHA-256 digests so old messages,
+  input items, and history operations can never be replayed after falling out
+  of a recent window. Response terminal, playback, abandoned-admission, and
+  output-item ownership state now share one exact connection-lifetime ledger.
+- Registered `/invocations_ws` ahead of overlapping WebSocket catch-all routes
+  and mounts while rejecting exact endpoint conflicts.
+- Made Voice connection shutdown cancellation-safe and bounded all teardown
+  phases by one absolute cleanup deadline.
 
 ### Other Changes
 
 - Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b11`, the
-  first Core package version that exports the shared `experimental` decorator,
-  and added WebSocket platform identity and trace-context propagation.
+  first Core package version that exports the shared `experimental` decorator.
 - Voice now ships in the Invocations distribution and shares its package version
   and release artifact; no separate Voice package or server identity is required.
 - Voice follows the existing `invocations_ws` tracing behavior: the transport

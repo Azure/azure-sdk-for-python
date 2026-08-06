@@ -5,6 +5,7 @@
 
 import asyncio
 import gc
+import hashlib
 import json
 import threading
 import weakref
@@ -53,6 +54,9 @@ class _Sender:
 
     async def send(self, message_type: str, **fields) -> None:
         self.messages.append((message_type, fields))
+
+    def register_response_item(self, _response_id: str, _item_id: str) -> None:
+        return None
 
 
 class _RecordingWebSocket:
@@ -494,13 +498,19 @@ def test_recent_response_cache_does_not_retain_response_object_graph() -> None:
         gc.collect()
 
         recent = connection._recent_responses["r_recent"]  # pylint: disable=protected-access
-        assert recent.item_ids == frozenset({item_id})
+        assert not hasattr(recent, "item_ids")
+        assert connection._response_identities.owns_item("r_recent", item_id)  # pylint: disable=protected-access
+        assert all(
+            isinstance(value, bytes) and len(value) == hashlib.sha256().digest_size
+            for value in connection._response_identities._item_owners  # pylint: disable=protected-access
+        )
         assert reference() is None
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
 
-def test_dedupe_cache_evicts_oldest_without_ending_long_connection(monkeypatch) -> None:
+def test_dedupe_budget_fails_closed_without_evicting_history(monkeypatch) -> None:
     class QueueWebSocket(_RecordingWebSocket):
         def __init__(self, messages: list[dict]) -> None:
             super().__init__()
@@ -519,31 +529,478 @@ def test_dedupe_cache_evicts_oldest_without_ending_long_connection(monkeypatch) 
             for index in range(3)
         ]
         connection = _connection(QueueWebSocket(messages))
-        for _ in range(3):
+        for _ in range(2):
             assert await connection._receive_payload() is not None  # pylint: disable=protected-access
 
+        with pytest.raises(VoiceBridgeProtocolError, match="dedupe budget exceeded") as exc_info:
+            await connection._receive_payload()  # pylint: disable=protected-access
+
+        assert exc_info.value.close_code == 1008
         assert len(connection._seen_messages) == 2  # pylint: disable=protected-access
-        assert not connection.ending
+        first_key = hashlib.sha256(b"m_0").digest()
+        assert first_key in connection._seen_messages._values  # pylint: disable=protected-access
+        assert connection.ending
+        assert connection._resource_limit_reached.done()  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
 
-def test_connection_identity_tombstones_are_bounded() -> None:
+def test_full_dedupe_ledger_ignores_old_history_replay_before_failing_new_message(monkeypatch) -> None:
+    class QueueWebSocket(_RecordingWebSocket):
+        def __init__(self, payloads: list[dict]) -> None:
+            super().__init__()
+            self.messages = iter({"type": "websocket.receive", "text": json.dumps(payload)} for payload in payloads)
+
+        async def receive(self) -> dict:
+            return next(self.messages)
+
+    async def scenario() -> None:
+        monkeypatch.setattr(voice_host, "_MAX_SEEN_MESSAGES", 2)
+        history = {
+            "type": "conversation.item.delete",
+            "id": "m_history",
+            "ts": "2026-08-05T00:00:00Z",
+            "item_id": "hi_1",
+        }
+        websocket = QueueWebSocket(
+            [
+                history,
+                {"type": "future.signal", "id": "m_fill", "ts": "2026-08-05T00:00:00Z"},
+                history,
+                {"type": "future.signal", "id": "m_overflow", "ts": "2026-08-05T00:00:00Z"},
+            ]
+        )
+        calls: list[str] = []
+
+        async def delete_history(_session, event) -> None:
+            calls.append(event.item_id)
+
+        connection = _connection(websocket)
+        connection._ready = True  # pylint: disable=protected-access
+        connection._session = object()  # type: ignore[assignment]  # pylint: disable=protected-access
+        connection._on_conversation_item_delete = delete_history  # pylint: disable=protected-access
+        connection._callback_worker = asyncio.create_task(  # pylint: disable=protected-access
+            connection._callback_worker_loop()  # pylint: disable=protected-access
+        )
+
+        await connection._dispatch(await connection._receive_payload())  # type: ignore[arg-type]  # pylint: disable=protected-access
+        await connection._callback_queue.join()  # pylint: disable=protected-access
+        await connection._dispatch(await connection._receive_payload())  # type: ignore[arg-type]  # pylint: disable=protected-access
+
+        with pytest.raises(VoiceBridgeProtocolError, match="dedupe budget exceeded"):
+            # _receive_payload skips the exact replay and fails on m_overflow;
+            # the old history callback is never dispatched a second time.
+            await connection._receive_payload()  # pylint: disable=protected-access
+
+        assert calls == ["hi_1"]
+        assert len(connection._seen_messages) == 2  # pylint: disable=protected-access
+        connection._callback_worker.cancel()  # pylint: disable=protected-access
+        await asyncio.gather(connection._callback_worker, return_exceptions=True)  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_history_operation_replay_with_new_message_id_is_rejected_before_callback() -> None:
+    async def scenario() -> None:
+        calls: list[str] = []
+
+        async def delete_history(_session, event) -> None:
+            calls.append(event.item_id)
+
+        connection = _connection(_RecordingWebSocket())
+        connection._ready = True  # pylint: disable=protected-access
+        connection._session = object()  # type: ignore[assignment]  # pylint: disable=protected-access
+        connection._on_conversation_item_delete = delete_history  # pylint: disable=protected-access
+        connection._callback_worker = asyncio.create_task(  # pylint: disable=protected-access
+            connection._callback_worker_loop()  # pylint: disable=protected-access
+        )
+        first = {
+            "type": "conversation.item.delete",
+            "id": "m_delete_1",
+            "item_id": "hi_1",
+        }
+        replay = {**first, "id": "m_delete_2"}
+
+        await connection._dispatch(first)  # pylint: disable=protected-access
+        await connection._callback_queue.join()  # pylint: disable=protected-access
+        with pytest.raises(VoiceBridgeProtocolError, match="operation was replayed"):
+            await connection._dispatch(replay)  # pylint: disable=protected-access
+
+        assert calls == ["hi_1"]
+        connection._callback_worker.cancel()  # pylint: disable=protected-access
+        await asyncio.gather(connection._callback_worker, return_exceptions=True)  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_connection_identity_byte_budget_is_unified_and_poisoned(monkeypatch) -> None:
+    async def scenario() -> None:
+        baseline = voice_host._GLOBAL_IDENTITY_BYTES  # pylint: disable=protected-access
+        monkeypatch.setattr(
+            voice_host,
+            "_MAX_CONNECTION_IDENTITY_BYTES",
+            voice_host._MESSAGE_IDENTITY_BYTES + voice_host._INPUT_IDENTITY_BYTES,  # pylint: disable=protected-access
+        )
+        connection = _connection()
+        connection._seen_messages.add(b"m" * 32, b"p" * 32)  # pylint: disable=protected-access
+        connection._seen_input_ids.add("in_1")  # pylint: disable=protected-access
+        snapshot = (
+            len(connection._seen_messages),  # pylint: disable=protected-access
+            len(connection._seen_input_ids),  # pylint: disable=protected-access
+            len(connection._seen_response_ids),  # pylint: disable=protected-access
+            connection._identity_budget.used_bytes,  # pylint: disable=protected-access
+        )
+
+        with pytest.raises(VoiceBridgeProtocolError, match="connection identity byte budget"):
+            connection._seen_response_ids.add("r_overflow")  # pylint: disable=protected-access
+        with pytest.raises(VoiceBridgeProtocolError, match="connection identity byte budget"):
+            connection._seen_messages.add(b"n" * 32, b"q" * 32)  # pylint: disable=protected-access
+
+        assert snapshot == (
+            len(connection._seen_messages),  # pylint: disable=protected-access
+            len(connection._seen_input_ids),  # pylint: disable=protected-access
+            len(connection._seen_response_ids),  # pylint: disable=protected-access
+            connection._identity_budget.used_bytes,  # pylint: disable=protected-access
+        )
+        connection._release_connection_state()  # pylint: disable=protected-access
+        assert voice_host._GLOBAL_IDENTITY_BYTES == baseline  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_long_input_id_uses_fixed_digest_in_pending_and_resolved_state() -> None:
+    async def scenario() -> None:
+        item_id = f"in_{'x' * (256 * 1024)}"
+        connection = _connection(_RecordingWebSocket())
+        connection._ready = True  # pylint: disable=protected-access
+        event = UserMessageEvent(
+            item_id=item_id,
+            content=(InputTextPart(text="hello"),),
+        )
+
+        await connection._enqueue_turn(  # pylint: disable=protected-access
+            item_id,
+            event,
+            None,
+            "user.message",
+        )
+
+        assert all(isinstance(key, bytes) and len(key) == 32 for key in connection._pending_turns)
+        assert all(isinstance(key, bytes) and len(key) == 32 for key in connection._seen_input_ids._values)
+        assert connection._identity_budget.used_bytes == (  # pylint: disable=protected-access
+            voice_host._INPUT_IDENTITY_BYTES + voice_host._RESPONSE_IDENTITY_BYTES
+        )
+        await connection.decline_response((item_id,), None)
+        assert all(
+            all(isinstance(value, bytes) and len(value) == 32 for value in prefix)
+            for prefix in connection._resolved_input_prefixes  # pylint: disable=protected-access
+        )
+
+        connection._discard_callback_queue()  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_fatal_identity_failure_blocks_history_signal_and_ledger_growth() -> None:
     async def scenario() -> None:
         connection = _connection()
-        tombstones = (
+        with pytest.raises(VoiceBridgeProtocolError, match="identity budget exhausted"):
+            connection._identity_budget.fail(  # pylint: disable=protected-access
+                "Voice identity budget exhausted",
+                1008,
+            )
+        snapshot = (
+            connection._callback_queue.qsize(),  # pylint: disable=protected-access
+            connection._callback_queue_bytes,  # pylint: disable=protected-access
+            len(connection._seen_messages),  # pylint: disable=protected-access
+            len(connection._seen_input_ids),  # pylint: disable=protected-access
+            len(connection._seen_response_ids),  # pylint: disable=protected-access
+        )
+
+        with pytest.raises(VoiceBridgeProtocolError, match="identity budget exhausted"):
+            connection._enqueue_history(  # pylint: disable=protected-access
+                ConversationItemDeleteEvent(request_id="m_delete", item_id="hi_1"),
+                None,
+                "conversation.item.delete",
+                "conversation.item.deleted",
+            )
+        with pytest.raises(VoiceBridgeProtocolError, match="identity budget exhausted"):
+            await connection._enqueue_signal(  # pylint: disable=protected-access
+                object(),
+                mock.AsyncMock(),
+                "signal",
+            )
+        with pytest.raises(VoiceBridgeProtocolError, match="identity budget exhausted"):
+            connection._seen_input_ids.add("in_late")  # pylint: disable=protected-access
+
+        assert snapshot == (
+            connection._callback_queue.qsize(),  # pylint: disable=protected-access
+            connection._callback_queue_bytes,  # pylint: disable=protected-access
+            len(connection._seen_messages),  # pylint: disable=protected-access
+            len(connection._seen_input_ids),  # pylint: disable=protected-access
+            len(connection._seen_response_ids),  # pylint: disable=protected-access
+        )
+        connection._release_connection_state()  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_old_playback_outcome_survives_recent_response_eviction_and_runs_once() -> None:
+    async def scenario() -> None:
+        calls: list[str] = []
+
+        async def on_barge_in(_session, event) -> None:
+            calls.append(event.response_id)
+
+        connection = _connection()
+        connection._ready = True  # pylint: disable=protected-access
+        connection._session = object()  # type: ignore[assignment]  # pylint: disable=protected-access
+        connection._on_barge_in = on_barge_in  # pylint: disable=protected-access
+        connection._callback_worker = asyncio.create_task(  # pylint: disable=protected-access
+            connection._callback_worker_loop()  # pylint: disable=protected-access
+        )
+        response = VoiceResponse._create(  # pylint: disable=protected-access
+            connection,
+            response_id="r_old",
+            in_reply_to=None,
+            wire_opened=True,
+        )
+        connection._seen_response_ids.add("r_old")  # pylint: disable=protected-access
+        connection.register_response_item("r_old", "it_old")
+        connection._terminal_response_ids.add("r_old")  # pylint: disable=protected-access
+        await response._mark_terminal()  # pylint: disable=protected-access
+        assert "r_old" not in connection._recent_responses  # pylint: disable=protected-access
+        payload = {"response_id": "r_old", "item_id": "it_old", "heard_text": "hello"}
+
+        await connection._handle_playback_terminal(payload, kind="barge_in")  # pylint: disable=protected-access
+        await connection._callback_queue.join()  # pylint: disable=protected-access
+        await connection._handle_playback_terminal(payload, kind="barge_in")  # pylint: disable=protected-access
+        await connection._callback_queue.join()  # pylint: disable=protected-access
+
+        assert calls == ["r_old"]
+        connection._callback_worker.cancel()  # pylint: disable=protected-access
+        await asyncio.gather(connection._callback_worker, return_exceptions=True)  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_connection_identity_ledgers_fail_closed_without_eviction() -> None:
+    async def scenario() -> None:
+        connection = _connection()
+        response_views = (
             connection._seen_response_ids,  # pylint: disable=protected-access
             connection._terminal_response_ids,  # pylint: disable=protected-access
-            connection._seen_input_ids,  # pylint: disable=protected-access
             connection._playback_outcomes,  # pylint: disable=protected-access
             connection._abandoned_proactive_cancels,  # pylint: disable=protected-access
         )
-        for values in tombstones:
-            for index in range(voice_host._MAX_ID_TOMBSTONES + 1):  # pylint: disable=protected-access
+        seen = connection._seen_response_ids  # pylint: disable=protected-access
+        for index in range(seen._max_size):  # pylint: disable=protected-access
+            seen.add(f"id_{index}")
+        for values in response_views:
+            for index in range(values._max_size):  # pylint: disable=protected-access
                 values.add(f"id_{index}")
-            assert len(values) == voice_host._MAX_ID_TOMBSTONES  # pylint: disable=protected-access
-            assert "id_0" not in values
-            assert f"id_{voice_host._MAX_ID_TOMBSTONES}" in values  # pylint: disable=protected-access
+            with pytest.raises(VoiceBridgeProtocolError, match="budget exceeded") as exc_info:
+                values.add("id_overflow")
+            assert exc_info.value.close_code == 1008
+            assert len(values) == values._max_size  # pylint: disable=protected-access
+            assert "id_0" in values
+            assert "id_overflow" not in values
+        seen.clear()
+        connection._release_connection_state()  # pylint: disable=protected-access
+
+        input_connection = _connection()
+        input_ids = input_connection._seen_input_ids  # pylint: disable=protected-access
+        for index in range(input_ids._max_size):  # pylint: disable=protected-access
+            input_ids.add(f"input_{index}")
+        with pytest.raises(VoiceBridgeProtocolError, match="budget exceeded"):
+            input_ids.add("input_overflow")
+        assert "input_0" in input_ids
+        assert all(isinstance(value, bytes) and len(value) == 32 for value in input_ids._values)
+        input_ids.clear()
+        input_connection._release_connection_state()  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_identity_byte_budget_is_shared_across_connections(monkeypatch) -> None:
+    baseline = voice_host._GLOBAL_IDENTITY_BYTES  # pylint: disable=protected-access
+    monkeypatch.setattr(
+        voice_host,
+        "_MAX_GLOBAL_IDENTITY_BYTES",
+        baseline + voice_host._INPUT_IDENTITY_BYTES,  # pylint: disable=protected-access
+    )
+    first_budget = voice_host._IdentityBudget(1024)  # pylint: disable=protected-access
+    second_budget = voice_host._IdentityBudget(1024)  # pylint: disable=protected-access
+    first = voice_host._ExactIdSet(2, name="input id", budget=first_budget)  # pylint: disable=protected-access
+    second = voice_host._ExactIdSet(2, name="input id", budget=second_budget)  # pylint: disable=protected-access
+
+    first.add("first")
+    with pytest.raises(RuntimeError, match="global identity byte budget"):
+        second.add("second")
+
+    assert (
+        voice_host._GLOBAL_IDENTITY_BYTES == baseline + voice_host._INPUT_IDENTITY_BYTES
+    )  # pylint: disable=protected-access
+    first.clear()
+    assert voice_host._GLOBAL_IDENTITY_BYTES == baseline  # pylint: disable=protected-access
+
+
+def test_response_identity_flags_share_one_byte_reservation() -> None:
+    baseline = voice_host._GLOBAL_IDENTITY_BYTES  # pylint: disable=protected-access
+    budget = voice_host._IdentityBudget(4096)  # pylint: disable=protected-access
+    ledger = voice_host._ResponseIdentityLedger(  # pylint: disable=protected-access
+        4,
+        max_abandoned=2,
+        budget=budget,
+    )
+    seen = voice_host._ResponseIdentityView(ledger, "seen")  # pylint: disable=protected-access
+    terminal = voice_host._ResponseIdentityView(ledger, "terminal")  # pylint: disable=protected-access
+    playback = voice_host._ResponseIdentityView(ledger, "playback")  # pylint: disable=protected-access
+    abandoned = voice_host._ResponseIdentityView(ledger, "abandoned")  # pylint: disable=protected-access
+
+    seen.add("r_1")
+    terminal.add("r_1")
+    playback.add("r_1")
+    abandoned.add("r_1")
+
+    assert (
+        voice_host._GLOBAL_IDENTITY_BYTES == baseline + voice_host._RESPONSE_IDENTITY_BYTES
+    )  # pylint: disable=protected-access
+    assert "r_1" in seen and "r_1" in terminal and "r_1" in playback and "r_1" in abandoned
+
+    ledger.register_item("r_1", "it_1")
+    assert ledger.owns_item("r_1", "it_1")
+    assert voice_host._GLOBAL_IDENTITY_BYTES == (  # pylint: disable=protected-access
+        baseline + voice_host._RESPONSE_IDENTITY_BYTES + voice_host._RESPONSE_ITEM_IDENTITY_BYTES
+    )
+
+    playback.remove("r_1")
+    abandoned.discard("r_1")
+    assert "r_1" in seen and "r_1" in terminal
+
+    seen.clear()
+    assert voice_host._GLOBAL_IDENTITY_BYTES == baseline  # pylint: disable=protected-access
+
+
+def test_callback_identity_overflow_wakes_connection_supervision(monkeypatch) -> None:
+    async def scenario() -> None:
+        monkeypatch.setattr(voice_host, "_MAX_ID_TOMBSTONES", 1)
+        websocket = _RecordingWebSocket()
+        connection = _connection(websocket)
+        connection._ready = True  # pylint: disable=protected-access
+        connection._seen_response_ids.add("r_existing")  # pylint: disable=protected-access
+
+        with pytest.raises(VoiceBridgeProtocolError, match="response identity budget exceeded"):
+            await connection.start_proactive_response(  # pylint: disable=protected-access
+                admission_timeout_ms=1000,
+                supersede_key=None,
+            )
+
+        assert connection.ending
+        assert connection._resource_limit_reached.done()  # pylint: disable=protected-access
+        assert connection._resource_limit_reached.result().close_code == 1008  # pylint: disable=protected-access
+        assert not connection._pending_proactive  # pylint: disable=protected-access
+        assert not websocket.sent
+        connection._release_connection_state()  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_protocol_identity_failure_preserves_close_code_through_supervision() -> None:
+    class BlockingWebSocket(_RecordingWebSocket):
+        async def receive(self) -> dict:
+            await asyncio.Event().wait()
+            raise AssertionError("unreachable")
+
+    async def scenario() -> None:
+        connection = _connection(BlockingWebSocket())
+        connection._ready = True  # pylint: disable=protected-access
+        connection._callback_worker = asyncio.create_task(asyncio.Event().wait())  # pylint: disable=protected-access
+        connection._signal_runtime_failure(  # pylint: disable=protected-access
+            "Voice message dedupe limit exceeded",
+            1008,
+        )
+
+        with pytest.raises(VoiceBridgeProtocolError, match="dedupe limit exceeded") as exc_info:
+            await connection._receive_with_worker_supervision()  # pylint: disable=protected-access
+
+        assert exc_info.value.close_code == 1008
+        connection._callback_worker.cancel()  # pylint: disable=protected-access
+        await asyncio.gather(connection._callback_worker, return_exceptions=True)  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_abandoned_proactive_identity_is_released_by_timeout() -> None:
+    async def scenario() -> None:
+        baseline = voice_host._GLOBAL_IDENTITY_BYTES  # pylint: disable=protected-access
+        connection = _connection(_RecordingWebSocket())
+        connection._ready = True  # pylint: disable=protected-access
+        response = VoiceResponse._create(  # pylint: disable=protected-access
+            connection,
+            response_id="r_abandoned",
+            in_reply_to=None,
+            wire_opened=True,
+        )
+        connection._active_response = response  # pylint: disable=protected-access
+        connection._seen_response_ids.add(response.response_id)  # pylint: disable=protected-access
+        connection._abandoned_proactive_cancels.add(response.response_id)  # pylint: disable=protected-access
+
+        await connection._handle_response_timeout(  # pylint: disable=protected-access
+            ResponseTimeoutEvent(stage="idle", response_id=response.response_id)
+        )
+
+        assert response.response_id not in connection._abandoned_proactive_cancels  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
+        assert voice_host._GLOBAL_IDENTITY_BYTES == baseline  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_release_connection_state_clears_abandoned_identity_records() -> None:
+    async def scenario() -> None:
+        baseline = voice_host._GLOBAL_IDENTITY_BYTES  # pylint: disable=protected-access
+        connection = _connection()
+        connection._abandoned_proactive_cancels.add("r_abandoned")  # pylint: disable=protected-access
+
+        connection._release_connection_state()  # pylint: disable=protected-access
+
+        assert not connection._abandoned_proactive_cancels  # pylint: disable=protected-access
+        assert voice_host._GLOBAL_IDENTITY_BYTES == baseline  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+@pytest.mark.parametrize("terminal_kind", ["session_end", "shutdown"])
+def test_teardown_does_not_allocate_terminal_tombstones(monkeypatch, terminal_kind: str) -> None:
+    async def scenario() -> None:
+        monkeypatch.setattr(voice_host, "_MAX_ID_TOMBSTONES", 1)
+        connection = _connection(_RecordingWebSocket())
+        connection._ready = True  # pylint: disable=protected-access
+        response = VoiceResponse._create(  # pylint: disable=protected-access
+            connection,
+            response_id="r_active",
+            in_reply_to=("in_active",),
+        )
+        connection._active_response = response  # pylint: disable=protected-access
+        connection._pending_turns[voice_host._identity_digest("in_active")] = (
+            response  # pylint: disable=protected-access
+        )
+        connection._terminal_response_ids.add("r_existing")  # pylint: disable=protected-access
+
+        if terminal_kind == "session_end":
+            await connection._handle_session_end({"reason": "caller_hangup"})  # pylint: disable=protected-access
+            connection._release_connection_state()  # pylint: disable=protected-access
+        else:
+            await connection._shutdown_runtime(drain_callbacks=False)  # pylint: disable=protected-access
+
+        assert response.is_terminal
+        assert connection._closed or terminal_kind == "session_end"  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 

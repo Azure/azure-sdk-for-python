@@ -13,6 +13,7 @@ from azure.ai.agentserver.core import experimental
 
 from ._models import ResponseCancellationOutcome, ResponseTimeouts, SessionStartEvent
 from ._protocol import (
+    _PreparedFrame,
     VoiceBridgeConnectionClosedError,
     new_id,
     normalize_voice,
@@ -44,7 +45,13 @@ class _ConnectionSender(Protocol):
 
     async def send(self, message_type: str, **fields: Any) -> None: ...
 
-    async def send_committed(self, message_type: str, **fields: Any) -> None: ...
+    def prepare_frame(self, message_type: str, **fields: Any) -> _PreparedFrame: ...
+
+    async def send_prepared(self, prepared: _PreparedFrame, *, state_committed: bool) -> None: ...
+
+    def prepare_response_item(self, response_id: str, item_id: str) -> None: ...
+
+    def discard_response_item(self, response_id: str, item_id: str) -> None: ...
 
     async def open_response(self, response_id: str, in_reply_to: tuple[str, ...] | None) -> bool: ...
 
@@ -385,16 +392,18 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         async with self._send_lock:
             async with self._lock:
                 self._ensure_writable_locked()
-            await self._ensure_open()
-            async with self._lock:
-                self._claim_local_terminal_locked()
-            await self._send_committed(
+            prepared = self._prepare_frame(
                 "error",
                 code=code,
                 message=message,
                 response_id=self._response_id,
             )
-        await self._sender.response_completed(self._response_id, "error")
+            await self._ensure_open()
+            async with self._lock:
+                self._ensure_writable_locked()
+                self._claim_local_terminal_locked()
+            await self._send_prepared_committed(prepared)
+        await self._notify_response_completed("error")
 
     async def cancel(self, *, reason: str | None = None) -> ResponseCancellationOutcome:
         """Request self-cancel and await the winning playback outcome.
@@ -490,20 +499,22 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
             raise ValueError("target must be non-empty")
         if message is not None:
             message = _require_string(message, "message")
+        fields: dict[str, Any] = {
+            "response_id": self._response_id,
+            "target": target,
+        }
+        if message is not None:
+            fields["message"] = message
         async with self._send_lock:
             async with self._lock:
                 self._ensure_writable_locked()
+            prepared = self._prepare_frame("handoff", **fields)
             await self._ensure_open()
-            fields: dict[str, Any] = {
-                "response_id": self._response_id,
-                "target": target,
-            }
-            if message is not None:
-                fields["message"] = message
             async with self._lock:
+                self._ensure_writable_locked()
                 self._claim_local_terminal_locked(cancel=True)
-            await self._send_committed("handoff", **fields)
-        await self._sender.response_completed(self._response_id, "handoff")
+            await self._send_prepared_committed(prepared)
+        await self._notify_response_completed("handoff")
 
     async def done(self) -> None:
         """Explicitly finish normal generation.
@@ -511,7 +522,6 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         Callback-bound responses normally auto-complete on callback return;
         proactive responses use this method explicitly.
         """
-        notify = False
         async with self._send_lock:
             async with self._lock:
                 self._ensure_writable_locked()
@@ -519,11 +529,12 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                     raise RuntimeError("response.done requires at least one completed output item")
                 if any(not item._done for item in self._items):  # pylint: disable=protected-access
                     raise RuntimeError("Complete every response item before response.done")
+            prepared = self._prepare_frame("response.done", response_id=self._response_id)
+            async with self._lock:
+                self._ensure_writable_locked()
                 self._claim_local_terminal_locked()
-            await self._send_committed("response.done", response_id=self._response_id)
-            notify = True
-        if notify:
-            await self._sender.response_completed(self._response_id, "done")
+            await self._send_prepared_committed(prepared)
+        await self._notify_response_completed("done")
 
     async def _send_item_text(
         self,
@@ -553,6 +564,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                         raise ValueError("A response exceeds the maximum cumulative text chunk count")
                     self._reserve_output_bytes(text_bytes)
                     reserved = True
+                self._register_response_item(item.item_id)
                 await self._ensure_open()
                 fields: dict[str, Any] = {
                     "response_id": self._response_id,
@@ -575,6 +587,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                         self._response_chunks += 1
                         retained = True
             finally:
+                self._discard_prepared_response_item(item.item_id)
                 async with self._lock:
                     if not retained and not self._sender.ending:
                         # The sender can prove no ambiguous connection-level
@@ -613,6 +626,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                         raise ValueError("A response exceeds the maximum cumulative text chunk count")
                     self._reserve_output_bytes(delta_bytes)
                     reserved = True
+                self._register_response_item(item.item_id)
                 await self._ensure_open()
                 fields: dict[str, Any] = {
                     "response_id": self._response_id,
@@ -634,6 +648,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                         self._response_chunks += 1
                         retained = True
             finally:
+                self._discard_prepared_response_item(item.item_id)
                 async with self._lock:
                     if not retained and not self._sender.ending:
                         item._send_in_flight = False  # pylint: disable=protected-access
@@ -661,6 +676,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                 }
                 if voice_payload is not None:
                     fields["voice"] = voice_payload
+            self._register_response_item(item.item_id)
             await self._sender.send("response.output_text.done", **fields)
             async with self._lock:
                 item._done = True  # pylint: disable=protected-access
@@ -681,10 +697,24 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                     or not self._items
                     or any(not item._done for item in self._items)  # pylint: disable=protected-access
                 )
+            if incomplete:
+                prepared = self._prepare_frame(
+                    "error",
+                    code="handler_error",
+                    message="Voice turn callback returned without complete output or decline",
+                    response_id=self._response_id,
+                )
+                await self._ensure_open()
+            else:
+                prepared = self._prepare_frame("response.done", response_id=self._response_id)
+            async with self._lock:
+                if self._terminal or self._cancel_pending or self._sender.ending:
+                    self._sealed = True
+                    return
                 self._claim_local_terminal_locked()
             if incomplete:
                 try:
-                    await self._emit_sdk_error("Voice turn callback returned without complete output or decline")
+                    await self._emit_sdk_error(prepared)
                 except VoiceBridgeConnectionClosedError:
                     if self._terminal or self._sender.ending:
                         return
@@ -692,12 +722,12 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                 terminal_kind = "error"
             else:
                 try:
-                    await self._send_committed("response.done", response_id=self._response_id)
+                    await self._send_prepared_committed(prepared)
                 except VoiceBridgeConnectionClosedError:
                     if self._terminal or self._sender.ending:
                         return
                     raise
-        await self._sender.response_completed(self._response_id, terminal_kind)
+        await self._notify_response_completed(terminal_kind)
 
     async def _fail_callback(self) -> None:
         async with self._send_lock:
@@ -708,19 +738,31 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                 if self._terminal or self._cancel_pending or self._sender.ending:
                     self._sealed = True
                     return
+            prepared = self._prepare_frame(
+                "error",
+                code="handler_error",
+                message="Voice turn callback failed",
+                response_id=self._response_id,
+            )
+            await self._ensure_open()
+            async with self._lock:
+                if self._terminal or self._cancel_pending or self._sender.ending:
+                    self._sealed = True
+                    return
                 self._claim_local_terminal_locked()
             try:
-                await self._emit_sdk_error("Voice turn callback failed")
+                await self._emit_sdk_error(prepared)
             except VoiceBridgeConnectionClosedError:
                 if self._terminal or self._sender.ending:
                     return
                 raise
-        await self._sender.response_completed(self._response_id, "error")
+        await self._notify_response_completed("error")
 
     async def _mark_terminal(self) -> None:
         async with self._lock:
             self._terminal = True
             self._sealed = True
+            self._cancel_pending = False
             self._cancellation._cancel()
             self._release_output_buffers_locked()
 
@@ -754,6 +796,20 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         if reserve is not None:
             reserve(size)
 
+    def _register_response_item(self, item_id: str) -> None:
+        prepare = getattr(self._sender, "prepare_response_item", None)
+        if prepare is not None:
+            prepare(self._response_id, item_id)
+            return
+        register = getattr(self._sender, "register_response_item", None)
+        if register is not None:
+            register(self._response_id, item_id)
+
+    def _discard_prepared_response_item(self, item_id: str) -> None:
+        discard = getattr(self._sender, "discard_response_item", None)
+        if discard is not None:
+            discard(self._response_id, item_id)
+
     def _release_output_bytes(self, size: int) -> None:
         release = getattr(self._sender, "release_output_bytes", None)
         if release is not None:
@@ -762,6 +818,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
     def _claim_local_terminal_locked(self, *, cancel: bool = False) -> None:
         self._terminal = True
         self._sealed = True
+        self._cancel_pending = False
         if cancel:
             self._cancellation._cancel()
         self._release_output_buffers_locked()
@@ -821,23 +878,35 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         if any(not previous._done for previous in self._items[:index]):  # pylint: disable=protected-access
             raise RuntimeError("Complete the previous response item first")
 
-    async def _emit_sdk_error(self, message: str) -> None:
+    async def _emit_sdk_error(self, prepared: _PreparedFrame) -> None:
         # Callers must hold _send_lock (never _lock); the wire writes happen off
         # the state lock.
         await self._ensure_open()
-        await self._send_committed(
-            "error",
-            code="handler_error",
-            message=message,
-            response_id=self._response_id,
-        )
+        await self._send_prepared_committed(prepared)
 
-    async def _send_committed(self, message_type: str, **fields: Any) -> None:
-        send_committed = getattr(self._sender, "send_committed", None)
-        if send_committed is None:
-            await self._sender.send(message_type, **fields)
-            return
-        await send_committed(message_type, **fields)
+    def _prepare_frame(self, message_type: str, **fields: Any) -> _PreparedFrame:
+        return self._sender.prepare_frame(message_type, **fields)
+
+    async def _send_prepared_committed(self, prepared: _PreparedFrame) -> None:
+        await self._sender.send_prepared(prepared, state_committed=True)
+
+    async def _notify_response_completed(self, terminal_kind: str) -> None:
+        completion = asyncio.create_task(
+            self._sender.response_completed(self._response_id, terminal_kind),
+            name="voice_response_completed",
+        )
+        cancellation: asyncio.CancelledError | None = None
+        while not completion.done():
+            try:
+                await asyncio.shield(completion)
+            except asyncio.CancelledError as exc:
+                # The terminal frame already reached the transport. Keep the
+                # host ownership transition alive even if the customer await is
+                # cancelled, then propagate cancellation after bookkeeping.
+                cancellation = exc
+        await completion
+        if cancellation is not None:
+            raise cancellation
 
     def _ensure_writable_locked(self) -> None:
         self._ensure_locally_writable()
@@ -921,7 +990,14 @@ class VoiceSession:
     ) -> VoiceResponse:
         """Request proactive admission and return a writable accepted response.
 
-        :keyword admission_timeout_ms: Positive admission wait, at most 60000 ms.
+        The Bridge enforces the admission deadline while it waits for a
+        barge-safe point. The SDK waits for ``response.accepted``,
+        ``response.dropped``, connection termination, or caller cancellation;
+        it does not run a second local admission timer.
+
+        :keyword admission_timeout_ms: Maximum time, from 1 through 60000 ms,
+            that the Bridge may buffer this request while waiting for a
+            barge-safe admission point.
         :paramtype admission_timeout_ms: int
         :keyword supersede_key: Optional non-empty logical notification key.
         :paramtype supersede_key: str or None

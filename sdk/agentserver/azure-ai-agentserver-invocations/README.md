@@ -306,10 +306,11 @@ app.run()
 ### What the SDK does for `@app.ws_handler`
 
 - Registers `/invocations_ws` on the same Starlette host as `/invocations` and `/readiness`.
-- Calls `await websocket.accept()` before invoking your handler.
+- Reserves `/invocations_ws` for the Invocations transport, rejects exact route conflicts, and installs its exact WebSocket route ahead of custom matchers.
+- Calls `await websocket.accept()` with the combined `x-platform-server` identity before invoking your handler.
 - Runs WebSocket Ping/Pong keep-alive in the background — disabled by default; enable by setting the `WS_KEEPALIVE_INTERVAL` environment variable (auto-injected by AgentService into hosted-agent containers). Set the value to `0` to disable. Frames are sent at the WebSocket protocol layer (RFC 6455 opcode `0x9`/`0xA`) by the underlying Hypercorn server, which keeps the connection alive across upstream proxy / load-balancer idle timeouts without any extra application traffic.
-- Closes the connection cleanly on handler return (close code `1000`) or maps an uncaught handler exception to close code `1011`.
-- Emits a structured close-event log line carrying `azure.ai.agentserver.invocations_ws.session_id`, `azure.ai.agentserver.invocations_ws.close_code`, and `azure.ai.agentserver.invocations_ws.duration_ms`.
+- Uses first-terminal-wins close arbitration across application, peer, and SDK outcomes. An uncaught exception maps to `1011` only when no earlier terminal outcome exists.
+- Emits a structured close-event log line carrying `azure.ai.agentserver.invocations_ws.session_id`, `azure.ai.agentserver.invocations_ws.close_code`, `azure.ai.agentserver.invocations_ws.close_code_source`, and `azure.ai.agentserver.invocations_ws.duration_ms`.
 - Inherits `/readiness`, OpenTelemetry export configuration, and graceful shutdown from `azure-ai-agentserver-core`.
 
 ### Per-connection tracing
@@ -320,7 +321,8 @@ protocols and handlers inherit the caller's context. It does not create a
 framework-owned connection span; the transport reports its connection outcome
 through the structured close-event log described above. The typed Voice
 submodule follows this same tracing behavior and does not add connection or turn
-spans.
+spans. This behavior is owned by Invocations and does not alter Core's HTTP
+middleware or observability callback contract.
 
 ### Handler signature
 

@@ -58,6 +58,7 @@ for each prompt while you type the next one::
     > {"type": "cancel", "id": "p1"}
     > {"type": "bye"}
 """
+
 import asyncio
 import contextlib
 import json
@@ -83,9 +84,31 @@ app = InvocationAgentServerHost()
 #   https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples
 #   https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples
 _SIMULATED_TOKENS = [
-    "Once", " upon", " a", " time", ",", " in", " a", " land",
-    " of", " full", "-", "duplex", " sockets", ",", " a", " server",
-    " and", " a", " client", " spoke", " at", " the", " same", " time", ".",
+    "Once",
+    " upon",
+    " a",
+    " time",
+    ",",
+    " in",
+    " a",
+    " land",
+    " of",
+    " full",
+    "-",
+    "duplex",
+    " sockets",
+    ",",
+    " a",
+    " server",
+    " and",
+    " a",
+    " client",
+    " spoke",
+    " at",
+    " the",
+    " same",
+    " time",
+    ".",
 ]
 
 _TOKEN_DELAY_S = 0.2
@@ -94,6 +117,7 @@ _TOKEN_DELAY_S = 0.2
 # ---------------------------------------------------------------------------
 # HTTP — same host, kept for parity with the rest of the samples.
 # ---------------------------------------------------------------------------
+
 
 @app.invoke_handler  # POST /invocations
 async def handle_invoke(request: Request) -> Response:
@@ -105,6 +129,7 @@ async def handle_invoke(request: Request) -> Response:
 # ---------------------------------------------------------------------------
 # WebSocket — true bidirectional streaming.
 # ---------------------------------------------------------------------------
+
 
 async def _generate_tokens(_text: str) -> AsyncGenerator[str, None]:
     """Yield simulated tokens with a small per-token delay.
@@ -124,7 +149,9 @@ async def _generate_tokens(_text: str) -> AsyncGenerator[str, None]:
 
 
 async def _stream_tokens(
-    websocket: WebSocket, prompt_id: str, text: str,
+    websocket: WebSocket,
+    prompt_id: str,
+    text: str,
 ) -> None:
     """Stream tokens for one prompt; cancellable via ``asyncio.CancelledError``.
 
@@ -231,7 +258,9 @@ async def _reader(
                     # ``cancelled`` frame before we move on — prevents the
                     # next prompt from racing against an in-flight close.
                     with contextlib.suppress(
-                        asyncio.TimeoutError, asyncio.CancelledError, Exception,
+                        asyncio.TimeoutError,
+                        asyncio.CancelledError,
+                        Exception,
                     ):
                         await asyncio.wait_for(pending_task, timeout=1.0)
 

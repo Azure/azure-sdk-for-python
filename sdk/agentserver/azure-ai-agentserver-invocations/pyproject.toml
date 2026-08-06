@@ -36,7 +36,6 @@ dev = [
     "azure-monitor-query",
     "azure-sdk-tools",
     "httpx",
-    "httpx2>=2.0.0",
     "opentelemetry-api>=1.40.0",
     "opentelemetry-sdk>=1.43.0",
     "pytest-asyncio",
@@ -74,7 +73,8 @@ mypy = true
 pyright = true
 verifytypes = false
 latestdependency = false
-# azure-ai-agentserver-core>=2.0.0b11 is not yet on PyPI
+# The editable local Core dev dependency prevents the minimum-dependency verifier
+# from observing the released Core wheel version.
 mindependency = false
 pylint = true
 type_check_samples = false

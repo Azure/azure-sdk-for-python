@@ -184,9 +184,16 @@ tool cancellation. Do not retry writes on the same helper.
 
 ### A proactive response is dropped
 
-`start_proactive_response()` completes only after `response.accepted`. Handle
-`VoiceProactiveResponseDroppedError` and create a new proactive response if the
-application still needs to speak; never reuse a dropped response identifier.
+`start_proactive_response()` completes after `response.accepted`, or raises
+`VoiceProactiveResponseDroppedError` after `response.dropped`. The
+`admission_timeout_ms` argument is a Bridge-owned deadline: while waiting for a
+barge-safe point, the Bridge buffers the request for at most that duration and
+then drops it with reason `no_barge_safe_window`. The SDK does not run a second
+local timer; it also stops waiting when the connection terminates or the caller
+cancels the await.
+
+Create a new proactive response if the application still needs to speak; never
+reuse a dropped response identifier.
 
 ## Next steps
 

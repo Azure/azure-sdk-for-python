@@ -14,6 +14,8 @@ import math
 import re
 import uuid
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+from dataclasses import fields as dataclass_fields, is_dataclass
 from types import MappingProxyType
 from typing import Any, cast
 
@@ -40,7 +42,6 @@ PROTOCOL_VERSION = "1.0"
 MAX_ERROR_MESSAGE_LENGTH = 1024
 MAX_JSON_DEPTH = 128
 MAX_JSON_INTEGER_DIGITS = 128
-_MAX_PROTOCOL_ID_BYTES = 256
 _SAFE_CODE = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
 _VOICE_TYPE_ALIASES = {"azure-platform": "azure-standard", "custom": "azure-custom"}
 _VOICE_TYPES = {
@@ -96,6 +97,16 @@ _RFC3339 = re.compile(
     r"^(?P<date>\d{4}-\d{2}-\d{2})T(?P<time>(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d)"
     r"(?:\.\d{1,9})?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$"
 )
+
+
+@dataclass(frozen=True)
+class _PreparedFrame:
+    """Immutable transport frame validated before protocol state commit."""
+
+    message_type: str
+    frame: str
+    response_id: str | None
+    item_id: str | None
 
 
 @experimental
@@ -174,7 +185,7 @@ def decode_frame(frame: str) -> dict[str, Any]:
     _validate_json_tree(raw_payload)
     payload = cast(dict[str, Any], raw_payload)
     require_string(payload, "type", non_empty=True)
-    require_prefixed_id(payload, "id", "m_", max_bytes=False)
+    require_prefixed_id(payload, "id", "m_")
     validate_timestamp(payload.get("ts"))
     return payload
 
@@ -222,6 +233,65 @@ def encode_frame(message_type: str, **fields: Any) -> str:
         **fields,
     }
     return json.dumps(payload, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+
+
+def prepare_frame(
+    message_type: str,
+    fields: Mapping[str, Any],
+    *,
+    max_frame_bytes: int,
+) -> _PreparedFrame:
+    """Validate and encode an immutable frame without changing protocol state.
+
+    :param message_type: Wire message discriminator.
+    :type message_type: str
+    :param fields: Outbound message fields.
+    :type fields: Mapping[str, Any]
+    :keyword max_frame_bytes: Maximum encoded frame size.
+    :paramtype max_frame_bytes: int
+    :return: Immutable transport-ready frame.
+    :rtype: _PreparedFrame
+    """
+    if _estimate_frame_fields(fields) > max_frame_bytes:
+        raise ValueError("Voice bridge fields exceed the maximum encoded size")
+    frame = encode_frame(message_type, **fields)
+    if len(frame.encode("utf-8")) > max_frame_bytes:
+        raise ValueError("Voice bridge frame exceeds the maximum encoded size")
+    response_id = fields.get("response_id")
+    item_id = fields.get("item_id")
+    return _PreparedFrame(
+        message_type=message_type,
+        frame=frame,
+        response_id=response_id if isinstance(response_id, str) else None,
+        item_id=item_id if isinstance(item_id, str) else None,
+    )
+
+
+def _estimate_frame_fields(value: Any) -> int:
+    """Return a conservative recursive encoded-size estimate for frame fields."""
+    total = 0
+    pending = [value]
+    seen: set[int] = set()
+    while pending:
+        current = pending.pop()
+        if isinstance(current, str):
+            total += len(current.encode("utf-8"))
+            continue
+        if current is None or isinstance(current, (bool, int, float)):
+            total += 8
+            continue
+        current_id = id(current)
+        if current_id in seen:
+            continue
+        seen.add(current_id)
+        if is_dataclass(current) and not isinstance(current, type):
+            pending.extend(getattr(current, field.name) for field in dataclass_fields(current))
+        elif isinstance(current, Mapping):
+            pending.extend(current.keys())
+            pending.extend(current.values())
+        elif isinstance(current, Sequence) and not isinstance(current, (str, bytes, bytearray)):
+            pending.extend(current)
+    return total
 
 
 def canonical_payload(payload: Mapping[str, Any]) -> str:
@@ -454,25 +524,15 @@ def require_prefixed_id(
     payload: Mapping[str, Any],
     name: str,
     prefix: str,
-    *,
-    max_bytes: bool = True,
 ) -> str:
-    """Return one required protocol identifier in the expected namespace.
-
-    :keyword max_bytes: Whether to enforce the state-safe identifier byte limit.
-    """
-    return _validate_prefixed_id(payload.get(name), name, prefix, max_bytes=max_bytes)
+    """Return one required protocol identifier in the expected namespace."""
+    return _validate_prefixed_id(payload.get(name), name, prefix)
 
 
-def _validate_prefixed_id(value: object, name: str, prefix: str, *, max_bytes: bool = True) -> str:
-    """Validate one bounded protocol identifier value.
-
-    :keyword max_bytes: Whether to enforce the state-safe identifier byte limit.
-    """
+def _validate_prefixed_id(value: object, name: str, prefix: str) -> str:
+    """Validate one protocol identifier without retaining it in identity ledgers."""
     if not isinstance(value, str) or not value.startswith(prefix) or len(value) <= len(prefix):
         raise VoiceBridgeProtocolError(f"{name} must start with {prefix}")
-    if max_bytes and len(value.encode("utf-8")) > _MAX_PROTOCOL_ID_BYTES:
-        raise VoiceBridgeProtocolError(f"{name} exceeds the maximum encoded identifier size")
     return value
 
 

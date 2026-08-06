@@ -2,12 +2,6 @@
 
 ## 2.0.0b11 (Unreleased)
 
-### Bugs Fixed
-
-- Included the shared `experimental` decorator in the package distribution. Although listed in the `2.0.0b10` release notes, it was absent from the published `2.0.0b10` artifacts.
-- Added the combined `x-platform-server` header to WebSocket acceptance responses in addition to HTTP responses.
-- Propagated incoming W3C trace context and baggage for the lifetime of WebSocket connections without creating framework-owned spans.
-
 ### Other Changes
 
 - The per-turn task `timeout` hard ceiling was raised from **1 day** to **7 days**. The default when unset is still **1 day**; a supplied value may now raise the per-turn budget up to 7 days. A value greater than 7 days (or a negative value) is still rejected at registration (`ValueError`, fail-fast, not clamped). This remains a per-turn cap only — multi-turn chains still live indefinitely across turns (the budget resets each turn).

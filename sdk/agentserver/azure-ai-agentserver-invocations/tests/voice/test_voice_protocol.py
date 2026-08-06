@@ -198,14 +198,17 @@ def test_user_message_rejects_no_supported_content() -> None:
         )
 
 
-def test_user_message_rejects_oversized_item_id() -> None:
-    with pytest.raises(VoiceBridgeProtocolError, match="maximum encoded identifier size"):
-        parse_user_message(
-            {
-                "item_id": f"in_{'x' * 254}",
-                "content": [{"type": "input_text", "text": "hello"}],
-            }
-        )
+def test_user_message_preserves_long_item_id_for_fixed_digest_accounting() -> None:
+    item_id = f"in_{'x' * 4096}"
+
+    event = parse_user_message(
+        {
+            "item_id": item_id,
+            "content": [{"type": "input_text", "text": "hello"}],
+        }
+    )
+
+    assert event.item_id == item_id
 
 
 def test_response_timeout_supports_response_and_input_batch_shapes() -> None:

@@ -33,7 +33,7 @@ Current-source statements refer to the `azure-sdk-for-python` PR branch. Voice i
 |---|---|
 | Distribution | Preview submodule in `azure-ai-agentserver-invocations`; it shares the parent package version and release artifact. |
 | Host | `VoiceAgentServerHost`, derived from `InvocationAgentServerHost`. |
-| Route | Reuse `/invocations_ws`; no second route or required subprotocol. |
+| Route | Reuse the globally reserved `/invocations_ws`; no second route or required subprotocol. |
 | Dependencies | Parent Invocations host and AgentServer Core only; no media dependency. |
 | Public surface | Frozen inbound models, callbacks, response/item helpers, and session controls. |
 | Wire models | Internal; customer code cannot construct outbound frames. |
@@ -105,7 +105,7 @@ Each accepted socket owns activation context, unresolved inputs, active/recent r
 | Output | Streamed/non-streamed ordered items without `output_index`. | Implemented |
 | Decline/timeout | `response.none` and exclusive response/input-batch timeout forms. | Implemented |
 | Proactive/cancel | Typed admission/drop and cancel/barge-in outcomes. | Implemented |
-| Coordination | Non-blocking receive pump and five-second bounded cleanup. | Implemented |
+| Coordination | Non-blocking receive pump and one five-second absolute teardown deadline. | Implemented |
 | Dedupe | Bounded exact-payload duplicate/tamper tracking. | Implemented |
 | Immutability | Deeply read-only caller metadata and frozen event models. | Implemented |
 | Observability/privacy | Same tracing behavior as raw `invocations_ws`; content-free Voice metrics and wire diagnostics. | Implemented |
@@ -212,7 +212,7 @@ Normal callback return auto-emits `response.done` only after completed output an
 
 `in_reply_to` is an explicit ordered prefix. Initially, one callback receives the unresolved queue head and its helper is bound to `[event.item_id]`; the SDK never adds queued inputs that callback code did not observe. Multi-input batching requires separate APIView approval.
 
-`VoiceSession` exposes read-only startup context, `end_call(reason, mode)`, proactive admission, and sanitized session-error reporting. A proactive response emits `response.created` without `in_reply_to` and remains unwritable until `response.accepted`; `response.dropped` is terminal.
+`VoiceSession` exposes read-only startup context, `end_call(reason, mode)`, proactive admission, and sanitized session-error reporting. A proactive response emits `response.created` without `in_reply_to` and remains unwritable until `response.accepted`; `response.dropped` is terminal. `admission_timeout_ms` is enforced by the Bridge while it waits for a barge-safe point. On expiry the Bridge emits `response.dropped{reason:"no_barge_safe_window"}`. The SDK deliberately does not race that protocol timer with a second local deadline; it waits for the Bridge outcome, connection termination, or caller cancellation.
 
 The bridge still owns one pending proactive slot. During `supersede_key` replacement, the SDK retains a bounded outcome future for both request IDs until the old request is dropped and the replacement is accepted/dropped; this is correlation state, not multiple bridge admission slots.
 
@@ -271,7 +271,21 @@ Every message has non-empty `type`, unique `id`, and RFC 3339 `ts`. Timestamps a
 - Malformed known message, invalid closed enum, or known message in illegal state: reject/close as applicable.
 - Additive fields and unknown open enums: accept with documented safe fallback.
 
-Duplicate and tombstone maps are bounded and connection-scoped. They are not copied to a reattached connection because frames are never replayed.
+Duplicate and tombstone maps are exact, bounded, and connection-scoped. Reaching
+their per-connection or process-wide identity budget fails the connection closed
+instead of evicting history and silently weakening replay detection. They are not
+copied to a reattached connection because frames are never replayed.
+All untrusted identifiers are retained only as binary SHA-256 digests in the
+exact ledgers. Message records pair an ID digest with a canonical-payload digest;
+input and history-operation digests are monotonic. Response terminal,
+playback-outcome, abandoned-admission, and exact output-item ownership state
+share one connection-lifetime ledger rather than separately evictable
+tombstones. Every record reserves a conservative fixed byte cost against one
+connection budget and a process-wide budget; either budget fails closed before
+semantic dispatch or a new output item reaches the wire.
+Pending and late-timeout input routing also uses digest keys. The original wire
+ID remains only in transient callback/response values that must expose or echo
+it; callback queue and customer-task byte budgets account for those values.
 
 | Condition | Close code |
 |---|---:|
@@ -325,10 +339,11 @@ Voice follows the raw `invocations_ws` tracing contract: neither layer creates a
 
 SDK-owned metrics, structured logs, and wire errors exclude transcripts, generated text, greeting/prompt/`heard_text`, caller metadata, DTMF digits, image/SAS references, tool payloads, credentials, and arbitrary exception messages. GenAI content capture remains governed by the parent host's standard observability configuration.
 
-Voice requires no protocol-specific changes to Core. It reuses existing Invocations support for:
+Voice requires no protocol-specific changes to Core. Invocations itself owns:
 
-- actual application-selected close reporting;
+- first-terminal-wins close reporting with confirmed/ambiguous source;
 - package identity on HTTP responses and WebSocket acceptances;
+- connection-lifetime W3C extraction from raw multi-value upgrade headers;
 - structured WebSocket close diagnostics.
 
 ## 8. Compatibility, validation, and open decisions

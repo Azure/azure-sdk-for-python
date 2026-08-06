@@ -13,11 +13,13 @@ import os
 from unittest.mock import patch
 
 import pytest
+from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from azure.ai.agentserver.invocations._invocation_ws import _extract_websocket_context
 
 
 try:
@@ -60,7 +62,9 @@ def _clear():
 
 def _make_server_with_child_span():
     """Server whose handler creates a child span (simulating a framework)."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+    with patch.dict(
+        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
+    ):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
@@ -75,7 +79,9 @@ def _make_server_with_child_span():
 
 def _make_streaming_server_with_child_span():
     """Server with streaming response whose handler creates a child span."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+    with patch.dict(
+        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
+    ):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
@@ -83,8 +89,10 @@ def _make_streaming_server_with_child_span():
     @app.invoke_handler
     async def handle(request: Request) -> StreamingResponse:
         with child_tracer.start_as_current_span("framework_invoke_agent"):
+
             async def generate():
                 yield b"chunk\n"
+
             return StreamingResponse(generate(), media_type="text/plain")
 
     return app
@@ -102,6 +110,42 @@ def _make_websocket_server_with_child_span():
             await websocket.send_text("ready")
 
     return app
+
+
+def test_websocket_context_preserves_split_w3c_headers() -> None:
+    """Invocations owns multi-value extraction for its WebSocket transport."""
+    headers = [
+        (b"traceparent", b"00-00000000000000000000000000000001-0000000000000001-01"),
+        (b"tracestate", b"vendor1=value1"),
+        (b"tracestate", b"vendor2=value2"),
+        (b"Baggage", b"user.id=user-1"),
+        (b"baggage", b"tenant.id=tenant-1"),
+        (b"x-request-id", b""),
+        (b"x-request-id", b"request-1"),
+    ]
+
+    context = _extract_websocket_context(headers)
+    token = _otel_context.attach(context)
+    try:
+        span_context = trace.get_current_span().get_span_context()
+        assert list(span_context.trace_state.items()) == [("vendor1", "value1"), ("vendor2", "value2")]
+        assert _otel_baggage.get_baggage("user.id") == "user-1"
+        assert _otel_baggage.get_baggage("tenant.id") == "tenant-1"
+        assert _otel_baggage.get_baggage("x_request_id") == "request-1"
+    finally:
+        _otel_context.detach(token)
+
+
+def test_websocket_context_rejects_duplicate_traceparent() -> None:
+    """Ambiguous duplicate parent fields never select one caller trace."""
+    traceparent = b"00-00000000000000000000000000000001-0000000000000001-01"
+
+    context = _extract_websocket_context([(b"traceparent", traceparent), (b"TraceParent", traceparent)])
+    token = _otel_context.attach(context)
+    try:
+        assert not trace.get_current_span().get_span_context().is_valid
+    finally:
+        _otel_context.detach(token)
 
 
 def test_framework_span_parented_under_incoming_traceparent():
@@ -226,7 +270,9 @@ def test_handler_span_is_child_of_real_caller_span():
     """
     from opentelemetry.propagate import inject
 
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+    with patch.dict(
+        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
+    ):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             app = InvocationAgentServerHost()
 
@@ -257,20 +303,16 @@ def test_handler_span_is_child_of_real_caller_span():
     spans = _EXPORTER.get_finished_spans()
     span_by_name = {s.name: s for s in spans}
 
-    assert "CallerOperation" in span_by_name, (
-        f"Caller span not found. Spans: {[s.name for s in spans]}"
-    )
-    assert "HandleInvocation" in span_by_name, (
-        f"Handler span not found. Spans: {[s.name for s in spans]}"
-    )
+    assert "CallerOperation" in span_by_name, f"Caller span not found. Spans: {[s.name for s in spans]}"
+    assert "HandleInvocation" in span_by_name, f"Handler span not found. Spans: {[s.name for s in spans]}"
 
     caller = span_by_name["CallerOperation"]
     handler = span_by_name["HandleInvocation"]
 
     # Handler span must share the same trace ID as the caller
-    assert format(handler.context.trace_id, "032x") == caller_trace_id, (
-        "Handler span has a different trace ID — trace context was not propagated"
-    )
+    assert (
+        format(handler.context.trace_id, "032x") == caller_trace_id
+    ), "Handler span has a different trace ID — trace context was not propagated"
 
     # Handler span must be a child of the caller span
     assert handler.parent is not None, "Handler span has no parent"

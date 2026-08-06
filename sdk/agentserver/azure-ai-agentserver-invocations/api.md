@@ -6,11 +6,11 @@ namespace azure.ai.agentserver.invocations
         property ws_ping_interval: float    # Read-only
 
         def __init__(
-                self, 
-                *, 
-                asyncapi_spec_json: Optional[dict[str, Any]] = ..., 
-                asyncapi_spec_yaml: Optional[str] = ..., 
-                openapi_spec: Optional[dict[str, Any]] = ..., 
+                self,
+                *,
+                asyncapi_spec_json: Optional[dict[str, Any]] = ...,
+                asyncapi_spec_yaml: Optional[str] = ...,
+                openapi_spec: Optional[dict[str, Any]] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -31,6 +31,7 @@ namespace azure.ai.agentserver.invocations
 
 namespace azure.ai.agentserver.invocations.voice
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.BargeInEvent:
         heard_text: str
@@ -44,8 +45,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                response_id: str, 
-                heard_text: str, 
+                response_id: str,
+                heard_text: str,
                 item_id: str | None
             ) -> None: ...
 
@@ -54,6 +55,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.ConversationHistoryItem:
         content: tuple[Union[InputTextPart, InputImagePart], Ellipsis]
@@ -73,6 +75,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.ConversationItemCreateEvent:
         item: ConversationHistoryItem
@@ -86,8 +89,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                request_id: str, 
-                item: ConversationHistoryItem, 
+                request_id: str,
+                item: ConversationHistoryItem,
                 previous_item_id: str | None
             ) -> None: ...
 
@@ -96,6 +99,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.ConversationItemDeleteEvent:
         item_id: str
@@ -114,6 +118,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.DtmfCollectedEvent:
         collection_id: str
@@ -128,9 +133,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                item_id: str, 
-                collection_id: str, 
-                digits: str, 
+                item_id: str,
+                collection_id: str,
+                digits: str,
                 completion_reason: str
             ) -> None: ...
 
@@ -139,6 +144,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.DtmfCollectionCancelledEvent:
         collection_id: str
@@ -157,6 +163,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.DtmfCollectionRejectedEvent:
         collection_id: str
@@ -175,6 +182,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.DtmfKeyEvent:
         digit: str
@@ -192,6 +200,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.HandoffFailedEvent:
         code: str
@@ -206,9 +215,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                item_id: str, 
-                target: str, 
-                code: str, 
+                item_id: str,
+                target: str,
+                code: str,
                 message: str | None
             ) -> None: ...
 
@@ -217,6 +226,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.InputImagePart:
         alt: Optional[str]
@@ -231,8 +241,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                image_ref: str, 
-                mime_type: str, 
+                image_ref: str,
+                mime_type: str,
                 alt: str | None
             ) -> None: ...
 
@@ -241,6 +251,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.InputTextPart:
         text: str
@@ -259,6 +270,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.ResponseCancellationOutcome:
         heard_text: str
@@ -273,9 +285,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                response_id: str, 
-                kind: Literal, 
-                heard_text: str, 
+                response_id: str,
+                kind: Literal,
+                heard_text: str,
                 item_id: str | None
             ) -> None: ...
 
@@ -284,6 +296,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.ResponseTimeoutEvent:
         item_ids: Optional[tuple[str, Ellipsis]]
@@ -297,8 +310,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                stage: str, 
-                response_id: str | None, 
+                stage: str,
+                response_id: str | None,
                 item_ids: tuple
             ) -> None: ...
 
@@ -307,6 +320,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.ResponseTimeouts:
         first_output_ms: int
@@ -320,8 +334,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                first_output_ms: int, 
-                idle_ms: int, 
+                first_output_ms: int,
+                idle_ms: int,
                 max_duration_ms: int
             ) -> None: ...
 
@@ -330,6 +344,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.SessionEndEvent:
         reason: str
@@ -347,6 +362,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.SessionStartEvent:
         caller: Optional[Mapping[str, Any]]
@@ -363,11 +379,11 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                protocol_version: str, 
-                reconnect: bool, 
-                response_timeouts: ResponseTimeouts, 
-                greeting: str | None, 
-                no_input_timeout_ms: int | None, 
+                protocol_version: str,
+                reconnect: bool,
+                response_timeouts: ResponseTimeouts,
+                greeting: str | None,
+                no_input_timeout_ms: int | None,
                 caller: Mapping
             ) -> None: ...
 
@@ -376,6 +392,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.UserMessageEvent:
         property text: str    # Read-only
@@ -395,6 +412,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.UserNoInputEvent:
         count: int
@@ -413,6 +431,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.UserSpeechStartedEvent:
 
@@ -429,6 +448,7 @@ namespace azure.ai.agentserver.invocations.voice
         def __setattr__() -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.invocations.voice.VoiceAgentServerHost(InvocationAgentServerHost):
         property routes: list[BaseRoute]    # Read-only
         property ws_ping_interval: float    # Read-only
@@ -478,19 +498,22 @@ namespace azure.ai.agentserver.invocations.voice
         def ws_handler(self, fn: Any) -> Any: ...
 
 
+    @experimental
     class azure.ai.agentserver.invocations.voice.VoiceBridgeConnectionClosedError(RuntimeError):
 
 
+    @experimental
     class azure.ai.agentserver.invocations.voice.VoiceBridgeProtocolError(ValueError):
 
         def __init__(
-                self, 
-                message: str, 
-                *, 
+                self,
+                message: str,
+                *,
                 close_code: int = 1002
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.invocations.voice.VoiceCancellationToken:
         property is_cancelled: bool    # Read-only
 
@@ -499,15 +522,17 @@ namespace azure.ai.agentserver.invocations.voice
         async def wait(self) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.invocations.voice.VoiceProactiveResponseDroppedError(RuntimeError):
 
         def __init__(
-                self, 
-                response_id: str, 
+                self,
+                response_id: str,
                 reason: str
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.invocations.voice.VoiceResponse:
         property cancellation: VoiceCancellationToken    # Read-only
         property in_reply_to: tuple[str, ] | None    # Read-only
@@ -519,65 +544,66 @@ namespace azure.ai.agentserver.invocations.voice
         def __init__(self) -> None: ...
 
         async def cancel(
-                self, 
-                *, 
+                self,
+                *,
                 reason: str | None = ...
             ) -> ResponseCancellationOutcome: ...
 
         async def collect_dtmf(
-                self, 
-                *, 
-                initial_timeout_ms: int, 
-                inter_digit_timeout_ms: int, 
-                max_digits: int, 
+                self,
+                *,
+                initial_timeout_ms: int,
+                inter_digit_timeout_ms: int,
+                max_digits: int,
                 terminator: str | None = ...
             ) -> str: ...
 
         async def decline(
-                self, 
-                *, 
+                self,
+                *,
                 reason: str | None = ...
             ) -> None: ...
 
         async def done(self) -> None: ...
 
         async def fail(
-                self, 
-                *, 
-                code: str, 
+                self,
+                *,
+                code: str,
                 message: str
             ) -> None: ...
 
         async def handoff(
-                self, 
-                *, 
-                message: str | None = ..., 
+                self,
+                *,
+                message: str | None = ...,
                 target: str
             ) -> None: ...
 
         def new_text_item(self) -> VoiceTextItem: ...
 
         async def send_text(
-                self, 
-                text: str, 
-                *, 
+                self,
+                text: str,
+                *,
                 voice: Mapping[str, Any] | None = ...
             ) -> None: ...
 
         async def send_text_delta(
-                self, 
-                delta: str, 
-                *, 
+                self,
+                delta: str,
+                *,
                 voice: Mapping[str, Any] | None = ...
             ) -> None: ...
 
         async def send_text_done(
-                self, 
-                *, 
+                self,
+                *,
                 voice: Mapping[str, Any] | None = ...
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.invocations.voice.VoiceSession:
         property caller: Mapping[str, Any] | None    # Read-only
         property greeting: str | None    # Read-only
@@ -590,49 +616,50 @@ namespace azure.ai.agentserver.invocations.voice
         async def cancel_dtmf_collection(self, collection_id: str) -> None: ...
 
         async def end_call(
-                self, 
-                *, 
-                mode: Literal["drain", "immediate"] = "drain", 
+                self,
+                *,
+                mode: Literal["drain", "immediate"] = "drain",
                 reason: str
             ) -> None: ...
 
         async def report_error(
-                self, 
-                *, 
-                code: str, 
+                self,
+                *,
+                code: str,
                 message: str
             ) -> None: ...
 
         async def start_proactive_response(
-                self, 
-                *, 
-                admission_timeout_ms: int = 60000, 
+                self,
+                *,
+                admission_timeout_ms: int = 60000,
                 supersede_key: str | None = ...
             ) -> VoiceResponse: ...
 
 
+    @experimental
     class azure.ai.agentserver.invocations.voice.VoiceTextItem:
         property item_id: str    # Read-only
 
         def __init__(self) -> None: ...
 
         async def send_text(
-                self, 
-                text: str, 
-                *, 
+                self,
+                text: str,
+                *,
                 voice: Mapping[str, Any] | None = ...
             ) -> None: ...
 
         async def send_text_delta(
-                self, 
-                delta: str, 
-                *, 
+                self,
+                delta: str,
+                *,
                 voice: Mapping[str, Any] | None = ...
             ) -> None: ...
 
         async def send_text_done(
-                self, 
-                *, 
+                self,
+                *,
                 voice: Mapping[str, Any] | None = ...
             ) -> None: ...
 
