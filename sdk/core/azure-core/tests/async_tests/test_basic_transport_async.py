@@ -1093,7 +1093,7 @@ async def test_aiohttp_timeout_request(http_request):
     async with AioHttpTransport() as transport:
         transport.session._connector.connect = mock.Mock(side_effect=asyncio.TimeoutError("Too slow!"))
 
-        request = http_request("GET", f"http://localhost:12345/basic/string")
+        request = http_request("GET", "http://localhost:12345/basic/string")
 
         # aiohttp 3.10 introduced separate connection timeout
         if Version(aiohttp.__version__) >= Version("3.10"):
@@ -1103,7 +1103,7 @@ async def test_aiohttp_timeout_request(http_request):
             with pytest.raises(ServiceRequestError) as err:
                 await transport.send(request)
 
-            stream_request = http_request("GET", f"http://localhost:12345/streams/basic")
+            stream_request = http_request("GET", "http://localhost:12345/streams/basic")
             with pytest.raises(ServiceRequestTimeoutError) as err:
                 await transport.send(stream_request, stream=True)
 
@@ -1114,6 +1114,6 @@ async def test_aiohttp_timeout_request(http_request):
             with pytest.raises(ServiceResponseError) as err:
                 await transport.send(request)
 
-            stream_request = http_request("GET", f"http://localhost:12345/streams/basic")
+            stream_request = http_request("GET", "http://localhost:12345/streams/basic")
             with pytest.raises(ServiceResponseTimeoutError) as err:
                 await transport.send(stream_request, stream=True)

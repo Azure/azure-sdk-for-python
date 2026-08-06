@@ -344,7 +344,7 @@ def test_configure_retries_uses_constructor_values():
     assert retry_settings["max_backoff"] == 60
     assert retry_settings["timeout"] == 300
     assert retry_settings["methods"] == frozenset(["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]
 
 
 def test_configure_retries_options_override_constructor():
@@ -382,7 +382,7 @@ def test_configure_retries_options_override_constructor():
     assert retry_settings["max_backoff"] == 180
     assert retry_settings["timeout"] == 600
     assert retry_settings["methods"] == frozenset(["GET", "POST"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]
 
     # Verify options dict was modified (values were popped)
     assert "retry_total" not in options
@@ -412,4 +412,4 @@ def test_configure_retries_default_values():
     assert retry_settings["max_backoff"] == 120  # default retry_backoff_max (BACKOFF_MAX)
     assert retry_settings["timeout"] == 604800  # default timeout
     assert retry_settings["methods"] == frozenset(["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]

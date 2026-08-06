@@ -242,8 +242,8 @@ class TestExceptions(object):
         assert exp.code == "501"
         assert exp.message == "Unsupported functionality"
         assert exp.target is None
-        assert exp.details == []
-        assert exp.innererror == {}
+        assert not exp.details
+        assert not exp.innererror
 
     @pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
     def test_broken_odata_details(self, mock_response):
