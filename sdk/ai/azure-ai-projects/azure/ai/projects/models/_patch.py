@@ -8,7 +8,8 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
+from dataclasses import MISSING, dataclass, fields
+from typing import Final, FrozenSet, Generic, List, Dict, Mapping, Optional, Any, Tuple, Type, TypeVar, cast
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -385,6 +386,85 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
 
         return cls(client, initial_response, deserialization_callback, polling_method)
 
+TResult = TypeVar("TResult")
+TJob = TypeVar("TJob")
+
+
+@dataclass
+class DatasetGenerationJob:
+    id: str
+
+
+@dataclass
+class EvaluatorGenerationJob:
+    id: str
+
+
+@dataclass
+class OptimizationJob:
+    id: str
+
+
+class AdvanceLROPoller(LROPoller[TResult], Generic[TResult, TJob]):
+    _job_type: Type[TJob]
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        self._job = self._get_job(initial_response)
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+
+    def _get_job(self, initial_response: Any) -> TJob:
+        try:
+            payload = initial_response.http_response.json()
+        except (AttributeError, TypeError, ValueError) as exc:
+            raise ValueError("Failed to read job details from initial response.") from exc
+
+        if not isinstance(payload, Mapping):
+            raise ValueError("Failed to read job details from initial response.")
+
+        job_kwargs = {}
+        missing_fields = []
+        for field in fields(cast(Any, self._job_type)):
+            if field.name in payload:
+                job_kwargs[field.name] = payload[field.name]
+            elif field.default is MISSING and field.default_factory is MISSING:
+                missing_fields.append(field.name)
+
+        if missing_fields:
+            missing_field_list = ", ".join(missing_fields)
+            raise ValueError(f"Failed to extract required job fields from initial response: {missing_field_list}")
+
+        return self._job_type(**job_kwargs)
+
+    @property
+    def details(self) -> TJob:
+        """Returns metadata associated with the long-running operation.
+
+        The returned job model is populated from matching fields in the initial HTTP response.
+
+        :return: A job model populated from the initial response payload.
+        :rtype: TJob
+        """
+        return self._job
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[TResult], continuation_token: str, **kwargs: Any
+    ) -> "AdvanceLROPoller[TResult, TJob]":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AdvanceLROPoller.
+        :rtype: AdvanceLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
 
 class DatasetGenerationLROPoller(LROPoller[DataGenerationJobResult]):
     """Custom LROPoller for data generation job operations."""
@@ -648,6 +728,7 @@ __all__: List[str] = [
     "ToolDescriptionParam",
     "TracesPreviewEvalRunDataSource",
     "UpdateMemoriesLROPoller",
+    "AdvanceLROPoller"
 ]  # Add all objects you want publicly available to users at this package level
 
 

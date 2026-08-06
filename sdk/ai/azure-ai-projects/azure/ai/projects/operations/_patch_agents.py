@@ -24,9 +24,11 @@ from ._operations import (
 )
 from .. import models as _models
 from .._utils.model_base import _deserialize
-from ..models import AgentOptimizationLROPoller
+from ..models import AdvanceLROPoller
 from ..models._patch import (
+    OptimizationJobResult,
     _FOUNDRY_FEATURES_HEADER_NAME,
+    OptimizationJob,
     _has_header_case_insensitive,
     _AGENT_OPERATION_FEATURE_HEADERS,
     _PREVIEW_FEATURE_REQUIRED_CODE,
@@ -370,7 +372,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> AgentOptimizationLROPoller: ...
+    ) -> AdvanceLROPoller[OptimizationJobResult, OptimizationJob]: ...
 
     @overload
     def begin_create_optimization_job(
@@ -380,7 +382,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> AgentOptimizationLROPoller: ...
+    ) -> AdvanceLROPoller[OptimizationJobResult, OptimizationJob]: ...
 
     @overload
     def begin_create_optimization_job(
@@ -390,7 +392,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> AgentOptimizationLROPoller: ...
+    ) -> AdvanceLROPoller[OptimizationJobResult, OptimizationJob]: ...
 
     @distributed_trace
     def begin_create_optimization_job(
@@ -399,7 +401,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
-    ) -> AgentOptimizationLROPoller:
+    ) -> AdvanceLROPoller[OptimizationJobResult, OptimizationJob]:
         """Create an agent optimization job.
 
         :param job: The job to create. Required.
@@ -408,7 +410,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :return: A poller that returns OptimizationJobResult and exposes the job ID in ``details``.
-        :rtype: ~azure.ai.projects.models.AgentOptimizationLROPoller
+        :rtype: ~azure.ai.projects.models.AdvanceLROPoller[OptimizationJobResult, OptimizationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -451,19 +453,19 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
         }
 
         if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            polling_method: PollingMethod[OptimizationJobResult] = cast(
+                PollingMethod[OptimizationJobResult], LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
             )
         elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
+            polling_method = cast(PollingMethod[OptimizationJobResult], NoPolling())
         else:
             polling_method = polling
         if continuation_token:
-            return AgentOptimizationLROPoller.from_continuation_token(
+            return AdvanceLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=continuation_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
         assert raw_result is not None
-        return AgentOptimizationLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AdvanceLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
