@@ -31,14 +31,13 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import KeyVaultClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC
 from .._validation import api_version_validation
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -51,7 +50,7 @@ def build_role_definitions_delete_request(scope: str, role_definition_name: str,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -79,7 +78,7 @@ def build_role_definitions_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -106,7 +105,7 @@ def build_role_definitions_get_request(scope: str, role_definition_name: str, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +130,7 @@ def build_role_definitions_list_request(scope: str, *, filter: Optional[str] = N
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -157,7 +156,7 @@ def build_role_assignments_delete_request(scope: str, role_assignment_name: str,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -183,7 +182,7 @@ def build_role_assignments_create_request(scope: str, role_assignment_name: str,
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -210,7 +209,7 @@ def build_role_assignments_get_request(scope: str, role_assignment_name: str, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -237,7 +236,7 @@ def build_role_assignments_list_for_scope_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -265,7 +264,7 @@ def build_key_vault_full_backup_status_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -290,7 +289,7 @@ def build_key_vault_full_backup_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -312,7 +311,7 @@ def build_key_vault_pre_full_backup_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -333,7 +332,7 @@ def build_key_vault_restore_status_request(job_id: str, **kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -358,7 +357,7 @@ def build_key_vault_full_restore_operation_request(**kwargs: Any) -> HttpRequest
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -380,7 +379,7 @@ def build_key_vault_pre_full_restore_operation_request(**kwargs: Any) -> HttpReq
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -403,7 +402,7 @@ def build_key_vault_selective_key_restore_status_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -430,7 +429,7 @@ def build_key_vault_selective_key_restore_operation_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -457,7 +456,7 @@ def build_key_vault_update_setting_request(setting_name: str, **kwargs: Any) -> 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -483,7 +482,7 @@ def build_key_vault_get_setting_request(setting_name: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -507,7 +506,7 @@ def build_key_vault_get_settings_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -526,7 +525,7 @@ def build_key_vault_get_ekm_connection_request(**kwargs: Any) -> HttpRequest:  #
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -545,7 +544,7 @@ def build_key_vault_get_ekm_certificate_request(**kwargs: Any) -> HttpRequest:  
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -564,7 +563,7 @@ def build_key_vault_check_ekm_connection_request(**kwargs: Any) -> HttpRequest: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -584,7 +583,7 @@ def build_key_vault_create_ekm_connection_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -606,7 +605,7 @@ def build_key_vault_update_ekm_connection_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -627,7 +626,7 @@ def build_key_vault_delete_ekm_connection_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -642,7 +641,133 @@ def build_key_vault_delete_ekm_connection_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class RoleDefinitionsOperations:
+def build_key_vault_get_ekm_private_endpoint_operation_status_request(  # pylint: disable=name-too-long
+    operation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ekm/privateendpoint/operations/{operationId}"
+    path_format_arguments = {
+        "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_key_vault_create_ekm_private_endpoint_request(  # pylint: disable=name-too-long
+    pe_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ekm/privateendpoint/{peName}"
+    path_format_arguments = {
+        "peName": _SERIALIZER.url("pe_name", pe_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_key_vault_delete_ekm_private_endpoint_request(  # pylint: disable=name-too-long
+    pe_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ekm/privateendpoint/{peName}"
+    path_format_arguments = {
+        "peName": _SERIALIZER.url("pe_name", pe_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_key_vault_get_ekm_private_endpoint_request(  # pylint: disable=name-too-long
+    pe_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ekm/privateendpoint/{peName}"
+    path_format_arguments = {
+        "peName": _SERIALIZER.url("pe_name", pe_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_key_vault_list_ekm_private_endpoints_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ekm/privateendpoint"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class RoleDefinitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -764,7 +889,7 @@ class RoleDefinitionsOperations:
         self,
         scope: str,
         role_definition_name: str,
-        parameters: JSON,
+        parameters: _types.RoleDefinitionCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -778,7 +903,8 @@ class RoleDefinitionsOperations:
          valid GUID. Required.
         :type role_definition_name: str
         :param parameters: Parameters for the role definition. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.keyvault.administration._generated.types.RoleDefinitionCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -820,7 +946,7 @@ class RoleDefinitionsOperations:
         self,
         scope: str,
         role_definition_name: str,
-        parameters: Union[_models.RoleDefinitionCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.RoleDefinitionCreateParameters, _types.RoleDefinitionCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.RoleDefinition:
         """Creates or updates a custom role definition.
@@ -831,11 +957,11 @@ class RoleDefinitionsOperations:
         :param role_definition_name: The name of the role definition to create or update. It can be any
          valid GUID. Required.
         :type role_definition_name: str
-        :param parameters: Parameters for the role definition. Is one of the following types:
-         RoleDefinitionCreateParameters, JSON, IO[bytes] Required.
+        :param parameters: Parameters for the role definition. Is either a
+         RoleDefinitionCreateParameters type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.keyvault.administration._generated.models.RoleDefinitionCreateParameters or JSON or
-         IO[bytes]
+         ~azure.keyvault.administration._generated.models.RoleDefinitionCreateParameters or
+         ~azure.keyvault.administration._generated.types.RoleDefinitionCreateParameters or IO[bytes]
         :return: RoleDefinition. The RoleDefinition is compatible with MutableMapping
         :rtype: ~azure.keyvault.administration._generated.models.RoleDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1079,7 +1205,7 @@ class RoleDefinitionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RoleAssignmentsOperations:
+class RoleAssignmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1199,7 +1325,7 @@ class RoleAssignmentsOperations:
         self,
         scope: str,
         role_assignment_name: str,
-        parameters: JSON,
+        parameters: _types.RoleAssignmentCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1212,7 +1338,8 @@ class RoleAssignmentsOperations:
          GUID. Required.
         :type role_assignment_name: str
         :param parameters: Parameters for the role assignment. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.keyvault.administration._generated.types.RoleAssignmentCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1253,7 +1380,7 @@ class RoleAssignmentsOperations:
         self,
         scope: str,
         role_assignment_name: str,
-        parameters: Union[_models.RoleAssignmentCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.RoleAssignmentCreateParameters, _types.RoleAssignmentCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.RoleAssignment:
         """Creates a role assignment.
@@ -1263,11 +1390,11 @@ class RoleAssignmentsOperations:
         :param role_assignment_name: The name of the role assignment to create. It can be any valid
          GUID. Required.
         :type role_assignment_name: str
-        :param parameters: Parameters for the role assignment. Is one of the following types:
-         RoleAssignmentCreateParameters, JSON, IO[bytes] Required.
+        :param parameters: Parameters for the role assignment. Is either a
+         RoleAssignmentCreateParameters type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.keyvault.administration._generated.models.RoleAssignmentCreateParameters or JSON or
-         IO[bytes]
+         ~azure.keyvault.administration._generated.models.RoleAssignmentCreateParameters or
+         ~azure.keyvault.administration._generated.types.RoleAssignmentCreateParameters or IO[bytes]
         :return: RoleAssignment. The RoleAssignment is compatible with MutableMapping
         :rtype: ~azure.keyvault.administration._generated.models.RoleAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1586,7 +1713,9 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     def _full_backup_initial(
-        self, azure_storage_blob_container_uri: Union[_models.SASTokenParameter, JSON, IO[bytes]], **kwargs: Any
+        self,
+        azure_storage_blob_container_uri: Union[_models.SASTokenParameter, _types.SASTokenParameter, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1683,14 +1812,19 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     def begin_full_backup(
-        self, azure_storage_blob_container_uri: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        azure_storage_blob_container_uri: _types.SASTokenParameter,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.FullBackupOperation]:
         """Creates a full backup using a user-provided SAS token to an Azure blob storage container.
 
         :param azure_storage_blob_container_uri: Azure blob shared access signature token pointing to a
          valid Azure blob container where full backup needs to be stored. This token needs to be valid
          for at least next 24 hours from the time of making this call. Required.
-        :type azure_storage_blob_container_uri: JSON
+        :type azure_storage_blob_container_uri:
+         ~azure.keyvault.administration._generated.types.SASTokenParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1723,16 +1857,19 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_full_backup(
-        self, azure_storage_blob_container_uri: Union[_models.SASTokenParameter, JSON, IO[bytes]], **kwargs: Any
+        self,
+        azure_storage_blob_container_uri: Union[_models.SASTokenParameter, _types.SASTokenParameter, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.FullBackupOperation]:
         """Creates a full backup using a user-provided SAS token to an Azure blob storage container.
 
         :param azure_storage_blob_container_uri: Azure blob shared access signature token pointing to a
          valid Azure blob container where full backup needs to be stored. This token needs to be valid
-         for at least next 24 hours from the time of making this call. Is one of the following types:
-         SASTokenParameter, JSON, IO[bytes] Required.
+         for at least next 24 hours from the time of making this call. Is either a SASTokenParameter
+         type or a IO[bytes] type. Required.
         :type azure_storage_blob_container_uri:
-         ~azure.keyvault.administration._generated.models.SASTokenParameter or JSON or IO[bytes]
+         ~azure.keyvault.administration._generated.models.SASTokenParameter or
+         ~azure.keyvault.administration._generated.types.SASTokenParameter or IO[bytes]
         :return: An instance of LROPoller that returns FullBackupOperation. The FullBackupOperation is
          compatible with MutableMapping
         :rtype:
@@ -1800,11 +1937,22 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="7.6-preview.2",
         params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
-        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01", "2026-01-01-preview"],
+        api_versions_list=[
+            "7.6-preview.2",
+            "7.6",
+            "2025-06-01-preview",
+            "2025-07-01",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def _pre_full_backup_initial(
         self,
-        pre_backup_operation_parameters: Union[_models.PreBackupOperationParameters, JSON, IO[bytes]],
+        pre_backup_operation_parameters: Union[
+            _models.PreBackupOperationParameters, _types.PreBackupOperationParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1901,13 +2049,18 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     def begin_pre_full_backup(
-        self, pre_backup_operation_parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        pre_backup_operation_parameters: _types.PreBackupOperationParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.FullBackupOperation]:
         """Pre-backup operation for checking whether the customer can perform a full backup operation.
 
         :param pre_backup_operation_parameters: Optional parameters to validate prior to performing a
          full backup operation. Required.
-        :type pre_backup_operation_parameters: JSON
+        :type pre_backup_operation_parameters:
+         ~azure.keyvault.administration._generated.types.PreBackupOperationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1941,21 +2094,32 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="7.6-preview.2",
         params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
-        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01", "2026-01-01-preview"],
+        api_versions_list=[
+            "7.6-preview.2",
+            "7.6",
+            "2025-06-01-preview",
+            "2025-07-01",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def begin_pre_full_backup(
         self,
-        pre_backup_operation_parameters: Union[_models.PreBackupOperationParameters, JSON, IO[bytes]],
+        pre_backup_operation_parameters: Union[
+            _models.PreBackupOperationParameters, _types.PreBackupOperationParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.FullBackupOperation]:
         """Pre-backup operation for checking whether the customer can perform a full backup operation.
 
         :param pre_backup_operation_parameters: Optional parameters to validate prior to performing a
-         full backup operation. Is one of the following types: PreBackupOperationParameters, JSON,
-         IO[bytes] Required.
+         full backup operation. Is either a PreBackupOperationParameters type or a IO[bytes] type.
+         Required.
         :type pre_backup_operation_parameters:
-         ~azure.keyvault.administration._generated.models.PreBackupOperationParameters or JSON or
-         IO[bytes]
+         ~azure.keyvault.administration._generated.models.PreBackupOperationParameters or
+         ~azure.keyvault.administration._generated.types.PreBackupOperationParameters or IO[bytes]
         :return: An instance of LROPoller that returns FullBackupOperation. The FullBackupOperation is
          compatible with MutableMapping
         :rtype:
@@ -2088,7 +2252,9 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     def _full_restore_operation_initial(
-        self, restore_blob_details: Union[_models.RestoreOperationParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        restore_blob_details: Union[_models.RestoreOperationParameters, _types.RestoreOperationParameters, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2185,14 +2351,19 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     def begin_full_restore_operation(
-        self, restore_blob_details: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        restore_blob_details: _types.RestoreOperationParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.RestoreOperation]:
         """Restores all key materials using the SAS token pointing to a previously stored Azure Blob
         storage backup folder.
 
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
          successful full backup was stored. Required.
-        :type restore_blob_details: JSON
+        :type restore_blob_details:
+         ~azure.keyvault.administration._generated.types.RestoreOperationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2225,17 +2396,19 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_full_restore_operation(
-        self, restore_blob_details: Union[_models.RestoreOperationParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        restore_blob_details: Union[_models.RestoreOperationParameters, _types.RestoreOperationParameters, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.RestoreOperation]:
         """Restores all key materials using the SAS token pointing to a previously stored Azure Blob
         storage backup folder.
 
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
-         successful full backup was stored. Is one of the following types: RestoreOperationParameters,
-         JSON, IO[bytes] Required.
+         successful full backup was stored. Is either a RestoreOperationParameters type or a IO[bytes]
+         type. Required.
         :type restore_blob_details:
-         ~azure.keyvault.administration._generated.models.RestoreOperationParameters or JSON or
-         IO[bytes]
+         ~azure.keyvault.administration._generated.models.RestoreOperationParameters or
+         ~azure.keyvault.administration._generated.types.RestoreOperationParameters or IO[bytes]
         :return: An instance of LROPoller that returns RestoreOperation. The RestoreOperation is
          compatible with MutableMapping
         :rtype:
@@ -2303,11 +2476,22 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="7.6-preview.2",
         params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
-        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01", "2026-01-01-preview"],
+        api_versions_list=[
+            "7.6-preview.2",
+            "7.6",
+            "2025-06-01-preview",
+            "2025-07-01",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def _pre_full_restore_operation_initial(
         self,
-        pre_restore_operation_parameters: Union[_models.PreRestoreOperationParameters, JSON, IO[bytes]],
+        pre_restore_operation_parameters: Union[
+            _models.PreRestoreOperationParameters, _types.PreRestoreOperationParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2404,13 +2588,18 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     def begin_pre_full_restore_operation(
-        self, pre_restore_operation_parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        pre_restore_operation_parameters: _types.PreRestoreOperationParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.RestoreOperation]:
         """Pre-restore operation for checking whether the customer can perform a full restore operation.
 
         :param pre_restore_operation_parameters: Optional pre restore parameters to validate prior to
          performing a full restore operation. Required.
-        :type pre_restore_operation_parameters: JSON
+        :type pre_restore_operation_parameters:
+         ~azure.keyvault.administration._generated.types.PreRestoreOperationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2444,21 +2633,32 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="7.6-preview.2",
         params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
-        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01", "2026-01-01-preview"],
+        api_versions_list=[
+            "7.6-preview.2",
+            "7.6",
+            "2025-06-01-preview",
+            "2025-07-01",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def begin_pre_full_restore_operation(
         self,
-        pre_restore_operation_parameters: Union[_models.PreRestoreOperationParameters, JSON, IO[bytes]],
+        pre_restore_operation_parameters: Union[
+            _models.PreRestoreOperationParameters, _types.PreRestoreOperationParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.RestoreOperation]:
         """Pre-restore operation for checking whether the customer can perform a full restore operation.
 
         :param pre_restore_operation_parameters: Optional pre restore parameters to validate prior to
-         performing a full restore operation. Is one of the following types:
-         PreRestoreOperationParameters, JSON, IO[bytes] Required.
+         performing a full restore operation. Is either a PreRestoreOperationParameters type or a
+         IO[bytes] type. Required.
         :type pre_restore_operation_parameters:
-         ~azure.keyvault.administration._generated.models.PreRestoreOperationParameters or JSON or
-         IO[bytes]
+         ~azure.keyvault.administration._generated.models.PreRestoreOperationParameters or
+         ~azure.keyvault.administration._generated.types.PreRestoreOperationParameters or IO[bytes]
         :return: An instance of LROPoller that returns RestoreOperation. The RestoreOperation is
          compatible with MutableMapping
         :rtype:
@@ -2594,7 +2794,9 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def _selective_key_restore_operation_initial(
         self,
         key_name: str,
-        restore_blob_details: Union[_models.SelectiveKeyRestoreOperationParameters, JSON, IO[bytes]],
+        restore_blob_details: Union[
+            _models.SelectiveKeyRestoreOperationParameters, _types.SelectiveKeyRestoreOperationParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2696,7 +2898,12 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     def begin_selective_key_restore_operation(
-        self, key_name: str, restore_blob_details: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        key_name: str,
+        restore_blob_details: _types.SelectiveKeyRestoreOperationParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.SelectiveKeyRestoreOperation]:
         """Restores all key versions of a given key using user supplied SAS token pointing to a previously
         stored Azure Blob storage backup folder.
@@ -2705,7 +2912,8 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type key_name: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
          successful full backup was stored. Required.
-        :type restore_blob_details: JSON
+        :type restore_blob_details:
+         ~azure.keyvault.administration._generated.types.SelectiveKeyRestoreOperationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2742,7 +2950,9 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def begin_selective_key_restore_operation(
         self,
         key_name: str,
-        restore_blob_details: Union[_models.SelectiveKeyRestoreOperationParameters, JSON, IO[bytes]],
+        restore_blob_details: Union[
+            _models.SelectiveKeyRestoreOperationParameters, _types.SelectiveKeyRestoreOperationParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.SelectiveKeyRestoreOperation]:
         """Restores all key versions of a given key using user supplied SAS token pointing to a previously
@@ -2751,11 +2961,12 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param key_name: The name of the key to be restored from the user supplied backup. Required.
         :type key_name: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
-         successful full backup was stored. Is one of the following types:
-         SelectiveKeyRestoreOperationParameters, JSON, IO[bytes] Required.
+         successful full backup was stored. Is either a SelectiveKeyRestoreOperationParameters type or a
+         IO[bytes] type. Required.
         :type restore_blob_details:
-         ~azure.keyvault.administration._generated.models.SelectiveKeyRestoreOperationParameters or JSON
-         or IO[bytes]
+         ~azure.keyvault.administration._generated.models.SelectiveKeyRestoreOperationParameters or
+         ~azure.keyvault.administration._generated.types.SelectiveKeyRestoreOperationParameters or
+         IO[bytes]
         :return: An instance of LROPoller that returns SelectiveKeyRestoreOperation. The
          SelectiveKeyRestoreOperation is compatible with MutableMapping
         :rtype:
@@ -2850,7 +3061,12 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     def update_setting(
-        self, setting_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        setting_name: str,
+        parameters: _types.UpdateSettingRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Setting:
         """Updates key vault account setting, stores it, then returns the setting name and value to the
         client.
@@ -2861,7 +3077,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
          Required.
         :type setting_name: str
         :param parameters: The parameters to update an account setting. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.keyvault.administration._generated.types.UpdateSettingRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2894,7 +3110,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def update_setting(
-        self, setting_name: str, parameters: Union[_models.UpdateSettingRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        setting_name: str,
+        parameters: Union[_models.UpdateSettingRequest, _types.UpdateSettingRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Setting:
         """Updates key vault account setting, stores it, then returns the setting name and value to the
         client.
@@ -2904,10 +3123,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param setting_name: The name of the account setting. Must be a valid settings option.
          Required.
         :type setting_name: str
-        :param parameters: The parameters to update an account setting. Is one of the following types:
-         UpdateSettingRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.administration._generated.models.UpdateSettingRequest or JSON
-         or IO[bytes]
+        :param parameters: The parameters to update an account setting. Is either a
+         UpdateSettingRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.keyvault.administration._generated.models.UpdateSettingRequest or
+         ~azure.keyvault.administration._generated.types.UpdateSettingRequest or IO[bytes]
         :return: Setting. The Setting is compatible with MutableMapping
         :rtype: ~azure.keyvault.administration._generated.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3119,7 +3338,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def get_ekm_connection(self, **kwargs: Any) -> _models.EkmConnection:
         """Gets the EKM connection.
@@ -3191,7 +3410,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def get_ekm_certificate(self, **kwargs: Any) -> _models.EkmProxyClientCertificateInfo:
         """Gets the EKM proxy client certificate.
@@ -3264,7 +3483,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def check_ekm_connection(self, **kwargs: Any) -> _models.EkmProxyInfo:
         """Checks the connectivity and authentication with the EKM proxy.
@@ -3353,7 +3572,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     def create_ekm_connection(
-        self, ekm_connection: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, ekm_connection: _types.EkmConnection, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EkmConnection:
         """Creates the EKM connection.
 
@@ -3361,7 +3580,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         exists, this operation fails. This operation requires ekm/write permission.
 
         :param ekm_connection: The ekmConnection to create. Required.
-        :type ekm_connection: JSON
+        :type ekm_connection: ~azure.keyvault.administration._generated.types.EkmConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3393,20 +3612,20 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def create_ekm_connection(
-        self, ekm_connection: Union[_models.EkmConnection, JSON, IO[bytes]], **kwargs: Any
+        self, ekm_connection: Union[_models.EkmConnection, _types.EkmConnection, IO[bytes]], **kwargs: Any
     ) -> _models.EkmConnection:
         """Creates the EKM connection.
 
         The External Key Manager (EKM) sets up the EKM connection. If the EKM connection already
         exists, this operation fails. This operation requires ekm/write permission.
 
-        :param ekm_connection: The ekmConnection to create. Is one of the following types:
-         EkmConnection, JSON, IO[bytes] Required.
-        :type ekm_connection: ~azure.keyvault.administration._generated.models.EkmConnection or JSON or
-         IO[bytes]
+        :param ekm_connection: The ekmConnection to create. Is either a EkmConnection type or a
+         IO[bytes] type. Required.
+        :type ekm_connection: ~azure.keyvault.administration._generated.models.EkmConnection or
+         ~azure.keyvault.administration._generated.types.EkmConnection or IO[bytes]
         :return: EkmConnection. The EkmConnection is compatible with MutableMapping
         :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3498,7 +3717,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     def update_ekm_connection(
-        self, ekm_connection: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, ekm_connection: _types.EkmConnection, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EkmConnection:
         """Updates the EKM connection.
 
@@ -3506,7 +3725,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         not exist, this operation fails. This operation requires ekm/write permission.
 
         :param ekm_connection: The ekmConnection to update. Required.
-        :type ekm_connection: JSON
+        :type ekm_connection: ~azure.keyvault.administration._generated.types.EkmConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3538,20 +3757,20 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def update_ekm_connection(
-        self, ekm_connection: Union[_models.EkmConnection, JSON, IO[bytes]], **kwargs: Any
+        self, ekm_connection: Union[_models.EkmConnection, _types.EkmConnection, IO[bytes]], **kwargs: Any
     ) -> _models.EkmConnection:
         """Updates the EKM connection.
 
         The External Key Manager (EKM) updates the existing EKM connection. If the EKM connection does
         not exist, this operation fails. This operation requires ekm/write permission.
 
-        :param ekm_connection: The ekmConnection to update. Is one of the following types:
-         EkmConnection, JSON, IO[bytes] Required.
-        :type ekm_connection: ~azure.keyvault.administration._generated.models.EkmConnection or JSON or
-         IO[bytes]
+        :param ekm_connection: The ekmConnection to update. Is either a EkmConnection type or a
+         IO[bytes] type. Required.
+        :type ekm_connection: ~azure.keyvault.administration._generated.models.EkmConnection or
+         ~azure.keyvault.administration._generated.types.EkmConnection or IO[bytes]
         :return: EkmConnection. The EkmConnection is compatible with MutableMapping
         :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3626,7 +3845,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def delete_ekm_connection(self, **kwargs: Any) -> _models.EkmConnection:
         """Deletes the EKM connection.
@@ -3688,6 +3907,634 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EkmConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={"2026-07-01-preview": ["api_version", "operation_id", "accept"]},
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def get_ekm_private_endpoint_operation_status(  # pylint: disable=name-too-long
+        self, operation_id: str, **kwargs: Any
+    ) -> _models.EkmPrivateEndpointOperation:
+        """Gets the status of an EKM proxy private endpoint operation.
+
+        The External Key Manager (EKM) private endpoint operation status. Returns the status of a
+        private endpoint create or delete operation. This operation requires ekm/read permission.
+
+        :param operation_id: The identifier of the private endpoint operation. Required.
+        :type operation_id: str
+        :return: EkmPrivateEndpointOperation. The EkmPrivateEndpointOperation is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmPrivateEndpointOperation] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_get_ekm_private_endpoint_operation_status_request(
+            operation_id=operation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EkmPrivateEndpointOperation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={"2026-07-01-preview": ["api_version", "pe_name", "content_type", "accept"]},
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def _create_ekm_private_endpoint_initial(
+        self,
+        pe_name: str,
+        parameters: Union[
+            _models.EkmPrivateEndpointCreateParameters, _types.EkmPrivateEndpointCreateParameters, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_key_vault_create_ekm_private_endpoint_request(
+            pe_name=pe_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_ekm_private_endpoint(
+        self,
+        pe_name: str,
+        parameters: _models.EkmPrivateEndpointCreateParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.EkmPrivateEndpointOperation]:
+        """Creates an EKM proxy private endpoint.
+
+        The External Key Manager (EKM) creates a private endpoint to the EKM proxy Private Link
+        Service. A pool may have up to two private endpoints. This operation requires ekm/write
+        permission.
+
+        :param pe_name: The name of the private endpoint. Must be 1-24 characters, start and end with
+         an alphanumeric character, and contain only alphanumeric characters and hyphens. Required.
+        :type pe_name: str
+        :param parameters: The parameters to create the private endpoint. Required.
+        :type parameters:
+         ~azure.keyvault.administration._generated.models.EkmPrivateEndpointCreateParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EkmPrivateEndpointOperation. The
+         EkmPrivateEndpointOperation is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_ekm_private_endpoint(
+        self,
+        pe_name: str,
+        parameters: _types.EkmPrivateEndpointCreateParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.EkmPrivateEndpointOperation]:
+        """Creates an EKM proxy private endpoint.
+
+        The External Key Manager (EKM) creates a private endpoint to the EKM proxy Private Link
+        Service. A pool may have up to two private endpoints. This operation requires ekm/write
+        permission.
+
+        :param pe_name: The name of the private endpoint. Must be 1-24 characters, start and end with
+         an alphanumeric character, and contain only alphanumeric characters and hyphens. Required.
+        :type pe_name: str
+        :param parameters: The parameters to create the private endpoint. Required.
+        :type parameters:
+         ~azure.keyvault.administration._generated.types.EkmPrivateEndpointCreateParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EkmPrivateEndpointOperation. The
+         EkmPrivateEndpointOperation is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_ekm_private_endpoint(
+        self, pe_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.EkmPrivateEndpointOperation]:
+        """Creates an EKM proxy private endpoint.
+
+        The External Key Manager (EKM) creates a private endpoint to the EKM proxy Private Link
+        Service. A pool may have up to two private endpoints. This operation requires ekm/write
+        permission.
+
+        :param pe_name: The name of the private endpoint. Must be 1-24 characters, start and end with
+         an alphanumeric character, and contain only alphanumeric characters and hyphens. Required.
+        :type pe_name: str
+        :param parameters: The parameters to create the private endpoint. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EkmPrivateEndpointOperation. The
+         EkmPrivateEndpointOperation is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={"2026-07-01-preview": ["api_version", "pe_name", "content_type", "accept"]},
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def begin_create_ekm_private_endpoint(
+        self,
+        pe_name: str,
+        parameters: Union[
+            _models.EkmPrivateEndpointCreateParameters, _types.EkmPrivateEndpointCreateParameters, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> LROPoller[_models.EkmPrivateEndpointOperation]:
+        """Creates an EKM proxy private endpoint.
+
+        The External Key Manager (EKM) creates a private endpoint to the EKM proxy Private Link
+        Service. A pool may have up to two private endpoints. This operation requires ekm/write
+        permission.
+
+        :param pe_name: The name of the private endpoint. Must be 1-24 characters, start and end with
+         an alphanumeric character, and contain only alphanumeric characters and hyphens. Required.
+        :type pe_name: str
+        :param parameters: The parameters to create the private endpoint. Is either a
+         EkmPrivateEndpointCreateParameters type or a IO[bytes] type. Required.
+        :type parameters:
+         ~azure.keyvault.administration._generated.models.EkmPrivateEndpointCreateParameters or
+         ~azure.keyvault.administration._generated.types.EkmPrivateEndpointCreateParameters or IO[bytes]
+        :return: An instance of LROPoller that returns EkmPrivateEndpointOperation. The
+         EkmPrivateEndpointOperation is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EkmPrivateEndpointOperation] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_ekm_private_endpoint_initial(
+                pe_name=pe_name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.EkmPrivateEndpointOperation, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.EkmPrivateEndpointOperation].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.EkmPrivateEndpointOperation](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={"2026-07-01-preview": ["api_version", "pe_name", "accept"]},
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def _delete_ekm_private_endpoint_initial(self, pe_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_delete_ekm_private_endpoint_request(
+            pe_name=pe_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={"2026-07-01-preview": ["api_version", "pe_name", "accept"]},
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def begin_delete_ekm_private_endpoint(
+        self, pe_name: str, **kwargs: Any
+    ) -> LROPoller[_models.EkmPrivateEndpointOperation]:
+        """Deletes an EKM proxy private endpoint.
+
+        The External Key Manager (EKM) deletes an existing EKM proxy private endpoint. The operation is
+        rejected while an EKM connection still references the private endpoint. This operation requires
+        ekm/write permission.
+
+        :param pe_name: The name of the private endpoint to delete. Required.
+        :type pe_name: str
+        :return: An instance of LROPoller that returns EkmPrivateEndpointOperation. The
+         EkmPrivateEndpointOperation is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmPrivateEndpointOperation] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_ekm_private_endpoint_initial(
+                pe_name=pe_name, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.EkmPrivateEndpointOperation, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.EkmPrivateEndpointOperation].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.EkmPrivateEndpointOperation](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={"2026-07-01-preview": ["api_version", "pe_name", "accept"]},
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def get_ekm_private_endpoint(self, pe_name: str, **kwargs: Any) -> _models.EkmPrivateEndpoint:
+        """Gets an EKM proxy private endpoint.
+
+        The External Key Manager (EKM) gets an existing EKM proxy private endpoint. This operation
+        requires ekm/read permission.
+
+        :param pe_name: The name of the private endpoint to get. Required.
+        :type pe_name: str
+        :return: EkmPrivateEndpoint. The EkmPrivateEndpoint is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmPrivateEndpoint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmPrivateEndpoint] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_get_ekm_private_endpoint_request(
+            pe_name=pe_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EkmPrivateEndpoint, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={"2026-07-01-preview": ["api_version", "accept"]},
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def list_ekm_private_endpoints(self, **kwargs: Any) -> _models.EkmPrivateEndpointListResult:
+        """Lists the EKM proxy private endpoints.
+
+        The External Key Manager (EKM) lists all EKM proxy private endpoints on the pool. This
+        operation requires ekm/read permission.
+
+        :return: EkmPrivateEndpointListResult. The EkmPrivateEndpointListResult is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmPrivateEndpointListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmPrivateEndpointListResult] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_list_ekm_private_endpoints_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EkmPrivateEndpointListResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
