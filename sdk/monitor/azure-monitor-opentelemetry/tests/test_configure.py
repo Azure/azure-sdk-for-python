@@ -35,6 +35,14 @@ TEST_RESOURCE = Resource({"foo": "bar"})
 
 # pylint: disable=too-many-public-methods
 class TestConfigure(unittest.TestCase):
+    def setUp(self):
+        # Patch get_configuration_manager for every test so configure_azure_monitor never starts the
+        # real OneSettings worker thread. Tests that care about the interaction use
+        # self._get_config_manager_mock to control the returned manager.
+        patcher = patch("azure.monitor.opentelemetry._configure.get_configuration_manager")
+        self._get_config_manager_mock = patcher.start()
+        self.addCleanup(patcher.stop)
+
     @patch(
         "azure.monitor.opentelemetry._configure._send_attach_warning",
     )
@@ -53,12 +61,8 @@ class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._setup_tracing",
     )
-    @patch(
-        "azure.monitor.opentelemetry._configure.get_configuration_manager",
-    )
     def test_configure_azure_monitor(
         self,
-        get_config_manager_mock,
         tracing_mock,
         logging_mock,
         metrics_mock,
@@ -95,12 +99,8 @@ class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._setup_tracing",
     )
-    @patch(
-        "azure.monitor.opentelemetry._configure.get_configuration_manager",
-    )
     def test_configure_azure_monitor_initializes_config_manager(
         self,
-        get_config_manager_mock,
         tracing_mock,
         logging_mock,
         metrics_mock,
@@ -108,8 +108,7 @@ class TestConfigure(unittest.TestCase):
         instrumentation_mock,
         detect_attach_mock,
     ):
-        config_manager_mock = Mock()
-        get_config_manager_mock.return_value = config_manager_mock
+        config_manager_mock = self._get_config_manager_mock.return_value
         configure_azure_monitor(connection_string="test_cs")
         # Distro contributes component="dst" and its version before any exporter is created.
         config_manager_mock.initialize.assert_called_once_with(
@@ -135,12 +134,8 @@ class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._setup_tracing",
     )
-    @patch(
-        "azure.monitor.opentelemetry._configure.get_configuration_manager",
-    )
     def test_configure_azure_monitor_config_manager_disabled(
         self,
-        get_config_manager_mock,
         tracing_mock,
         logging_mock,
         metrics_mock,
@@ -150,7 +145,7 @@ class TestConfigure(unittest.TestCase):
     ):
         # When the control plane is disabled, get_configuration_manager returns None and the distro
         # skips initialize() without raising.
-        get_config_manager_mock.return_value = None
+        self._get_config_manager_mock.return_value = None
         configure_azure_monitor(connection_string="test_cs")
         tracing_mock.assert_called_once()
         logging_mock.assert_called_once()
