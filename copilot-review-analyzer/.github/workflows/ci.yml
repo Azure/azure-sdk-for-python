@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - "copilot-review-analyzer/**"
+  pull_request:
+    paths:
+      - "copilot-review-analyzer/**"
+
+defaults:
+  run:
+    working-directory: copilot-review-analyzer
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Ruff
+        run: ruff check analyzer tests
+      - name: Black
+        run: black --check analyzer tests
+      - name: Mypy
+        run: mypy analyzer
+      - name: Pytest
+        run: pytest

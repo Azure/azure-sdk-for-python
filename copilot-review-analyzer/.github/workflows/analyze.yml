@@ -1,0 +1,155 @@
+name: Analyze Copilot Reviews
+
+# Weekly mining of recently merged PRs to track Copilot-reviewer miss-rate/precision.
+#
+# DB persistence strategy (chosen per Phase 8): the SQLite DB is committed to a
+# dedicated orphan branch `analyzer-data` so weekly trends accumulate durably across
+# runs, AND uploaded as a build artifact for per-run audit snapshots. (Cache was
+# rejected because eviction would silently break long-term trend continuity.)
+#
+# Token wiring: GITHUB_TOKEN authenticates repo reads, issue writes, and the data
+# branch push. Provide the optional `ANALYZER_PAT` secret for cross-repo reads or
+# higher GitHub Models limits — it is preferred when present. Tokens are never echoed.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      since:
+        description: "Analysis window (e.g. 7d, 24h, 2w)"
+        default: "7d"
+      repo:
+        description: "owner/name to analyze"
+        default: "Azure/azure-sdk-for-python"
+
+permissions:
+  contents: write # push analyzer.db to the data branch
+  issues: write # open/update the weekly summary issue
+
+concurrency:
+  group: analyze-copilot-reviews
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: copilot-review-analyzer
+
+env:
+  GITHUB_TOKEN: ${{ secrets.ANALYZER_PAT || secrets.GITHUB_TOKEN }}
+  DATA_BRANCH: analyzer-data
+  ANALYZER_DB: analyzer.db
+  ISSUE_LABEL: copilot-review-analyzer
+  SINCE: ${{ github.event.inputs.since || '7d' }}
+  TARGET_REPO: ${{ github.event.inputs.repo || 'Azure/azure-sdk-for-python' }}
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install
+        run: pip install -e .
+
+      - name: Restore DB from data branch
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          if git clone --depth 1 --branch "$DATA_BRANCH" \
+              "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+              "$tmp" >/dev/null 2>&1; then
+            if [ -f "$tmp/analyzer.db" ]; then
+              cp "$tmp/analyzer.db" "$ANALYZER_DB"
+              echo "Restored existing DB from $DATA_BRANCH."
+            else
+              echo "Data branch present but has no analyzer.db; starting fresh."
+            fi
+          else
+            echo "Data branch $DATA_BRANCH not found; starting fresh history."
+          fi
+          rm -rf "$tmp"
+
+      - name: Run analysis
+        run: |
+          set -euo pipefail
+          analyzer run \
+            --repo "$TARGET_REPO" \
+            --since "$SINCE" \
+            --state merged \
+            --use-llm \
+            --db "$ANALYZER_DB"
+
+      - name: Build summary
+        run: |
+          set -euo pipefail
+          analyzer report --format markdown --db "$ANALYZER_DB" > summary.md || true
+          if [ ! -s summary.md ] || grep -qi '^No data' summary.md; then
+            printf '## Copilot Review Analyzer\n\nNo new data in the last %s.\n' "$SINCE" > summary.md
+          fi
+          {
+            echo ""
+            echo "---"
+            echo "### Proposed prompt deltas (requires human approval)"
+            echo ""
+            echo "> The themes above are the issue categories humans caught that the"
+            echo "> Copilot reviewer missed. Review the top themes and decide whether the"
+            echo "> judge/review prompts should emphasize them. **No prompt change is applied"
+            echo "> automatically** — edit \`analyzer/llm/prompts.py\` via PR if warranted."
+          } >> summary.md
+          cat summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload DB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: analyzer-db
+          path: copilot-review-analyzer/analyzer.db
+          if-no-files-found: warn
+
+      - name: Persist DB to data branch
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          if ! git clone --depth 1 --branch "$DATA_BRANCH" \
+              "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+              "$tmp" >/dev/null 2>&1; then
+            git clone --depth 1 \
+              "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+              "$tmp" >/dev/null 2>&1
+            ( cd "$tmp" && git checkout --orphan "$DATA_BRANCH" && git rm -rfq . || true )
+          fi
+          cp "$ANALYZER_DB" "$tmp/analyzer.db"
+          cd "$tmp"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f analyzer.db
+          if git diff --cached --quiet; then
+            echo "DB unchanged; nothing to persist."
+          else
+            git commit -q -m "Update analyzer.db ($(date -u +%FT%TZ))"
+            git push -q origin "$DATA_BRANCH"
+            echo "Persisted DB to $DATA_BRANCH."
+          fi
+
+      - name: Open or update summary issue
+        run: |
+          set -euo pipefail
+          title="Weekly Copilot Review Analysis"
+          existing="$(gh issue list --state open --label "$ISSUE_LABEL" \
+            --json number --jq '.[0].number' --repo "$GITHUB_REPOSITORY" || true)"
+          gh label create "$ISSUE_LABEL" --color BFD4F2 \
+            --description "Copilot review analyzer reports" \
+            --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || true
+          if [ -n "$existing" ] && [ "$existing" != "null" ]; then
+            gh issue edit "$existing" --body-file summary.md --repo "$GITHUB_REPOSITORY"
+            gh issue comment "$existing" \
+              --body "Updated $(date -u +%FT%TZ) (window: $SINCE)." \
+              --repo "$GITHUB_REPOSITORY"
+          else
+            gh issue create --title "$title" --label "$ISSUE_LABEL" \
+              --body-file summary.md --repo "$GITHUB_REPOSITORY"
+          fi
