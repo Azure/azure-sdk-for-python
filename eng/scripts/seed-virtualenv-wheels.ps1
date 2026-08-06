@@ -28,7 +28,7 @@ param (
 $attempts = 0
 
 # ensure these can be pulled down from pypi.
-$env:PIP_EXTRA_INDEX_URL="https://pypi.python.org/simple"
+$env:PIP_EXTRA_INDEX_URL="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
 
 while ($attempts -lt 3) {
   virtualenv --download --reset-app-data `
