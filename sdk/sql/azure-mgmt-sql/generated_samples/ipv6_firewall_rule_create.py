@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/IPv6FirewallRuleCreate.json
+# x-ms-original-file: 2025-08-01-preview/IPv6FirewallRuleCreate.json
 if __name__ == "__main__":
     main()
