@@ -6,4 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.1.0b1"
+from azure.ai.contentsafety import BlocklistClient
+
+"""
+# PREREQUISITES
+    pip install azure-ai-contentsafety
+# USAGE
+    python delete_text_blocklist.py
+"""
+
+
+def main():
+    client = BlocklistClient(
+        endpoint="ENDPOINT",
+        credential="CREDENTIAL",
+    )
+
+    client.delete_text_blocklist(
+        blocklist_name="TestBlocklist",
+    )
+
+
+# x-ms-original-file: 2026-07-01-preview/DeleteTextBlocklist.json
+if __name__ == "__main__":
+    main()
