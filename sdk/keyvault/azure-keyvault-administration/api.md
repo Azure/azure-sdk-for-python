@@ -4,6 +4,7 @@ namespace azure.keyvault.administration
     class azure.keyvault.administration.ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         V2025_07_01 = "2025-07-01"
         V2026_01_01_PREVIEW = "2026-01-01-preview"
+        V2026_07_01_PREVIEW = "2026-07-01-preview"
         V7_2 = "7.2"
         V7_3 = "7.3"
         V7_4 = "7.4"
@@ -270,6 +271,23 @@ namespace azure.keyvault.administration
             ) -> None: ...
 
         @distributed_trace
+        def begin_create_ekm_private_endpoint(
+                self, 
+                name: str, 
+                private_link_service_id: str, 
+                *, 
+                request_message: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[KeyVaultEkmPrivateEndpointOperation]: ...
+
+        @distributed_trace
+        def begin_delete_ekm_private_endpoint(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> LROPoller[KeyVaultEkmPrivateEndpointOperation]: ...
+
+        @distributed_trace
         def check_ekm_connection(self, **kwargs: Any) -> KeyVaultEkmProxyInfo: ...
 
         def close(self) -> None: ...
@@ -291,6 +309,23 @@ namespace azure.keyvault.administration
         def get_ekm_connection(self, **kwargs: Any) -> KeyVaultEkmConnection: ...
 
         @distributed_trace
+        def get_ekm_private_endpoint(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> KeyVaultEkmPrivateEndpoint: ...
+
+        @distributed_trace
+        def get_ekm_private_endpoint_operation_status(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> KeyVaultEkmPrivateEndpointOperation: ...
+
+        @distributed_trace
+        def list_ekm_private_endpoints(self, **kwargs: Any) -> ItemPaged[KeyVaultEkmPrivateEndpoint]: ...
+
+        @distributed_trace
         def send_request(
                 self, 
                 request: HttpRequest, 
@@ -308,6 +343,7 @@ namespace azure.keyvault.administration
 
 
     class azure.keyvault.administration.KeyVaultEkmConnection:
+        connectivity_mode: Union[str, KeyVaultEkmConnectivityMode, None]
         host: str
         path_prefix: Union[str, None]
         server_ca_certificates: list[bytes]
@@ -318,11 +354,91 @@ namespace azure.keyvault.administration
                 host: str, 
                 server_ca_certificates: List[bytes], 
                 *, 
+                connectivity_mode: Optional[Union[str, KeyVaultEkmConnectivityMode]] = ..., 
                 path_prefix: Optional[str] = ..., 
                 server_subject_common_name: Optional[str] = ...
             ) -> None: ...
 
         def __repr__(self) -> str: ...
+
+
+    class azure.keyvault.administration.KeyVaultEkmConnectivityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PRIVATE_ENDPOINT = "PrivateEndpoint"
+        PUBLIC = "Public"
+
+
+    class azure.keyvault.administration.KeyVaultEkmPrivateEndpoint:
+        location: Union[str, None]
+        name: Union[str, None]
+        private_link_service_connection_state: Union[KeyVaultEkmPrivateEndpointConnectionState, None]
+        properties: Union[KeyVaultEkmPrivateEndpointProperties, None]
+        provisioning_state: Union[str, KeyVaultEkmPrivateEndpointProvisioningState, None]
+
+        def __init__(self, **kwargs: Any) -> None: ...
+
+        def __repr__(self) -> str: ...
+
+
+    class azure.keyvault.administration.KeyVaultEkmPrivateEndpointConnectionState:
+        actions_required: Union[str, None]
+        description: Union[str, None]
+        status: Union[str, KeyVaultEkmPrivateEndpointConnectionStatus, None]
+
+        def __init__(self, **kwargs: Any) -> None: ...
+
+        def __repr__(self) -> str: ...
+
+
+    class azure.keyvault.administration.KeyVaultEkmPrivateEndpointConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPROVED = "Approved"
+        DISCONNECTED = "Disconnected"
+        PENDING = "Pending"
+        REJECTED = "Rejected"
+
+
+    class azure.keyvault.administration.KeyVaultEkmPrivateEndpointOperation:
+        end_time: Union[datetime, None]
+        error_code: Union[str, None]
+        error_message: Union[str, None]
+        job_id: Union[str, None]
+        operation_type: Union[str, KeyVaultEkmPrivateEndpointOperationType, None]
+        private_endpoint_name: Union[str, None]
+        start_time: Union[datetime, None]
+        status: Union[str, KeyVaultEkmPrivateEndpointOperationStatus, None]
+        status_details: Union[str, None]
+
+        def __init__(self, **kwargs: Any) -> None: ...
+
+        def __repr__(self) -> str: ...
+
+
+    class azure.keyvault.administration.KeyVaultEkmPrivateEndpointOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELED = "Canceled"
+        FAILED = "Failed"
+        NOT_STARTED = "NotStarted"
+        RUNNING = "Running"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.keyvault.administration.KeyVaultEkmPrivateEndpointOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CREATE = "Create"
+        DELETE = "Delete"
+
+
+    class azure.keyvault.administration.KeyVaultEkmPrivateEndpointProperties:
+        private_link_service_connection_name: Union[str, None]
+        private_link_service_id: Union[str, None]
+
+        def __init__(self, **kwargs: Any) -> None: ...
+
+        def __repr__(self) -> str: ...
+
+
+    class azure.keyvault.administration.KeyVaultEkmPrivateEndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
+        UPDATING = "Updating"
 
 
     class azure.keyvault.administration.KeyVaultEkmProxyClientCertificateInfo:
@@ -676,6 +792,23 @@ namespace azure.keyvault.administration.aio
             ) -> None: ...
 
         @distributed_trace_async
+        async def begin_create_ekm_private_endpoint(
+                self, 
+                name: str, 
+                private_link_service_id: str, 
+                *, 
+                request_message: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[KeyVaultEkmPrivateEndpointOperation]: ...
+
+        @distributed_trace_async
+        async def begin_delete_ekm_private_endpoint(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[KeyVaultEkmPrivateEndpointOperation]: ...
+
+        @distributed_trace_async
         async def check_ekm_connection(self, **kwargs: Any) -> KeyVaultEkmProxyInfo: ...
 
         async def close(self) -> None: ...
@@ -695,6 +828,23 @@ namespace azure.keyvault.administration.aio
 
         @distributed_trace_async
         async def get_ekm_connection(self, **kwargs: Any) -> KeyVaultEkmConnection: ...
+
+        @distributed_trace_async
+        async def get_ekm_private_endpoint(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> KeyVaultEkmPrivateEndpoint: ...
+
+        @distributed_trace_async
+        async def get_ekm_private_endpoint_operation_status(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> KeyVaultEkmPrivateEndpointOperation: ...
+
+        @distributed_trace
+        def list_ekm_private_endpoints(self, **kwargs: Any) -> AsyncItemPaged[KeyVaultEkmPrivateEndpoint]: ...
 
         @distributed_trace_async
         def send_request(
