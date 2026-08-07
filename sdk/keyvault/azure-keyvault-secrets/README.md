@@ -377,5 +377,3 @@ contact opencode@microsoft.com with any additional questions or comments.
 [soft_delete]: https://learn.microsoft.com/azure/key-vault/general/soft-delete-overview
 
 
-
-<!-- Trivial change to exercise CI network-isolation validation. Revert before merge. -->
