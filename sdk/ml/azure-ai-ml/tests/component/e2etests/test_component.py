@@ -1224,7 +1224,7 @@ class TestComponent(AzureRecordedTestCase):
         assert component._get_origin_code_value() == created_component._get_origin_code_value()
 
     def test_load_component_from_flow_in_registry(self, registry_client: MLClient, randstr):
-        target_path: str = "./tests/test_configs/flows/runs/with_environment.yml"
+        target_path: str = "./tests/test_configs/components/helloworld_component.yml"
         component = load_component(
             target_path,
             params_override=[
@@ -1242,4 +1242,5 @@ class TestComponent(AzureRecordedTestCase):
         assert created_component.version == "2"
 
         assert component._get_origin_code_value() == created_component._get_origin_code_value()
-        assert component.environment == created_component.task.environment
+        assert component.type == created_component.type
+        assert component.command == created_component.command
