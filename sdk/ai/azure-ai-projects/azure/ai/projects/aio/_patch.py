@@ -184,7 +184,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         kwargs = kwargs.copy() if kwargs else {}
 
         base_url = _resolve_openai_base_url(self._config, agent_name, kwargs)
-        default_query = _resolve_openai_query_params(self._config, agent_name, kwargs)
+        default_query = _resolve_openai_query_params(kwargs)
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
