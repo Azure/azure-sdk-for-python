@@ -22,8 +22,7 @@ parameters:
     default: []
 
 jobs:
-# TODO: Once the base templates are merged and synced, this should be changed to refernce the local version
-- template: /eng/common/pipelines/templates/jobs/apireview-hub-job-base.yml@self
+- template: /eng/common/pipelines/templates/jobs/apireview-hub-job-base.yml
   parameters:
     jobName: CreatePythonApiReviewArtifacts
     displayName: 'Create Python API review artifacts'

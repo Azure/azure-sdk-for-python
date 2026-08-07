@@ -17,8 +17,7 @@ parameters:
   - name: workingDir
     type: string
 steps:
-  # TODO: Once the base templates are merged and synced, this should be changed to refernce the local version
-  - template: /eng/common/pipelines/templates/steps/create-apireview-hub-artifacts-base.yml@self
+  - template: /eng/common/pipelines/templates/steps/create-apireview-hub-artifacts-base.yml
     parameters:
       requestMode: ${{ parameters.requestMode }}
       operationId: ${{ parameters.operationId }}
