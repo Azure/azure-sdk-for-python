@@ -81,7 +81,6 @@ class TaskInput(TypedDict):
     session_id: str
     message: str
     invocation_id: str
-    call_id: str
 
 
 # ---------------------------------------------------------------------------
@@ -325,7 +324,6 @@ async def _finalize_invocation(
     thread_config: dict[str, Any],
     invocation_id: str,
     session_id: str,
-    call_id: str,
 ) -> dict[str, Any] | Any:
     """Save results and suspend/return after a graph invoke completes."""
     state = await asyncio.to_thread(_graph.get_state, thread_config)
@@ -340,13 +338,10 @@ async def _finalize_invocation(
             "last_output": output,
         },
         tags={"invocation_id": invocation_id},
-        call_id=call_id,
     )
     await invocation_store.set_item(
         f"invocation/{invocation_id}",
         {"status": "completed", "output": output},
-        tags={"session_id": session_id},
-        call_id=call_id,
     )
     return output
 
@@ -360,8 +355,7 @@ async def _finalize_invocation(
 async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | None:
     """Run one LangGraph conversation turn with steering + crash recovery.
 
-    Input schema includes ``session_id``, ``message``, ``invocation_id``, and
-    the opaque Foundry ``call_id`` required by outbound State Store calls.
+    Input schema includes ``session_id``, ``message``, and ``invocation_id``.
 
     LangGraph integration (applying the responses-sample learnings):
 
@@ -385,7 +379,6 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
     session_id: str = ctx.input["session_id"]
     message: str = ctx.input["message"]
     invocation_id: str = ctx.input["invocation_id"]
-    call_id: str = ctx.input["call_id"]
     session_store = await FoundryStateStore.get_or_create(
         session_state_store_name(session_id),
         description="LangGraph session state",
@@ -395,9 +388,7 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
         description="LangGraph invocation status and results",
     )
 
-    session_item = await session_store.get_item(
-        f"session/{session_id}", call_id=call_id
-    )
+    session_item = await session_store.get_item(f"session/{session_id}")
     session_state = (
         dict(session_item.value)
         if session_item is not None and isinstance(session_item.value, dict)
@@ -412,8 +403,6 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
             await invocation_store.set_item(
                 f"invocation/{invocation_id}",
                 {"status": "completed", "output": output},
-                tags={"session_id": session_id},
-                call_id=call_id,
             )
             await session_store.aclose()
             await invocation_store.aclose()
@@ -422,8 +411,6 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
     await invocation_store.set_item(
         f"invocation/{invocation_id}",
         {"status": "running"},
-        tags={"session_id": session_id},
-        call_id=call_id,
     )
     stream = await streams.get_or_create(invocation_id)
     await stream.emit({"type": "lifecycle", "status": "running"})
@@ -435,8 +422,6 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
         await invocation_store.set_item(
             f"invocation/{invocation_id}",
             {"status": "cancelled", "reason": "steered"},
-            tags={"session_id": session_id},
-            call_id=call_id,
         )
         await stream.close()
         await session_store.aclose()
@@ -504,8 +489,6 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
                         "status": "streaming",
                         "last_node": node_names[-1] if node_names else None,
                     },
-                    tags={"session_id": session_id},
-                    call_id=call_id,
                 ),
                 loop,
             )
@@ -526,8 +509,6 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
         await invocation_store.set_item(
             f"invocation/{invocation_id}",
             {"status": "cancelled", "reason": "steered"},
-            tags={"session_id": session_id},
-            call_id=call_id,
         )
         await stream.close()
         await session_store.aclose()
@@ -543,7 +524,6 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
             thread_config,
             invocation_id,
             session_id,
-            call_id,
         )
     finally:
         await session_store.aclose()

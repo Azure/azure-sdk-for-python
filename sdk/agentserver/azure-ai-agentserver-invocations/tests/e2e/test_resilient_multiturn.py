@@ -112,7 +112,6 @@ async def test_session_workflow_runs_two_turns_and_accumulates_history(
             "session_id": task_id,
             "message": "I want to plan a vacation to Japan",
             "invocation_id": "inv-1",
-            "call_id": "call-1",
         },
     )
     result1 = await run1.result()
@@ -124,7 +123,6 @@ async def test_session_workflow_runs_two_turns_and_accumulates_history(
             "session_id": task_id,
             "message": "Budget is $5000, 2 weeks",
             "invocation_id": "inv-2",
-            "call_id": "call-2",
         },
     )
     result2 = await run2.result()
@@ -161,7 +159,6 @@ async def test_session_workflow_done_clears_history(
             "session_id": task_id,
             "message": "First turn",
             "invocation_id": "inv-1",
-            "call_id": "call-1",
         },
     )
     await run1.result()
@@ -172,7 +169,6 @@ async def test_session_workflow_done_clears_history(
             "session_id": task_id,
             "message": "done",
             "invocation_id": "inv-2",
-            "call_id": "call-2",
         },
     )
     result2 = await run2.result()
@@ -203,7 +199,6 @@ async def test_invocation_status_persisted_to_default_namespace(
             "session_id": task_id,
             "message": "Hello",
             "invocation_id": "inv-status",
-            "call_id": "call-status",
         },
     )
     await run.result()

@@ -71,7 +71,6 @@ async def handle_invoke(request: Request) -> Response:
         await store.set_item(
             f"invocation/{invocation_id}",
             {"status": "queued"},
-            tags={"session_id": session_id},
         )
 
     try:
@@ -81,7 +80,6 @@ async def handle_invoke(request: Request) -> Response:
                 "session_id": session_id,
                 "message": message,
                 "invocation_id": invocation_id,
-                "call_id": request.state.call_id,
             },
         )
     except TaskConflictError as e:
@@ -92,7 +90,6 @@ async def handle_invoke(request: Request) -> Response:
             await store.set_item(
                 f"invocation/{invocation_id}",
                 {"status": "failed", "error": str(e)},
-                tags={"session_id": session_id},
             )
         return JSONResponse({"error": str(e)}, status_code=409)
 

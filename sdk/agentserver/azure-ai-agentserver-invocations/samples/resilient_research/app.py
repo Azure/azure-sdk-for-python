@@ -186,7 +186,6 @@ async def handle_invoke(request: Request) -> Response:
             "topic": topic,
             "invocation_id": invocation_id,
             "session_id": session_id,
-            "call_id": request.state.call_id,
         },
     )
 

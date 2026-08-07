@@ -135,7 +135,7 @@ async def handler(
         description="State for the resilient steering response sample",
     )
     async with store:
-        item = await store.get_item("state", call_id=context.platform_context.call_id)
+        item = await store.get_item("state")
         state = (
             dict(item.value)
             if item is not None and isinstance(item.value, dict)
@@ -148,7 +148,6 @@ async def handler(
             await store.set_item(
                 "state",
                 {"turn_count": turn_count, "last_response_id": context.response_id},
-                call_id=context.platform_context.call_id,
             )
 
     # Optional local shutdown simulation.

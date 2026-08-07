@@ -81,8 +81,8 @@ async def test_fork_from_checkpoint_seeds_checkpoint_ns(tmp_path: Path) -> None:
 
 
 @pytest.mark.asyncio
-async def test_record_stable_uses_conversation_store_and_persisted_call_id() -> None:
-    """Stable checkpoint state is isolated by chain and forwards the recovered call ID."""
+async def test_record_stable_uses_conversation_store_without_call_id() -> None:
+    """Conversation-scoped state does not require user-resolution call IDs."""
     context = MagicMock(spec=ResponseContext)
     context.conversation_chain_id = "chain-21"
     context.platform_context = PlatformContext(call_id="persisted-call")
@@ -107,6 +107,5 @@ async def test_record_stable_uses_conversation_store_and_persisted_call_id() -> 
     store.set_item.assert_awaited_once_with(
         "state",
         {"stable_checkpoint_id": "checkpoint-21"},
-        call_id="persisted-call",
     )
     store.__aexit__.assert_awaited_once()

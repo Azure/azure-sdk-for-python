@@ -129,7 +129,6 @@ async def handle_invoke(request: Request) -> Response:
         "session_id": session_id,
         "message": message,
         "invocation_id": invocation_id,
-        "call_id": request.state.call_id,
     }
 
     store = await FoundryStateStore.get_or_create(
@@ -140,7 +139,6 @@ async def handle_invoke(request: Request) -> Response:
         await store.set_item(
             f"invocation/{invocation_id}",
             {"status": "queued"},
-            tags={"session_id": session_id},
         )
 
     # Subscribe-before-start (streaming.md §5.1): attach SSE subscriber

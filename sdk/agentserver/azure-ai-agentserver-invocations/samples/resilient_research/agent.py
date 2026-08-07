@@ -213,16 +213,13 @@ class TaskInput(TypedDict):
     topic: str
     invocation_id: str
     session_id: str
-    call_id: str
 
 
 async def _finish_turn(
     store: FoundryStateStore,
     stream: Any,
     inv_id: str,
-    session_id: str,
     terminal_status: str,
-    call_id: str,
     *,
     error: str | None = None,
 ) -> None:
@@ -248,8 +245,7 @@ async def _finish_turn(
         await store.set_item(
             inv_id,
             checkpoint,
-            tags={"session_id": session_id},
-            call_id=call_id,
+            tags={"invocation_id": inv_id},
         )
         await stream.close()
     finally:
@@ -277,14 +273,13 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
     topic: str = ctx.input["topic"]
     inv_id: str = ctx.input["invocation_id"]
     session_id: str = ctx.input["session_id"]
-    call_id: str = ctx.input["call_id"]
     store = await FoundryStateStore.get_or_create(
         state_store_name(session_id),
         description="Deep-research recovery checkpoints",
     )
 
     stream = await streams.get_or_create(inv_id)
-    checkpoint_item = await store.get_item(inv_id, call_id=call_id)
+    checkpoint_item = await store.get_item(inv_id)
     checkpoint = (
         dict(checkpoint_item.value)
         if checkpoint_item is not None and isinstance(checkpoint_item.value, dict)
@@ -325,9 +320,7 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
 
         for phase_idx in range(completed, NUM_PHASES):
             if ctx.cancel.is_set():
-                return await _wind_down(
-                    store, emit, stream, ctx, inv_id, phase_idx, call_id
-                )
+                return await _wind_down(store, emit, stream, ctx, inv_id, phase_idx)
 
             phase_started_mono = time.monotonic()
             title = _phase_title(phase_idx)
@@ -348,8 +341,6 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
                 emit,
                 ctx,
                 inv_id,
-                session_id,
-                call_id,
                 checkpoint,
                 phase_idx,
                 topic,
@@ -368,8 +359,7 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
             await store.set_item(
                 inv_id,
                 checkpoint,
-                tags={"session_id": session_id},
-                call_id=call_id,
+                tags={"invocation_id": inv_id},
             )
 
             phase_duration = round(time.monotonic() - phase_started_mono, 1)
@@ -386,9 +376,7 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
             )
 
             if ctx.cancel.is_set():
-                return await _wind_down(
-                    store, emit, stream, ctx, inv_id, phase_idx + 1, call_id
-                )
+                return await _wind_down(store, emit, stream, ctx, inv_id, phase_idx + 1)
 
             if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
                 await _cooldown(
@@ -401,7 +389,7 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
                 )
                 if ctx.cancel.is_set():
                     return await _wind_down(
-                        store, emit, stream, ctx, inv_id, phase_idx + 1, call_id
+                        store, emit, stream, ctx, inv_id, phase_idx + 1
                     )
 
         await emit(
@@ -416,7 +404,7 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
         # Skipped on crash (the handler exits via an
         # exception and the orchestrator's leave_stream_open_for_recovery
         # path keeps the stream open for the next-lifetime recovery).
-        await _finish_turn(store, stream, inv_id, session_id, "completed", call_id)
+        await _finish_turn(store, stream, inv_id, "completed")
     except Exception as exc:  # pylint: disable=broad-except
         # Logical-failure path: a downstream call (e.g. the LLM) raised.
         # Emit a terminal SSE frame so subscribers fast-fail instead of
@@ -446,9 +434,7 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
                 store,
                 stream,
                 inv_id,
-                session_id,
                 "failed",
-                call_id,
                 error=f"{type(exc).__name__}: {str(exc)[:2000]}",
             )
         except Exception:  # pylint: disable=broad-except
@@ -483,7 +469,6 @@ async def _wind_down(
     ctx: TaskContext,
     inv_id: str,
     completed_phases: int,
-    call_id: str,
 ):
     """Cooperative wind-down at a phase boundary.
 
@@ -516,9 +501,7 @@ async def _wind_down(
         store,
         stream,
         inv_id,
-        ctx.input["session_id"],
         "suspended",
-        call_id,
     )
     # multi-turn `return` is the implicit-suspend signal.
     # The chain stays alive across turns; ctx.suspend() is not part of
@@ -563,8 +546,6 @@ async def _run_phase(
     emit: EmitFn,
     ctx: TaskContext,
     inv_id: str,
-    session_id: str,
-    call_id: str,
     checkpoint: dict[str, Any],
     phase_idx: int,
     topic: str,
@@ -594,8 +575,7 @@ async def _run_phase(
         await store.set_item(
             inv_id,
             checkpoint,
-            tags={"session_id": session_id},
-            call_id=call_id,
+            tags={"invocation_id": inv_id},
         )
 
     for sub_idx in range(start_sub, CALLS_PER_PHASE):
@@ -646,8 +626,7 @@ async def _run_phase(
         await store.set_item(
             inv_id,
             checkpoint,
-            tags={"session_id": session_id},
-            call_id=call_id,
+            tags={"invocation_id": inv_id},
         )
 
         if sub_idx + 1 < CALLS_PER_PHASE and INTRA_PHASE_COOLDOWN_SEC > 0:

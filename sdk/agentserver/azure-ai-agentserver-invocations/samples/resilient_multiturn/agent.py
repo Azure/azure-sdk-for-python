@@ -37,7 +37,6 @@ class TaskInput(TypedDict):
     session_id: str
     message: str
     invocation_id: str
-    call_id: str
 
 
 def _generate_reply(turn: int, last_msg: str) -> str:
@@ -72,7 +71,6 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
     session_id: str = ctx.input["session_id"]
     message: str = ctx.input["message"]
     invocation_id: str = ctx.input["invocation_id"]
-    call_id: str = ctx.input["call_id"]
 
     session_key = f"session/{session_id}"
     invocation_key = f"invocation/{invocation_id}"
@@ -85,7 +83,7 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
         description="Multi-turn invocation status and results",
     )
     async with session_store, invocation_store:
-        session_item = await session_store.get_item(session_key, call_id=call_id)
+        session_item = await session_store.get_item(session_key)
         session = (
             dict(session_item.value)
             if session_item is not None and isinstance(session_item.value, dict)
@@ -103,16 +101,12 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
                 await invocation_store.set_item(
                     invocation_key,
                     {"status": "completed", "output": output},
-                    tags={"session_id": session_id},
-                    call_id=call_id,
                 )
                 return output
 
         await invocation_store.set_item(
             invocation_key,
             {"status": "running"},
-            tags={"session_id": session_id},
-            call_id=call_id,
         )
 
         if ctx.entry_mode == "recovered":
@@ -135,14 +129,11 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
                     "last_output": result,
                 },
                 tags={"invocation_id": invocation_id},
-                call_id=call_id,
             )
 
             await invocation_store.set_item(
                 invocation_key,
                 {"status": "completed", "output": result},
-                tags={"session_id": session_id},
-                call_id=call_id,
             )
             return result
 
@@ -163,14 +154,11 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
                 "last_output": output,
             },
             tags={"invocation_id": invocation_id},
-            call_id=call_id,
         )
 
         await invocation_store.set_item(
             invocation_key,
             {"status": "completed", "output": output},
-            tags={"session_id": session_id},
-            call_id=call_id,
         )
 
         # Suspend — the client will resume with the next turn.

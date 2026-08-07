@@ -130,8 +130,8 @@ class TestSample20FreshEntry:
         assert types.count("response.output_item.done") == 1
         assert state_store.state["turn_count"] == 1
         assert state_store.operations == [
-            ("get", "state", "call-test"),
-            ("set", "state", "call-test"),
+            ("get", "state", None),
+            ("set", "state", None),
         ]
         assert state_store.close_count == 1
         get_or_create.assert_awaited_once_with(
@@ -177,8 +177,8 @@ class TestSample20Recovery:
         )
         assert state_store.state["turn_count"] == 2
         assert state_store.operations == [
-            ("get", "state", "call-test"),
-            ("set", "state", "call-test"),
+            ("get", "state", None),
+            ("set", "state", None),
         ]
         assert state_store.close_count == 1
 
@@ -273,9 +273,9 @@ async def test_sample_22_done_marker_is_idempotent_across_recovery() -> None:
         await sample.handler(request, ctx, ctx._cancellation_signal)
     assert state_store.state["completed_turns"] == 2
     assert state_store.operations == [
-        ("get", "state", "call-test"),
-        ("set", "state", "call-test"),
-        ("get", "state", "call-test"),
+        ("get", "state", None),
+        ("set", "state", None),
+        ("get", "state", None),
     ]
     assert state_store.close_count == 2
     assert get_or_create.await_count == 2
@@ -316,7 +316,7 @@ async def test_sample_22_new_response_resets_terminated_state() -> None:
         "last_response_id": "resp_new",
     }
     assert state_store.operations == [
-        ("get", "state", "call-test"),
-        ("set", "state", "call-test"),
+        ("get", "state", None),
+        ("set", "state", None),
     ]
     assert state_store.close_count == 1

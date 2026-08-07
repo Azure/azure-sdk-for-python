@@ -4,7 +4,7 @@
 
 ### Samples
 
-- Simplified the resilient samples to use `FoundryStateStore` directly for application state and explicitly forward persisted call IDs during recovered task execution.
+- Simplified the resilient samples to use conversation-scoped `FoundryStateStore` instances directly for application state.
 
 ### Other Changes
 

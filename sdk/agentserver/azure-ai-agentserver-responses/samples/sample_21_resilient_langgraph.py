@@ -275,7 +275,6 @@ async def _record_stable(context: ResponseContext, state: Any) -> None:
             await store.set_item(
                 "state",
                 {"stable_checkpoint_id": checkpoint_id},
-                call_id=context.platform_context.call_id,
             )
 
 
@@ -347,9 +346,7 @@ async def handler(
             description="State for the resilient LangGraph response sample",
         )
         async with store:
-            item = await store.get_item(
-                "state", call_id=context.platform_context.call_id
-            )
+            item = await store.get_item("state")
         conversation_state = (
             dict(item.value)
             if item is not None and isinstance(item.value, dict)
