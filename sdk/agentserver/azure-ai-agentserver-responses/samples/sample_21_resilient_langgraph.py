@@ -389,6 +389,7 @@ async def handler(
 
     # ── Turn complete — record the stable fork point for steering ────
     _record_stable(context, await graph.aget_state(thread_config))
+    await context.conversation_chain_metadata.flush()
     yield stream.emit_completed()
 
 
