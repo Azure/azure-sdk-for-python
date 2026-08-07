@@ -163,7 +163,7 @@ def readonly_checks(response, old_response_class):
         if attr[0] == "_":
             # don't care about private variables
             continue
-        if type(getattr(response, attr)) == types.MethodType:
+        if isinstance(getattr(response, attr), types.MethodType):
             # methods aren't "readonly"
             continue
         if attr == "encoding":
