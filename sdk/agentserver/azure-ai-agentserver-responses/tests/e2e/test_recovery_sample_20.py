@@ -135,7 +135,7 @@ class TestSample20FreshEntry:
         ]
         assert state_store.close_count == 1
         get_or_create.assert_awaited_once_with(
-            "responses/resilient-steering/conv-test",
+            "conv-test",
             user_isolation=True,
             description="State for the resilient steering response sample",
         )
