@@ -8,7 +8,7 @@ authors = [
 ]
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0",
+    "azure-ai-agentserver-core>=2.0.0b10",
     # Constraint on the transitive aiohttp: the `--pre` CI install otherwise
     # resolves the unbuildable aiohttp 4.0.0a1 alpha. Cap must be <4.0.0a0
     # (<4.0.0 still admits 4.0.0a1 under PEP 440).
@@ -31,7 +31,7 @@ dependencies = [
 [dependency-groups]
 # keep in sync with dev_requirements.txt
 dev = [
-    "azure-identity>=1.17.0",
+    "azure-identity",
     "azure-monitor-query",
     "azure-sdk-tools",
     "httpx",
@@ -72,6 +72,8 @@ mypy = true
 pyright = true
 verifytypes = false
 latestdependency = false
+# azure-ai-agentserver-core>=2.0.0b8 is not yet on PyPI
+mindependency = false
 pylint = true
 type_check_samples = false
 

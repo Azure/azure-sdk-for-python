@@ -6,6 +6,11 @@
 
 - First stable release of the Azure AI Agent Server Responses client library.
 
+### Breaking Changes
+
+- Removed the duplicate `azure.ai.agentserver.responses.get_input_expanded`
+  export. Import it from `azure.ai.agentserver.responses.models` instead.
+
 ### Other Changes
 
 - Bumped the minimum `azure-ai-agentserver-core` dependency to the stable `2.0.0` release.
