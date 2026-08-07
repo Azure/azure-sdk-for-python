@@ -2,8 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Shared fixtures and factory functions for invocations tests."""
+import asyncio
+import faulthandler
+import gc
 import json
 import os
+import sys
+import threading
 from typing import Any
 from unittest.mock import patch
 
@@ -15,12 +20,158 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
+_CI_HANG_DIAGNOSTICS = os.environ.get("TF_BUILD", "").lower() == "true"
+_CI_WINDOWS_VOICE_REPEATS = _CI_HANG_DIAGNOSTICS and os.environ.get("AGENT_OS") == "Windows_NT"
+_TEST_TIMEOUT_SECONDS = 60.0
+_SESSION_TIMEOUT_SECONDS = 300.0
+_CI_VOICE_REPEAT_COUNT = 100
+_CI_VOICE_REPEAT_TESTS = frozenset(
+    {
+        (
+            "test_voice_adversarial_limits.py",
+            "test_session_retention_outlives_connection_for_resistant_customer_task",
+        ),
+        (
+            "test_voice_adversarial_limits.py",
+            "test_global_customer_task_bytes_are_shared_across_event_loops",
+        ),
+        (
+            "test_voice_host.py",
+            "test_session_start_callback_failure_releases_session_retention",
+        ),
+        (
+            "test_voice_host.py",
+            "test_session_retention_admission_failure_rejects_before_callback",
+        ),
+        (
+            "test_voice_host.py",
+            "test_cancellation_resistant_signal_does_not_block_teardown",
+        ),
+        (
+            "test_voice_host.py",
+            "test_session_end_runs_despite_a_blocked_prior_callback",
+        ),
+        (
+            "test_voice_host.py",
+            "test_cancellation_resistant_task_is_tracked_until_done",
+        ),
+        (
+            "test_voice_host.py",
+            "test_resistant_task_limit_closes_without_additional_work",
+        ),
+        (
+            "test_voice_host.py",
+            "test_cancel_pending_retains_active_owner_until_bridge_outcome",
+        ),
+        (
+            "test_voice_host.py",
+            "test_cancel_pending_active_owner_is_released_by_connection_terminal",
+        ),
+    }
+)
+_watchdog_lock = threading.Lock()
+_session_watchdog: threading.Timer | None = None
+_active_test = "pytest collection/startup"
+
+
+def _dump_hang_diagnostics(scope: str) -> None:
+    """Dump process state and terminate so dispatch_checks prints buffered output."""
+    try:
+        print(
+            f"\nVOICE_CI_HANG_DIAGNOSTIC timeout={scope} active_test={_active_test}",
+            file=sys.stderr,
+            flush=True,
+        )
+        print("VOICE_CI_HANG_DIAGNOSTIC all thread stacks:", file=sys.stderr, flush=True)
+        faulthandler.dump_traceback(file=sys.stderr, all_threads=True)
+        print("VOICE_CI_HANG_DIAGNOSTIC pending asyncio tasks:", file=sys.stderr, flush=True)
+        for candidate in gc.get_objects():
+            if not isinstance(candidate, asyncio.Task) or candidate.done():
+                continue
+            print(
+                f"task={candidate!r} loop={candidate.get_loop()!r}",
+                file=sys.stderr,
+                flush=True,
+            )
+            candidate.print_stack(file=sys.stderr)
+    except BaseException as exc:  # pylint: disable=broad-exception-caught
+        print(f"VOICE_CI_HANG_DIAGNOSTIC dump failed: {exc!r}", file=sys.stderr, flush=True)
+    finally:
+        sys.stdout.flush()
+        sys.stderr.flush()
+        # dispatch_checks buffers concurrent child output until the child exits.
+        # A hard exit makes the diagnostic visible instead of losing it at the
+        # three-hour parent-job cancellation boundary.
+        os._exit(124)  # pylint: disable=protected-access
+
+
+def _start_watchdog(seconds: float, scope: str) -> threading.Timer:
+    watchdog = threading.Timer(seconds, _dump_hang_diagnostics, args=(scope,))
+    watchdog.daemon = True
+    watchdog.start()
+    return watchdog
+
+
 def pytest_configure(config):
     config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
     config.addinivalue_line("markers", "slow: tests that send large payloads or otherwise take noticeable time in CI")
     config.addinivalue_line(
         "markers", "live: tests that require live external services (Azure OpenAI, github-copilot-sdk, etc.)"
     )
+    if _CI_HANG_DIAGNOSTICS:
+        global _session_watchdog  # pylint: disable=global-statement
+        faulthandler.enable(file=sys.stderr, all_threads=True)
+        _session_watchdog = _start_watchdog(_SESSION_TIMEOUT_SECONDS, "pytest session")
+
+
+def pytest_generate_tests(metafunc):
+    """Repeat hang-prone Voice tests in CI to amplify scheduling races."""
+    if not _CI_WINDOWS_VOICE_REPEATS or "_voice_ci_repeat" not in metafunc.fixturenames:
+        return
+    test_key = (metafunc.definition.path.name, metafunc.function.__name__)
+    if test_key not in _CI_VOICE_REPEAT_TESTS:
+        return
+    repeats = [pytest.param(index, id=f"ci-repeat-{index:03d}") for index in range(1, _CI_VOICE_REPEAT_COUNT + 1)]
+    metafunc.parametrize("_voice_ci_repeat", repeats, indirect=True)
+
+
+@pytest.fixture(autouse=True)
+def _voice_ci_repeat(request):
+    """Provide the CI-only repeat parameter without changing test signatures."""
+    return getattr(request, "param", None)
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_protocol(item, nextitem):  # pylint: disable=unused-argument
+    """Identify and bound every test, including its setup and teardown phases."""
+    if not _CI_HANG_DIAGNOSTICS:
+        yield
+        return
+
+    global _active_test  # pylint: disable=global-statement
+    with _watchdog_lock:
+        _active_test = item.nodeid
+    print(f"VOICE_CI_TEST_START {item.nodeid}", flush=True)
+    watchdog = _start_watchdog(_TEST_TIMEOUT_SECONDS, f"test protocol: {item.nodeid}")
+    try:
+        yield
+    finally:
+        watchdog.cancel()
+        print(f"VOICE_CI_TEST_END {item.nodeid}", flush=True)
+
+
+def pytest_sessionfinish(session, exitstatus):  # pylint: disable=unused-argument
+    """Keep a watchdog alive through pytest and interpreter shutdown."""
+    if not _CI_HANG_DIAGNOSTICS:
+        return
+
+    global _active_test  # pylint: disable=global-statement
+    with _watchdog_lock:
+        _active_test = f"pytest session shutdown (exitstatus={exitstatus})"
+    if _session_watchdog is not None:
+        _session_watchdog.cancel()
+    print(f"VOICE_CI_SESSION_FINISH exitstatus={exitstatus}", flush=True)
+    _start_watchdog(_TEST_TIMEOUT_SECONDS, "pytest/interpreter shutdown")
 
 
 @pytest.fixture(autouse=True)
