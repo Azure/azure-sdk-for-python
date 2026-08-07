@@ -80,8 +80,10 @@
         "azure.mgmt.storagemover.models.EndpointType": "Microsoft.StorageMover.EndpointType",
         "azure.mgmt.storagemover.models.EndpointKind": "Microsoft.StorageMover.EndpointKind",
         "azure.mgmt.storagemover.models.NfsVersion": "Microsoft.StorageMover.NfsVersion",
+        "azure.mgmt.storagemover.models.NfsMountSourceType": "Microsoft.StorageMover.NfsMountSourceType",
         "azure.mgmt.storagemover.models.CredentialType": "Microsoft.StorageMover.CredentialType",
         "azure.mgmt.storagemover.models.S3WithHmacSourceType": "Microsoft.StorageMover.S3WithHmacSourceType",
+        "azure.mgmt.storagemover.models.SmbMountSourceType": "Microsoft.StorageMover.SmbMountSourceType",
         "azure.mgmt.storagemover.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
         "azure.mgmt.storagemover.models.JobType": "Microsoft.StorageMover.JobType",
         "azure.mgmt.storagemover.models.CopyMode": "Microsoft.StorageMover.CopyMode",
@@ -149,6 +151,8 @@
         "azure.mgmt.storagemover.aio.operations.JobDefinitionsOperations.start_job": "Microsoft.StorageMover.JobDefinitions.startJob",
         "azure.mgmt.storagemover.operations.JobDefinitionsOperations.stop_job": "Microsoft.StorageMover.JobDefinitions.stopJob",
         "azure.mgmt.storagemover.aio.operations.JobDefinitionsOperations.stop_job": "Microsoft.StorageMover.JobDefinitions.stopJob",
+        "azure.mgmt.storagemover.operations.JobDefinitionsOperations.reconcile_job": "Microsoft.StorageMover.JobDefinitions.reconcileJob",
+        "azure.mgmt.storagemover.aio.operations.JobDefinitionsOperations.reconcile_job": "Microsoft.StorageMover.JobDefinitions.reconcileJob",
         "azure.mgmt.storagemover.operations.ConnectionsOperations.create_or_update": "Microsoft.StorageMover.Connections.createOrUpdate",
         "azure.mgmt.storagemover.aio.operations.ConnectionsOperations.create_or_update": "Microsoft.StorageMover.Connections.createOrUpdate",
         "azure.mgmt.storagemover.operations.ConnectionsOperations.get": "Microsoft.StorageMover.Connections.get",
@@ -161,5 +165,6 @@
         "azure.mgmt.storagemover.aio.operations.JobRunsOperations.get": "Microsoft.StorageMover.JobRuns.get",
         "azure.mgmt.storagemover.operations.JobRunsOperations.list": "Microsoft.StorageMover.JobRuns.list",
         "azure.mgmt.storagemover.aio.operations.JobRunsOperations.list": "Microsoft.StorageMover.JobRuns.list"
-    }
+    },
+    "CrossLanguageVersion": "3f52fe18b277"
 }

@@ -41,12 +41,13 @@ def main():
                 "endpointType": "NfsMount",
                 "export": "examples-exportName",
                 "host": "0.0.0.0",
+                "sourceType": "NfsMount",
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-12-01/Endpoints_CreateOrUpdate_NfsMount.json
+# x-ms-original-file: 2026-05-01/Endpoints_CreateOrUpdate_NfsMount.json
 if __name__ == "__main__":
     main()

@@ -153,6 +153,8 @@ class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ONETIME."""
     NONE = "None"
     """No schedule frequency. The job definition will not run on a schedule."""
+    HOURLY = "Hourly"
+    """HOURLY."""
 
 
 class JobRunScanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -196,6 +198,8 @@ class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ON_PREM_TO_CLOUD."""
     CLOUD_TO_CLOUD = "CloudToCloud"
     """CLOUD_TO_CLOUD."""
+    ON_PREM_TO_CLOUD_AGENT_LESS = "OnPremToCloudAgentLess"
+    """ON_PREM_TO_CLOUD_AGENT_LESS."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -224,6 +228,15 @@ class Minute(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     """THIRTY."""
 
 
+class NfsMountSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source type to differentiate NFSMount and FSX-EFS endpoints. Default is NFSMount."""
+
+    NFS_MOUNT = "NfsMount"
+    """NFS_MOUNT."""
+    FSXEFS = "FSX-EFS"
+    """FSXEFS."""
+
+
 class NfsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The NFS protocol version."""
 
@@ -233,6 +246,8 @@ class NfsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NF_SV3."""
     NF_SV4 = "NFSv4"
     """NF_SV4."""
+    NF_SV4_1 = "NFSv4_1"
+    """NF_SV4_1."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -276,6 +291,15 @@ class S3WithHmacSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DELL_EMC."""
     OTHER = "OTHER"
     """OTHER."""
+
+
+class SmbMountSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source type to differentiate SMBMount and FSX-SMB endpoints. Default is SMBMount."""
+
+    SMB_MOUNT = "SmbMount"
+    """SMB_MOUNT."""
+    FSXSMB = "FSX-SMB"
+    """FSXSMB."""
 
 
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
