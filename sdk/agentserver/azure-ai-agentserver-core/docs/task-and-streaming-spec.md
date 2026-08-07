@@ -526,7 +526,6 @@ lifetime that died before the handler raised does not advance
 ```python
 store = await FoundryStateStore.get_or_create(
     f"agents/my-agent/tasks/{ctx.task_id}",
-    user_isolation=True,
 )
 item = await store.get_item("effect")
 state = dict(item.value) if item else {}

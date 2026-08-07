@@ -303,7 +303,6 @@ from azure.ai.agentserver.core.storage import FoundryStateStore
 
 store = await FoundryStateStore.get_or_create(
     f"agents/my-agent/tasks/{ctx.task_id}",
-    user_isolation=True,
 )
 state = await store.get_item("state")
 await store.set_item("state", {"score": 42})
@@ -721,7 +720,6 @@ async def session_agent(ctx: TaskContext[dict]) -> dict:
     # subsequent turns of this conversation.
     store = await FoundryStateStore.get_or_create(
         f"agents/session-agent/{ctx.task_id}",
-        user_isolation=True,
     )
     item = await store.get_item("conversation")
     state = dict(item.value) if item else {"history": [], "turn": 0}
@@ -752,7 +750,6 @@ async def charge_card(ctx: TaskContext[dict]) -> str:
     # don't double-charge.
     store = await FoundryStateStore.get_or_create(
         f"payments/tasks/{ctx.task_id}",
-        user_isolation=True,
     )
     item = await store.get_item("charge")
     state = dict(item.value) if item else {}
