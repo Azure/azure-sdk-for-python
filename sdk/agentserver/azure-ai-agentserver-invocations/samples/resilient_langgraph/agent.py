@@ -39,15 +39,18 @@ from azure.ai.agentserver.core.streaming import streams
 
 logger = logging.getLogger(__name__)
 
-# Explicit application state store for invocation results and checkpoint pointers.
-STATE_STORE_NAME = "resilient-langgraph"
+
+def state_store_name(session_id: str) -> str:
+    """Return the session-isolated application state store name."""
+    return f"resilient-langgraph/{session_id}"
+
 
 # LangGraph's internal SQLite checkpointer remains local to this sample.
 _STATE_ROOT = os.environ.get("AGENTSERVER_STATE_ROOT")
 _DATA_DIR = (
     Path(_STATE_ROOT) / "langgraph-invocations"
     if _STATE_ROOT
-    else Path.home() / ".agentserver-sessions"
+    else Path.home() / ".agentserver" / "langgraph-invocations"
 )
 
 
@@ -378,8 +381,7 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
     invocation_id: str = ctx.input["invocation_id"]
     call_id: str = ctx.input["call_id"]
     store = await FoundryStateStore.get_or_create(
-        STATE_STORE_NAME,
-        user_isolation=True,
+        state_store_name(session_id),
         description="LangGraph session checkpoints and invocation results",
     )
 

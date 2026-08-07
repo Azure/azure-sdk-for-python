@@ -132,7 +132,10 @@ def _get_client() -> Any:
 
 # --- Explicit application checkpoint store ---------------------------------
 
-STATE_STORE_NAME = "resilient-research"
+
+def state_store_name(session_id: str) -> str:
+    """Return the session-isolated application state store name."""
+    return f"resilient-research/{session_id}"
 
 
 # --- Research phase plan ---------------------------------------------------
@@ -276,8 +279,7 @@ async def deep_research(ctx: TaskContext[TaskInput]) -> None:
     session_id: str = ctx.input["session_id"]
     call_id: str = ctx.input["call_id"]
     store = await FoundryStateStore.get_or_create(
-        STATE_STORE_NAME,
-        user_isolation=True,
+        state_store_name(session_id),
         description="Deep-research recovery checkpoints",
     )
 

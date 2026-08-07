@@ -19,7 +19,11 @@ from azure.ai.agentserver.core.storage import FoundryStateStore
 from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 
 logger = logging.getLogger(__name__)
-STATE_STORE_NAME = "resilient-multiturn"
+
+
+def state_store_name(session_id: str) -> str:
+    """Return the session-isolated application state store name."""
+    return f"resilient-multiturn/{session_id}"
 
 
 class TaskInput(TypedDict):
@@ -68,8 +72,7 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
     session_key = f"session/{session_id}"
     invocation_key = f"invocation/{invocation_id}"
     store = await FoundryStateStore.get_or_create(
-        STATE_STORE_NAME,
-        user_isolation=True,
+        state_store_name(session_id),
         description="Multi-turn conversation state and invocation results",
     )
     async with store:

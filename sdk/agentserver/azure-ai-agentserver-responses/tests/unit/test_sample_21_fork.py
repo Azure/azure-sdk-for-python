@@ -17,15 +17,23 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 pytest.importorskip("langgraph", reason="langgraph required for sample 21")
-pytest.importorskip("langgraph.checkpoint.sqlite.aio", reason="AsyncSqliteSaver required")
+pytest.importorskip(
+    "langgraph.checkpoint.sqlite.aio", reason="AsyncSqliteSaver required"
+)
 
 import aiosqlite  # noqa: E402
 from langchain_core.messages import HumanMessage  # noqa: E402
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver  # noqa: E402
+from azure.ai.agentserver.responses import (
+    PlatformContext,
+    ResponseContext,
+)  # noqa: E402
 
 _SAMPLES = str(Path(__file__).resolve().parents[1].parent / "samples")
 if _SAMPLES not in sys.path:
@@ -50,17 +58,56 @@ async def test_fork_from_checkpoint_seeds_checkpoint_ns(tmp_path: Path) -> None:
 
         # Run one turn to the wait_for_user interrupt, capture its checkpoint.
         async for _ in graph.astream(
-            {"messages": [HumanMessage("first")], "is_complete": False}, cfg, stream_mode=["updates"]
+            {"messages": [HumanMessage("first")], "is_complete": False},
+            cfg,
+            stream_mode=["updates"],
         ):
             pass
         state = await graph.aget_state(cfg)
         stable_cp = state.config["configurable"]["checkpoint_id"]
 
-        forked = await sample._fork_from_checkpoint(graph, cfg, stable_cp, "second-steered")
+        forked = await sample._fork_from_checkpoint(
+            graph, cfg, stable_cp, "second-steered"
+        )
         assert forked is True
 
         after = await graph.aget_state(cfg)
-        humans = [m.content for m in after.values["messages"] if isinstance(m, HumanMessage)]
+        humans = [
+            m.content for m in after.values["messages"] if isinstance(m, HumanMessage)
+        ]
         assert "second-steered" in humans, humans
     finally:
         await conn.close()
+
+
+@pytest.mark.asyncio
+async def test_record_stable_uses_conversation_store_and_persisted_call_id() -> None:
+    """Stable checkpoint state is isolated by chain and forwards the recovered call ID."""
+    context = MagicMock(spec=ResponseContext)
+    context.conversation_chain_id = "chain-21"
+    context.platform_context = PlatformContext(call_id="persisted-call")
+    state = SimpleNamespace(config={"configurable": {"checkpoint_id": "checkpoint-21"}})
+
+    store = MagicMock()
+    store.__aenter__ = AsyncMock(return_value=store)
+    store.__aexit__ = AsyncMock(return_value=None)
+    store.set_item = AsyncMock()
+
+    with patch.object(
+        sample.FoundryStateStore,
+        "get_or_create",
+        new=AsyncMock(return_value=store),
+    ) as get_or_create:
+        await sample._record_stable(context, state)
+
+    get_or_create.assert_awaited_once_with(
+        "responses/resilient-langgraph/chain-21",
+        user_isolation=True,
+        description="State for the resilient LangGraph response sample",
+    )
+    store.set_item.assert_awaited_once_with(
+        "state",
+        {"stable_checkpoint_id": "checkpoint-21"},
+        call_id="persisted-call",
+    )
+    store.__aexit__.assert_awaited_once()

@@ -59,6 +59,8 @@ Usage::
 import asyncio
 import os
 
+from azure.ai.agentserver.core.storage import FoundryStateStore
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -66,12 +68,6 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
 )
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
-
-try:
-    from _state_store import ConversationStateStore
-except ModuleNotFoundError:
-    from samples._state_store import ConversationStateStore
 
 options = ResponsesServerOptions(
     resilient_background=True,
@@ -86,7 +82,6 @@ app = ResponsesAgentServerHost(options=options)
 set_resilient_tasks_enabled(True)
 
 _SIMULATE_SHUTDOWN_MS = int(os.environ.get("SIMULATE_SHUTDOWN_MS", "0"))
-_state_store = ConversationStateStore("resilient-steering")
 
 
 async def _simulate_llm_stream(prompt: str):
@@ -135,15 +130,27 @@ async def handler(
     yield stream.emit_in_progress()
 
     # Cross-turn state lives in an explicit application-owned State Store.
-    state = await _state_store.load(context.conversation_chain_id)
-    if state.get("last_response_id") == context.response_id:
-        turn_count = int(state.get("turn_count", 1))
-    else:
-        turn_count = int(state.get("turn_count", 0)) + 1
-        await _state_store.save(
-            context.conversation_chain_id,
-            {"turn_count": turn_count, "last_response_id": context.response_id},
+    store = await FoundryStateStore.get_or_create(
+        f"responses/resilient-steering/{context.conversation_chain_id}",
+        user_isolation=True,
+        description="State for the resilient steering response sample",
+    )
+    async with store:
+        item = await store.get_item("state", call_id=context.platform_context.call_id)
+        state = (
+            dict(item.value)
+            if item is not None and isinstance(item.value, dict)
+            else {}
         )
+        if state.get("last_response_id") == context.response_id:
+            turn_count = int(state.get("turn_count", 1))
+        else:
+            turn_count = int(state.get("turn_count", 0)) + 1
+            await store.set_item(
+                "state",
+                {"turn_count": turn_count, "last_response_id": context.response_id},
+                call_id=context.platform_context.call_id,
+            )
 
     # Optional local shutdown simulation.
     shutdown_timer: asyncio.Task | None = None

@@ -70,9 +70,9 @@ from azure.ai.agentserver.core.streaming import (
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import STATE_STORE_NAME, langgraph_session
+    from .agent import langgraph_session, state_store_name
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import STATE_STORE_NAME, langgraph_session
+    from agent import langgraph_session, state_store_name
 
 logger = logging.getLogger(__name__)
 
@@ -133,8 +133,7 @@ async def handle_invoke(request: Request) -> Response:
     }
 
     store = await FoundryStateStore.get_or_create(
-        STATE_STORE_NAME,
-        user_isolation=True,
+        state_store_name(session_id),
         description="LangGraph session checkpoints and invocation results",
     )
     async with store:
@@ -160,7 +159,7 @@ async def handle_invoke(request: Request) -> Response:
         )
 
     # Standard async mode — return 202 with status from store
-    poll_store = await FoundryStateStore.get_or_create(STATE_STORE_NAME)
+    poll_store = await FoundryStateStore.get_or_create(state_store_name(session_id))
     async with poll_store:
         stored = await poll_store.get_item(f"invocation/{invocation_id}")
     status = (
@@ -184,8 +183,9 @@ async def poll_invocation(request: Request) -> Response:
     Use this as the recovery path after an SSE disconnect.
     """
     invocation_id: str = request.state.invocation_id
+    session_id: str = request.state.session_id
 
-    store = await FoundryStateStore.get_or_create(STATE_STORE_NAME)
+    store = await FoundryStateStore.get_or_create(state_store_name(session_id))
     async with store:
         item = await store.get_item(f"invocation/{invocation_id}")
     if item is None or not isinstance(item.value, dict):

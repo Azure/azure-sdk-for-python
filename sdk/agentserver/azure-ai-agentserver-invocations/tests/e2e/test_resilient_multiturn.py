@@ -84,7 +84,9 @@ async def _load_state(store_name: str, key: str) -> dict | None:
     store = await FoundryStateStore.get_or_create(store_name)
     async with store:
         item = await store.get_item(key)
-    return dict(item.value) if item is not None and isinstance(item.value, dict) else None
+    return (
+        dict(item.value) if item is not None and isinstance(item.value, dict) else None
+    )
 
 
 @pytest.mark.asyncio
@@ -93,7 +95,10 @@ async def test_session_workflow_runs_two_turns_and_accumulates_history(
 ) -> None:
     """Two consecutive turns share the same session namespace."""
     _ensure_sample_importable()
-    from resilient_multiturn.agent import STATE_STORE_NAME, session_workflow  # noqa: WPS433
+    from resilient_multiturn.agent import (
+        session_workflow,
+        state_store_name,
+    )  # noqa: WPS433
 
     task_id = "session-turn-accumulate"
 
@@ -121,7 +126,7 @@ async def test_session_workflow_runs_two_turns_and_accumulates_history(
     result2 = await run2.result()
     assert result2["turn"] == 2
 
-    session = await _load_state(STATE_STORE_NAME, f"session/{task_id}")
+    session = await _load_state(state_store_name(task_id), f"session/{task_id}")
     assert session is not None
     history = session.get("history", [])
     assert len(history) == 4, f"Expected 4 messages, got {history}"
@@ -135,7 +140,10 @@ async def test_session_workflow_done_clears_history(
 ) -> None:
     """Sending ``"done"`` terminates the session and clears history."""
     _ensure_sample_importable()
-    from resilient_multiturn.agent import STATE_STORE_NAME, session_workflow  # noqa: WPS433
+    from resilient_multiturn.agent import (
+        session_workflow,
+        state_store_name,
+    )  # noqa: WPS433
 
     task_id = "session-done"
 
@@ -163,7 +171,7 @@ async def test_session_workflow_done_clears_history(
     assert result2.get("finished") is True
     assert "Session complete" in result2["reply"]
 
-    session = await _load_state(STATE_STORE_NAME, f"session/{task_id}")
+    session = await _load_state(state_store_name(task_id), f"session/{task_id}")
     assert session is not None
     assert session.get("history", []) == []
     assert session.get("turn_count", 0) == 0
@@ -175,7 +183,10 @@ async def test_invocation_status_persisted_to_default_namespace(
 ) -> None:
     """A separate State Store item records invocation status and output."""
     _ensure_sample_importable()
-    from resilient_multiturn.agent import STATE_STORE_NAME, session_workflow  # noqa: WPS433
+    from resilient_multiturn.agent import (
+        session_workflow,
+        state_store_name,
+    )  # noqa: WPS433
 
     task_id = "session-statuses"
     run = await session_workflow.start(
@@ -189,7 +200,7 @@ async def test_invocation_status_persisted_to_default_namespace(
     )
     await run.result()
 
-    invocation = await _load_state(STATE_STORE_NAME, "invocation/inv-status")
+    invocation = await _load_state(state_store_name(task_id), "invocation/inv-status")
     assert invocation is not None
     assert invocation.get("status") == "completed"
     assert invocation.get("output", {}).get("turn") == 1
