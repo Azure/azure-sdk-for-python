@@ -66,7 +66,6 @@ metadata pointer is what lets the recovered handler find that data.
 async def handler(request, context, cancellation_signal):
     store = await FoundryStateStore.get_or_create(
         f"responses/my-agent/{context.conversation_chain_id}",
-        user_isolation=True,
     )
     item = await store.get_item("workflow")
     state = dict(item.value) if item else {}
@@ -320,7 +319,6 @@ client replay) plus the snapshot at each of the points above.
 ### Notes on `FoundryStateStore`
 
 - Choose a stable store name that includes `context.conversation_chain_id`.
-- Use `user_isolation=True` when the naming scheme is shared across users.
 - Persist a watermark before a non-idempotent side effect and update it
   after the downstream system commits.
 - Keys and namespace names **starting with `_` are rejected** (raise `ValueError`). Those prefixes are reserved for framework-internal use — pick your own prefix-free names.
