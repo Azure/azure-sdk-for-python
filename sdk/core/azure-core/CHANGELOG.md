@@ -4,6 +4,7 @@
 
 ### Features Added
 
+- Added JSONL streaming support via the `azure.core.streaming` module, including the `Stream`/`AsyncStream` iterators and `JSONLDecoder`/`AsyncJSONLDecoder`. #38806
 - Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.
 
 ## 1.41.0 (2026-05-07)

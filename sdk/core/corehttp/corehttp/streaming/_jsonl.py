@@ -1,0 +1,144 @@
+# --------------------------------------------------------------------------
+#
+# Copyright (c) Microsoft Corporation. All rights reserved.
+#
+# The MIT License (MIT)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the ""Software""), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+#
+# --------------------------------------------------------------------------
+
+import codecs
+import json
+from contextlib import aclosing
+from typing import Iterator, AsyncIterator, Any, Optional, cast
+
+
+class JSONLEvent:
+    """A single JSON Lines (JSONL) event.
+
+    :ivar data: The raw JSONL record.
+    :vartype data: str or None
+    """
+
+    def __init__(
+        self,
+        *,
+        data: Optional[str] = None,
+    ) -> None:
+        self.data = data
+
+    def json(self) -> Any:
+        """Parse the event data as JSON.
+
+        :return: The parsed JSON value.
+        :rtype: Any
+        """
+        return json.loads(cast(str, self.data))
+
+
+def iter_lines(iter_bytes: Iterator[bytes]) -> Iterator[str]:
+    """Iterate over lines from a byte iterator.
+
+    :param iter_bytes: An iterator of byte chunks.
+    :type iter_bytes: Iterator[bytes]
+    :rtype: Iterator[str]
+    :return: An iterator of lines.
+    """
+    decoder = codecs.getincrementaldecoder("utf-8")()
+
+    # Split only on "\n" (tolerating "\r\n") rather than using str.splitlines(),
+    # which would also break on other Unicode boundaries (\v, \f, \x1c-\x1e, \x85,
+    # \u2028, \u2029) that are valid inside a JSONL record's string value.
+    decoded = ""
+    for chunk in iter_bytes:
+        decoded += decoder.decode(chunk)
+        if decoded:
+            decoded_lines = [line[:-1] if line.endswith("\r") else line for line in decoded.split("\n")]
+            yield from decoded_lines[:-1]
+            decoded = decoded_lines[-1]
+
+    decoded += decoder.decode(b"", final=True)
+    if decoded:
+        yield decoded[:-1] if decoded.endswith("\r") else decoded
+
+
+async def aiter_lines(iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[str]:
+    """Iterate over lines from a byte iterator.
+
+    :param iter_bytes: An iterator of byte chunks.
+    :type iter_bytes: Iterator[bytes]
+    :rtype: Iterator[str]
+    :return: An iterator of lines.
+    """
+    decoder = codecs.getincrementaldecoder("utf-8")()
+
+    # Split only on "\n" (tolerating "\r\n") rather than using str.splitlines(),
+    # which would also break on other Unicode boundaries (\v, \f, \x1c-\x1e, \x85,
+    # \u2028, \u2029) that are valid inside a JSONL record's string value.
+    decoded = ""
+    try:
+        async for chunk in iter_bytes:
+            decoded += decoder.decode(chunk)
+            if decoded:
+                decoded_lines = [line[:-1] if line.endswith("\r") else line for line in decoded.split("\n")]
+                for line in decoded_lines[:-1]:
+                    yield line
+                decoded = decoded_lines[-1]
+    finally:
+        aclose = getattr(iter_bytes, "aclose", None)
+        if aclose is not None:
+            await aclose()
+
+    decoded += decoder.decode(b"", final=True)
+    if decoded:
+        yield decoded[:-1] if decoded.endswith("\r") else decoded
+
+
+class JSONLDecoder:
+    """Decoder for JSON Lines (JSONL) format. https://jsonlines.org/"""
+
+    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[JSONLEvent]:
+        """Iterate over JSONL events from a byte iterator.
+
+        :param iter_bytes: An iterator of byte chunks.
+        :type iter_bytes: Iterator[bytes]
+        :rtype: Iterator[~corehttp.streaming.JSONLEvent]
+        :return: An iterator of JSONL events.
+        """
+
+        yield from (JSONLEvent(data=line) for line in iter_lines(iter_bytes))
+
+
+class AsyncJSONLDecoder:
+    """Asynchronous decoder for JSON Lines (JSONL) format. https://jsonlines.org/"""
+
+    # pylint: disable=invalid-overridden-method
+    async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[JSONLEvent]:
+        """Asynchronously iterate over JSONL events from a byte iterator.
+
+        :param iter_bytes: An asynchronous iterator of byte chunks.
+        :type iter_bytes: AsyncIterator[bytes]
+        :rtype: AsyncIterator[~corehttp.streaming.JSONLEvent]
+        :return: An asynchronous iterator of JSONL events.
+        """
+
+        async with aclosing(aiter_lines(iter_bytes)) as lines:
+            async for line in lines:
+                yield JSONLEvent(data=line)
