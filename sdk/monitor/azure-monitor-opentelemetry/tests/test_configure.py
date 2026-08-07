@@ -109,12 +109,25 @@ class TestConfigure(unittest.TestCase):
         detect_attach_mock,
     ):
         config_manager_mock = self._get_config_manager_mock.return_value
+        # Record the order of manager initialization relative to exporter setup. initialize() must run
+        # before any exporter setup so the distro's component="dst" wins under first-wins fill(); if it
+        # ran afterward the profile would revert to the exporter's component="ext".
+        call_order = []
+        config_manager_mock.initialize.side_effect = lambda *a, **k: call_order.append("initialize")
+        metrics_mock.side_effect = lambda *a, **k: call_order.append("metrics")
+        tracing_mock.side_effect = lambda *a, **k: call_order.append("tracing")
+        logging_mock.side_effect = lambda *a, **k: call_order.append("logging")
         configure_azure_monitor(connection_string="test_cs")
         # Distro contributes component="dst" and its version before any exporter is created.
         config_manager_mock.initialize.assert_called_once_with(
             component="dst",
             version=VERSION,
         )
+        # initialize() is recorded first, ahead of every exporter setup step.
+        self.assertEqual(call_order[0], "initialize")
+        self.assertIn("metrics", call_order)
+        self.assertIn("tracing", call_order)
+        self.assertIn("logging", call_order)
 
     @patch(
         "azure.monitor.opentelemetry._configure._send_attach_warning",
