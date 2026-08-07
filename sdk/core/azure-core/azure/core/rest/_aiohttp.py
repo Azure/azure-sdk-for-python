@@ -35,8 +35,8 @@ from ._http_response_impl_async import (
     AsyncHttpResponseImpl,
     AsyncHttpResponseBackcompatMixin,
 )
-from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
-from ..utils._pipeline_transport_rest_shared import _pad_attr_name, _aiohttp_body_helper
+from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator, _aiohttp_body_helper
+from ..utils._pipeline_transport_rest_shared import _pad_attr_name
 from ..exceptions import (
     ResponseNotReadError,
     IncompleteReadError,
@@ -167,7 +167,7 @@ class _RestAioHttpTransportResponseBackcompatMixin(AsyncHttpResponseBackcompatMi
         :return: The response's bytes
         :rtype: bytes
         """
-        return _aiohttp_body_helper(self)
+        return _aiohttp_body_helper(cast("RestAioHttpTransportResponse", self))
 
     async def _load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
