@@ -3,7 +3,36 @@
 import:
   - ../../.vscode/cspell.json
 words:
+  - aarti
+  - aiservices
+  - byom
+  - BYOS
+  - CSDL
+  - dalia
+  - diya
+  - deser
+  - DTMF
+  - hyunsu
+  - keita
+  - MCPHTTP
+  - meera
+  - niwat
+  - pcma
+  - pcmu
+  - premwadee
   - pyaudio
+  - redef
   - realtime
+  - reraises
+  - sess
+  - SSML
+  - sunhi
+  - unsanitized
   - vad
   - viseme
+  - webrtc
+  - xhigh
+  - xiaoxiao
+  - ximena
+  - yunxi
+  - yulin

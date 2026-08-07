@@ -65,8 +65,8 @@ for agent in client.voice_agents.list_voice_agents(
     print(agent.name)
 ```
 
-See the [samples](samples/README.md) directory for management, quickstart, and
-realtime conversation examples.
+See the [samples on GitHub](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/voiceagents/azure-ai-voiceagents/samples)
+for management, quickstart, and realtime conversation examples.
 
 ## Contributing
 
