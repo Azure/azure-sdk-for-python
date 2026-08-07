@@ -71,6 +71,8 @@ def _agent_identity_headers() -> dict[str, str]:
     agent_version = os.environ.get(_FOUNDRY_AGENT_VERSION_ENV)
     if agent_version:
         headers[_AGENT_VERSION_HEADER] = agent_version
+    if headers:
+        logger.info("Resolved agent identity headers: %s", headers)
     return headers
 
 
