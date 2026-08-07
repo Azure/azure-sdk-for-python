@@ -77,6 +77,25 @@ async def test_with_keep_alive_closes_source_when_consumer_stops() -> None:
 
 
 @pytest.mark.asyncio
+async def test_with_keep_alive_preserves_source_backpressure() -> None:
+    produced = 0
+
+    async def source() -> AsyncIterator[str]:
+        nonlocal produced
+        for index in range(100):
+            produced += 1
+            yield str(index)
+
+    stream = _with_keep_alive(source(), 0.02)
+
+    assert await anext(stream) == "0"
+    await asyncio.sleep(0.05)
+    assert produced == 1
+
+    await stream.aclose()
+
+
+@pytest.mark.asyncio
 async def test_invocations_sse_stream_uses_configured_keep_alive(monkeypatch) -> None:
     monkeypatch.setenv("SSE_KEEPALIVE_INTERVAL", "1")
     app = InvocationAgentServerHost(configure_observability=None)

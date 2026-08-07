@@ -14,48 +14,63 @@ async def _with_keep_alive(
     source: AsyncIterator[Any],
     interval_seconds: float | None,
 ) -> AsyncIterator[Any]:
-    """Interleave SSE keep-alive comments while the source is idle."""
+    """Interleave SSE keep-alive comments while the source is idle.
+
+    :param source: The source SSE stream.
+    :type source: ~collections.abc.AsyncIterator
+    :param interval_seconds: Seconds of inactivity between keep-alive comments,
+        or zero/``None`` to disable them.
+    :type interval_seconds: float or None
+    :return: The source chunks with keep-alive comments inserted during idle periods.
+    :rtype: ~collections.abc.AsyncIterator
+    """
     if not interval_seconds:
         async for item in source:
             yield item
         return
 
-    queue: asyncio.Queue[Any] = asyncio.Queue()
+    requests: asyncio.Queue[asyncio.Future[Any]] = asyncio.Queue(maxsize=1)
     sentinel = object()
-    pump_error: BaseException | None = None
 
     async def _pump() -> None:
-        nonlocal pump_error
         try:
-            async for item in source:
-                queue.put_nowait(item)
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            pump_error = exc
+            while True:
+                result = await requests.get()
+                try:
+                    item = await anext(source)
+                except StopAsyncIteration:
+                    result.set_result(sentinel)
+                    return
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    result.set_exception(exc)
+                    return
+                result.set_result(item)
         finally:
-            queue.put_nowait(sentinel)
+            close = getattr(source, "aclose", None)
+            if close is not None:
+                await close()
 
     pump_task = asyncio.create_task(_pump())
-    get_task: asyncio.Task[Any] | None = None
+    next_result: asyncio.Future[Any] | None = None
     try:
         while True:
-            if get_task is None:
-                get_task = asyncio.create_task(queue.get())
+            if next_result is None:
+                next_result = asyncio.get_running_loop().create_future()
+                requests.put_nowait(next_result)
             try:
                 item = await asyncio.wait_for(
-                    asyncio.shield(get_task),
+                    asyncio.shield(next_result),
                     timeout=interval_seconds,
                 )
             except asyncio.TimeoutError:
                 yield _KEEP_ALIVE_COMMENT
                 continue
-            get_task = None
+            next_result = None
             if item is sentinel:
                 break
             yield item
-        if pump_error is not None:
-            raise pump_error
     finally:
-        pending = [task for task in (pump_task, get_task) if task is not None]
-        for task in pending:
-            task.cancel()
-        await asyncio.gather(*pending, return_exceptions=True)
+        if next_result is not None:
+            next_result.cancel()
+        pump_task.cancel()
+        await asyncio.gather(pump_task, return_exceptions=True)
