@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/ServerDevOpsAuditCreateMin.json
+# x-ms-original-file: 2025-08-01-preview/ServerDevOpsAuditCreateMin.json
 if __name__ == "__main__":
     main()
