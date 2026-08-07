@@ -121,35 +121,35 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
     :type name: str
     :param version: Version of the deployment template.
     :type version: str
-    :param description: Description of the deployment template.
-    :type description: str
-    :param environment: Environment for the deployment template.
-    :type environment: ~azure.ai.ml.entities.Environment
-    :param request_settings: Request settings for the deployment template.
-    :type request_settings: ~azure.ai.ml.entities.OnlineRequestSettings
-    :param liveness_probe: Liveness probe settings.
-    :type liveness_probe: ~azure.ai.ml.entities.ProbeSettings
-    :param readiness_probe: Readiness probe settings.
-    :type readiness_probe: ~azure.ai.ml.entities.ProbeSettings
-    :param instance_count: Number of instances for the deployment template.
-    :type instance_count: int
-    :param instance_type: Instance type for the deployment template.
-    :type instance_type: str
-    :param model: Model for the deployment template.
-    :type model: str
-    :param code_configuration: Code configuration for the deployment template.
-    :type code_configuration: dict
-    :param environment_variables: Environment variables for the deployment template.
-    :type environment_variables: dict
-    :param app_insights_enabled: Whether application insights is enabled.
-    :type app_insights_enabled: bool
-    :param display_name: Display name of the deployment template.
-    :type display_name: str
-    :param stage: Stage of the deployment template. Can be "Active" or "Archived".
-    :type stage: str
-    :param accelerator_maps: List of accelerator maps describing the accelerator types
+    :keyword description: Description of the deployment template.
+    :paramtype description: str
+    :keyword environment: Environment for the deployment template.
+    :paramtype environment: ~azure.ai.ml.entities.Environment
+    :keyword request_settings: Request settings for the deployment template.
+    :paramtype request_settings: ~azure.ai.ml.entities.OnlineRequestSettings
+    :keyword liveness_probe: Liveness probe settings.
+    :paramtype liveness_probe: ~azure.ai.ml.entities.ProbeSettings
+    :keyword readiness_probe: Readiness probe settings.
+    :paramtype readiness_probe: ~azure.ai.ml.entities.ProbeSettings
+    :keyword instance_count: Number of instances for the deployment template.
+    :paramtype instance_count: int
+    :keyword instance_type: Instance type for the deployment template.
+    :paramtype instance_type: str
+    :keyword model: Model for the deployment template.
+    :paramtype model: str
+    :keyword code_configuration: Code configuration for the deployment template.
+    :paramtype code_configuration: dict
+    :keyword environment_variables: Environment variables for the deployment template.
+    :paramtype environment_variables: dict
+    :keyword app_insights_enabled: Whether application insights is enabled.
+    :paramtype app_insights_enabled: bool
+    :keyword display_name: Display name of the deployment template.
+    :paramtype display_name: str
+    :keyword stage: Stage of the deployment template. Can be "Active" or "Archived".
+    :paramtype stage: str
+    :keyword accelerator_maps: List of accelerator maps describing the accelerator types
         and their configurations for this deployment template.
-    :type accelerator_maps: list[~azure.ai.ml.entities.AcceleratorMap]
+    :paramtype accelerator_maps: list[~azure.ai.ml.entities.AcceleratorMap]
     """
 
     def __init__(  # pylint: disable=too-many-locals
