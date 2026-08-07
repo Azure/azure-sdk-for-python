@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessKeys(_Model):
+class AccessKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Namespace/Relay Connection String.
 
     :ivar primary_connection_string: Primary connection string of the created namespace
@@ -122,7 +122,7 @@ class ProxyResource(Resource):
     """
 
 
-class AuthorizationRule(ProxyResource):
+class AuthorizationRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single item in a List or Get AuthorizationRule operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -187,7 +187,7 @@ class AuthorizationRule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AuthorizationRuleProperties(_Model):
+class AuthorizationRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties supplied to create or update AuthorizationRule.
 
     :ivar rights: The rights associated with the rule. Required.
@@ -217,7 +217,48 @@ class AuthorizationRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailability(_Model):
+class AvailableRelayClusterRegion(_Model):
+    """A region with available Relay cluster capacity.
+
+    :ivar location: The Azure region location.
+    :vartype location: str
+    """
+
+    location: Optional[str] = rest_field(visibility=["read"])
+    """The Azure region location."""
+
+
+class AvailableRelayClustersList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The response from listing regions that have available Relay cluster capacity.
+
+    :ivar value: Regions containing available Relay cluster capacity. Required.
+    :vartype value: list[~azure.mgmt.relay.models.AvailableRelayClusterRegion]
+    """
+
+    value: list["_models.AvailableRelayClusterRegion"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Regions containing available Relay cluster capacity. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.AvailableRelayClusterRegion"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CheckNameAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of the check name availability request properties.
 
     :ivar name: The namespace name to check for availability. The namespace name can contain only
@@ -249,7 +290,7 @@ class CheckNameAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResult(_Model):
+class CheckNameAvailabilityResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of the check name availability request properties.
 
     :ivar message: The detailed info regarding the reason associated with the namespace.
@@ -296,7 +337,7 @@ class CheckNameAvailabilityResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionState(_Model):
+class ConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectionState information.
 
     :ivar status: Status of the connection. Known values are: "Pending", "Approved", "Rejected",
@@ -377,7 +418,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -405,7 +446,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HybridConnection(ProxyResource):
+class HybridConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of hybrid connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -470,7 +511,7 @@ class HybridConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class HybridConnectionProperties(_Model):
+class HybridConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the HybridConnection.
 
     :ivar created_at: The time the hybrid connection was created.
@@ -526,7 +567,7 @@ class HybridConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRuleSet(ProxyResource):
+class NetworkRuleSet(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of topic resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -587,7 +628,7 @@ class NetworkRuleSet(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NetworkRuleSetProperties(_Model):
+class NetworkRuleSetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkRuleSet properties.
 
     :ivar trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
@@ -642,7 +683,7 @@ class NetworkRuleSetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NWRuleSetIpRules(_Model):
+class NWRuleSetIpRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from the List namespace operation.
 
     :ivar ip_mask: IP Mask.
@@ -677,7 +718,7 @@ class NWRuleSetIpRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -765,7 +806,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PrivateEndpoint(_Model):
+class PrivateEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateEndpoint information.
 
     :ivar id: The ARM identifier for Private Endpoint.
@@ -793,7 +834,7 @@ class PrivateEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the PrivateEndpointConnection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -858,7 +899,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection resource.
 
     :ivar private_endpoint: The Private Endpoint resource for this Connection.
@@ -904,7 +945,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A resource that supports private link capabilities.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -965,7 +1006,7 @@ class PrivateLinkResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of PrivateLinkResource.
 
     :ivar group_id: The private link resource group id.
@@ -1007,7 +1048,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourcesListResult(_Model):
+class PrivateLinkResourcesListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the List private link resources operation.
 
     :ivar value: A collection of private link resources. Required.
@@ -1040,7 +1081,7 @@ class PrivateLinkResourcesListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegenerateAccessKeyParameters(_Model):
+class RegenerateAccessKeyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the regenerate authorization rule operation, specifies which key needs
     to be reset.
 
@@ -1079,7 +1120,7 @@ class RegenerateAccessKeyParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1123,7 +1164,317 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class RelayNamespace(TrackedResource):
+class RelayCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Relay dedicated cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.relay.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.relay.models.RelayClusterProperties
+    :ivar sku: The Relay cluster SKU. Required.
+    :vartype sku: ~azure.mgmt.relay.models.RelayClusterSku
+    """
+
+    properties: Optional["_models.RelayClusterProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    sku: "_models.RelayClusterSku" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Relay cluster SKU. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        sku: "_models.RelayClusterSku",
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.RelayClusterProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RelayClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Relay cluster properties.
+
+    :ivar provisioning_state: The provisioning state of the Relay cluster. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Deleting", and "Scaling".
+    :vartype provisioning_state: str or ~azure.mgmt.relay.models.RelayClusterProvisioningState
+    :ivar metric_id: The metric ID of the Relay cluster.
+    :vartype metric_id: str
+    :ivar status: The status of the Relay cluster.
+    :vartype status: str
+    :ivar supports_scaling: Indicates whether the Relay cluster supports capacity scaling.
+    :vartype supports_scaling: bool
+    :ivar zone_redundant: Indicates whether the Relay cluster was created as zone redundant.
+    :vartype zone_redundant: bool
+    """
+
+    provisioning_state: Optional[Union[str, "_models.RelayClusterProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the Relay cluster. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Creating\", \"Deleting\", and \"Scaling\"."""
+    metric_id: Optional[str] = rest_field(name="metricId", visibility=["read"])
+    """The metric ID of the Relay cluster."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """The status of the Relay cluster."""
+    supports_scaling: Optional[bool] = rest_field(name="supportsScaling", visibility=["read"])
+    """Indicates whether the Relay cluster supports capacity scaling."""
+    zone_redundant: Optional[bool] = rest_field(name="zoneRedundant", visibility=["read", "create"])
+    """Indicates whether the Relay cluster was created as zone redundant."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        zone_redundant: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RelayClusterSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SKU parameters for a Relay cluster.
+
+    :ivar name: Name of the Relay cluster SKU. Required. "Dedicated"
+    :vartype name: str or ~azure.mgmt.relay.models.RelayClusterSkuName
+    :ivar tier: Tier of the Relay cluster SKU. "Dedicated"
+    :vartype tier: str or ~azure.mgmt.relay.models.RelayClusterSkuTier
+    :ivar capacity: The number of capacity units assigned to the Relay cluster.
+    :vartype capacity: int
+    """
+
+    name: Union[str, "_models.RelayClusterSkuName"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the Relay cluster SKU. Required. \"Dedicated\""""
+    tier: Optional[Union[str, "_models.RelayClusterSkuTier"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tier of the Relay cluster SKU. \"Dedicated\""""
+    capacity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of capacity units assigned to the Relay cluster."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Union[str, "_models.RelayClusterSkuName"],
+        tier: Optional[Union[str, "_models.RelayClusterSkuTier"]] = None,
+        capacity: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RelayClusterSkuCapacity(_Model):
+    """Relay cluster SKU capacity information.
+
+    :ivar minimum: The minimum supported capacity.
+    :vartype minimum: int
+    :ivar maximum: The maximum supported capacity.
+    :vartype maximum: int
+    :ivar allowed_values: The allowed capacity values.
+    :vartype allowed_values: list[int]
+    :ivar default: The default capacity.
+    :vartype default: int
+    :ivar scale_type: The supported scaling mode. "Automatic"
+    :vartype scale_type: str or ~azure.mgmt.relay.models.RelayClusterSkuScaleType
+    """
+
+    minimum: Optional[int] = rest_field(visibility=["read"])
+    """The minimum supported capacity."""
+    maximum: Optional[int] = rest_field(visibility=["read"])
+    """The maximum supported capacity."""
+    allowed_values: Optional[list[int]] = rest_field(name="allowedValues", visibility=["read"])
+    """The allowed capacity values."""
+    default: Optional[int] = rest_field(visibility=["read"])
+    """The default capacity."""
+    scale_type: Optional[Union[str, "_models.RelayClusterSkuScaleType"]] = rest_field(
+        name="scaleType", visibility=["read"]
+    )
+    """The supported scaling mode. \"Automatic\""""
+
+
+class RelayClusterSkuDetails(_Model):
+    """Relay cluster SKU name and tier.
+
+    :ivar name: The SKU name. "Dedicated"
+    :vartype name: str or ~azure.mgmt.relay.models.RelayClusterSkuName
+    :ivar tier: The SKU tier. "Dedicated"
+    :vartype tier: str or ~azure.mgmt.relay.models.RelayClusterSkuTier
+    """
+
+    name: Optional[Union[str, "_models.RelayClusterSkuName"]] = rest_field(visibility=["read"])
+    """The SKU name. \"Dedicated\""""
+    tier: Optional[Union[str, "_models.RelayClusterSkuTier"]] = rest_field(visibility=["read"])
+    """The SKU tier. \"Dedicated\""""
+
+
+class RelayClusterSkuInfo(_Model):
+    """A SKU supported by a Relay cluster.
+
+    :ivar resource_type: The resource type to which the SKU applies.
+    :vartype resource_type: str
+    :ivar sku: The SKU name and tier.
+    :vartype sku: ~azure.mgmt.relay.models.RelayClusterSkuDetails
+    :ivar capacity: Capacity information for the SKU.
+    :vartype capacity: ~azure.mgmt.relay.models.RelayClusterSkuCapacity
+    """
+
+    resource_type: Optional[str] = rest_field(name="resourceType", visibility=["read"])
+    """The resource type to which the SKU applies."""
+    sku: Optional["_models.RelayClusterSkuDetails"] = rest_field(visibility=["read"])
+    """The SKU name and tier."""
+    capacity: Optional["_models.RelayClusterSkuCapacity"] = rest_field(visibility=["read"])
+    """Capacity information for the SKU."""
+
+
+class RelayClusterSkuListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The response from listing supported SKUs for a Relay cluster.
+
+    :ivar value: The SKUs supported by the Relay cluster. Required.
+    :vartype value: list[~azure.mgmt.relay.models.RelayClusterSkuInfo]
+    """
+
+    value: list["_models.RelayClusterSkuInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The SKUs supported by the Relay cluster. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.RelayClusterSkuInfo"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RelayClusterSkuUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Mutable Relay cluster SKU parameters.
+
+    :ivar name: Name of the Relay cluster SKU. "Dedicated"
+    :vartype name: str or ~azure.mgmt.relay.models.RelayClusterSkuName
+    :ivar tier: Tier of the Relay cluster SKU. "Dedicated"
+    :vartype tier: str or ~azure.mgmt.relay.models.RelayClusterSkuTier
+    :ivar capacity: The number of capacity units assigned to the Relay cluster.
+    :vartype capacity: int
+    """
+
+    name: Optional[Union[str, "_models.RelayClusterSkuName"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the Relay cluster SKU. \"Dedicated\""""
+    tier: Optional[Union[str, "_models.RelayClusterSkuTier"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tier of the Relay cluster SKU. \"Dedicated\""""
+    capacity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of capacity units assigned to the Relay cluster."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[Union[str, "_models.RelayClusterSkuName"]] = None,
+        tier: Optional[Union[str, "_models.RelayClusterSkuTier"]] = None,
+        capacity: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RelayClusterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for updating a Relay cluster.
+
+    :ivar sku: The Relay cluster SKU.
+    :vartype sku: ~azure.mgmt.relay.models.RelayClusterSkuUpdate
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    sku: Optional["_models.RelayClusterSkuUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Relay cluster SKU."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sku: Optional["_models.RelayClusterSkuUpdate"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RelayNamespace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a namespace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1163,6 +1514,7 @@ class RelayNamespace(TrackedResource):
         "metric_id",
         "private_endpoint_connections",
         "public_network_access",
+        "minimum_tls_version",
     ]
 
     @overload
@@ -1204,7 +1556,37 @@ class RelayNamespace(TrackedResource):
             super().__setattr__(key, value)
 
 
-class RelayNamespaceProperties(_Model):
+class RelayNamespaceIdListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The response from listing Relay namespace references in a cluster.
+
+    :ivar value: Relay namespace references assigned to the cluster. Required.
+    :vartype value: list[~azure.mgmt.relay.models.RelayNamespaceReference]
+    """
+
+    value: list["_models.RelayNamespaceReference"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Relay namespace references assigned to the cluster. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.RelayNamespaceReference"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RelayNamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the namespace.
 
     :ivar provisioning_state: Provisioning state of the Namespace.
@@ -1224,6 +1606,10 @@ class RelayNamespaceProperties(_Model):
     :ivar public_network_access: This determines if traffic is allowed over public network. By
      default it is enabled. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.relay.models.PublicNetworkAccess
+    :ivar minimum_tls_version: The minimum TLS version for the namespace. Supported values are 1.2
+     and 1.3. The service defaults to 1.2 when the property is omitted. Existing namespaces
+     configured with TLS 1.0 or 1.1 are reported as TLS 1.2. Known values are: "1.2" and "1.3".
+    :vartype minimum_tls_version: str or ~azure.mgmt.relay.models.TlsVersion
     """
 
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
@@ -1247,6 +1633,12 @@ class RelayNamespaceProperties(_Model):
     )
     """This determines if traffic is allowed over public network. By default it is enabled. Known
      values are: \"Enabled\", \"Disabled\", and \"SecuredByPerimeter\"."""
+    minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = rest_field(
+        name="minimumTlsVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum TLS version for the namespace. Supported values are 1.2 and 1.3. The service
+     defaults to 1.2 when the property is omitted. Existing namespaces configured with TLS 1.0 or
+     1.1 are reported as TLS 1.2. Known values are: \"1.2\" and \"1.3\"."""
 
     @overload
     def __init__(
@@ -1254,6 +1646,7 @@ class RelayNamespaceProperties(_Model):
         *,
         private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
     ) -> None: ...
 
     @overload
@@ -1267,7 +1660,18 @@ class RelayNamespaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceNamespacePatch(Resource):
+class RelayNamespaceReference(_Model):
+    """A reference to a Relay namespace assigned to a cluster.
+
+    :ivar id: The full Azure resource ID of the Relay namespace.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The full Azure resource ID of the Relay namespace."""
+
+
+class ResourceNamespacePatch(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1306,7 +1710,7 @@ class ResourceNamespacePatch(Resource):
         super().__init__(*args, **kwargs)
 
 
-class RelayUpdateParameters(ResourceNamespacePatch):
+class RelayUpdateParameters(ResourceNamespacePatch):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a namespace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1344,6 +1748,7 @@ class RelayUpdateParameters(ResourceNamespacePatch):
         "metric_id",
         "private_endpoint_connections",
         "public_network_access",
+        "minimum_tls_version",
     ]
 
     @overload
@@ -1384,7 +1789,7 @@ class RelayUpdateParameters(ResourceNamespacePatch):
             super().__setattr__(key, value)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU of the namespace.
 
     :ivar name: Name of this SKU. Required. "Standard"
@@ -1419,7 +1824,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1486,7 +1891,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WcfRelay(ProxyResource):
+class WcfRelay(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of the WCF relay resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1560,7 +1965,7 @@ class WcfRelay(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WcfRelayProperties(_Model):
+class WcfRelayProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the WCF relay.
 
     :ivar is_dynamic: Returns true if the relay is dynamic; otherwise, false.
