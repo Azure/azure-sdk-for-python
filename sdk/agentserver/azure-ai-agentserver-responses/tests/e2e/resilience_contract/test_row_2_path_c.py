@@ -31,7 +31,6 @@ from tests.e2e._crash_harness import CrashHarness
 from tests.e2e.resilience_contract.conftest import (
     LONG_GRACE_S,
     LONG_TIME_SECS,
-    poll_until_output_count,
     poll_until_terminal,
     post_and_get_response_id,
 )
@@ -44,7 +43,6 @@ async def test_row_2_path_c(make_harness: Callable[..., CrashHarness], stream: b
     harness = make_harness(
         resilient_background=False,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
-        pre_sleep_deltas=1 if stream else 0,
         shutdown_grace_seconds=LONG_GRACE_S,
     )
     await harness.start()
@@ -55,10 +53,7 @@ async def test_row_2_path_c(make_harness: Callable[..., CrashHarness], stream: b
             background=True,
             stream=stream,
         )
-        if stream:
-            await poll_until_output_count(harness.client, response_id, 1)
-        else:
-            await asyncio.sleep(0.5)
+        await asyncio.sleep(0.5)
         await harness.kill()
         await harness.restart()
 

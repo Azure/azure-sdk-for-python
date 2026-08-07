@@ -4,7 +4,7 @@
 
 Tests:
 - Session creation and multi-turn within session
-- Application session state persists across turns
+- Session metadata persists across turns
 """
 
 from __future__ import annotations
@@ -27,15 +27,14 @@ from azure.ai.agentserver.responses import (
 def _make_session_app() -> TestClient:
     options = ResponsesServerOptions(resilient_background=True, steerable_conversations=True)
     app = ResponsesAgentServerHost(options=options)
-    state_by_chain: dict[str, dict[str, Any]] = {}
 
     @app.response_handler
     async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         input_text = await context.get_input_text()
-        state = state_by_chain.setdefault(context.conversation_chain_id, {})
-        session_id = state.setdefault("session_id", "new-session")
-        msg_count = int(state.get("msg_count", 0)) + 1
-        state["msg_count"] = msg_count
+        session_id = context.conversation_chain_metadata.get("session_id", "new-session")
+        context.conversation_chain_metadata["session_id"] = session_id
+        msg_count = context.conversation_chain_metadata.get("msg_count", 0) + 1
+        context.conversation_chain_metadata["msg_count"] = msg_count
         text = f"Session {session_id}, msg #{msg_count}: {input_text}"
         return TextResponse(context, request, text=text)
 

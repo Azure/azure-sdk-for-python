@@ -183,7 +183,7 @@ class TestExitForRecovery:
 
     ctx.exit_for_recovery() is the prescribed shutdown shape:
     - Callable only when ctx.shutdown.is_set() (else RuntimeError).
-    - Releases the lease and leaves status in_progress.
+    - Flushes metadata, releases lease, leaves status in_progress.
     - Signals awaiters with TaskCancelled.
     - Preserves queued steering inputs.
     """

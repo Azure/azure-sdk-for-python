@@ -3,7 +3,8 @@
 # ---------------------------------------------------------
 """TaskContext — the single parameter to a resilient task function.
 
-Provides identity, typed input, cancellation signals, and recovery controls.
+Provides identity, typed input, mutable metadata, cancellation signals,
+and the ``suspend()`` method for pausing execution.
 
   introduces the cancel-cause boolean surface
 (``timeout_exceeded``, ``cancel_requested``, ``pending_input_count``,
@@ -18,6 +19,8 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Callable, Generic, Literal, TypeVar
 
 from azure.ai.agentserver.core._experimental import experimental
+
+from ._metadata import TaskMetadata
 
 Input = TypeVar("Input")
 Output = TypeVar("Output")
@@ -56,7 +59,8 @@ class _Suspended:
 class _ExitForRecovery:
     """: internal sentinel returned by
     :meth:`TaskContext.exit_for_recovery` to signal the framework to
-    release the lease and leave the stored status as ``in_progress``.
+    flush metadata, release the lease, and leave the stored status
+    as ``in_progress``.
     """
 
     __slots__ = ()
@@ -66,13 +70,16 @@ class _ExitForRecovery:
 class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attributes
     """The single parameter to a resilient task function.
 
-    Provides access to the task's identity, typed input, cancellation signals
-    (with cause booleans), and the ability to suspend or exit-for-recovery.
+    Provides access to the task's identity, typed input, mutable metadata
+    for progress tracking, cancellation signals (with cause booleans),
+    and the ability to suspend or exit-for-recovery.
 
     :param task_id: Unique task identifier.
     :type task_id: str
     :param input: Typed, validated input value.
     :type input: Input
+    :param metadata: Mutable progress metadata.
+    :type metadata: TaskMetadata
     :param retry_attempt: Resilient retry attempt counter. Survives crashes;
         increments only on failure-retries, never on crash recovery.
     :type retry_attempt: int
@@ -93,6 +100,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         "input_id",  #   /
         "_session_id",
         "input",
+        "metadata",
         "retry_attempt",
         "recovery_count",
         "cancel",
@@ -117,6 +125,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         task_id: str,
         session_id: str,
         input: Input,  # noqa: A002 — mirrors the spec naming
+        metadata: TaskMetadata,
         retry_attempt: int = 0,
         recovery_count: int = 0,
         cancel: asyncio.Event | None = None,
@@ -132,6 +141,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         self.input_id = input_id if input_id is not None else task_id
         self._session_id = session_id
         self.input = input
+        self.metadata = metadata
         self.retry_attempt = retry_attempt
         self.recovery_count = recovery_count
         self.cancel = cancel or asyncio.Event()
@@ -168,27 +178,28 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
     async def exit_for_recovery(self) -> Any:
         """: graceful-shutdown shape.
 
-        Callable ONLY when ``ctx.shutdown.is_set() == True``. Calling it
-        outside shutdown raises ``RuntimeError`` at the call site
-        (visible in user-code tracebacks; the task ends in ``failed``).
+                Callable ONLY when ``ctx.shutdown.is_set() == True``. Calling it
+                outside shutdown raises ``RuntimeError`` at the call site
+                (visible in user-code tracebacks; the task ends in ``failed``).
 
-        When called during shutdown, the framework:
+                When called during shutdown, the framework:
 
-        1. Releases the lease on the persisted record.
-        2. Leaves the stored ``status`` as ``in_progress`` (NOT
-           transitions to ``suspended``).
-        3. Signals in-process awaiters with the standard cooperative-
-           cancel ``TaskCancelled`` result.
-        4. Preserves any queued steering inputs in the persisted state.
+                1. Flushes ``ctx.metadata`` (auto-flush invariant).
+                2. Releases the lease on the persisted record.
+                3. Leaves the stored ``status`` as ``in_progress`` (NOT
+                   transitions to ``suspended``).
+                4. Signals in-process awaiters with the standard cooperative-
+                   cancel ``TaskCancelled`` result.
+                5. Preserves any queued steering inputs in the persisted state.
 
-        The recovery scan on the next process startup re-enters the
-        handler with ``ctx.entry_mode == "recovered"``.
+                The recovery scan on the next process startup re-enters the
+                handler with ``ctx.entry_mode == "recovered"``.
 
-        Use as ``return await ctx.exit_for_recovery()``.
+                Use as ``return await ctx.exit_for_recovery()``.
 
-        :return: The :class:`_ExitForRecovery` sentinel.
-        :rtype: Any
-        :raises RuntimeError: If called outside ``ctx.shutdown.is_set() == True``.
+                :return: The :class:`_ExitForRecovery` sentinel.
+                :rtype: Any
+                :raises RuntimeError: If called outside ``ctx.shutdown.is_set() == True``.
         """
         if not self.shutdown.is_set():
             raise RuntimeError(

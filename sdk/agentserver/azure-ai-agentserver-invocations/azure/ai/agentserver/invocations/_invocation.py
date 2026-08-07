@@ -147,28 +147,6 @@ def _sanitize_id(value: str, fallback: str) -> str:
     return value
 
 
-def _platform_context_from_request(
-    request: Request,
-    session_id: str,
-) -> FoundryAgentRequestContext:
-    """Populate request state and return its platform identity context.
-
-    :param request: The incoming invocation request.
-    :type request: ~starlette.requests.Request
-    :param session_id: The sanitized invocation session ID.
-    :type session_id: str
-    :return: Platform identity context for downstream calls.
-    :rtype: ~azure.ai.agentserver.core.FoundryAgentRequestContext
-    """
-    request.state.user_id = request.headers.get(USER_ID, "")
-    request.state.call_id = request.headers.get(FOUNDRY_CALL_ID, "")
-    return FoundryAgentRequestContext(
-        call_id=request.state.call_id or None,
-        user_id=request.state.user_id or None,
-        session_id=session_id or None,
-    )
-
-
 class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     """Invocation protocol host for Azure AI Hosted Agents.
 
@@ -515,18 +493,25 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         return response
 
     async def _create_invocation_endpoint(self, request: Request) -> Response:
-        invocation_id = _sanitize_id(
-            request.headers.get(InvocationConstants.INVOCATION_ID_HEADER) or "",
-            str(uuid.uuid4()),
-        )
+        generated_id = str(uuid.uuid4())
+        raw_invocation_id = request.headers.get(InvocationConstants.INVOCATION_ID_HEADER) or ""
+        invocation_id = _sanitize_id(raw_invocation_id, generated_id)
         request.state.invocation_id = invocation_id
 
         # Session ID: query param overrides env var / generated UUID
-        session_id = _sanitize_id(
-            request.query_params.get("agent_session_id") or self.config.session_id or "",
-            str(uuid.uuid4()),
+        raw_session_id = (
+            request.query_params.get("agent_session_id")
+            or self.config.session_id
+            or ""
         )
+        session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
         request.state.session_id = session_id
+
+        # Platform identity headers — expose to handlers
+        user_id = request.headers.get(USER_ID, "")
+        call_id = request.headers.get(FOUNDRY_CALL_ID, "")
+        request.state.user_id = user_id
+        request.state.call_id = call_id
 
         # Incoming baggage and trace context are already attached by
         # BaggageMiddleware and the Starlette OTel instrumentor.
@@ -546,7 +531,11 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         session_token = _session_id_var.set(session_id)
         # Bind platform context so outbound 1P calls (and handler/tool code) can
         # forward the per-request call ID and user ID (protocol 2.0.0).
-        platform_ctx = _platform_context_from_request(request, session_id)
+        platform_ctx = FoundryAgentRequestContext(
+            call_id=call_id or None,
+            user_id=user_id or None,
+            session_id=session_id,
+        )
         ctx_token = set_request_context(platform_ctx)
         try:
             response = await self._dispatch_invoke(request)
@@ -633,7 +622,6 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         _ensure_log_filter()
         inv_token = _invocation_id_var.set(invocation_id)
         session_token = _session_id_var.set(session_id)
-        ctx_token = set_request_context(_platform_context_from_request(request, session_id))
         try:
             response = await dispatch(request)
             response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -654,7 +642,6 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         finally:
             _invocation_id_var.reset(inv_token)
             _session_id_var.reset(session_token)
-            reset_request_context(ctx_token)
 
     async def _get_invocation_endpoint(self, request: Request) -> Response:
         return await self._traced_invocation_endpoint(

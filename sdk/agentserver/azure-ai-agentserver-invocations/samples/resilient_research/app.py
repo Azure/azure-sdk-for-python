@@ -77,6 +77,7 @@ from azure.ai.agentserver.core.streaming import (
     EventStreamNotFoundError,
     streams,
 )
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
@@ -100,6 +101,12 @@ logger = logging.getLogger(__name__)
 streams.use_file_backed_replay(cursor_fn=lambda ev: ev["sequence_number"])
 
 app = InvocationAgentServerHost()
+
+# Opt into resilient-task startup recovery. This sample declares a durable
+# task, so the framework would enable recovery automatically; we set the switch
+# explicitly to make the intent clear and to keep recovery working even if the
+# task is ever registered lazily (after startup).
+set_resilient_tasks_enabled(True)
 
 
 # --- SSE rendering ---------------------------------------------------------
@@ -182,11 +189,7 @@ async def handle_invoke(request: Request) -> Response:
     # ``_finish_turn`` discipline that makes this safe.
     await deep_research.start(
         task_id=task_id,
-        input={
-            "topic": topic,
-            "invocation_id": invocation_id,
-            "session_id": session_id,
-        },
+        input={"topic": topic, "invocation_id": invocation_id},
     )
 
     if "text/event-stream" in request.headers.get("accept", ""):
@@ -239,10 +242,7 @@ async def handle_get(request: Request) -> Response:
             stream = await streams.get(invocation_id)
         except EventStreamNotFoundError:
             return JSONResponse(
-                {
-                    "status": "not_found",
-                    "message": "No live stream for this invocation id.",
-                },
+                {"status": "not_found", "message": "No live stream for this invocation id."},
                 status_code=404,
             )
 
@@ -295,14 +295,10 @@ async def handle_cancel(request: Request) -> Response:
 
     run = await get_task_manager().get_active_run(task_id)
     if run is None:
-        return JSONResponse(
-            {"status": "not_found", "message": "No active task to cancel."}
-        )
+        return JSONResponse({"status": "not_found", "message": "No active task to cancel."})
 
     await run.cancel()
-    return JSONResponse(
-        {"status": "cancelled", "message": "Task cancellation requested."}
-    )
+    return JSONResponse({"status": "cancelled", "message": "Task cancellation requested."})
 
 
 if __name__ == "__main__":

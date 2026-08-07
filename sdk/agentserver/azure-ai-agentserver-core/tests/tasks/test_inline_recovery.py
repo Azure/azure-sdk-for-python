@@ -243,7 +243,7 @@ class TestSC004CrashRecovery:
 
     @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason="SC-004: requires multi_turn_task (RED)")
     async def test_recovery_scenario_multi_turn_resumed_turn(self, tmp_path: Path) -> None:
-        """Multi-turn resumed turn — crash recovery preserves the resumed input."""
+        """Multi-turn resumed turn — crash recovery preserves prior metadata."""
 
     @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason="SC-004: requires multi_turn_task (RED)")
     async def test_recovery_scenario_steerable_with_queued_inputs(self, tmp_path: Path) -> None:

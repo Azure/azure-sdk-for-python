@@ -375,7 +375,7 @@ class TestClaudeSteeringSampleE2E:
                 message = ctx.input["message"]
                 invocation_id = ctx.input["invocation_id"]
                 store[invocation_id] = {"status": "running"}
-                # Load history from the external application store.
+                # Load history from EXTERNAL store (not metadata)
                 history = list(conv_store.get(session_id, []))
                 history.append({"role": "user", "content": message})
                 if ctx.cancel.is_set():
@@ -424,7 +424,7 @@ class TestClaudeSteeringSampleE2E:
             assert result["reply"] == "Echo: Hello"
             assert result["partial"] is False
             assert store["inv-1"]["status"] == "completed"
-            # History is stored externally.
+            # History stored externally, not in metadata
             assert len(conv_store["s1"]) == 2  # user + assistant
 
         finally:
@@ -867,6 +867,7 @@ class TestLangGraphSteeringSampleE2E:
                 # Save checkpoint
                 cp_id = f"cp-{0}"
                 checkpoints.append(cp_id)
+                ctx.metadata.set("stable_checkpoint_id", cp_id)
 
                 output = {"invocation_id": invocation_id, "reply": reply}
                 store[invocation_id] = {"status": "completed", "output": output}

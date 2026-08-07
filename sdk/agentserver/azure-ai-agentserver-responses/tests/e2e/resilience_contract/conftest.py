@@ -116,6 +116,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
         resilient_background: bool = True,
         handler_sleep_ms: int = 50,
         pre_sleep_deltas: int = 0,
+        emit_metadata_watermark: bool = False,
         explicit_exit_for_recovery: bool = False,
         shutdown_grace_seconds: int = LONG_GRACE_S,
         keep_alive_seconds: int | None = None,
@@ -125,6 +126,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
             "CONFORMANCE_RESILIENT_BACKGROUND": "true" if resilient_background else "false",
             "CONFORMANCE_HANDLER_SLEEP_MS": str(handler_sleep_ms),
             "CONFORMANCE_PRE_SLEEP_DELTAS": str(pre_sleep_deltas),
+            "CONFORMANCE_EMIT_METADATA_WATERMARK": ("true" if emit_metadata_watermark else "false"),
             "CONFORMANCE_EXPLICIT_EXIT_FOR_RECOVERY": ("true" if explicit_exit_for_recovery else "false"),
             "AGENTSERVER_SHUTDOWN_GRACE_SECONDS": str(shutdown_grace_seconds),
             # Force Hypercorn to cancel in-flight connections after the
