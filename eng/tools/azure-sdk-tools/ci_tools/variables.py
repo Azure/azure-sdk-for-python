@@ -102,7 +102,10 @@ DEFAULT_ENVIRONMENT_VARIABLES = {
     "VIRTUALENV_WHEEL": "0.45.1",
     "VIRTUALENV_PIP": "24.0",
     "VIRTUALENV_SETUPTOOLS": "75.3.2",
-    "PIP_EXTRA_INDEX_URL": "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
+    # Intentionally no PIP_EXTRA_INDEX_URL default. azpysdk.main already points PIP_INDEX_URL and
+    # UV_DEFAULT_INDEX at CFS_INDEX_URL when they are unset, and PipAuthenticate@1 supplies an
+    # authenticated value in CI. Adding an extra index here would duplicate that feed and would
+    # leak it into `--pypi` runs, which are meant to resolve from PyPI only.
     # I haven't spent much time looking to see if a variable exists when invoking uv run. there might be one already that we can depend
     # on for get_pip_command adjustment.
     "IN_UV": "1",

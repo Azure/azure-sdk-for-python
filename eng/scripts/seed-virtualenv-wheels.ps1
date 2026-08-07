@@ -27,8 +27,14 @@ param (
 
 $attempts = 0
 
-# ensure these can be pulled down from pypi.
-$env:PIP_EXTRA_INDEX_URL="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+# virtualenv --download shells out to pip, which reads PIP_INDEX_URL. Prefer whatever the pipeline
+# already authenticated; only fall back to the public CFS feed when nothing is set.
+if (-not $env:PIP_INDEX_URL) {
+  $env:PIP_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+  Write-Host "PIP_INDEX_URL was not set; defaulting to the public azure-sdk-for-python feed."
+} else {
+  Write-Host "PIP_INDEX_URL is already set; preserving existing value."
+}
 
 while ($attempts -lt 3) {
   virtualenv --download --reset-app-data `
