@@ -40,9 +40,14 @@ from azure.ai.agentserver.core.streaming import streams
 logger = logging.getLogger(__name__)
 
 
-def state_store_name(session_id: str) -> str:
-    """Return the session-isolated application state store name."""
-    return f"resilient-langgraph/{session_id}"
+def session_state_store_name(session_id: str) -> str:
+    """Return the session-isolated LangGraph state store name."""
+    return f"resilient-langgraph/sessions/{session_id}"
+
+
+def invocation_state_store_name(session_id: str) -> str:
+    """Return the session-isolated invocation status store name."""
+    return f"resilient-langgraph/invocations/{session_id}"
 
 
 # LangGraph's internal SQLite checkpointer remains local to this sample.
@@ -315,7 +320,8 @@ def _build_session_output(state: Any) -> dict[str, Any]:
 
 
 async def _finalize_invocation(
-    store: FoundryStateStore,
+    session_store: FoundryStateStore,
+    invocation_store: FoundryStateStore,
     thread_config: dict[str, Any],
     invocation_id: str,
     session_id: str,
@@ -326,17 +332,17 @@ async def _finalize_invocation(
 
     new_cp_id = state.config["configurable"]["checkpoint_id"]
     output = _build_turn_output(state) if state.next else _build_session_output(state)
-    await store.set_item(
+    await session_store.set_item(
         f"session/{session_id}",
         {
             "stable_checkpoint_id": new_cp_id,
             "last_applied_invocation_id": invocation_id,
             "last_output": output,
         },
-        tags={"session_id": session_id},
+        tags={"invocation_id": invocation_id},
         call_id=call_id,
     )
-    await store.set_item(
+    await invocation_store.set_item(
         f"invocation/{invocation_id}",
         {"status": "completed", "output": output},
         tags={"session_id": session_id},
@@ -380,12 +386,18 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
     message: str = ctx.input["message"]
     invocation_id: str = ctx.input["invocation_id"]
     call_id: str = ctx.input["call_id"]
-    store = await FoundryStateStore.get_or_create(
-        state_store_name(session_id),
-        description="LangGraph session checkpoints and invocation results",
+    session_store = await FoundryStateStore.get_or_create(
+        session_state_store_name(session_id),
+        description="LangGraph session state",
+    )
+    invocation_store = await FoundryStateStore.get_or_create(
+        invocation_state_store_name(session_id),
+        description="LangGraph invocation status and results",
     )
 
-    session_item = await store.get_item(f"session/{session_id}", call_id=call_id)
+    session_item = await session_store.get_item(
+        f"session/{session_id}", call_id=call_id
+    )
     session_state = (
         dict(session_item.value)
         if session_item is not None and isinstance(session_item.value, dict)
@@ -397,16 +409,17 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
     ):
         output = session_state.get("last_output")
         if isinstance(output, dict):
-            await store.set_item(
+            await invocation_store.set_item(
                 f"invocation/{invocation_id}",
                 {"status": "completed", "output": output},
                 tags={"session_id": session_id},
                 call_id=call_id,
             )
-            await store.aclose()
+            await session_store.aclose()
+            await invocation_store.aclose()
             return output
 
-    await store.set_item(
+    await invocation_store.set_item(
         f"invocation/{invocation_id}",
         {"status": "running"},
         tags={"session_id": session_id},
@@ -419,14 +432,15 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
 
     # ── Pre-entry cancel (steering supersede / client cancel) ───────
     if ctx.cancel.is_set():
-        await store.set_item(
+        await invocation_store.set_item(
             f"invocation/{invocation_id}",
             {"status": "cancelled", "reason": "steered"},
             tags={"session_id": session_id},
             call_id=call_id,
         )
         await stream.close()
-        await store.aclose()
+        await session_store.aclose()
+        await invocation_store.aclose()
         return None
 
     # ── Resolve how this turn runs ──────────────────────────────────
@@ -484,7 +498,7 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
             )
         pending_updates.append(
             asyncio.run_coroutine_threadsafe(
-                store.set_item(
+                invocation_store.set_item(
                     f"invocation/{invocation_id}",
                     {
                         "status": "streaming",
@@ -509,21 +523,28 @@ async def langgraph_session(ctx: TaskContext[TaskInput]) -> dict[str, Any] | Non
 
     # ── Post-run cancel check ───────────────────────────────────────
     if not completed or ctx.cancel.is_set():
-        await store.set_item(
+        await invocation_store.set_item(
             f"invocation/{invocation_id}",
             {"status": "cancelled", "reason": "steered"},
             tags={"session_id": session_id},
             call_id=call_id,
         )
         await stream.close()
-        await store.aclose()
+        await session_store.aclose()
+        await invocation_store.aclose()
         return None
 
     # ── Normal completion ───────────────────────────────────────────
     await stream.close()
     try:
         return await _finalize_invocation(
-            store, thread_config, invocation_id, session_id, call_id
+            session_store,
+            invocation_store,
+            thread_config,
+            invocation_id,
+            session_id,
+            call_id,
         )
     finally:
-        await store.aclose()
+        await session_store.aclose()
+        await invocation_store.aclose()
