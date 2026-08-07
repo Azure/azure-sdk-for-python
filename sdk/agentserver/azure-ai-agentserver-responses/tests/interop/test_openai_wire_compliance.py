@@ -24,9 +24,9 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponseEventStream,
     ResponsesAgentServerHost,
+    get_input_expanded,
 )
 from azure.ai.agentserver.responses.models import (
-    get_input_expanded,
     get_tool_choice_expanded,
 )
 

@@ -17,6 +17,9 @@ from ._response_context import (
 )
 from .hosting._routing import ResponsesAgentServerHost
 from .models import CreateResponse, ResponseObject
+from .models._helpers import (
+    get_input_expanded,
+)
 from .store._base import ResponseProviderProtocol
 from .store._file import FileResponseStore
 from .store._foundry_errors import (
@@ -54,4 +57,5 @@ __all__ = [
     "TextResponse",
     "CreateResponse",
     "ResponseObject",
+    "get_input_expanded",
 ]

@@ -1,6 +1,9 @@
 ```py
 namespace azure.ai.agentserver.responses
 
+    def azure.ai.agentserver.responses.get_input_expanded(request: CreateResponse) -> list[Item]: ...
+
+
     class azure.ai.agentserver.responses.ConversationChainMetadataNamespace(Protocol): implements Collection 
 
         def __call__(self, name: Optional[str] = None) -> ConversationChainMetadataNamespace: ...
