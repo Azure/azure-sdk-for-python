@@ -41,9 +41,9 @@ from azure.ai.agentserver.core.tasks import TaskConflictError
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import session_workflow, state_store_name
+    from .agent import invocation_state_store_name, session_workflow
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import session_workflow, state_store_name
+    from agent import invocation_state_store_name, session_workflow
 
 app = InvocationAgentServerHost()
 
@@ -64,7 +64,9 @@ async def handle_invoke(request: Request) -> Response:
     message: str = data.get("message", "")
     task_id = f"session-{session_id}"
 
-    store = await FoundryStateStore.get_or_create(state_store_name(session_id))
+    store = await FoundryStateStore.get_or_create(
+        invocation_state_store_name(session_id)
+    )
     async with store:
         await store.set_item(
             f"invocation/{invocation_id}",
@@ -83,7 +85,9 @@ async def handle_invoke(request: Request) -> Response:
             },
         )
     except TaskConflictError as e:
-        store = await FoundryStateStore.get_or_create(state_store_name(session_id))
+        store = await FoundryStateStore.get_or_create(
+            invocation_state_store_name(session_id)
+        )
         async with store:
             await store.set_item(
                 f"invocation/{invocation_id}",
@@ -106,7 +110,9 @@ async def poll_invocation(request: Request) -> Response:
     """
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
-    store = await FoundryStateStore.get_or_create(state_store_name(session_id))
+    store = await FoundryStateStore.get_or_create(
+        invocation_state_store_name(session_id)
+    )
     async with store:
         item = await store.get_item(f"invocation/{invocation_id}")
     if item is None or not isinstance(item.value, dict):

@@ -21,9 +21,14 @@ from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 logger = logging.getLogger(__name__)
 
 
-def state_store_name(session_id: str) -> str:
-    """Return the session-isolated application state store name."""
-    return f"resilient-multiturn/{session_id}"
+def session_state_store_name(session_id: str) -> str:
+    """Return the session-isolated conversation state store name."""
+    return f"resilient-multiturn/sessions/{session_id}"
+
+
+def invocation_state_store_name(session_id: str) -> str:
+    """Return the session-isolated invocation status store name."""
+    return f"resilient-multiturn/invocations/{session_id}"
 
 
 class TaskInput(TypedDict):
@@ -61,7 +66,7 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
     Each invocation runs this function from the top.
     ``ctx.entry_mode`` tells us why we were entered.
 
-    Session and invocation state are stored as separate State Store items.
+    Session and invocation state are stored in separate State Stores.
     """
 
     session_id: str = ctx.input["session_id"]
@@ -71,12 +76,16 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
 
     session_key = f"session/{session_id}"
     invocation_key = f"invocation/{invocation_id}"
-    store = await FoundryStateStore.get_or_create(
-        state_store_name(session_id),
-        description="Multi-turn conversation state and invocation results",
+    session_store = await FoundryStateStore.get_or_create(
+        session_state_store_name(session_id),
+        description="Multi-turn conversation state",
     )
-    async with store:
-        session_item = await store.get_item(session_key, call_id=call_id)
+    invocation_store = await FoundryStateStore.get_or_create(
+        invocation_state_store_name(session_id),
+        description="Multi-turn invocation status and results",
+    )
+    async with session_store, invocation_store:
+        session_item = await session_store.get_item(session_key, call_id=call_id)
         session = (
             dict(session_item.value)
             if session_item is not None and isinstance(session_item.value, dict)
@@ -91,7 +100,7 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
         ):
             output = session.get("last_output")
             if isinstance(output, dict):
-                await store.set_item(
+                await invocation_store.set_item(
                     invocation_key,
                     {"status": "completed", "output": output},
                     tags={"session_id": session_id},
@@ -99,7 +108,7 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
                 )
                 return output
 
-        await store.set_item(
+        await invocation_store.set_item(
             invocation_key,
             {"status": "running"},
             tags={"session_id": session_id},
@@ -117,7 +126,7 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
             )
             result = {"reply": summary, "turn": turn_count, "finished": True}
             # Clear the session history so a future session_id reuse starts clean.
-            await store.set_item(
+            await session_store.set_item(
                 session_key,
                 {
                     "history": [],
@@ -125,11 +134,11 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
                     "last_applied_invocation_id": invocation_id,
                     "last_output": result,
                 },
-                tags={"session_id": session_id},
+                tags={"invocation_id": invocation_id},
                 call_id=call_id,
             )
 
-            await store.set_item(
+            await invocation_store.set_item(
                 invocation_key,
                 {"status": "completed", "output": result},
                 tags={"session_id": session_id},
@@ -145,7 +154,7 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
         history.append({"role": "assistant", "content": reply})
         output = {"reply": reply, "turn": turn_count}
 
-        await store.set_item(
+        await session_store.set_item(
             session_key,
             {
                 "history": history,
@@ -153,11 +162,11 @@ async def session_workflow(ctx: TaskContext[TaskInput]) -> dict[str, Any]:
                 "last_applied_invocation_id": invocation_id,
                 "last_output": output,
             },
-            tags={"session_id": session_id},
+            tags={"invocation_id": invocation_id},
             call_id=call_id,
         )
 
-        await store.set_item(
+        await invocation_store.set_item(
             invocation_key,
             {"status": "completed", "output": output},
             tags={"session_id": session_id},
