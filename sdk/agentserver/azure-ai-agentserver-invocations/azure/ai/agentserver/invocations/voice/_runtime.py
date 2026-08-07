@@ -81,7 +81,11 @@ class _ConnectionSender(Protocol):
 
 @experimental
 class VoiceCancellationToken:
-    """Read-only cooperative cancellation signal for response callbacks."""
+    """Read-only, connection-loop-scoped cancellation signal for response callbacks.
+
+    Do not retain this helper after its WebSocket connection ends or await it
+    from a different event loop.
+    """
 
     _event: asyncio.Event
 
@@ -115,7 +119,9 @@ class VoiceCancellationToken:
 class VoiceTextItem:
     """One ordered text item in a :class:`VoiceResponse`.
 
-    Instances are created by :meth:`VoiceResponse.new_text_item`.
+    Instances are created by :meth:`VoiceResponse.new_text_item`. They are bound
+    to the response's WebSocket connection and owning event loop; do not retain
+    or invoke them after that connection ends.
     """
 
     _response: "VoiceResponse"
@@ -183,7 +189,11 @@ class VoiceTextItem:
 
 @experimental
 class VoiceResponse:  # pylint: disable=too-many-instance-attributes
-    """SDK-owned response helper bound to an immutable input prefix."""
+    """SDK-owned response helper bound to one connection and input prefix.
+
+    The helper is event-loop-affine. Do not retain or invoke it after its
+    WebSocket connection ends, or await it from another event loop.
+    """
 
     _sender: _ConnectionSender
     _response_id: str
@@ -866,7 +876,13 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
 
 @experimental
 class VoiceSession:
-    """Connection-scoped context and controls exposed to callbacks."""
+    """Connection-scoped context and controls exposed to callbacks.
+
+    The helper is event-loop-affine. Do not retain or invoke it after its
+    WebSocket connection ends, or await it from another event loop. Copy any
+    application data that must outlive the connection instead of retaining this
+    helper.
+    """
 
     _sender: _ConnectionSender
     _start: SessionStartEvent

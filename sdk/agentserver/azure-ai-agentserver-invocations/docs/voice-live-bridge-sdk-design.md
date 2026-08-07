@@ -170,6 +170,12 @@ The first output operation allocates `r_`, emits `response.created{in_reply_to:[
 | Outcome/error models | Proactive, cancellation, timeout, handoff, and connection results. |
 
 Nested caller data must also be immutable. `VoiceSession` is not `AgentSessionResource` and never exposes control-plane CRUD.
+All public Voice helpers are scoped to one WebSocket connection and its owning
+event loop; customer retention does not extend protocol lifetime or reconnect
+state. The startup context retained by the live connection is charged once to
+the process-wide customer-memory budget. Connection and SDK-owned callback-task
+lease references keep that charge active until the last SDK owner releases it,
+including when a cancellation-resistant callback outlives connection teardown.
 
 ### 4.2 Callbacks
 

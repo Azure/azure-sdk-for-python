@@ -7,6 +7,7 @@ import asyncio
 import gc
 import hashlib
 import json
+import sys
 import threading
 import weakref
 from unittest import mock
@@ -133,6 +134,167 @@ def test_retained_byte_estimate_counts_many_small_content_objects() -> None:
     encoded = voice_host._estimate_event_bytes(event)  # pylint: disable=protected-access
 
     assert retained > encoded * 4
+
+
+def test_session_retained_estimate_counts_mapping_proxy_storage_without_sender_graph() -> None:
+    event = voice_host.parse_session_start(  # pylint: disable=protected-access
+        {
+            "protocol_version": "1.0",
+            "reconnect": False,
+            "response_timeouts": {
+                "first_output_ms": 1,
+                "idle_ms": 1,
+                "max_duration_ms": 1,
+            },
+            "caller": {"custom_parameters": {f"key_{index}": index for index in range(32)}},
+        }
+    )
+    sender = _Sender()
+    session = voice_runtime.VoiceSession._create(sender, event)  # type: ignore[arg-type]  # pylint: disable=protected-access
+    before = voice_host._estimate_session_retained_bytes(session, event)  # pylint: disable=protected-access
+    sender.unrelated_large_state = ["x" * 1024 for _ in range(100)]
+
+    assert voice_host._estimate_session_retained_bytes(session, event) == before  # pylint: disable=protected-access
+    assert before > voice_host._estimate_retained_bytes(event)  # pylint: disable=protected-access
+    assert event.caller is not None
+    shallow_visible = sys.getsizeof(event.caller) + sum(
+        sys.getsizeof(key) + sys.getsizeof(value) for key, value in event.caller.items()
+    )
+    assert voice_host._estimate_retained_bytes(event.caller) > shallow_visible  # pylint: disable=protected-access
+
+
+def test_session_retention_budget_is_shared_across_connections(monkeypatch) -> None:
+    monkeypatch.setattr(voice_host, "_MAX_GLOBAL_CUSTOMER_TASK_BYTES", 10)
+    first = voice_host._reserve_session_retention(6)  # pylint: disable=protected-access
+    assert first is not None
+    try:
+        assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 6  # pylint: disable=protected-access
+        assert voice_host._reserve_session_retention(5) is None  # pylint: disable=protected-access
+        assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 6  # pylint: disable=protected-access
+    finally:
+        voice_host._release_session_retention(first)  # pylint: disable=protected-access
+    assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 0  # pylint: disable=protected-access
+
+
+def test_session_retention_outlives_connection_for_resistant_customer_task() -> None:
+    async def scenario() -> None:
+        connection = _connection()
+        lease = voice_host._reserve_session_retention(17)  # pylint: disable=protected-access
+        assert lease is not None
+        connection._session_retention = lease  # pylint: disable=protected-access
+        started = asyncio.Event()
+        cancelled = asyncio.Event()
+        release = asyncio.Event()
+
+        async def resist_cancellation() -> None:
+            started.set()
+            try:
+                await asyncio.Event().wait()
+            except asyncio.CancelledError:
+                cancelled.set()
+                await release.wait()
+
+        task = connection._create_customer_task(  # pylint: disable=protected-access
+            resist_cancellation(),
+            name="session_retention_resistant_customer",
+        )
+        await started.wait()
+        task.cancel()
+        await cancelled.wait()
+        connection._release_connection_state()  # pylint: disable=protected-access
+
+        assert lease.references == 1
+        assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 17  # pylint: disable=protected-access
+        release.set()
+        await task
+        await asyncio.sleep(0)
+        assert lease.released
+        assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 0  # pylint: disable=protected-access
+        assert not voice_host._GLOBAL_SESSION_RETENTION_BY_TASK  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_session_retention_rolls_back_when_customer_task_creation_fails() -> None:
+    async def scenario() -> None:
+        connection = _connection()
+        lease = voice_host._reserve_session_retention(11)  # pylint: disable=protected-access
+        assert lease is not None
+        connection._session_retention = lease  # pylint: disable=protected-access
+
+        with mock.patch.object(asyncio, "create_task", side_effect=RuntimeError("task creation failed")):
+            with pytest.raises(RuntimeError, match="task creation failed"):
+                connection._create_customer_task(  # pylint: disable=protected-access
+                    asyncio.Event().wait(),
+                    name="session_retention_creation_failure",
+                )
+
+        assert lease.references == 1
+        assert voice_host._GLOBAL_CUSTOMER_TASK_RESERVATIONS == 0  # pylint: disable=protected-access
+        assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 11  # pylint: disable=protected-access
+        assert not voice_host._GLOBAL_SESSION_RETENTION_BY_TASK  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
+        assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 0  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_eager_session_retention_task_release_is_idempotent() -> None:
+    eager_task_factory = getattr(asyncio, "eager_task_factory", None)
+    if eager_task_factory is None:
+        pytest.skip("asyncio.eager_task_factory requires Python 3.12+")
+
+    async def scenario() -> None:
+        connection = _connection()
+        lease = voice_host._reserve_session_retention(13)  # pylint: disable=protected-access
+        assert lease is not None
+        connection._session_retention = lease  # pylint: disable=protected-access
+        loop = asyncio.get_running_loop()
+        original_factory = loop.get_task_factory()
+        loop.set_task_factory(eager_task_factory)
+
+        async def complete_immediately() -> None:
+            return None
+
+        try:
+            task = connection._create_customer_task(  # pylint: disable=protected-access
+                complete_immediately(),
+                name="eager_session_retention_customer",
+            )
+            assert task.done()
+            assert lease.references == 1
+            assert task not in voice_host._GLOBAL_SESSION_RETENTION_BY_TASK  # pylint: disable=protected-access
+            voice_host._release_global_customer_task(task)  # pylint: disable=protected-access
+            assert lease.references == 1
+        finally:
+            loop.set_task_factory(original_factory)
+        connection._release_connection_state()  # pylint: disable=protected-access
+        assert lease.released
+        assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 0  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_session_retention_and_output_share_global_customer_budget(monkeypatch) -> None:
+    async def scenario() -> None:
+        monkeypatch.setattr(voice_host, "_MAX_GLOBAL_CUSTOMER_TASK_BYTES", 5)
+        lease = voice_host._reserve_session_retention(3)  # pylint: disable=protected-access
+        assert lease is not None
+        connection = _connection(_RecordingWebSocket())
+        response = VoiceResponse._create(  # pylint: disable=protected-access
+            connection,
+            response_id="r_session_output_budget",
+            in_reply_to=None,
+            wire_opened=True,
+        )
+        try:
+            with pytest.raises(RuntimeError, match="global customer task byte limit"):
+                await response.send_text("123")
+        finally:
+            voice_host._release_session_retention(lease)  # pylint: disable=protected-access
+        assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 0  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
 
 
 def test_global_callback_queue_byte_limit_is_shared_across_connections(monkeypatch) -> None:

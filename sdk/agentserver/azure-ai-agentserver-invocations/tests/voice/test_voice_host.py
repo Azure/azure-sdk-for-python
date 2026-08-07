@@ -509,6 +509,29 @@ def test_readiness_send_failure_still_shuts_down(monkeypatch) -> None:
 
     assert exc_info.value.code == 1011
     assert shutdown_calls == [False]
+    assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 0  # pylint: disable=protected-access
+
+
+def test_session_start_callback_failure_releases_session_retention() -> None:
+    app = _app()
+
+    @app.on_session_start
+    async def on_start(_session, _event) -> None:
+        raise RuntimeError("startup failed")
+
+    @app.on_user_message
+    async def on_message(_session, _event, response) -> None:
+        await response.decline()
+
+    with pytest.raises(WebSocketDisconnect) as exc_info:
+        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+            websocket.send_json(_start(caller={"custom_parameters": {"value": "retained"}}))
+            rejection = websocket.receive_json()
+            assert rejection["code"] == "startup_failed"
+            websocket.receive_json()
+
+    assert exc_info.value.code == 1011
+    assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 0  # pylint: disable=protected-access
 
 
 def test_activation_cancellation_still_runs_shutdown(monkeypatch) -> None:
@@ -578,6 +601,7 @@ def test_application_frame_during_startup_callback_rejects_activation() -> None:
 
     assert exc_info.value.code == 1008
     assert startup_cancelled.wait(timeout=1.0)
+    assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 0  # pylint: disable=protected-access
 
 
 def test_exact_duplicate_session_start_is_ignored_during_activation() -> None:
@@ -645,6 +669,8 @@ def test_startup_context_is_immutable_and_ready_has_no_version() -> None:
                 "nested": {"key": "value"},
             },
         )
+        assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES > 0  # pylint: disable=protected-access
+        assert not voice_host._GLOBAL_SESSION_RETENTION_BY_TASK  # pylint: disable=protected-access
 
     assert starts[0].greeting == "Welcome"
     assert starts[0].no_input_timeout_ms == 8_000
@@ -652,6 +678,34 @@ def test_startup_context_is_immutable_and_ready_has_no_version() -> None:
     assert starts[0].caller["nested"]["key"] == "value"  # type: ignore[index]
     with pytest.raises(TypeError):
         starts[0].caller["channel"] = "websocket"  # type: ignore[index]
+    assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 0  # pylint: disable=protected-access
+
+
+def test_session_retention_admission_failure_rejects_before_callback(monkeypatch) -> None:
+    app = _app()
+    startup_called = threading.Event()
+    monkeypatch.setattr(voice_host, "_MAX_GLOBAL_CUSTOMER_TASK_BYTES", 1)
+
+    @app.on_session_start
+    async def on_start(_session, _event) -> None:
+        startup_called.set()
+
+    @app.on_user_message
+    async def on_message(_session, _event, response) -> None:
+        await response.decline()
+
+    with pytest.raises(WebSocketDisconnect) as exc_info:
+        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+            websocket.send_json(_start(caller={"custom_parameters": {"value": "large"}}))
+            rejection = websocket.receive_json()
+            assert rejection["type"] == "session.rejected"
+            assert rejection["code"] == "startup_failed"
+            assert rejection["retriable"] is False
+            websocket.receive_json()
+
+    assert exc_info.value.code == 1011
+    assert not startup_called.is_set()
+    assert voice_host._GLOBAL_CUSTOMER_TASK_BYTES == 0  # pylint: disable=protected-access
 
 
 def test_invalid_caller_context_is_rejected_without_content_leak(caplog) -> None:

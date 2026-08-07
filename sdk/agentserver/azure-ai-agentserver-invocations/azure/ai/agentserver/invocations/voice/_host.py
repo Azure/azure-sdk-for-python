@@ -17,6 +17,7 @@ from collections import OrderedDict
 from collections.abc import Awaitable, Callable, Coroutine, Mapping, Sequence
 from dataclasses import dataclass
 from dataclasses import fields as dataclass_fields, is_dataclass, replace
+from types import MappingProxyType
 from typing import Any, Literal, Optional
 
 from opentelemetry import metrics
@@ -150,6 +151,7 @@ _MAX_GLOBAL_IDENTITY_BYTES = 64 * 1024 * 1024
 _CLEANUP_TIMEOUT_SECONDS = 5.0
 _GLOBAL_CUSTOMER_TASKS: set[asyncio.Task[None]] = set()
 _GLOBAL_CUSTOMER_TASK_BYTES_BY_TASK: dict[asyncio.Task[None], int] = {}
+_GLOBAL_SESSION_RETENTION_BY_TASK: dict[asyncio.Task[None], _SessionRetentionLease] = {}
 _GLOBAL_CUSTOMER_TASKS_LOCK = threading.Lock()
 _GLOBAL_CUSTOMER_TASK_RESERVATIONS = 0
 _GLOBAL_CALLBACK_QUEUE_BYTES = 0
@@ -170,6 +172,58 @@ _AGENT_TO_BRIDGE_TYPES = {
 }
 
 
+class _SessionRetentionLease:
+    """One global byte reservation shared by a connection and its customer tasks."""
+
+    def __init__(self, retained_bytes: int) -> None:
+        self.retained_bytes = retained_bytes
+        self.references = 1
+        self.released = False
+
+
+def _reserve_session_retention(retained_bytes: int) -> _SessionRetentionLease | None:
+    """Reserve one connection's startup context in the aggregate customer budget.
+
+    :param retained_bytes: Estimated bytes retained by the live session graph.
+    :type retained_bytes: int
+    :return: New connection-owned lease, or ``None`` when the budget is full.
+    :rtype: _SessionRetentionLease or None
+    """
+    global _GLOBAL_CUSTOMER_TASK_BYTES  # pylint: disable=global-statement
+    with _GLOBAL_CUSTOMER_TASKS_LOCK:
+        if _GLOBAL_CUSTOMER_TASK_BYTES + retained_bytes > _MAX_GLOBAL_CUSTOMER_TASK_BYTES:
+            return None
+        _GLOBAL_CUSTOMER_TASK_BYTES += retained_bytes
+        return _SessionRetentionLease(retained_bytes)
+
+
+def _release_session_retention_locked(lease: _SessionRetentionLease) -> None:
+    """Release one lease reference while the global customer-task lock is held.
+
+    :param lease: Shared startup-context byte reservation.
+    :type lease: _SessionRetentionLease
+    """
+    global _GLOBAL_CUSTOMER_TASK_BYTES  # pylint: disable=global-statement
+    if lease.released or lease.references <= 0:
+        raise RuntimeError("Voice session retention lease accounting underflow")
+    lease.references -= 1
+    if lease.references == 0:
+        _GLOBAL_CUSTOMER_TASK_BYTES -= lease.retained_bytes
+        if _GLOBAL_CUSTOMER_TASK_BYTES < 0:
+            raise RuntimeError("Voice global customer byte accounting underflow")
+        lease.released = True
+
+
+def _release_session_retention(lease: _SessionRetentionLease) -> None:
+    """Release one connection-owned startup-context lease reference.
+
+    :param lease: Shared startup-context byte reservation.
+    :type lease: _SessionRetentionLease
+    """
+    with _GLOBAL_CUSTOMER_TASKS_LOCK:
+        _release_session_retention_locked(lease)
+
+
 def _release_global_customer_task(completed: asyncio.Task[None]) -> None:
     """Release one process-level customer/finalizer task reservation.
 
@@ -184,6 +238,9 @@ def _release_global_customer_task(completed: asyncio.Task[None]) -> None:
         _GLOBAL_CUSTOMER_TASKS.discard(completed)
         _GLOBAL_CUSTOMER_TASK_RESERVATIONS -= 1
         _GLOBAL_CUSTOMER_TASK_BYTES -= _GLOBAL_CUSTOMER_TASK_BYTES_BY_TASK.pop(completed, 0)
+        session_retention = _GLOBAL_SESSION_RETENTION_BY_TASK.pop(completed, None)
+        if session_retention is not None:
+            _release_session_retention_locked(session_retention)
     if not completed.cancelled():
         completed.exception()
 
@@ -1042,6 +1099,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         # not sit behind possibly-stalled ordinary callback work in the queue.
         self._session_end_task: asyncio.Task[None] | None = None
         self._session: VoiceSession | None = None
+        self._session_retention: _SessionRetentionLease | None = None
         self._active_response: VoiceResponse | None = None
         self._pending_turns: OrderedDict[bytes, VoiceResponse] = OrderedDict()
         self._resolved_input_prefixes = _DigestPrefixMap()
@@ -1672,6 +1730,12 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             await self._reject("startup_failed", close_code=1011)
             return False
         session = VoiceSession._create(self, event)
+        session_retention = _reserve_session_retention(_estimate_session_retained_bytes(session, event))
+        if session_retention is None:
+            self._signal_runtime_failure("Voice global customer retained byte limit reached")
+            await self._reject("startup_failed", close_code=1011)
+            return False
+        self._session_retention = session_retention
         self._session = session
         startup_receive_task: asyncio.Task[dict[str, Any] | None] | None = None
         try:
@@ -1841,7 +1905,6 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             customer_task = self._create_customer_task(
                 _invoke_customer_callback(),
                 name="voice_session_start",
-                retained_bytes=_estimate_retained_bytes((session, event)),
             )
             try:
                 done, _ = await asyncio.wait((customer_task, receive_task), return_when=asyncio.FIRST_COMPLETED)
@@ -2251,15 +2314,20 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
     ) -> asyncio.Task[None]:
         global _GLOBAL_CUSTOMER_TASK_RESERVATIONS  # pylint: disable=global-statement
         global _GLOBAL_CUSTOMER_TASK_BYTES  # pylint: disable=global-statement
+        session_retention = self._session_retention
         with _GLOBAL_CUSTOMER_TASKS_LOCK:
             if _GLOBAL_CUSTOMER_TASK_RESERVATIONS >= _MAX_GLOBAL_CUSTOMER_TASKS:
                 limit_error = "Voice global customer task limit reached"
             elif _GLOBAL_CUSTOMER_TASK_BYTES + retained_bytes > _MAX_GLOBAL_CUSTOMER_TASK_BYTES:
                 limit_error = "Voice global customer task byte limit reached"
+            elif session_retention is not None and session_retention.released:
+                limit_error = "Voice session retention lease was already released"
             else:
                 limit_error = None
                 _GLOBAL_CUSTOMER_TASK_RESERVATIONS += 1
                 _GLOBAL_CUSTOMER_TASK_BYTES += retained_bytes
+                if session_retention is not None:
+                    session_retention.references += 1
 
         if limit_error is not None:
             coroutine.close()
@@ -2273,11 +2341,15 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             with _GLOBAL_CUSTOMER_TASKS_LOCK:
                 _GLOBAL_CUSTOMER_TASK_RESERVATIONS -= 1
                 _GLOBAL_CUSTOMER_TASK_BYTES -= retained_bytes
+                if session_retention is not None:
+                    _release_session_retention_locked(session_retention)
             raise
 
         with _GLOBAL_CUSTOMER_TASKS_LOCK:
             _GLOBAL_CUSTOMER_TASKS.add(task)
             _GLOBAL_CUSTOMER_TASK_BYTES_BY_TASK[task] = retained_bytes
+            if session_retention is not None:
+                _GLOBAL_SESSION_RETENTION_BY_TASK[task] = session_retention
 
         task.add_done_callback(_release_global_customer_task)
         if task.done():
@@ -2847,7 +2919,11 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         self._active_release = None
         self._callback_worker = None
         self._session_end_task = None
+        session_retention = self._session_retention
+        self._session_retention = None
         self._session = None
+        if session_retention is not None:
+            _release_session_retention(session_retention)
 
     def _fail_pending_proactive_locked(self, message: str) -> None:
         """Fail pending proactive admissions while the caller holds ``_state_lock``.
@@ -2971,8 +3047,29 @@ def _estimate_retained_bytes(event: Any) -> int:
         if is_dataclass(value) and not isinstance(value, type):
             pending.extend(getattr(value, field.name) for field in dataclass_fields(value))
         elif isinstance(value, Mapping):
+            if isinstance(value, MappingProxyType):
+                # ``sys.getsizeof(mappingproxy)`` excludes its hidden backing
+                # dictionary. Add an equivalent shallow table without recounting
+                # keys or values, which remain traversed below.
+                total += sys.getsizeof(dict.fromkeys(value))
             pending.extend(value.keys())
             pending.extend(value.values())
         elif isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
             pending.extend(value)
     return total
+
+
+def _estimate_session_retained_bytes(session: VoiceSession, event: SessionStartEvent) -> int:
+    """Estimate the startup graph retained by a live connection.
+
+    Measure the session shell, its attribute table, and the event graph without
+    traversing ``session._sender`` back into the full connection/WebSocket graph.
+
+    :param session: Connection-scoped public helper retaining the startup event.
+    :type session: VoiceSession
+    :param event: Parsed startup context retained by the session.
+    :type event: SessionStartEvent
+    :return: Estimated retained bytes charged once per live session graph.
+    :rtype: int
+    """
+    return sys.getsizeof(session) + sys.getsizeof(session.__dict__) + _estimate_retained_bytes(event)

@@ -375,7 +375,9 @@ app.run()
 
 The host owns Bridge framing, IDs, ordering, callback coordination, bounded
 connection state, and terminal races. Application code remains text-in and
-text-out. See the [Voice Live Bridge guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-invocations/docs/voice-live-bridge.md) for
+text-out. Voice session/response/item helpers are scoped to their WebSocket
+connection and owning event loop; do not retain or invoke them after that
+connection ends. See the [Voice Live Bridge guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-invocations/docs/voice-live-bridge.md) for
 streaming, handoff, proactive responses, privacy, and troubleshooting.
 
 ## Troubleshooting

@@ -48,6 +48,13 @@ response timeout, and session end.
 - `VoiceCancellationToken` lets model/tool work cooperatively stop after a
   timeout, barge-in, session end, or disconnect.
 
+These helpers are scoped to their WebSocket connection and its owning event
+loop. Do not retain or invoke them after the connection ends, or await them from
+another event loop. Code originating on another thread must schedule work onto
+the owning loop. Copy ordinary application data that must outlive the connection
+instead of retaining a helper; retaining a helper does not preserve or reattach
+protocol state.
+
 Normal callback return emits `response.done` only after all output items are
 complete. Use `decline()` for an explicit no-reply outcome, `fail()` for a
 response-scoped error, or `handoff()` for a terminal agent transfer.

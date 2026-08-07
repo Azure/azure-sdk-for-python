@@ -29,6 +29,9 @@
   `m_` namespace for SDK-generated frames, matching the protocol contract.
 - Validated known Voice caller-context fields while preserving additive metadata
   and open channel values, and rejected explicit `null` for typed startup fields.
+- Kept connection-lifetime Voice startup context charged to the process-wide
+  customer-memory budget until the connection and any cancellation-resistant
+  SDK-owned callback tasks release it.
 - Moved Voice readiness arbitration to the actual WebSocket transport-attempt
   boundary so application frames received while `session.ready` is still waiting
   on local send locks are rejected without misclassifying immediate peer replies.
