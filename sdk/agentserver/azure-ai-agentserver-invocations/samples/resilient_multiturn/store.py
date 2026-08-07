@@ -34,7 +34,7 @@ class FileStore:
         target = self._base / f"{key}.json"
         fd, tmp_path = tempfile.mkstemp(dir=str(self._base), suffix=".tmp", prefix=f"{key}_")
         try:
-            with open(fd, "w") as f:
+            with open(fd, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
             Path(tmp_path).replace(target)
         except BaseException:

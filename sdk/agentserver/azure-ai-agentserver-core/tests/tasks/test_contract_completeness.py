@@ -175,9 +175,8 @@ CONTRACT_CLAUSE_TO_TEST: dict[str, str] = {
     "task_metadata_flush_per_namespace_only": ("test_metadata.py::test_flush_per_namespace_only"),
     #  — default-namespace convenience accessor
     "task_metadata_default_namespace_callable_and_dict": ("test_metadata.py::test_default_namespace_callable_and_dict"),
-    # (Underscore-namespace not-enforced-by-primitive contract is vacuous
-    # post-redesign — primitive now reserves leading underscore and
-    # raises ValueError; covered by test_metadata::test_named_namespace.)
+    # Underscore-namespace guard is enforced by the facade layer, not the
+    # primitive named-namespace accessor.
     # ---  — Task & Streams Reconciliation ----------------------
     #  (etag CAS, write queue, dynamic lease, per-op 412 policy)
     "task_streams_etag_cas_every_patch": ("test_etag_cas.py::test_every_patch_after_first_carries_if_match"),

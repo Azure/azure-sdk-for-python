@@ -396,7 +396,7 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any] | None:
         graph_input = {"messages": [HumanMessage(content=message)], "is_complete": False}
 
     # ── Run the graph with inter-node cancellation ──────────────────
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
 
     def _on_node(chunk: dict) -> None:
         """Stream node progress events from the sync graph thread."""
