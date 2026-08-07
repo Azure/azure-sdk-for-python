@@ -70,6 +70,8 @@ from langgraph.config import get_stream_writer
 from langgraph.graph import END, START, StateGraph, add_messages
 from langgraph.types import Command, interrupt
 
+from azure.ai.agentserver.core.storage import FoundryStateStore
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -77,7 +79,6 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
 )
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
 
 # ─── Graph state ────────────────────────────────────────────────────────────
@@ -92,8 +93,12 @@ class ConversationState(typing.TypedDict):
 
 # ─── Graph nodes ────────────────────────────────────────────────────────────
 
-_STEP_DELAY = float(os.environ.get("LANGGRAPH_STEP_DELAY_SEC", "0.4"))  # Seconds per non-streaming node.
-_TOKEN_DELAY = float(os.environ.get("LANGGRAPH_TOKEN_DELAY_SEC", "0.08"))  # Seconds between streamed tokens.
+_STEP_DELAY = float(
+    os.environ.get("LANGGRAPH_STEP_DELAY_SEC", "0.4")
+)  # Seconds per non-streaming node.
+_TOKEN_DELAY = float(
+    os.environ.get("LANGGRAPH_TOKEN_DELAY_SEC", "0.08")
+)  # Seconds between streamed tokens.
 
 
 async def analyze_input(state: ConversationState) -> dict[str, Any]:
@@ -149,7 +154,9 @@ def _should_continue(state: ConversationState) -> str:
 # and survives restarts); fall back to a per-user dir for local runs.
 _STATE_ROOT = os.environ.get("AGENTSERVER_STATE_ROOT")
 _DATA_DIR = (
-    Path(_STATE_ROOT) / "langgraph" if _STATE_ROOT else Path.home() / ".agentserver-sessions" / "langgraph-responses"
+    Path(_STATE_ROOT) / "langgraph"
+    if _STATE_ROOT
+    else Path.home() / ".agentserver" / "langgraph-responses"
 )
 _DATA_DIR.mkdir(parents=True, exist_ok=True)
 _DB_PATH = _DATA_DIR / "checkpoints.db"
@@ -170,7 +177,9 @@ def _build_graph(checkpointer: Any) -> Any:
     builder.add_edge("analyze_input", "generate_response")
     builder.add_edge("generate_response", "refine_response")
     builder.add_edge("refine_response", "wait_for_user")
-    builder.add_conditional_edges("wait_for_user", _should_continue, {"continue": "analyze_input", "end": END})
+    builder.add_conditional_edges(
+        "wait_for_user", _should_continue, {"continue": "analyze_input", "end": END}
+    )
     return builder.compile(checkpointer=checkpointer)
 
 
@@ -223,16 +232,25 @@ def _reply_already_persisted(stream: ResponseEventStream) -> bool:
     again. It also becomes True the moment this attempt closes a fresh reply item.
     """
     return any(
-        isinstance(item, dict) and item.get("type") == "message" for item in (stream.response.get("output") or [])
+        isinstance(item, dict) and item.get("type") == "message"
+        for item in (stream.response.get("output") or [])
     )
 
 
-async def _fork_from_checkpoint(graph: Any, config: dict[str, Any], checkpoint_id: str, new_message: str) -> bool:
+async def _fork_from_checkpoint(
+    graph: Any, config: dict[str, Any], checkpoint_id: str, new_message: str
+) -> bool:
     """Fork graph state from a stable checkpoint with a new (steered) message."""
     # The sqlite checkpointer requires ``checkpoint_ns`` on the config it writes
     # through; the resilient context only carries ``thread_id``, so seed the
     # default namespace explicitly before resolving + forking the state.
-    target_config = {"configurable": {"checkpoint_ns": "", **config["configurable"], "checkpoint_id": checkpoint_id}}
+    target_config = {
+        "configurable": {
+            "checkpoint_ns": "",
+            **config["configurable"],
+            "checkpoint_id": checkpoint_id,
+        }
+    }
     target = await graph.aget_state(target_config)
     if not target or not target.config:
         return False
@@ -244,12 +262,20 @@ async def _fork_from_checkpoint(graph: Any, config: dict[str, Any], checkpoint_i
     return True
 
 
-def _record_stable(context: ResponseContext, state: Any) -> None:
+async def _record_stable(context: ResponseContext, state: Any) -> None:
     """Record the current graph checkpoint as the stable fork point for steering."""
     cfg = getattr(state, "config", None) or {}
     checkpoint_id = cfg.get("configurable", {}).get("checkpoint_id")
     if checkpoint_id:
-        context.conversation_chain_metadata["stable_checkpoint_id"] = checkpoint_id
+        store = await FoundryStateStore.get_or_create(
+            f"responses/resilient-langgraph/{context.conversation_chain_id}",
+            description="State for the resilient LangGraph response sample",
+        )
+        async with store:
+            await store.set_item(
+                "state",
+                {"stable_checkpoint_id": checkpoint_id},
+            )
 
 
 @app.response_handler
@@ -273,7 +299,9 @@ async def handler(
     # Seed from the last framework checkpoint so already-emitted items keep their
     # ORIGINAL ids; the in_progress below re-emits them (the reset point).
     if context.is_recovery and context.persisted_response is not None:
-        stream = ResponseEventStream(response_id=context.response_id, response=context.persisted_response)
+        stream = ResponseEventStream(
+            response_id=context.response_id, response=context.persisted_response
+        )
     else:
         stream = ResponseEventStream(response_id=context.response_id, request=request)
 
@@ -300,20 +328,48 @@ async def handler(
         # checkpoint, so nodes after it (incl. the token-streaming node, if its
         # reply was not yet persisted) re-run — re-streaming the reply exactly
         # when needed and nothing more.
-        graph_cp = stream.internal_metadata.get(_GRAPH_CP_KEY) if context.persisted_response is not None else None
-        run_config = {"configurable": {"thread_id": chain_id, "checkpoint_id": graph_cp}} if graph_cp else thread_config
+        graph_cp = (
+            stream.internal_metadata.get(_GRAPH_CP_KEY)
+            if context.persisted_response is not None
+            else None
+        )
+        run_config = (
+            {"configurable": {"thread_id": chain_id, "checkpoint_id": graph_cp}}
+            if graph_cp
+            else thread_config
+        )
         graph_input: Any = None
     else:
         input_text = await context.get_input_text()
-        stable_cp = context.conversation_chain_metadata.get("stable_checkpoint_id")
+        store = await FoundryStateStore.get_or_create(
+            f"responses/resilient-langgraph/{chain_id}",
+            description="State for the resilient LangGraph response sample",
+        )
+        async with store:
+            item = await store.get_item("state")
+        conversation_state = (
+            dict(item.value)
+            if item is not None and isinstance(item.value, dict)
+            else {}
+        )
+        stable_cp = conversation_state.get("stable_checkpoint_id")
         state = await graph.aget_state(thread_config)
         run_config = thread_config
         parked_at_interrupt = "wait_for_user" in (state.next or ())
         if stable_cp and context.is_steered_turn:
             # Fresh steered successor: fork from the last stable checkpoint with
             # the new message, then resume (input=None).
-            forked = await _fork_from_checkpoint(graph, thread_config, stable_cp, input_text)
-            graph_input = None if forked else {"messages": [HumanMessage(content=input_text)], "is_complete": False}
+            forked = await _fork_from_checkpoint(
+                graph, thread_config, stable_cp, input_text
+            )
+            graph_input = (
+                None
+                if forked
+                else {
+                    "messages": [HumanMessage(content=input_text)],
+                    "is_complete": False,
+                }
+            )
         elif parked_at_interrupt:
             # Cleanly paused at the wait_for_user interrupt — the next turn of the
             # conversation; satisfy the interrupt with the new message.
@@ -322,10 +378,22 @@ async def handler(
             # Graph left mid-turn (e.g. a prior turn was cancelled before its
             # interrupt) — do NOT Command(resume) a non-interrupt node; fork a
             # clean turn from the last stable checkpoint instead.
-            forked = await _fork_from_checkpoint(graph, thread_config, stable_cp, input_text)
-            graph_input = None if forked else {"messages": [HumanMessage(content=input_text)], "is_complete": False}
+            forked = await _fork_from_checkpoint(
+                graph, thread_config, stable_cp, input_text
+            )
+            graph_input = (
+                None
+                if forked
+                else {
+                    "messages": [HumanMessage(content=input_text)],
+                    "is_complete": False,
+                }
+            )
         else:
-            graph_input = {"messages": [HumanMessage(content=input_text)], "is_complete": False}
+            graph_input = {
+                "messages": [HumanMessage(content=input_text)],
+                "is_complete": False,
+            }
 
     # ── One real-time streaming loop (forward AND recovery) ─────────
     # ``custom`` chunks carry tokens (relayed instantly). ``checkpoints`` chunks
@@ -340,7 +408,10 @@ async def handler(
     saw_generate_commit = False
     interrupted = False
     async for mode, chunk in graph.astream(
-        graph_input, run_config, stream_mode=["updates", "custom", "checkpoints"], durability="sync"
+        graph_input,
+        run_config,
+        stream_mode=["updates", "custom", "checkpoints"],
+        durability="sync",
     ):
         if mode == "custom" and "token" in chunk:
             if not reply_open and not _reply_already_persisted(stream):
@@ -356,7 +427,9 @@ async def handler(
             # is the point at which the reply is durable.
             saw_generate_commit = True
         elif mode == "checkpoints":
-            checkpoint_id = chunk.get("config", {}).get("configurable", {}).get("checkpoint_id")
+            checkpoint_id = (
+                chunk.get("config", {}).get("configurable", {}).get("checkpoint_id")
+            )
             if reply_open and not reply_closed and saw_generate_commit:
                 yield text.emit_text_done()
                 yield text.emit_done()
@@ -388,8 +461,7 @@ async def handler(
         return
 
     # ── Turn complete — record the stable fork point for steering ────
-    _record_stable(context, await graph.aget_state(thread_config))
-    await context.conversation_chain_metadata.flush()
+    await _record_stable(context, await graph.aget_state(thread_config))
     yield stream.emit_completed()
 
 

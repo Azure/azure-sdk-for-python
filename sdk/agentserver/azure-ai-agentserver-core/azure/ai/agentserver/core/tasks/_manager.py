@@ -14,10 +14,16 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
 import traceback
-from collections.abc import Awaitable, Callable
-from typing import Any, Optional, TypeVar
+from collections.abc import Awaitable, Callable, Mapping
+from typing import Any, TypeVar
 
 from .._config import AgentConfig
+from .._request_context import (
+    FoundryAgentRequestContext,
+    get_request_context,
+    reset_request_context,
+    set_request_context,
+)
 from ._client import TransportClassifiedError
 from ._context import EntryMode, TaskContext
 from ._attachments import (
@@ -38,7 +44,6 @@ from ._exceptions import (
 )
 from ._exceptions_internal import _HostedConflict, _translate_hosted_conflict
 from ._lease import derive_lease_owner, generate_instance_id, lease_renewal_loop
-from ._metadata import TaskMetadata
 from ._models import TaskCreateRequest, TaskInfo, TaskPatchRequest, TaskStatus
 from ._provider import TaskProvider
 from ._retry import RetryPolicy
@@ -74,6 +79,22 @@ _SCHEMA_VERSION_KEY = "schema_version"
 
 Input = TypeVar("Input")
 Output = TypeVar("Output")
+
+
+def _call_id_from_input(input_value: Any) -> str | None:
+    """Extract the persisted Foundry call ID from a task input.
+
+    :param input_value: Deserialized task input.
+    :type input_value: Any
+    :return: The non-empty call ID, if present.
+    :rtype: str or None
+    """
+    if isinstance(input_value, Mapping):
+        call_id = input_value.get("call_id")
+    else:
+        call_id = getattr(input_value, "call_id", None)
+    return call_id if isinstance(call_id, str) and call_id else None
+
 
 # Module-level manager singleton
 _manager: TaskManager | None = None
@@ -992,7 +1013,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         attachments: dict[str, Any] | None = None
         if input_mode == "attachment":
             attachments = {_FUNCTION_INPUT_KEY: serialized_input}
-        payload["metadata"] = {}
         #: persist a turn-start timestamp at every
         # turn-start boundary so the per-turn watchdog can compute
         # remaining = max(0, opts.timeout - (now - turn_started_at))
@@ -1008,10 +1028,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         #  Framework-reserved top-level slots
         # (e.g., `last_input_id`) supplied by `Task.start(input_id=...)`.
-        # Merged shallowly so callers cannot clobber `input` or `metadata`.
+        # Merged shallowly so callers cannot clobber `input`.
         if initial_payload_extras:
             for k, v in initial_payload_extras.items():
-                if k in ("input", "metadata"):
+                if k == "input":
                     continue
                 payload[k] = v
 
@@ -1067,17 +1087,12 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         # Build context
         cancel_event = asyncio.Event()
-        metadata = TaskMetadata(
-            flush_callback=self._make_metadata_flush(task_id),
-        )
-
         lease_gen = task_info.lease.generation if task_info.lease else 0
 
         ctx: TaskContext[Any] = TaskContext(
             task_id=task_id,
             session_id=resolved_session,
             input=input_val,
-            metadata=metadata,
             retry_attempt=0,
             recovery_count=lease_gen,
             cancel=cancel_event,
@@ -1167,15 +1182,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         )
         self._active_tasks[task_id] = active
 
-        #: metadata is flushed explicitly at
-        # lifecycle boundaries via ``_flush_all()``. There is no auto-
-        # flush loop.
-
         return TaskRun(
             task_id=task_id,
             provider=self._provider,
             result_future=result_future,
-            metadata=metadata,
             cancel_event=cancel_event,
             terminate_event=terminate_event,
             execution_task=execution_task,
@@ -1211,7 +1221,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 task_id=task_id,
                 provider=self._provider,
                 result_future=active.result_future,
-                metadata=active.context.metadata,
                 cancel_event=active.context.cancel,
                 terminate_event=active.terminate_event,
                 execution_task=active.execution_task,
@@ -1289,7 +1298,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     task_id=task_id,
                     provider=self._provider,
                     result_future=active.result_future,
-                    metadata=active.context.metadata,
                     cancel_event=active.context.cancel,
                     terminate_event=active.terminate_event,
                     execution_task=active.execution_task,
@@ -1453,16 +1461,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         # Build context for execution
         cancel_event = asyncio.Event()
-        #: restore ALL namespaces, not just default.
-        # ``from_payload`` decodes ``payload["metadata"]`` into the default
-        # namespace and every ``payload["metadata:<name>"]`` into its named
-        # sibling, all sharing the same flush_callback so the framework can
-        # _flush_all() at lifecycle boundaries.
-        metadata = TaskMetadata.from_payload(
-            task_info.payload,
-            flush_callback=self._make_metadata_flush(task_id),
-        )
-
         lease_gen = task_info.lease.generation if task_info.lease else 0
 
         # Extract steering context from payload
@@ -1501,7 +1499,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             task_id=task_id,
             session_id=task_info.session_id,
             input=resolved_input,
-            metadata=metadata,
             retry_attempt=persisted_retry_attempt,
             recovery_count=lease_gen,
             cancel=cancel_event,
@@ -1593,7 +1590,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             task_id=task_id,
             provider=self._provider,
             result_future=result_future,
-            metadata=metadata,
             cancel_event=cancel_event,
             terminate_event=terminate_event,
             execution_task=execution_task,
@@ -1867,12 +1863,21 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         while True:
             ctx.retry_attempt = attempt
             try:
-                result = await fn(ctx)
+                ambient_request_context = get_request_context()
+                request_context_token = set_request_context(
+                    FoundryAgentRequestContext(
+                        call_id=_call_id_from_input(ctx.input) or ambient_request_context.call_id,
+                    )
+                )
+                try:
+                    result = await fn(ctx)
+                finally:
+                    reset_request_context(request_context_token)
 
                 #: the handler returned the
                 # _ExitForRecovery sentinel via ``ctx.exit_for_recovery()``.
-                # Flush metadata, release the lease, leave the stored
-                # status as 'in_progress' (do NOT write terminal),
+                # Release the lease, leave the stored status as 'in_progress'
+                # (do NOT write terminal),
                 # preserve queued steering inputs, and signal
                 # awaiters with TaskCancelled.
                 from ._context import (
@@ -1889,9 +1894,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     )
 
                     renewal_cancel.set()
-                    # (a) Flush metadata (auto-flush).
-                    await ctx.metadata._flush_all()
-                    # (b) Release the lease (lease_duration_seconds=0) so the
+                    # (a) Release the lease (lease_duration_seconds=0) so the
                     #     next process reclaims immediately. SOT §22: force-
                     #     expire on exit_for_recovery. The renewal loop above
                     #     was just cancelled but may have raced a PATCH; on
@@ -1964,15 +1967,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                                 exc_info=True,
                             )
                             break
-                    # (c) Do NOT write a terminal record — status MUST
+                    # (b) Do NOT write a terminal record — status MUST
                     #     remain 'in_progress' so the recovery scan picks
                     #     it up next process start.
-                    # (d) Signal awaiters with TaskDeferred per
+                    # (c) Signal awaiters with TaskDeferred per
                     #      /  (NOT TaskCancelled — the task
                     #     is deferring to next lifetime, not terminating).
                     if not current_result_future.done():
                         current_result_future.set_exception(TaskDeferred())
-                    # (e) Queued steerers: preserved in
+                    # (d) Queued steerers: preserved in
                     #     persisted state — already untouched here, so
                     #     no action needed.
                     break
@@ -1982,12 +1985,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 # the framework's ``return X`` is the only end-of-turn
                 # signal. Success flow.
                 renewal_cancel.set()
-                await ctx.metadata._flush_all()
                 try:
                     completed = await self._handle_success(
                         task_id=task_id,
                         result=result,
-                        metadata=ctx.metadata,
                         opts=opts,
                     )
                 except TaskConflictError as exc:
@@ -2071,7 +2072,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
             except asyncio.CancelledError:
                 renewal_cancel.set()
-                await ctx.metadata._flush_all()
                 # asyncio.CancelledError is the cooperative-cancel path —
                 # the handler chose to raise it (or the framework signalled
                 # cancel via ctx.cancel and the handler did not catch).
@@ -2113,7 +2113,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                         await self._handle_multi_turn_failure(
                             task_id=task_id,
                             exc=TaskCancelled(),
-                            metadata=ctx.metadata,
                             opts=opts,
                             error_dict=error_dict,
                         )
@@ -2195,7 +2194,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
                 # Exhausted or non-retryable — terminal failure
                 renewal_cancel.set()
-                await ctx.metadata._flush_all()
 
                 if retry and attempt > 0:
                     # Retries were attempted but exhausted
@@ -2216,7 +2214,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 await self._handle_failure(
                     task_id=task_id,
                     exc=exc,
-                    metadata=ctx.metadata,
                     opts=opts,
                 )
                 #   /  step 5 — caller's future resolution:
@@ -2486,7 +2483,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             task_id=task_id,
             session_id=ctx._session_id,  # pylint: disable=protected-access
             input=resolved_input,
-            metadata=ctx.metadata,
             retry_attempt=0,
             recovery_count=ctx.recovery_count,
             cancel=cancel_event,
@@ -2532,7 +2528,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self,
         *,
         task_id: str,
-        metadata: TaskMetadata,
         opts: TaskOptions,
     ) -> bool:
         """Multi-turn return handler.
@@ -2553,23 +2548,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         :keyword task_id: The task identifier.
         :paramtype task_id: str
-        :keyword metadata: The task metadata (auto-flushed before the PATCH).
-        :paramtype metadata: TaskMetadata
         :keyword opts: The task options.
         :paramtype opts: TaskOptions
         :return: True when the terminal write succeeded.
         :rtype: bool
         """
-        # Auto-flush metadata BEFORE the chain PATCH.
-        try:
-            await metadata._flush_all()  # noqa: SLF001 — framework-internal fence
-        except Exception:  # noqa: BLE001
-            logger.warning(
-                "Failed to auto-flush metadata before multi-turn success PATCH for task %s",
-                task_id,
-                exc_info=True,
-            )
-
         # SOT §23.8 item #3 — the turn-end PATCH MUST atomically clear ALL of:
         #   payload["input"], payload["steering"]["active_input"],
         #   payload["retry_attempt"], and (if input was promoted) the
@@ -2591,7 +2574,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 attachments_patch[_ref_key(existing_input_slot)] = None
 
         payload_patch: dict[str, Any] = {
-            "metadata": metadata.to_dict(),
             "input": None,
             "retry_attempt": None,
             # NO "output", NO "error"
@@ -2633,7 +2615,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         *,
         task_id: str,
         result: Any,
-        metadata: TaskMetadata,
         opts: TaskOptions,
     ) -> bool:
         """Handle successful task completion.
@@ -2654,8 +2635,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :paramtype task_id: str
         :keyword result: The task result value.
         :paramtype result: Any
-        :keyword metadata: The task metadata.
-        :paramtype metadata: TaskMetadata
         :keyword opts: The task options.
         :paramtype opts: TaskOptions
         :return: True if completion succeeded, False if etag conflict
@@ -2668,7 +2647,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if is_multi_turn:
             return await self._handle_multi_turn_success(
                 task_id=task_id,
-                metadata=metadata,
                 opts=opts,
             )
 
@@ -2686,7 +2664,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         *,
         task_id: str,
         exc: Exception,
-        metadata: TaskMetadata,
         opts: TaskOptions,
         error_dict: dict[str, Any],
     ) -> None:
@@ -2694,44 +2671,31 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         Per   7-step ordering:
         1. (caller) Run the failure handler (this method).
-        2. Auto-flush ctx.metadata BEFORE the chain-PATCH (load-bearing).
-        3. Clear payload["input"] and payload["retry_attempt"].
-        4. PATCH chain record to ``suspended`` (NOT ``completed``) with
+        2. Clear payload["input"] and payload["retry_attempt"].
+        3. PATCH chain record to ``suspended`` (NOT ``completed``) with
            ``suspension_reason="run_completion"``. No ``payload["error"]``
            is written. ``payload["last_input_id"]`` MUST be
            preserved. Steering queue MUST be preserved.
-        5. (caller) Resolve current caller's.result future:
+        4. (caller) Resolve current caller's.result future:
            ``CancelledError`` → bare ``TaskCancelled()`` else
            ``TaskFailed(error_dict)``.
-        6. (caller) If queued steerers exist, promote head.
-        7. (caller) Else leave chain in ``suspended`` awaiting future
+        5. (caller) If queued steerers exist, promote head.
+        6. (caller) Else leave chain in ``suspended`` awaiting future
            ``.run()`` / ``.start()``.
 
-        Steps 5/6/7 are handled by the caller (`_execute_task`) after this
-        method returns; this method owns steps 2/3/4.
+        Steps 4/5/6 are handled by the caller (`_execute_task`) after this
+        method returns; this method owns steps 2/3.
 
         :keyword task_id: The task identifier.
         :paramtype task_id: str
         :keyword exc: The exception raised by the handler.
         :paramtype exc: Exception
-        :keyword metadata: The task metadata (auto-flushed before the PATCH).
-        :paramtype metadata: TaskMetadata
         :keyword opts: The task options.
         :paramtype opts: TaskOptions
         :keyword error_dict: The structured error payload for the caller's future.
         :paramtype error_dict: dict[str, Any]
         """
-        # Step 2: auto-flush metadata BEFORE the chain-PATCH.
-        try:
-            await metadata._flush_all()  # noqa: SLF001 — framework-internal fence
-        except Exception:  # noqa: BLE001
-            logger.warning(
-                "Failed to auto-flush metadata before multi-turn failure PATCH for task %s",
-                task_id,
-                exc_info=True,
-            )
-
-        # Step 3 + 4: PATCH to suspended (NOT completed); clear input + _retry_attempt
+        # Steps 2 + 3: PATCH to suspended (NOT completed); clear input + _retry_attempt
         # + _steering.active_input + promoted _input attachment if any (SOT §23.8
         # single-PATCH invariant); NO payload["error"] written; _last_input_id preserved.
         task_info = await self._provider_get_tracked(task_id)
@@ -2749,7 +2713,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 attachments_patch[_ref_key(existing_input_slot)] = None
 
         payload_patch: dict[str, Any] = {
-            "metadata": metadata.to_dict(),
             "input": None,
             "retry_attempt": None,
             # NO "output", NO "error"
@@ -2819,7 +2782,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         *,
         task_id: str,
         exc: Exception,
-        metadata: TaskMetadata,
         opts: TaskOptions,
     ) -> None:
         """Handle task failure.
@@ -2838,8 +2800,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :paramtype task_id: str
         :keyword exc: The exception that caused the failure.
         :paramtype exc: Exception
-        :keyword metadata: The task metadata.
-        :paramtype metadata: TaskMetadata
         :keyword opts: The task options.
         :paramtype opts: TaskOptions
         """
@@ -2850,13 +2810,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         }
 
         #   — multi-turn raise → suspended (NOT completed).
-        # Auto-flush metadata BEFORE the chain-PATCH (step 2 of).
         is_multi_turn = getattr(opts, "_is_multi_turn", False)
         if is_multi_turn:
             await self._handle_multi_turn_failure(
                 task_id=task_id,
                 exc=exc,
-                metadata=metadata,
                 opts=opts,
                 error_dict=error_dict,
             )
@@ -3557,61 +3515,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             active.lease_last_refresh_monotonic = asyncio.get_running_loop().time()
         except RuntimeError:  # no running loop (sync context)
             pass
-
-    def _make_metadata_flush(self, task_id: str) -> Callable[[Optional[str], dict[str, Any]], Awaitable[None]]:
-        """Create a per-namespace flush callback for metadata persistence.
-
-        The callback persists each namespace into its dedicated payload
-        slot (layout): ``payload["metadata"]`` for the
-        default namespace and ``payload["metadata:<name>"]`` for named
-        namespaces. Patches are shallow-merged by the provider so
-        flushing one namespace does NOT clobber another.
-
-        :param task_id: The task identifier.
-        :type task_id: str
-        :return: An async callback that flushes one namespace.
-        :rtype: Callable[[Optional[str], dict[str, Any]], Awaitable[None]]
-        """
-
-        async def _flush(namespace: Optional[str], data: dict[str, Any]) -> None:
-            slot = "metadata" if namespace is None else f"metadata:{namespace}"
-            #   /  — route through the per-task
-            # write queue and use the tracked etag as if_match. The
-            # helper refreshes the etag from the response and bumps
-            # lease-last-refresh (cadence shadow).
-            #
-            # Spec 031 / FR-006 + SOT §25.3 — on a genuine (cross-process)
-            # etag conflict, re-read to refresh the tracked etag and retry.
-            # The patch addresses only this namespace's slot and the provider
-            # shallow-merges, so last-write-wins on the slot is correct (no
-            # logical re-merge of OTHER namespaces is needed). Bounded so the
-            # store's etag comparator cannot loop forever. A translated
-            # conflict (lease lost / already terminal) is NOT retried — the
-            # owner changed, so persisting our metadata would clobber theirs.
-            for attempt in range(5):
-                try:
-                    await self._provider_update_locked(
-                        task_id,
-                        TaskPatchRequest(
-                            payload={slot: data},
-                            **self._lease_ext_kwargs(task_id),
-                        ),
-                    )
-                    return
-                except _HostedConflict as exc:
-                    if _translate_hosted_conflict(exc, task_id=task_id) is not None or attempt == 4:
-                        raise
-                    await self._provider_get_tracked(task_id)
-                except (EtagConflict, ValueError, TransportClassifiedError) as exc:
-                    if isinstance(exc, TransportClassifiedError) and getattr(exc, "classification", None) != "conflict":
-                        raise
-                    if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
-                        raise
-                    if attempt == 4:
-                        raise
-                    await self._provider_get_tracked(task_id)
-
-        return _flush
 
     def _make_pending_count_provider(self, task_id: str) -> Callable[[], int]:
         """: factory for the live pending-input-count

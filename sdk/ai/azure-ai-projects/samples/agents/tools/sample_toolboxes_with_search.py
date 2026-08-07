@@ -56,7 +56,7 @@ TOOLBOX_NAME = "toolbox_with_mcp_tool"
 INNER_MCP_LABEL = "github"
 INNER_MCP_URL = "https://api.githubcopilot.com/mcp"
 TOOLBOX_MCP_LABEL = "search-tool"
-agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 
 with (

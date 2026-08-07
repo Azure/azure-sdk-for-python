@@ -82,9 +82,8 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         # Enablement switch
         "set_resilient_tasks_enabled",
         "resilient_tasks_enabled",
-        # Context + metadata
+        # Context
         "TaskContext",
-        "TaskMetadata",
         "EntryMode",
         # TaskRun (slim shape)
         "TaskRun",
@@ -169,27 +168,19 @@ CONTRACT_CLAUSE_TO_TEST: dict[str, str] = {
     ),
     #  — TaskContext.previous_input deleted
     "task_context_previous_input_removed": ("test_steering.py::test_task_context_previous_input_removed"),
-    #  — TaskMetadata named-namespace facility
-    "task_metadata_named_namespace_isolation": ("test_metadata.py::test_named_namespace_isolation"),
-    #  — TaskMetadata flush per-namespace
-    "task_metadata_flush_per_namespace_only": ("test_metadata.py::test_flush_per_namespace_only"),
-    #  — default-namespace convenience accessor
-    "task_metadata_default_namespace_callable_and_dict": ("test_metadata.py::test_default_namespace_callable_and_dict"),
-    # Underscore-namespace guard is enforced by the facade layer, not the
-    # primitive named-namespace accessor.
     # ---  — Task & Streams Reconciliation ----------------------
     #  (etag CAS, write queue, dynamic lease, per-op 412 policy)
     "task_streams_etag_cas_every_patch": ("test_etag_cas.py::test_every_patch_after_first_carries_if_match"),
     "task_streams_delete_carries_no_if_match": ("test_etag_cas.py::test_delete_does_not_carry_if_match"),
     "task_streams_write_queue_serializes_intra_process": (
-        "test_write_queue.py::test_concurrent_metadata_flushes_serialize"
+        "test_write_queue.py::test_concurrent_task_patches_serialize"
     ),
     "task_streams_write_queue_no_lock_for_reads": ("test_write_queue.py::test_reads_do_not_acquire_lock"),
     "task_streams_write_queue_lock_torn_down_with_task": (
         "test_write_queue.py::test_lock_removed_when_active_entry_torn_down"
     ),
     "task_streams_lease_renewal_dynamic_cadence_full_shadow": (
-        "test_lease_renewal.py::test_dynamic_cadence_shadows_heartbeats"
+        "test_lease_renewal.py::test_application_state_writes_do_not_shadow_heartbeats"
     ),
     "task_streams_terminal_412_reread_lease_lost_abandons": ("test_etag_cas.py::test_terminal_412_lease_lost_abandons"),
     "task_streams_terminal_412_reread_already_terminal_abandons": (
@@ -238,9 +229,6 @@ CONTRACT_CLAUSE_TO_TEST: dict[str, str] = {
     ),
     "task_streams_output_attachment_error_remapped_to_output_too_large": (
         "test_errors_public_surface.py::test_output_too_large_remap_from_internal_output_key"
-    ),
-    "task_streams_flush_all_renamed_private": (
-        "test_metadata_flush.py::test_flush_all_renamed_to_underscore_flush_all"
     ),
     "task_streams_local_provider_bumps_expiry_count": (
         "test_local_provider.py::test_local_provider_bumps_expiry_count_on_real_handoff"

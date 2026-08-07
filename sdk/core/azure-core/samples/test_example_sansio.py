@@ -23,6 +23,7 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+# pylint: disable=protected-access
 
 from azure.core.pipeline import PipelineRequest
 from azure.core.rest import HttpRequest, HttpResponse

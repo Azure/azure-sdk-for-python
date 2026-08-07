@@ -58,7 +58,7 @@ async def main() -> None:
 
             # Create agent with code interpreter tool
             agent = await project_client.agents.create_version(
-                agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"),
+                agent_name=os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent",
                 definition=PromptAgentDefinition(
                     model=os.environ["FOUNDRY_MODEL_NAME"],
                     instructions="You are a helpful assistant.",
