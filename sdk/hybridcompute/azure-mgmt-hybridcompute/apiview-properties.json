@@ -297,5 +297,5 @@
         "azure.mgmt.hybridcompute.HybridComputeManagementClient.begin_setup_extensions": "Microsoft.HybridCompute.Machines.setupExtensions",
         "azure.mgmt.hybridcompute.aio.HybridComputeManagementClient.begin_setup_extensions": "Microsoft.HybridCompute.Machines.setupExtensions"
     },
-    "CrossLanguageVersion": "ff51d258037c"
+    "CrossLanguageVersion": "d7b3cc5469b8"
 }
