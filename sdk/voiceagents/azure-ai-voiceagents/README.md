@@ -22,7 +22,7 @@ python -m pip install azure-ai-voiceagents
 ### Prerequisites
 
 - Python 3.10 or later is required to use this package.
-- You need an [Azure subscription][azure_sub].
+- You need an Azure subscription.
 - You need an Azure AI Foundry project endpoint, for example
   `https://<account>.services.ai.azure.com/api/projects/<project>`.
 - For Microsoft Entra ID authentication, install [`azure-identity`][azure_identity_pip].
@@ -65,7 +65,7 @@ for agent in client.voice_agents.list_voice_agents(
     print(agent.name)
 ```
 
-See the [samples on GitHub](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/voiceagents/azure-ai-voiceagents/samples)
+See the [samples on GitHub](https://github.com/Azure/azure-sdk-for-python/tree/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples)
 for management, quickstart, and realtime conversation examples.
 
 ## Contributing
@@ -90,4 +90,3 @@ additional questions or comments.
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[azure_sub]: https://azure.microsoft.com/free/

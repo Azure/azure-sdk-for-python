@@ -283,7 +283,13 @@ class SessionResource(_BaseResource):
         :keyword event_id: An optional client-generated event identifier.
         :paramtype event_id: str or None
         """
-        await self._send(_models.VoiceAgentClientEventSessionAvatarConnect(client_sdp=client_sdp, event_id=event_id))
+        await self._send(
+            _models.VoiceAgentClientEventSessionAvatarConnect(
+                type=_models.RealtimeClientEventType.SESSION_AVATAR_CONNECT,
+                client_sdp=client_sdp,
+                event_id=event_id,
+            )
+        )
 
 
 class InputAudioBufferResource(_BaseResource):
@@ -533,6 +539,8 @@ class AsyncRealtimeConnection:  # pylint: disable=too-many-instance-attributes
         import aiohttp  # pylint: disable=import-outside-toplevel
 
         msg = await self._connection.receive()
+        while msg.type in (aiohttp.WSMsgType.PING, aiohttp.WSMsgType.PONG):
+            msg = await self._connection.receive()
         if msg.type in (aiohttp.WSMsgType.CLOSE, aiohttp.WSMsgType.CLOSING, aiohttp.WSMsgType.CLOSED):
             raise ConnectionResetError("The realtime connection was closed.")
         if msg.type == aiohttp.WSMsgType.ERROR:
@@ -628,6 +636,8 @@ class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attri
         # ``connection_url`` fully overrides the computed route (scheme/host/path). This is the
         # escape hatch used to reach a specific data-plane host/path directly.
         url = self._connection_url or _to_ws_url(self._endpoint, self._agent_name)
+        if not url.startswith("wss://"):
+            raise ValueError("The realtime WebSocket URL must use wss:// to protect credentials in transit.")
 
         params: Dict[str, str] = {"api-version": self._api_version}
         if self._agent_session_id is not None:

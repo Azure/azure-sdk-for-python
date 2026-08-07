@@ -13,7 +13,6 @@ from azure.ai.voiceagents.aio import VoiceAgentsClient as AsyncVoiceAgentsClient
 from azure.ai.voiceagents.operations import (
     AgentEndpointConversationsOperations,
     VoiceAgentsOperations,
-    VoiceAgentWebSocketOperations,
 )
 
 ENDPOINT = "https://example.services.ai.azure.com/api/projects/p"
@@ -37,7 +36,6 @@ def test_sync_client_exposes_operation_groups():
     try:
         assert isinstance(client.voice_agents, VoiceAgentsOperations)
         assert isinstance(client.agent_endpoint_conversations, AgentEndpointConversationsOperations)
-        assert isinstance(client.voice_agent_web_socket, VoiceAgentWebSocketOperations)
     finally:
         client.close()
 
@@ -51,7 +49,6 @@ async def test_async_client_exposes_operation_groups():
     async with AsyncVoiceAgentsClient(endpoint=ENDPOINT, credential=_FakeAsyncCredential()) as client:
         assert client.voice_agents is not None
         assert client.agent_endpoint_conversations is not None
-        assert client.voice_agent_web_socket is not None
 
 
 async def test_async_client_realtime_property_is_lazy_and_cached():

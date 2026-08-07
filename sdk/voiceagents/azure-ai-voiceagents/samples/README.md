@@ -39,7 +39,7 @@ These code samples are organized **by scenario**:
 
 | File | Description |
 | ---- | ----------- |
-| [quickstart/sample_quickstart_async.py](quickstart/sample_quickstart_async.py) | Generate a temporary voice agent, stream microphone audio to it, play the spoken response through your speakers, and delete the agent when the sample exits. Requires `pyaudio`. |
+| [quickstart/sample_quickstart_async.py](https://github.com/Azure/azure-sdk-for-python/blob/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples/quickstart/sample_quickstart_async.py) | Generate a temporary voice agent, stream microphone audio to it, play the spoken response through your speakers, and delete the agent when the sample exits. Requires `pyaudio`. |
 
 ## `management/` -- manage agents and read conversations
 
@@ -47,26 +47,26 @@ These code samples are organized **by scenario**:
 
 | File | Description |
 | ---- | ----------- |
-| [management/sample_create_and_manage_voice_agent.py](management/sample_create_and_manage_voice_agent.py) | Create (with a voice/audio config and conversation storage enabled), get, list, update, disable/enable, and delete a voice agent. |
-| [management/sample_create_and_manage_voice_agent_async.py](management/sample_create_and_manage_voice_agent_async.py) | Async version of the create/manage lifecycle. |
-| [management/sample_create_voice_agent_with_tools.py](management/sample_create_voice_agent_with_tools.py) | Create an agent with tools (`function`, `system`, `mcp`, `toolbox`), input-audio config (turn detection + transcription), and bring-your-own-model (`self_deployed`). |
-| [management/sample_generate_voice_agent.py](management/sample_generate_voice_agent.py) | Guided authoring: generate and create a voice agent from a persona, use case, and a natural-language goal. |
-| [management/sample_manage_voice_agent_versions.py](management/sample_manage_voice_agent_versions.py) | Create and list immutable versions of a voice agent, including draft versions. |
+| [management/sample_create_and_manage_voice_agent.py](https://github.com/Azure/azure-sdk-for-python/blob/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_create_and_manage_voice_agent.py) | Create (with a voice/audio config and conversation storage enabled), get, list, update, disable/enable, and delete a voice agent. |
+| [management/sample_create_and_manage_voice_agent_async.py](https://github.com/Azure/azure-sdk-for-python/blob/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_create_and_manage_voice_agent_async.py) | Async version of the create/manage lifecycle. |
+| [management/sample_create_voice_agent_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_create_voice_agent_with_tools.py) | Create an agent with tools (`function`, `system`, `mcp`, `toolbox`), input-audio config (turn detection + transcription), and bring-your-own-model (`self_deployed`). |
+| [management/sample_generate_voice_agent.py](https://github.com/Azure/azure-sdk-for-python/blob/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_generate_voice_agent.py) | Guided authoring: generate and create a voice agent from a persona, use case, and a natural-language goal. |
+| [management/sample_manage_voice_agent_versions.py](https://github.com/Azure/azure-sdk-for-python/blob/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_manage_voice_agent_versions.py) | Create and list immutable versions of a voice agent, including draft versions. |
 
 **Read conversations** -- these need an existing agent and a conversation id from
 a completed live session (see [Getting a conversation id](#getting-a-conversation-id)).
 
 | File | Description |
 | ---- | ----------- |
-| [management/sample_read_conversation.py](management/sample_read_conversation.py) | Read a persisted conversation, its responses (and per-response items), and its items (with single get by id). |
-| [management/sample_read_conversation_audio.py](management/sample_read_conversation_audio.py) | Read the merged whole-call recording and a single turn's audio, streaming each to a WAV file. |
+| [management/sample_read_conversation.py](https://github.com/Azure/azure-sdk-for-python/blob/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_read_conversation.py) | Read a persisted conversation, its responses (and per-response items), and its items (with single get by id). |
+| [management/sample_read_conversation_audio.py](https://github.com/Azure/azure-sdk-for-python/blob/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_read_conversation_audio.py) | Read the merged whole-call recording and a single turn's audio, streaming each to a WAV file. |
 
 ## `live/` -- hold a live conversation
 
 | File | Description |
 | ---- | ----------- |
-| [live/sample_live_text_conversation_async.py](live/sample_live_text_conversation_async.py) | Converse with an **existing** agent using **typed** turns: type prompts in a loop -- each is sent via `client.realtime.connect(...)` and the spoken reply is streamed back (optionally played through your speakers). Reads the persisted conversation back at the end. Runs headless -- no microphone needed. |
-| [live/sample_live_audio_conversation_async.py](live/sample_live_audio_conversation_async.py) | Converse with an **existing** agent using your **microphone**: stream live audio to the agent, let server VAD detect your turns, and talk over the agent to **barge in** (cancel its in-flight reply). Requires `pyaudio`. Runs until you press Ctrl-C. |
+| [live/sample_live_text_conversation_async.py](https://github.com/Azure/azure-sdk-for-python/blob/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples/live/sample_live_text_conversation_async.py) | Converse with an **existing** agent using **typed** turns: type prompts in a loop -- each is sent via `client.realtime.connect(...)` and the spoken reply is streamed back (optionally played through your speakers). Reads the persisted conversation back at the end. Runs headless -- no microphone needed. |
+| [live/sample_live_audio_conversation_async.py](https://github.com/Azure/azure-sdk-for-python/blob/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples/live/sample_live_audio_conversation_async.py) | Converse with an **existing** agent using your **microphone**: stream live audio to the agent, let server VAD detect your turns, and talk over the agent to **barge in** (cancel its in-flight reply). Requires `pyaudio`. Runs until you press Ctrl-C. |
 
 ## Prerequisites
 

@@ -16,7 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import VoiceAgentsClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import AgentEndpointConversationsOperations, VoiceAgentWebSocketOperations, VoiceAgentsOperations
+from .operations import AgentEndpointConversationsOperations, VoiceAgentsOperations
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -30,8 +30,6 @@ if TYPE_CHECKING:
 class VoiceAgentsClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VoiceAgentsClient.
 
-    :ivar voice_agent_web_socket: VoiceAgentWebSocketOperations operations
-    :vartype voice_agent_web_socket: azure.ai.voiceagents.operations.VoiceAgentWebSocketOperations
     :ivar agent_endpoint_conversations: AgentEndpointConversationsOperations operations
     :vartype agent_endpoint_conversations:
      azure.ai.voiceagents.operations.AgentEndpointConversationsOperations
@@ -77,9 +75,6 @@ class VoiceAgentsClient:  # pylint: disable=docstring-keyword-should-match-keywo
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.voice_agent_web_socket = VoiceAgentWebSocketOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.agent_endpoint_conversations = AgentEndpointConversationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
