@@ -103,6 +103,8 @@ INPUT_MOUNT_MAPPING_FROM_REST = {
     InputDeliveryMode.DIRECT: InputOutputModes.DIRECT,
     InputDeliveryMode.EVAL_MOUNT: InputOutputModes.EVAL_MOUNT,
     InputDeliveryMode.EVAL_DOWNLOAD: InputOutputModes.EVAL_DOWNLOAD,
+    "Hdfs": InputOutputModes.HDFS,
+    "hdfs": InputOutputModes.HDFS,
 }
 
 INPUT_MOUNT_MAPPING_TO_REST = {
@@ -113,6 +115,7 @@ INPUT_MOUNT_MAPPING_TO_REST = {
     InputOutputModes.EVAL_MOUNT: InputDeliveryMode.EVAL_MOUNT,
     InputOutputModes.EVAL_DOWNLOAD: InputDeliveryMode.EVAL_DOWNLOAD,
     InputOutputModes.DIRECT: InputDeliveryMode.DIRECT,
+    InputOutputModes.HDFS: "Hdfs",
 }
 
 
@@ -286,7 +289,7 @@ def to_rest_dataset_literal_inputs(
                     # reads ``val.mode`` back off the object, so keep them as plain (non-serialized)
                     # attributes on the arm_ml_service hybrid to preserve that behavior.
                     if input_value.mode:
-                        input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
+                        input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()]
                     if getattr(input_value, "path_on_compute", None) is not None:
                         input_data.pathOnCompute = input_value.path_on_compute
                     input_data.job_input_type = JobInputType.LITERAL

@@ -3,6 +3,7 @@
 ## 1.35.0 (unreleased)
 
 ### Features Added
+- Added support for the `hdfs` input/output delivery mode (`InputOutputModes.HDFS`) for Spark jobs and components. Spark inputs and outputs can now be set to `hdfs` mode in addition to `direct`, allowing pipelines to explicitly request HDFS delivery instead of relying on service-side defaults.
 
 ### Bugs Fixed
 - Fixed internal pipeline `Command` node dropping node-level interactive `services` (SSH, JupyterLab, TensorBoard, VS Code, etc.) during serialization, which prevented interactive endpoints from being created for Singularity jobs. The `services` are now serialized into the pipeline REST request and round-tripped on deserialization, matching the public `Command` node behavior.

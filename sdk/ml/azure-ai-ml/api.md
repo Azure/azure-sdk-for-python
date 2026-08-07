@@ -2485,6 +2485,7 @@ namespace azure.ai.ml.constants
         DOWNLOAD = download
         EVAL_DOWNLOAD = eval_download
         EVAL_MOUNT = eval_mount
+        HDFS = hdfs
         MOUNT = mount
         RO_MOUNT = ro_mount
         RW_MOUNT = rw_mount
