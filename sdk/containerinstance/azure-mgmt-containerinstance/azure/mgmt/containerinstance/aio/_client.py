@@ -20,6 +20,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ContainerInstanceManagementClientConfiguration
 from .operations import (
+    AiAgentsGroupsOperations,
     CGProfileOperations,
     CGProfilesOperations,
     ContainerGroupsOperations,
@@ -27,7 +28,6 @@ from .operations import (
     LocationOperations,
     NGroupsOperations,
     Operations,
-    SandboxGroupsOperations,
     SubnetServiceAssociationLinkOperations,
 )
 
@@ -53,8 +53,8 @@ class ContainerInstanceManagementClient:  # pylint: disable=too-many-instance-at
     :vartype ngroups: azure.mgmt.containerinstance.aio.operations.NGroupsOperations
     :ivar cg_profile: CGProfileOperations operations
     :vartype cg_profile: azure.mgmt.containerinstance.aio.operations.CGProfileOperations
-    :ivar sandbox_groups: SandboxGroupsOperations operations
-    :vartype sandbox_groups: azure.mgmt.containerinstance.aio.operations.SandboxGroupsOperations
+    :ivar ai_agents_groups: AiAgentsGroupsOperations operations
+    :vartype ai_agents_groups: azure.mgmt.containerinstance.aio.operations.AiAgentsGroupsOperations
     :ivar containers: ContainersOperations operations
     :vartype containers: azure.mgmt.containerinstance.aio.operations.ContainersOperations
     :ivar cg_profiles: CGProfilesOperations operations
@@ -74,7 +74,7 @@ class ContainerInstanceManagementClient:  # pylint: disable=too-many-instance-at
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-06-01-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-08-01-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -137,7 +137,7 @@ class ContainerInstanceManagementClient:  # pylint: disable=too-many-instance-at
         )
         self.ngroups = NGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.cg_profile = CGProfileOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sandbox_groups = SandboxGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.ai_agents_groups = AiAgentsGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.containers = ContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.cg_profiles = CGProfilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.location = LocationOperations(self._client, self._config, self._serialize, self._deserialize)
