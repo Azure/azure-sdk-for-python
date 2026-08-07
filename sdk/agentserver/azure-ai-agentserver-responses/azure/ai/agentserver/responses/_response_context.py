@@ -13,9 +13,7 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, NoReturn, Optional, Protocol, Sequence, cast
-
-from ._resilience_context import _DeveloperMetadataFacade
+from typing import TYPE_CHECKING, Any, NoReturn, Sequence, cast
 from .models._generated import (
     CreateResponse,
     Item,
@@ -68,46 +66,6 @@ class ResponseExitForRecovery(BaseException):
     """
 
 
-class ConversationChainMetadataNamespace(Protocol):
-    """Public Protocol describing the shape of ``context.conversation_chain_metadata``.
-
-    Handlers type-annotate their interactions with the metadata namespace
-    using this Protocol. The concrete implementation
-    (``_DeveloperMetadataFacade``) is internal — handlers never need to
-    know about it directly.
-
-    Use ``context.conversation_chain_metadata["key"] = value`` for the default
-    namespace, or ``context.conversation_chain_metadata("my_namespace")["key"] = value``
-    for a named namespace. Keys (and namespace names) starting with ``_``
-    are rejected — those are reserved for framework-internal layers.
-
-    The Protocol mirrors the standard :class:`MutableMapping` shape (so
-    handlers can ``iter()``, ``len()``, ``clear()``, ``pop()``, etc.) and
-    adds two namespace-specific operations:
-
-    - ``__call__(name)`` returns a sibling namespace facade.
-    - ``await flush()`` forces the underlying resilient write to land
-      before the handler proceeds with a side effect.
-    """
-
-    def __getitem__(self, key: str) -> Any: ...
-    def __setitem__(self, key: str, value: Any) -> None: ...
-    def __delitem__(self, key: str) -> None: ...
-    def __contains__(self, key: object) -> bool: ...
-    def __iter__(self) -> Any: ...
-    def __len__(self) -> int: ...
-    def get(self, key: str, default: Any = None) -> Any: ...
-    def keys(self) -> Any: ...
-    def values(self) -> Any: ...
-    def items(self) -> Any: ...
-    def clear(self) -> None: ...
-    def pop(self, key: str, *default: Any) -> Any: ...
-    def setdefault(self, key: str, default: Any = None) -> Any: ...
-    def update(self, *args: Any, **kwargs: Any) -> None: ...
-    def __call__(self, name: Optional[str] = None) -> "ConversationChainMetadataNamespace": ...
-    async def flush(self) -> None: ...
-
-
 class PlatformContext:
     """Platform-injected identity context for multi-tenant state partitioning.
 
@@ -157,8 +115,6 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         - :attr:`is_recovery` — True on a crash-recovered re-entry.
         - :attr:`is_steered_turn` — True on a steering-drain re-entry.
         - :attr:`pending_input_count` — queued steering inputs (live count).
-        - :attr:`conversation_chain_metadata` — :class:`ConversationChainMetadataNamespace`-typed
-          checkpoint store.
 
     Cancellation surface (Proposal #11):
         - :attr:`cancel` — asyncio.Event set when any cancel cause fires.
@@ -187,7 +143,6 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
     is_recovery: bool
     is_steered_turn: bool
     pending_input_count: int
-    conversation_chain_metadata: ConversationChainMetadataNamespace
     shutdown: asyncio.Event
     client_cancelled: bool
     persisted_response: ResponseObject | None
@@ -255,13 +210,6 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         # handler can seed its stream from already-persisted items. ``None`` on
         # fresh entries; never refreshed mid-execution.
         self.persisted_response: ResponseObject | None = None
-        # Default-namespace metadata facade; framework code (in the
-        # orchestrator) swaps the backing to the TaskContext.metadata
-        # when the response runs inside a resilient task body.
-        self.conversation_chain_metadata: ConversationChainMetadataNamespace = cast(
-            ConversationChainMetadataNamespace, _DeveloperMetadataFacade({})
-        )
-
         # Composing cancellation surface. ``_cancellation_signal`` is
         # the per-request cancel Event delivered to the handler as the
         # 3rd positional argument; it fires on /cancel API calls, client

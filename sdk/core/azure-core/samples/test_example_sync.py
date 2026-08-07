@@ -23,7 +23,7 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-# pylint: disable=non-abstract-transport-import
+# pylint: disable=non-abstract-transport-import,protected-access
 from typing import Iterable, MutableSequence, Union
 from azure.core.pipeline import Pipeline
 from azure.core import PipelineClient

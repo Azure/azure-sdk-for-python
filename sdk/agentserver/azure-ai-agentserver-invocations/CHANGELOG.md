@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (Unreleased)
+## 1.1.0b2 (Unreleased)
 
 ### Features Added
 
@@ -57,6 +57,18 @@
 - Voice follows the existing `invocations_ws` tracing behavior: the transport
   emits structured close diagnostics but creates no framework-owned connection
   or turn spans.
+
+## 1.1.0b1 (2026-08-07)
+
+### Samples
+
+- Simplified the resilient samples to use conversation-scoped `FoundryStateStore` instances directly for application state.
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.1.0b1` so
+  package tests and consumers use the Core release containing the local State
+  Store fallback.
 
 ## 1.0.0 (2026-08-07)
 

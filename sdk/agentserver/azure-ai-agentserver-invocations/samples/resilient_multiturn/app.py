@@ -36,25 +36,16 @@ from __future__ import annotations
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core.tasks import TaskConflictError, set_resilient_tasks_enabled
+from azure.ai.agentserver.core.storage import FoundryStateStore
+from azure.ai.agentserver.core.tasks import TaskConflictError
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import session_workflow as _package_session_workflow
+    from .agent import invocation_state_store_name, session_workflow
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import session_workflow as _script_session_workflow
-
-    session_workflow = _script_session_workflow
-else:
-    session_workflow = _package_session_workflow
+    from agent import invocation_state_store_name, session_workflow
 
 app = InvocationAgentServerHost()
-
-# Opt into resilient-task startup recovery. This sample declares a durable
-# task, so the framework would enable recovery automatically; we set the switch
-# explicitly to make the intent clear and to keep recovery working even if the
-# task is ever registered lazily (after startup).
-set_resilient_tasks_enabled(True)
 
 
 @app.invoke_handler
@@ -73,6 +64,15 @@ async def handle_invoke(request: Request) -> Response:
     message: str = data.get("message", "")
     task_id = f"session-{session_id}"
 
+    store = await FoundryStateStore.get_or_create(
+        invocation_state_store_name(session_id)
+    )
+    async with store:
+        await store.set_item(
+            f"invocation/{invocation_id}",
+            {"status": "queued"},
+        )
+
     try:
         await session_workflow.start(
             task_id=task_id,
@@ -83,6 +83,14 @@ async def handle_invoke(request: Request) -> Response:
             },
         )
     except TaskConflictError as e:
+        store = await FoundryStateStore.get_or_create(
+            invocation_state_store_name(session_id)
+        )
+        async with store:
+            await store.set_item(
+                f"invocation/{invocation_id}",
+                {"status": "failed", "error": str(e)},
+            )
         return JSONResponse({"error": str(e)}, status_code=409)
 
     return JSONResponse(
@@ -95,37 +103,24 @@ async def handle_invoke(request: Request) -> Response:
 async def poll_invocation(request: Request) -> Response:
     """Poll a specific invocation's result.
 
-    Reads the per-invocation result out of ``ctx.metadata`` for the
-    current session-level resilient task — it was written by the resilient
-    handler itself inside the execution boundary, so it survives
-    crashes.
+    Reads the per-invocation result from the sample's explicit State Store.
     """
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
-    task_id = f"session-{session_id}"
-
-    # Task.get + TaskSnapshot removed. Use the
-    # provider directly for read-only inspection (returns TaskInfo).
-    from azure.ai.agentserver.core.tasks._manager import get_task_manager
-
-    mgr = get_task_manager()
-    info = await mgr.provider.get(task_id)
-    if info is None:
+    store = await FoundryStateStore.get_or_create(
+        invocation_state_store_name(session_id)
+    )
+    async with store:
+        item = await store.get_item(f"invocation/{invocation_id}")
+    if item is None or not isinstance(item.value, dict):
         return JSONResponse({"error": "Invocation not found"}, status_code=404)
-
-    payload = info.payload or {}
-    # The handler writes per-invocation state through the default metadata
-    # namespace (``ctx.metadata[...]``), which the framework persists under
-    # the nested ``payload["metadata"]`` slot — not at the payload top level.
-    meta = payload.get("metadata") or {}
-    if meta.get("invocation_id") != invocation_id:
-        return JSONResponse({"error": "Invocation not found for this session"}, status_code=404)
+    result = item.value
 
     return JSONResponse(
         {
             "invocation_id": invocation_id,
-            "status": meta.get("status", info.status),
-            "output": meta.get("output"),
+            "status": result.get("status", "running"),
+            "output": result.get("output"),
         }
     )
 
