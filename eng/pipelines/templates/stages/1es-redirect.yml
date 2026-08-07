@@ -22,6 +22,13 @@ parameters:
 - name: EnableCompiledCodeql
   type: boolean
   default: false
+# Comma-separated 1ES network isolation flags. Defaults to enforcing CFSClean, which
+# restricts outbound package restores to Microsoft CFS / Azure Artifacts endpoints.
+# Pipelines that genuinely cannot restore from CFS (see conda-sdk-client.yml) may
+# lower this to 'Permissive'.
+- name: NetworkIsolationPolicy
+  type: string
+  default: Permissive, CFSClean
 
 
 extends:
@@ -40,7 +47,7 @@ extends:
         - 1ES.PT.Tag-refs/tags/canary
     settings:
       skipBuildTagsForGitHubPullRequests: true
-      networkIsolationPolicy: Permissive, CFSClean
+      networkIsolationPolicy: ${{ parameters.NetworkIsolationPolicy }}
     ${{ if ne(variables['Build.DefinitionName'], 'python - core') }}:
       featureFlags:
         autoBaseline: false
