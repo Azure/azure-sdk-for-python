@@ -5,7 +5,6 @@ import os
 import re
 from setuptools import setup, find_packages
 
-
 PACKAGE_NAME = "setuppy-authentication-union"
 PACKAGE_PPRINT_NAME = "Setuppy Authentication Union"
 PACKAGE_NAMESPACE = "setuppy.authentication.union"
