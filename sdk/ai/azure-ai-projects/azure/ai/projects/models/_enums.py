@@ -1278,3 +1278,63 @@ class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FIXED_RATIO = "FixedRatio"
     """FIXED_RATIO."""
+
+
+class RLEnvironmentDiskImageConversionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the asynchronous ACR image to disk image conversion. Serialized as its string name."""
+
+    NOT_REQUESTED = "NotRequested"
+    """Disk image conversion has not been requested for this environment yet."""
+    PENDING = "Pending"
+    """Disk image conversion is in progress."""
+    READY = "Ready"
+    """Disk image conversion completed successfully and the disk image is ready for use."""
+    FAILED = "Failed"
+    """Disk image conversion failed. See ``diskImageConversionError`` for details."""
+
+
+class RLEInstanceGroupStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allocation lifecycle status of an RLE instance group. This tracks allocation, not ML outcome:
+    RLE does not run the training, so there is no group-level ``Succeeded`` status. ``Closed`` is the
+    normal (success-equivalent) terminal and ``Failed`` is an infrastructure/allocation verdict only
+    (RLE could not serve the environment)."""
+
+    CREATED = "Created"
+    """Instance-group record exists; no instance has been leased yet."""
+    ACTIVE = "Active"
+    """At least one instance has been leased for the group."""
+    CLOSED = "Closed"
+    """Ended normally; all instances released. Success-equivalent terminal state."""
+    FAILED = "Failed"
+    """RLE could not serve the environment (invalid version, broken image, or all instances failed).
+    Infrastructure verdict only."""
+    CANCELLED = "Cancelled"
+    """Aborted early by an explicit cancel or delete."""
+
+
+class RLEInstanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Runtime status of an RLE instance, as observed by RLE from the backing runtime."""
+
+    CREATING = "Creating"
+    """The backing runtime is being provisioned."""
+    RUNNING = "Running"
+    """The instance is up and serving data-plane calls."""
+    STOPPED = "Stopped"
+    """The instance's task finished and RLE stopped the backing runtime. Not reused in this version."""
+    FAILED = "Failed"
+    """The instance errored during provisioning or at runtime. See ``error`` for details."""
+    DELETED = "Deleted"
+    """The backing runtime has been torn down / removed."""
+    CANCELLED = "Cancelled"
+    """The instance was released before its task completed (e.g. the instance group was cancelled)."""
+
+
+class RLEInstanceLeaseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allocation (lease) state of an RLE instance, orthogonal to its runtime ``status``."""
+
+    LEASED = "Leased"
+    """The instance is actively leased and counts against the group's reserved quota."""
+    IDLE = "Idle"
+    """Reserved for future instance reuse. Not used in this version."""
+    RELEASED = "Released"
+    """The lease has been released; the instance no longer counts against quota and is not reused."""

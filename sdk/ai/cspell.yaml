@@ -78,6 +78,7 @@ words:
   - OCEACARGO
   - okwargs
   - openai
+  - openenv
   - openmpi
   - oupfoo
   - pipelinerunid
@@ -123,6 +124,7 @@ words:
   - wday
   - webrtc
   - westus
+  - wordle
   - wsid
   - xhigh
 ignorePaths:
