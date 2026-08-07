@@ -1,7 +1,8 @@
+# keep in sync with pyproject.toml#dependency-groups.dev
 -e ../../../eng/tools/azure-sdk-tools
 -e ../azure-ai-agentserver-core
 ../../monitor/azure-monitor-query
-../../identity/azure-identity
+azure-identity>=1.17.0
 httpx
 hypercorn
 openai

@@ -41,8 +41,9 @@ async def _with_keep_alive(
                 except StopAsyncIteration:
                     result.set_result(sentinel)
                     return
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    result.set_exception(exc)
+                except BaseException as exc:  # pylint: disable=broad-exception-caught
+                    if not result.done():
+                        result.set_exception(exc)
                     return
                 result.set_result(item)
         finally:

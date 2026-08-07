@@ -58,6 +58,19 @@ async def test_with_keep_alive_propagates_source_error() -> None:
 
 
 @pytest.mark.asyncio
+async def test_with_keep_alive_propagates_source_cancellation() -> None:
+    async def source() -> AsyncIterator[str]:
+        yield "started"
+        raise asyncio.CancelledError
+
+    stream = _with_keep_alive(source(), 0.02)
+
+    assert await anext(stream) == "started"
+    with pytest.raises(asyncio.CancelledError):
+        await asyncio.wait_for(anext(stream), timeout=1.0)
+
+
+@pytest.mark.asyncio
 async def test_with_keep_alive_closes_source_when_consumer_stops() -> None:
     finalized = asyncio.Event()
 

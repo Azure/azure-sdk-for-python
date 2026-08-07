@@ -7,7 +7,7 @@ requires-python = ">=3.10"
 license = "MIT"
 authors = [{ name = "Microsoft Corporation" }]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -18,12 +18,27 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b10",
-    "azure-core>=1.30.0",
+    "azure-ai-agentserver-core>=2.0.0",
+    "azure-core>=1.37.0",
     "isodate>=0.6.1",
     "aiohttp>=3.10.0,<4.0.0a0",
 ]
 keywords = ["azure", "azure sdk"]
+
+[dependency-groups]
+# keep in sync with dev_requirements.txt
+dev = [
+    "azure-ai-agentserver-core",
+    "azure-identity>=1.17.0",
+    "azure-monitor-query",
+    "azure-sdk-tools",
+    "httpx",
+    "hypercorn",
+    "openai",
+    "pytest",
+    "pytest-asyncio",
+    "starlette",
+]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python"
@@ -67,10 +82,10 @@ pythonpath = ["."]
 [tool.uv.sources]
 azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
 azure-core = { path = "../../core/azure-core" }
+azure-identity = { path = "../../identity/azure-identity" }
+azure-monitor-query = { path = "../../monitor/azure-monitor-query" }
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
 
 [tool.azure-sdk-build]
 verifytypes = false
 latestdependency = false
-# azure-ai-agentserver-core>=2.0.0b9 is not yet on PyPI
-mindependency = false
