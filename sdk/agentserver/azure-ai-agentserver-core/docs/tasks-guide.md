@@ -756,14 +756,17 @@ async def charge_card(ctx: TaskContext[dict]) -> str:
     if state.get("charge_done"):
         return state["charge_receipt"]
 
-    # Persist a dedup token before the side effect, then act.
-    state["pending_charge_token"] = generate_uuid()
-    await store.set_item("charge", state)
+    # Persist a dedup token once, then reuse it after crash recovery.
+    pending_token = state.get("pending_charge_token")
+    if pending_token is None:
+        pending_token = generate_uuid()
+        state["pending_charge_token"] = pending_token
+        await store.set_item("charge", state)
 
     receipt = await payment_gateway.charge(
         ctx.input["card"],
         ctx.input["amount"],
-        idempotency_key=state["pending_charge_token"],
+        idempotency_key=pending_token,
     )
 
     state["charge_done"] = True
