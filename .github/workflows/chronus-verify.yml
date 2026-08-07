@@ -1,0 +1,45 @@
+name: Chronus Verify
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "sdk/*/*/**"
+
+jobs:
+  chronus-verify:
+    name: Verify Chronus Change Descriptions
+    if: >-
+      github.event.pull_request.user.login != 'azure-sdk'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # needed so chronus can diff against base branch
+
+      # SHA corresponds to pnpm/action-setup@v4
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+          cache-dependency-path: .github/pnpm-lock.yaml
+
+      - name: Install pinned dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: .github
+
+      - name: Run chronus verify
+        run: pnpm chronus verify
+        working-directory: .github
+
+      - name: Chronus verification failed – see docs
+        if: failure()
+        run: |
+          echo "::error::Chronus verification failed. Add a change description with 'npx chronus add'."
+          echo "::error::See https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md for instructions."
