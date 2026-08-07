@@ -183,7 +183,7 @@ def mock_operation_config_no_progress() -> OperationConfig:
 @pytest.fixture
 def sanitized_environment_variables(environment_variables, fake_datastore_key) -> dict:
     sanitizings = {
-        "ML_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
+        "ML_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000000",
         "ML_RESOURCE_GROUP": "00000",
         "ML_WORKSPACE_NAME": "00000",
         "ML_FEATURE_STORE_NAME": "00000",

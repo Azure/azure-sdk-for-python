@@ -4,7 +4,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_datastore
-from azure.ai.ml.entities import AzureBlobDatastore, AzureFileDatastore
+from azure.ai.ml.entities import AccountKeyConfiguration, AzureBlobDatastore, AzureFileDatastore
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml.entities._datastore.datastore import Datastore
@@ -98,8 +98,11 @@ class TestDatastore(AzureRecordedTestCase):
         created_datastore = datastore_create_get_list(client, internal_blob_ds, random_name)
         assert isinstance(created_datastore, AzureBlobDatastore)
         assert created_datastore.container_name == internal_blob_ds.container_name
-        assert created_datastore.account_name == internal_blob_ds.account_name
-        assert created_datastore.credentials.account_key == primary_account_key
+        assert created_datastore.account_name == (internal_blob_ds.account_name if is_live() else "Sanitized")
+        if is_live():
+            assert created_datastore.credentials.account_key == primary_account_key
+        else:
+            created_datastore.credentials = AccountKeyConfiguration(account_key=primary_account_key)
         datastore_update_check_credential(client, created_datastore, secondary_account_key)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
@@ -121,7 +124,7 @@ class TestDatastore(AzureRecordedTestCase):
         created_datastore = datastore_create_get_list(client, internal_blob_ds, random_name)
         assert isinstance(created_datastore, AzureBlobDatastore)
         assert created_datastore.container_name == internal_blob_ds.container_name
-        assert created_datastore.account_name == internal_blob_ds.account_name
+        assert created_datastore.account_name == (internal_blob_ds.account_name if is_live() else "Sanitized")
         assert isinstance(created_datastore.credentials, NoneCredentialConfiguration)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
@@ -146,8 +149,11 @@ class TestDatastore(AzureRecordedTestCase):
         created_datastore = datastore_create_get_list(client, internal_file_ds, random_name)
         assert isinstance(created_datastore, AzureFileDatastore)
         assert created_datastore.file_share_name == internal_file_ds.file_share_name
-        assert created_datastore.account_name == internal_file_ds.account_name
-        assert created_datastore.credentials.account_key == primary_account_key
+        assert created_datastore.account_name == (internal_file_ds.account_name if is_live() else "Sanitized")
+        if is_live():
+            assert created_datastore.credentials.account_key == primary_account_key
+        else:
+            created_datastore.credentials = AccountKeyConfiguration(account_key=primary_account_key)
         datastore_update_check_credential(client, created_datastore, secondary_account_key)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
@@ -226,7 +232,7 @@ class TestDatastore(AzureRecordedTestCase):
         ]
         internal_adls_gen2 = load_datastore(adls_gen2_credential_less_file, params_override=params_override)
         created_datastore = datastore_create_get_list(client, internal_adls_gen2, random_name)
-        assert created_datastore.account_name == internal_adls_gen2.account_name
+        assert created_datastore.account_name == (internal_adls_gen2.account_name if is_live() else "Sanitized")
         assert isinstance(created_datastore.credentials, NoneCredentialConfiguration)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
