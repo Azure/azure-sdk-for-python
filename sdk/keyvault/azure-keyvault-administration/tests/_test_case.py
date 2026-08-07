@@ -18,6 +18,7 @@ class BaseClientPreparer(AzureRecordedTestCase):
         playback_sas_token = "fake-sas"
         playback_ekm_host = "fake-ekm-host"
         playback_server_ca_certificate = "ZmFrZS1jZXJ0LWRhdGE="
+        playback_private_link_service_id = "fake-private-link-service-id"
 
         if self.is_live:
             hsm = os.environ.get("AZURE_MANAGEDHSM_URL")
@@ -29,6 +30,7 @@ class BaseClientPreparer(AzureRecordedTestCase):
             self.sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN")
             self.ekm_host = os.environ.get("EKM_PROXY_HOST")
             self.ekm_certificate = os.environ.get("EKM_SERVER_CA_CERTIFICATE")
+            self.private_link_service_id = os.environ.get("EKM_PRIVATE_LINK_SERVICE_ID")
 
         else:
             self.managed_hsm_url = hsm_playback_url
@@ -36,6 +38,7 @@ class BaseClientPreparer(AzureRecordedTestCase):
             self.sas_token = playback_sas_token
             self.ekm_host = playback_ekm_host
             self.ekm_certificate = playback_server_ca_certificate
+            self.private_link_service_id = playback_private_link_service_id
 
         use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
         use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
@@ -164,6 +167,7 @@ class KeyVaultEkmClientPreparer(BaseClientPreparer):
             self._skip_if_not_configured(api_version)
             kwargs["ekm_host"] = self.ekm_host
             kwargs["ekm_certificate"] = self.ekm_certificate
+            kwargs["private_link_service_id"] = self.private_link_service_id
             client = self.create_ekm_client(api_version=api_version, **kwargs)
 
             with client:
