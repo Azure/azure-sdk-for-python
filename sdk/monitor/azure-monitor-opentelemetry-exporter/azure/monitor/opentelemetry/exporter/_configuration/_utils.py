@@ -116,6 +116,8 @@ def make_onesettings_request(
     headers = headers or {}
 
     try:
+        # requests honors standard proxy environment variables (HTTP_PROXY/HTTPS_PROXY/NO_PROXY)
+        # automatically, so no explicit proxy configuration is needed here.
         result = requests.get(url, params=query_dict, headers=headers, timeout=10)
         # Do NOT call raise_for_status(): HTTP error codes (4xx/5xx) are handled by the parser so
         # the real status_code is preserved. This lets callers distinguish retryable errors

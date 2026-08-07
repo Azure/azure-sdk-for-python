@@ -23,6 +23,8 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Generic, TypeVar
 
+from azure.ai.agentserver.core._experimental import experimental
+
 from ._metadata import TaskMetadata
 
 Output = TypeVar("Output")
@@ -42,6 +44,7 @@ def _unwrap_result(res: Any) -> Any:
     return res
 
 
+@experimental
 class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
     """Handle to a running or completed resilient task.
 

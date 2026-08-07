@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any, Union
 
+from azure.ai.agentserver.core._experimental import experimental
 from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG
 
 if TYPE_CHECKING:
@@ -17,6 +18,7 @@ if TYPE_CHECKING:
     _AnyHttpResponse = Union[HttpResponse, AsyncHttpResponse]
 
 
+@experimental
 class FoundryStorageError(Exception):
     """Base class for errors returned by the Foundry storage API."""
 
@@ -33,10 +35,12 @@ class FoundryStorageError(Exception):
         self.status_code = status_code
 
 
+@experimental
 class FoundryStorageNotFoundError(FoundryStorageError):
     """Raised when the requested resource does not exist (HTTP 404)."""
 
 
+@experimental
 class FoundryStorageBadRequestError(FoundryStorageError):
     """Raised for invalid-request errors (HTTP 400)."""
 
@@ -52,10 +56,12 @@ class FoundryStorageBadRequestError(FoundryStorageError):
         self.param = param
 
 
+@experimental
 class FoundryStorageConflictError(FoundryStorageBadRequestError):
     """Raised when the requested create/update conflicts with an existing resource (HTTP 409)."""
 
 
+@experimental
 class FoundryStoragePreconditionError(FoundryStorageError):
     """Raised when an ``If-Match`` precondition fails on a single-item write."""
 
@@ -71,6 +77,7 @@ class FoundryStoragePreconditionError(FoundryStorageError):
         self.current_etag = current_etag
 
 
+@experimental
 class FoundryStorageApiError(FoundryStorageError):
     """Raised for all other non-success HTTP responses."""
 

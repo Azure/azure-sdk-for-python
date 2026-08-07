@@ -18,9 +18,7 @@ from ._response_context import (
 from .hosting._routing import ResponsesAgentServerHost
 from .models import CreateResponse, ResponseObject
 from .models._helpers import (
-    get_conversation_id,
     get_input_expanded,
-    to_output_item,
 )
 from .store._base import ResponseProviderProtocol
 from .store._file import FileResponseStore
@@ -59,7 +57,5 @@ __all__ = [
     "TextResponse",
     "CreateResponse",
     "ResponseObject",
-    "get_conversation_id",
     "get_input_expanded",
-    "to_output_item",
 ]
