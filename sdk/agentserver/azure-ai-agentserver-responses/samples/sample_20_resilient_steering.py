@@ -132,7 +132,6 @@ async def handler(
     # Cross-turn state lives in an explicit application-owned State Store.
     store = await FoundryStateStore.get_or_create(
         context.conversation_chain_id,
-        user_isolation=True,
         description="State for the resilient steering response sample",
     )
     async with store:

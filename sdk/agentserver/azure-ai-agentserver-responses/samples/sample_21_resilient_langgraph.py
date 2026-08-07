@@ -269,7 +269,6 @@ async def _record_stable(context: ResponseContext, state: Any) -> None:
     if checkpoint_id:
         store = await FoundryStateStore.get_or_create(
             f"responses/resilient-langgraph/{context.conversation_chain_id}",
-            user_isolation=True,
             description="State for the resilient LangGraph response sample",
         )
         async with store:
@@ -345,7 +344,6 @@ async def handler(
         input_text = await context.get_input_text()
         store = await FoundryStateStore.get_or_create(
             f"responses/resilient-langgraph/{chain_id}",
-            user_isolation=True,
             description="State for the resilient LangGraph response sample",
         )
         async with store:

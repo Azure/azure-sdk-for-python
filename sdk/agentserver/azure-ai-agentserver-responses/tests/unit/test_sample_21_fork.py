@@ -102,7 +102,6 @@ async def test_record_stable_uses_conversation_store_and_persisted_call_id() -> 
 
     get_or_create.assert_awaited_once_with(
         "responses/resilient-langgraph/chain-21",
-        user_isolation=True,
         description="State for the resilient LangGraph response sample",
     )
     store.set_item.assert_awaited_once_with(

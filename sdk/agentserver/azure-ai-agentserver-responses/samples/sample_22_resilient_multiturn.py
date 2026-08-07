@@ -70,7 +70,6 @@ async def handler(
     input_text = await context.get_input_text()
     store = await FoundryStateStore.get_or_create(
         f"responses/resilient-multiturn/{context.conversation_chain_id}",
-        user_isolation=True,
         description="State for the resilient multi-turn response sample",
     )
     async with store:

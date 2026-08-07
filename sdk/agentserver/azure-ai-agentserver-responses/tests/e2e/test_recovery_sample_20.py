@@ -136,7 +136,6 @@ class TestSample20FreshEntry:
         assert state_store.close_count == 1
         get_or_create.assert_awaited_once_with(
             "conv-test",
-            user_isolation=True,
             description="State for the resilient steering response sample",
         )
 
@@ -283,7 +282,6 @@ async def test_sample_22_done_marker_is_idempotent_across_recovery() -> None:
     for awaited_call in get_or_create.await_args_list:
         assert awaited_call.args[0] == "responses/resilient-multiturn/conv-test"
         assert awaited_call.kwargs == {
-            "user_isolation": True,
             "description": "State for the resilient multi-turn response sample",
         }
 
