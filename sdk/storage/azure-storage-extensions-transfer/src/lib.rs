@@ -11,11 +11,11 @@
 
 use std::collections::HashMap;
 use std::num::NonZero;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex, RwLock};
 
 use azure_core::credentials::{AccessToken, Secret, TokenCredential, TokenRequestOptions};
 use azure_core::http::headers::HeaderName;
-use azure_core::http::{NoFormat, RequestContent, Url};
+use azure_core::http::{new_http_client, HttpClientOptions, NoFormat, RequestContent, Transport, Url};
 use azure_core::Bytes;
 use azure_storage_blob::models::{
     BlobClientDownloadOptions, BlockBlobClientUploadOptions, HttpRange,
@@ -33,6 +33,27 @@ use tokio::runtime::Runtime;
 static RUNTIME: Lazy<Runtime> = Lazy::new(|| {
     Runtime::new().expect("Failed to create tokio runtime")
 });
+
+/// Shared HTTP transport — a single connection pool reused by every `BlobClient` we build.
+///
+/// Each `BlobClient` otherwise constructs its own HTTP client (and therefore its own
+/// connection pool), so building a fresh client per transfer would repeat TLS handshakes and
+/// discard warm connections. Injecting one shared transport keeps the pool warm across calls.
+///
+/// Automatic decompression is disabled to guarantee the crate receives raw bytes for
+/// partitioned/ranged downloads (matching the storage default for range requests).
+static SHARED_TRANSPORT: Lazy<Transport> = Lazy::new(|| {
+    Transport::new(new_http_client(Some(HttpClientOptions {
+        automatic_decompression: false,
+    })))
+});
+
+/// Process-wide token credential, cached so the token is fetched from the Python credential
+/// (and, for CLI-based credentials, the `az` subprocess) only once and then reused across
+/// every transfer. Without this, each per-transfer `BlobClient` starts with a cold
+/// per-pipeline token cache and re-invokes the Python credential on every operation.
+static CACHED_CREDENTIAL: Lazy<Mutex<Option<Arc<PyCallbackCredential>>>> =
+    Lazy::new(|| Mutex::new(None));
 
 /// Custom error wrapper for mapping `azure_core::Error` to Python exceptions.
 struct AzureError(azure_core::Error);
@@ -57,9 +78,12 @@ impl From<azure_core::Error> for AzureError {
 /// the caller to have encoded it correctly, and `Url::parse` preserves existing
 /// percent-encoding, so no double-encoding occurs.
 ///
-/// If `token_provider` is provided, a Python-callback credential is used that fetches a
-/// fresh token on demand. If the `blob_url` contains a SAS token in the query string,
-/// pass `token_provider=None`.
+/// If `token_provider` is provided, the process-wide cached credential is used (fetching a
+/// token from Python once and reusing it). If the `blob_url` contains a SAS token in the
+/// query string, pass `token_provider=None`.
+///
+/// Every client is built with the shared transport so connection pooling persists across
+/// transfers regardless of authentication mode.
 fn build_blob_client(
     blob_url: &str,
     token_provider: Option<Py<PyAny>>,
@@ -71,40 +95,59 @@ fn build_blob_client(
         )
     })?;
 
+    // Reuse one shared connection pool across every client we build.
+    let mut options = BlobClientOptions::default();
+    options.client_options.transport = Some(SHARED_TRANSPORT.clone());
+
     let credential: Option<Arc<dyn TokenCredential>> = match token_provider {
-        Some(provider) => Some(Arc::new(PyCallbackCredential::new(provider))),
+        Some(provider) => {
+            // Reuse a single process-wide credential so the token is fetched (and any `az`
+            // subprocess is spawned) only once, then served from the credential's own cache.
+            // The provider passed on later calls is ignored: the cached credential already
+            // references the same long-lived Python credential.
+            let mut cached = CACHED_CREDENTIAL
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner());
+            let credential = cached
+                .get_or_insert_with(|| Arc::new(PyCallbackCredential::new(provider)))
+                .clone();
+            Some(credential)
+        }
         None => None,
     };
 
     let client =
-        BlobClient::new(blob_url, credential, None::<BlobClientOptions>).map_err(AzureError::from)?;
+        BlobClient::new(blob_url, credential, Some(options)).map_err(AzureError::from)?;
     Ok(client)
 }
 
 /// A `TokenCredential` that delegates to a Python callable on every request.
 ///
-/// Rather than caching a single token string, we hold a Python "token provider"
-/// (`Py<PyAny>`) and invoke it whenever the `azure_core` bearer-token policy needs a
-/// token — including when the cached token nears expiry. This lets token refresh flow
-/// all the way back to the real Python credential (e.g. `DefaultAzureCredential`), which
-/// owns caching and refresh.
+/// We hold a Python "token provider" (`Py<PyAny>`) and additionally cache the last token it
+/// returned. The cache lets the credential serve tokens without re-entering Python on every
+/// request; when the cached token nears expiry the provider is invoked again, so refresh
+/// still flows back to the real Python credential (e.g. `DefaultAzureCredential`).
 ///
 /// The provider has the signature `provider(scopes: list[str]) -> (token: str, expires_on: int)`
 /// where `expires_on` is a Unix timestamp in seconds.
 ///
-/// Thread-safety: the struct holds only an immutable `Py<PyAny>` (which is `Send + Sync`);
-/// each `get_token` call independently re-acquires the GIL, which serializes the actual
-/// Python execution. The Python-side provider additionally serializes calls with a lock.
-/// The `azure_core` bearer policy already serializes refreshes via a `RwLock`, so under
-/// parallel chunked transfers only one refresh runs at a time per client.
+/// Thread-safety: the provider is an immutable `Py<PyAny>` (`Send + Sync`); the token cache is
+/// guarded by an `RwLock`. Concurrent callers take the read path and return the cached token;
+/// a refresh takes the write lock so callers coalesce onto a single Python invocation.
 #[derive(Debug)]
 struct PyCallbackCredential {
     provider: Py<PyAny>,
+    /// Cached token as `(token, expiry)`. Stored as components rather than an `AccessToken`
+    /// so we don't rely on `Secret` being cloneable.
+    cache: RwLock<Option<(String, azure_core::time::OffsetDateTime)>>,
 }
 
 impl PyCallbackCredential {
     fn new(provider: Py<PyAny>) -> Self {
-        Self { provider }
+        Self {
+            provider,
+            cache: RwLock::new(None),
+        }
     }
 }
 
@@ -115,10 +158,36 @@ impl TokenCredential for PyCallbackCredential {
         scopes: &[&str],
         _options: Option<TokenRequestOptions<'_>>,
     ) -> azure_core::Result<AccessToken> {
+        // Refresh a little ahead of expiry, mirroring the bearer-token policy's own window, so
+        // callers always receive a token with comfortable remaining lifetime.
+        const REFRESH_WINDOW_SECS: i64 = 300;
+        let now = azure_core::time::OffsetDateTime::now_utc().unix_timestamp();
+
+        // Fast path: return the cached token if it is still comfortably valid. This is what
+        // avoids re-invoking the Python credential on every transfer, since each new
+        // `BlobClient` starts with a cold per-pipeline token cache.
+        {
+            let cache = self.cache.read().unwrap_or_else(|poisoned| poisoned.into_inner());
+            if let Some((token, expires)) = cache.as_ref() {
+                if expires.unix_timestamp() - now > REFRESH_WINDOW_SECS {
+                    return Ok(AccessToken::new(Secret::new(token.clone()), *expires));
+                }
+            }
+        }
+
+        // Slow path: fetch a fresh token. Hold the write lock across the fetch so concurrent
+        // callers coalesce onto a single refresh rather than each calling into Python.
+        let mut cache = self.cache.write().unwrap_or_else(|poisoned| poisoned.into_inner());
+        if let Some((token, expires)) = cache.as_ref() {
+            if expires.unix_timestamp() - now > REFRESH_WINDOW_SECS {
+                return Ok(AccessToken::new(Secret::new(token.clone()), *expires));
+            }
+        }
+
         // Re-attach the current thread to the interpreter (valid to do inside the outer
         // `detach`) and call the Python token provider to obtain a fresh token and its
         // real expiry.
-        Python::attach(|py| {
+        let (token, expires) = Python::attach(|py| {
             let scope_list: Vec<String> = scopes.iter().map(|s| s.to_string()).collect();
             let result = self.provider.bind(py).call1((scope_list,)).map_err(|e| {
                 azure_core::Error::with_message(
@@ -142,8 +211,11 @@ impl TokenCredential for PyCallbackCredential {
                         format!("Python token provider returned an invalid expiry: {}", e),
                     )
                 })?;
-            Ok(AccessToken::new(Secret::new(token), expires))
-        })
+            Ok::<(String, azure_core::time::OffsetDateTime), azure_core::Error>((token, expires))
+        })?;
+
+        *cache = Some((token.clone(), expires));
+        Ok(AccessToken::new(Secret::new(token), expires))
     }
 }
 
