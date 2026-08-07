@@ -32,14 +32,14 @@ def main():
 
     response = client.workspace_private_endpoint_connections.begin_create_or_update(
         resource_group_name="rgdiscovery",
-        workspace_name="2b2ef1dfc273d99493",
+        workspace_name="d72095912c2b410266",
         private_endpoint_connection_name="connection",
         resource={
             "properties": {
                 "privateEndpoint": {},
                 "privateLinkServiceConnectionState": {
-                    "actionsRequired": "vgqhrxvmviabfgmafqtbej",
-                    "description": "lknyprq",
+                    "actionsRequired": "xbshniighjomlygqk",
+                    "description": "km",
                     "status": "Pending",
                 },
             }
@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/WorkspacePrivateEndpointConnections_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/WorkspacePrivateEndpointConnections_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

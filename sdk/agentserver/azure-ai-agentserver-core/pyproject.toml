@@ -29,6 +29,15 @@ dependencies = [
     "opentelemetry-sdk>=1.43.0",
     "microsoft-opentelemetry>=1.3.5",
     "aiohttp>=3.10.0,<4.0.0a0",
+    "azure-identity>=1.17.0",
+]
+
+[project.optional-dependencies]
+otlp-grpc = [
+    "opentelemetry-exporter-otlp-proto-grpc>=1.43.0",
+]
+hosted = [
+    "azure-identity>=1.16.0",
 ]
 
 [build-system]
@@ -55,6 +64,9 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 [tool.setuptools.package-data]
 "azure.ai.agentserver.core" = ["py.typed"]
 
+[tool.azure-sdk-conda]
+in_bundle = false
+
 [tool.azure-sdk-build]
 breaking = false
 mypy = true
@@ -63,5 +75,6 @@ verifytypes = false
 latestdependency = false
 pylint = true
 type_check_samples = false
+apistub = true
 
 [tool.uv.sources]

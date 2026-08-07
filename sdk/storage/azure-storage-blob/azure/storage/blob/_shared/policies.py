@@ -459,7 +459,7 @@ def _validate_content_response(
                 response=response.http_response,
             )
 
-    elif is_crc64_validation(validate_content):
+    elif is_crc64_validation(validate_content) and response.http_response.status_code < 300:
         # For upload and download verify structured message header present in response if provided in request.
         sm_request = request.http_request.headers.get(SM_HEADER)
         sm_response = response.http_response.headers.get(SM_HEADER)

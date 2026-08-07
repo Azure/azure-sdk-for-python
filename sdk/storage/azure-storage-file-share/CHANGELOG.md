@@ -1,8 +1,17 @@
 # Release History
 
-## 12.27.0b1 (Unreleased)
+## 12.27.0b1 (2026-08-10)
 
 ### Features Added
+- Added support for service version 2026-10-06.
+- Added `list_ranges` and `list_ranges_diff` APIs to `ShareFileClient` which return an auto-paging iterable of
+`FileRange` and support continuation tokens and `results_per_page` for enumerating file ranges across multiple
+service responses.
+
+### Other Changes
+- Deprecated `ShareFileClient`'s `get_ranges` and `get_ranges_diff` APIs in favor of `list_ranges` and
+`list_ranges_diff`.
+- Migrated generated code to use the new TypeSpec generator.
 
 ### Bugs Fixed
 - Return type of get_share_access_policies is now the publicly exposed SignedIdentifier model containing the publicly exposed AccessPolicy model. Previously we were leaking the internal generated SignedIdentifier model without exposing it in the api.

@@ -37,7 +37,14 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._blob_client_async import BlobClient
 from ._download_async import StorageStreamDownloader
 from ._lease_async import BlobLeaseClient
-from ._list_blobs_helper import BlobNamesPaged, BlobPropertiesPaged, BlobPrefix
+from ._list_blobs_helper import (
+    ArrowBlobPropertiesPaged,
+    ArrowBlobPrefixPaged,
+    ArrowBlobNamesPaged,
+    BlobNamesPaged,
+    BlobPropertiesPaged,
+    BlobPrefix,
+)
 from ._models import FilteredBlobPaged
 from .._container_client_helpers import (
     _format_url,
@@ -825,9 +832,20 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
             `AsyncItemPaged.by_page()`.
+        :keyword response_format:
+            The format used to return and parse the List Blobs response.
+            Possible values are "auto", "xml", and "arrow".
+            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
+
+            .. note::
+                The use of "arrow" requires `nanoarrow` to be installed.
+        :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
             Only one entity level is supported.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used if response_format is set to "arrow".
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -856,15 +874,36 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
 
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
+        response_format = kwargs.pop("response_format", "xml")
+        use_arrow = response_format == "arrow"
+        if kwargs.get("end_before") is not None and not use_arrow:
+            raise ValueError("'end_before' is only supported when using arrow response format.")
+        if use_arrow:
+            try:
+                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
+            except ImportError as e:
+                raise ValueError(
+                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
+                    "Please install nanoarrow and try again."
+                ) from e
         command = functools.partial(
-            self._client.container.list_blob_flat_segment, include=include, timeout=timeout, **kwargs
+            (
+                self._client.container.list_blob_flat_segment_apache_arrow
+                if use_arrow
+                else self._client.container.list_blob_flat_segment
+            ),
+            include=include,
+            timeout=timeout,
+            **kwargs,
         )
         return AsyncItemPaged(
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
             container=self.container_name,
-            page_iterator_class=BlobPropertiesPaged,
+            page_iterator_class=ArrowBlobPropertiesPaged if use_arrow else BlobPropertiesPaged,
+            # pylint: disable-next=protected-access
+            **({"deserializer": self._client.container._deserialize} if use_arrow else {}),
         )
 
     @distributed_trace
@@ -883,9 +922,20 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
             `AsyncItemPaged.by_page()`.
+        :keyword response_format:
+            The format used to return and parse the List Blobs response.
+            Possible values are "auto", "xml", and "arrow".
+            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
+
+            .. note::
+                The use of "arrow" requires `nanoarrow` to be installed.
+        :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
             Only one entity level is supported.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used if response_format is set to "arrow".
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -903,12 +953,35 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         name_starts_with = kwargs.pop("name_starts_with", None)
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
+        response_format = kwargs.pop("response_format", "xml")
+        use_arrow = response_format == "arrow"
+        if kwargs.get("end_before") is not None and not use_arrow:
+            raise ValueError("'end_before' is only supported when using arrow response format.")
+        if use_arrow:
+            try:
+                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
+            except ImportError as e:
+                raise ValueError(
+                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
+                    "Please install nanoarrow and try again."
+                ) from e
 
-        # For listing only names we need to create a one-off generated client and
-        # override its deserializer to prevent deserialization of the full response.
+        # For listing only names we need to create a one-off generated client.
         client = self._build_generated_client()
-        client.container._deserialize = IgnoreListBlobsDeserializer()  # pylint: disable=protected-access
 
+        if use_arrow:
+            command = functools.partial(client.container.list_blob_flat_segment_apache_arrow, timeout=timeout, **kwargs)
+            return AsyncItemPaged(
+                command,
+                prefix=name_starts_with,
+                results_per_page=results_per_page,
+                container=self.container_name,
+                page_iterator_class=ArrowBlobNamesPaged,
+                deserializer=client.container._deserialize,  # pylint: disable=protected-access
+            )
+
+        # Override the deserializer to prevent deserialization of the full response for names-only XML.
+        client.container._deserialize = IgnoreListBlobsDeserializer()  # pylint: disable=protected-access
         command = functools.partial(client.container.list_blob_flat_segment, timeout=timeout, **kwargs)
         return AsyncItemPaged(
             command,
@@ -944,8 +1017,19 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             element in the response body that acts as a placeholder for all blobs whose
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
+        :keyword response_format:
+            The format used to return and parse the List Blobs response.
+            Possible values are "auto", "xml", and "arrow".
+            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
+
+            .. note::
+                The use of "arrow" requires `nanoarrow` to be installed.
+        :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used if response_format is set to "arrow".
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -966,6 +1050,35 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
 
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
+        response_format = kwargs.pop("response_format", "xml")
+        use_arrow = response_format == "arrow"
+        if kwargs.get("end_before") is not None and not use_arrow:
+            raise ValueError("'end_before' is only supported when using arrow response format.")
+        if use_arrow:
+            try:
+                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
+            except ImportError as e:
+                raise ValueError(
+                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
+                    "Please install nanoarrow and try again."
+                ) from e
+            command = functools.partial(
+                self._client.container.list_blob_hierarchy_segment_apache_arrow,
+                delimiter=delimiter,
+                include=include,
+                timeout=timeout,
+                **kwargs,
+            )
+            return AsyncItemPaged(
+                command,
+                prefix=name_starts_with,
+                results_per_page=results_per_page,
+                container=self.container_name,
+                delimiter=delimiter,
+                deserializer=self._client.container._deserialize,  # pylint: disable=protected-access
+                page_iterator_class=ArrowBlobPrefixPaged,
+            )
+
         command = functools.partial(
             self._client.container.list_blob_hierarchy_segment,
             delimiter=delimiter,

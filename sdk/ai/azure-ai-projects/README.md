@@ -127,6 +127,7 @@ async with (
     ) as project_client,
 ):
 ```
+
 ### Performing Responses operations using OpenAI client
 
 Use the `.get_openai_client()` method to obtain an authenticated [OpenAI](https://github.com/openai/openai-python) client and run Responses, Conversations, Evaluations, Files, and Fine-Tuning operations. See the **responses**, **agents**, **evaluations**, **files**, and **finetuning** folders in the [samples][samples] for complete working examples.
@@ -158,6 +159,7 @@ See the **responses** folder in the [samples][samples] for additional samples in
 ### Agents
 
 See Foundry documentation:
+
 * **[Microsoft Foundry Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview)** — concepts, setup, and quick-starts.
 * **[Runtime components](https://learn.microsoft.com/azure/foundry/agents/concepts/runtime-components?tabs=python)** — deep-dive into agent architecture.
 * **[Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog)** — all available tools and agent capabilities.
@@ -234,24 +236,28 @@ To turn on client console logging define the environment variable `AZURE_AI_PROJ
 
 #### Customizing your log
 
-Instead of using the above-mentioned environment variable, you can configure logging yourself and control the log level, format and destination. To log to `stdout`, add the following at the top of your Python script:
+Instead of using the above-mentioned environment variable, you can configure logging yourself and control the log level, format, and destination. You can optionally attach the same handler to the Azure SDK logger and, for `.get_openai_client()` scenarios, optionally attach it to the dedicated OpenAI transport logger as well:
 
 ```python
 import sys
 import logging
 
-# Acquire the logger for this client library. Use 'azure' to affect both
-# `azure.core` and `azure.ai.projects' libraries.
-logger = logging.getLogger("azure")
-
-# Set the desired logging level. logging.INFO or logging.DEBUG are good options.
-logger.setLevel(logging.DEBUG)
-
 # Direct logging output to stdout:
 handler = logging.StreamHandler(stream=sys.stdout)
 # Or direct logging output to a file:
 # handler = logging.FileHandler(filename="sample.log")
+
+# Optional: logger for azure-ai-projects and azure-core.
+logger = logging.getLogger("azure")
+logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
+
+# Optional: additional logger for an openai client generated from `.get_openai_client()`.
+openai_logger = logging.getLogger("azure.ai.projects.openai_transport")
+openai_logger.setLevel(logging.DEBUG)
+openai_logger.propagate = False
+openai_logger.addHandler(handler)
+
 
 # Optional: change the default logging format. Here we add a timestamp.
 #formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
@@ -269,6 +275,8 @@ project_client = AIProjectClient(
 ```
 
 Note that the log level must be set to `logging.DEBUG` (see above code). Logs will be redacted with any other log level.
+
+See the logging samples in the `samples/logs/` folder for complete end-to-end examples, including console logging, file logging, and OpenAI transport logging.
 
 Be sure to protect non-redacted logs to avoid compromising security.
 
