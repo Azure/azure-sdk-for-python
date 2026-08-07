@@ -30,7 +30,7 @@ from azure.core import PipelineClient
 @pytest.fixture
 def assert_iterator_body():
     def _comparer(request, final_value):
-        content = b"".join([p for p in request.content])
+        content = b"".join(list(request.content))
         assert content == final_value
 
     return _comparer
