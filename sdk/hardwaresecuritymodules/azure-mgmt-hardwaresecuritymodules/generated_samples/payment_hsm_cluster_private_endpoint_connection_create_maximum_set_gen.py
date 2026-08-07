@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
+from azure.mgmt.hardwaresecuritymodules import HardwareSecurityModulesMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-containerservicefleet
+    pip install azure-mgmt-hardwaresecuritymodules
 # USAGE
-    python cluster_mesh_profiles_apply.py
+    python payment_hsm_cluster_private_endpoint_connection_create_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,19 +25,27 @@ from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
 
 
 def main():
-    client = ContainerServiceFleetMgmtClient(
+    client = HardwareSecurityModulesMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.cluster_mesh_profiles.begin_apply(
-        resource_group_name="rgfleets",
-        fleet_name="fleet1",
-        cluster_mesh_profile_name="clustermeshprofile1",
-    ).result()
+    response = client.payment_hsm_cluster_private_endpoint_connections.create(
+        resource_group_name="rgpaymenthsm",
+        payment_hsm_cluster_name="phsm1",
+        pe_connection_name="sample-pec",
+        properties={
+            "properties": {
+                "privateLinkServiceConnectionState": {
+                    "description": "My name is Joe and I am approving this.",
+                    "status": "Approved",
+                }
+            }
+        },
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-03-02-preview/ClusterMeshProfiles_Apply.json
+# x-ms-original-file: 2025-12-01-preview/PaymentHsmClusterPrivateEndpointConnection_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Affinity(_Model):
+class Affinity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Affinity is a group of cluster affinity scheduling rules. More to be added.
 
     :ivar cluster_affinity: ClusterAffinity contains cluster affinity scheduling rules for the
@@ -48,7 +48,7 @@ class Affinity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentProfile(_Model):
+class AgentProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Agent profile for the Fleet hub.
 
     :ivar subnet_id: The ID of the subnet which the Fleet hub node will join on startup. If this is
@@ -83,7 +83,7 @@ class AgentProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class APIServerAccessProfile(_Model):
+class APIServerAccessProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access profile for the Fleet hub API server.
 
     :ivar enable_private_cluster: Whether to create the Fleet hub as a private cluster or not.
@@ -124,7 +124,7 @@ class APIServerAccessProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoUpgradeNodeImageSelection(_Model):
+class AutoUpgradeNodeImageSelection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The node image upgrade to be applied to the target clusters in auto upgrade.
 
     :ivar type: The node image upgrade type. Required. Known values are: "Latest" and "Consistent".
@@ -198,7 +198,7 @@ class ProxyResource(Resource):
     """
 
 
-class AutoUpgradeProfile(ProxyResource):
+class AutoUpgradeProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AutoUpgradeProfile resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -278,7 +278,7 @@ class AutoUpgradeProfile(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AutoUpgradeProfileProperties(_Model):
+class AutoUpgradeProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the AutoUpgradeProfile.
 
     :ivar provisioning_state: The provisioning state of the AutoUpgradeProfile resource. Known
@@ -419,26 +419,7 @@ class AutoUpgradeProfileStatus(_Model):
     """The target Kubernetes version or node image versions of the last trigger."""
 
 
-class CiliumProperties(_Model):
-    """The Cilium specific properties of the member cluster.
-
-    :ivar id: Cilium requires each cluster to be assigned a unique numeric cluster id from 1 - 255.
-     The id is managed by Fleet and cannot be set by the user. Required.
-    :vartype id: int
-    :ivar name: Cilium requires each cluster to be assigned a unique human-readable name. The name
-     is managed by Fleet, based on the Fleet Member name, and cannot be set by the user. Required.
-    :vartype name: str
-    """
-
-    id: int = rest_field(visibility=["read"])
-    """Cilium requires each cluster to be assigned a unique numeric cluster id from 1 - 255. The id is
-     managed by Fleet and cannot be set by the user. Required."""
-    name: str = rest_field(visibility=["read"])
-    """Cilium requires each cluster to be assigned a unique human-readable name. The name is managed
-     by Fleet, based on the Fleet Member name, and cannot be set by the user. Required."""
-
-
-class ClusterAffinity(_Model):
+class ClusterAffinity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterAffinity contains cluster affinity scheduling rules for the selected resources.
 
     :ivar required_during_scheduling_ignored_during_execution: If the affinity requirements
@@ -477,155 +458,7 @@ class ClusterAffinity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterMeshProfile(ProxyResource):
-    """A cluster mesh profile stores the general information about the mesh.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.containerservicefleet.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.containerservicefleet.models.ClusterMeshProfileProperties
-    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
-     the normal etag convention.  Entity tags are used for comparing two or more entities from the
-     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
-     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
-    :vartype e_tag: str
-    """
-
-    properties: Optional["_models.ClusterMeshProfileProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
-    """If eTag is provided in the response body, it may also be provided as a header per the normal
-     etag convention.  Entity tags are used for comparing two or more entities from the same
-     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
-     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
-
-    __flattened_items = ["provisioning_state", "member_selector", "status"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.ClusterMeshProfileProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class ClusterMeshProfileProperties(_Model):
-    """A cluster mesh profile stores the general information about the mesh.
-
-    :ivar provisioning_state: The provisioning state of the cluster mesh profile. Known values are:
-     "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.containerservicefleet.models.ClusterMeshProfileProvisioningState
-    :ivar member_selector: Select the members of the mesh.
-
-     * Only key/value pairs with the `=` operator are accepted in the label selector.
-     * If empty or not specified, no Fleet members will be selected to join the mesh.
-    :vartype member_selector: ~azure.mgmt.containerservicefleet.models.MemberSelector
-    :ivar status: The cluster mesh profile status.
-    :vartype status: ~azure.mgmt.containerservicefleet.models.ClusterMeshProfileStatus
-    """
-
-    provisioning_state: Optional[Union[str, "_models.ClusterMeshProfileProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The provisioning state of the cluster mesh profile. Known values are: \"Succeeded\",
-     \"Failed\", and \"Canceled\"."""
-    member_selector: Optional["_models.MemberSelector"] = rest_field(
-        name="memberSelector", visibility=["read", "create"]
-    )
-    """Select the members of the mesh.
- 
-      * Only key/value pairs with the `=` operator are accepted in the label selector.
-      * If empty or not specified, no Fleet members will be selected to join the mesh."""
-    status: Optional["_models.ClusterMeshProfileStatus"] = rest_field(visibility=["read"])
-    """The cluster mesh profile status."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        member_selector: Optional["_models.MemberSelector"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ClusterMeshProfileStatus(_Model):
-    """Status of the cluster mesh.
-
-    :ivar state: The state of the cluster mesh. Required. Known values are: "NotConnected",
-     "Applying", "Connected", "Degraded", and "Failed".
-    :vartype state: str or ~azure.mgmt.containerservicefleet.models.ClusterMeshState
-    :ivar last_applied_member_selector: The last applied MemberSelector for the cluster mesh
-     profile.
-    :vartype last_applied_member_selector: ~azure.mgmt.containerservicefleet.models.MemberSelector
-    :ivar last_operation_id: The last operation ID for the cluster mesh profile.
-    :vartype last_operation_id: str
-    :ivar last_operation_error: The last operation error of the cluster mesh profile.
-    :vartype last_operation_error: ~azure.mgmt.containerservicefleet.models.ErrorDetail
-    """
-
-    state: Union[str, "_models.ClusterMeshState"] = rest_field(visibility=["read"])
-    """The state of the cluster mesh. Required. Known values are: \"NotConnected\", \"Applying\",
-     \"Connected\", \"Degraded\", and \"Failed\"."""
-    last_applied_member_selector: Optional["_models.MemberSelector"] = rest_field(
-        name="lastAppliedMemberSelector", visibility=["read"]
-    )
-    """The last applied MemberSelector for the cluster mesh profile."""
-    last_operation_id: Optional[str] = rest_field(name="lastOperationId", visibility=["read"])
-    """The last operation ID for the cluster mesh profile."""
-    last_operation_error: Optional["_models.ErrorDetail"] = rest_field(name="lastOperationError", visibility=["read"])
-    """The last operation error of the cluster mesh profile."""
-
-
-class ClusterResourcePlacementSpec(_Model):
+class ClusterResourcePlacementSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterResourcePlacementSpec defines the desired state of ClusterResourcePlacement.
 
     :ivar policy: Policy defines how to select member clusters to place the selected resources. If
@@ -655,7 +488,7 @@ class ClusterResourcePlacementSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterSelector(_Model):
+class ClusterSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterSelector.
 
     :ivar cluster_selector_terms: ClusterSelectorTerms is a list of cluster selector terms. The
@@ -687,7 +520,7 @@ class ClusterSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterSelectorTerm(_Model):
+class ClusterSelectorTerm(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterSelectorTerm.
 
     :ivar label_selector: LabelSelector is a label query over all the joined member clusters.
@@ -782,7 +615,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -810,7 +643,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -854,7 +687,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Fleet(TrackedResource):
+class Fleet(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Fleet resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -964,7 +797,7 @@ class FleetCredentialResults(_Model):
     """Array of base64-encoded Kubernetes configuration files."""
 
 
-class FleetHubProfile(_Model):
+class FleetHubProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The FleetHubProfile configures the fleet hub.
 
     :ivar dns_prefix: DNS prefix used to create the FQDN for the Fleet hub.
@@ -1017,7 +850,7 @@ class FleetHubProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetManagedNamespace(TrackedResource):
+class FleetManagedNamespace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A fleet managed namespace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1102,7 +935,7 @@ class FleetManagedNamespace(TrackedResource):
             super().__setattr__(key, value)
 
 
-class FleetManagedNamespacePatch(_Model):
+class FleetManagedNamespacePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a fleet managed namespace that can be patched.
 
     :ivar tags: Resource tags.
@@ -1130,7 +963,7 @@ class FleetManagedNamespacePatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetManagedNamespaceProperties(_Model):
+class FleetManagedNamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a fleet managed namespace.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -1218,7 +1051,7 @@ class FleetManagedNamespaceStatus(_Model):
     """The last operation error of the fleet managed namespace."""
 
 
-class FleetMember(ProxyResource):
+class FleetMember(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A member of the Fleet. It contains a reference to an existing Kubernetes cluster on Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1251,7 +1084,7 @@ class FleetMember(ProxyResource):
      requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
      14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
 
-    __flattened_items = ["cluster_resource_id", "group", "provisioning_state", "labels", "status", "mesh_properties"]
+    __flattened_items = ["cluster_resource_id", "group", "provisioning_state", "labels", "status"]
 
     @overload
     def __init__(
@@ -1289,7 +1122,7 @@ class FleetMember(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FleetMemberProperties(_Model):
+class FleetMemberProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A member of the Fleet. It contains a reference to an existing Kubernetes cluster on Azure.
 
     :ivar cluster_resource_id: The ARM resource id of the cluster that joins the Fleet. Must be a
@@ -1307,8 +1140,6 @@ class FleetMemberProperties(_Model):
     :vartype labels: dict[str, str]
     :ivar status: Status information of the last operation for fleet member.
     :vartype status: ~azure.mgmt.containerservicefleet.models.FleetMemberStatus
-    :ivar mesh_properties: The Mesh Member Properties associated with this Fleet Member.
-    :vartype mesh_properties: ~azure.mgmt.containerservicefleet.models.MeshProperties
     """
 
     cluster_resource_id: str = rest_field(name="clusterResourceId", visibility=["read", "create"])
@@ -1327,8 +1158,6 @@ class FleetMemberProperties(_Model):
     """The labels for the fleet member."""
     status: Optional["_models.FleetMemberStatus"] = rest_field(visibility=["read"])
     """Status information of the last operation for fleet member."""
-    mesh_properties: Optional["_models.MeshProperties"] = rest_field(name="meshProperties", visibility=["read"])
-    """The Mesh Member Properties associated with this Fleet Member."""
 
     @overload
     def __init__(
@@ -1365,7 +1194,7 @@ class FleetMemberStatus(_Model):
     """The last operation error of the fleet member."""
 
 
-class FleetMemberUpdate(_Model):
+class FleetMemberUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the FleetMember.
 
     :ivar properties: The resource-specific properties for this resource.
@@ -1415,7 +1244,7 @@ class FleetMemberUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class FleetMemberUpdateProperties(_Model):
+class FleetMemberUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the FleetMember.
 
     :ivar group: The group this member belongs to for multi-cluster update management.
@@ -1448,7 +1277,7 @@ class FleetMemberUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetPatch(_Model):
+class FleetPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Fleet that can be patched.
 
     :ivar tags: Resource tags.
@@ -1483,7 +1312,7 @@ class FleetPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetProperties(_Model):
+class FleetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fleet properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -1541,7 +1370,7 @@ class FleetStatus(_Model):
     """The last operation error for the fleet."""
 
 
-class FleetUpdateStrategy(ProxyResource):
+class FleetUpdateStrategy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a multi-stage process to perform update operations across members of a Fleet.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1612,7 +1441,7 @@ class FleetUpdateStrategy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FleetUpdateStrategyProperties(_Model):
+class FleetUpdateStrategyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the UpdateStrategy.
 
     :ivar provisioning_state: The provisioning state of the UpdateStrategy resource. Known values
@@ -1649,7 +1478,7 @@ class FleetUpdateStrategyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Gate(ProxyResource):
+class Gate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Gate controls the progression during a staged rollout, e.g. in an Update Run.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1720,7 +1549,7 @@ class Gate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GateConfiguration(_Model):
+class GateConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GateConfiguration is used to define where Gates should be placed within the Update Run.
 
     :ivar display_name: The human-readable display name of the Gate.
@@ -1755,7 +1584,7 @@ class GateConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GatePatch(_Model):
+class GatePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patch a Gate resource.
 
     :ivar properties: Properties of a Gate that can be patched. Required.
@@ -1783,7 +1612,7 @@ class GatePatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GatePatchProperties(_Model):
+class GatePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Gate that can be patched.
 
     :ivar state: The state of the Gate. Required. Known values are: "Pending", "Skipped", and
@@ -1812,7 +1641,7 @@ class GatePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GateProperties(_Model):
+class GateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Gate controls the progression during a staged rollout, e.g. in an Update Run.
 
     :ivar provisioning_state: The provisioning state of the Gate resource. Known values are:
@@ -1865,7 +1694,7 @@ class GateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GateTarget(_Model):
+class GateTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The target that the Gate is controlling, e.g. an Update Run. Exactly one of the properties
     objects will be set.
 
@@ -1917,7 +1746,7 @@ class GenerateResponse(_Model):
      Required."""
 
 
-class LabelSelector(_Model):
+class LabelSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A label selector is a label query over a set of resources. The result of matchLabels and
     matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
     matches no objects.
@@ -1962,7 +1791,7 @@ class LabelSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LabelSelectorRequirement(_Model):
+class LabelSelectorRequirement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A label selector requirement is a selector that contains values, a key, and an operator that
     relates the key and values.
 
@@ -2013,7 +1842,7 @@ class LabelSelectorRequirement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterUpdate(_Model):
+class ManagedClusterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The update to be applied to the ManagedClusters.
 
     :ivar upgrade: The upgrade to apply to the ManagedClusters. Required.
@@ -2051,7 +1880,7 @@ class ManagedClusterUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterUpgradeSpec(_Model):
+class ManagedClusterUpgradeSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The upgrade to apply to a ManagedCluster.
 
     :ivar type: ManagedClusterUpgradeType is the type of upgrade to be applied. Required. Known
@@ -2090,7 +1919,7 @@ class ManagedClusterUpgradeSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedNamespaceProperties(_Model):
+class ManagedNamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The namespace properties for the fleet managed namespace.
 
     :ivar labels: The labels for the fleet managed namespace.
@@ -2137,7 +1966,7 @@ class ManagedNamespaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -2189,35 +2018,6 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemberSelector(_Model):
-    """Select members of a fleet.
-
-    :ivar by_label: Kubernetes-style label selector for selecting Fleet members, e.g.
-     ``env=production``. Required.
-    :vartype by_label: str
-    """
-
-    by_label: str = rest_field(name="byLabel", visibility=["read", "create"])
-    """Kubernetes-style label selector for selecting Fleet members, e.g. ``env=production``. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        by_label: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class MemberUpdateStatus(_Model):
     """The status of a member update operation.
 
@@ -2245,55 +2045,7 @@ class MemberUpdateStatus(_Model):
     """The status message after processing the member update operation."""
 
 
-class MeshMemberStatus(_Model):
-    """Status of the mesh member.
-
-    :ivar state: The mesh member state. Required. Known values are: "Connecting", "Connected",
-     "Disconnecting", and "Failed".
-    :vartype state: str or ~azure.mgmt.containerservicefleet.models.MeshMemberState
-    :ivar last_updated_at: When the status was last updated.
-    :vartype last_updated_at: ~datetime.datetime
-    :ivar last_operation_id: The last operation ID that affected the mesh properties of the fleet
-     member.
-    :vartype last_operation_id: str
-    :ivar error: The error affecting this member.
-    :vartype error: ~azure.mgmt.containerservicefleet.models.ErrorDetail
-    """
-
-    state: Union[str, "_models.MeshMemberState"] = rest_field(visibility=["read"])
-    """The mesh member state. Required. Known values are: \"Connecting\", \"Connected\",
-     \"Disconnecting\", and \"Failed\"."""
-    last_updated_at: Optional[datetime.datetime] = rest_field(
-        name="lastUpdatedAt", visibility=["read"], format="rfc3339"
-    )
-    """When the status was last updated."""
-    last_operation_id: Optional[str] = rest_field(name="lastOperationId", visibility=["read"])
-    """The last operation ID that affected the mesh properties of the fleet member."""
-    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
-    """The error affecting this member."""
-
-
-class MeshProperties(_Model):
-    """The Mesh Member data for a Fleet Member resource.
-
-    :ivar cilium_properties: The Cilium cluster properties. Required.
-    :vartype cilium_properties: ~azure.mgmt.containerservicefleet.models.CiliumProperties
-    :ivar status: The status of the mesh member. Required.
-    :vartype status: ~azure.mgmt.containerservicefleet.models.MeshMemberStatus
-    :ivar cluster_mesh_profile_resource_id: Resource id of the cluster mesh profile associated with
-     this mesh member. Required.
-    :vartype cluster_mesh_profile_resource_id: str
-    """
-
-    cilium_properties: "_models.CiliumProperties" = rest_field(name="ciliumProperties", visibility=["read"])
-    """The Cilium cluster properties. Required."""
-    status: "_models.MeshMemberStatus" = rest_field(visibility=["read"])
-    """The status of the mesh member. Required."""
-    cluster_mesh_profile_resource_id: str = rest_field(name="clusterMeshProfileResourceId", visibility=["read"])
-    """Resource id of the cluster mesh profile associated with this mesh member. Required."""
-
-
-class NetworkPolicy(_Model):
+class NetworkPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network policy for the managed namespace.
 
     :ivar ingress: The ingress policy for the managed namespace. Known values are: "AllowAll",
@@ -2334,7 +2086,7 @@ class NetworkPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeImageSelection(_Model):
+class NodeImageSelection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The node image upgrade to be applied to the target nodes in update run.
 
     :ivar type: The node image upgrade type. Required. Known values are: "Latest", "Consistent",
@@ -2408,7 +2160,7 @@ class NodeImageVersion(_Model):
     """The image version to upgrade the nodes to (e.g., 'AKSUbuntu-1804gen2containerd-2022.12.13')."""
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -2496,7 +2248,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PlacementPolicy(_Model):
+class PlacementPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PlacementPolicy contains the rules to select target member clusters to place the selected
     resources. Note that only clusters that are both joined and satisfying the rules will be
     selected. You can only specify at most one of the two fields: ClusterNames and Affinity. If
@@ -2557,7 +2309,7 @@ class PlacementPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlacementProfile(_Model):
+class PlacementProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration profile for default ClusterResourcePlacement for placement.
 
     :ivar default_cluster_resource_placement: The default ClusterResourcePlacement policy
@@ -2589,7 +2341,7 @@ class PlacementProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PropagationPolicy(_Model):
+class PropagationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The propagation to be used for provisioning the namespace among the fleet.
 
     :ivar type: The type of the policy to be used. Default is Placement. Required. "Placement"
@@ -2624,7 +2376,7 @@ class PropagationPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PropertySelector(_Model):
+class PropertySelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PropertySelector helps user specify property requirements when picking clusters for resource
     placement.
 
@@ -2658,7 +2410,7 @@ class PropertySelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PropertySelectorRequirement(_Model):
+class PropertySelectorRequirement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PropertySelectorRequirement is a specific property requirement when picking clusters for
     resource placement.
 
@@ -2717,7 +2469,7 @@ class PropertySelectorRequirement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceQuota(_Model):
+class ResourceQuota(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource quota for the managed namespace.
 
     :ivar cpu_request: The CPU request for the managed namespace. See more at
@@ -2782,7 +2534,7 @@ class ResourceQuota(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkipProperties(_Model):
+class SkipProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a skip operation containing multiple skip requests.
 
     :ivar targets: The targets to skip. Required.
@@ -2810,7 +2562,7 @@ class SkipProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkipTarget(_Model):
+class SkipTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a single skip request.
 
     :ivar type: The skip target type. Required. Known values are: "Member", "Group", "Stage", and
@@ -2847,7 +2599,7 @@ class SkipTarget(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2914,7 +2666,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Toleration(_Model):
+class Toleration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Toleration allows ClusterResourcePlacement to tolerate any taint that matches the triple
     <key,value,effect> using the matching operator <operator>.
 
@@ -2975,7 +2727,7 @@ class Toleration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateGroup(_Model):
+class UpdateGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A group to be updated.
 
     :ivar name: Name of the group. It must match a group name of an existing fleet member.
@@ -3080,7 +2832,7 @@ class UpdateGroupStatus(_Model):
     """The list of Gates that will run after this UpdateGroup."""
 
 
-class UpdateRun(ProxyResource):
+class UpdateRun(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A multi-stage process to perform update operations across members of a Fleet.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3177,7 +2929,7 @@ class UpdateRunGateStatus(_Model):
     """The status of the Gate."""
 
 
-class UpdateRunGateTargetProperties(_Model):
+class UpdateRunGateTargetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the Update Run that the Gate is targeting.
 
     :ivar name: The name of the Update Run. Required.
@@ -3219,7 +2971,7 @@ class UpdateRunGateTargetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateRunProperties(_Model):
+class UpdateRunProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the UpdateRun.
 
     :ivar provisioning_state: The provisioning state of the UpdateRun resource. Known values are:
@@ -3344,7 +3096,7 @@ class UpdateRunStatus(_Model):
      ``NodeImageSelection.type`` is ``Consistent``."""
 
 
-class UpdateRunStrategy(_Model):
+class UpdateRunStrategy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the update sequence of the clusters via stages and groups.
 
     Stages within a run are executed sequentially one after another.
@@ -3378,7 +3130,7 @@ class UpdateRunStrategy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateStage(_Model):
+class UpdateStage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a stage which contains the groups to update and the steps to take (e.g., wait for a
     time period) before starting the next stage.
 

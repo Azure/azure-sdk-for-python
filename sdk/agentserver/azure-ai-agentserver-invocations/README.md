@@ -313,6 +313,7 @@ The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`.
 
 | Environment variable | Default | Description |
 |---|---|---|
+| `SSE_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected interval, in seconds, for SSE comments on idle `POST /invocations` streams. `0` disables keep-alive. Surfaced on `app.config.sse_keepalive_interval`. |
 | `WS_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected WebSocket Ping interval, in seconds. `0` disables keep-alive. Surfaced on `app.config.ws_ping_interval` and wired into Hypercorn's `websocket_ping_interval` by `AgentServerHost`. |
 
 ### Reference: close codes

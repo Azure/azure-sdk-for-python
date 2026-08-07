@@ -39,6 +39,7 @@ from azure.ai.agentserver.core._tracing import _BAGGAGE_SESSION_ID
 
 from ._constants import InvocationConstants
 from ._invocation_ws import _WSHandlerMixin
+from ._sse import _with_keep_alive
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -481,7 +482,15 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 if stream_ctx_token is not None:
                     reset_request_context(stream_ctx_token)
 
-        response.body_iterator = _wrapped_body()
+        wrapped_body = _wrapped_body()
+        content_type = response.headers.get("content-type") or response.media_type or ""
+        if content_type.lower().startswith("text/event-stream"):
+            response.body_iterator = _with_keep_alive(
+                wrapped_body,
+                self.config.sse_keepalive_interval,
+            )
+        else:
+            response.body_iterator = wrapped_body
         return response
 
     async def _create_invocation_endpoint(self, request: Request) -> Response:

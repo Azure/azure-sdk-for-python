@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b9 (Unreleased)
+## 1.0.1 (Unreleased)
 
 ### Bugs Fixed
 
@@ -8,7 +8,20 @@
 
 ### Other Changes
 
-- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b11`.
+- Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.0.1`.
+
+## 1.0.0 (2026-08-07)
+
+### Bugs Fixed
+
+- Added SSE keep-alive comments to idle `POST /invocations` event streams when
+  `SSE_KEEPALIVE_INTERVAL` is configured, preventing hosted proxy idle timeouts
+  from disconnecting clients before the agent emits its final events.
+
+### Other Changes
+
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable
+  `2.0.0` release.
 
 ## 1.0.0b8 (2026-08-03)
 

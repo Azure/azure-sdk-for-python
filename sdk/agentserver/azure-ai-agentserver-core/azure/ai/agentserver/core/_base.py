@@ -9,8 +9,6 @@ import signal
 import urllib.parse
 from collections.abc import (  # pylint: disable=import-error
     AsyncGenerator,
-    AsyncIterable,
-    AsyncIterator,
     Awaitable,
     Callable,
 )
@@ -27,7 +25,7 @@ from . import _config, _tracing
 from ._middleware import InboundRequestLoggingMiddleware
 from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
 from ._server_version import build_server_version
-from ._types import MiddlewareFactory, P, StreamContent
+from ._types import MiddlewareFactory, P
 from ._version import VERSION as _CORE_VERSION
 
 logger = logging.getLogger("azure.ai.agentserver")
@@ -663,41 +661,3 @@ class AgentServerHost(Starlette):
         :rtype: Response
         """
         return Response(_HEALTHY_BODY, media_type="application/json")
-
-    # ------------------------------------------------------------------
-    # Streaming utilities
-    # ------------------------------------------------------------------
-
-    @staticmethod
-    async def sse_keepalive_stream(
-        iterator: AsyncIterable[StreamContent],
-        interval: int,
-    ) -> AsyncIterator[StreamContent]:
-        """Interleave SSE keep-alive comment frames into a streaming body.
-
-        Emits ``b": keep-alive\\n\\n"`` whenever the upstream iterator has not
-        produced a chunk within *interval* seconds.  This prevents
-        proxies/load-balancers from closing idle connections.
-
-        :param iterator: The async iterable to wrap.
-        :type iterator: AsyncIterable[~azure.ai.agentserver.core.StreamContent]
-        :param interval: Seconds between keep-alive frames. Must be > 0.
-        :type interval: int
-        :return: An async iterator with interleaved keep-alive frames.
-        :rtype: AsyncIterator[~azure.ai.agentserver.core.StreamContent]
-        """
-        ait = iterator.__aiter__()
-        # Reuse the same __anext__ task across timeouts to avoid cancelling
-        # the upstream iterator when wait_for expires.
-        pending: Optional[asyncio.Task[StreamContent]] = None
-        while True:
-            if pending is None:
-                pending = asyncio.ensure_future(ait.__anext__())
-            try:
-                chunk = await asyncio.wait_for(asyncio.shield(pending), timeout=interval)
-                pending = None  # consumed — create new task next iteration
-                yield chunk
-            except asyncio.TimeoutError:
-                yield b": keep-alive\n\n"
-            except StopAsyncIteration:
-                break
