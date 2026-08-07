@@ -80,9 +80,13 @@ from azure.ai.agentserver.core.streaming import (
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import deep_research
+    from .agent import deep_research as _package_deep_research
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import deep_research
+    from agent import deep_research as _script_deep_research
+
+    deep_research = _script_deep_research
+else:
+    deep_research = _package_deep_research
 
 logger = logging.getLogger(__name__)
 

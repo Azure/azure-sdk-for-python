@@ -7,4 +7,4 @@ pytest
 httpx
 pytest-asyncio
 opentelemetry-api>=1.40.0
-opentelemetry-sdk>=1.40.0
+opentelemetry-sdk>=1.43.0

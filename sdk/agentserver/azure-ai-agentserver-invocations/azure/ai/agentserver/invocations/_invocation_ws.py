@@ -13,7 +13,7 @@ the user handler with:
   on ``AgentConfig.ws_ping_interval``) so idle connections can survive
   upstream proxy / load-balancer idle timeouts;
 * a clean close on handler return (code 1000) or a 1011 close on uncaught
-  handler exceptions;
+    handler exceptions, unless the application already sent a close frame;
 * a structured close-event log line carrying
   ``azure.ai.agentserver.invocations_ws.session_id``,
   ``azure.ai.agentserver.invocations_ws.close_code``, and
@@ -24,9 +24,11 @@ import inspect
 import logging
 import time
 import uuid
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, MutableMapping
 from typing import TYPE_CHECKING, Any, Optional
 
+from opentelemetry import baggage as _otel_baggage, context as _otel_context
+from opentelemetry.propagators.textmap import Getter
 from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
@@ -53,6 +55,69 @@ else:
 
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+_APPLICATION_CLOSE_CODE = "azure.ai.agentserver.invocations_ws.application_close_code"
+_PEER_CLOSE_CODE = "azure.ai.agentserver.invocations_ws.peer_close_code"
+_TERMINAL_CLOSE = "azure.ai.agentserver.invocations_ws.terminal_close"
+
+
+def _record_terminal_close(websocket: WebSocket, code: int, source: str) -> None:
+    websocket.scope.setdefault(_TERMINAL_CLOSE, (int(code), source))
+
+
+def _selected_close(websocket: WebSocket, default_code: int) -> tuple[int, str]:
+    selected = websocket.scope.get(_TERMINAL_CLOSE)
+    if isinstance(selected, tuple) and len(selected) == 2:
+        return int(selected[0]), str(selected[1])
+    return default_code, "unknown"
+
+
+class _WebSocketHeaderGetter(Getter[list[tuple[bytes, bytes]]]):
+    """Read raw WebSocket upgrade headers with W3C multi-value semantics."""
+
+    def get(self, carrier: list[tuple[bytes, bytes]], key: str) -> list[str] | None:
+        normalized_key = key.lower().encode("latin-1")
+        values = [value.decode("latin-1") for name, value in carrier if name.lower() == normalized_key]
+        if not values:
+            return None
+        if key.lower() == "traceparent" and len(values) != 1:
+            return None
+        if key.lower() == "baggage":
+            return [",".join(values)]
+        return values
+
+    def keys(self, carrier: list[tuple[bytes, bytes]]) -> list[str]:
+        names: list[str] = []
+        seen: set[str] = set()
+        for name, _ in carrier:
+            normalized_name = name.decode("latin-1").lower()
+            if normalized_name not in seen:
+                seen.add(normalized_name)
+                names.append(normalized_name)
+        return names
+
+
+_WEBSOCKET_HEADER_GETTER = _WebSocketHeaderGetter()
+
+
+def _extract_websocket_context(headers: list[tuple[bytes, bytes]]) -> _otel_context.Context:
+    """Extract connection-lifetime W3C context from raw upgrade headers.
+
+    :param headers: Raw ASGI WebSocket upgrade headers.
+    :type headers: list[tuple[bytes, bytes]]
+    :return: Extracted OpenTelemetry context.
+    :rtype: ~opentelemetry.context.Context
+    """
+    from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+
+    context = extract(carrier=headers, getter=_WEBSOCKET_HEADER_GETTER)
+    request_ids = _WEBSOCKET_HEADER_GETTER.get(headers, "x-request-id") or []
+    request_id = next((value for value in request_ids if value), None)
+    if request_id is not None:
+        context = _otel_baggage.set_baggage("x_request_id", request_id, context=context)
+    if len(request_ids) > 1:
+        logger.debug("Ignoring duplicate WebSocket x-request-id values after the first non-empty value")
+    return context
 
 
 WSHandler = Callable[[WebSocket], Awaitable[None]]
@@ -161,24 +226,77 @@ class _WSHandlerMixin(_MixinBase):
         return fn
 
     def _ensure_ws_route_registered(self) -> None:
-        """Append the ``/invocations_ws`` WebSocketRoute to the router (idempotent).
+        """Register a first-match-reachable ``/invocations_ws`` route.
 
         Starlette's ``router.routes`` is a plain list and may be mutated
-        between construction and first request, so deferring registration
-        until ``@ws_handler`` is called is safe.
+        between construction and first request. The exact SDK route therefore
+        moves before the first catch-all route or Mount that would otherwise
+        consume the WebSocket under Starlette's first-match routing.
         """
-        from starlette.routing import WebSocketRoute  # pylint: disable=import-outside-toplevel
+        from starlette.routing import Mount, WebSocketRoute  # pylint: disable=import-outside-toplevel
+
+        def _join_route_path(prefix: str, path: str) -> str:
+            if not prefix:
+                return path or "/"
+            if not path:
+                return prefix or "/"
+            return f"{prefix.rstrip('/')}/{path.lstrip('/')}"
+
+        def _contains_nested_exact_route(routes: list[Any], prefix: str = "") -> bool:
+            for nested_route in routes:
+                if isinstance(nested_route, WebSocketRoute):
+                    if _join_route_path(prefix, nested_route.path) == InvocationsWSConstants.ROUTE_PATH:
+                        return True
+                    continue
+                nested_routes = getattr(nested_route, "routes", None)
+                if not isinstance(nested_routes, list):
+                    continue
+                nested_prefix = prefix
+                if isinstance(nested_route, Mount):
+                    nested_prefix = _join_route_path(prefix, nested_route.path)
+                    if nested_prefix == "/":
+                        nested_prefix = ""
+                if _contains_nested_exact_route(nested_routes, nested_prefix):
+                    return True
+            return False
 
         for route in self.router.routes:
+            nested_routes = getattr(route, "routes", None)
+            if isinstance(nested_routes, list) and _contains_nested_exact_route([route]):
+                raise RuntimeError(
+                    "InvocationAgentServerHost cannot own /invocations_ws because "
+                    "a nested exact route is already registered"
+                )
+
+        sdk_route = None
+        expected_endpoint = getattr(self._ws_endpoint, "__func__", self._ws_endpoint)
+        for route in self.router.routes:
             if isinstance(route, WebSocketRoute) and getattr(route, "path", None) == InvocationsWSConstants.ROUTE_PATH:
-                return
-        self.router.routes.append(
-            WebSocketRoute(
+                route_endpoint = getattr(route, "endpoint", None)
+                if (
+                    getattr(route_endpoint, "__self__", None) is not self
+                    or getattr(route_endpoint, "__func__", route_endpoint) is not expected_endpoint
+                ):
+                    raise RuntimeError(
+                        "InvocationAgentServerHost cannot own /invocations_ws because "
+                        "the route is already registered"
+                    )
+                sdk_route = route
+
+        if sdk_route is None:
+            sdk_route = WebSocketRoute(
                 InvocationsWSConstants.ROUTE_PATH,
                 self._ws_endpoint,
                 name="invocations_ws",
             )
-        )
+        else:
+            self.router.routes.remove(sdk_route)
+
+        # This path is globally reserved by Invocations. Putting the exact route
+        # first affects no unrelated path or HTTP scope, while guaranteeing that
+        # custom matchers cannot conditionally shadow it based on headers,
+        # subprotocols, or other runtime-only scope fields.
+        self.router.routes.insert(0, sdk_route)
 
     # ------------------------------------------------------------------
     # Endpoint
@@ -192,6 +310,19 @@ class _WSHandlerMixin(_MixinBase):
         close event log + span attributes.
 
         :param websocket: The incoming Starlette WebSocket.
+        :type websocket: ~starlette.websockets.WebSocket
+        """
+        raw_headers: list[tuple[bytes, bytes]] = websocket.scope.get("headers", [])
+        token = _otel_context.attach(_extract_websocket_context(raw_headers))
+        try:
+            await self._run_ws_endpoint(websocket)
+        finally:
+            _otel_context.detach(token)
+
+    async def _run_ws_endpoint(self, websocket: WebSocket) -> None:
+        """Run one accepted WebSocket while the upgrade context is attached.
+
+        :param websocket: Incoming Starlette WebSocket.
         :type websocket: ~starlette.websockets.WebSocket
         """
         # Per-connection identifiers.  Honour the platform-injected
@@ -210,7 +341,7 @@ class _WSHandlerMixin(_MixinBase):
 
         # Accept the upgrade *before* invoking the user handler — per spec.
         try:
-            await websocket.accept()
+            await websocket.accept(headers=[(b"x-platform-server", self._build_server_version().encode("latin-1"))])
         except Exception as exc:  # pylint: disable=broad-exception-caught
             await self._finalize_session(
                 websocket=None,
@@ -221,12 +352,54 @@ class _WSHandlerMixin(_MixinBase):
             )
             logger.error(
                 "WebSocket accept failed for session %s: %s",
-                session_id, exc, exc_info=True,
+                session_id,
+                exc,
+                exc_info=True,
             )
             return
 
         close_code: int = InvocationsWSConstants.CLOSE_NORMAL
         handler_exc: Optional[BaseException] = None
+        original_send = websocket.send
+        original_receive = websocket.receive
+
+        async def _tracked_send(message: MutableMapping[str, Any]) -> None:
+            application_close_code = (
+                int(message.get("code", InvocationsWSConstants.CLOSE_NORMAL))
+                if message.get("type") == "websocket.close"
+                else None
+            )
+            state_before_send = websocket.application_state
+            try:
+                await original_send(message)
+            except BaseException:
+                if (
+                    application_close_code is not None
+                    and state_before_send == WebSocketState.CONNECTED
+                    and websocket.application_state == WebSocketState.DISCONNECTED
+                ):
+                    # Starlette changes application_state immediately before
+                    # invoking the underlying ASGI send. An exception or
+                    # cancellation after that transition is therefore past an
+                    # ambiguous transport commit boundary: preserve the first
+                    # application-selected code instead of misreporting 1011.
+                    websocket.scope.setdefault(_APPLICATION_CLOSE_CODE, application_close_code)
+                    _record_terminal_close(websocket, application_close_code, "application_ambiguous")
+                raise
+            if application_close_code is not None:
+                websocket.scope.setdefault(_APPLICATION_CLOSE_CODE, application_close_code)
+                _record_terminal_close(websocket, application_close_code, "application")
+
+        async def _tracked_receive() -> MutableMapping[str, Any]:
+            message = await original_receive()
+            if message.get("type") == "websocket.disconnect":
+                peer_code = int(message.get("code") or InvocationsWSConstants.CLOSE_NORMAL)
+                websocket.scope.setdefault(_PEER_CLOSE_CODE, peer_code)
+                _record_terminal_close(websocket, peer_code, "peer")
+            return message
+
+        websocket.send = _tracked_send  # type: ignore[method-assign]
+        websocket.receive = _tracked_receive  # type: ignore[method-assign]
         try:
             close_code, handler_exc = await self._invoke_user_handler(websocket, session_id)
         except BaseException as exc:  # pylint: disable=broad-exception-caught
@@ -235,7 +408,7 @@ class _WSHandlerMixin(_MixinBase):
             # the exception so the ``finally`` block below can record it,
             # then re-raise via ``finally`` so cancellation is never
             # swallowed.
-            close_code = InvocationsWSConstants.CLOSE_INTERNAL_ERROR
+            close_code, _ = _selected_close(websocket, InvocationsWSConstants.CLOSE_INTERNAL_ERROR)
             handler_exc = exc
             raise
         finally:
@@ -254,11 +427,14 @@ class _WSHandlerMixin(_MixinBase):
                 session_id=session_id,
                 start_ns=start_ns,
                 close_code=close_code,
+                close_code_source=_selected_close(websocket, close_code)[1],
                 error_code=error_code,
             )
 
     async def _invoke_user_handler(
-        self, websocket: WebSocket, session_id: str,
+        self,
+        websocket: WebSocket,
+        session_id: str,
     ) -> tuple[int, Optional[BaseException]]:
         """Run the registered user handler and classify the outcome.
 
@@ -281,7 +457,7 @@ class _WSHandlerMixin(_MixinBase):
             raise RuntimeError("_invoke_user_handler called with no registered ws_handler")
         try:
             await ws_fn(websocket)
-            return InvocationsWSConstants.CLOSE_NORMAL, None
+            return _selected_close(websocket, InvocationsWSConstants.CLOSE_NORMAL)[0], None
         except WebSocketDisconnect as exc:
             # Client (or proxy) closed first — surface their code, not 1011.
             return (
@@ -291,9 +467,11 @@ class _WSHandlerMixin(_MixinBase):
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error(
                 "WebSocket handler raised for session %s: %s",
-                session_id, exc, exc_info=True,
+                session_id,
+                exc,
+                exc_info=True,
             )
-            return InvocationsWSConstants.CLOSE_INTERNAL_ERROR, exc
+            return _selected_close(websocket, InvocationsWSConstants.CLOSE_INTERNAL_ERROR)[0], exc
 
     async def _finalize_session(
         self,
@@ -302,6 +480,7 @@ class _WSHandlerMixin(_MixinBase):
         session_id: str,
         start_ns: int,
         close_code: int,
+        close_code_source: str = "unknown",
         error_code: Optional[str],
     ) -> None:
         """Close the WS (best-effort) and emit the close-event log line.
@@ -317,6 +496,8 @@ class _WSHandlerMixin(_MixinBase):
         :paramtype start_ns: int
         :keyword close_code: The RFC 6455 code to report to the client.
         :paramtype close_code: int
+        :keyword close_code_source: First terminal source classification.
+        :paramtype close_code_source: str
         :keyword error_code: Short error tag for the log line; ``None`` for success.
         :paramtype error_code: Optional[str]
         """
@@ -326,27 +507,25 @@ class _WSHandlerMixin(_MixinBase):
         # application hasn't already done so (e.g. the user handler
         # may have called ``websocket.close`` itself, or the client
         # may have disconnected).
-        if (
-            websocket is not None
-            and websocket.application_state != WebSocketState.DISCONNECTED
-        ):
-            reason = (
-                "Internal server error"
-                if close_code == InvocationsWSConstants.CLOSE_INTERNAL_ERROR
-                else ""
-            )
+        if websocket is not None and websocket.application_state != WebSocketState.DISCONNECTED:
+            _record_terminal_close(websocket, close_code, "sdk")
+            close_code, close_code_source = _selected_close(websocket, close_code)
+            reason = "Internal server error" if close_code == InvocationsWSConstants.CLOSE_INTERNAL_ERROR else ""
             try:
                 await websocket.close(code=close_code, reason=reason)
             except Exception:  # pylint: disable=broad-exception-caught
                 # Connection already gone — nothing to recover here.
                 logger.debug(
-                    "Error closing WebSocket session %s", session_id, exc_info=True,
+                    "Error closing WebSocket session %s",
+                    session_id,
+                    exc_info=True,
                 )
 
         self._emit_close_event(
             session_id,
             close_code,
             duration_ms,
+            close_code_source=close_code_source,
             error_code=error_code,
         )
 
@@ -360,6 +539,7 @@ class _WSHandlerMixin(_MixinBase):
         close_code: int,
         duration_ms: int,
         *,
+        close_code_source: str = "unknown",
         error_code: Optional[str] = None,
     ) -> None:
         """Emit the structured close-event log line for one WS connection.
@@ -381,10 +561,13 @@ class _WSHandlerMixin(_MixinBase):
         :type duration_ms: int
         :keyword error_code: Optional short error tag for the log record.
         :paramtype error_code: Optional[str]
+        :keyword close_code_source: First terminal source classification.
+        :paramtype close_code_source: str
         """
         extra: dict[str, Any] = {
             InvocationsWSConstants.ATTR_SPAN_SESSION_ID: session_id,
             InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE: close_code,
+            InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE_SOURCE: close_code_source,
             InvocationsWSConstants.ATTR_SPAN_DURATION_MS: duration_ms,
         }
         if error_code:
