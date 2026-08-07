@@ -16,6 +16,7 @@ the user handler with:
   handler exceptions;
 * a structured close-event log line carrying
   ``azure.ai.agentserver.session_id``,
+  ``azure.ai.agentserver.invocations_ws.session_id``,
   ``azure.ai.agentserver.invocations_ws.close_code``, and
   ``azure.ai.agentserver.invocations_ws.duration_ms``.
 """
@@ -383,6 +384,7 @@ class _WSHandlerMixin(_MixinBase):
         """Emit the structured close-event log line for one WS connection.
 
         The log record carries ``azure.ai.agentserver.session_id``,
+        ``azure.ai.agentserver.invocations_ws.session_id``,
         ``azure.ai.agentserver.invocations_ws.close_code``, and
         ``azure.ai.agentserver.invocations_ws.duration_ms`` via the standard
         ``logging`` ``extra`` dict — a structured-logging formatter or an
@@ -402,6 +404,7 @@ class _WSHandlerMixin(_MixinBase):
         """
         extra: dict[str, Any] = {
             _BAGGAGE_SESSION_ID: session_id,
+            InvocationsWSConstants.ATTR_SPAN_SESSION_ID: session_id,
             InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE: close_code,
             InvocationsWSConstants.ATTR_SPAN_DURATION_MS: duration_ms,
         }
@@ -411,9 +414,8 @@ class _WSHandlerMixin(_MixinBase):
         # NOTE: ``extra`` keys deliberately use dotted names so they line up
         # 1:1 with their source constants — the session-ID key comes from the
         # shared ``_BAGGAGE_SESSION_ID`` (``azure.ai.agentserver.session_id``)
-        # in ``azure-ai-agentserver-core`` so HTTP and WebSocket logs correlate,
-        # while the close-code / duration / error keys come from
-        # :class:`InvocationsWSConstants`.
+        # in ``azure-ai-agentserver-core`` so HTTP and WebSocket logs correlate.
+        # The protocol-specific session key is retained for compatibility.
         # The trade-off is that printf-style log formatters can't address
         # them directly — use a structured (JSON / OTel) formatter, or
         # access via ``LogRecord.__dict__["<key>"]`` for plain ``logging``.

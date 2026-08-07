@@ -43,10 +43,12 @@ def test_ws_close_event_log_contains_required_fields(caplog):
     rec = matches[-1]
 
     session_id = getattr(rec, "azure.ai.agentserver.session_id")
+    legacy_session_id = getattr(rec, "azure.ai.agentserver.invocations_ws.session_id")
     close_code = getattr(rec, "azure.ai.agentserver.invocations_ws.close_code")
     duration_ms = getattr(rec, "azure.ai.agentserver.invocations_ws.duration_ms")
 
     assert isinstance(session_id, str) and session_id  # generated UUID
+    assert legacy_session_id == session_id
     assert close_code == InvocationsWSConstants.CLOSE_NORMAL
     assert isinstance(duration_ms, int)
     assert duration_ms >= 0
