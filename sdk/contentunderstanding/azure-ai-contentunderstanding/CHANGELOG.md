@@ -2,6 +2,13 @@
 
 ## 1.2.0b3 (Unreleased)
 
+### Bugs Fixed
+
+- `cu-sdk-author-analyzer-classify-route`: `--schema-dir` now picks the
+  highest-numbered version when multiple files match an alias — so
+  `invoice_v10.json` beats `invoice_v9.json` (previous alphabetical
+  sort silently picked v9 because `'1' < '9'` char-by-char).
+
 ### Other Changes
 
 - Added GitHub Copilot skills under `.github/skills/` to help users
