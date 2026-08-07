@@ -155,6 +155,9 @@ class AzureFileVolume(_Model):
     :ivar storage_account_key_reference: The reference to the storage account access key used to
      access the Azure File share.
     :vartype storage_account_key_reference: str
+    :ivar user_assigned_identity_client_id: The client id of the user-assigned managed identity
+     that has access to the Azure File share.
+    :vartype user_assigned_identity_client_id: str
     """
 
     share_name: str = rest_field(name="shareName", visibility=["read", "create", "update", "delete", "query"])
@@ -173,6 +176,10 @@ class AzureFileVolume(_Model):
         name="storageAccountKeyReference", visibility=["read", "create", "update", "delete", "query"]
     )
     """The reference to the storage account access key used to access the Azure File share."""
+    user_assigned_identity_client_id: Optional[str] = rest_field(
+        name="userAssignedIdentityClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client id of the user-assigned managed identity that has access to the Azure File share."""
 
     @overload
     def __init__(
@@ -183,6 +190,7 @@ class AzureFileVolume(_Model):
         read_only: Optional[bool] = None,
         storage_account_key: Optional[str] = None,
         storage_account_key_reference: Optional[str] = None,
+        user_assigned_identity_client_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
