@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
+from azure.mgmt.sql import SqlManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-containerservicefleet
+    pip install azure-mgmt-sql
 # USAGE
-    python cluster_mesh_profiles_create_or_update.py
+    python long_term_retention_backup_list_by_location_with_pagination.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,20 +25,18 @@ from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
 
 
 def main():
-    client = ContainerServiceFleetMgmtClient(
+    client = SqlManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.cluster_mesh_profiles.begin_create_or_update(
-        resource_group_name="rgfleets",
-        fleet_name="fleet1",
-        cluster_mesh_profile_name="clustermeshprofile1",
-        resource={"properties": {"memberSelector": {"byLabel": "env=production"}}},
-    ).result()
-    print(response)
+    response = client.long_term_retention_backups.list_by_location(
+        location_name="japaneast",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-03-02-preview/ClusterMeshProfiles_CreateOrUpdate.json
+# x-ms-original-file: 2025-08-01-preview/LongTermRetentionBackupListByLocationWithPagination.json
 if __name__ == "__main__":
     main()
