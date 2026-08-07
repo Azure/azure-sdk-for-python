@@ -72,8 +72,6 @@ mypy = true
 pyright = true
 verifytypes = false
 latestdependency = false
-# azure-ai-agentserver-core is developed alongside this package
-mindependency = false
 pylint = true
 type_check_samples = false
 
