@@ -11,7 +11,7 @@
   - Added enum `CapacityOverageState`
   - Added model `Quota`
   - Added model `QuotaName`
-  - Model `FabricCapacitiesOperations` added method `list_usages`
+  - Operation group `FabricCapacitiesOperations` added method `list_usages`
 
 ## 1.0.0 (2024-10-21)
 
