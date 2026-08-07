@@ -133,7 +133,7 @@ class FoundryStateStore(FoundryStorageClient):
         if not name:
             raise ValueError("name must be a non-empty string")
         self._local_backend: LocalStateStoreBackend | None = None
-        if endpoint is None and not os.environ.get(_FOUNDRY_HOSTING_ENVIRONMENT):
+        if not os.environ.get(_FOUNDRY_HOSTING_ENVIRONMENT):
             local_path = (
                 resolve_state_subdir("state_stores") / f"{_encode_segment(name)}.json"
             )
@@ -193,7 +193,11 @@ class FoundryStateStore(FoundryStorageClient):
             await super().aclose()
         finally:
             credential = self._credential
-            if self._owns_credential and credential is not None and hasattr(credential, "close"):
+            if (
+                self._owns_credential
+                and credential is not None
+                and hasattr(credential, "close")
+            ):
                 await credential.close()
 
     @property

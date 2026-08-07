@@ -170,6 +170,7 @@ def _key(**overrides: Any) -> StateStoreItemKey:
 async def test_get_or_create_returns_existing_store_when_present(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "1")
     info = _state_store()
     fetch = AsyncMock(return_value=info)
     create = AsyncMock()
@@ -191,6 +192,7 @@ async def test_get_or_create_returns_existing_store_when_present(
 async def test_get_or_create_creates_store_when_absent(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "1")
     info = _state_store()
     fetch = AsyncMock(side_effect=FoundryStorageNotFoundError("not found"))
     create = AsyncMock(return_value=info)
@@ -212,6 +214,7 @@ async def test_get_or_create_creates_store_when_absent(
 async def test_get_or_create_refetches_when_create_races_with_another_caller(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "1")
     created_elsewhere = _state_store()
     fetch = AsyncMock(
         side_effect=[FoundryStorageNotFoundError("not found"), created_elsewhere]
@@ -235,6 +238,7 @@ async def test_get_or_create_refetches_when_create_races_with_another_caller(
 async def test_get_or_create_closes_store_when_fetch_fails(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "1")
     monkeypatch.setattr(
         FoundryStateStore,
         "_fetch_properties",
@@ -255,6 +259,7 @@ async def test_get_or_create_closes_store_when_fetch_fails(
 async def test_get_or_create_closes_store_when_create_fails(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "1")
     monkeypatch.setattr(
         FoundryStateStore,
         "_fetch_properties",
@@ -770,7 +775,7 @@ async def test_default_call_id_uses_ambient_request_context() -> None:
 
 
 @pytest.mark.asyncio
-async def test_get_or_create_uses_file_backend_outside_hosting(
+async def test_get_or_create_uses_file_backend_outside_hosting_even_with_endpoint(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -779,6 +784,8 @@ async def test_get_or_create_uses_file_backend_outside_hosting(
 
     store = await FoundryStateStore.get_or_create(
         "local/checkpoints",
+        MagicMock(),
+        "https://foundry.example.com/api/projects/test",
         user_isolation=True,
         item_ttl_seconds=-1,
     )

@@ -72,8 +72,8 @@ In a hosted environment, the client resolves:
 - `FOUNDRY_PROJECT_ENDPOINT` for the project endpoint
 - `DefaultAzureCredential` for authentication (requires `azure-identity`)
 
-Outside a hosted environment, no endpoint or credential is required. Passing
-an explicit `endpoint` selects the remote backend even during local development.
+Outside a hosted environment, the client always uses the local file backend;
+`endpoint` and `credential` are ignored.
 
 ## Store Name = Scope
 
