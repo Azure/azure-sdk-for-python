@@ -1,5 +1,3 @@
-Trivial change to test PR build. Revert before merging. 
-
 # Azure Key Vault Secrets client library for Python
 Azure Key Vault helps solve the following problems:
 
