@@ -100,6 +100,8 @@ namespace azure.ai.voiceagents.aio
                 self, 
                 endpoint: str, 
                 credential: AsyncTokenCredential, 
+                *, 
+                api_version: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
