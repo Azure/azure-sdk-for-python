@@ -277,3 +277,5 @@ additional questions or comments.
 
 <!-- LINKS -->
 [package]: https://pypi.org/project/azure-core/
+
+<!-- Trivial change to exercise CI network-isolation validation. Revert before merge. -->

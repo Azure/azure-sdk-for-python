@@ -378,3 +378,4 @@ contact opencode@microsoft.com with any additional questions or comments.
 
 
 
+<!-- Trivial change to exercise CI network-isolation validation. Revert before merge. -->
