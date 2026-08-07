@@ -145,3 +145,61 @@ async def test_invocations_non_sse_stream_does_not_get_keep_alive(monkeypatch) -
 
     assert response.status_code == 200
     assert ": keep-alive" not in response.text
+
+
+@pytest.mark.asyncio
+async def test_invocations_uses_final_content_type_header(monkeypatch) -> None:
+    monkeypatch.setenv("SSE_KEEPALIVE_INTERVAL", "1")
+    app = InvocationAgentServerHost(configure_observability=None)
+
+    @app.invoke_handler
+    async def handle(request: Request) -> StreamingResponse:
+        async def generate() -> AsyncIterator[str]:
+            yield '{"chunk": 1}\n'
+            await asyncio.sleep(1.1)
+            yield '{"chunk": 2}\n'
+
+        return StreamingResponse(
+            generate(),
+            media_type="text/event-stream",
+            headers={"content-type": "application/x-ndjson"},
+        )
+
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://testserver",
+    ) as client:
+        response = await client.post("/invocations")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/x-ndjson"
+    assert ": keep-alive" not in response.text
+
+
+@pytest.mark.asyncio
+async def test_invocations_adds_keep_alive_for_final_sse_header(monkeypatch) -> None:
+    monkeypatch.setenv("SSE_KEEPALIVE_INTERVAL", "1")
+    app = InvocationAgentServerHost(configure_observability=None)
+
+    @app.invoke_handler
+    async def handle(request: Request) -> StreamingResponse:
+        async def generate() -> AsyncIterator[str]:
+            yield "data: started\n\n"
+            await asyncio.sleep(1.1)
+            yield "data: finished\n\n"
+
+        return StreamingResponse(
+            generate(),
+            media_type="application/x-ndjson",
+            headers={"content-type": "text/event-stream"},
+        )
+
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://testserver",
+    ) as client:
+        response = await client.post("/invocations")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "text/event-stream"
+    assert ": keep-alive\n\n" in response.text

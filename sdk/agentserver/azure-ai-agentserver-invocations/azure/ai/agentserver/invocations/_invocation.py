@@ -482,7 +482,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                     reset_request_context(stream_ctx_token)
 
         wrapped_body = _wrapped_body()
-        content_type = response.media_type or response.headers.get("content-type", "")
+        content_type = response.headers.get("content-type") or response.media_type or ""
         if content_type.lower().startswith("text/event-stream"):
             response.body_iterator = _with_keep_alive(
                 wrapped_body,
