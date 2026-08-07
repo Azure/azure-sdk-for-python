@@ -12,9 +12,9 @@
 
 ### Other Changes
 - Contribute distro profile information (`component="dst"` and distro version) to the OneSettings control plane during `configure_azure_monitor`
-  ([#TBD](https://github.com/Azure/azure-sdk-for-python/pull/TBD))
+  ([#48475](https://github.com/Azure/azure-sdk-for-python/pull/48475))
 - Update `azure-monitor-opentelemetry-exporter` minimum dependency to `1.0.0b56`
-  ([#TBD](https://github.com/Azure/azure-sdk-for-python/pull/TBD))
+  ([#48475](https://github.com/Azure/azure-sdk-for-python/pull/48475))
 
 ## 1.8.9 (2026-07-01)
 
