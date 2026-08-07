@@ -79,7 +79,7 @@ async def upload_blob_to_url(
     :rtype: dict[str, Any]
     """
     client = BlobClient.from_blob_url(blob_url, credential=credential)
-    async with client:  # pylint: disable=not-async-context-manager
+    async with client:
         return await client.upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
 
 
