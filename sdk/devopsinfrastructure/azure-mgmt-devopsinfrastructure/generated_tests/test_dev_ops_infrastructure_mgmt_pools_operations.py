@@ -47,11 +47,12 @@ class TestDevOpsInfrastructureMgmtPoolsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "properties": {
                     "agentProfile": "agent_profile",
-                    "devCenterProjectResourceId": "str",
                     "fabricProfile": "fabric_profile",
                     "maximumConcurrency": 0,
                     "organizationProfile": "organization_profile",
+                    "devCenterProjectResourceId": "str",
                     "provisioningState": "str",
+                    "runtimeConfiguration": {"workFolder": "str"},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -89,6 +90,7 @@ class TestDevOpsInfrastructureMgmtPoolsOperations(AzureMgmtRecordedTestCase):
                     "maximumConcurrency": 0,
                     "organizationProfile": "organization_profile",
                     "provisioningState": "str",
+                    "runtimeConfiguration": {"workFolder": "str"},
                 },
                 "tags": {"str": "str"},
             },
@@ -123,5 +125,27 @@ class TestDevOpsInfrastructureMgmtPoolsOperations(AzureMgmtRecordedTestCase):
     def test_pools_list_by_subscription(self, resource_group):
         response = self.client.pools.list_by_subscription()
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_pools_check_name_availability(self, resource_group):
+        response = self.client.pools.check_name_availability(
+            body={"name": "str", "type": "str"},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_pools_delete_resources(self, resource_group):
+        response = self.client.pools.delete_resources(
+            resource_group_name=resource_group.name,
+            pool_name="str",
+            body={"resourceIds": ["str"]},
+        )
+
         # please add some check logic here by yourself
         # ...
