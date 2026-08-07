@@ -11,10 +11,14 @@ DESCRIPTION:
     This sample demonstrates how to update an existing custom analyzer, including updating
     its description and tags.
 
-    The update_analyzer method allows you to modify certain properties of an existing analyzer.
-    The following properties can be updated:
+    The update_analyzer method allows you to modify only these properties of an existing analyzer:
     - Description: Update the analyzer's description
     - Tags: Add or update tags
+
+    To change create-only properties such as models, field_schema, config,
+    dynamic_field_schema, processing_location, or knowledge_sources, use begin_create_analyzer
+    with allow_replace=True. If base_analyzer_id is included in an update request, it must
+    match the existing analyzer.
 
 USAGE:
     python sample_update_analyzer.py
@@ -92,7 +96,9 @@ def main() -> None:
         tags_str = ", ".join(f"{k}={v}" for k, v in current_analyzer.tags.items())
         print(f"  Tags: {tags_str}")
 
-    # Create an updated analyzer with new description and tags
+    # Create an updated analyzer with the properties supported by update_analyzer.
+    # Keep base_analyzer_id unchanged; other create-only properties require
+    # begin_create_analyzer(..., allow_replace=True).
     updated_analyzer = ContentAnalyzer(
         base_analyzer_id=current_analyzer.base_analyzer_id,
         description="Updated description",

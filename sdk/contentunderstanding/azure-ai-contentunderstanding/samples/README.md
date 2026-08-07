@@ -119,13 +119,17 @@ Lists all available analyzers in your Microsoft Foundry resource. Shows how to d
 ### Sample 08: Update Analyzer
 
 #### `sample_update_analyzer.py` / `sample_update_analyzer_async.py`
-Updates an existing custom analyzer's description and tags. Shows how to modify analyzer properties.
+Updates an existing custom analyzer's description and tags. Only `description` and `tags` can be updated
+with `update_analyzer`. Use `begin_create_analyzer` with `allow_replace=True` to change create-only
+properties such as `models`, `field_schema`, `config`, `dynamic_field_schema`, `processing_location`, or
+`knowledge_sources`. If `base_analyzer_id` is included in an update request, it must match the existing
+analyzer.
 
 **Key concepts:**
 - Updating analyzer description
 - Adding, updating, and removing tags
 - Verifying analyzer updates
-- Modifying analyzer properties
+- Replacing create-only analyzer properties with `begin_create_analyzer(..., allow_replace=True)`
 
 ### Sample 09: Delete Analyzer
 
