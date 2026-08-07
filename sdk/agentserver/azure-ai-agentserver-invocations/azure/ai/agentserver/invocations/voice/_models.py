@@ -60,48 +60,6 @@ UserContentPart = Union[InputTextPart, InputImagePart]
 
 @experimental
 @dataclass(frozen=True)
-class ConversationHistoryItem:
-    """One caller-app supplied user-role history item.
-
-    :param item_id: Caller/bridge-allocated ``hi_`` identifier.
-    :param content: Supported content parts in original order.
-    """
-
-    item_id: str
-    content: tuple[UserContentPart, ...]
-    role: Literal["user"] = field(default="user", init=False)
-
-
-@experimental
-@dataclass(frozen=True)
-class ConversationItemCreateEvent:
-    """Non-response-producing history create request.
-
-    :param request_id: Inbound envelope identifier used for result correlation.
-    :param item: User-role history item to persist.
-    :param previous_item_id: Insertion predecessor, ``root``, or ``None`` to append.
-    """
-
-    request_id: str
-    item: ConversationHistoryItem
-    previous_item_id: str | None = None
-
-
-@experimental
-@dataclass(frozen=True)
-class ConversationItemDeleteEvent:
-    """Non-response-producing history delete request.
-
-    :param request_id: Inbound envelope identifier used for result correlation.
-    :param item_id: Existing history item to delete.
-    """
-
-    request_id: str
-    item_id: str
-
-
-@experimental
-@dataclass(frozen=True)
 class SessionStartEvent:
     """Validated application-start event delivered before ``session.ready``.
 
@@ -160,60 +118,6 @@ class UserNoInputEvent:
 @dataclass(frozen=True)
 class UserSpeechStartedEvent:
     """Advisory signal that caller speech began while no response was open."""
-
-
-@experimental
-@dataclass(frozen=True)
-class DtmfKeyEvent:
-    """One raw session-scoped DTMF key.
-
-    :param digit: Exactly one of ``0``–``9``, ``*``, or ``#``.
-    """
-
-    digit: str
-
-
-@experimental
-@dataclass(frozen=True)
-class DtmfCollectedEvent:
-    """Completed DTMF collection delivered as a new response turn.
-
-    :param item_id: Bridge-allocated ``in_`` input item identifier.
-    :param collection_id: SDK-allocated ``dc_`` collection identifier.
-    :param digits: Collected digits, excluding the terminator.
-    :param completion_reason: Open-enum completion reason.
-    """
-
-    item_id: str
-    collection_id: str
-    digits: str
-    completion_reason: str
-
-
-@experimental
-@dataclass(frozen=True)
-class DtmfCollectionRejectedEvent:
-    """DTMF collection request that the bridge did not start.
-
-    :param collection_id: Rejected ``dc_`` collection identifier.
-    :param reason: Open-enum rejection reason.
-    """
-
-    collection_id: str
-    reason: str
-
-
-@experimental
-@dataclass(frozen=True)
-class DtmfCollectionCancelledEvent:
-    """Pending or active DTMF collection that ended without a result turn.
-
-    :param collection_id: Cancelled ``dc_`` collection identifier.
-    :param reason: Open-enum cancellation reason.
-    """
-
-    collection_id: str
-    reason: str
 
 
 @experimental

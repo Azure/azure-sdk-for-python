@@ -57,151 +57,6 @@ namespace azure.ai.agentserver.invocations.voice
 
     @experimental
     @dataclass(frozen=True)
-    class azure.ai.agentserver.invocations.voice.ConversationHistoryItem:
-        content: tuple[Union[InputTextPart, InputImagePart], Ellipsis]
-        item_id: str
-        role: Literal["user"] = user
-
-        def __delattr__() -> None: ...
-
-        def __eq__() -> None: ...
-
-        def __hash__() -> None: ...
-
-        def __init__(item_id: str, content: tuple) -> None: ...
-
-        def __repr__() -> None: ...
-
-        def __setattr__() -> None: ...
-
-
-    @experimental
-    @dataclass(frozen=True)
-    class azure.ai.agentserver.invocations.voice.ConversationItemCreateEvent:
-        item: ConversationHistoryItem
-        previous_item_id: Optional[str]
-        request_id: str
-
-        def __delattr__() -> None: ...
-
-        def __eq__() -> None: ...
-
-        def __hash__() -> None: ...
-
-        def __init__(
-                request_id: str,
-                item: ConversationHistoryItem,
-                previous_item_id: str | None
-            ) -> None: ...
-
-        def __repr__() -> None: ...
-
-        def __setattr__() -> None: ...
-
-
-    @experimental
-    @dataclass(frozen=True)
-    class azure.ai.agentserver.invocations.voice.ConversationItemDeleteEvent:
-        item_id: str
-        request_id: str
-
-        def __delattr__() -> None: ...
-
-        def __eq__() -> None: ...
-
-        def __hash__() -> None: ...
-
-        def __init__(request_id: str, item_id: str) -> None: ...
-
-        def __repr__() -> None: ...
-
-        def __setattr__() -> None: ...
-
-
-    @experimental
-    @dataclass(frozen=True)
-    class azure.ai.agentserver.invocations.voice.DtmfCollectedEvent:
-        collection_id: str
-        completion_reason: str
-        digits: str
-        item_id: str
-
-        def __delattr__() -> None: ...
-
-        def __eq__() -> None: ...
-
-        def __hash__() -> None: ...
-
-        def __init__(
-                item_id: str,
-                collection_id: str,
-                digits: str,
-                completion_reason: str
-            ) -> None: ...
-
-        def __repr__() -> None: ...
-
-        def __setattr__() -> None: ...
-
-
-    @experimental
-    @dataclass(frozen=True)
-    class azure.ai.agentserver.invocations.voice.DtmfCollectionCancelledEvent:
-        collection_id: str
-        reason: str
-
-        def __delattr__() -> None: ...
-
-        def __eq__() -> None: ...
-
-        def __hash__() -> None: ...
-
-        def __init__(collection_id: str, reason: str) -> None: ...
-
-        def __repr__() -> None: ...
-
-        def __setattr__() -> None: ...
-
-
-    @experimental
-    @dataclass(frozen=True)
-    class azure.ai.agentserver.invocations.voice.DtmfCollectionRejectedEvent:
-        collection_id: str
-        reason: str
-
-        def __delattr__() -> None: ...
-
-        def __eq__() -> None: ...
-
-        def __hash__() -> None: ...
-
-        def __init__(collection_id: str, reason: str) -> None: ...
-
-        def __repr__() -> None: ...
-
-        def __setattr__() -> None: ...
-
-
-    @experimental
-    @dataclass(frozen=True)
-    class azure.ai.agentserver.invocations.voice.DtmfKeyEvent:
-        digit: str
-
-        def __delattr__() -> None: ...
-
-        def __eq__() -> None: ...
-
-        def __hash__() -> None: ...
-
-        def __init__(digit: str) -> None: ...
-
-        def __repr__() -> None: ...
-
-        def __setattr__() -> None: ...
-
-
-    @experimental
-    @dataclass(frozen=True)
     class azure.ai.agentserver.invocations.voice.HandoffFailedEvent:
         code: str
         item_id: str
@@ -469,18 +324,6 @@ namespace azure.ai.agentserver.invocations.voice
 
         def on_barge_in(self, fn: BargeInCallback) -> BargeInCallback: ...
 
-        def on_conversation_item_create(self, fn: ConversationItemCreateCallback) -> ConversationItemCreateCallback: ...
-
-        def on_conversation_item_delete(self, fn: ConversationItemDeleteCallback) -> ConversationItemDeleteCallback: ...
-
-        def on_dtmf_collected(self, fn: DtmfCollectedCallback) -> DtmfCollectedCallback: ...
-
-        def on_dtmf_collection_cancelled(self, fn: DtmfCollectionCancelledCallback) -> DtmfCollectionCancelledCallback: ...
-
-        def on_dtmf_collection_rejected(self, fn: DtmfCollectionRejectedCallback) -> DtmfCollectionRejectedCallback: ...
-
-        def on_dtmf_key(self, fn: DtmfKeyCallback) -> DtmfKeyCallback: ...
-
         def on_handoff_failed(self, fn: HandoffFailedCallback) -> HandoffFailedCallback: ...
 
         def on_response_timeout(self, fn: ResponseTimeoutCallback) -> ResponseTimeoutCallback: ...
@@ -549,15 +392,6 @@ namespace azure.ai.agentserver.invocations.voice
                 reason: str | None = ...
             ) -> ResponseCancellationOutcome: ...
 
-        async def collect_dtmf(
-                self,
-                *,
-                initial_timeout_ms: int,
-                inter_digit_timeout_ms: int,
-                max_digits: int,
-                terminator: str | None = ...
-            ) -> str: ...
-
         async def decline(
                 self,
                 *,
@@ -612,8 +446,6 @@ namespace azure.ai.agentserver.invocations.voice
         property response_timeouts: ResponseTimeouts    # Read-only
 
         def __init__(self) -> None: ...
-
-        async def cancel_dtmf_collection(self, collection_id: str) -> None: ...
 
         async def end_call(
                 self,

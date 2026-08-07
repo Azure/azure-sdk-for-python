@@ -6,13 +6,6 @@
 from ._host import VoiceAgentServerHost
 from ._models import (
     BargeInEvent,
-    ConversationHistoryItem,
-    ConversationItemCreateEvent,
-    ConversationItemDeleteEvent,
-    DtmfCollectedEvent,
-    DtmfCollectionCancelledEvent,
-    DtmfCollectionRejectedEvent,
-    DtmfKeyEvent,
     HandoffFailedEvent,
     InputImagePart,
     InputTextPart,
@@ -36,13 +29,6 @@ from .._version import VERSION
 
 __all__ = [
     "BargeInEvent",
-    "ConversationHistoryItem",
-    "ConversationItemCreateEvent",
-    "ConversationItemDeleteEvent",
-    "DtmfCollectedEvent",
-    "DtmfCollectionCancelledEvent",
-    "DtmfCollectionRejectedEvent",
-    "DtmfKeyEvent",
     "HandoffFailedEvent",
     "InputImagePart",
     "InputTextPart",

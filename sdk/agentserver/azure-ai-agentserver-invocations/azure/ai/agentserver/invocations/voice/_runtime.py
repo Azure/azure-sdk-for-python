@@ -63,19 +63,6 @@ class _ConnectionSender(Protocol):
 
     async def response_completed(self, response_id: str, terminal_kind: str = "done") -> None: ...
 
-    async def register_dtmf_collection(
-        self,
-        *,
-        response_id: str,
-        collection_id: str,
-        max_digits: int,
-        terminator: str | None,
-        initial_timeout_ms: int,
-        inter_digit_timeout_ms: int,
-    ) -> None: ...
-
-    async def cancel_dtmf_collection(self, collection_id: str) -> None: ...
-
     async def end_call(self, reason: str, mode: str) -> None: ...
 
     async def start_proactive_response(
@@ -442,49 +429,6 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
             if future.done():
                 async with self._lock:
                     self._cancel_pending = False
-
-    async def collect_dtmf(
-        self,
-        *,
-        max_digits: int,
-        initial_timeout_ms: int,
-        inter_digit_timeout_ms: int,
-        terminator: str | None = None,
-    ) -> str:
-        """Arm structured DTMF collection after this response drains.
-
-        :keyword max_digits: Positive maximum returned digit count.
-        :paramtype max_digits: int
-        :keyword initial_timeout_ms: Positive first-key timeout in milliseconds.
-        :paramtype initial_timeout_ms: int
-        :keyword inter_digit_timeout_ms: Positive inter-key timeout in milliseconds.
-        :paramtype inter_digit_timeout_ms: int
-        :keyword terminator: Optional single DTMF terminator excluded from the result.
-        :paramtype terminator: str or None
-        :return: SDK-allocated ``dc_`` collection identifier.
-        :rtype: str
-        """
-        max_digits = _require_positive_int(max_digits, "max_digits")
-        initial_timeout_ms = _require_positive_int(initial_timeout_ms, "initial_timeout_ms")
-        inter_digit_timeout_ms = _require_positive_int(inter_digit_timeout_ms, "inter_digit_timeout_ms")
-        if terminator is not None:
-            terminator = _require_string(terminator, "terminator")
-            if len(terminator) != 1 or terminator not in "0123456789*#":
-                raise ValueError("terminator must be one DTMF key")
-        collection_id = new_id("dc")
-        async with self._send_lock:
-            async with self._lock:
-                self._ensure_writable_locked()
-            await self._ensure_open()
-            await self._sender.register_dtmf_collection(
-                response_id=self._response_id,
-                collection_id=collection_id,
-                max_digits=max_digits,
-                terminator=terminator,
-                initial_timeout_ms=initial_timeout_ms,
-                inter_digit_timeout_ms=inter_digit_timeout_ms,
-            )
-        return collection_id
 
     async def handoff(self, *, target: str, message: str | None = None) -> None:
         """Request terminal handoff to a same-project hosted text agent.
@@ -1039,17 +983,6 @@ class VoiceSession:
         if mode not in ("drain", "immediate"):
             raise ValueError("mode must be 'drain' or 'immediate'")
         await self._sender.end_call(reason, mode)
-
-    async def cancel_dtmf_collection(self, collection_id: str) -> None:
-        """Cancel one pending or active DTMF collection.
-
-        :param collection_id: SDK-allocated ``dc_`` collection identifier.
-        :type collection_id: str
-        """
-        collection_id = _require_string(collection_id, "collection_id")
-        if not collection_id.startswith("dc_") or len(collection_id) <= 3:
-            raise ValueError("collection_id must start with dc_")
-        await self._sender.cancel_dtmf_collection(collection_id)
 
     async def report_error(self, *, code: str, message: str) -> None:
         """Report a terminal session-scoped agent failure.

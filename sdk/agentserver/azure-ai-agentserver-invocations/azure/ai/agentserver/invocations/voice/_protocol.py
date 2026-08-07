@@ -22,13 +22,6 @@ from typing import Any, cast
 from azure.ai.agentserver.core import experimental
 
 from ._models import (
-    ConversationHistoryItem,
-    ConversationItemCreateEvent,
-    ConversationItemDeleteEvent,
-    DtmfCollectedEvent,
-    DtmfCollectionCancelledEvent,
-    DtmfCollectionRejectedEvent,
-    DtmfKeyEvent,
     HandoffFailedEvent,
     InputImagePart,
     InputTextPart,
@@ -185,7 +178,7 @@ def decode_frame(frame: str) -> dict[str, Any]:
     _validate_json_tree(raw_payload)
     payload = cast(dict[str, Any], raw_payload)
     require_string(payload, "type", non_empty=True)
-    require_prefixed_id(payload, "id", "m_")
+    require_string(payload, "id", non_empty=True)
     validate_timestamp(payload.get("ts"))
     return payload
 
@@ -299,6 +292,19 @@ def canonical_payload(payload: Mapping[str, Any]) -> str:
     return json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
 
 
+def _parse_caller_context(payload: Mapping[str, Any]) -> Mapping[str, Any]:
+    """Validate known caller fields while preserving the open object."""
+    caller = payload.get("caller")
+    if not isinstance(caller, dict):
+        raise VoiceBridgeProtocolError("session.start caller must be an object")
+    for field_name in ("channel", "ani", "dnis", "customer_id"):
+        if field_name in caller and not isinstance(caller[field_name], str):
+            raise VoiceBridgeProtocolError(f"session.start caller.{field_name} must be a string")
+    if "custom_parameters" in caller and not isinstance(caller["custom_parameters"], dict):
+        raise VoiceBridgeProtocolError("session.start caller.custom_parameters must be an object")
+    return cast(Mapping[str, Any], freeze_json(caller))
+
+
 def parse_session_start(payload: Mapping[str, Any]) -> SessionStartEvent:
     """Validate ``session.start`` and return a deeply read-only event."""
     if payload.get("protocol_version") != PROTOCOL_VERSION:
@@ -314,20 +320,15 @@ def parse_session_start(payload: Mapping[str, Any]) -> SessionStartEvent:
         max_duration_ms=require_positive_int(timeout_payload, "max_duration_ms"),
     )
 
-    greeting = optional_string(payload, "greeting")
+    greeting = require_string(payload, "greeting") if "greeting" in payload else None
     if reconnect and greeting is not None:
         raise VoiceBridgeProtocolError("session.start greeting must be absent on reconnect")
 
     no_input_timeout_ms: int | None = None
-    if payload.get("no_input_timeout_ms") is not None:
+    if "no_input_timeout_ms" in payload:
         no_input_timeout_ms = require_positive_int(payload, "no_input_timeout_ms")
 
-    caller_value = payload.get("caller")
-    caller: Mapping[str, Any] | None = None
-    if caller_value is not None:
-        if not isinstance(caller_value, dict):
-            raise VoiceBridgeProtocolError("session.start caller must be an object")
-        caller = cast(Mapping[str, Any], freeze_json(caller_value))
+    caller = _parse_caller_context(payload) if "caller" in payload else None
 
     return SessionStartEvent(
         protocol_version=PROTOCOL_VERSION,
@@ -346,81 +347,6 @@ def parse_user_message(payload: Mapping[str, Any]) -> UserMessageEvent:
     return UserMessageEvent(item_id=item_id, content=content)
 
 
-def parse_conversation_item_create(payload: Mapping[str, Any]) -> ConversationItemCreateEvent:
-    """Validate one non-triggering history create request."""
-    request_id = require_string(payload, "id", non_empty=True)
-    raw_item = require_mapping(payload, "item")
-    item_id = require_prefixed_id(raw_item, "id", "hi_")
-    if raw_item.get("role") != "user":
-        raise VoiceBridgeProtocolError("conversation.item.create role must be user", close_code=1008)
-    content = parse_content_parts(raw_item.get("content"), "conversation.item.create")
-    previous_item_id = optional_string(payload, "previous_item_id")
-    if previous_item_id is not None and not (
-        previous_item_id == "root"
-        or (previous_item_id.startswith("hi_") and len(previous_item_id) > 3)
-        or (previous_item_id.startswith("it_") and len(previous_item_id) > 3)
-    ):
-        raise VoiceBridgeProtocolError(
-            "previous_item_id must be root or start with hi_ or it_",
-            close_code=1008,
-        )
-    return ConversationItemCreateEvent(
-        request_id=request_id,
-        item=ConversationHistoryItem(item_id=item_id, content=content),
-        previous_item_id=previous_item_id,
-    )
-
-
-def parse_conversation_item_delete(payload: Mapping[str, Any]) -> ConversationItemDeleteEvent:
-    """Validate one non-triggering history delete request."""
-    item_id = require_string(payload, "item_id", non_empty=True)
-    if not ((item_id.startswith("hi_") and len(item_id) > 3) or (item_id.startswith("it_") and len(item_id) > 3)):
-        raise VoiceBridgeProtocolError("conversation.item.delete item_id must start with hi_ or it_", close_code=1008)
-    return ConversationItemDeleteEvent(
-        request_id=require_string(payload, "id", non_empty=True),
-        item_id=item_id,
-    )
-
-
-def parse_dtmf(payload: Mapping[str, Any]) -> DtmfKeyEvent | DtmfCollectedEvent:
-    """Validate raw-key and collected-result DTMF shapes."""
-    digits = require_string(payload, "digits")
-    collection_value = payload.get("collection_id")
-    item_value = payload.get("item_id")
-    reason_value = payload.get("completion_reason")
-    collected_values = (collection_value, item_value, reason_value)
-    if all(value is None for value in collected_values):
-        if len(digits) != 1 or digits not in "0123456789*#":
-            raise VoiceBridgeProtocolError("Raw dtmf digits must contain exactly one DTMF key")
-        return DtmfKeyEvent(digit=digits)
-    if any(value is None for value in collected_values):
-        raise VoiceBridgeProtocolError("Collected dtmf requires collection_id, item_id, and completion_reason")
-    if any(character not in "0123456789*#" for character in digits):
-        raise VoiceBridgeProtocolError("Collected dtmf digits contain an invalid key")
-    return DtmfCollectedEvent(
-        item_id=require_prefixed_id(payload, "item_id", "in_"),
-        collection_id=require_prefixed_id(payload, "collection_id", "dc_"),
-        digits=digits,
-        completion_reason=require_string(payload, "completion_reason", non_empty=True),
-    )
-
-
-def parse_dtmf_collection_rejected(payload: Mapping[str, Any]) -> DtmfCollectionRejectedEvent:
-    """Validate one DTMF collection rejection."""
-    return DtmfCollectionRejectedEvent(
-        collection_id=require_prefixed_id(payload, "collection_id", "dc_"),
-        reason=require_string(payload, "reason", non_empty=True),
-    )
-
-
-def parse_dtmf_collection_cancelled(payload: Mapping[str, Any]) -> DtmfCollectionCancelledEvent:
-    """Validate one DTMF collection cancellation."""
-    return DtmfCollectionCancelledEvent(
-        collection_id=require_prefixed_id(payload, "collection_id", "dc_"),
-        reason=require_string(payload, "reason", non_empty=True),
-    )
-
-
 def parse_handoff_failed(payload: Mapping[str, Any]) -> HandoffFailedEvent:
     """Validate one bridge-generated handoff recovery turn."""
     return HandoffFailedEvent(
@@ -432,7 +358,7 @@ def parse_handoff_failed(payload: Mapping[str, Any]) -> HandoffFailedEvent:
 
 
 def parse_content_parts(raw_content: object, message_name: str) -> tuple[InputTextPart | InputImagePart, ...]:
-    """Validate ordered user content parts shared by turns and history."""
+    """Validate ordered user content parts."""
     if not isinstance(raw_content, list) or not raw_content:
         raise VoiceBridgeProtocolError(f"{message_name} content must be a non-empty array")
 
@@ -456,8 +382,6 @@ def parse_content_parts(raw_content: object, message_name: str) -> tuple[InputTe
         else:
             raise VoiceBridgeProtocolError(f"{message_name} content part requires a string type")
 
-    if not content:
-        raise VoiceBridgeProtocolError(f"{message_name} contains no supported content parts")
     return tuple(content)
 
 

@@ -1,6 +1,6 @@
 # AgentServer Typed Voice Live Bridge Submodule — Design
 
-**Status:** Full Python SDK wire surface implemented — pending API review, bridge interoperability, and external conformance gates
+**Status:** Core Python SDK profile implemented — pending API review, bridge interoperability, and external conformance gates
 
 **Date:** 2026-07-27
 
@@ -109,9 +109,7 @@ Each accepted socket owns activation context, unresolved inputs, active/recent r
 | Dedupe | Bounded exact-payload duplicate/tamper tracking. | Implemented |
 | Immutability | Deeply read-only caller metadata and frozen event models. | Implemented |
 | Observability/privacy | Same tracing behavior as raw `invocations_ws`; content-free Voice metrics and wire diagnostics. | Implemented |
-| DTMF | Raw/collected events, collection request/cancel, and rejection/cancellation outcomes. | Implemented |
 | Handoff | Terminal request and failed-handoff recovery turn. | Implemented |
-| History mutation | Ordered create/delete callbacks and correlated success/failure results. | Implemented |
 | Metrics | Activation, callback, latency, terminal, connection, protocol, and close-code instruments. | Implemented |
 
 ## 4. Implemented public API
@@ -169,7 +167,7 @@ The first output operation allocates `r_`, emits `response.created{in_reply_to:[
 | `VoiceResponse` | Lazy helper bound to an immutable input prefix or accepted proactive response. |
 | `VoiceTextItem` | One ordered output item. |
 | Event/content models | Frozen typed inbound data. |
-| Outcome/error models | Proactive, cancellation, timeout, DTMF, handoff, history, and connection results. |
+| Outcome/error models | Proactive, cancellation, timeout, handoff, and connection results. |
 
 Nested caller data must also be immutable. `VoiceSession` is not `AgentSessionResource` and never exposes control-plane CRUD.
 
@@ -184,10 +182,7 @@ Nested caller data must also be immutable. `VoiceSession` is not `AgentSessionRe
 | `on_session_end` | `session.end` | Core |
 | `on_user_speech_started` | `user.speech_started` | Core |
 | `on_user_no_input` | `user.no_input` | Core |
-| `on_dtmf_key`, `on_dtmf_collected` | `dtmf` | Core |
-| `on_dtmf_collection_rejected/cancelled` | `dtmf.collect.*` | Core |
 | `on_handoff_failed` | `handoff.failed` | Core |
-| `on_conversation_item_create/delete` | `conversation.item.*` | Core |
 
 `on_user_message` is the required completed-turn callback. A convenience text accessor must not discard ordered content parts. Control messages such as `response.accepted`, `response.dropped`, and `response.cancelled` resolve awaited helpers rather than requiring manual correlation.
 
@@ -203,8 +198,9 @@ Duplicate or non-async callback registration is a startup error. Missing `on_use
 - `decline()` emits `response.none` without opening a response.
 - `fail()` opens if necessary, then emits response-scoped `error`.
 - `cancel()` emits `response.cancel` before `response.done` and awaits the winning `response.cancelled` or `barge_in` outcome.
-- `collect_dtmf()` opens the response if necessary and returns the SDK-owned `dc_` identifier.
 - `handoff()` opens the response if necessary and terminalizes it without `response.done`.
+
+If customer code abandons the `cancel()` await and returns from its callback, the customer-task lifecycle ends but the cancel-pending response retains the active protocol slot. The callback coordinator does not dispatch another response-producing turn until the Bridge outcome, another response/session terminal, or connection close releases that owner.
 
 A streamed item ends with full concatenated text; a non-streamed item sends only item-level done. New items start only after the prior item completes. There is no `output_index`.
 
@@ -231,18 +227,22 @@ Voice Live reads the deployed declarations and rejects an unsupported explicit `
 7. Startup exception emits sanitized `session.rejected{code:"startup_failed",retriable:false}` and closes with `1011`.
 8. No ordinary callback or customer emitter is available before readiness.
 
-Reconnect start must omit greeting. Caller metadata is untrusted content, not authorization.
+Reconnect start must omit greeting. Typed optional startup fields reject explicit
+`null`; producers omit absent values. Caller metadata is untrusted content, not
+authorization. The SDK validates the known caller fields (`channel`, `ani`, `dnis`,
+`customer_id`, and `custom_parameters`) without closing the open object: unknown
+caller properties and unknown string `channel` values remain preserved. It performs
+no trimming, case conversion, telephone-number normalization, or authorization based
+on these values. Caller data remains deeply read-only after validation.
 
 ### 5.2 ID ownership
 
-| Prefix | Owner | Purpose |
+| Identifier | Owner | Purpose |
 |---|---|---|
-| `m_` | Each sender | Envelope identity. |
+| Envelope `id` | Each sender | Opaque non-empty identity. The SDK emits `m_`; inbound IDs are not prefix-restricted. |
 | `in_` | Bridge | Input item. |
 | `r_` | SDK | Reply/proactive response. |
 | `it_` | SDK | Output item. |
-| `dc_` | SDK | DTMF collection. |
-| `hi_` | Caller app/bridge | Injected history item. |
 
 SDK IDs use random/UUID components, remain collision-resistant across reconnects, and are never reused after terminal state.
 
@@ -263,21 +263,22 @@ SDK IDs use random/UUID components, remain collision-resistant across reconnects
 ### 5.4 Envelope, duplicates, and errors
 
 Every message has non-empty `type`, unique `id`, and RFC 3339 `ts`. Timestamps are observability-only. The SDK emits canonical UTC milliseconds and shares codec vectors across implementations.
+Inbound envelope IDs are opaque non-empty strings. The `m_` prefix is an SDK outbound generation convention, not an inbound validation requirement.
 
 - Same ID and decoded payload: ignore before semantic processing.
 - Same ID with changed payload: protocol violation.
 - Unknown type after readiness: ignore.
-- Every currently defined `1.0` message type is recognized; genuinely future message types remain ignorable after readiness.
+- Every message in the implemented core profile is recognized; other message types remain ignorable after readiness.
 - Malformed known message, invalid closed enum, or known message in illegal state: reject/close as applicable.
 - Additive fields and unknown open enums: accept with documented safe fallback.
 
 Duplicate and tombstone maps are exact, bounded, and connection-scoped. Reaching
 their per-connection or process-wide identity budget fails the connection closed
-instead of evicting history and silently weakening replay detection. They are not
+instead of evicting identity records and silently weakening replay detection. They are not
 copied to a reattached connection because frames are never replayed.
 All untrusted identifiers are retained only as binary SHA-256 digests in the
 exact ledgers. Message records pair an ID digest with a canonical-payload digest;
-input and history-operation digests are monotonic. Response terminal,
+input digests are monotonic. Response terminal,
 playback-outcome, abandoned-admission, and exact output-item ownership state
 share one connection-lifetime ledger rather than separately evictable
 tombstones. Every record reserves a conservative fixed byte cost against one
@@ -305,7 +306,6 @@ The transport's 1 MB frame limit is the Preview guard. Local pre-allocation enfo
 - The receive pump performs only decode/dedupe/short state transitions, resolves control futures, queues callbacks, and resumes reading.
 - Customer model/tool I/O never runs in the receive pump.
 - One response-producing callback is active at a time.
-- History mutation callbacks and their explicit results complete before dependent later turns.
 - All writes use one send path, honor backpressure, and revalidate state immediately before sending.
 - Queues, maps, accumulated text, and task sets are bounded.
 
@@ -319,7 +319,6 @@ Response callbacks receive task cancellation and a read-only `VoiceCancellationT
 | Timeout after response open | Tombstone `response_id`; reject later sends. |
 | Terminal vs callback return | Terminal suppresses auto `response.done`. |
 | Self-cancel vs barge-in | First bridge-serialized outcome resolves one shared future. |
-| DTMF source terminal vs agent cancel | Dispatch the source outcome and allow one correlated late `collection_not_found` rejection. |
 | Barge-in after `response.done` | Reconcile playback; do not complete twice. |
 | Connection close vs helper | Fail all helpers once and prevent later writes. |
 
@@ -337,7 +336,7 @@ A reattach creates a new runtime, runs activation with `reconnect=True`, and emi
 
 Voice follows the raw `invocations_ws` tracing contract: neither layer creates a framework-owned connection or turn span. Incoming W3C context and baggage from the WebSocket upgrade remain attached for the connection lifetime, so application and downstream-framework spans inherit the caller context. The transport emits one structured close-event log, while Voice protocol metrics cover activation, callback duration/error, first output, terminal kind, protocol violations, active connections, and actual close code without payload or ID dimensions.
 
-SDK-owned metrics, structured logs, and wire errors exclude transcripts, generated text, greeting/prompt/`heard_text`, caller metadata, DTMF digits, image/SAS references, tool payloads, credentials, and arbitrary exception messages. GenAI content capture remains governed by the parent host's standard observability configuration.
+SDK-owned metrics, structured logs, and wire errors exclude transcripts, generated text, greeting/prompt/`heard_text`, caller metadata, image/SAS references, tool payloads, credentials, and arbitrary exception messages. GenAI content capture remains governed by the parent host's standard observability configuration.
 
 Voice requires no protocol-specific changes to Core. Invocations itself owns:
 
@@ -350,7 +349,7 @@ Voice requires no protocol-specific changes to Core. Invocations itself owns:
 
 The package version, raw transport version, and `bridgeProtocolVersion` are independent. The typed host accepts exact `1.0` only; raw `InvocationAgentServerHost.ws_handler` remains available for custom protocols.
 
-The Python package implements every currently defined Bridge `1.0` SDK-side message and helper. This does not by itself make the end-to-end product conformant: the bridge repository still has an allowlisted core checkpoint, and external route, session-resume, cross-language parity, feature implementation, and telemetry ship blockers remain owned by the bridge architecture document rather than duplicated here.
+The Python package implements the Bridge `1.0` core profile described in this document. This does not by itself make the end-to-end product conformant: the bridge repository still has an allowlisted core checkpoint, and external route, session-resume, cross-language parity, feature implementation, and telemetry ship blockers remain owned by the bridge architecture document rather than duplicated here.
 
 Required validation:
 

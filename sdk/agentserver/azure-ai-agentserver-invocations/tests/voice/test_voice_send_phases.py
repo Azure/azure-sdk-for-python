@@ -32,13 +32,7 @@ def _connection(websocket) -> voice_host._VoiceConnection:  # pylint: disable=pr
         on_user_message=None,
         on_user_no_input=None,
         on_user_speech_started=None,
-        on_dtmf_key=None,
-        on_dtmf_collected=None,
-        on_dtmf_collection_rejected=None,
-        on_dtmf_collection_cancelled=None,
         on_handoff_failed=None,
-        on_conversation_item_create=None,
-        on_conversation_item_delete=None,
         on_barge_in=None,
         on_response_timeout=None,
         on_session_end=None,
@@ -362,7 +356,7 @@ def test_output_item_pre_io_failure_does_not_create_ghost_ownership() -> None:
     asyncio.run(scenario())
 
 
-def test_connection_shutdown_finishes_before_rethrowing_cancellation() -> None:
+def test_connection_shutdown_finishes_before_propagating_cancellation() -> None:
     """A second cancellation cannot interrupt connection resource release."""
 
     async def scenario() -> None:

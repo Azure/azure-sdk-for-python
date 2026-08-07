@@ -39,7 +39,7 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 `VoiceAgentServerHost` derives from `InvocationAgentServerHost` and owns the
 `/invocations_ws` route for exact Voice Live Bridge Protocol `1.0`. It exposes
 typed async callbacks, immutable inbound events, response and item helpers,
-terminal arbitration, DTMF, handoff, history mutation, and session controls.
+terminal arbitration, handoff, and session controls.
 Voice Live continues to own audio, speech recognition, synthesis, voice
 activity detection, turn-taking, and barge-in.
 
@@ -376,7 +376,7 @@ app.run()
 The host owns Bridge framing, IDs, ordering, callback coordination, bounded
 connection state, and terminal races. Application code remains text-in and
 text-out. See the [Voice Live Bridge guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-invocations/docs/voice-live-bridge.md) for
-streaming, DTMF, handoff, proactive responses, privacy, and troubleshooting.
+streaming, handoff, proactive responses, privacy, and troubleshooting.
 
 ## Troubleshooting
 

@@ -5,6 +5,7 @@
 
 import asyncio
 import json
+import logging
 import threading
 import time
 from unittest import mock
@@ -21,6 +22,7 @@ from azure.ai.agentserver.invocations.voice import (
     UserMessageEvent,
     VoiceAgentServerHost,
     VoiceBridgeConnectionClosedError,
+    VoiceBridgeProtocolError,
     VoiceProactiveResponseDroppedError,
     VoiceResponse,
     VoiceSession,
@@ -76,13 +78,7 @@ def _connection(websocket, **callbacks):
         "on_user_message": None,
         "on_user_no_input": None,
         "on_user_speech_started": None,
-        "on_dtmf_key": None,
-        "on_dtmf_collected": None,
-        "on_dtmf_collection_rejected": None,
-        "on_dtmf_collection_cancelled": None,
         "on_handoff_failed": None,
-        "on_conversation_item_create": None,
-        "on_conversation_item_delete": None,
         "on_barge_in": None,
         "on_response_timeout": None,
         "on_session_end": None,
@@ -188,6 +184,34 @@ def test_non_streaming_response_opens_sdk_owned_response() -> None:
     assert "output_index" not in item_done
     assert response_done["type"] == "response.done"
     assert response_done["response_id"] == created["response_id"]
+
+
+def test_unknown_only_user_message_records_item_without_creating_turn() -> None:
+    async def scenario() -> None:
+        callback = mock.AsyncMock()
+        connection = _connection(None, on_user_message=callback)
+        connection._ready = True  # pylint: disable=protected-access
+        payload = {
+            "type": "user.message",
+            "id": "m_unknown_1",
+            "ts": _TS,
+            "item_id": "in_unknown",
+            "content": [{"type": "future_part"}],
+        }
+
+        assert await connection._dispatch(payload)  # pylint: disable=protected-access
+        callback.assert_not_awaited()
+        assert "in_unknown" in connection._seen_input_ids  # pylint: disable=protected-access
+        assert not connection._pending_turns  # pylint: disable=protected-access
+        assert connection._active_response is None  # pylint: disable=protected-access
+        assert connection._callback_queue.empty()  # pylint: disable=protected-access
+
+        with pytest.raises(VoiceBridgeProtocolError, match="item_id was reused"):
+            await connection._dispatch({**payload, "id": "m_unknown_2"})  # pylint: disable=protected-access
+
+        connection._release_connection_state()  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
 
 
 def test_streamed_multi_item_response_uses_wire_order() -> None:
@@ -432,32 +456,6 @@ def test_user_speech_started_dispatches_advisory_callback() -> None:
         assert notified.wait(timeout=1.0)
 
 
-def test_raw_dtmf_key_dispatches_session_signal() -> None:
-    app = _app()
-    notified = threading.Event()
-
-    @app.on_user_message
-    async def on_message(_session, _event, response) -> None:
-        await response.decline()
-
-    @app.on_dtmf_key
-    async def on_dtmf(_session, event) -> None:
-        assert event.digit == "1"
-        notified.set()
-
-    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
-        _activate(websocket)
-        websocket.send_json(
-            {
-                "type": "dtmf",
-                "id": "m_dtmf",
-                "ts": _TS,
-                "digits": "1",
-            }
-        )
-        assert notified.wait(timeout=1.0)
-
-
 def test_self_cancelled_signal_callback_does_not_stop_dispatch() -> None:
     app = _app()
     signal_started = threading.Event()
@@ -466,14 +464,14 @@ def test_self_cancelled_signal_callback_does_not_stop_dispatch() -> None:
     async def on_message(_session, _event, response) -> None:
         await response.send_text("still running")
 
-    @app.on_dtmf_key
-    async def on_dtmf(_session, _event) -> None:
+    @app.on_user_speech_started
+    async def on_speech_started(_session, _event) -> None:
         signal_started.set()
         raise asyncio.CancelledError()
 
     with TestClient(app).websocket_connect("/invocations_ws") as websocket:
         _activate(websocket)
-        websocket.send_json({"type": "dtmf", "id": "m_dtmf", "ts": _TS, "digits": "1"})
+        websocket.send_json({"type": "user.speech_started", "id": "m_speech", "ts": _TS})
         assert signal_started.wait(timeout=1.0)
         websocket.send_json(_user_message())
         assert websocket.receive_json()["type"] == "response.created"
@@ -485,19 +483,19 @@ def test_readiness_send_failure_still_shuts_down(monkeypatch) -> None:
     app = _app()
     shutdown_calls: list[bool] = []
 
-    original_send = voice_host._VoiceConnection.send
+    original_send_prepared = voice_host._VoiceConnection._send_prepared
     original_shutdown = voice_host._VoiceConnection._shutdown_runtime
 
-    async def fail_readiness(self, message_type, **fields) -> None:
-        if message_type == "session.ready":
+    async def fail_readiness(self, prepared, **kwargs) -> None:
+        if prepared.message_type == "session.ready":
             raise RuntimeError("readiness send failed")
-        await original_send(self, message_type, **fields)
+        await original_send_prepared(self, prepared, **kwargs)
 
     async def capture_shutdown(self, *, drain_callbacks) -> None:
         shutdown_calls.append(drain_callbacks)
         await original_shutdown(self, drain_callbacks=drain_callbacks)
 
-    monkeypatch.setattr(voice_host._VoiceConnection, "send", fail_readiness)
+    monkeypatch.setattr(voice_host._VoiceConnection, "_send_prepared", fail_readiness)
     monkeypatch.setattr(voice_host._VoiceConnection, "_shutdown_runtime", capture_shutdown)
 
     @app.on_user_message
@@ -605,6 +603,22 @@ def test_exact_duplicate_session_start_is_ignored_during_activation() -> None:
         assert websocket.receive_json()["type"] == "session.ready"
 
 
+def test_opaque_session_start_id_is_accepted_and_ready_uses_m_namespace() -> None:
+    app = _app()
+
+    @app.on_user_message
+    async def on_message(_session, _event, response) -> None:
+        await response.decline()
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        websocket.send_json(_start(id="bridge-start-1"))
+        ready = websocket.receive_json()
+
+    assert ready["type"] == "session.ready"
+    assert ready["id"].startswith("m_")
+    assert len(ready["id"]) > len("m_")
+
+
 def test_startup_context_is_immutable_and_ready_has_no_version() -> None:
     app = _app()
     starts: list[SessionStartEvent] = []
@@ -622,13 +636,51 @@ def test_startup_context_is_immutable_and_ready_has_no_version() -> None:
             websocket,
             greeting="Welcome",
             no_input_timeout_ms=8_000,
-            caller={"channel": "pstn", "nested": {"key": "value"}},
+            caller={
+                "channel": "future-channel",
+                "ani": "+14255550101",
+                "dnis": "+14255550100",
+                "customer_id": "customer-1",
+                "custom_parameters": {"campaign": "renewals"},
+                "nested": {"key": "value"},
+            },
         )
 
     assert starts[0].greeting == "Welcome"
     assert starts[0].no_input_timeout_ms == 8_000
+    assert starts[0].caller["channel"] == "future-channel"  # type: ignore[index]
+    assert starts[0].caller["nested"]["key"] == "value"  # type: ignore[index]
     with pytest.raises(TypeError):
         starts[0].caller["channel"] = "websocket"  # type: ignore[index]
+
+
+def test_invalid_caller_context_is_rejected_without_content_leak(caplog) -> None:
+    app = _app()
+    startup_called = threading.Event()
+    sensitive_value = "sensitive-caller-value"
+    caplog.set_level(logging.DEBUG)
+
+    @app.on_session_start
+    async def on_start(_session, _event) -> None:
+        startup_called.set()
+
+    @app.on_user_message
+    async def on_message(_session, _event, response) -> None:
+        await response.decline()
+
+    with pytest.raises(WebSocketDisconnect) as exc_info:
+        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+            websocket.send_json(_start(caller={"channel": {"secret": sensitive_value}}))
+            rejection = websocket.receive_json()
+            assert rejection["type"] == "session.rejected"
+            assert rejection["code"] == "invalid_session_start"
+            assert rejection["retriable"] is False
+            assert sensitive_value not in json.dumps(rejection)
+            websocket.receive_json()
+
+    assert exc_info.value.code == 1002
+    assert not startup_called.is_set()
+    assert sensitive_value not in caplog.text
 
 
 def test_reconnect_greeting_is_rejected() -> None:
@@ -1116,7 +1168,7 @@ def test_duplicate_frame_with_long_id_is_bounded_and_deduplicated() -> None:
         handled.append(event.item_id)
         await response.send_text("ok")
 
-    long_id = "m_" + "x" * 200_000
+    long_id = "x" * 200_000
     duplicate = _user_message(message_id=long_id)
     with TestClient(app).websocket_connect("/invocations_ws") as websocket:
         _activate(websocket)
@@ -1678,221 +1730,6 @@ def test_cancelling_proactive_admission_sends_response_cancel() -> None:
         assert websocket.receive_json()["type"] == "response.done"
 
 
-def test_dtmf_collection_request_and_collected_turn() -> None:
-    app = _app()
-    collection_ids: list[str] = []
-
-    @app.on_user_message
-    async def on_message(_session, _event, response: VoiceResponse) -> None:
-        await response.send_text("Enter digits")
-        collection_ids.append(
-            await response.collect_dtmf(
-                max_digits=4,
-                terminator="#",
-                initial_timeout_ms=10_000,
-                inter_digit_timeout_ms=5_000,
-            )
-        )
-
-    @app.on_dtmf_collected
-    async def on_collected(_session, event, response: VoiceResponse) -> None:
-        assert event.collection_id == collection_ids[0]
-        assert event.digits == "1234"
-        await response.send_text("Digits received")
-
-    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
-        _activate(websocket)
-        websocket.send_json(_user_message())
-        assert websocket.receive_json()["type"] == "response.created"
-        assert websocket.receive_json()["type"] == "response.output_text.done"
-        collect = websocket.receive_json()
-        assert collect["type"] == "dtmf.collect"
-        assert collect["collection_id"].startswith("dc_")
-        assert collect["max_digits"] == 4
-        assert collect["terminator"] == "#"
-        assert websocket.receive_json()["type"] == "response.done"
-
-        websocket.send_json(
-            {
-                "type": "dtmf",
-                "id": "m_dtmf_collected",
-                "ts": _TS,
-                "collection_id": collect["collection_id"],
-                "item_id": "in_dtmf",
-                "digits": "1234",
-                "completion_reason": "max_digits",
-            }
-        )
-        created = websocket.receive_json()
-        output = websocket.receive_json()
-        done = websocket.receive_json()
-
-    assert created["in_reply_to"] == ["in_dtmf"]
-    assert output["text"] == "Digits received"
-    assert done["type"] == "response.done"
-
-
-def test_dtmf_collection_rejection_releases_slot() -> None:
-    app = _app()
-    rejected = threading.Event()
-
-    @app.on_user_message
-    async def on_message(_session, _event, response: VoiceResponse) -> None:
-        await response.send_text("Enter digits")
-        await response.collect_dtmf(
-            max_digits=1,
-            initial_timeout_ms=1_000,
-            inter_digit_timeout_ms=1_000,
-        )
-
-    @app.on_dtmf_collection_rejected
-    async def on_rejected(_session, event) -> None:
-        assert event.reason == "invalid_configuration"
-        rejected.set()
-
-    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
-        _activate(websocket)
-        websocket.send_json(_user_message())
-        websocket.receive_json()
-        websocket.receive_json()
-        collect = websocket.receive_json()
-        websocket.receive_json()
-        websocket.send_json(
-            {
-                "type": "dtmf.collect.rejected",
-                "id": "m_rejected",
-                "ts": _TS,
-                "collection_id": collect["collection_id"],
-                "reason": "invalid_configuration",
-            }
-        )
-        assert rejected.wait(timeout=1.0)
-
-
-def test_dtmf_collection_can_be_cancelled_explicitly() -> None:
-    app = _app()
-    cancel_requested = threading.Event()
-    cancelled = threading.Event()
-    cancellation_tasks: list[asyncio.Task[None]] = []
-
-    @app.on_user_message
-    async def on_message(session: VoiceSession, _event, response: VoiceResponse) -> None:
-        await response.send_text("Enter digits")
-        collection_id = await response.collect_dtmf(
-            max_digits=4,
-            initial_timeout_ms=5_000,
-            inter_digit_timeout_ms=2_000,
-            terminator="#",
-        )
-
-        async def cancel_when_requested() -> None:
-            await asyncio.to_thread(cancel_requested.wait)
-            await session.cancel_dtmf_collection(collection_id)
-
-        cancellation_tasks.append(asyncio.create_task(cancel_when_requested()))
-
-    @app.on_dtmf_collection_cancelled
-    async def on_cancelled(_session, event) -> None:
-        assert event.reason == "cancelled_by_agent"
-        cancelled.set()
-
-    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
-        _activate(websocket)
-        websocket.send_json(_user_message())
-        assert websocket.receive_json()["type"] == "response.created"
-        assert websocket.receive_json()["type"] == "response.output_text.done"
-        collect = websocket.receive_json()
-        assert collect["type"] == "dtmf.collect"
-        assert websocket.receive_json()["type"] == "response.done"
-        cancel_requested.set()
-        cancel = websocket.receive_json()
-        assert cancel == {
-            "type": "dtmf.collect.cancel",
-            "id": cancel["id"],
-            "ts": cancel["ts"],
-            "collection_id": collect["collection_id"],
-        }
-        websocket.send_json(
-            {
-                "type": "dtmf.collect.cancelled",
-                "id": "m_cancelled",
-                "ts": _TS,
-                "collection_id": collect["collection_id"],
-                "reason": "cancelled_by_agent",
-            }
-        )
-        assert cancelled.wait(timeout=1.0)
-
-    assert cancellation_tasks[0].done()
-    assert cancellation_tasks[0].exception() is None
-
-
-def test_dtmf_source_cancellation_can_race_agent_cancel() -> None:
-    app = _app()
-    cancel_requested = threading.Event()
-    cancelled = threading.Event()
-    cancel_rejected = threading.Event()
-    cancellation_tasks: list[asyncio.Task[None]] = []
-
-    @app.on_user_message
-    async def on_message(session: VoiceSession, _event, response: VoiceResponse) -> None:
-        await response.send_text("Enter digits")
-        collection_id = await response.collect_dtmf(
-            max_digits=4,
-            initial_timeout_ms=5_000,
-            inter_digit_timeout_ms=2_000,
-        )
-
-        async def cancel_when_requested() -> None:
-            await asyncio.to_thread(cancel_requested.wait)
-            await session.cancel_dtmf_collection(collection_id)
-
-        cancellation_tasks.append(asyncio.create_task(cancel_when_requested()))
-
-    @app.on_dtmf_collection_cancelled
-    async def on_cancelled(_session, event) -> None:
-        assert event.reason == "speech_input"
-        cancelled.set()
-
-    @app.on_dtmf_collection_rejected
-    async def on_rejected(_session, event) -> None:
-        assert event.reason == "collection_not_found"
-        cancel_rejected.set()
-
-    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
-        _activate(websocket)
-        websocket.send_json(_user_message())
-        websocket.receive_json()
-        websocket.receive_json()
-        collect = websocket.receive_json()
-        websocket.receive_json()
-        cancel_requested.set()
-        assert websocket.receive_json()["type"] == "dtmf.collect.cancel"
-        websocket.send_json(
-            {
-                "type": "dtmf.collect.cancelled",
-                "id": "m_cancelled",
-                "ts": _TS,
-                "collection_id": collect["collection_id"],
-                "reason": "speech_input",
-            }
-        )
-        websocket.send_json(
-            {
-                "type": "dtmf.collect.rejected",
-                "id": "m_rejected",
-                "ts": _TS,
-                "collection_id": collect["collection_id"],
-                "reason": "collection_not_found",
-            }
-        )
-        assert cancelled.wait(timeout=1.0)
-        assert cancel_rejected.wait(timeout=1.0)
-
-    assert cancellation_tasks[0].done()
-    assert cancellation_tasks[0].exception() is None
-
-
 def test_handoff_is_terminal_and_failed_handoff_opens_recovery_turn() -> None:
     app = _app()
 
@@ -1937,133 +1774,6 @@ def test_handoff_is_terminal_and_failed_handoff_opens_recovery_turn() -> None:
     assert recovery_done["type"] == "response.done"
 
 
-def test_history_mutation_result_precedes_dependent_turn() -> None:
-    app = _app()
-    history: list[str] = []
-
-    @app.on_conversation_item_create
-    async def on_create(_session, event) -> None:
-        history.append(event.item.item_id)
-
-    @app.on_user_message
-    async def on_message(_session, _event, response: VoiceResponse) -> None:
-        assert history == ["hi_1"]
-        await response.send_text("history applied")
-
-    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
-        _activate(websocket)
-        websocket.send_json(
-            {
-                "type": "conversation.item.create",
-                "id": "m_history",
-                "ts": _TS,
-                "item": {
-                    "id": "hi_1",
-                    "role": "user",
-                    "content": [{"type": "input_text", "text": "order 42"}],
-                },
-            }
-        )
-        websocket.send_json(_user_message())
-        mutation_result = websocket.receive_json()
-        assert mutation_result == {
-            "type": "conversation.item.created",
-            "id": mutation_result["id"],
-            "ts": mutation_result["ts"],
-            "request_id": "m_history",
-        }
-        assert websocket.receive_json()["type"] == "response.created"
-        assert websocket.receive_json()["text"] == "history applied"
-        assert websocket.receive_json()["type"] == "response.done"
-
-
-def test_invalid_history_predecessor_is_rejected_before_callback() -> None:
-    app = _app()
-    callback_called = threading.Event()
-
-    @app.on_conversation_item_create
-    async def on_create(_session, _event) -> None:
-        callback_called.set()
-
-    @app.on_user_message
-    async def on_message(_session, _event, response: VoiceResponse) -> None:
-        await response.decline()
-
-    with pytest.raises(WebSocketDisconnect) as exc_info:
-        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
-            _activate(websocket)
-            websocket.send_json(
-                {
-                    "type": "conversation.item.create",
-                    "id": "m_history",
-                    "ts": _TS,
-                    "previous_item_id": "anything",
-                    "item": {
-                        "id": "hi_1",
-                        "role": "user",
-                        "content": [{"type": "input_text", "text": "order 42"}],
-                    },
-                }
-            )
-            websocket.receive_json()
-
-    assert exc_info.value.code == 1008
-    assert not callback_called.is_set()
-
-
-def test_history_callback_failure_emits_correlated_failure() -> None:
-    app = _app()
-
-    @app.on_conversation_item_delete
-    async def on_delete(_session, _event) -> None:
-        raise RuntimeError("private storage detail")
-
-    @app.on_user_message
-    async def on_message(_session, _event, response) -> None:
-        await response.decline()
-
-    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
-        _activate(websocket)
-        websocket.send_json(
-            {
-                "type": "conversation.item.delete",
-                "id": "m_delete",
-                "ts": _TS,
-                "item_id": "hi_1",
-            }
-        )
-        failure = websocket.receive_json()
-
-    assert failure["type"] == "conversation.item.failed"
-    assert failure["request_id"] == "m_delete"
-    assert failure["code"] == "mutation_failed"
-    assert "private storage detail" not in failure["message"]
-
-
-def test_history_without_registered_callback_emits_mutation_failure() -> None:
-    app = _app()
-
-    @app.on_user_message
-    async def on_message(_session, _event, response) -> None:
-        await response.decline()
-
-    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
-        _activate(websocket)
-        websocket.send_json(
-            {
-                "type": "conversation.item.delete",
-                "id": "m_delete",
-                "ts": _TS,
-                "item_id": "hi_1",
-            }
-        )
-        failure = websocket.receive_json()
-
-    assert failure["type"] == "conversation.item.failed"
-    assert failure["request_id"] == "m_delete"
-    assert failure["code"] == "mutation_failed"
-
-
 def test_exact_duplicate_is_ignored_but_next_turn_runs() -> None:
     app = _app()
     seen: list[str] = []
@@ -2073,7 +1783,9 @@ def test_exact_duplicate_is_ignored_but_next_turn_runs() -> None:
         seen.append(event.item_id)
         await response.send_text(event.text)
 
-    first = _user_message()
+    # Envelope and item identifiers are separate identity domains even when
+    # their opaque wire values happen to be equal.
+    first = _user_message(message_id="in_1")
     second = _user_message(message_id="m_user_2", item_id="in_2", text="world")
     with TestClient(app).websocket_connect("/invocations_ws") as websocket:
         _activate(websocket)
@@ -2097,7 +1809,7 @@ def test_unknown_future_message_is_ignored_after_readiness() -> None:
 
     with TestClient(app).websocket_connect("/invocations_ws") as websocket:
         _activate(websocket)
-        websocket.send_json({"type": "future.signal", "id": "m_future", "ts": _TS})
+        websocket.send_json({"type": "future.signal", "id": "future-envelope", "ts": _TS})
         websocket.send_json(_user_message())
         assert websocket.receive_json()["type"] == "response.created"
         assert websocket.receive_json()["text"] == "still ready"
@@ -2413,8 +2125,8 @@ def test_cancellation_resistant_signal_does_not_block_teardown(monkeypatch) -> N
     async def on_message(_session, _event, response) -> None:
         await response.decline()
 
-    @app.on_dtmf_key
-    async def on_dtmf(_session, _event) -> None:
+    @app.on_user_speech_started
+    async def on_speech_started(_session, _event) -> None:
         started.set()
         try:
             await asyncio.Event().wait()
@@ -2424,7 +2136,7 @@ def test_cancellation_resistant_signal_does_not_block_teardown(monkeypatch) -> N
 
     with TestClient(app).websocket_connect("/invocations_ws") as websocket:
         _activate(websocket)
-        websocket.send_json({"type": "dtmf", "id": "m_dtmf", "ts": _TS, "digits": "1"})
+        websocket.send_json({"type": "user.speech_started", "id": "m_speech", "ts": _TS})
         assert started.wait(timeout=1.0)
         websocket.send_json(
             {
@@ -2445,16 +2157,16 @@ def test_session_end_runs_despite_a_blocked_prior_callback(monkeypatch) -> None:
     """
     monkeypatch.setattr(voice_host, "_CLEANUP_TIMEOUT_SECONDS", 0.05)
     app = _app()
-    dtmf_started = threading.Event()
+    signal_started = threading.Event()
     session_ended = threading.Event()
 
     @app.on_user_message
     async def on_message(_session, _event, response) -> None:
         await response.decline()
 
-    @app.on_dtmf_key
-    async def on_dtmf(_session, _event) -> None:
-        dtmf_started.set()
+    @app.on_user_speech_started
+    async def on_speech_started(_session, _event) -> None:
+        signal_started.set()
         await asyncio.Event().wait()  # blocks the sole callback worker
 
     @app.on_session_end
@@ -2464,8 +2176,8 @@ def test_session_end_runs_despite_a_blocked_prior_callback(monkeypatch) -> None:
 
     with TestClient(app).websocket_connect("/invocations_ws") as websocket:
         _activate(websocket)
-        websocket.send_json({"type": "dtmf", "id": "m_dtmf", "ts": _TS, "digits": "1"})
-        assert dtmf_started.wait(1.0)  # worker is now blocked in the dtmf callback
+        websocket.send_json({"type": "user.speech_started", "id": "m_speech", "ts": _TS})
+        assert signal_started.wait(1.0)  # worker is now blocked in the signal callback
         websocket.send_json(
             {
                 "type": "session.end",
@@ -2502,8 +2214,8 @@ def test_cancellation_resistant_task_is_tracked_until_done(monkeypatch) -> None:
     async def on_message(_session, _event, response) -> None:
         await response.decline()
 
-    @app.on_dtmf_key
-    async def on_dtmf(_session, _event) -> None:
+    @app.on_user_speech_started
+    async def on_speech_started(_session, _event) -> None:
         started.set()
         try:
             await asyncio.Event().wait()
@@ -2513,7 +2225,7 @@ def test_cancellation_resistant_task_is_tracked_until_done(monkeypatch) -> None:
 
     with TestClient(app).websocket_connect("/invocations_ws") as websocket:
         _activate(websocket)
-        websocket.send_json({"type": "dtmf", "id": "m_dtmf", "ts": _TS, "digits": "1"})
+        websocket.send_json({"type": "user.speech_started", "id": "m_speech", "ts": _TS})
         assert started.wait(1.0)
         websocket.send_json(
             {
@@ -2588,13 +2300,23 @@ def test_resistant_task_limit_closes_without_additional_work(monkeypatch) -> Non
     assert close_codes == [1011]
 
 
-def test_no_second_terminal_when_callback_returns_with_cancel_pending() -> None:
+@pytest.mark.parametrize("terminal_type", ["response.cancelled", "barge_in", "response.timeout"])
+def test_cancel_pending_retains_active_owner_until_bridge_outcome(monkeypatch, terminal_type: str) -> None:
     """If a callback starts a self-cancel, its await is cancelled (e.g. the callback
-    times out waiting for arbitration) and the callback then returns, auto-completion
-    must not emit a second terminal (response.done / SDK error) while response.cancel
-    is still being arbitrated by the bridge.
+    times out waiting for arbitration) and the callback then returns, the response
+    remains the active owner until the Bridge commits its terminal outcome.
     """
     app = _app()
+    first_returned = threading.Event()
+    second_started = threading.Event()
+    callback_metric_recorded = threading.Event()
+
+    class CallbackDuration:
+        def record(self, _value, attributes=None) -> None:
+            if attributes == {"kind": "user.message"}:
+                callback_metric_recorded.set()
+
+    monkeypatch.setattr(voice_host, "_CALLBACK_DURATION", CallbackDuration())
 
     @app.on_user_message
     async def on_message(_session, event: UserMessageEvent, response: VoiceResponse) -> None:
@@ -2606,8 +2328,59 @@ def test_no_second_terminal_when_callback_returns_with_cancel_pending() -> None:
                 await asyncio.wait_for(response.cancel(), timeout=0.05)
             except (asyncio.TimeoutError, asyncio.CancelledError):
                 pass
+            first_returned.set()
         else:
+            second_started.set()
             await response.send_text("second")
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        _activate(websocket)
+        websocket.send_json(_user_message())
+        created = websocket.receive_json()
+        delta = websocket.receive_json()
+        cancel = websocket.receive_json()
+        assert cancel["type"] == "response.cancel"
+        assert first_returned.wait(timeout=1.0)
+        assert callback_metric_recorded.wait(timeout=1.0)
+
+        # An adversarial early turn may be queued by the receive pump, but its
+        # customer callback cannot start while the old response still owns the slot.
+        websocket.send_json(_user_message(message_id="m_user_2", item_id="in_2"))
+        assert not second_started.wait(timeout=0.1)
+
+        terminal = {
+            "type": terminal_type,
+            "id": "m_terminal",
+            "ts": _TS,
+            "response_id": created["response_id"],
+        }
+        if terminal_type == "response.timeout":
+            terminal["stage"] = "idle"
+        else:
+            terminal["item_id"] = delta["item_id"]
+            terminal["heard_text"] = "hi"
+        websocket.send_json(terminal)
+        assert second_started.wait(timeout=1.0)
+        assert websocket.receive_json()["type"] == "response.created"
+        assert websocket.receive_json()["type"] == "response.output_text.done"
+        assert websocket.receive_json()["type"] == "response.done"
+
+
+@pytest.mark.parametrize("terminal_kind", ["session_end", "disconnect"])
+def test_cancel_pending_active_owner_is_released_by_connection_terminal(terminal_kind: str) -> None:
+    app = _app()
+    callback_returned = threading.Event()
+    responses: list[VoiceResponse] = []
+
+    @app.on_user_message
+    async def on_message(_session, _event, response: VoiceResponse) -> None:
+        responses.append(response)
+        await response.send_text_delta("hi")
+        try:
+            await asyncio.wait_for(response.cancel(), timeout=0.05)
+        except (asyncio.TimeoutError, asyncio.CancelledError):
+            pass
+        callback_returned.set()
 
     with TestClient(app).websocket_connect("/invocations_ws") as websocket:
         _activate(websocket)
@@ -2615,13 +2388,19 @@ def test_no_second_terminal_when_callback_returns_with_cancel_pending() -> None:
         assert websocket.receive_json()["type"] == "response.created"
         assert websocket.receive_json()["type"] == "response.output_text.delta"
         assert websocket.receive_json()["type"] == "response.cancel"
-        # No response.done / error must follow for the first response. The second
-        # turn proves the connection is healthy and that the next frame is its own
-        # response.created, not a stray terminal for the cancel-pending response.
-        websocket.send_json(_user_message(message_id="m_user_2", item_id="in_2"))
-        assert websocket.receive_json()["type"] == "response.created"
-        assert websocket.receive_json()["type"] == "response.output_text.done"
-        assert websocket.receive_json()["type"] == "response.done"
+        assert callback_returned.wait(timeout=1.0)
+        if terminal_kind == "session_end":
+            websocket.send_json(
+                {
+                    "type": "session.end",
+                    "id": "m_session_end",
+                    "ts": _TS,
+                    "reason": "caller_hangup",
+                }
+            )
+
+    assert responses[0].is_terminal
+    assert responses[0].cancellation.is_cancelled
 
 
 def test_end_call_supports_immediate_mode() -> None:

@@ -30,12 +30,6 @@ from .._version import VERSION
 
 from ._models import (
     BargeInEvent,
-    ConversationItemCreateEvent,
-    ConversationItemDeleteEvent,
-    DtmfCollectedEvent,
-    DtmfCollectionCancelledEvent,
-    DtmfCollectionRejectedEvent,
-    DtmfKeyEvent,
     HandoffFailedEvent,
     ResponseCancellationOutcome,
     ResponseTimeoutEvent,
@@ -56,11 +50,6 @@ from ._protocol import (
     decode_frame,
     new_id,
     optional_string,
-    parse_conversation_item_create,
-    parse_conversation_item_delete,
-    parse_dtmf,
-    parse_dtmf_collection_cancelled,
-    parse_dtmf_collection_rejected,
     parse_handoff_failed,
     parse_response_timeout,
     parse_session_start,
@@ -131,13 +120,7 @@ SessionStartCallback = Callable[[VoiceSession, SessionStartEvent], Awaitable[Non
 UserMessageCallback = Callable[[VoiceSession, UserMessageEvent, VoiceResponse], Awaitable[None]]
 UserNoInputCallback = Callable[[VoiceSession, UserNoInputEvent, VoiceResponse], Awaitable[None]]
 UserSpeechStartedCallback = Callable[[VoiceSession, UserSpeechStartedEvent], Awaitable[None]]
-DtmfKeyCallback = Callable[[VoiceSession, DtmfKeyEvent], Awaitable[None]]
-DtmfCollectedCallback = Callable[[VoiceSession, DtmfCollectedEvent, VoiceResponse], Awaitable[None]]
-DtmfCollectionRejectedCallback = Callable[[VoiceSession, DtmfCollectionRejectedEvent], Awaitable[None]]
-DtmfCollectionCancelledCallback = Callable[[VoiceSession, DtmfCollectionCancelledEvent], Awaitable[None]]
 HandoffFailedCallback = Callable[[VoiceSession, HandoffFailedEvent, VoiceResponse], Awaitable[None]]
-ConversationItemCreateCallback = Callable[[VoiceSession, ConversationItemCreateEvent], Awaitable[None]]
-ConversationItemDeleteCallback = Callable[[VoiceSession, ConversationItemDeleteEvent], Awaitable[None]]
 BargeInCallback = Callable[[VoiceSession, BargeInEvent], Awaitable[None]]
 ResponseTimeoutCallback = Callable[[VoiceSession, ResponseTimeoutEvent], Awaitable[None]]
 SessionEndCallback = Callable[[VoiceSession, SessionEndEvent], Awaitable[None]]
@@ -175,9 +158,6 @@ _GLOBAL_IDENTITY_BYTES = 0
 _AGENT_TO_BRIDGE_TYPES = {
     "session.ready",
     "session.rejected",
-    "conversation.item.created",
-    "conversation.item.deleted",
-    "conversation.item.failed",
     "response.created",
     "response.none",
     "response.output_text.delta",
@@ -186,8 +166,6 @@ _AGENT_TO_BRIDGE_TYPES = {
     "response.cancel",
     "handoff",
     "end_call",
-    "dtmf.collect",
-    "dtmf.collect.cancel",
     "error",
 }
 
@@ -334,8 +312,6 @@ class _CallbackWork:
     callback: Callable[..., Awaitable[None]] | None
     response: VoiceResponse | None = None
     item_id: str | None = None
-    request_id: str | None = None
-    success_type: str | None = None
     payload_bytes: int = 0
 
 
@@ -867,13 +843,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):  # pylint: disable=too-ma
         self._on_user_message: Optional[UserMessageCallback] = None
         self._on_user_no_input: Optional[UserNoInputCallback] = None
         self._on_user_speech_started: Optional[UserSpeechStartedCallback] = None
-        self._on_dtmf_key: Optional[DtmfKeyCallback] = None
-        self._on_dtmf_collected: Optional[DtmfCollectedCallback] = None
-        self._on_dtmf_collection_rejected: Optional[DtmfCollectionRejectedCallback] = None
-        self._on_dtmf_collection_cancelled: Optional[DtmfCollectionCancelledCallback] = None
         self._on_handoff_failed: Optional[HandoffFailedCallback] = None
-        self._on_conversation_item_create: Optional[ConversationItemCreateCallback] = None
-        self._on_conversation_item_delete: Optional[ConversationItemDeleteCallback] = None
         self._on_barge_in: Optional[BargeInCallback] = None
         self._on_response_timeout: Optional[ResponseTimeoutCallback] = None
         self._on_session_end: Optional[SessionEndCallback] = None
@@ -955,54 +925,6 @@ class VoiceAgentServerHost(InvocationAgentServerHost):  # pylint: disable=too-ma
         self._on_user_speech_started = self._register_once("on_user_speech_started", self._on_user_speech_started, fn)
         return fn
 
-    def on_dtmf_key(self, fn: DtmfKeyCallback) -> DtmfKeyCallback:
-        """Register the optional raw DTMF key callback.
-
-        :param fn: Async session-signal callback.
-        :type fn: Callable[[VoiceSession, DtmfKeyEvent], Awaitable[None]]
-        :return: Registered callback.
-        :rtype: Callable[[VoiceSession, DtmfKeyEvent], Awaitable[None]]
-        """
-        self._on_dtmf_key = self._register_once("on_dtmf_key", self._on_dtmf_key, fn)
-        return fn
-
-    def on_dtmf_collected(self, fn: DtmfCollectedCallback) -> DtmfCollectedCallback:
-        """Register the optional completed DTMF collection turn callback.
-
-        :param fn: Async response-producing callback.
-        :type fn: Callable[[VoiceSession, DtmfCollectedEvent, VoiceResponse], Awaitable[None]]
-        :return: Registered callback.
-        :rtype: Callable[[VoiceSession, DtmfCollectedEvent, VoiceResponse], Awaitable[None]]
-        """
-        self._on_dtmf_collected = self._register_once("on_dtmf_collected", self._on_dtmf_collected, fn)
-        return fn
-
-    def on_dtmf_collection_rejected(self, fn: DtmfCollectionRejectedCallback) -> DtmfCollectionRejectedCallback:
-        """Register the optional DTMF collection rejection callback.
-
-        :param fn: Async collection-control callback.
-        :type fn: Callable[[VoiceSession, DtmfCollectionRejectedEvent], Awaitable[None]]
-        :return: Registered callback.
-        :rtype: Callable[[VoiceSession, DtmfCollectionRejectedEvent], Awaitable[None]]
-        """
-        self._on_dtmf_collection_rejected = self._register_once(
-            "on_dtmf_collection_rejected", self._on_dtmf_collection_rejected, fn
-        )
-        return fn
-
-    def on_dtmf_collection_cancelled(self, fn: DtmfCollectionCancelledCallback) -> DtmfCollectionCancelledCallback:
-        """Register the optional DTMF collection cancellation callback.
-
-        :param fn: Async collection-control callback.
-        :type fn: Callable[[VoiceSession, DtmfCollectionCancelledEvent], Awaitable[None]]
-        :return: Registered callback.
-        :rtype: Callable[[VoiceSession, DtmfCollectionCancelledEvent], Awaitable[None]]
-        """
-        self._on_dtmf_collection_cancelled = self._register_once(
-            "on_dtmf_collection_cancelled", self._on_dtmf_collection_cancelled, fn
-        )
-        return fn
-
     def on_handoff_failed(self, fn: HandoffFailedCallback) -> HandoffFailedCallback:
         """Register the optional handoff recovery-turn callback.
 
@@ -1012,32 +934,6 @@ class VoiceAgentServerHost(InvocationAgentServerHost):  # pylint: disable=too-ma
         :rtype: Callable[[VoiceSession, HandoffFailedEvent, VoiceResponse], Awaitable[None]]
         """
         self._on_handoff_failed = self._register_once("on_handoff_failed", self._on_handoff_failed, fn)
-        return fn
-
-    def on_conversation_item_create(self, fn: ConversationItemCreateCallback) -> ConversationItemCreateCallback:
-        """Register the optional durable history-create callback.
-
-        :param fn: Async history mutation callback.
-        :type fn: Callable[[VoiceSession, ConversationItemCreateEvent], Awaitable[None]]
-        :return: Registered callback.
-        :rtype: Callable[[VoiceSession, ConversationItemCreateEvent], Awaitable[None]]
-        """
-        self._on_conversation_item_create = self._register_once(
-            "on_conversation_item_create", self._on_conversation_item_create, fn
-        )
-        return fn
-
-    def on_conversation_item_delete(self, fn: ConversationItemDeleteCallback) -> ConversationItemDeleteCallback:
-        """Register the optional durable history-delete callback.
-
-        :param fn: Async history mutation callback.
-        :type fn: Callable[[VoiceSession, ConversationItemDeleteEvent], Awaitable[None]]
-        :return: Registered callback.
-        :rtype: Callable[[VoiceSession, ConversationItemDeleteEvent], Awaitable[None]]
-        """
-        self._on_conversation_item_delete = self._register_once(
-            "on_conversation_item_delete", self._on_conversation_item_delete, fn
-        )
         return fn
 
     def on_barge_in(self, fn: BargeInCallback) -> BargeInCallback:
@@ -1088,13 +984,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):  # pylint: disable=too-ma
             on_user_message=self._on_user_message,
             on_user_no_input=self._on_user_no_input,
             on_user_speech_started=self._on_user_speech_started,
-            on_dtmf_key=self._on_dtmf_key,
-            on_dtmf_collected=self._on_dtmf_collected,
-            on_dtmf_collection_rejected=self._on_dtmf_collection_rejected,
-            on_dtmf_collection_cancelled=self._on_dtmf_collection_cancelled,
             on_handoff_failed=self._on_handoff_failed,
-            on_conversation_item_create=self._on_conversation_item_create,
-            on_conversation_item_delete=self._on_conversation_item_delete,
             on_barge_in=self._on_barge_in,
             on_response_timeout=self._on_response_timeout,
             on_session_end=self._on_session_end,
@@ -1117,13 +1007,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         on_user_message: Optional[UserMessageCallback],
         on_user_no_input: Optional[UserNoInputCallback],
         on_user_speech_started: Optional[UserSpeechStartedCallback],
-        on_dtmf_key: Optional[DtmfKeyCallback],
-        on_dtmf_collected: Optional[DtmfCollectedCallback],
-        on_dtmf_collection_rejected: Optional[DtmfCollectionRejectedCallback],
-        on_dtmf_collection_cancelled: Optional[DtmfCollectionCancelledCallback],
         on_handoff_failed: Optional[HandoffFailedCallback],
-        on_conversation_item_create: Optional[ConversationItemCreateCallback],
-        on_conversation_item_delete: Optional[ConversationItemDeleteCallback],
         on_barge_in: Optional[BargeInCallback],
         on_response_timeout: Optional[ResponseTimeoutCallback],
         on_session_end: Optional[SessionEndCallback],
@@ -1133,13 +1017,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         self._on_user_message = on_user_message
         self._on_user_no_input = on_user_no_input
         self._on_user_speech_started = on_user_speech_started
-        self._on_dtmf_key = on_dtmf_key
-        self._on_dtmf_collected = on_dtmf_collected
-        self._on_dtmf_collection_rejected = on_dtmf_collection_rejected
-        self._on_dtmf_collection_cancelled = on_dtmf_collection_cancelled
         self._on_handoff_failed = on_handoff_failed
-        self._on_conversation_item_create = on_conversation_item_create
-        self._on_conversation_item_delete = on_conversation_item_delete
         self._on_barge_in = on_barge_in
         self._on_response_timeout = on_response_timeout
         self._on_session_end = on_session_end
@@ -1195,9 +1073,6 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             str,
             tuple[VoiceResponse, asyncio.Future[tuple[bool, str]]],
         ] = OrderedDict()
-        self._dtmf_collections: dict[str, str] = {}
-        self._dtmf_cancel_pending: set[str] = set()
-        self._recent_dtmf_cancel_races: OrderedDict[str, None] = OrderedDict()
         self._response_start_ns: dict[str, int] = {}
         self._first_output_recorded: set[str] = set()
         self._activation_recorded = False
@@ -1384,6 +1259,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         *,
         allow_while_ending: bool = False,
         state_committed: bool,
+        before_transport_attempt: Callable[[], None] | None = None,
     ) -> None:
         """Send one prepared frame with explicit commit-boundary handling.
 
@@ -1393,6 +1269,9 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         :paramtype allow_while_ending: bool
         :keyword state_committed: Whether caller state was irreversibly committed.
         :paramtype state_committed: bool
+        :keyword before_transport_attempt: Internal synchronous arbitration hook
+            invoked immediately before entering the WebSocket transport call.
+        :paramtype before_transport_attempt: Callable[[], None] or None
         """
         if self._closed:
             raise VoiceBridgeConnectionClosedError("The voice connection is closed")
@@ -1429,6 +1308,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             cancelling = getattr(current_task, "cancelling", lambda: 0)
             if prepared.item_id is not None and cancelling():
                 raise asyncio.CancelledError()
+            if before_transport_attempt is not None:
+                before_transport_attempt()
             try:
                 if prepared.response_id is not None and prepared.item_id is not None:
                     self._response_identities.commit_item(prepared.response_id, prepared.item_id)
@@ -1635,77 +1516,6 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 self._active_response = None
         if local_terminal_won:
             self._record_terminal(response_id, terminal_kind)
-
-    async def register_dtmf_collection(
-        self,
-        *,
-        response_id: str,
-        collection_id: str,
-        max_digits: int,
-        terminator: str | None,
-        initial_timeout_ms: int,
-        inter_digit_timeout_ms: int,
-    ) -> None:
-        """Register and emit one response-scoped DTMF collection request.
-
-        :keyword response_id: Open source response identifier.
-        :paramtype response_id: str
-        :keyword collection_id: SDK-allocated collection identifier.
-        :paramtype collection_id: str
-        :keyword max_digits: Positive maximum returned digit count.
-        :paramtype max_digits: int
-        :keyword terminator: Optional single DTMF terminator.
-        :paramtype terminator: str or None
-        :keyword initial_timeout_ms: Positive first-key timeout.
-        :paramtype initial_timeout_ms: int
-        :keyword inter_digit_timeout_ms: Positive inter-key timeout.
-        :paramtype inter_digit_timeout_ms: int
-        """
-        self._ensure_ready()
-        fields: dict[str, Any] = {
-            "response_id": response_id,
-            "collection_id": collection_id,
-            "max_digits": max_digits,
-            "initial_timeout_ms": initial_timeout_ms,
-            "inter_digit_timeout_ms": inter_digit_timeout_ms,
-        }
-        if terminator is not None:
-            fields["terminator"] = terminator
-        prepared = self._prepare_frame("dtmf.collect", fields)
-        async with self._state_lock:
-            if self._dtmf_collections:
-                raise RuntimeError("Only one DTMF collection may be pending or active")
-            response = self._find_response_locked(response_id)
-            if response is None or response.is_terminal:
-                raise VoiceBridgeConnectionClosedError("The source response is not open")
-            self._dtmf_collections[collection_id] = response_id
-        try:
-            await self._send_prepared(prepared, state_committed=True)
-        except BaseException:
-            async with self._state_lock:
-                self._dtmf_collections.pop(collection_id, None)
-            raise
-
-    async def cancel_dtmf_collection(self, collection_id: str) -> None:
-        """Emit explicit cancellation for one known DTMF collection.
-
-        :param collection_id: SDK-allocated collection identifier.
-        :type collection_id: str
-        """
-        self._ensure_ready()
-        prepared = self._prepare_frame("dtmf.collect.cancel", {"collection_id": collection_id})
-        async with self._state_lock:
-            if collection_id not in self._dtmf_collections:
-                raise RuntimeError("Unknown or completed DTMF collection_id")
-            if collection_id in self._dtmf_cancel_pending:
-                raise RuntimeError("DTMF collection cancellation is already pending")
-            self._dtmf_cancel_pending.add(collection_id)
-        try:
-            await self._send_prepared(prepared, state_committed=True)
-        except BaseException:
-            async with self._state_lock:
-                self._dtmf_cancel_pending.discard(collection_id)
-            raise
 
     async def end_call(self, reason: str, mode: str) -> None:
         """Emit one call terminal and seal active work.
@@ -1917,17 +1727,31 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         :return: Whether activation may proceed.
         :rtype: bool
         """
-        ready_send_started = False
-        receive_completed_after_send_started = False
+        ready_transport_attempted = asyncio.Event()
+        receive_after_transport_attempt = False
         transferred_receive = receive_task
+        prepared_ready = self._prepare_frame("session.ready", {})
+
+        class _EarlyReadyReceive(Exception):
+            """The receive gate won before the ready transport attempt."""
+
+        def _enter_ready_transport() -> None:
+            # No await separates this check, marker, and the following transport
+            # call. This is the local arbitration point between a completed receive
+            # and the ready frame entering the WebSocket transport.
+            if active_receive_task.done() and not receive_after_transport_attempt:
+                raise _EarlyReadyReceive()
+            ready_transport_attempted.set()
 
         async def _send_ready() -> None:
-            nonlocal ready_send_started
-            ready_send_started = True
-            await self.send("session.ready")
+            await self._send_prepared(
+                prepared_ready,
+                state_committed=False,
+                before_transport_attempt=_enter_ready_transport,
+            )
 
         async def _receive_during_ready() -> dict[str, Any] | None:
-            nonlocal receive_completed_after_send_started
+            nonlocal receive_after_transport_attempt
             try:
                 if transferred_receive is not None:
                     return await transferred_receive
@@ -1935,7 +1759,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             finally:
                 # Captured in the receive task itself, before task completion
                 # callbacks or the coordinator can reorder observations.
-                receive_completed_after_send_started = ready_send_started
+                receive_after_transport_attempt = ready_transport_attempted.is_set()
 
         active_receive_task = asyncio.create_task(_receive_during_ready(), name="voice_ready_receive")
 
@@ -1963,7 +1787,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             active_receive_task.cancel()
             await asyncio.gather(active_receive_task, return_exceptions=True)
             raise
-        if active_receive_task.done() and not receive_completed_after_send_started:
+        if active_receive_task.done() and not receive_after_transport_attempt:
             return await _reject_early_receive()
         ready_task = asyncio.create_task(_send_ready(), name="voice_session_ready")
         try:
@@ -1975,15 +1799,18 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             raise
 
         # A frame is provably early only when the receive coroutine completed
-        # before the ready send attempt began. Once send starts, the peer may
-        # receive ready and reply before the sender continuation resumes.
-        if active_receive_task in done and not receive_completed_after_send_started:
+        # before the ready frame entered the WebSocket transport call. Once that
+        # call begins, the peer may receive ready and reply before the sender
+        # continuation resumes.
+        if active_receive_task in done and not receive_after_transport_attempt:
             ready_task.cancel()
             await asyncio.gather(ready_task, return_exceptions=True)
             return await _reject_early_receive()
 
         try:
             await ready_task
+        except _EarlyReadyReceive:
+            return await _reject_early_receive()
         except BaseException:
             if not active_receive_task.done():
                 active_receive_task.cancel()
@@ -2076,6 +1903,17 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         message_type = payload["type"]
         if message_type == "user.message":
             message_event = parse_user_message(payload)
+            if not message_event.content:
+                async with self._state_lock:
+                    if self._ending:
+                        raise VoiceBridgeProtocolError(
+                            "user.message arrived after session terminal",
+                            close_code=1008,
+                        )
+                    if message_event.item_id in self._seen_input_ids:
+                        raise VoiceBridgeProtocolError("Input item_id was reused", close_code=1008)
+                    self._seen_input_ids.add(message_event.item_id)
+                return True
             await self._enqueue_turn(
                 message_event.item_id,
                 message_event,
@@ -2095,60 +1933,6 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             )
         elif message_type == "user.speech_started":
             await self._enqueue_signal(UserSpeechStartedEvent(), self._on_user_speech_started, "user.speech_started")
-        elif message_type == "conversation.item.create":
-            create_event = parse_conversation_item_create(payload)
-            self._enqueue_history(
-                create_event,
-                self._on_conversation_item_create,
-                "conversation.item.create",
-                "conversation.item.created",
-            )
-        elif message_type == "conversation.item.delete":
-            delete_event = parse_conversation_item_delete(payload)
-            self._enqueue_history(
-                delete_event,
-                self._on_conversation_item_delete,
-                "conversation.item.delete",
-                "conversation.item.deleted",
-            )
-        elif message_type == "dtmf":
-            dtmf_event = parse_dtmf(payload)
-            if isinstance(dtmf_event, DtmfKeyEvent):
-                await self._enqueue_signal(dtmf_event, self._on_dtmf_key, "dtmf.key")
-            else:
-                await self._consume_dtmf_collection(
-                    dtmf_event.collection_id,
-                    preserve_cancel_race=True,
-                )
-                await self._enqueue_turn(
-                    dtmf_event.item_id,
-                    dtmf_event,
-                    self._on_dtmf_collected,
-                    "dtmf.collected",
-                )
-        elif message_type == "dtmf.collect.rejected":
-            rejected_event = parse_dtmf_collection_rejected(payload)
-            await self._consume_dtmf_collection(
-                rejected_event.collection_id,
-                allow_late_cancel_rejection=rejected_event.reason == "collection_not_found",
-                preserve_cancel_race=rejected_event.reason != "collection_not_found",
-            )
-            await self._enqueue_signal(
-                rejected_event,
-                self._on_dtmf_collection_rejected,
-                "dtmf.collect.rejected",
-            )
-        elif message_type == "dtmf.collect.cancelled":
-            cancelled_event = parse_dtmf_collection_cancelled(payload)
-            await self._consume_dtmf_collection(
-                cancelled_event.collection_id,
-                preserve_cancel_race=cancelled_event.reason != "cancelled_by_agent",
-            )
-            await self._enqueue_signal(
-                cancelled_event,
-                self._on_dtmf_collection_cancelled,
-                "dtmf.collect.cancelled",
-            )
         elif message_type == "handoff.failed":
             handoff_event = parse_handoff_failed(payload)
             await self._enqueue_turn(
@@ -2216,50 +2000,6 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
     ) -> None:
         if callback is not None:
             self._put_work(_CallbackWork(kind=kind, event=event, callback=callback))
-
-    def _enqueue_history(
-        self,
-        event: ConversationItemCreateEvent | ConversationItemDeleteEvent,
-        callback: Callable[..., Awaitable[None]] | None,
-        kind: str,
-        success_type: str,
-    ) -> None:
-        self._ensure_dispatch_open()
-        item_id = event.item.item_id if isinstance(event, ConversationItemCreateEvent) else event.item_id
-        operation_identity = f"{kind}\0{item_id}"
-        if operation_identity in self._seen_input_ids:
-            raise VoiceBridgeProtocolError("History item operation was replayed", close_code=1008)
-        self._seen_input_ids.add(operation_identity)
-        self._put_work(
-            _CallbackWork(
-                kind=kind,
-                event=event,
-                callback=callback,
-                request_id=event.request_id,
-                success_type=success_type,
-            )
-        )
-
-    async def _consume_dtmf_collection(
-        self,
-        collection_id: str,
-        *,
-        allow_late_cancel_rejection: bool = False,
-        preserve_cancel_race: bool = False,
-    ) -> None:
-        async with self._state_lock:
-            source_response_id = self._dtmf_collections.pop(collection_id, None)
-            if source_response_id is None:
-                if allow_late_cancel_rejection and collection_id in self._recent_dtmf_cancel_races:
-                    self._recent_dtmf_cancel_races.pop(collection_id, None)
-                    return
-                raise VoiceBridgeProtocolError("Unknown DTMF collection_id", close_code=1008)
-            cancel_pending = collection_id in self._dtmf_cancel_pending
-            self._dtmf_cancel_pending.discard(collection_id)
-            if cancel_pending and preserve_cancel_race:
-                self._recent_dtmf_cancel_races[collection_id] = None
-                while len(self._recent_dtmf_cancel_races) > _MAX_RECENT_RESPONSES:
-                    self._recent_dtmf_cancel_races.popitem(last=False)
 
     def _put_work(self, work: _CallbackWork) -> None:
         self._ensure_dispatch_open()
@@ -2376,6 +2116,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             retained_bytes=work.payload_bytes,
         )
         release_task = asyncio.create_task(release.wait(), name="voice_turn_release")
+        callback_metric_recorded = False
         async with self._state_lock:
             self._active_customer_task = customer_task
         try:
@@ -2408,16 +2149,32 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                         await self._finalize_turn_response(response, release_task, failed=True)
                 else:
                     await self._finalize_turn_response(response, release_task, failed=False)
+            if customer_task.done():
+                async with self._state_lock:
+                    if self._active_customer_task is customer_task:
+                        self._active_customer_task = None
+                _metric_record(
+                    _CALLBACK_DURATION,
+                    (time.monotonic_ns() - callback_started_ns) / 1_000_000,
+                    {"kind": work.kind},
+                )
+                callback_metric_recorded = True
+            if response.is_cancel_pending and not response.is_terminal and not self.ending:
+                # Customer callback completion does not end protocol ownership.
+                # Keep this response active until the Bridge commits the winning
+                # cancel/barge/timeout outcome or the connection starts ending.
+                await release_task
         except asyncio.CancelledError:
             if not customer_task.done():
                 self._schedule_customer_cleanup(customer_task)
             raise
         finally:
-            _metric_record(
-                _CALLBACK_DURATION,
-                (time.monotonic_ns() - callback_started_ns) / 1_000_000,
-                {"kind": work.kind},
-            )
+            if not callback_metric_recorded:
+                _metric_record(
+                    _CALLBACK_DURATION,
+                    (time.monotonic_ns() - callback_started_ns) / 1_000_000,
+                    {"kind": work.kind},
+                )
             release_task.cancel()
             await asyncio.gather(release_task, return_exceptions=True)
             async with self._state_lock:
@@ -2434,41 +2191,6 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
 
     async def _process_signal_work(self, work: _CallbackWork) -> None:
         if self._session is None or self._ending:
-            return
-        if work.success_type is not None:
-            assert work.request_id is not None
-            if work.callback is None:
-                await self.send(
-                    "conversation.item.failed",
-                    request_id=work.request_id,
-                    code="mutation_failed",
-                    message="No history mutation callback is registered",
-                )
-                return
-            callback_started_ns = time.monotonic_ns()
-            try:
-                await self._await_signal_callback(work)
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                logger.error("Voice history callback failed: %s", type(exc).__name__)
-                _metric_add(_CALLBACK_ERROR_COUNTER, 1, {"kind": work.kind})
-                if self._ending:
-                    return
-                await self.send(
-                    "conversation.item.failed",
-                    request_id=work.request_id,
-                    code="mutation_failed",
-                    message="History mutation callback failed",
-                )
-            else:
-                if self._ending:
-                    return
-                await self.send(work.success_type, request_id=work.request_id)
-            finally:
-                _metric_record(
-                    _CALLBACK_DURATION,
-                    (time.monotonic_ns() - callback_started_ns) / 1_000_000,
-                    {"kind": work.kind},
-                )
             return
         if work.callback is None:
             return
@@ -3149,9 +2871,6 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 future.set_exception(VoiceBridgeConnectionClosedError(message))
         self._cancel_waiters.clear()
         self._abandoned_proactive_cancels.clear()
-        self._dtmf_collections.clear()
-        self._dtmf_cancel_pending.clear()
-        self._recent_dtmf_cancel_races.clear()
         for _, proactive_future in self._pending_proactive.values():
             if not proactive_future.done():
                 proactive_future.set_exception(VoiceBridgeConnectionClosedError(message))

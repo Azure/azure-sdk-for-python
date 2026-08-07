@@ -8,16 +8,14 @@ from types import MappingProxyType
 
 import pytest
 
-from azure.ai.agentserver.invocations.voice import DtmfCollectedEvent, DtmfKeyEvent, InputImagePart, InputTextPart
+from azure.ai.agentserver.invocations.voice import InputImagePart, InputTextPart
 from azure.ai.agentserver.invocations.voice._protocol import (
     VoiceBridgeProtocolError,
     canonical_payload,
     decode_frame,
+    encode_frame,
     new_timestamp,
     normalize_voice,
-    parse_conversation_item_create,
-    parse_conversation_item_delete,
-    parse_dtmf,
     parse_handoff_failed,
     parse_response_timeout,
     parse_session_start,
@@ -85,13 +83,30 @@ def test_new_timestamp_uses_canonical_utc_milliseconds() -> None:
 
 
 def test_decode_requires_common_envelope() -> None:
-    with pytest.raises(VoiceBridgeProtocolError, match="id must start with m_"):
+    with pytest.raises(VoiceBridgeProtocolError, match="id must be a non-empty string"):
         decode_frame('{"type":"user.message","ts":"2026-07-21T12:00:00Z"}')
 
 
-def test_decode_requires_message_id_namespace() -> None:
-    with pytest.raises(VoiceBridgeProtocolError, match="id must start with m_"):
-        decode_frame('{"type":"future","id":"r_1","ts":"2026-07-24T12:34:56.789Z"}')
+@pytest.mark.parametrize("message_id", ["opaque", "r_1", "in_1", "it_1", "dc_1", "m_", "消息-一"])
+def test_decode_accepts_opaque_non_empty_message_id(message_id: str) -> None:
+    frame = json.dumps({"type": "future", "id": message_id, "ts": _TS})
+
+    assert decode_frame(frame)["id"] == message_id
+
+
+@pytest.mark.parametrize("message_id", [None, "", 1, {}, []])
+def test_decode_rejects_invalid_message_id(message_id: object) -> None:
+    frame = json.dumps({"type": "future", "id": message_id, "ts": _TS})
+
+    with pytest.raises(VoiceBridgeProtocolError, match="id must be a non-empty string"):
+        decode_frame(frame)
+
+
+def test_encode_uses_m_namespace_for_sdk_owned_envelope_id() -> None:
+    message_id = json.loads(encode_frame("session.ready"))["id"]
+
+    assert message_id.startswith("m_")
+    assert len(message_id) > len("m_")
 
 
 def test_decode_rejects_non_standard_json_numbers() -> None:
@@ -129,20 +144,74 @@ def test_canonical_payload_ignores_object_key_order() -> None:
     assert canonical_payload({"a": 1, "b": 2}) == canonical_payload({"b": 2, "a": 1})
 
 
-def test_session_start_is_deeply_read_only() -> None:
+def test_session_start_validates_preserves_and_freezes_caller_context() -> None:
     event = parse_session_start(
         _start(
             greeting="Welcome",
             no_input_timeout_ms=8_000,
-            caller={"channel": "pstn", "custom_parameters": {"campaign": "renewals"}},
+            caller={
+                "channel": "future-channel",
+                "ani": "",
+                "dnis": "+14255550100",
+                "customer_id": "customer-1",
+                "custom_parameters": {
+                    "campaign": "renewals",
+                    "enabled": True,
+                    "attempt": 2,
+                    "ratio": 0.5,
+                    "optional": None,
+                    "segments": ["a", {"rank": 1}],
+                },
+                "future_context": {"nested": ["value"]},
+            },
         )
     )
 
     assert isinstance(event.caller, MappingProxyType)
+    assert event.caller["channel"] == "future-channel"  # type: ignore[index]
+    assert event.caller["ani"] == ""  # type: ignore[index]
+    assert event.caller["dnis"] == "+14255550100"  # type: ignore[index]
+    assert event.caller["customer_id"] == "customer-1"  # type: ignore[index]
     assert isinstance(event.caller["custom_parameters"], MappingProxyType)  # type: ignore[index]
+    assert event.caller["custom_parameters"]["segments"][1]["rank"] == 1  # type: ignore[index]
+    assert isinstance(event.caller["custom_parameters"]["segments"], tuple)  # type: ignore[index]
+    assert event.caller["future_context"]["nested"] == ("value",)  # type: ignore[index]
     assert event.no_input_timeout_ms == 8_000
     with pytest.raises(TypeError):
         event.caller["channel"] = "websocket"  # type: ignore[index]
+    with pytest.raises(TypeError):
+        event.caller["future_context"]["other"] = "value"  # type: ignore[index]
+
+
+@pytest.mark.parametrize("field_name", ["channel", "ani", "dnis", "customer_id"])
+@pytest.mark.parametrize("value", [None, False, 1, 1.5, [], {}])
+def test_session_start_rejects_invalid_known_caller_string_field(field_name: str, value: object) -> None:
+    with pytest.raises(VoiceBridgeProtocolError, match=rf"caller\.{field_name} must be a string"):
+        parse_session_start(_start(caller={field_name: value}))
+
+
+@pytest.mark.parametrize("value", [None, False, 1, 1.5, "invalid", []])
+def test_session_start_rejects_invalid_caller_custom_parameters(value: object) -> None:
+    with pytest.raises(VoiceBridgeProtocolError, match="caller.custom_parameters must be an object"):
+        parse_session_start(_start(caller={"custom_parameters": value}))
+
+
+@pytest.mark.parametrize("value", [None, False, 1, 1.5, "invalid", []])
+def test_session_start_rejects_invalid_caller_object(value: object) -> None:
+    with pytest.raises(VoiceBridgeProtocolError, match="caller must be an object"):
+        parse_session_start(_start(caller=value))
+
+
+@pytest.mark.parametrize("value", [None, False, 1, 1.5, [], {}])
+def test_session_start_rejects_invalid_greeting(value: object) -> None:
+    with pytest.raises(VoiceBridgeProtocolError, match="greeting must be a string"):
+        parse_session_start(_start(greeting=value))
+
+
+@pytest.mark.parametrize("value", [None, False, 0, -1, 1.5, "invalid", [], {}])
+def test_session_start_rejects_invalid_no_input_timeout(value: object) -> None:
+    with pytest.raises(VoiceBridgeProtocolError, match="no_input_timeout_ms must be a positive integer"):
+        parse_session_start(_start(no_input_timeout_ms=value))
 
 
 def test_session_start_rejects_greeting_on_reconnect() -> None:
@@ -185,17 +254,19 @@ def test_user_message_preserves_supported_content_order() -> None:
     assert event.text == "which receipt is mine"
 
 
-def test_user_message_rejects_no_supported_content() -> None:
-    with pytest.raises(VoiceBridgeProtocolError, match="no supported"):
-        parse_user_message(
-            {
-                "type": "user.message",
-                "id": "m_user",
-                "ts": _TS,
-                "item_id": "in_1",
-                "content": [{"type": "future_part"}],
-            }
-        )
+def test_user_message_allows_no_supported_content() -> None:
+    event = parse_user_message(
+        {
+            "type": "user.message",
+            "id": "m_user",
+            "ts": _TS,
+            "item_id": "in_1",
+            "content": [{"type": "future_part"}],
+        }
+    )
+
+    assert event.item_id == "in_1"
+    assert event.content == ()
 
 
 def test_user_message_preserves_long_item_id_for_fixed_digest_accounting() -> None:
@@ -245,105 +316,6 @@ def test_normalize_voice_materializes_json_mapping() -> None:
 def test_normalize_voice_requires_non_empty_json_mapping() -> None:
     with pytest.raises(TypeError, match="non-empty"):
         normalize_voice({})
-
-
-def test_history_create_and_delete_models_preserve_correlation() -> None:
-    created = parse_conversation_item_create(
-        {
-            "id": "m_history_create",
-            "item": {
-                "id": "hi_1",
-                "role": "user",
-                "content": [{"type": "input_text", "text": "selected order 42"}],
-            },
-            "previous_item_id": "root",
-        }
-    )
-    deleted = parse_conversation_item_delete({"id": "m_history_delete", "item_id": "hi_1"})
-
-    assert created.request_id == "m_history_create"
-    assert created.item.item_id == "hi_1"
-    assert created.item.role == "user"
-    assert created.previous_item_id == "root"
-    assert deleted.request_id == "m_history_delete"
-    assert deleted.item_id == "hi_1"
-
-
-def test_history_create_rejects_privileged_role() -> None:
-    with pytest.raises(VoiceBridgeProtocolError, match="role must be user"):
-        parse_conversation_item_create(
-            {
-                "id": "m_history",
-                "item": {
-                    "id": "hi_1",
-                    "role": "system",
-                    "content": [{"type": "input_text", "text": "secret"}],
-                },
-            }
-        )
-
-
-@pytest.mark.parametrize("previous_item_id", ["", "anything", "hi_", "it_", "in_1"])
-def test_history_create_rejects_invalid_previous_item_id(previous_item_id) -> None:
-    with pytest.raises(VoiceBridgeProtocolError, match="root or start with hi_ or it_"):
-        parse_conversation_item_create(
-            {
-                "id": "m_history",
-                "item": {
-                    "id": "hi_1",
-                    "role": "user",
-                    "content": [{"type": "input_text", "text": "history"}],
-                },
-                "previous_item_id": previous_item_id,
-            }
-        )
-
-
-@pytest.mark.parametrize("previous_item_id", ["root", "hi_previous", "it_previous"])
-def test_history_create_accepts_valid_previous_item_id(previous_item_id) -> None:
-    event = parse_conversation_item_create(
-        {
-            "id": "m_history",
-            "item": {
-                "id": "hi_1",
-                "role": "user",
-                "content": [{"type": "input_text", "text": "history"}],
-            },
-            "previous_item_id": previous_item_id,
-        }
-    )
-
-    assert event.previous_item_id == previous_item_id
-
-
-def test_history_delete_rejects_non_history_input_id() -> None:
-    with pytest.raises(VoiceBridgeProtocolError, match="must start with hi_ or it_"):
-        parse_conversation_item_delete({"id": "m_history_delete", "item_id": "in_1"})
-
-
-def test_dtmf_parser_distinguishes_raw_and_collected_shapes() -> None:
-    raw = parse_dtmf({"digits": "#"})
-    collected = parse_dtmf(
-        {
-            "digits": "123",
-            "collection_id": "dc_1",
-            "item_id": "in_dtmf",
-            "completion_reason": "max_digits",
-        }
-    )
-
-    assert raw == DtmfKeyEvent(digit="#")
-    assert collected == DtmfCollectedEvent(
-        item_id="in_dtmf",
-        collection_id="dc_1",
-        digits="123",
-        completion_reason="max_digits",
-    )
-
-
-def test_dtmf_parser_rejects_partial_collected_shape() -> None:
-    with pytest.raises(VoiceBridgeProtocolError, match="requires collection_id"):
-        parse_dtmf({"digits": "1", "collection_id": "dc_1"})
 
 
 def test_handoff_failed_parser_creates_recovery_turn() -> None:

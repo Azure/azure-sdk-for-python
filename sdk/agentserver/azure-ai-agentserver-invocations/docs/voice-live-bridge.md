@@ -35,7 +35,7 @@ code does not accept caller credentials through this library.
 callbacks before calling `run()`.
 
 `on_user_message` is required. Optional callbacks cover no-input turns,
-speech-start signals, DTMF, handoff recovery, history mutation, barge-in,
+speech-start signals, handoff recovery, barge-in,
 response timeout, and session end.
 
 ### Sessions, responses, and items
@@ -56,8 +56,15 @@ response-scoped error, or `handoff()` for a terminal agent transfer.
 
 Every WebSocket connection creates a fresh runtime. The SDK does not reconnect,
 retain helper state across connections, or replay callbacks and output. Caller
-metadata, transcript text, DTMF digits, image references, and generated text are
+metadata, transcript text, image references, and generated text are
 excluded from SDK-owned telemetry by default.
+
+Caller metadata is an open, untrusted object, never an authorization identity.
+Known fields are type-validated before `on_session_start`, while unknown fields
+and unknown string channel values are preserved for forward compatibility. The
+SDK does not normalize caller values. Caller metadata and nested containers are
+deeply read-only after validation, and invalid values are rejected without being
+included in SDK-owned logs, metrics, or wire errors.
 
 ## Examples
 
@@ -121,37 +128,6 @@ async def maybe_answer(
         return
     await response.send_text("How can I help?")
 ```
-
-### Collect DTMF input
-
-```python
-from azure.ai.agentserver.invocations.voice import DtmfCollectedEvent
-
-
-@app.on_user_message
-async def present_menu(session, event, response):
-    del session, event
-    await response.send_text("Enter your four-digit PIN, followed by pound.")
-    await response.collect_dtmf(
-        max_digits=4,
-        terminator="#",
-        initial_timeout_ms=10_000,
-        inter_digit_timeout_ms=5_000,
-    )
-
-
-@app.on_dtmf_collected
-async def handle_digits(
-    session: VoiceSession,
-    event: DtmfCollectedEvent,
-    response: VoiceResponse,
-) -> None:
-    del session
-    await response.send_text(f"Received {len(event.digits)} digits.")
-```
-
-DTMF digits are sensitive caller content. Avoid recording them in logs, span
-attributes, or exception messages.
 
 ### Hand off to another hosted agent
 

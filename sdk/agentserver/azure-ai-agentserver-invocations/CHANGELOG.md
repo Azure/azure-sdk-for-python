@@ -9,8 +9,8 @@
   implementation of Voice Live Bridge Protocol `1.0` over the existing
   `invocations_ws` transport.
 - Added `VoiceAgentServerHost`, immutable Voice events, ordered multi-item text
-  output, proactive admission, cancellation and terminal arbitration, DTMF,
-  handoff, history mutation, and session controls without exposing wire frames.
+  output, proactive admission, cancellation and terminal arbitration, handoff,
+  and session controls without exposing wire frames.
 - Added exact-message deduplication, bounded callback coordination and cleanup,
   cooperative cancellation, content-free protocol metrics, strict protocol
   validation, and per-connection replay-free state.
@@ -25,14 +25,22 @@
 - Propagated `x-platform-server` and incoming W3C trace context through the
   WebSocket upgrade and connection lifetime directly in Invocations, without
   changing Core middleware behavior.
-- Rejected malformed Voice history insertion predecessors before invoking
-  application mutation callbacks.
+- Accepted opaque non-empty inbound Voice envelope IDs while retaining the
+  `m_` namespace for SDK-generated frames, matching the protocol contract.
+- Validated known Voice caller-context fields while preserving additive metadata
+  and open channel values, and rejected explicit `null` for typed startup fields.
+- Moved Voice readiness arbitration to the actual WebSocket transport-attempt
+  boundary so application frames received while `session.ready` is still waiting
+  on local send locks are rejected without misclassifying immediate peer replies.
 - Prepared and validated Voice terminal frames before committing local terminal
   state, and completed post-wire response bookkeeping before propagating cancellation.
+- Kept a self-cancelled response in the active protocol slot after its customer
+  callback returns, until the Bridge terminal outcome or connection teardown,
+  preventing a later response from starting during cancellation arbitration.
 - Replaced eviction-based Voice message and identity tombstones with exact,
-  byte-bounded fail-closed ledgers of binary SHA-256 digests so old messages,
-  input items, and history operations can never be replayed after falling out
-  of a recent window. Response terminal, playback, abandoned-admission, and
+  byte-bounded fail-closed ledgers of binary SHA-256 digests so old messages
+  and input items can never be replayed after falling out of a recent window.
+  Response terminal, playback, abandoned-admission, and
   output-item ownership state now share one exact connection-lifetime ledger.
 - Registered `/invocations_ws` ahead of overlapping WebSocket catch-all routes
   and mounts while rejecting exact endpoint conflicts.

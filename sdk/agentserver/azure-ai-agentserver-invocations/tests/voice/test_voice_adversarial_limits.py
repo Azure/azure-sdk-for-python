@@ -14,7 +14,6 @@ from unittest import mock
 import pytest
 
 from azure.ai.agentserver.invocations.voice import (
-    ConversationItemDeleteEvent,
     HandoffFailedEvent,
     InputTextPart,
     ResponseTimeoutEvent,
@@ -33,13 +32,7 @@ def _connection(websocket=None):
         on_user_message=None,
         on_user_no_input=None,
         on_user_speech_started=None,
-        on_dtmf_key=None,
-        on_dtmf_collected=None,
-        on_dtmf_collection_rejected=None,
-        on_dtmf_collection_cancelled=None,
         on_handoff_failed=None,
-        on_conversation_item_create=None,
-        on_conversation_item_delete=None,
         on_barge_in=None,
         on_response_timeout=None,
         on_session_end=None,
@@ -546,7 +539,7 @@ def test_dedupe_budget_fails_closed_without_evicting_history(monkeypatch) -> Non
     asyncio.run(scenario())
 
 
-def test_full_dedupe_ledger_ignores_old_history_replay_before_failing_new_message(monkeypatch) -> None:
+def test_full_dedupe_ledger_ignores_old_replay_before_failing_new_message(monkeypatch) -> None:
     class QueueWebSocket(_RecordingWebSocket):
         def __init__(self, payloads: list[dict]) -> None:
             super().__init__()
@@ -557,80 +550,29 @@ def test_full_dedupe_ledger_ignores_old_history_replay_before_failing_new_messag
 
     async def scenario() -> None:
         monkeypatch.setattr(voice_host, "_MAX_SEEN_MESSAGES", 2)
-        history = {
-            "type": "conversation.item.delete",
-            "id": "m_history",
+        replayed = {
+            "type": "future.signal",
+            "id": "m_replayed",
             "ts": "2026-08-05T00:00:00Z",
-            "item_id": "hi_1",
         }
         websocket = QueueWebSocket(
             [
-                history,
+                replayed,
                 {"type": "future.signal", "id": "m_fill", "ts": "2026-08-05T00:00:00Z"},
-                history,
+                replayed,
                 {"type": "future.signal", "id": "m_overflow", "ts": "2026-08-05T00:00:00Z"},
             ]
         )
-        calls: list[str] = []
-
-        async def delete_history(_session, event) -> None:
-            calls.append(event.item_id)
-
         connection = _connection(websocket)
-        connection._ready = True  # pylint: disable=protected-access
-        connection._session = object()  # type: ignore[assignment]  # pylint: disable=protected-access
-        connection._on_conversation_item_delete = delete_history  # pylint: disable=protected-access
-        connection._callback_worker = asyncio.create_task(  # pylint: disable=protected-access
-            connection._callback_worker_loop()  # pylint: disable=protected-access
-        )
-
-        await connection._dispatch(await connection._receive_payload())  # type: ignore[arg-type]  # pylint: disable=protected-access
-        await connection._callback_queue.join()  # pylint: disable=protected-access
-        await connection._dispatch(await connection._receive_payload())  # type: ignore[arg-type]  # pylint: disable=protected-access
+        assert await connection._receive_payload() == replayed  # pylint: disable=protected-access
+        assert await connection._receive_payload() is not None  # pylint: disable=protected-access
 
         with pytest.raises(VoiceBridgeProtocolError, match="dedupe budget exceeded"):
             # _receive_payload skips the exact replay and fails on m_overflow;
-            # the old history callback is never dispatched a second time.
+            # the old message never consumes a second ledger record.
             await connection._receive_payload()  # pylint: disable=protected-access
 
-        assert calls == ["hi_1"]
         assert len(connection._seen_messages) == 2  # pylint: disable=protected-access
-        connection._callback_worker.cancel()  # pylint: disable=protected-access
-        await asyncio.gather(connection._callback_worker, return_exceptions=True)  # pylint: disable=protected-access
-        connection._release_connection_state()  # pylint: disable=protected-access
-
-    asyncio.run(scenario())
-
-
-def test_history_operation_replay_with_new_message_id_is_rejected_before_callback() -> None:
-    async def scenario() -> None:
-        calls: list[str] = []
-
-        async def delete_history(_session, event) -> None:
-            calls.append(event.item_id)
-
-        connection = _connection(_RecordingWebSocket())
-        connection._ready = True  # pylint: disable=protected-access
-        connection._session = object()  # type: ignore[assignment]  # pylint: disable=protected-access
-        connection._on_conversation_item_delete = delete_history  # pylint: disable=protected-access
-        connection._callback_worker = asyncio.create_task(  # pylint: disable=protected-access
-            connection._callback_worker_loop()  # pylint: disable=protected-access
-        )
-        first = {
-            "type": "conversation.item.delete",
-            "id": "m_delete_1",
-            "item_id": "hi_1",
-        }
-        replay = {**first, "id": "m_delete_2"}
-
-        await connection._dispatch(first)  # pylint: disable=protected-access
-        await connection._callback_queue.join()  # pylint: disable=protected-access
-        with pytest.raises(VoiceBridgeProtocolError, match="operation was replayed"):
-            await connection._dispatch(replay)  # pylint: disable=protected-access
-
-        assert calls == ["hi_1"]
-        connection._callback_worker.cancel()  # pylint: disable=protected-access
-        await asyncio.gather(connection._callback_worker, return_exceptions=True)  # pylint: disable=protected-access
         connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
@@ -705,7 +647,7 @@ def test_long_input_id_uses_fixed_digest_in_pending_and_resolved_state() -> None
     asyncio.run(scenario())
 
 
-def test_fatal_identity_failure_blocks_history_signal_and_ledger_growth() -> None:
+def test_fatal_identity_failure_blocks_signal_and_ledger_growth() -> None:
     async def scenario() -> None:
         connection = _connection()
         with pytest.raises(VoiceBridgeProtocolError, match="identity budget exhausted"):
@@ -721,13 +663,6 @@ def test_fatal_identity_failure_blocks_history_signal_and_ledger_growth() -> Non
             len(connection._seen_response_ids),  # pylint: disable=protected-access
         )
 
-        with pytest.raises(VoiceBridgeProtocolError, match="identity budget exhausted"):
-            connection._enqueue_history(  # pylint: disable=protected-access
-                ConversationItemDeleteEvent(request_id="m_delete", item_id="hi_1"),
-                None,
-                "conversation.item.delete",
-                "conversation.item.deleted",
-            )
         with pytest.raises(VoiceBridgeProtocolError, match="identity budget exhausted"):
             await connection._enqueue_signal(  # pylint: disable=protected-access
                 object(),
@@ -1001,37 +936,5 @@ def test_teardown_does_not_allocate_terminal_tombstones(monkeypatch, terminal_ki
 
         assert response.is_terminal
         assert connection._closed or terminal_kind == "session_end"  # pylint: disable=protected-access
-
-    asyncio.run(scenario())
-
-
-def test_session_end_does_not_fail_inflight_history_callback() -> None:
-    async def scenario() -> None:
-        entered = asyncio.Event()
-        release = asyncio.Event()
-
-        async def delete_history(_session, _event) -> None:
-            entered.set()
-            await release.wait()
-
-        websocket = _RecordingWebSocket()
-        connection = _connection(websocket)
-        connection._ready = True  # pylint: disable=protected-access
-        connection._session = object()  # type: ignore[assignment]  # pylint: disable=protected-access
-        connection._callback_worker = asyncio.create_task(  # pylint: disable=protected-access
-            connection._callback_worker_loop()  # pylint: disable=protected-access
-        )
-        connection._enqueue_history(  # pylint: disable=protected-access
-            ConversationItemDeleteEvent(request_id="m_delete", item_id="hi_1"),
-            delete_history,
-            "conversation.item.delete",
-            "conversation.item.deleted",
-        )
-        await entered.wait()
-        await connection._handle_session_end({"reason": "done"})  # pylint: disable=protected-access
-        release.set()
-        await connection._shutdown_runtime(drain_callbacks=True)  # pylint: disable=protected-access
-
-        assert not websocket.sent
 
     asyncio.run(scenario())
