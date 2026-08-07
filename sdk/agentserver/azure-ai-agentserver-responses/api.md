@@ -1,9 +1,6 @@
 ```py
 namespace azure.ai.agentserver.responses
 
-    def azure.ai.agentserver.responses.get_input_expanded(request: CreateResponse) -> list[Item]: ...
-
-
     class azure.ai.agentserver.responses.CreateResponse(TypedDict, total=False):
         key "agent_reference": ForwardRef('AgentReference', module='types')
         key "background": Optional[bool]
