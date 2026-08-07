@@ -2298,7 +2298,7 @@ def test_cancellation_resistant_task_is_tracked_until_done(monkeypatch) -> None:
         assert not task.done()
 
 
-def test_resistant_task_limit_closes_without_additional_work(monkeypatch) -> None:
+def test_resistant_task_limit_closes_without_additional_work(monkeypatch, voice_ci_checkpoint) -> None:
     """Reaching the cancellation-resistant task cap must wake connection
     supervision and close immediately, without relying on another callback work
     item to make the worker notice the limit.
@@ -2313,26 +2313,38 @@ def test_resistant_task_limit_closes_without_additional_work(monkeypatch) -> Non
     original_close = voice_host._VoiceConnection._close
 
     async def capture_close(self, *, code, reason):
+        voice_ci_checkpoint("resistant-limit: close hook entered")
         close_codes.append(code)
         closed.set()
+        voice_ci_checkpoint("resistant-limit: close event set; entering websocket close")
         await original_close(self, code=code, reason=reason)
+        voice_ci_checkpoint("resistant-limit: websocket close completed")
 
     monkeypatch.setattr(voice_host._VoiceConnection, "_close", capture_close)
 
     @app.on_user_message
     async def on_message(_session, _event: UserMessageEvent, response: VoiceResponse) -> None:
+        voice_ci_checkpoint("resistant-limit: callback entered")
         await response.send_text_delta("hi")
+        voice_ci_checkpoint("resistant-limit: delta sent; callback awaiting cancellation")
         try:
             await asyncio.Event().wait()
         except asyncio.CancelledError:
             cancelled.set()
+            voice_ci_checkpoint("resistant-limit: callback cancelled; entering resistant wait")
             await asyncio.Event().wait()  # resistant: swallow cancellation
 
+    voice_ci_checkpoint("resistant-limit: entering websocket context")
     with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        voice_ci_checkpoint("resistant-limit: websocket context entered; activating")
         _activate(websocket)
+        voice_ci_checkpoint("resistant-limit: activated; sending user message")
         websocket.send_json(_user_message())
+        voice_ci_checkpoint("resistant-limit: user message sent; awaiting response.created")
         created = websocket.receive_json()
+        voice_ci_checkpoint("resistant-limit: response.created received; awaiting text delta")
         delta = websocket.receive_json()
+        voice_ci_checkpoint("resistant-limit: text delta received; sending barge_in")
         websocket.send_json(
             {
                 "type": "barge_in",
@@ -2343,13 +2355,18 @@ def test_resistant_task_limit_closes_without_additional_work(monkeypatch) -> Non
                 "heard_text": "hi",
             }
         )
+        voice_ci_checkpoint("resistant-limit: barge_in sent; awaiting callback cancellation")
         assert cancelled.wait(timeout=2.0)
+        voice_ci_checkpoint("resistant-limit: callback cancellation observed; awaiting close hook")
         # No second frame or callback work is sent. The one-shot resource-limit
         # signal itself must interrupt the pending receive and close the socket.
         assert closed.wait(timeout=1.0)
+        voice_ci_checkpoint("resistant-limit: close hook observed; awaiting close frame")
         with pytest.raises(WebSocketDisconnect) as exc_info:
             websocket.receive_json()
+        voice_ci_checkpoint("resistant-limit: close frame received; exiting websocket context")
 
+    voice_ci_checkpoint("resistant-limit: websocket context exited")
     assert exc_info.value.code == 1011
     assert close_codes == [1011]
 
