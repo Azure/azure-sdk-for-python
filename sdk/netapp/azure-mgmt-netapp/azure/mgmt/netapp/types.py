@@ -18,6 +18,7 @@ if TYPE_CHECKING:
         ApplicationType,
         AvsDataStore,
         BackupType,
+        BindAuthenticationLevel,
         BreakthroughMode,
         BucketPatchPermissions,
         BucketPermissions,
@@ -32,7 +33,22 @@ if TYPE_CHECKING:
         CoolAccessTieringPolicy,
         CreatedByType,
         CredentialsStatus,
+        DayOfWeek,
         DesiredRansomwareProtectionState,
+        ElasticBackupPolicyState,
+        ElasticBackupType,
+        ElasticKeyVaultStatus,
+        ElasticNfsv3Access,
+        ElasticNfsv4Access,
+        ElasticPoolEncryptionKeySource,
+        ElasticProtocolType,
+        ElasticResourceAvailabilityStatus,
+        ElasticRootAccess,
+        ElasticServiceLevel,
+        ElasticSmbEncryption,
+        ElasticUnixAccessRule,
+        ElasticVolumePolicyEnforcement,
+        ElasticVolumeRestorationState,
         EnableSubvolumes,
         EnableWriteBackState,
         EncryptionKeySource,
@@ -46,6 +62,7 @@ if TYPE_CHECKING:
         KerberosState,
         KeySource,
         KeyVaultStatus,
+        LargeVolumeType,
         LdapServerType,
         LdapState,
         ManagedServiceIdentityType,
@@ -54,6 +71,7 @@ if TYPE_CHECKING:
         NetAppProvisioningState,
         NetworkFeatures,
         OnCertificateConflictAction,
+        PolicyStatus,
         ProtocolTypes,
         QosType,
         QuotaType,
@@ -65,8 +83,11 @@ if TYPE_CHECKING:
         SmbAccessBasedEnumeration,
         SmbEncryptionState,
         SmbNonBrowsable,
+        SnapshotDirectoryVisibility,
+        SnapshotUsage,
         VolumeLanguage,
         VolumeReplicationRelationshipStatus,
+        VolumeSize,
         VolumeStorageToNetworkProximity,
     )
 
@@ -102,6 +123,8 @@ class AccountProperties(TypedDict, total=False):
     :vartype provisioning_state: str
     :ivar active_directories: Active Directories.
     :vartype active_directories: list["ActiveDirectory"]
+    :ivar entra_id_config: Entra ID configuration for the account.
+    :vartype entra_id_config: "EntraIdConfig"
     :ivar encryption: Encryption settings.
     :vartype encryption: "AccountEncryption"
     :ivar disable_showmount: Shows the status of disableShowmount for all volumes under the
@@ -113,12 +136,16 @@ class AccountProperties(TypedDict, total=False):
     :ivar multi_ad_status: MultiAD Status for the account. Known values are: "Disabled" and
      "Enabled".
     :vartype multi_ad_status: Union[str, "MultiAdStatus"]
+    :ivar ldap_configuration: LDAP Configuration for the account.
+    :vartype ldap_configuration: "LdapConfiguration"
     """
 
     provisioningState: str
     """Azure lifecycle management."""
     activeDirectories: list["ActiveDirectory"]
     """Active Directories."""
+    entraIdConfig: "EntraIdConfig"
+    """Entra ID configuration for the account."""
     encryption: "AccountEncryption"
     """Encryption settings."""
     disableShowmount: Optional[bool]
@@ -128,6 +155,37 @@ class AccountProperties(TypedDict, total=False):
      subscription and region and only affect non ldap NFSv4 volumes."""
     multiAdStatus: Union[str, "MultiAdStatus"]
     """MultiAD Status for the account. Known values are: \"Disabled\" and \"Enabled\"."""
+    ldapConfiguration: "LdapConfiguration"
+    """LDAP Configuration for the account."""
+
+
+class AccountPropertiesPatch(TypedDict, total=False):
+    """NetApp account patch properties.
+
+    :ivar active_directories: Active Directories.
+    :vartype active_directories: list["ActiveDirectory"]
+    :ivar encryption: Encryption settings.
+    :vartype encryption: "AccountEncryption"
+    :ivar nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
+     NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
+    :vartype nfs_v4_id_domain: str
+    :ivar entra_id_config: Entra ID configuration for the account.
+    :vartype entra_id_config: "EntraIdConfigPatch"
+    :ivar ldap_configuration: LDAP Configuration for the account.
+    :vartype ldap_configuration: "LdapConfigurationPatch"
+    """
+
+    activeDirectories: list["ActiveDirectory"]
+    """Active Directories."""
+    encryption: "AccountEncryption"
+    """Encryption settings."""
+    nfsV4IDDomain: Optional[str]
+    """Domain for NFSv4 user ID mapping. This property will be set for all NetApp accounts in the
+     subscription and region and only affect non ldap NFSv4 volumes."""
+    entraIdConfig: "EntraIdConfigPatch"
+    """Entra ID configuration for the account."""
+    ldapConfiguration: "LdapConfigurationPatch"
+    """LDAP Configuration for the account."""
 
 
 class ActiveDirectory(TypedDict, total=False):
@@ -255,6 +313,245 @@ class ActiveDirectory(TypedDict, total=False):
      separated IPv4 addresses can be passed."""
 
 
+class Resource(TypedDict, total=False):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    """
+
+    id: str
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: str
+    """The name of the resource."""
+    type: str
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    systemData: "SystemData"
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class TrackedResource(Resource):
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    location: Required[str]
+    """The geo-location where the resource lives. Required."""
+
+
+class ActiveDirectoryConfig(TrackedResource):
+    """Active Directory Configuration resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ActiveDirectoryConfigProperties"
+    :ivar etag: "If etag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.").
+    :vartype etag: str
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    """
+
+    properties: "ActiveDirectoryConfigProperties"
+    """The resource-specific properties for this resource."""
+    etag: str
+    """\"If etag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.\")."""
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+
+
+class ActiveDirectoryConfigProperties(TypedDict, total=False):
+    """Active Directory Configuration properties.
+
+    :ivar user_name: A domain user account with permission to create machine accounts.
+    :vartype user_name: str
+    :ivar dns: An array of DNS server IP addresses(IPv4 only) for the Active Directory.
+    :vartype dns: list[str]
+    :ivar smb_server_name: NetBIOS name of the SMB server. This name will be registered as a
+     computer account in the AD and used to mount volumes.
+    :vartype smb_server_name: str
+    :ivar organizational_unit: The Organizational Unit (OU) within the Windows Active Directory.
+    :vartype organizational_unit: str
+    :ivar site: The Active Directory site the service will limit Domain Controller discovery to.
+     Required.
+    :vartype site: str
+    :ivar backup_operators: Users to be added to the Built-in Backup Operator active directory
+     group. A list of unique usernames without domain specifier.
+    :vartype backup_operators: list[str]
+    :ivar administrators: Users to be added to the Built-in Administrators active directory group.
+     A list of unique usernames without domain specifier.
+    :vartype administrators: list[str]
+    :ivar security_operators: Domain Users in the Active directory to be given SecurityPrivilege
+     privilege (Needed for SMB Continuously available shares for SQL). A list of unique usernames
+     without domain specifier.
+    :vartype security_operators: list[str]
+    :ivar active_directory_status: Status of the Active Directory. Known values are: "Created",
+     "InUse", "Deleted", "Error", and "Updating".
+    :vartype active_directory_status: Union[str, "ActiveDirectoryStatus"]
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: Union[str, "NetAppProvisioningState"]
+    :ivar domain: Name of the Active Directory domain. Required.
+    :vartype domain: str
+    :ivar secret_password: Access password from Azure KeyVault Secrets to connect Active Directory.
+     Required.
+    :vartype secret_password: "SecretPassword"
+    """
+
+    userName: str
+    """A domain user account with permission to create machine accounts."""
+    dns: list[str]
+    """An array of DNS server IP addresses(IPv4 only) for the Active Directory."""
+    smbServerName: str
+    """NetBIOS name of the SMB server. This name will be registered as a computer account in the AD
+     and used to mount volumes."""
+    organizationalUnit: str
+    """The Organizational Unit (OU) within the Windows Active Directory."""
+    site: Required[str]
+    """The Active Directory site the service will limit Domain Controller discovery to. Required."""
+    backupOperators: list[str]
+    """Users to be added to the Built-in Backup Operator active directory group. A list of unique
+     usernames without domain specifier."""
+    administrators: list[str]
+    """Users to be added to the Built-in Administrators active directory group. A list of unique
+     usernames without domain specifier."""
+    securityOperators: list[str]
+    """Domain Users in the Active directory to be given SecurityPrivilege privilege (Needed for SMB
+     Continuously available shares for SQL). A list of unique usernames without domain specifier."""
+    activeDirectoryStatus: Union[str, "ActiveDirectoryStatus"]
+    """Status of the Active Directory. Known values are: \"Created\", \"InUse\", \"Deleted\",
+     \"Error\", and \"Updating\"."""
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    domain: Required[str]
+    """Name of the Active Directory domain. Required."""
+    secretPassword: Required["SecretPassword"]
+    """Access password from Azure KeyVault Secrets to connect Active Directory. Required."""
+
+
+class ActiveDirectoryConfigUpdate(TypedDict, total=False):
+    """The type used for update operations of the ActiveDirectoryConfig.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ActiveDirectoryConfigUpdateProperties"
+    """
+
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "ActiveDirectoryConfigUpdateProperties"
+    """The resource-specific properties for this resource."""
+
+
+class ActiveDirectoryConfigUpdateProperties(TypedDict, total=False):
+    """The updatable properties of the ActiveDirectoryConfig.
+
+    :ivar user_name: A domain user account with permission to create machine accounts.
+    :vartype user_name: str
+    :ivar dns: An array of DNS server IP addresses(IPv4 only) for the Active Directory.
+    :vartype dns: list[str]
+    :ivar smb_server_name: NetBIOS name of the SMB server. This name will be registered as a
+     computer account in the AD and used to mount volumes.
+    :vartype smb_server_name: str
+    :ivar organizational_unit: The Organizational Unit (OU) within the Windows Active Directory.
+    :vartype organizational_unit: str
+    :ivar site: The Active Directory site the service will limit Domain Controller discovery to.
+    :vartype site: str
+    :ivar backup_operators: Users to be added to the Built-in Backup Operator active directory
+     group. A list of unique usernames without domain specifier.
+    :vartype backup_operators: list[str]
+    :ivar administrators: Users to be added to the Built-in Administrators active directory group.
+     A list of unique usernames without domain specifier.
+    :vartype administrators: list[str]
+    :ivar security_operators: Domain Users in the Active directory to be given SecurityPrivilege
+     privilege (Needed for SMB Continuously available shares for SQL). A list of unique usernames
+     without domain specifier.
+    :vartype security_operators: list[str]
+    :ivar domain: Name of the Active Directory domain.
+    :vartype domain: str
+    :ivar secret_password: Access password from Azure KeyVault Secrets to connect Active Directory.
+    :vartype secret_password: "SecretPassword"
+    """
+
+    userName: str
+    """A domain user account with permission to create machine accounts."""
+    dns: list[str]
+    """An array of DNS server IP addresses(IPv4 only) for the Active Directory."""
+    smbServerName: str
+    """NetBIOS name of the SMB server. This name will be registered as a computer account in the AD
+     and used to mount volumes."""
+    organizationalUnit: str
+    """The Organizational Unit (OU) within the Windows Active Directory."""
+    site: str
+    """The Active Directory site the service will limit Domain Controller discovery to."""
+    backupOperators: list[str]
+    """Users to be added to the Built-in Backup Operator active directory group. A list of unique
+     usernames without domain specifier."""
+    administrators: list[str]
+    """Users to be added to the Built-in Administrators active directory group. A list of unique
+     usernames without domain specifier."""
+    securityOperators: list[str]
+    """Domain Users in the Active directory to be given SecurityPrivilege privilege (Needed for SMB
+     Continuously available shares for SQL). A list of unique usernames without domain specifier."""
+    domain: str
+    """Name of the Active Directory domain."""
+    secretPassword: "SecretPassword"
+    """Access password from Azure KeyVault Secrets to connect Active Directory."""
+
+
 class AuthorizeRequest(TypedDict, total=False):
     """Authorize request.
 
@@ -294,34 +591,6 @@ class AzureKeyVaultDetails(TypedDict, total=False):
     """Specifies the Azure Key Vault settings for retrieving the bucket server certificate."""
     credentialsAkvDetails: "CredentialsAkvDetails"
     """Specifies the Azure Key Vault settings for storing the bucket credentials."""
-
-
-class Resource(TypedDict, total=False):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    """
-
-    id: str
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: str
-    """The name of the resource."""
-    type: str
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    systemData: "SystemData"
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
 class ProxyResource(Resource):
@@ -383,32 +652,6 @@ class BackupPatchProperties(TypedDict, total=False):
 
     label: str
     """Label for backup."""
-
-
-class TrackedResource(Resource):
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: dict[str, str]
-    """Resource tags."""
-    location: Required[str]
-    """The geo-location where the resource lives. Required."""
 
 
 class BackupPolicy(TrackedResource):
@@ -664,6 +907,51 @@ class BackupVaultProperties(TypedDict, total=False):
 
     provisioningState: str
     """Azure lifecycle management."""
+
+
+class BindPasswordAkvConfig(TypedDict, total=False):
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+    stored.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Bind DN user password is stored.
+     Required.
+    :vartype azure_key_vault_uri: str
+    :ivar secret_name: The name of the secret in Azure Key Vault that contains the Bind DN user
+     password. Required.
+    :vartype secret_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azureKeyVaultUri: Required[str]
+    """The Azure Key Vault URI where the Bind DN user password is stored. Required."""
+    secretName: Required[str]
+    """The name of the secret in Azure Key Vault that contains the Bind DN user password. Required."""
+    userAssignedIdentity: str
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
+
+
+class BindPasswordAkvConfigPatch(TypedDict, total=False):
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+    stored.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Bind DN user password is stored.
+    :vartype azure_key_vault_uri: str
+    :ivar secret_name: The name of the secret in Azure Key Vault that contains the Bind DN user
+     password.
+    :vartype secret_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azureKeyVaultUri: str
+    """The Azure Key Vault URI where the Bind DN user password is stored."""
+    secretName: str
+    """The name of the secret in Azure Key Vault that contains the Bind DN user password."""
+    userAssignedIdentity: str
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
 
 
 class BreakFileLocksRequest(TypedDict, total=False):
@@ -1339,12 +1627,22 @@ class CertificateAkvDetails(TypedDict, total=False):
     :ivar certificate_name: The name of the bucket server certificate stored in the Azure Key
      Vault.
     :vartype certificate_name: str
+    :ivar user_assigned_identity: Optional resource ID of the managed identity that has access to
+     the Azure Key Vault (AKV) secret. If a value is provided, it is used to find a matching entry
+     in the account's collection of user-assigned managed identities. If no match is found, an
+     exception is thrown. If no value is provided, the system-assigned managed identity is used.
+    :vartype user_assigned_identity: str
     """
 
     certificateKeyVaultUri: str
     """The base URI of the Azure Key Vault that is used when retrieving the bucket certificate."""
     certificateName: str
     """The name of the bucket server certificate stored in the Azure Key Vault."""
+    userAssignedIdentity: str
+    """Optional resource ID of the managed identity that has access to the Azure Key Vault (AKV)
+     secret. If a value is provided, it is used to find a matching entry in the account's collection
+     of user-assigned managed identities. If no match is found, an exception is thrown. If no value
+     is provided, the system-assigned managed identity is used."""
 
 
 class ChangeKeyVault(TypedDict, total=False):
@@ -1375,6 +1673,31 @@ class ChangeKeyVault(TypedDict, total=False):
      encrypted with customer-managed keys needs its own key vault private endpoint. Required."""
 
 
+class ChangeZoneRequest(TypedDict, total=False):
+    """Changes the zone for the Zone Redundant elastic capacity pool.
+
+    :ivar new_zone: Availability zone to move Zone Redundant elastic capacity pool to. Required.
+    :vartype new_zone: str
+    """
+
+    newZone: Required[str]
+    """Availability zone to move Zone Redundant elastic capacity pool to. Required."""
+
+
+class CheckElasticVolumeFilePathAvailabilityRequest(TypedDict, total=False):  # pylint: disable=name-too-long
+    """File path availability request content - availability is based on the elastic volume filePath
+    within the given elastic capacityPool.
+
+    :ivar file_path: A unique file path for the volume. Used when creating mount targets. This
+     needs to be unique within the elastic capacity pool. Required.
+    :vartype file_path: str
+    """
+
+    filePath: Required[str]
+    """A unique file path for the volume. Used when creating mount targets. This needs to be unique
+     within the elastic capacity pool. Required."""
+
+
 class CifsUser(TypedDict, total=False):
     """The effective CIFS username when accessing the volume data.
 
@@ -1400,6 +1723,11 @@ class CredentialsAkvDetails(TypedDict, total=False):
      "secret_access_key": "<REDACTED>"
      }.
     :vartype secret_name: str
+    :ivar user_assigned_identity: Optional resource ID of the managed identity that has access to
+     the Azure Key Vault (AKV) secret. If a value is provided, it is used to find a matching entry
+     in the account's collection of user-assigned managed identities. If no match is found, an
+     exception is thrown. If no value is provided, the system-assigned managed identity is used.
+    :vartype user_assigned_identity: str
     """
 
     credentialsKeyVaultUri: str
@@ -1412,6 +1740,11 @@ class CredentialsAkvDetails(TypedDict, total=False):
      \"access_key_id\": \"<REDACTED>\",
      \"secret_access_key\": \"<REDACTED>\"
      }."""
+    userAssignedIdentity: str
+    """Optional resource ID of the managed identity that has access to the Azure Key Vault (AKV)
+     secret. If a value is provided, it is used to find a matching entry in the account's collection
+     of user-assigned managed identities. If no match is found, an exception is thrown. If no value
+     is provided, the system-assigned managed identity is used."""
 
 
 class DailySchedule(TypedDict, total=False):
@@ -1462,6 +1795,1157 @@ class DestinationReplication(TypedDict, total=False):
     """The remote zone for the destination volume."""
 
 
+class ElasticAccount(TrackedResource):
+    """NetApp elastic account resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticAccountProperties"
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    """
+
+    properties: "ElasticAccountProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+
+
+class ElasticAccountProperties(TypedDict, total=False):
+    """NetApp elastic account properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: Union[str, "NetAppProvisioningState"]
+    :ivar encryption: Encryption settings.
+    :vartype encryption: "ElasticEncryption"
+    """
+
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    encryption: "ElasticEncryption"
+    """Encryption settings."""
+
+
+class ElasticAccountUpdate(TypedDict, total=False):
+    """The type used for update operations of the ElasticAccount.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticAccountUpdateProperties"
+    """
+
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "ElasticAccountUpdateProperties"
+    """The resource-specific properties for this resource."""
+
+
+class ElasticAccountUpdateProperties(TypedDict, total=False):
+    """The updatable properties of the ElasticAccount.
+
+    :ivar encryption: Encryption settings.
+    :vartype encryption: "ElasticEncryption"
+    """
+
+    encryption: "ElasticEncryption"
+    """Encryption settings."""
+
+
+class ElasticBackup(ProxyResource):
+    """NetApp Elastic Backup under an elastic Backup Vault.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticBackupProperties"
+    """
+
+    properties: "ElasticBackupProperties"
+    """The resource-specific properties for this resource."""
+
+
+class ElasticBackupPolicy(TrackedResource):
+    """NetApp Elastic Backup Policy resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticBackupPolicyProperties"
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: "ElasticBackupPolicyProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+
+class ElasticBackupPolicyProperties(TypedDict, total=False):
+    """Elastic Backup Policy properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: Union[str, "NetAppProvisioningState"]
+    :ivar daily_backups_to_keep: Daily backups count to keep.
+    :vartype daily_backups_to_keep: int
+    :ivar weekly_backups_to_keep: Weekly backups count to keep.
+    :vartype weekly_backups_to_keep: int
+    :ivar monthly_backups_to_keep: Monthly backups count to keep.
+    :vartype monthly_backups_to_keep: int
+    :ivar assigned_volumes_count: The number of volumes currently using this Backup Policy.
+    :vartype assigned_volumes_count: int
+    :ivar policy_state: The property to identify whether Backup Policy is enabled or not. Known
+     values are: "Enabled" and "Disabled".
+    :vartype policy_state: Union[str, "ElasticBackupPolicyState"]
+    """
+
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    dailyBackupsToKeep: int
+    """Daily backups count to keep."""
+    weeklyBackupsToKeep: int
+    """Weekly backups count to keep."""
+    monthlyBackupsToKeep: int
+    """Monthly backups count to keep."""
+    assignedVolumesCount: int
+    """The number of volumes currently using this Backup Policy."""
+    policyState: Union[str, "ElasticBackupPolicyState"]
+    """The property to identify whether Backup Policy is enabled or not. Known values are: \"Enabled\"
+     and \"Disabled\"."""
+
+
+class ElasticBackupPolicyUpdate(TypedDict, total=False):
+    """The type used for update operations of the ElasticBackupPolicy.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticBackupPolicyUpdateProperties"
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "ElasticBackupPolicyUpdateProperties"
+    """The resource-specific properties for this resource."""
+
+
+class ElasticBackupPolicyUpdateProperties(TypedDict, total=False):
+    """The updatable properties of the ElasticBackupPolicy.
+
+    :ivar daily_backups_to_keep: Daily backups count to keep.
+    :vartype daily_backups_to_keep: int
+    :ivar weekly_backups_to_keep: Weekly backups count to keep.
+    :vartype weekly_backups_to_keep: int
+    :ivar monthly_backups_to_keep: Monthly backups count to keep.
+    :vartype monthly_backups_to_keep: int
+    :ivar policy_state: The property to identify whether Backup Policy is enabled or not. Known
+     values are: "Enabled" and "Disabled".
+    :vartype policy_state: Union[str, "ElasticBackupPolicyState"]
+    """
+
+    dailyBackupsToKeep: int
+    """Daily backups count to keep."""
+    weeklyBackupsToKeep: int
+    """Weekly backups count to keep."""
+    monthlyBackupsToKeep: int
+    """Monthly backups count to keep."""
+    policyState: Union[str, "ElasticBackupPolicyState"]
+    """The property to identify whether Backup Policy is enabled or not. Known values are: \"Enabled\"
+     and \"Disabled\"."""
+
+
+class ElasticBackupProperties(TypedDict, total=False):
+    """Elastic Backup properties.
+
+    :ivar creation_date: The creation date of the backup.
+    :vartype creation_date: str
+    :ivar snapshot_creation_date: The snapshot creation date of the backup.
+    :vartype snapshot_creation_date: str
+    :ivar completion_date: The completion date of the backup.
+    :vartype completion_date: str
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: Union[str, "NetAppProvisioningState"]
+    :ivar size: Size of backup in bytes.
+    :vartype size: int
+    :ivar label: Label for backup.
+    :vartype label: str
+    :ivar backup_type: Type of backup Manual or Scheduled. Known values are: "Manual" and
+     "Scheduled".
+    :vartype backup_type: Union[str, "ElasticBackupType"]
+    :ivar failure_reason: Failure reason.
+    :vartype failure_reason: str
+    :ivar elastic_volume_resource_id: ResourceId used to identify the Elastic Volume. Required.
+    :vartype elastic_volume_resource_id: str
+    :ivar snapshot_usage: Manual backup using an already existing snapshot. This will always be
+     CreateNewSnapshot for scheduled backups and UseExistingSnapshot/CreateNewSnapshot for manual
+     backups. Known values are: "UseExistingSnapshot" and "CreateNewSnapshot".
+    :vartype snapshot_usage: Union[str, "SnapshotUsage"]
+    :ivar elastic_snapshot_resource_id: ResourceId used to identify the elastic snapshot resource.
+     This is required when an existing snapshot needs to be used for creating a manual backup.
+    :vartype elastic_snapshot_resource_id: str
+    :ivar elastic_backup_policy_resource_id: ResourceId used to identify the elastic backup policy.
+    :vartype elastic_backup_policy_resource_id: str
+    :ivar volume_size: Specifies if the backup is for a large volume. Known values are: "Large" and
+     "Regular".
+    :vartype volume_size: Union[str, "VolumeSize"]
+    """
+
+    creationDate: str
+    """The creation date of the backup."""
+    snapshotCreationDate: str
+    """The snapshot creation date of the backup."""
+    completionDate: str
+    """The completion date of the backup."""
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    size: int
+    """Size of backup in bytes."""
+    label: str
+    """Label for backup."""
+    backupType: Union[str, "ElasticBackupType"]
+    """Type of backup Manual or Scheduled. Known values are: \"Manual\" and \"Scheduled\"."""
+    failureReason: str
+    """Failure reason."""
+    elasticVolumeResourceId: Required[str]
+    """ResourceId used to identify the Elastic Volume. Required."""
+    snapshotUsage: Union[str, "SnapshotUsage"]
+    """Manual backup using an already existing snapshot. This will always be CreateNewSnapshot for
+     scheduled backups and UseExistingSnapshot/CreateNewSnapshot for manual backups. Known values
+     are: \"UseExistingSnapshot\" and \"CreateNewSnapshot\"."""
+    elasticSnapshotResourceId: str
+    """ResourceId used to identify the elastic snapshot resource. This is required when an existing
+     snapshot needs to be used for creating a manual backup."""
+    elasticBackupPolicyResourceId: str
+    """ResourceId used to identify the elastic backup policy."""
+    volumeSize: Union[str, "VolumeSize"]
+    """Specifies if the backup is for a large volume. Known values are: \"Large\" and \"Regular\"."""
+
+
+class ElasticBackupVault(TrackedResource):
+    """NetApp elastic backup vault resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticBackupVaultProperties"
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: "ElasticBackupVaultProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+
+class ElasticBackupVaultProperties(TypedDict, total=False):
+    """Elastic Backup Vault properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: Union[str, "NetAppProvisioningState"]
+    """
+
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+
+
+class ElasticBackupVaultUpdate(TypedDict, total=False):
+    """The type used for update operations of the ElasticBackupVault.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+
+
+class ElasticCapacityPool(TrackedResource):
+    """NetApp Elastic Capacity Pool resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticCapacityPoolProperties"
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    """
+
+    properties: "ElasticCapacityPoolProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+    zones: list[str]
+    """The availability zones."""
+
+
+class ElasticCapacityPoolProperties(TypedDict, total=False):
+    """Elastic capacity pool properties.
+
+    :ivar size: Provisioned size of the pool (in bytes). For zoneRedundant service level pool,
+     value must be in the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values
+     expressed in bytes as multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to
+     128TiB. Pool size can't be shrunk once it is created. Required.
+    :vartype size: int
+    :ivar service_level: The service level of the elastic capacity pool. Required. "ZoneRedundant"
+    :vartype service_level: Union[str, "ElasticServiceLevel"]
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: Union[str, "NetAppProvisioningState"]
+    :ivar encryption: Encryption settings.
+    :vartype encryption: "ElasticEncryptionConfiguration"
+    :ivar total_throughput_mibps: Total throughput of the pool in MiB/s.
+    :vartype total_throughput_mibps: float
+    :ivar subnet_resource_id: The Azure Resource URI for a delegated subnet. Must have the
+     delegation Microsoft.NetApp/elasticVolumes, this is used by all the volumes within the pool.
+     Required.
+    :vartype subnet_resource_id: str
+    :ivar current_zone: Indicates the current zone of the pool. This can be changed for
+     zoneRedundant service level pool with the changeZone action.
+    :vartype current_zone: str
+    :ivar availability_status: Current availability status of the resource. Known values are:
+     "Online" and "Offline".
+    :vartype availability_status: Union[str, "ElasticResourceAvailabilityStatus"]
+    :ivar active_directory_config_resource_id: The Azure Resource URI for an Active Directory
+     configuration. This is used by all the SMB volumes within the pool.
+    :vartype active_directory_config_resource_id: str
+    """
+
+    size: Required[int]
+    """Provisioned size of the pool (in bytes). For zoneRedundant service level pool, value must be in
+     the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values expressed in bytes as
+     multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to 128TiB. Pool size can't be
+     shrunk once it is created. Required."""
+    serviceLevel: Required[Union[str, "ElasticServiceLevel"]]
+    """The service level of the elastic capacity pool. Required. \"ZoneRedundant\""""
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    encryption: "ElasticEncryptionConfiguration"
+    """Encryption settings."""
+    totalThroughputMibps: float
+    """Total throughput of the pool in MiB/s."""
+    subnetResourceId: Required[str]
+    """The Azure Resource URI for a delegated subnet. Must have the delegation
+     Microsoft.NetApp/elasticVolumes, this is used by all the volumes within the pool. Required."""
+    currentZone: str
+    """Indicates the current zone of the pool. This can be changed for zoneRedundant service level
+     pool with the changeZone action."""
+    availabilityStatus: Union[str, "ElasticResourceAvailabilityStatus"]
+    """Current availability status of the resource. Known values are: \"Online\" and \"Offline\"."""
+    activeDirectoryConfigResourceId: str
+    """The Azure Resource URI for an Active Directory configuration. This is used by all the SMB
+     volumes within the pool."""
+
+
+class ElasticCapacityPoolUpdate(TypedDict, total=False):
+    """The type used for update operations of the ElasticCapacityPool.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticCapacityPoolUpdateProperties"
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "ElasticCapacityPoolUpdateProperties"
+    """The resource-specific properties for this resource."""
+
+
+class ElasticCapacityPoolUpdateProperties(TypedDict, total=False):
+    """The updatable properties of the ElasticCapacityPool.
+
+    :ivar size: Provisioned size of the pool (in bytes). For zoneRedundant service level pool,
+     value must be in the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values
+     expressed in bytes as multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to
+     128TiB. Pool size can't be shrunk once it is created.
+    :vartype size: int
+    :ivar encryption: Encryption settings.
+    :vartype encryption: "ElasticEncryptionConfiguration"
+    :ivar active_directory_config_resource_id: The Azure Resource URI for an Active Directory
+     configuration. This is used by all the SMB volumes within the pool.
+    :vartype active_directory_config_resource_id: str
+    """
+
+    size: int
+    """Provisioned size of the pool (in bytes). For zoneRedundant service level pool, value must be in
+     the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values expressed in bytes as
+     multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to 128TiB. Pool size can't be
+     shrunk once it is created."""
+    encryption: "ElasticEncryptionConfiguration"
+    """Encryption settings."""
+    activeDirectoryConfigResourceId: str
+    """The Azure Resource URI for an Active Directory configuration. This is used by all the SMB
+     volumes within the pool."""
+
+
+class ElasticEncryption(TypedDict, total=False):
+    """Encryption settings.
+
+    :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
+     Microsoft.NetApp, Microsoft.KeyVault. Known values are: "Microsoft.NetApp" and
+     "Microsoft.KeyVault".
+    :vartype key_source: Union[str, "KeySource"]
+    :ivar key_vault_properties: Properties provided by KeyVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype key_vault_properties: "ElasticKeyVaultProperties"
+    :ivar identity: Identity used to authenticate to KeyVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype identity: "ElasticEncryptionIdentity"
+    """
+
+    keySource: Union[str, "KeySource"]
+    """The encryption keySource (provider). Possible values (case-insensitive): Microsoft.NetApp,
+     Microsoft.KeyVault. Known values are: \"Microsoft.NetApp\" and \"Microsoft.KeyVault\"."""
+    keyVaultProperties: "ElasticKeyVaultProperties"
+    """Properties provided by KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+    identity: "ElasticEncryptionIdentity"
+    """Identity used to authenticate to KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+
+
+class ElasticEncryptionConfiguration(TypedDict, total=False):
+    """CMK Encryption Configuration.
+
+    :ivar elastic_pool_encryption_key_source: Pool Encryption Key Source. Required. Known values
+     are: "NetApp" and "KeyVault".
+    :vartype elastic_pool_encryption_key_source: Union[str, "ElasticPoolEncryptionKeySource"]
+    :ivar key_vault_private_endpoint_resource_id: The resource ID of private endpoint for KeyVault.
+     It must reside in the same VNET as the volume. Only applicable if encryptionKeySource =
+     'Microsoft.KeyVault'. Required.
+    :vartype key_vault_private_endpoint_resource_id: str
+    """
+
+    elasticPoolEncryptionKeySource: Required[Union[str, "ElasticPoolEncryptionKeySource"]]
+    """Pool Encryption Key Source. Required. Known values are: \"NetApp\" and \"KeyVault\"."""
+    keyVaultPrivateEndpointResourceId: Required[str]
+    """The resource ID of private endpoint for KeyVault. It must reside in the same VNET as the
+     volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'. Required."""
+
+
+class ElasticEncryptionIdentity(TypedDict, total=False):
+    """Identity used to authenticate with key vault.
+
+    :ivar principal_id: The principal ID (object ID) of the identity used to authenticate with key
+     vault. Read-only.
+    :vartype principal_id: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
+     key of identity.userAssignedIdentities.
+    :vartype user_assigned_identity: str
+    :ivar federated_client_id: ClientId of the multi-tenant Entra ID Application. Used to access
+     cross-tenant keyvaults.
+    :vartype federated_client_id: str
+    """
+
+    principalId: str
+    """The principal ID (object ID) of the identity used to authenticate with key vault. Read-only."""
+    userAssignedIdentity: str
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault.
+     Applicable if identity.type has 'UserAssigned'. It should match key of
+     identity.userAssignedIdentities."""
+    federatedClientId: str
+    """ClientId of the multi-tenant Entra ID Application. Used to access cross-tenant keyvaults."""
+
+
+class ElasticExportPolicy(TypedDict, total=False):
+    """Set of export policy rules.
+
+    :ivar rules: Export policy rule.
+    :vartype rules: list["ElasticExportPolicyRule"]
+    """
+
+    rules: list["ElasticExportPolicyRule"]
+    """Export policy rule."""
+
+
+class ElasticExportPolicyRule(TypedDict, total=False):
+    """Elastic Volume Export Policy Rule.
+
+    :ivar rule_index: Controls the priority of the export policy rule. When connecting to the
+     volume the rule with the lowest index that applies to the connecting client is used.
+    :vartype rule_index: int
+    :ivar unix_access_rule: Specifies the Unix file access level for the volume. It encompasses
+     both read-only and read-write permissions. Additionally, NoAccess can be set to block all
+     access to the volume. Known values are: "ReadOnly", "ReadWrite", and "NoAccess".
+    :vartype unix_access_rule: Union[str, "ElasticUnixAccessRule"]
+    :ivar nfsv3: Allows clients to access the volume with the NFSv3 protocol. Enable only for NFSv3
+     type volumes. Known values are: "Enabled" and "Disabled".
+    :vartype nfsv3: Union[str, "ElasticNfsv3Access"]
+    :ivar nfsv4: Allows clients to access the volume with at least NFSv4.1 protocol. Known values
+     are: "Enabled" and "Disabled".
+    :vartype nfsv4: Union[str, "ElasticNfsv4Access"]
+    :ivar allowed_clients: Client ingress specification for the export policy as list of IPv4
+     CIDRs, IPv4 host addresses and host names.
+    :vartype allowed_clients: list[str]
+    :ivar root_access: Indicates whether root access to the volume is granted to clients affected
+     by this rule. Known values are: "Enabled" and "Disabled".
+    :vartype root_access: Union[str, "ElasticRootAccess"]
+    """
+
+    ruleIndex: int
+    """Controls the priority of the export policy rule. When connecting to the volume the rule with
+     the lowest index that applies to the connecting client is used."""
+    unixAccessRule: Union[str, "ElasticUnixAccessRule"]
+    """Specifies the Unix file access level for the volume. It encompasses both read-only and
+     read-write permissions. Additionally, NoAccess can be set to block all access to the volume.
+     Known values are: \"ReadOnly\", \"ReadWrite\", and \"NoAccess\"."""
+    nfsv3: Union[str, "ElasticNfsv3Access"]
+    """Allows clients to access the volume with the NFSv3 protocol. Enable only for NFSv3 type
+     volumes. Known values are: \"Enabled\" and \"Disabled\"."""
+    nfsv4: Union[str, "ElasticNfsv4Access"]
+    """Allows clients to access the volume with at least NFSv4.1 protocol. Known values are:
+     \"Enabled\" and \"Disabled\"."""
+    allowedClients: list[str]
+    """Client ingress specification for the export policy as list of IPv4 CIDRs, IPv4 host addresses
+     and host names."""
+    rootAccess: Union[str, "ElasticRootAccess"]
+    """Indicates whether root access to the volume is granted to clients affected by this rule. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+
+
+class ElasticKeyVaultProperties(TypedDict, total=False):
+    """Properties of key vault.
+
+    :ivar key_vault_uri: The Uri of KeyVault.
+    :vartype key_vault_uri: str
+    :ivar key_name: The name of KeyVault key.
+    :vartype key_name: str
+    :ivar key_vault_resource_id: The resource ID of KeyVault.
+    :vartype key_vault_resource_id: str
+    :ivar status: Status of the KeyVault connection. Known values are: "Created", "InUse",
+     "Deleted", "Error", and "Updating".
+    :vartype status: Union[str, "ElasticKeyVaultStatus"]
+    """
+
+    keyVaultUri: str
+    """The Uri of KeyVault."""
+    keyName: str
+    """The name of KeyVault key."""
+    keyVaultResourceId: str
+    """The resource ID of KeyVault."""
+    status: Union[str, "ElasticKeyVaultStatus"]
+    """Status of the KeyVault connection. Known values are: \"Created\", \"InUse\", \"Deleted\",
+     \"Error\", and \"Updating\"."""
+
+
+class ElasticMountTargetProperties(TypedDict, total=False):
+    """Contains all the information needed to mount an elastic volume.
+
+    :ivar ip_address: The mount target's IPv4 address, used to mount the volume.
+    :vartype ip_address: str
+    :ivar smb_server_fqdn: The SMB server's Fully Qualified Domain Name, FQDN.
+    :vartype smb_server_fqdn: str
+    """
+
+    ipAddress: str
+    """The mount target's IPv4 address, used to mount the volume."""
+    smbServerFqdn: str
+    """The SMB server's Fully Qualified Domain Name, FQDN."""
+
+
+class ElasticSmbPatchProperties(TypedDict, total=False):
+    """SMB Patch Properties.
+
+    :ivar smb_encryption: Used to enable or disable encryption for in-flight SMB data volume. This
+     flag can be modified during Elastic volume update operation as well. Only applicable for SMB
+     protocol Elastic volumes. Known values are: "Enabled" and "Disabled".
+    :vartype smb_encryption: Union[str, "ElasticSmbEncryption"]
+    """
+
+    smbEncryption: Union[str, "ElasticSmbEncryption"]
+    """Used to enable or disable encryption for in-flight SMB data volume. This flag can be modified
+     during Elastic volume update operation as well. Only applicable for SMB protocol Elastic
+     volumes. Known values are: \"Enabled\" and \"Disabled\"."""
+
+
+class ElasticSmbProperties(TypedDict, total=False):
+    """SMB Properties.
+
+    :ivar smb_encryption: Used to enable or disable encryption for in-flight SMB data volume. This
+     flag can be modified during Elastic volume update operation as well. Only applicable for SMB
+     protocol Elastic volumes. Known values are: "Enabled" and "Disabled".
+    :vartype smb_encryption: Union[str, "ElasticSmbEncryption"]
+    """
+
+    smbEncryption: Union[str, "ElasticSmbEncryption"]
+    """Used to enable or disable encryption for in-flight SMB data volume. This flag can be modified
+     during Elastic volume update operation as well. Only applicable for SMB protocol Elastic
+     volumes. Known values are: \"Enabled\" and \"Disabled\"."""
+
+
+class ElasticSnapshot(ProxyResource):
+    """NetApp Elastic Snapshot under an Elastic Volume.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticSnapshotProperties"
+    """
+
+    properties: "ElasticSnapshotProperties"
+    """The resource-specific properties for this resource."""
+
+
+class ElasticSnapshotPolicy(TrackedResource):
+    """NetApp Elastic Snapshot Policy under an Elastic Account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticSnapshotPolicyProperties"
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: "ElasticSnapshotPolicyProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+
+class ElasticSnapshotPolicyDailySchedule(TypedDict, total=False):
+    """Daily Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Daily snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar hour: Indicates which hour in UTC timezone a snapshot should be taken.
+    :vartype hour: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshotsToKeep: int
+    """Daily snapshot count to keep."""
+    hour: int
+    """Indicates which hour in UTC timezone a snapshot should be taken."""
+    minute: int
+    """Indicates which minute snapshot should be taken."""
+
+
+class ElasticSnapshotPolicyHourlySchedule(TypedDict, total=False):
+    """Hourly Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Hourly snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshotsToKeep: int
+    """Hourly snapshot count to keep."""
+    minute: int
+    """Indicates which minute snapshot should be taken."""
+
+
+class ElasticSnapshotPolicyMonthlySchedule(TypedDict, total=False):
+    """Monthly Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Monthly snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar days_of_month: Indicates which days of the month snapshot (1-31) should be taken, accepts
+     a list of integers.
+    :vartype days_of_month: list[int]
+    :ivar hour: Indicates which hour in UTC timezone a snapshot should be taken.
+    :vartype hour: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshotsToKeep: int
+    """Monthly snapshot count to keep."""
+    daysOfMonth: list[int]
+    """Indicates which days of the month snapshot (1-31) should be taken, accepts a list of integers."""
+    hour: int
+    """Indicates which hour in UTC timezone a snapshot should be taken."""
+    minute: int
+    """Indicates which minute snapshot should be taken."""
+
+
+class ElasticSnapshotPolicyProperties(TypedDict, total=False):
+    """Elastic Snapshot policy properties.
+
+    :ivar hourly_schedule: Schedule for hourly snapshots.
+    :vartype hourly_schedule: "ElasticSnapshotPolicyHourlySchedule"
+    :ivar daily_schedule: Schedule for daily snapshots.
+    :vartype daily_schedule: "ElasticSnapshotPolicyDailySchedule"
+    :ivar weekly_schedule: Schedule for weekly snapshots.
+    :vartype weekly_schedule: "ElasticSnapshotPolicyWeeklySchedule"
+    :ivar monthly_schedule: Schedule for monthly snapshots.
+    :vartype monthly_schedule: "ElasticSnapshotPolicyMonthlySchedule"
+    :ivar policy_status: Configures if the snapshot policy is enabled on the volumes connected to
+     the policy. Known values are: "Enabled" and "Disabled".
+    :vartype policy_status: Union[str, "PolicyStatus"]
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: Union[str, "NetAppProvisioningState"]
+    """
+
+    hourlySchedule: "ElasticSnapshotPolicyHourlySchedule"
+    """Schedule for hourly snapshots."""
+    dailySchedule: "ElasticSnapshotPolicyDailySchedule"
+    """Schedule for daily snapshots."""
+    weeklySchedule: "ElasticSnapshotPolicyWeeklySchedule"
+    """Schedule for weekly snapshots."""
+    monthlySchedule: "ElasticSnapshotPolicyMonthlySchedule"
+    """Schedule for monthly snapshots."""
+    policyStatus: Union[str, "PolicyStatus"]
+    """Configures if the snapshot policy is enabled on the volumes connected to the policy. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+
+
+class ElasticSnapshotPolicyUpdate(TypedDict, total=False):
+    """The type used for update operations of the ElasticSnapshotPolicy.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticSnapshotPolicyUpdateProperties"
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "ElasticSnapshotPolicyUpdateProperties"
+    """The resource-specific properties for this resource."""
+
+
+class ElasticSnapshotPolicyUpdateProperties(TypedDict, total=False):
+    """The updatable properties of the ElasticSnapshotPolicy.
+
+    :ivar hourly_schedule: Schedule for hourly snapshots.
+    :vartype hourly_schedule: "ElasticSnapshotPolicyHourlySchedule"
+    :ivar daily_schedule: Schedule for daily snapshots.
+    :vartype daily_schedule: "ElasticSnapshotPolicyDailySchedule"
+    :ivar weekly_schedule: Schedule for weekly snapshots.
+    :vartype weekly_schedule: "ElasticSnapshotPolicyWeeklySchedule"
+    :ivar monthly_schedule: Schedule for monthly snapshots.
+    :vartype monthly_schedule: "ElasticSnapshotPolicyMonthlySchedule"
+    :ivar policy_status: Configures if the snapshot policy is enabled on the volumes connected to
+     the policy. Known values are: "Enabled" and "Disabled".
+    :vartype policy_status: Union[str, "PolicyStatus"]
+    """
+
+    hourlySchedule: "ElasticSnapshotPolicyHourlySchedule"
+    """Schedule for hourly snapshots."""
+    dailySchedule: "ElasticSnapshotPolicyDailySchedule"
+    """Schedule for daily snapshots."""
+    weeklySchedule: "ElasticSnapshotPolicyWeeklySchedule"
+    """Schedule for weekly snapshots."""
+    monthlySchedule: "ElasticSnapshotPolicyMonthlySchedule"
+    """Schedule for monthly snapshots."""
+    policyStatus: Union[str, "PolicyStatus"]
+    """Configures if the snapshot policy is enabled on the volumes connected to the policy. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+
+
+class ElasticSnapshotPolicyWeeklySchedule(TypedDict, total=False):
+    """Weekly Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Weekly snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar days: Indicates which weekday(s) snapshot(s) should be taken, accepts a list of week day
+     names in english.
+    :vartype days: list[Union[str, "DayOfWeek"]]
+    :ivar hour: Indicates which hour in UTC timezone a snapshot should be taken.
+    :vartype hour: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshotsToKeep: int
+    """Weekly snapshot count to keep."""
+    days: list[Union[str, "DayOfWeek"]]
+    """Indicates which weekday(s) snapshot(s) should be taken, accepts a list of week day names in
+     english."""
+    hour: int
+    """Indicates which hour in UTC timezone a snapshot should be taken."""
+    minute: int
+    """Indicates which minute snapshot should be taken."""
+
+
+class ElasticSnapshotProperties(TypedDict, total=False):
+    """Elastic Snapshot properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: Union[str, "NetAppProvisioningState"]
+    """
+
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+
+
+class ElasticVolume(TrackedResource):
+    """NetApp Elastic Volume resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticVolumeProperties"
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    """
+
+    properties: "ElasticVolumeProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+    zones: list[str]
+    """The availability zones."""
+
+
+class ElasticVolumeBackupProperties(TypedDict, total=False):
+    """Elastic Volume Backup Properties.
+
+    :ivar elastic_backup_policy_resource_id: ResourceId used to identify Elastic Backup Policy.
+    :vartype elastic_backup_policy_resource_id: str
+    :ivar policy_enforcement: The property to decide policy is enforced or not on the volume. Known
+     values are: "Enforced" and "NotEnforced".
+    :vartype policy_enforcement: Union[str, "ElasticVolumePolicyEnforcement"]
+    :ivar elastic_backup_vault_resource_id: ResourceId used to identify Elastic Backup Vault.
+    :vartype elastic_backup_vault_resource_id: str
+    """
+
+    elasticBackupPolicyResourceId: str
+    """ResourceId used to identify Elastic Backup Policy."""
+    policyEnforcement: Union[str, "ElasticVolumePolicyEnforcement"]
+    """The property to decide policy is enforced or not on the volume. Known values are: \"Enforced\"
+     and \"NotEnforced\"."""
+    elasticBackupVaultResourceId: str
+    """ResourceId used to identify Elastic Backup Vault."""
+
+
+class ElasticVolumeDataProtectionPatchProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Data protection configuration option for updating the volume, including snapshot policies and
+    backup.
+
+    :ivar snapshot: Used to apply a snapshot policy to a volume.
+    :vartype snapshot: "ElasticVolumeSnapshotProperties"
+    :ivar backup: Used to configure backups on an elastic volume.
+    :vartype backup: "ElasticVolumeBackupProperties"
+    """
+
+    snapshot: "ElasticVolumeSnapshotProperties"
+    """Used to apply a snapshot policy to a volume."""
+    backup: "ElasticVolumeBackupProperties"
+    """Used to configure backups on an elastic volume."""
+
+
+class ElasticVolumeDataProtectionProperties(TypedDict, total=False):
+    """Data protection configuration option for the volume, including snapshot policies and backup.
+
+    :ivar snapshot: Used to apply a snapshot policy to a volume.
+    :vartype snapshot: "ElasticVolumeSnapshotProperties"
+    :ivar backup: Used to configure backups on an elastic volume.
+    :vartype backup: "ElasticVolumeBackupProperties"
+    """
+
+    snapshot: "ElasticVolumeSnapshotProperties"
+    """Used to apply a snapshot policy to a volume."""
+    backup: "ElasticVolumeBackupProperties"
+    """Used to configure backups on an elastic volume."""
+
+
+class ElasticVolumeProperties(TypedDict, total=False):
+    """Elastic Volume properties.
+
+    :ivar file_path: A unique file path for the volume. Used when creating mount targets. This
+     needs to be unique within the elastic capacity pool. Required.
+    :vartype file_path: str
+    :ivar size: Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to
+     16TiB. Values expressed in bytes as multiples of 1 GiB. Required.
+    :vartype size: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: "ElasticExportPolicy"
+    :ivar protocol_types: Set of support protocol types for the elastic volume. Required.
+    :vartype protocol_types: list[Union[str, "ElasticProtocolType"]]
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: Union[str, "NetAppProvisioningState"]
+    :ivar availability_status: Current availability status of the resource. Known values are:
+     "Online" and "Offline".
+    :vartype availability_status: Union[str, "ElasticResourceAvailabilityStatus"]
+    :ivar snapshot_resource_id: Resource identifier used to identify the Elastic Snapshot.
+    :vartype snapshot_resource_id: str
+    :ivar mount_targets: List of mount targets that can be used to mount this volume.
+    :vartype mount_targets: list["ElasticMountTargetProperties"]
+    :ivar data_protection: Data protection configuration option for the volume, including snapshot
+     policies and backup.
+    :vartype data_protection: "ElasticVolumeDataProtectionProperties"
+    :ivar snapshot_directory_visibility: Controls the visibility of the volume's read-only snapshot
+     directory, which provides access to each of the volume's snapshots. Known values are: "Hidden"
+     and "Visible".
+    :vartype snapshot_directory_visibility: Union[str, "SnapshotDirectoryVisibility"]
+    :ivar smb_properties: SMB Properties.
+    :vartype smb_properties: "ElasticSmbProperties"
+    :ivar backup_resource_id: Resource identifier used to identify the Elastic Backup.
+    :vartype backup_resource_id: str
+    :ivar restoration_state: The current state of the restoration process. Known values are:
+     "Restoring", "Restored", and "Failed".
+    :vartype restoration_state: Union[str, "ElasticVolumeRestorationState"]
+    """
+
+    filePath: Required[str]
+    """A unique file path for the volume. Used when creating mount targets. This needs to be unique
+     within the elastic capacity pool. Required."""
+    size: Required[int]
+    """Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to 16TiB. Values
+     expressed in bytes as multiples of 1 GiB. Required."""
+    exportPolicy: "ElasticExportPolicy"
+    """Set of export policy rules."""
+    protocolTypes: Required[list[Union[str, "ElasticProtocolType"]]]
+    """Set of support protocol types for the elastic volume. Required."""
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    availabilityStatus: Union[str, "ElasticResourceAvailabilityStatus"]
+    """Current availability status of the resource. Known values are: \"Online\" and \"Offline\"."""
+    snapshotResourceId: str
+    """Resource identifier used to identify the Elastic Snapshot."""
+    mountTargets: list["ElasticMountTargetProperties"]
+    """List of mount targets that can be used to mount this volume."""
+    dataProtection: "ElasticVolumeDataProtectionProperties"
+    """Data protection configuration option for the volume, including snapshot policies and backup."""
+    snapshotDirectoryVisibility: Union[str, "SnapshotDirectoryVisibility"]
+    """Controls the visibility of the volume's read-only snapshot directory, which provides access to
+     each of the volume's snapshots. Known values are: \"Hidden\" and \"Visible\"."""
+    smbProperties: "ElasticSmbProperties"
+    """SMB Properties."""
+    backupResourceId: str
+    """Resource identifier used to identify the Elastic Backup."""
+    restorationState: Union[str, "ElasticVolumeRestorationState"]
+    """The current state of the restoration process. Known values are: \"Restoring\", \"Restored\",
+     and \"Failed\"."""
+
+
+class ElasticVolumeRevert(TypedDict, total=False):
+    """Reverts the elastic volume to the specified snapshot.
+
+    :ivar snapshot_resource_id: Resource identifier used to identify the Elastic Snapshot.
+    :vartype snapshot_resource_id: str
+    """
+
+    snapshotResourceId: str
+    """Resource identifier used to identify the Elastic Snapshot."""
+
+
+class ElasticVolumeSnapshotProperties(TypedDict, total=False):
+    """Elastic Volume Snapshot Properties.
+
+    :ivar snapshot_policy_resource_id: Snapshot Policy ResourceId.
+    :vartype snapshot_policy_resource_id: str
+    """
+
+    snapshotPolicyResourceId: str
+    """Snapshot Policy ResourceId."""
+
+
+class ElasticVolumeUpdate(TypedDict, total=False):
+    """The type used for update operations of the ElasticVolume.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ElasticVolumeUpdateProperties"
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "ElasticVolumeUpdateProperties"
+    """The resource-specific properties for this resource."""
+
+
+class ElasticVolumeUpdateProperties(TypedDict, total=False):
+    """The updatable properties of the ElasticVolume.
+
+    :ivar size: Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to
+     16TiB. Values expressed in bytes as multiples of 1 GiB.
+    :vartype size: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: "ElasticExportPolicy"
+    :ivar data_protection: Data protection configuration option for the volume, including snapshot
+     policies and backup.
+    :vartype data_protection: "ElasticVolumeDataProtectionPatchProperties"
+    :ivar snapshot_directory_visibility: Controls the visibility of the volume's read-only snapshot
+     directory, which provides access to each of the volume's snapshots. Known values are: "Hidden"
+     and "Visible".
+    :vartype snapshot_directory_visibility: Union[str, "SnapshotDirectoryVisibility"]
+    :ivar smb_properties: SMB Properties.
+    :vartype smb_properties: "ElasticSmbPatchProperties"
+    """
+
+    size: int
+    """Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to 16TiB. Values
+     expressed in bytes as multiples of 1 GiB."""
+    exportPolicy: "ElasticExportPolicy"
+    """Set of export policy rules."""
+    dataProtection: "ElasticVolumeDataProtectionPatchProperties"
+    """Data protection configuration option for the volume, including snapshot policies and backup."""
+    snapshotDirectoryVisibility: Union[str, "SnapshotDirectoryVisibility"]
+    """Controls the visibility of the volume's read-only snapshot directory, which provides access to
+     each of the volume's snapshots. Known values are: \"Hidden\" and \"Visible\"."""
+    smbProperties: "ElasticSmbPatchProperties"
+    """SMB Properties."""
+
+
 class EncryptionIdentity(TypedDict, total=False):
     """Identity used to authenticate with key vault.
 
@@ -1501,6 +2985,113 @@ class EncryptionTransitionRequest(TypedDict, total=False):
     """Identifier for the virtual network. Required."""
     privateEndpointId: Required[str]
     """Identifier of the private endpoint to reach the Azure Key Vault. Required."""
+
+
+class EntraIdAkvConfig(TypedDict, total=False):
+    """Using AKV config, certificate will be fetched, which will contain private key & public
+    certificate, that correspond to the public certificate which is uploaded on the application
+    created by customer. This will be used further for authentication.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Entra ID credentials are stored.
+     Required.
+    :vartype azure_key_vault_uri: str
+    :ivar certificate_name: The name of the certificate in Azure Key Vault. Required.
+    :vartype certificate_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azureKeyVaultUri: Required[str]
+    """The Azure Key Vault URI where the Entra ID credentials are stored. Required."""
+    certificateName: Required[str]
+    """The name of the certificate in Azure Key Vault. Required."""
+    userAssignedIdentity: str
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
+
+
+class EntraIdAkvConfigPatch(TypedDict, total=False):
+    """Entra ID Patch configuration for the account.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Entra ID credentials are stored.
+    :vartype azure_key_vault_uri: str
+    :ivar certificate_name: The name of the certificate in Azure Key Vault.
+    :vartype certificate_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azureKeyVaultUri: str
+    """The Azure Key Vault URI where the Entra ID credentials are stored."""
+    certificateName: str
+    """The name of the certificate in Azure Key Vault."""
+    userAssignedIdentity: str
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
+
+
+class EntraIdConfig(TypedDict, total=False):
+    """Entra ID configuration for the account.
+
+    :ivar application_id: ApplicationId of the app created by customer to provide authentication
+     and required API permissions for Microsoft Graph endpoint. Required.
+    :vartype application_id: str
+    :ivar domain: Domain of the Active directory synced to Entra ID for hybrid identities.
+     Required.
+    :vartype domain: str
+    :ivar server_name_prefix: Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be
+     generated for SMB share, using this FQDN, SMB Share will be mounted on Entra Joined VM.
+     Required.
+    :vartype server_name_prefix: str
+    :ivar entra_id_akv_config: Using AKV config, certificate will be fetched, which will contain
+     private key & public certificate, that correspond to the public certificate which is uploaded
+     on the application created by customer. This will be used further for authentication.
+    :vartype entra_id_akv_config: "EntraIdAkvConfig"
+    """
+
+    applicationId: Required[str]
+    """ApplicationId of the app created by customer to provide authentication and required API
+     permissions for Microsoft Graph endpoint. Required."""
+    domain: Required[str]
+    """Domain of the Active directory synced to Entra ID for hybrid identities. Required."""
+    serverNamePrefix: Required[str]
+    """Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be generated for SMB share,
+     using this FQDN, SMB Share will be mounted on Entra Joined VM. Required."""
+    entraIdAkvConfig: "EntraIdAkvConfig"
+    """Using AKV config, certificate will be fetched, which will contain private key & public
+     certificate, that correspond to the public certificate which is uploaded on the application
+     created by customer. This will be used further for authentication."""
+
+
+class EntraIdConfigPatch(TypedDict, total=False):
+    """Entra ID Patch configuration for the account.
+
+    :ivar application_id: ApplicationId of the app created by customer to provide authentication
+     and required API permissions for Microsoft Graph endpoint.
+    :vartype application_id: str
+    :ivar domain: Domain of the Active directory synced to Entra ID for hybrid identities.
+    :vartype domain: str
+    :ivar server_name_prefix: Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be
+     generated for SMB share, using this FQDN, SMB Share will be mounted on Entra Joined VM.
+    :vartype server_name_prefix: str
+    :ivar entra_id_akv_config: Using AKV config, certificate will be fetched, which will contain
+     private key & public certificate, that correspond to the public certificate which is uploaded
+     on the application created by customer. This will be used further for authentication.
+    :vartype entra_id_akv_config: "EntraIdAkvConfigPatch"
+    """
+
+    applicationId: str
+    """ApplicationId of the app created by customer to provide authentication and required API
+     permissions for Microsoft Graph endpoint."""
+    domain: str
+    """Domain of the Active directory synced to Entra ID for hybrid identities."""
+    serverNamePrefix: str
+    """Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be generated for SMB share,
+     using this FQDN, SMB Share will be mounted on Entra Joined VM."""
+    entraIdAkvConfig: "EntraIdAkvConfigPatch"
+    """Using AKV config, certificate will be fetched, which will contain private key & public
+     certificate, that correspond to the public certificate which is uploaded on the application
+     created by customer. This will be used further for authentication."""
 
 
 class ExportPolicyRule(TypedDict, total=False):
@@ -1698,6 +3289,154 @@ class KeyVaultProperties(TypedDict, total=False):
      \"Error\", and \"Updating\"."""
 
 
+class LdapConfiguration(TypedDict, total=False):
+    """LDAP configuration.
+
+    :ivar domain: Name of the LDAP configuration domain.
+    :vartype domain: str
+    :ivar ldap_servers: List of LDAP server IP addresses (IPv4 only) for the LDAP domain.
+    :vartype ldap_servers: list[str]
+    :ivar ldap_over_tls: Specifies whether or not the LDAP traffic needs to be secured via TLS.
+    :vartype ldap_over_tls: bool
+    :ivar server_ca_certificate: When LDAP over SSL/TLS is enabled, the LDAP client is required to
+     have base64 encoded ldap servers CA certificate.
+    :vartype server_ca_certificate: str
+    :ivar certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
+     TLS requires the CN host name to create DNS host entry.
+    :vartype certificate_cn_host: str
+    :ivar dns_servers: List of DNS server IPv4 addresses for resolving the CN host certificate.
+     This parameter is used when LDAP over TLS is enabled.
+    :vartype dns_servers: list[str]
+    :ivar ldap_port: Port number for LDAP communication. Default is 389 for LDAP.
+    :vartype ldap_port: int
+    :ivar user_dn: This specifies the user DN (Distinguished Name), which overrides the base DN for
+     user lookups.
+    :vartype user_dn: str
+    :ivar group_dn: This specifies the group DN (Distinguished Name), which overrides the base DN
+     for group lookups.
+    :vartype group_dn: str
+    :ivar net_group_dn: This specifies the netgroup DN (Distinguished Name), which overrides the
+     base DN for netgroup lookups.
+    :vartype net_group_dn: str
+    :ivar bind_authentication_level: The authentication level to use when binding to the LDAP
+     server, defaults to Anonymous. Known values are: "Anonymous" and "Simple".
+    :vartype bind_authentication_level: Union[str, "BindAuthenticationLevel"]
+    :ivar bind_dn: The distinguished name (DN) to bind as when performing LDAP operations.
+    :vartype bind_dn: str
+    :ivar bind_password_akv_config: The Azure Key Vault configuration where the Bind DN
+     (Distinguished Name) user password is stored.
+    :vartype bind_password_akv_config: "BindPasswordAkvConfig"
+    """
+
+    domain: str
+    """Name of the LDAP configuration domain."""
+    ldapServers: list[str]
+    """List of LDAP server IP addresses (IPv4 only) for the LDAP domain."""
+    ldapOverTLS: bool
+    """Specifies whether or not the LDAP traffic needs to be secured via TLS."""
+    serverCACertificate: str
+    """When LDAP over SSL/TLS is enabled, the LDAP client is required to have base64 encoded ldap
+     servers CA certificate."""
+    certificateCNHost: Optional[str]
+    """The CN host name used while generating the certificate, LDAP Over TLS requires the CN host name
+     to create DNS host entry."""
+    dnsServers: list[str]
+    """List of DNS server IPv4 addresses for resolving the CN host certificate. This parameter is used
+     when LDAP over TLS is enabled."""
+    ldapPort: int
+    """Port number for LDAP communication. Default is 389 for LDAP."""
+    userDN: str
+    """This specifies the user DN (Distinguished Name), which overrides the base DN for user lookups."""
+    groupDN: str
+    """This specifies the group DN (Distinguished Name), which overrides the base DN for group
+     lookups."""
+    netGroupDN: str
+    """This specifies the netgroup DN (Distinguished Name), which overrides the base DN for netgroup
+     lookups."""
+    bindAuthenticationLevel: Union[str, "BindAuthenticationLevel"]
+    """The authentication level to use when binding to the LDAP server, defaults to Anonymous. Known
+     values are: \"Anonymous\" and \"Simple\"."""
+    bindDN: str
+    """The distinguished name (DN) to bind as when performing LDAP operations."""
+    bindPasswordAkvConfig: "BindPasswordAkvConfig"
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+     stored."""
+
+
+class LdapConfigurationPatch(TypedDict, total=False):
+    """LDAP configuration for PATCH operations (no default values).
+
+    :ivar domain: Name of the LDAP configuration domain.
+    :vartype domain: str
+    :ivar ldap_servers: List of LDAP server IP addresses (IPv4 only) for the LDAP domain.
+    :vartype ldap_servers: list[str]
+    :ivar ldap_over_tls: Specifies whether or not the LDAP traffic needs to be secured via TLS.
+    :vartype ldap_over_tls: bool
+    :ivar server_ca_certificate: When LDAP over SSL/TLS is enabled, the LDAP client is required to
+     have base64 encoded ldap servers CA certificate.
+    :vartype server_ca_certificate: str
+    :ivar certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
+     TLS requires the CN host name to create DNS host entry.
+    :vartype certificate_cn_host: str
+    :ivar dns_servers: List of DNS server IPv4 addresses for resolving the CN host certificate.
+     This parameter is used when LDAP over TLS is enabled.
+    :vartype dns_servers: list[str]
+    :ivar ldap_port: Port number for LDAP communication. Default is 389 for LDAP.
+    :vartype ldap_port: int
+    :ivar user_dn: This specifies the user DN (Distinguished Name), which overrides the base DN for
+     user lookups.
+    :vartype user_dn: str
+    :ivar group_dn: This specifies the group DN (Distinguished Name), which overrides the base DN
+     for group lookups.
+    :vartype group_dn: str
+    :ivar net_group_dn: This specifies the netgroup DN (Distinguished Name), which overrides the
+     base DN for netgroup lookups.
+    :vartype net_group_dn: str
+    :ivar bind_authentication_level: The authentication level to use when binding to the LDAP
+     server, defaults to Anonymous. Known values are: "Anonymous" and "Simple".
+    :vartype bind_authentication_level: Union[str, "BindAuthenticationLevel"]
+    :ivar bind_dn: The distinguished name (DN) to bind as when performing LDAP operations.
+    :vartype bind_dn: str
+    :ivar bind_password_akv_config: The Azure Key Vault configuration where the Bind DN
+     (Distinguished Name) user password is stored.
+    :vartype bind_password_akv_config: "BindPasswordAkvConfigPatch"
+    """
+
+    domain: str
+    """Name of the LDAP configuration domain."""
+    ldapServers: list[str]
+    """List of LDAP server IP addresses (IPv4 only) for the LDAP domain."""
+    ldapOverTLS: bool
+    """Specifies whether or not the LDAP traffic needs to be secured via TLS."""
+    serverCACertificate: str
+    """When LDAP over SSL/TLS is enabled, the LDAP client is required to have base64 encoded ldap
+     servers CA certificate."""
+    certificateCNHost: Optional[str]
+    """The CN host name used while generating the certificate, LDAP Over TLS requires the CN host name
+     to create DNS host entry."""
+    dnsServers: list[str]
+    """List of DNS server IPv4 addresses for resolving the CN host certificate. This parameter is used
+     when LDAP over TLS is enabled."""
+    ldapPort: int
+    """Port number for LDAP communication. Default is 389 for LDAP."""
+    userDN: str
+    """This specifies the user DN (Distinguished Name), which overrides the base DN for user lookups."""
+    groupDN: str
+    """This specifies the group DN (Distinguished Name), which overrides the base DN for group
+     lookups."""
+    netGroupDN: str
+    """This specifies the netgroup DN (Distinguished Name), which overrides the base DN for netgroup
+     lookups."""
+    bindAuthenticationLevel: Union[str, "BindAuthenticationLevel"]
+    """The authentication level to use when binding to the LDAP server, defaults to Anonymous. Known
+     values are: \"Anonymous\" and \"Simple\"."""
+    bindDN: str
+    """The distinguished name (DN) to bind as when performing LDAP operations."""
+    bindPasswordAkvConfig: "BindPasswordAkvConfigPatch"
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+     stored."""
+
+
 class LdapSearchScopeOpt(TypedDict, total=False):
     """LDAP search scope.
 
@@ -1856,36 +3595,20 @@ class NetAppAccount(TrackedResource):
 class NetAppAccountPatch(TypedDict, total=False):
     """NetApp account patch resource.
 
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: NetApp Account properties.
-    :vartype properties: "AccountProperties"
-    :ivar identity: The identity used for the resource.
-    :vartype identity: "ManagedServiceIdentity"
+    :vartype properties: "AccountPropertiesPatch"
     """
 
-    location: str
-    """Resource location."""
-    id: str
-    """Resource Id."""
-    name: str
-    """Resource name."""
-    type: str
-    """Resource type."""
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
     tags: dict[str, str]
     """Resource tags."""
-    properties: "AccountProperties"
+    properties: "AccountPropertiesPatch"
     """NetApp Account properties."""
-    identity: "ManagedServiceIdentity"
-    """The identity used for the resource."""
 
 
 class NfsUser(TypedDict, total=False):
@@ -1975,8 +3698,8 @@ class PoolChangeRequest(TypedDict, total=False):
 class PoolPatchProperties(TypedDict, total=False):
     """Patchable pool properties.
 
-    :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value
-     must be multiple of 1099511627776).
+    :ivar size: Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888
+     bytes) or in 1TiB chunks (value must be multiple of 1099511627776).
     :vartype size: int
     :ivar qos_type: The qos type of the pool. Known values are: "Auto" and "Manual".
     :vartype qos_type: Union[str, "QosType"]
@@ -1988,8 +3711,8 @@ class PoolPatchProperties(TypedDict, total=False):
     """
 
     size: int
-    """Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value must be
-     multiple of 1099511627776)."""
+    """Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888 bytes) or in
+     1TiB chunks (value must be multiple of 1099511627776)."""
     qosType: Union[str, "QosType"]
     """The qos type of the pool. Known values are: \"Auto\" and \"Manual\"."""
     coolAccess: bool
@@ -2004,8 +3727,8 @@ class PoolProperties(TypedDict, total=False):
 
     :ivar pool_id: UUID v4 used to identify the Pool.
     :vartype pool_id: str
-    :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value
-     must be multiple of 1099511627776). Required.
+    :ivar size: Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888
+     bytes) or in 1TiB chunks (value must be multiple of 1099511627776). Required.
     :vartype size: int
     :ivar service_level: The service level of the file system. Required. Known values are:
      "Standard", "Premium", "Ultra", "StandardZRS", and "Flexible".
@@ -2032,8 +3755,8 @@ class PoolProperties(TypedDict, total=False):
     poolId: str
     """UUID v4 used to identify the Pool."""
     size: Required[int]
-    """Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value must be
-     multiple of 1099511627776). Required."""
+    """Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888 bytes) or in
+     1TiB chunks (value must be multiple of 1099511627776). Required."""
     serviceLevel: Required[Union[str, "ServiceLevel"]]
     """The service level of the file system. Required. Known values are: \"Standard\", \"Premium\",
      \"Ultra\", \"StandardZRS\", and \"Flexible\"."""
@@ -2341,6 +4064,57 @@ class ResourceNameAvailabilityRequest(TypedDict, total=False):
      \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups\"."""
     resourceGroup: Required[str]
     """Resource group name. Required."""
+
+
+class SecretPassword(TypedDict, total=False):
+    """Access password from Azure KeyVault Secrets to connect Active Directory.
+
+    :ivar key_vault_properties: Properties provided by KeyVault.
+    :vartype key_vault_properties: "SecretPasswordKeyVaultProperties"
+    :ivar identity: Identity used to authenticate to KeyVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype identity: "SecretPasswordIdentity"
+    """
+
+    keyVaultProperties: "SecretPasswordKeyVaultProperties"
+    """Properties provided by KeyVault."""
+    identity: "SecretPasswordIdentity"
+    """Identity used to authenticate to KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+
+
+class SecretPasswordIdentity(TypedDict, total=False):
+    """Identity used to authenticate with key vault.
+
+    :ivar principal_id: The principal ID (object ID) of the identity used to authenticate with key
+     vault. Read-only.
+    :vartype principal_id: str
+    :ivar user_assigned_identity: The Azure resource identifier of the user assigned identity used
+     to authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
+     key of identity.userAssignedIdentities.
+    :vartype user_assigned_identity: str
+    """
+
+    principalId: str
+    """The principal ID (object ID) of the identity used to authenticate with key vault. Read-only."""
+    userAssignedIdentity: str
+    """The Azure resource identifier of the user assigned identity used to authenticate with key
+     vault. Applicable if identity.type has 'UserAssigned'. It should match key of
+     identity.userAssignedIdentities."""
+
+
+class SecretPasswordKeyVaultProperties(TypedDict, total=False):
+    """Properties of key vault to get the secrets for password.
+
+    :ivar key_vault_uri: The Uri of KeyVault. Required.
+    :vartype key_vault_uri: str
+    :ivar secret_name: The name of KeyVault password secret. Required.
+    :vartype secret_name: str
+    """
+
+    keyVaultUri: Required[str]
+    """The Uri of KeyVault. Required."""
+    secretName: Required[str]
+    """The name of KeyVault password secret. Required."""
 
 
 class SmbSettings(TypedDict, total=False):
@@ -2912,7 +4686,8 @@ class VolumePatchProperties(TypedDict, total=False):
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
      100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
-     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
+     exceptional basis, from to 2400GiB to 2400TiB. For extra large volumes, valid values are in the
+     range 2400GiB to 7200TiB. Values expressed in bytes as multiples of 1 GiB.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: "VolumePatchPropertiesExportPolicy"
@@ -2978,7 +4753,8 @@ class VolumePatchProperties(TypedDict, total=False):
     """Maximum storage quota allowed for a file system in bytes. This is a soft quota used for
      alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large
      volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis, from to
-     2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB."""
+     2400GiB to 2400TiB. For extra large volumes, valid values are in the range 2400GiB to 7200TiB.
+     Values expressed in bytes as multiples of 1 GiB."""
     exportPolicy: "VolumePatchPropertiesExportPolicy"
     """Set of export policy rules."""
     protocolTypes: list[str]
@@ -3074,8 +4850,8 @@ class VolumeProperties(TypedDict, total=False):
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
      100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
-     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
-     Required.
+     exceptional basis, from to 2400GiB to 2400TiB. For extra large volumes, valid values are in the
+     range 2400GiB to 7200TiB. Values expressed in bytes as multiples of 1 GiB. Required.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: "VolumePropertiesExportPolicy"
@@ -3165,6 +4941,9 @@ class VolumeProperties(TypedDict, total=False):
     :vartype key_vault_private_endpoint_resource_id: str
     :ivar ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
     :vartype ldap_enabled: bool
+    :ivar ldap_server_type: Specifies the type of LDAP server for a given NFS volume. Known values
+     are: "ActiveDirectory" and "OpenLDAP".
+    :vartype ldap_server_type: Union[str, "LdapServerType"]
     :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
     :vartype cool_access: bool
     :ivar coolness_period: Specifies the number of days after which data that is not accessed by
@@ -3243,11 +5022,27 @@ class VolumeProperties(TypedDict, total=False):
     :vartype provisioned_availability_zone: str
     :ivar is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
     :vartype is_large_volume: bool
+    :ivar large_volume_type: Specifies the type of the Large Volume. When set to 'LargeVolume', the
+     large volume is created with standard configuration. If it is set to
+     'ExtraLargeVolume7Dot2PiB', the extra large volume is created with higher capacity limit 7.2PiB
+     with cool access enabled, delivering higher capacity limit with lower costs. Known values are:
+     "LargeVolume" and "PremExtraLargeVolume7Dot2PiB".
+    :vartype large_volume_type: Union[str, "LargeVolumeType"]
     :ivar originating_resource_id: Id of the snapshot or backup that the volume is restored from.
     :vartype originating_resource_id: str
     :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
      bytes.
     :vartype inherited_size_in_bytes: int
+    :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
+     "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
+     "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
+     "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
+     "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
+     "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
+     "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
+     "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
+     "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
+    :vartype language: Union[str, "VolumeLanguage"]
     :ivar breakthrough_mode: Specifies whether the volume operates in Breakthrough Mode. Known
      values are: "Enabled" and "Disabled".
     :vartype breakthrough_mode: Union[str, "BreakthroughMode"]
@@ -3264,7 +5059,8 @@ class VolumeProperties(TypedDict, total=False):
     """Maximum storage quota allowed for a file system in bytes. This is a soft quota used for
      alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large
      volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis, from to
-     2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB. Required."""
+     2400GiB to 2400TiB. For extra large volumes, valid values are in the range 2400GiB to 7200TiB.
+     Values expressed in bytes as multiples of 1 GiB. Required."""
     exportPolicy: "VolumePropertiesExportPolicy"
     """Set of export policy rules."""
     protocolTypes: list[str]
@@ -3343,6 +5139,9 @@ class VolumeProperties(TypedDict, total=False):
      volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'."""
     ldapEnabled: bool
     """Specifies whether LDAP is enabled or not for a given NFS volume."""
+    ldapServerType: Union[str, "LdapServerType"]
+    """Specifies the type of LDAP server for a given NFS volume. Known values are: \"ActiveDirectory\"
+     and \"OpenLDAP\"."""
     coolAccess: bool
     """Specifies whether Cool Access(tiering) is enabled for the volume."""
     coolnessPeriod: int
@@ -3414,10 +5213,28 @@ class VolumeProperties(TypedDict, total=False):
      zone where the volume resides."""
     isLargeVolume: bool
     """Specifies whether volume is a Large Volume or Regular Volume."""
+    largeVolumeType: Union[str, "LargeVolumeType"]
+    """Specifies the type of the Large Volume. When set to 'LargeVolume', the large volume is created
+     with standard configuration. If it is set to 'ExtraLargeVolume7Dot2PiB', the extra large volume
+     is created with higher capacity limit 7.2PiB with cool access enabled, delivering higher
+     capacity limit with lower costs. Known values are: \"LargeVolume\" and
+     \"PremExtraLargeVolume7Dot2PiB\"."""
     originatingResourceId: Optional[str]
     """Id of the snapshot or backup that the volume is restored from."""
     inheritedSizeInBytes: Optional[int]
     """Space shared by short term clone volume with parent volume in bytes."""
+    language: Union[str, "VolumeLanguage"]
+    """Language supported for volume. Known values are: \"c.utf-8\", \"utf8mb4\", \"ar\",
+     \"ar.utf-8\", \"hr\", \"hr.utf-8\", \"cs\", \"cs.utf-8\", \"da\", \"da.utf-8\", \"nl\",
+     \"nl.utf-8\", \"en\", \"en.utf-8\", \"fi\", \"fi.utf-8\", \"fr\", \"fr.utf-8\", \"de\",
+     \"de.utf-8\", \"he\", \"he.utf-8\", \"hu\", \"hu.utf-8\", \"it\", \"it.utf-8\", \"ja\",
+     \"ja.utf-8\", \"ja-v1\", \"ja-v1.utf-8\", \"ja-jp.pck\", \"ja-jp.pck.utf-8\", \"ja-jp.932\",
+     \"ja-jp.932.utf-8\", \"ja-jp.pck-v2\", \"ja-jp.pck-v2.utf-8\", \"ko\", \"ko.utf-8\", \"no\",
+     \"no.utf-8\", \"pl\", \"pl.utf-8\", \"pt\", \"pt.utf-8\", \"c\", \"ro\", \"ro.utf-8\", \"ru\",
+     \"ru.utf-8\", \"zh\", \"zh.utf-8\", \"zh.gbk\", \"zh.gbk.utf-8\", \"zh-tw.big5\",
+     \"zh-tw.big5.utf-8\", \"zh-tw\", \"zh-tw.utf-8\", \"sk\", \"sk.utf-8\", \"sl\", \"sl.utf-8\",
+     \"es\", \"es.utf-8\", \"sv\", \"sv.utf-8\", \"tr\", \"tr.utf-8\", \"en-us\", and
+     \"en-us.utf-8\"."""
     breakthroughMode: Union[str, "BreakthroughMode"]
     """Specifies whether the volume operates in Breakthrough Mode. Known values are: \"Enabled\" and
      \"Disabled\"."""
