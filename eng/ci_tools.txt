@@ -1,5 +1,5 @@
 # requirements leveraged by ci tools
-setuptools==77.0.3
+setuptools==83.0.0
 virtualenv==20.29.3
 wheel==0.45.1
 packaging==24.2
