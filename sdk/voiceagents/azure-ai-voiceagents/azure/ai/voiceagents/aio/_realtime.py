@@ -48,6 +48,9 @@ __all__ = [
     "AsyncRealtime",
     "AsyncRealtimeConnection",
     "AsyncRealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
 ]
 
 # Union of the client event models sendable over the connection, plus a raw mapping escape

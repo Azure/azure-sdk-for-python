@@ -29,7 +29,11 @@ class TestVoiceAgentsClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_get_voice_agent(self, azure_voice_agents_endpoint, azure_voice_agents_agent_name):
         with self.create_client(azure_voice_agents_endpoint) as client:
-            agent = client.voice_agents.get_voice_agent(azure_voice_agents_agent_name, foundry_features=PREVIEW)
+            agent = client.voice_agents.get_voice_agent(
+                azure_voice_agents_agent_name,
+                foundry_features=PREVIEW,
+                headers={"Accept-Encoding": "identity"},
+            )
 
         # NOTE: don't assert agent["name"]/["id"] against azure_voice_agents_agent_name --
         # the test-proxy's built-in default sanitizers always redact "id"/"name" body

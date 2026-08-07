@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Optional, TYPE_CHECKING
 
 from ._client import VoiceAgentsClient as _GeneratedVoiceAgentsClient
-from ._realtime import AsyncRealtime, AsyncRealtimeConnection, AsyncRealtimeConnectionManager
+from ._realtime import AsyncRealtime, AsyncRealtimeConnection, AsyncRealtimeConnectionManager, ClientEvent, ConversationItem, ServerEvent
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -28,24 +28,17 @@ class VoiceAgentsClient(_GeneratedVoiceAgentsClient):  # pylint: disable=client-
     def __init__(
         self, endpoint: str, credential: "AsyncTokenCredential", *, api_version: Optional[str] = None, **kwargs: Any
     ) -> None:
-        # Work around an azure-core/aiohttp limitation: azure-core's AioHttpTransport
-        # disables aiohttp's native response decompression and only re-implements
-        # gzip/deflate itself (no brotli support), while aiohttp advertises
-        # "Accept-Encoding: br" by default. If the service responds with a
-        # brotli-compressed body, azure-core fails to decode it. Unless the caller
-        # already supplied their own transport or session, default to only
-        # advertising the encodings azure-core can actually decompress.
-        if "transport" not in kwargs and "session" not in kwargs:
-            try:
-                import aiohttp
-                import azure.core.pipeline.transport as transport_module
-
-                kwargs["transport"] = transport_module.AioHttpTransport(
-                    session=aiohttp.ClientSession(auto_decompress=False, headers={"Accept-Encoding": "gzip, deflate"})
-                )
-            except ImportError:
-                pass
-        super().__init__(endpoint, credential, api_version=api_version, **kwargs)
+        # Work around an azure-core/aiohttp limitation without eagerly creating
+        # an aiohttp session (which requires a running event loop). We constrain
+        # Accept-Encoding through default request headers so session creation
+        # remains lazy and loop-independent.
+        headers = dict(kwargs.get("headers") or {})
+        headers.setdefault("Accept-Encoding", "gzip, deflate")
+        kwargs["headers"] = headers
+        if api_version is None:
+            super().__init__(endpoint, credential, **kwargs)
+        else:
+            super().__init__(endpoint, credential, api_version=api_version, **kwargs)
 
     @property
     def realtime(self) -> AsyncRealtime:
@@ -64,6 +57,9 @@ __all__: list[str] = [
     "AsyncRealtime",
     "AsyncRealtimeConnection",
     "AsyncRealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
 ]  # Add all objects you want publicly available to users at this package level
 
 
