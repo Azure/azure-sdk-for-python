@@ -1,6 +1,6 @@
 from pypi_tools.pypi import PyPIClient, retrieve_versions_from_pypi
 from pypi_tools.azdo import AzureArtifactsClient, AzureArtifactsFeedConfig
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 import os
 import pytest
 from packaging.version import Version
@@ -240,24 +240,6 @@ class TestGetLatestDownloadUri:
 
 
 # ---------------------------------------------------------------------------
-# project_release — works on both backends (AzDO falls back to pypi.org)
-# ---------------------------------------------------------------------------
-
-
-class TestProjectRelease:
-    """Covers functions.py:888 usage of project_release() for requires_dist."""
-
-    @SKIP_IN_CI
-    def test_project_release_returns_version_info(self, client):
-        result = client.project_release(WELL_KNOWN_PACKAGE, WELL_KNOWN_VERSION)
-
-        assert result["info"]["name"] == WELL_KNOWN_PACKAGE
-        assert result["info"]["release_url"] == f"https://pypi.org/project/{WELL_KNOWN_PACKAGE}/{WELL_KNOWN_VERSION}/"
-        # requires_dist is what the mindep resolver reads
-        assert "requires_dist" in result["info"]
-
-
-# ---------------------------------------------------------------------------
 # PyPI-only tests (project / filter_packages_for_compatibility)
 # ---------------------------------------------------------------------------
 
@@ -278,14 +260,58 @@ class TestPyPIOnlyMethods:
         assert "1.25.1" in result["releases"]
         assert WELL_KNOWN_VERSION in result["releases"]
 
-    @SKIP_IN_CI
-    @patch("pypi_tools.pypi.sys")
-    def test_filter_packages_for_compatibility(self, mock_sys):
-        mock_sys.version_info = (2, 7, 0)
+    def test_filter_packages_for_compatibility_uses_release_file_metadata(self):
         client = _make_client(PYPI_HOST)
-        filtered = client.get_ordered_versions(WELL_KNOWN_PACKAGE, True)
-        unfiltered = client.get_ordered_versions(WELL_KNOWN_PACKAGE, False)
-        assert len(filtered) < len(unfiltered)
+        project_data = {
+            "releases": {
+                "1.0.0": [{"requires_python": ">=3.8", "yanked": False}],
+                "2.0.0": [{"requires_python": ">=99", "yanked": False}],
+                "3.0.0": [{"requires_python": None, "yanked": False}],
+                "4.0.0": [{"requires_python": "not-a-specifier", "yanked": False}],
+                "5.0.0": [{"requires_python": ">=3.8", "yanked": True}],
+            }
+        }
+
+        with patch.object(PyPIClient, "project", return_value=project_data):
+            filtered = client.get_ordered_versions(WELL_KNOWN_PACKAGE, True)
+
+        assert filtered == [Version("1.0.0"), Version("3.0.0")]
+
+    def test_azdo_compatibility_filter_uses_simple_index(self):
+        client = _make_client(AZDO_FEED_URL)
+        with patch.object(
+            client._azdo,
+            "get_python_compatible_versions",
+            return_value=[Version("1.0.0")],
+        ) as get_compatible:
+            versions = client.get_ordered_versions("example-pkg", True)
+
+        assert versions == [Version("1.0.0")]
+        get_compatible.assert_called_once_with("example-pkg")
+
+    def test_azdo_backend_does_not_call_pypi_json(self):
+        client = _make_client(AZDO_FEED_URL)
+        with pytest.raises(NotImplementedError):
+            client._pypi_json_request("/pypi/example/json")
+
+
+class TestAzureArtifactsCompatibility:
+    def test_simple_index_filters_requires_python_yanked_and_invalid_files(self):
+        client = AzureArtifactsClient(AzureArtifactsFeedConfig("org", "project", "feed"))
+        response = MagicMock()
+        response.data = b"""
+        <html><body>
+          <a href="example_pkg-1.0.0-py3-none-any.whl" data-requires-python=">=3.8">one</a>
+          <a href="example_pkg-2.0.0-py3-none-any.whl" data-requires-python=">=99">two</a>
+          <a href="example_pkg-3.0.0.tar.gz">three</a>
+          <a href="example_pkg-4.0.0-py3-none-any.whl" data-yanked="">four</a>
+          <a href="not-a-package.txt">invalid</a>
+        </body></html>
+        """
+        with patch.object(client._http, "request", return_value=response):
+            versions = client.get_python_compatible_versions("example-pkg")
+
+        assert versions == [Version("1.0.0"), Version("3.0.0")]
 
 
 # ---------------------------------------------------------------------------
