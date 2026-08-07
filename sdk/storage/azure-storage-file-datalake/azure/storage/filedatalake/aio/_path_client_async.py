@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -13,7 +14,7 @@ from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobClient
 from .._deserialize import process_storage_error
-from .._generated.aio import AzureDataLakeStorageRESTAPI
+from .._generated.aio import DataLakeClient as AzureDataLakeStorageRESTAPI
 from .._models import (
     AccessControlChangeCounters,
     AccessControlChangeFailure,
@@ -84,7 +85,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         path_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
@@ -160,10 +161,10 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
             url,
-            version=self._api_version,
             base_url=url,
             file_system=self.file_system_name,
             path=self.path_name,
+            version=self._api_version,
             pipeline=self._pipeline,
         )
         return client

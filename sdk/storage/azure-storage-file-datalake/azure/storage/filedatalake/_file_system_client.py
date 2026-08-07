@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -19,7 +20,7 @@ from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import is_file_path, process_storage_error
 from ._file_system_client_helpers import _format_url, _parse_url, _undelete_path_options
-from ._generated import AzureDataLakeStorageRESTAPI
+from ._generated import DataLakeClient as AzureDataLakeStorageRESTAPI
 from ._list_paths_helper import DeletedPathPropertiesPaged, PathPropertiesPaged
 from ._models import (
     DeletedPathProperties,
@@ -95,7 +96,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_system_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any,
     ) -> None:
         if not file_system_name:
@@ -153,7 +154,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
-            url, version=self._api_version, base_url=url, file_system=self.file_system_name, pipeline=self._pipeline
+            url, base_url=url, file_system=self.file_system_name, version=self._api_version, pipeline=self._pipeline
         )
         return client
 
@@ -167,7 +168,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_system_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any,
     ) -> Self:
         """
@@ -952,7 +953,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             policies=self._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         path_client = AzureDataLakeStorageRESTAPI(
-            url, version=self._api_version, filesystem=self.file_system_name, path=deleted_path_name, pipeline=pipeline
+            url, filesystem=self.file_system_name, path=deleted_path_name, version=self._api_version, pipeline=pipeline
         )
         try:
             is_file = path_client.path.undelete(undelete_source=undelete_source, cls=is_file_path, **kwargs)

@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import CaseInsensitiveEnumMeta
+from azure.storage.filedatalake._generated.models._patch import _BackCompatMixin
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import AccountSasPermissions as BlobAccountSasPermissions
 from azure.storage.blob import ArrowDialect as BlobArrowDialect
@@ -21,12 +22,12 @@ from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
 from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
-from azure.storage.blob._generated.models import (
-    CorsRule as GenCorsRule,
-    Logging as GenLogging,
-    Metrics as GenMetrics,
-    RetentionPolicy as GenRetentionPolicy,
-    StaticWebsite as GenStaticWebsite,
+from azure.storage.blob import (
+    BlobAnalyticsLogging,
+    CorsRule as BlobCorsRule,
+    Metrics as BlobMetrics,
+    RetentionPolicy as BlobRetentionPolicy,
+    StaticWebsite as BlobStaticWebsite,
 )
 from azure.storage.blob._models import ContainerPropertiesPaged
 
@@ -37,7 +38,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-class RetentionPolicy(GenRetentionPolicy):
+class RetentionPolicy(_BackCompatMixin):
     """The retention policy which determines how long the associated data should persist.
 
     All required parameters must be populated in order to send to Azure.
@@ -56,8 +57,14 @@ class RetentionPolicy(GenRetentionPolicy):
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
         All data older than this value will be deleted."""
 
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
+    }
+
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
+        self.enabled = enabled
+        self.days = days
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -70,8 +77,14 @@ class RetentionPolicy(GenRetentionPolicy):
             days=generated.days,
         )
 
+    @classmethod
+    def _to_generated(cls, policy: Optional["RetentionPolicy"]) -> Optional[BlobRetentionPolicy]:
+        if policy is None:
+            return policy
+        return BlobRetentionPolicy(enabled=policy.enabled, days=policy.days)
 
-class Metrics(GenMetrics):
+
+class Metrics(_BackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates.
 
     All required parameters must be populated in order to send to Azure.
@@ -97,6 +110,13 @@ class Metrics(GenMetrics):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
 
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get("version", "1.0")
         self.enabled = kwargs.get("enabled", False)
@@ -116,8 +136,21 @@ class Metrics(GenMetrics):
             ),
         )
 
+    @classmethod
+    def _to_generated(cls, metrics: Optional["Metrics"]) -> Optional[BlobMetrics]:
+        if metrics is None:
+            return metrics
+        return BlobMetrics(
+            version=metrics.version,
+            enabled=metrics.enabled,
+            include_apis=metrics.include_apis,
+            retention_policy=RetentionPolicy._to_generated(  # pylint: disable=protected-access
+                metrics.retention_policy
+            ),
+        )
 
-class CorsRule(GenCorsRule):
+
+class CorsRule(_BackCompatMixin):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -162,6 +195,14 @@ class CorsRule(GenCorsRule):
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
+    _attribute_map = {
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
+    }
+
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ",".join(allowed_origins)
         self.allowed_methods = ",".join(allowed_methods)
@@ -170,17 +211,19 @@ class CorsRule(GenCorsRule):
         self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
-    def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GenCorsRule]]:
+    def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[BlobCorsRule]]:
         if rules is None:
             return rules
 
+        # Blob's public CorsRule ctor takes List[str] and joins on "," internally,
+        # so split the stored comma-joined strings back into lists before passing.
         generated_cors_list = []
         for cors_rule in rules:
-            generated_cors = GenCorsRule(
-                allowed_origins=cors_rule.allowed_origins,
-                allowed_methods=cors_rule.allowed_methods,
-                allowed_headers=cors_rule.allowed_headers,
-                exposed_headers=cors_rule.exposed_headers,
+            generated_cors = BlobCorsRule(
+                cors_rule.allowed_origins.split(",") if cors_rule.allowed_origins else [],
+                cors_rule.allowed_methods.split(",") if cors_rule.allowed_methods else [],
+                allowed_headers=cors_rule.allowed_headers.split(",") if cors_rule.allowed_headers else [],
+                exposed_headers=cors_rule.exposed_headers.split(",") if cors_rule.exposed_headers else [],
                 max_age_in_seconds=cors_rule.max_age_in_seconds,
             )
             generated_cors_list.append(generated_cors)
@@ -1004,7 +1047,7 @@ class PathProperties(DictMixin):
         path_prop.permissions = generated.permissions
         path_prop.last_modified = _rfc_1123_to_datetime(generated.last_modified)
         path_prop.is_directory = bool(generated.is_directory)
-        path_prop.etag = generated.additional_properties.get("etag")
+        path_prop.etag = generated.get("etag")
         path_prop.content_length = generated.content_length
         path_prop.creation_time = _filetime_to_datetime(generated.creation_time)
         path_prop.expiry_time = _filetime_to_datetime(generated.expiry_time)
@@ -1298,7 +1341,7 @@ class DeletedPathProperties(DictMixin):
         self.file_system = None
 
 
-class AnalyticsLogging(GenLogging):
+class AnalyticsLogging(_BackCompatMixin):
     """Azure Analytics Logging settings."""
 
     version: str
@@ -1312,6 +1355,14 @@ class AnalyticsLogging(GenLogging):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default."""
+
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "delete": {"key": "Delete", "type": "bool"},
+        "read": {"key": "Read", "type": "bool"},
+        "write": {"key": "Write", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
 
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get("version", "1.0")
@@ -1334,8 +1385,22 @@ class AnalyticsLogging(GenLogging):
             ),
         )
 
+    @classmethod
+    def _to_generated(cls, logging: Optional["AnalyticsLogging"]) -> Optional[BlobAnalyticsLogging]:
+        if not logging:
+            return None
+        return BlobAnalyticsLogging(
+            version=logging.version,
+            delete=logging.delete,
+            read=logging.read,
+            write=logging.write,
+            retention_policy=RetentionPolicy._to_generated(  # pylint: disable=protected-access
+                logging.retention_policy
+            ),
+        )
 
-class StaticWebsite(GenStaticWebsite):
+
+class StaticWebsite(_BackCompatMixin):
     """The properties that enable an account to host a static website.
 
     :keyword bool enabled:
@@ -1358,6 +1423,13 @@ class StaticWebsite(GenStaticWebsite):
     default_index_document_path: Optional[str]
     """Absolute path of the default index page."""
 
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "index_document": {"key": "IndexDocument", "type": "str"},
+        "error_document404_path": {"key": "ErrorDocument404Path", "type": "str"},
+        "default_index_document_path": {"key": "DefaultIndexDocumentPath", "type": "str"},
+    }
+
     def __init__(self, **kwargs: Any) -> None:
         self.enabled = kwargs.get("enabled", False)
         if self.enabled:
@@ -1378,4 +1450,15 @@ class StaticWebsite(GenStaticWebsite):
             index_document=generated.index_document,
             error_document404_path=generated.error_document404_path,
             default_index_document_path=generated.default_index_document_path,
+        )
+
+    @classmethod
+    def _to_generated(cls, static_website: Optional["StaticWebsite"]) -> Optional[BlobStaticWebsite]:
+        if not static_website:
+            return None
+        return BlobStaticWebsite(
+            enabled=static_website.enabled,
+            index_document=static_website.index_document,
+            error_document404_path=static_website.error_document404_path,
+            default_index_document_path=static_website.default_index_document_path,
         )

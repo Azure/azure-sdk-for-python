@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -14,7 +15,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import process_storage_error
-from ._generated import AzureDataLakeStorageRESTAPI
+from ._generated import DataLakeClient as AzureDataLakeStorageRESTAPI
 from ._models import (
     AccessControlChangeCounters,
     AccessControlChangeFailure,
@@ -85,7 +86,7 @@ class PathClient(StorageAccountHostsMixin):
         path_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         # remove the preceding/trailing delimiter from the path components
@@ -157,10 +158,10 @@ class PathClient(StorageAccountHostsMixin):
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
             url,
-            version=self._api_version,
             base_url=url,
             file_system=self.file_system_name,
             path=self.path_name,
+            version=self._api_version,
             pipeline=self._pipeline,
         )
         return client

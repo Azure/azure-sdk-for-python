@@ -1596,6 +1596,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         await fc.get_file_properties()
         await fc.upload_data(data, overwrite=True)
 
+    @pytest.mark.skip(reason="We drop support for legacy transports")
     @DataLakePreparer()
     async def test_mock_transport_no_content_validation(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
@@ -1628,6 +1629,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         resp = await file_client.delete_file()
         assert resp is not None
 
+    @pytest.mark.skip(reason="We drop support for legacy transports")
     @DataLakePreparer()
     async def test_mock_transport_with_content_validation(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
