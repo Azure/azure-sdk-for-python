@@ -1,5 +1,30 @@
 # Release History
 
+## 4.8.0b3 (Unreleased)
+
+### Features Added
+
+- Added support for service API version `2026-07-01-preview`
+- Added EKM proxy private endpoint management to `KeyVaultEkmClient`. The client now exposes
+  `begin_create_ekm_private_endpoint`, `begin_delete_ekm_private_endpoint`, `get_ekm_private_endpoint`,
+  `list_ekm_private_endpoints`, and `get_ekm_private_endpoint_operation_status`.
+- Added `KeyVaultEkmPrivateEndpoint`, `KeyVaultEkmPrivateEndpointConnectionState`,
+  `KeyVaultEkmPrivateEndpointProperties`, and `KeyVaultEkmPrivateEndpointOperation` models, along with the
+  `KeyVaultEkmConnectivityMode`, `KeyVaultEkmPrivateEndpointConnectionStatus`,
+  `KeyVaultEkmPrivateEndpointOperationStatus`, `KeyVaultEkmPrivateEndpointOperationType`, and
+  `KeyVaultEkmPrivateEndpointProvisioningState` enums.
+- Added a `connectivity_mode` keyword argument and attribute to `KeyVaultEkmConnection`. Set this to
+  `KeyVaultEkmConnectivityMode.PRIVATE_ENDPOINT` to reach the EKM proxy through an EKM proxy private endpoint, in which
+  case `host` is the name of the private endpoint instead of a DNS name or IP address.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Key Vault API version `2026-07-01-preview` is now the default.
+
 ## 4.8.0b2 (2026-07-08)
 
 ### Bugs Fixed
