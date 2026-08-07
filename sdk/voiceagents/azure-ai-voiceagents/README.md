@@ -68,6 +68,30 @@ for agent in client.voice_agents.list_voice_agents(
 See the [samples on GitHub](https://github.com/Azure/azure-sdk-for-python/tree/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples)
 for management, quickstart, and realtime conversation examples.
 
+## Key concepts
+
+- **Voice agents** are managed in an Azure AI Foundry project through the
+    `VoiceAgentsClient`.
+- **Realtime sessions** connect to an agent over an asynchronous WebSocket
+    connection and can stream audio input and output.
+- **Persisted conversations** contain transcripts and audio when conversation
+    storage is enabled for the agent.
+
+## Troubleshooting
+
+- Verify that `AZURE_VOICE_AGENTS_ENDPOINT` points to the Foundry project
+    endpoint, not the account endpoint.
+- Ensure the credential has permission to access the project and its voice
+    agents.
+- For realtime audio samples, install `aiohttp` and `pyaudio`, and verify that
+    the operating system has an available microphone and speaker.
+
+## Next steps
+
+- Review the [sample collection](https://github.com/Azure/azure-sdk-for-python/tree/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/samples).
+- Read the [Azure AI Foundry documentation](https://learn.microsoft.com/azure/ai-foundry/).
+- See the [API reference](https://github.com/Azure/azure-sdk-for-python/blob/xitzhang/voice-agent-pupr/sdk/voiceagents/azure-ai-voiceagents/api.md).
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require

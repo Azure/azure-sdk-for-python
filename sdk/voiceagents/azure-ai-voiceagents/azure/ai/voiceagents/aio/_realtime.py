@@ -285,7 +285,6 @@ class SessionResource(_BaseResource):
         """
         await self._send(
             _models.VoiceAgentClientEventSessionAvatarConnect(
-                type=_models.RealtimeClientEventType.SESSION_AVATAR_CONNECT,
                 client_sdp=client_sdp,
                 event_id=event_id,
             )

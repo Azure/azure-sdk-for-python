@@ -10,7 +10,6 @@ from collections.abc import MutableMapping
 from io import IOBase
 import json
 from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TYPE_CHECKING, TypeVar, Union, overload
-import urllib.parse
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -46,7 +45,6 @@ from ...operations._operations import (
     build_agent_endpoint_conversations_list_agent_conversation_items_request,
     build_agent_endpoint_conversations_list_agent_conversation_response_items_request,
     build_agent_endpoint_conversations_list_agent_conversation_responses_request,
-    build_voice_agent_web_socket_connect_voice_agent_request,
     build_voice_agents_create_voice_agent_request,
     build_voice_agents_create_voice_agent_version_request,
     build_voice_agents_delete_voice_agent_request,

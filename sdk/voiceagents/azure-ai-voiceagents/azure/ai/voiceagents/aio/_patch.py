@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class VoiceAgentsClient(_GeneratedVoiceAgentsClient):
+class VoiceAgentsClient(_GeneratedVoiceAgentsClient):  # pylint: disable=client-accepts-api-version-keyword
     """VoiceAgentsClient with a realtime streaming namespace.
 
     Adds the :attr:`realtime` namespace on top of the generated HTTP client, exposing
@@ -25,7 +25,9 @@ class VoiceAgentsClient(_GeneratedVoiceAgentsClient):
 
     _realtime: Optional[AsyncRealtime] = None
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: "AsyncTokenCredential", *, api_version: Optional[str] = None, **kwargs: Any
+    ) -> None:
         # Work around an azure-core/aiohttp limitation: azure-core's AioHttpTransport
         # disables aiohttp's native response decompression and only re-implements
         # gzip/deflate itself (no brotli support), while aiohttp advertises
@@ -36,14 +38,14 @@ class VoiceAgentsClient(_GeneratedVoiceAgentsClient):
         if "transport" not in kwargs and "session" not in kwargs:
             try:
                 import aiohttp
-                from azure.core.pipeline.transport import AioHttpTransport
+                import azure.core.pipeline.transport as transport_module
 
-                kwargs["transport"] = AioHttpTransport(
+                kwargs["transport"] = transport_module.AioHttpTransport(
                     session=aiohttp.ClientSession(auto_decompress=False, headers={"Accept-Encoding": "gzip, deflate"})
                 )
             except ImportError:
                 pass
-        super().__init__(endpoint, credential, **kwargs)
+        super().__init__(endpoint, credential, api_version=api_version, **kwargs)
 
     @property
     def realtime(self) -> AsyncRealtime:

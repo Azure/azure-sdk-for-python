@@ -42,7 +42,10 @@ class TestVoiceAgentsClientAsync(AzureRecordedTestCase):
     ):
         async with self.create_client(azure_voice_agents_endpoint) as client:
             conversation = await client.agent_endpoint_conversations.get_agent_conversation(
-                azure_voice_agents_agent_name, azure_voice_agents_conversation_id, foundry_features=PREVIEW
+                azure_voice_agents_agent_name,
+                azure_voice_agents_conversation_id,
+                foundry_features=PREVIEW,
+                headers={"Accept-Encoding": "identity"},
             )
 
         # See the note in test_get_voice_agent about not asserting on "id"/"name".
@@ -58,7 +61,10 @@ class TestVoiceAgentsClientAsync(AzureRecordedTestCase):
             items = [
                 item
                 async for item in client.agent_endpoint_conversations.list_agent_conversation_items(
-                    azure_voice_agents_agent_name, azure_voice_agents_conversation_id, foundry_features=PREVIEW
+                    azure_voice_agents_agent_name,
+                    azure_voice_agents_conversation_id,
+                    foundry_features=PREVIEW,
+                    headers={"Accept-Encoding": "identity"},
                 )
             ]
 
@@ -73,7 +79,10 @@ class TestVoiceAgentsClientAsync(AzureRecordedTestCase):
             responses = [
                 response
                 async for response in client.agent_endpoint_conversations.list_agent_conversation_responses(
-                    azure_voice_agents_agent_name, azure_voice_agents_conversation_id, foundry_features=PREVIEW
+                    azure_voice_agents_agent_name,
+                    azure_voice_agents_conversation_id,
+                    foundry_features=PREVIEW,
+                    headers={"Accept-Encoding": "identity"},
                 )
             ]
 
@@ -87,7 +96,10 @@ class TestVoiceAgentsClientAsync(AzureRecordedTestCase):
     ):
         async with self.create_client(azure_voice_agents_endpoint) as client:
             recording = await client.agent_endpoint_conversations.get_agent_conversation_audio(
-                azure_voice_agents_agent_name, azure_voice_agents_conversation_id, foundry_features=PREVIEW
+                azure_voice_agents_agent_name,
+                azure_voice_agents_conversation_id,
+                foundry_features=PREVIEW,
+                headers={"Accept-Encoding": "identity"},
             )
 
         assert recording["format"] is not None

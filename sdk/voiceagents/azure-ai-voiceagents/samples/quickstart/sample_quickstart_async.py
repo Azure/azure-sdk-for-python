@@ -168,7 +168,8 @@ async def _delete_agent(client: VoiceAgentsClient, agent_name: str) -> None:
     try:
         await client.voice_agents.delete_voice_agent(agent_name, foundry_features=PREVIEW)
     except HttpResponseError as exc:
-        if exc.response is None or exc.response.status_code != 200:
+        # Service currently returns either 200 or 204 on successful delete.
+        if exc.response is None or exc.response.status_code not in (200, 204):
             raise
     print(f"Deleted temporary voice agent: {agent_name}")
 
