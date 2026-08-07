@@ -486,37 +486,7 @@ class TestStructuredFailureLog:
 
 
 class TestSevenStepOrdering:
-    """+ SC-010 — 7-step ordering on multi-turn handler raise."""
-
-    @pytest.mark.asyncio
-    async def test_auto_flush_before_record_patch(self, tmp_path: Path, capturing_provider_factory: Any) -> None:
-        manager, mgr_mod, provider = await _setup_manager(tmp_path, capturing_provider_factory)
-        try:
-            observed_metadata: list[Any] = []
-
-            @multi_turn_task(name="flush-before-patch-chain")
-            async def chat(ctx: TaskContext[dict[str, str]]) -> str:
-                if ctx.input["value"] == "fail":
-                    ctx.metadata["x"] = "y"
-                    raise MyError("flush before suspend")
-                observed_metadata.append(ctx.metadata.get("x"))
-                return "ok"
-
-            failing = await chat.start(task_id="flush-before-patch", input_id="turn-1", input={"value": "fail"})
-            with pytest.raises(TaskFailed):
-                await asyncio.wait_for(failing.result(), timeout=5.0)
-
-            assert await chat.run(task_id="flush-before-patch", input_id="turn-2", input={"value": "ok"}) == "ok"
-            assert observed_metadata == ["y"]
-
-            updates = _captured_updates(provider, "flush-before-patch")
-            metadata_index = next(
-                index for index, patch in updates if (_patch_payload(patch).get("metadata") or {}).get("x") == "y"
-            )
-            suspend_index, _ = _find_suspend_patch(provider, "flush-before-patch")
-            assert metadata_index < suspend_index
-        finally:
-            await _teardown_manager(manager, mgr_mod)
+    """Ordering on multi-turn handler raise."""
 
     @pytest.mark.asyncio
     async def test_current_TaskFailed_resolves_before_queued_promotes(self, tmp_path: Path) -> None:

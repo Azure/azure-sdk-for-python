@@ -50,13 +50,13 @@ What this primitive solves:
 What this primitive deliberately does **not** do:
 
 - Deterministic replay. The handler is re-invoked from the top on
-  recovery; effects are your responsibility (use `ctx.metadata`
-  watermarks for at-most-once patterns — see §6).
+  recovery; effects are your responsibility. Persist watermarks in an
+  application-owned `FoundryStateStore` for at-most-once patterns (see §6).
 - Workflow orchestration (fan-out / fan-in / child workflows). If
   you want Temporal-style orchestration, use Temporal; you can
   still wrap resilient tasks inside it.
-- A bulk data store. `ctx.metadata` is small and JSON-only;
-  conversation history and big blobs belong in your own storage.
+- An application data store. Use `FoundryStateStore` for durable JSON
+  state and a blob store for large values.
 - A queue. One `task_id` is one logical job — not a competing-consumer
   pull queue.
 
@@ -236,8 +236,8 @@ The handler can branch on `ctx.entry_mode`:
 @multi_turn_task(name="checkpointer")
 async def step(ctx: TaskContext[dict]) -> dict:
     if ctx.entry_mode == "recovered":
-        # Skip any work we already wrote to ctx.metadata; pick up where we left off.
-        last_done = ctx.metadata.get("last_done_step")
+        # Load your application checkpoint from Foundry State Store.
+        last_done = await load_last_done_step(ctx.task_id)
     ...
 ```
 
@@ -260,6 +260,11 @@ typing flows through `task_id.run(input=X) -> Output`.
   Larger inputs raise `InputTooLarge` at the caller before any
   network round-trip. Externalize (blob store + reference) for
   bigger payloads.
+- **Persist `call_id` in typed task input.** When a task input exposes a
+  top-level `call_id` field, the framework restores
+  `FoundryAgentRequestContext` before every fresh, resumed, or recovered
+  handler attempt. This lets SDK calls inside recovered handlers keep the
+  original Foundry call identity.
 
 ### 4.4 The handler's context (`TaskContext`)
 
@@ -269,7 +274,6 @@ class TaskContext:
     task_id: str
     input_id: str                  # per-turn id
     entry_mode: Literal["fresh", "resumed", "recovered"]
-    metadata: TaskMetadata         # callable namespace facade (see §4.5)
     retry_attempt: int             # 0 on the first try
     is_steered_turn: bool          # True iff this turn was promoted from the queue
     pending_input_count: int       # how many newer turns are queued
@@ -287,26 +291,22 @@ The first parameter MUST be named `ctx`. The framework binds
 positionally, but it validates the name at decoration time so the
 guide examples and your code stay consistent.
 
-### 4.5 Metadata
+### 4.5 Durable application state
 
-`ctx.metadata` is a **callable namespace facade**: small key-value
-state that survives crashes and is visible across turns of a chain.
-Values must be JSON-serializable (the framework exposes the
-`JSONValue` type alias).
+Task lifecycle state and application state are intentionally separate.
+Create a `FoundryStateStore` with a stable application scope, then store
+conversation checkpoints, watermarks, and deduplication tokens there.
+State Store writes do not PATCH the task record or renew its lease.
 
 ```python
-@multi_turn_task(name="agent")
-async def agent(ctx: TaskContext[dict]) -> dict:
-    # Default namespace.
-    ctx.metadata["score"] = 42
-    # Named namespace — auto-vivified.
-    ctx.metadata("billing")["tokens_in"] = 130
-    return {"ok": True}
-```
+from azure.ai.agentserver.core.storage import FoundryStateStore
 
-Names starting with `_` are reserved for the framework and raise
-`ValueError` at write time. Use `ctx.metadata.flush()` if you need
-an explicit at-most-once fence before a side effect.
+store = await FoundryStateStore.get_or_create(
+    f"agents/my-agent/tasks/{ctx.task_id}",
+)
+state = await store.get_item("state")
+await store.set_item("state", {"score": 42})
+```
 
 ### 4.6 The result handle (`TaskRun`)
 
@@ -316,7 +316,6 @@ an explicit at-most-once fence before a side effect.
 class TaskRun(Generic[Output]):
     task_id: str
     input_id: str
-    metadata: TaskMetadata                # live ref while the run is in-flight
     is_queued: bool                       # True iff this is a queued steering input
 
     async def result(self) -> Output: ...
@@ -589,7 +588,6 @@ class MultiTurnTask(Generic[Input, Output]):
 class TaskRun(Generic[Output]):
     task_id: str
     input_id: str
-    metadata: TaskMetadata
 
     async def result(self) -> Output: ...
     async def cancel(self) -> None: ...
@@ -617,9 +615,6 @@ class TaskContext(Generic[Input]):
     timeout_exceeded: bool            # cause: per-turn timeout watchdog fired
     shutdown: asyncio.Event           # container is shutting down
 
-    # Cross-turn / cross-attempt state.
-    metadata: TaskMetadata
-
     # Control.
     async def exit_for_recovery(self) -> None: ...
 ```
@@ -635,7 +630,6 @@ Read-only enumeration:
 - `ctx.is_steered_turn`, `ctx.pending_input_count`
 - `ctx.cancel`, `ctx.cancel_requested`, `ctx.timeout_exceeded`,
   `ctx.shutdown`
-- `ctx.metadata`
 - `ctx.exit_for_recovery()`
 
 ### 5.6 Exceptions
@@ -696,7 +690,7 @@ class RetryPolicy:
 Presets: `exponential_backoff(...)`, `fixed_delay(delay, ...)`,
 `linear_backoff(...)`, `no_retry()`.
 
-### 5.8 `TaskMetadata` and `JSONValue`
+### 5.8 `JSONValue`
 
 ```python
 JSONValue = Union[
@@ -705,15 +699,6 @@ JSONValue = Union[
     dict[str, JSONValue],
 ]
 
-class TaskMetadata:
-    def __getitem__(self, key: str) -> JSONValue: ...
-    def __setitem__(self, key: str, value: JSONValue) -> None: ...
-    def __delitem__(self, key: str) -> None: ...
-    def __contains__(self, key: str) -> bool: ...
-    def __iter__(self) -> Iterator[str]: ...
-    def get(self, key: str, default: JSONValue = None) -> JSONValue: ...
-    def __call__(self, namespace: str) -> TaskMetadata: ...   # sibling ns
-    async def flush(self) -> None: ...                        # at-most-once fence
 ```
 
 ### 5.9 `EntryMode`
@@ -733,15 +718,21 @@ EntryMode = Literal["fresh", "resumed", "recovered"]
 async def session_agent(ctx: TaskContext[dict]) -> dict:
     # ctx.entry_mode is "fresh" on the first turn, "resumed" on
     # subsequent turns of this conversation.
-    history = ctx.metadata.get("history", [])
+    store = await FoundryStateStore.get_or_create(
+        f"agents/session-agent/{ctx.task_id}",
+    )
+    item = await store.get_item("conversation")
+    state = dict(item.value) if item else {"history": [], "turn": 0}
+    history = state["history"]
     user_msg = ctx.input["message"]
     history.append({"role": "user", "content": user_msg})
 
     reply = await llm.chat(history)
 
     history.append({"role": "assistant", "content": reply})
-    ctx.metadata["history"] = history
-    return {"reply": reply, "turn": ctx.metadata.get("turn", 0) + 1}
+    state["turn"] += 1
+    await store.set_item("conversation", state)
+    return {"reply": reply, "turn": state["turn"]}
 
 # Turn 1.
 r1 = await session_agent.run(task_id="conv-A", input={"message": "hi"})
@@ -757,21 +748,30 @@ r2 = await session_agent.run(task_id="conv-A", input={"message": "what time is i
 async def charge_card(ctx: TaskContext[dict]) -> str:
     # Survive recovery: if we already charged in a prior lifetime,
     # don't double-charge.
-    if ctx.metadata.get("charge_done"):
-        return ctx.metadata["charge_receipt"]
+    store = await FoundryStateStore.get_or_create(
+        f"payments/tasks/{ctx.task_id}",
+    )
+    item = await store.get_item("charge")
+    state = dict(item.value) if item else {}
+    if state.get("charge_done"):
+        return state["charge_receipt"]
 
-    # Reserve a dedup token before the side effect, flush, then act.
-    ctx.metadata["pending_charge_token"] = generate_uuid()
-    await ctx.metadata.flush()
+    # Persist a dedup token once, then reuse it after crash recovery.
+    pending_token = state.get("pending_charge_token")
+    if pending_token is None:
+        pending_token = generate_uuid()
+        state["pending_charge_token"] = pending_token
+        await store.set_item("charge", state)
 
     receipt = await payment_gateway.charge(
         ctx.input["card"],
         ctx.input["amount"],
-        idempotency_key=ctx.metadata["pending_charge_token"],
+        idempotency_key=pending_token,
     )
 
-    ctx.metadata["charge_done"] = True
-    ctx.metadata["charge_receipt"] = receipt
+    state["charge_done"] = True
+    state["charge_receipt"] = receipt
+    await store.set_item("charge", state)
     return receipt
 ```
 
@@ -883,17 +883,15 @@ except LastInputIdPreconditionFailed as exc:
 - **Not a deterministic-replay framework.** The handler is re-invoked
   from the top on recovery; the framework does not record and
   replay every effect. Determinism across re-invocations is the
-  handler's responsibility — use `ctx.metadata` watermarks for
-  at-most-once patterns (see §6.2).
+  handler's responsibility — use application-owned State Store
+  watermarks for at-most-once patterns (see §6.2).
 - **Not a workflow engine.** No fan-out / fan-in, no child-workflow
   orchestration, no first-class signals or timers. If you need
   those, use Temporal and wrap resilient tasks
   inside them.
-- **Not a bulk data store.** `ctx.metadata` is intentionally small
-  and JSON-only. Persist conversation history, LLM outputs, and
-  big checkpoints through your own storage (LangGraph SqliteSaver,
-  your own DB). Use metadata only for small watermarks and dedup
-  tokens.
+- **Not an application data store.** Persist conversation history,
+  watermarks, and checkpoints through `FoundryStateStore` or a dedicated
+  checkpointer. Keep large blobs in blob storage.
 - **Not a queue.** A `task_id` identifies one logical unit of
   work. If you want competing consumers off a shared queue, use a
   different primitive.
@@ -916,16 +914,14 @@ gets queued (multi-turn `steerable=True`), or sees `TaskConflictError`.
 **Q. Does the framework retry by default?**
 A. No. Pass `retry=RetryPolicy(...)` to opt in.
 
-**Q. Can I store conversation history in `ctx.metadata`?**
-A. Small histories fit, but `metadata` is intentionally small and
-JSON-only. Use a dedicated checkpointer (LangGraph SqliteSaver,
-your own DB, etc.) for large multi-turn state, and keep `metadata`
-to small watermarks and dedup tokens.
+**Q. Where should I store conversation history?**
+A. Use `FoundryStateStore` for durable JSON conversation state or a
+dedicated checkpointer such as LangGraph SqliteSaver.
 
 **Q. I compose LangGraph with a resilient task. How do I fork its state on
 steer/recovery, and why do I get `KeyError: 'checkpoint_ns'`?**
 A. On a steered or crash-recovered turn, re-run from the last STABLE graph
-checkpoint (recorded in `ctx.metadata`) rather than resuming the graph's latest
+checkpoint (recorded in State Store) rather than resuming the graph's latest
 (possibly half-executed) tip — otherwise you mis-attribute the turn's input or
 lose work. To fork, resolve that checkpoint with
 `graph.get_state({"configurable": {"thread_id": ..., "checkpoint_id": cp}})` and
@@ -953,4 +949,3 @@ A. Consult the task manager's provider directly:
 The decorator's public surface intentionally doesn't expose a
 `.get()` method — read paths go through the provider so the public
 decorator surface stays small and write-shaped.
-

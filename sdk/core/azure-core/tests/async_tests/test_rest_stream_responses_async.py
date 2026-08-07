@@ -78,9 +78,7 @@ async def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
 
     async with client.send_request(request, stream=True) as response:
-        content = ""
-        async for part in response.iter_text():
-            content += part
+        content = "".join([part async for part in response.iter_text()])
         assert content == "Hello, world!"
 
 
