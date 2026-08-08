@@ -72,7 +72,11 @@ def _agent_identity_headers() -> dict[str, str]:
     if agent_version:
         headers[_AGENT_VERSION_HEADER] = agent_version
     if headers:
-        logger.info("Resolved agent identity headers: %s", headers)
+        logger.info(
+            "Resolved agent identity headers: name length=%d, version length=%d",
+            len(agent_name or ""),
+            len(agent_version or ""),
+        )
     return headers
 
 
