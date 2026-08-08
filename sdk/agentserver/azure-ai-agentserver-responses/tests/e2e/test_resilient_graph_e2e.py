@@ -30,12 +30,11 @@ GRAPH_NODES = ["fetch_data", "transform_data", "generate_output"]
 def _make_graph_app() -> TestClient:
     options = ResponsesServerOptions(resilient_background=True)
     app = ResponsesAgentServerHost(options=options)
-    completed_by_chain: dict[str, list[str]] = {}
 
     @app.response_handler
     async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
-        completed = completed_by_chain.setdefault(context.conversation_chain_id, [])
+        completed = context.conversation_chain_metadata.get("completed_nodes", [])
         start_node = len(completed)
 
         yield stream.emit_created()
@@ -46,7 +45,9 @@ def _make_graph_app() -> TestClient:
                 break
             for event in stream.output_item_message(f"[{GRAPH_NODES[i]}] done. "):
                 yield event
+            completed = context.conversation_chain_metadata.get("completed_nodes", [])
             completed.append(GRAPH_NODES[i])
+            context.conversation_chain_metadata["completed_nodes"] = completed
 
         yield stream.emit_completed()
 

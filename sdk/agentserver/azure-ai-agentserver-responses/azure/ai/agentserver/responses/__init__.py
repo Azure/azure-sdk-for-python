@@ -9,6 +9,7 @@ __version__ = VERSION
 from . import _data_url as data_url
 from ._options import ResponsesServerOptions
 from ._response_context import (
+    ConversationChainMetadataNamespace,
     ExitForRecoverySignal,
     PlatformContext,
     ResponseContext,
@@ -33,6 +34,7 @@ from .streaming._text_response import TextResponse
 __all__ = [
     "__version__",
     "data_url",  # pylint: disable=naming-mismatch
+    "ConversationChainMetadataNamespace",
     "ExitForRecoverySignal",
     "ResponseExitForRecovery",
     "ResponsesAgentServerHost",

@@ -76,7 +76,9 @@ async def test_multiturn_context_accumulates(harness: CrashHarness) -> None:
 
     Note: this pins the reliable resilience property — conversation *history*
     accumulates across turns (the sample reports a growing context-item count).
-    It intentionally does not assert on application-owned turn-count state.
+    It intentionally does NOT assert on the ``turn_count`` watermark: cross-turn
+    ``conversation_chain_metadata`` propagation for non-steerable serial chains is
+    a separate, pre-existing behavior outside this sample's headline guarantee.
     """
     await harness.start()
     try:

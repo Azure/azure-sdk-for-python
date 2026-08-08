@@ -45,6 +45,7 @@ EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
         "resilient_tasks_enabled",
         "RetryPolicy",
         "TaskContext",
+        "TaskMetadata",
         # Type aliases + TypedDicts
         "JSONValue",
         "TaskErrorDict",

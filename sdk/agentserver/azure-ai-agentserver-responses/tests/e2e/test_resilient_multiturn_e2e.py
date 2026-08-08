@@ -6,7 +6,7 @@ Tests:
 - Multi-turn: 3 sequential turns → each references prior context
 - Turn counter increments across turns
 - Conversation context accumulates
-- ResponseContext recovery fields accessible in handler
+- ResilienceContext accessible in handler
 - Non-resilient fallback works when resilient=False
 """
 
@@ -38,7 +38,6 @@ def _make_multiturn_app() -> TestClient:
         steerable_conversations=True,
     )
     app = ResponsesAgentServerHost(options=options)
-    state_by_chain: dict[str, dict[str, Any]] = {}
 
     @app.response_handler
     async def handler(
@@ -47,12 +46,11 @@ def _make_multiturn_app() -> TestClient:
         cancellation_signal: asyncio.Event,
     ):
         input_text = await context.get_input_text()
-        state = state_by_chain.setdefault(context.conversation_chain_id, {})
-        turn_count = int(state.get("turn_count", 0)) + 1
-        context_list = list(state.get("conversation_context", []))
+        turn_count = context.conversation_chain_metadata.get("turn_count", 0) + 1
+        context_list = context.conversation_chain_metadata.get("conversation_context", [])
         context_list.append({"turn": turn_count, "input": input_text})
-        state["turn_count"] = turn_count
-        state["conversation_context"] = context_list
+        context.conversation_chain_metadata["turn_count"] = turn_count
+        context.conversation_chain_metadata["conversation_context"] = context_list
         text = f"Turn {turn_count}: {input_text}"
 
         return TextResponse(context, request, text=text)
@@ -192,7 +190,6 @@ def _make_conv_id_non_steerable_app() -> tuple[Any, dict[str, Any]]:
     )
     app = ResponsesAgentServerHost(options=options)
     handler_state: dict[str, Any] = {"invocations": []}
-    turn_count_by_chain: dict[str, int] = {}
 
     @app.response_handler
     async def handler(
@@ -202,8 +199,8 @@ def _make_conv_id_non_steerable_app() -> tuple[Any, dict[str, Any]]:
     ):
         input_text = await context.get_input_text()
         chain_id = context.conversation_chain_id
-        turn_count = turn_count_by_chain.get(chain_id, 0) + 1
-        turn_count_by_chain[chain_id] = turn_count
+        turn_count = context.conversation_chain_metadata.get("turn_count", 0) + 1
+        context.conversation_chain_metadata["turn_count"] = turn_count
         handler_state["invocations"].append(
             {
                 "input": input_text,

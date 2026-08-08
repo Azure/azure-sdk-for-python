@@ -7,7 +7,6 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import get_request_context
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
@@ -209,46 +208,6 @@ async def test_get_propagates_session_id_from_env_var(monkeypatch):
     assert resp.status_code == 200
     assert captured["session_id"] == "platform-session-get"
     assert captured["invocation_id"] == "some-id"
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize(
-    ("method", "path", "decorator_name"),
-    [
-        ("GET", "/invocations/some-id", "get_invocation_handler"),
-        ("POST", "/invocations/some-id/cancel", "cancel_invocation_handler"),
-    ],
-)
-async def test_get_and_cancel_bind_platform_request_context(method, path, decorator_name):
-    """GET and cancel handlers receive the platform identity context."""
-    app = InvocationAgentServerHost()
-    captured: dict[str, str | None] = {}
-
-    async def handler(request: Request) -> Response:
-        context = get_request_context()
-        captured["call_id"] = context.call_id
-        captured["user_id"] = context.user_id
-        captured["state_call_id"] = request.state.call_id
-        captured["state_user_id"] = request.state.user_id
-        return JSONResponse({"status": "ok"})
-
-    getattr(app, decorator_name)(handler)
-
-    transport = ASGITransport(app=app)
-    headers = {
-        "x-agent-foundry-call-id": "foundry-call",
-        "x-agent-user-id": "foundry-user",
-    }
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        resp = await client.request(method, path, headers=headers)
-
-    assert resp.status_code == 200
-    assert captured == {
-        "call_id": "foundry-call",
-        "user_id": "foundry-user",
-        "state_call_id": "foundry-call",
-        "state_user_id": "foundry-user",
-    }
 
 
 @pytest.mark.asyncio

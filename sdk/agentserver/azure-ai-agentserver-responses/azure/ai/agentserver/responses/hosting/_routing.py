@@ -49,7 +49,8 @@ Handlers MUST be ``async def`` and take exactly three positional parameters:
 - ``context``: The :class:`ResponseContext` for the current request
   (exposes ``context.shutdown`` event, ``context.client_cancelled``
   bool, ``context.is_recovery`` / ``context.is_steered_turn`` /
-  ``context.pending_input_count`` / ``context.exit_for_recovery()``).
+  ``context.pending_input_count`` / ``context.conversation_chain_metadata`` /
+  ``context.exit_for_recovery()``).
 - ``cancellation_signal``: An :class:`asyncio.Event` set when the
   request is cancelled (client disconnect on non-background create,
   explicit ``/cancel`` API call, or steering pressure). The cancel
