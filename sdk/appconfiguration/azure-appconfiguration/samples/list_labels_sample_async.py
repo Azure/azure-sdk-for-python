@@ -54,6 +54,16 @@ async def main():
     async for config_setting in config_settings:
         print(config_setting)
 
+    print("List labels used by key-value settings only")
+    config_settings = client.list_labels(resource_type="kv")
+    async for config_setting in config_settings:
+        print(config_setting)
+
+    print("List labels used by feature flags only")
+    config_settings = client.list_labels(resource_type="ff")
+    async for config_setting in config_settings:
+        print(config_setting)
+
     await client.delete_configuration_setting(key="MyKey1", label="my label1")
     await client.delete_configuration_setting(key="MyKey2", label="my label2")
 

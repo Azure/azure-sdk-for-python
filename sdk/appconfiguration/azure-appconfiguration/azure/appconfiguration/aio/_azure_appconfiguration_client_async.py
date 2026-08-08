@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -87,7 +88,8 @@ class AzureAppConfigurationClient:
             audience = get_audience(base_url)
 
         # Ensure all scopes end with /.default and strip any trailing slashes before adding suffix
-        kwargs["credential_scopes"] = [audience + DEFAULT_SCOPE_SUFFIX]
+        audience_scope = audience.rstrip("/") + "/" + DEFAULT_SCOPE_SUFFIX
+        kwargs["credential_scopes"] = [audience_scope]
 
         if isinstance(credential, AzureKeyCredential):
             id_credential = kwargs.pop("id_credential")
@@ -677,6 +679,7 @@ class AzureAppConfigurationClient:
             after=after,
             accept_datetime=accept_datetime,
             select=fields,
+            resource_type="kv",
             cls=lambda objs: [ConfigurationSettingLabel(name=x.name) for x in objs],
             **kwargs,
         )

@@ -35,16 +35,397 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._configuration import AzureAppConfigurationClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from .._utils.serialization import Serializer
+from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC, prep_if_match, prep_if_none_match
 from .._validation import api_version_validation
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
+
+
+def build_feature_flag_client_get_feature_flags_request(  # pylint: disable=name-too-long
+    *,
+    name: Optional[str] = None,
+    label: Optional[str] = None,
+    sync_token: Optional[str] = None,
+    after: Optional[str] = None,
+    accept_datetime: Optional[str] = None,
+    select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+    tags: Optional[list[str]] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop(
+        "Accept",
+        'application/json;profile="https://azconfig.io/mime-profiles/ffset";charset=utf-8, application/problem+json',
+    )
+
+    # Construct URL
+    _url = "/ff"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if name is not None:
+        _params["name"] = _SERIALIZER.query("name", name, "str")
+    if label is not None:
+        _params["label"] = _SERIALIZER.query("label", label, "str")
+    if after is not None:
+        _params["After"] = _SERIALIZER.query("after", after, "str")
+    if select is not None:
+        _params["$Select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if tags is not None:
+        _params["tags"] = [_SERIALIZER.query("tags", q, "str") if q is not None else "" for q in tags]
+
+    # Construct headers
+    if sync_token is not None:
+        _headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
+    if accept_datetime is not None:
+        _headers["Accept-Datetime"] = _SERIALIZER.header("accept_datetime", accept_datetime, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_feature_flag_client_check_feature_flags_request(  # pylint: disable=name-too-long
+    *,
+    name: Optional[str] = None,
+    label: Optional[str] = None,
+    sync_token: Optional[str] = None,
+    after: Optional[str] = None,
+    accept_datetime: Optional[str] = None,
+    select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+    tags: Optional[list[str]] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    # Construct URL
+    _url = "/ff"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if name is not None:
+        _params["name"] = _SERIALIZER.query("name", name, "str")
+    if label is not None:
+        _params["label"] = _SERIALIZER.query("label", label, "str")
+    if after is not None:
+        _params["After"] = _SERIALIZER.query("after", after, "str")
+    if select is not None:
+        _params["$Select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if tags is not None:
+        _params["tags"] = [_SERIALIZER.query("tags", q, "str") if q is not None else "" for q in tags]
+
+    # Construct headers
+    if sync_token is not None:
+        _headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
+    if accept_datetime is not None:
+        _headers["Accept-Datetime"] = _SERIALIZER.header("accept_datetime", accept_datetime, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_feature_flag_client_get_feature_flag_request(  # pylint: disable=name-too-long
+    name: str,
+    *,
+    label: Optional[str] = None,
+    select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+    sync_token: Optional[str] = None,
+    accept_datetime: Optional[str] = None,
+    tags: Optional[list[str]] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop(
+        "Accept",
+        'application/json;profile="https://azconfig.io/mime-profiles/ff";charset=utf-8, application/problem+json',
+    )
+
+    # Construct URL
+    _url = "/ff/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if label is not None:
+        _params["label"] = _SERIALIZER.query("label", label, "str")
+    if select is not None:
+        _params["$Select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if tags is not None:
+        _params["tags"] = [_SERIALIZER.query("tags", q, "str") if q is not None else "" for q in tags]
+
+    # Construct headers
+    if sync_token is not None:
+        _headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
+    if accept_datetime is not None:
+        _headers["Accept-Datetime"] = _SERIALIZER.header("accept_datetime", accept_datetime, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_feature_flag_client_check_feature_flag_request(  # pylint: disable=name-too-long
+    name: str,
+    *,
+    label: Optional[str] = None,
+    sync_token: Optional[str] = None,
+    accept_datetime: Optional[str] = None,
+    select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+    tags: Optional[list[str]] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    # Construct URL
+    _url = "/ff/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if label is not None:
+        _params["label"] = _SERIALIZER.query("label", label, "str")
+    if select is not None:
+        _params["$Select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if tags is not None:
+        _params["tags"] = [_SERIALIZER.query("tags", q, "str") if q is not None else "" for q in tags]
+
+    # Construct headers
+    if sync_token is not None:
+        _headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
+    if accept_datetime is not None:
+        _headers["Accept-Datetime"] = _SERIALIZER.header("accept_datetime", accept_datetime, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_feature_flag_client_put_feature_flag_request(  # pylint: disable=name-too-long
+    name: str,
+    *,
+    label: Optional[str] = None,
+    sync_token: Optional[str] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop(
+        "Accept",
+        'application/json;profile="https://azconfig.io/mime-profiles/ff";charset=utf-8, application/problem+json',
+    )
+
+    # Construct URL
+    _url = "/ff/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if label is not None:
+        _params["label"] = _SERIALIZER.query("label", label, "str")
+
+    # Construct headers
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if sync_token is not None:
+        _headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_feature_flag_client_delete_feature_flag_request(  # pylint: disable=name-too-long
+    name: str,
+    *,
+    label: Optional[str] = None,
+    sync_token: Optional[str] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop(
+        "Accept",
+        'application/json;profile="https://azconfig.io/mime-profiles/ff";charset=utf-8, application/problem+json',
+    )
+
+    # Construct URL
+    _url = "/ff/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if label is not None:
+        _params["label"] = _SERIALIZER.query("label", label, "str")
+
+    # Construct headers
+    if sync_token is not None:
+        _headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_feature_flag_client_get_feature_flag_revisions_request(  # pylint: disable=name-too-long
+    *,
+    name: Optional[str] = None,
+    label: Optional[str] = None,
+    after: Optional[str] = None,
+    select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+    tags: Optional[list[str]] = None,
+    sync_token: Optional[str] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop(
+        "Accept",
+        'application/json;profile="https://azconfig.io/mime-profiles/ffset";charset=utf-8, application/problem+json',
+    )
+
+    # Construct URL
+    _url = "/ff-revisions"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if name is not None:
+        _params["name"] = _SERIALIZER.query("name", name, "str")
+    if label is not None:
+        _params["label"] = _SERIALIZER.query("label", label, "str")
+    if after is not None:
+        _params["After"] = _SERIALIZER.query("after", after, "str")
+    if select is not None:
+        _params["$Select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if tags is not None:
+        _params["tags"] = [_SERIALIZER.query("tags", q, "str") if q is not None else "" for q in tags]
+
+    # Construct headers
+    if sync_token is not None:
+        _headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_feature_flag_client_check_feature_flag_revisions_request(  # pylint: disable=name-too-long
+    *,
+    name: Optional[str] = None,
+    label: Optional[str] = None,
+    after: Optional[str] = None,
+    select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+    tags: Optional[list[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    # Construct URL
+    _url = "/ff-revisions"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if name is not None:
+        _params["name"] = _SERIALIZER.query("name", name, "str")
+    if label is not None:
+        _params["label"] = _SERIALIZER.query("label", label, "str")
+    if after is not None:
+        _params["After"] = _SERIALIZER.query("after", after, "str")
+    if select is not None:
+        _params["$Select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if tags is not None:
+        _params["tags"] = [_SERIALIZER.query("tags", q, "str") if q is not None else "" for q in tags]
+
+    # Construct headers
+
+    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_azure_app_configuration_get_keys_request(  # pylint: disable=name-too-long
@@ -58,7 +439,7 @@ def build_azure_app_configuration_get_keys_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.keyset+json, application/problem+json")
 
     # Construct URL
@@ -92,7 +473,7 @@ def build_azure_app_configuration_check_keys_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/keys"
 
@@ -129,7 +510,7 @@ def build_azure_app_configuration_get_key_values_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kvset+json, application/problem+json")
 
     # Construct URL
@@ -183,7 +564,7 @@ def build_azure_app_configuration_check_key_values_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/kv"
 
@@ -232,7 +613,7 @@ def build_azure_app_configuration_get_key_value_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kv+json, application/problem+json")
 
     # Construct URL
@@ -281,7 +662,7 @@ def build_azure_app_configuration_put_key_value_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kv+json, application/problem+json")
 
     # Construct URL
@@ -325,7 +706,7 @@ def build_azure_app_configuration_delete_key_value_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kv+json, application/problem+json")
 
     # Construct URL
@@ -370,7 +751,7 @@ def build_azure_app_configuration_check_key_value_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/kv/{key}"
     path_format_arguments = {
@@ -415,7 +796,7 @@ def build_azure_app_configuration_get_snapshots_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.snapshotset+json, application/problem+json")
 
     # Construct URL
@@ -446,7 +827,7 @@ def build_azure_app_configuration_check_snapshots_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/snapshots"
 
@@ -474,7 +855,7 @@ def build_azure_app_configuration_get_snapshot_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.snapshot+json, application/problem+json")
 
     # Construct URL
@@ -510,7 +891,7 @@ def build_azure_app_configuration_get_operation_details_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -533,7 +914,7 @@ def build_azure_app_configuration_create_snapshot_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.snapshot+json, application/problem+json")
 
     # Construct URL
@@ -569,7 +950,7 @@ def build_azure_app_configuration_update_snapshot_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.snapshot+json, application/problem+json")
 
     # Construct URL
@@ -610,7 +991,7 @@ def build_azure_app_configuration_check_snapshot_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/snapshots/{name}"
     path_format_arguments = {
@@ -642,12 +1023,13 @@ def build_azure_app_configuration_get_labels_request(  # pylint: disable=name-to
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
     select: Optional[list[Union[str, _models.LabelFields]]] = None,
+    resource_type: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.labelset+json, application/problem+json")
 
     # Construct URL
@@ -661,6 +1043,8 @@ def build_azure_app_configuration_get_labels_request(  # pylint: disable=name-to
         _params["After"] = _SERIALIZER.query("after", after, "str")
     if select is not None:
         _params["$Select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if resource_type is not None:
+        _params["resourceType"] = _SERIALIZER.query("resource_type", resource_type, "str")
 
     # Construct headers
     if sync_token is not None:
@@ -679,12 +1063,13 @@ def build_azure_app_configuration_check_labels_request(  # pylint: disable=name-
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
     select: Optional[list[Union[str, _models.LabelFields]]] = None,
+    resource_type: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/labels"
 
@@ -696,6 +1081,8 @@ def build_azure_app_configuration_check_labels_request(  # pylint: disable=name-
         _params["After"] = _SERIALIZER.query("after", after, "str")
     if select is not None:
         _params["$Select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if resource_type is not None:
+        _params["resourceType"] = _SERIALIZER.query("resource_type", resource_type, "str")
 
     # Construct headers
     if sync_token is not None:
@@ -718,7 +1105,7 @@ def build_azure_app_configuration_put_lock_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kv+json, application/problem+json")
 
     # Construct URL
@@ -760,7 +1147,7 @@ def build_azure_app_configuration_delete_lock_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kv+json, application/problem+json")
 
     # Construct URL
@@ -804,7 +1191,7 @@ def build_azure_app_configuration_get_revisions_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kvset+json, application/problem+json")
 
     # Construct URL
@@ -847,7 +1234,7 @@ def build_azure_app_configuration_check_revisions_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/revisions"
 
@@ -871,6 +1258,1100 @@ def build_azure_app_configuration_check_revisions_request(  # pylint: disable=na
         _headers["Accept-Datetime"] = _SERIALIZER.header("accept_datetime", accept_datetime, "str")
 
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class FeatureFlagClientOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.appconfiguration.AzureAppConfigurationClient`'s
+        :attr:`feature_flag_client` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureAppConfigurationClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "name",
+                "label",
+                "sync_token",
+                "after",
+                "accept_datetime",
+                "select",
+                "tags",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def get_feature_flags(
+        self,
+        *,
+        name: Optional[str] = None,
+        label: Optional[str] = None,
+        sync_token: Optional[str] = None,
+        after: Optional[str] = None,
+        accept_datetime: Optional[str] = None,
+        select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+        tags: Optional[list[str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.FeatureFlag"]:
+        """Gets a list of feature flags.
+
+        Gets a list of feature flags.
+
+        :keyword name: A filter used to match feature flag names. Default value is None.
+        :paramtype name: str
+        :keyword label: A filter used to match labels. Syntax reference:
+         `https://aka.ms/azconfig/docs/keyvaluefiltering
+         <https://aka.ms/azconfig/docs/keyvaluefiltering>`_. Default value is None.
+        :paramtype label: str
+        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
+         None.
+        :paramtype sync_token: str
+        :keyword after: Instructs the server to return elements that appear after the element referred
+         to by the specified token. Default value is None.
+        :paramtype after: str
+        :keyword accept_datetime: Requests the server to respond with the state of the resource at the
+         specified
+         time. Default value is None.
+        :paramtype accept_datetime: str
+        :keyword select: Used to select what fields are present in the returned resource(s). Default
+         value is None.
+        :paramtype select: list[str or ~azure.appconfiguration.models.FeatureFlagFields]
+        :keyword tags: A filter used to query by tags. Syntax reference:
+         `https://aka.ms/azconfig/docs/keyvaluefiltering
+         <https://aka.ms/azconfig/docs/keyvaluefiltering>`_. Default value is None.
+        :paramtype tags: list[str]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An iterator like instance of FeatureFlag
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration._generated.models.FeatureFlag]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.FeatureFlag]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_feature_flag_client_get_feature_flags_request(
+                    name=name,
+                    label=label,
+                    sync_token=sync_token,
+                    after=after,
+                    accept_datetime=accept_datetime,
+                    select=select,
+                    tags=tags,
+                    etag=etag,
+                    match_condition=match_condition,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.FeatureFlag],
+                deserialized.get("items", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("@nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.Error,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "name",
+                "label",
+                "sync_token",
+                "after",
+                "accept_datetime",
+                "select",
+                "tags",
+                "client_request_id",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def check_feature_flags(
+        self,
+        *,
+        name: Optional[str] = None,
+        label: Optional[str] = None,
+        sync_token: Optional[str] = None,
+        after: Optional[str] = None,
+        accept_datetime: Optional[str] = None,
+        select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+        tags: Optional[list[str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> bool:
+        """Requests the headers and status of the given resource.
+
+        Requests the headers and status of the given resource.
+
+        :keyword name: A filter used to match feature flag names. Default value is None.
+        :paramtype name: str
+        :keyword label: A filter used to match labels. Syntax reference:
+         `https://aka.ms/azconfig/docs/keyvaluefiltering
+         <https://aka.ms/azconfig/docs/keyvaluefiltering>`_. Default value is None.
+        :paramtype label: str
+        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
+         None.
+        :paramtype sync_token: str
+        :keyword after: Instructs the server to return elements that appear after the element referred
+         to by the specified token. Default value is None.
+        :paramtype after: str
+        :keyword accept_datetime: Requests the server to respond with the state of the resource at the
+         specified
+         time. Default value is None.
+        :paramtype accept_datetime: str
+        :keyword select: Used to select what fields are present in the returned resource(s). Default
+         value is None.
+        :paramtype select: list[str or ~azure.appconfiguration.models.FeatureFlagFields]
+        :keyword tags: A filter used to query by tags. Syntax reference:
+         `https://aka.ms/azconfig/docs/keyvaluefiltering
+         <https://aka.ms/azconfig/docs/keyvaluefiltering>`_. Default value is None.
+        :paramtype tags: list[str]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_feature_flag_client_check_feature_flags_request(
+            name=name,
+            label=label,
+            sync_token=sync_token,
+            after=after,
+            accept_datetime=accept_datetime,
+            select=select,
+            tags=tags,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "name",
+                "label",
+                "select",
+                "sync_token",
+                "accept_datetime",
+                "client_request_id",
+                "tags",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def get_feature_flag(
+        self,
+        name: str,
+        *,
+        label: Optional[str] = None,
+        select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+        sync_token: Optional[str] = None,
+        accept_datetime: Optional[str] = None,
+        tags: Optional[list[str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.FeatureFlag:
+        """Gets a single feature flag.
+
+        Gets a single feature flag.
+
+        :param name: The name of the feature flag. Required.
+        :type name: str
+        :keyword label: The label of the feature flag to retrieve. Default value is None.
+        :paramtype label: str
+        :keyword select: Used to select what fields are present in the returned resource(s). Default
+         value is None.
+        :paramtype select: list[str or ~azure.appconfiguration.models.FeatureFlagFields]
+        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
+         None.
+        :paramtype sync_token: str
+        :keyword accept_datetime: Requests the server to respond with the state of the resource at the
+         specified
+         time. Default value is None.
+        :paramtype accept_datetime: str
+        :keyword tags: A filter used to query by tags. Syntax reference:
+         `https://aka.ms/azconfig/docs/keyvaluefiltering
+         <https://aka.ms/azconfig/docs/keyvaluefiltering>`_. Default value is None.
+        :paramtype tags: list[str]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: FeatureFlag. The FeatureFlag is compatible with MutableMapping
+        :rtype: ~azure.appconfiguration._generated.models.FeatureFlag
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FeatureFlag] = kwargs.pop("cls", None)
+
+        _request = build_feature_flag_client_get_feature_flag_request(
+            name=name,
+            label=label,
+            select=select,
+            sync_token=sync_token,
+            accept_datetime=accept_datetime,
+            tags=tags,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.FeatureFlag, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "name",
+                "label",
+                "sync_token",
+                "accept_datetime",
+                "select",
+                "tags",
+                "client_request_id",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def check_feature_flag(
+        self,
+        name: str,
+        *,
+        label: Optional[str] = None,
+        sync_token: Optional[str] = None,
+        accept_datetime: Optional[str] = None,
+        select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+        tags: Optional[list[str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> bool:
+        """Requests the headers and status of the given resource.
+
+        Requests the headers and status of the given resource.
+
+        :param name: The name of the feature flag to retrieve. Required.
+        :type name: str
+        :keyword label: The label of the feature flag to retrieve. Default value is None.
+        :paramtype label: str
+        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
+         None.
+        :paramtype sync_token: str
+        :keyword accept_datetime: Requests the server to respond with the state of the resource at the
+         specified
+         time. Default value is None.
+        :paramtype accept_datetime: str
+        :keyword select: Used to select what fields are present in the returned resource(s). Default
+         value is None.
+        :paramtype select: list[str or ~azure.appconfiguration.models.FeatureFlagFields]
+        :keyword tags: A filter used to query by tags. Syntax reference:
+         `https://aka.ms/azconfig/docs/keyvaluefiltering
+         <https://aka.ms/azconfig/docs/keyvaluefiltering>`_. Default value is None.
+        :paramtype tags: list[str]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_feature_flag_client_check_feature_flag_request(
+            name=name,
+            label=label,
+            sync_token=sync_token,
+            accept_datetime=accept_datetime,
+            select=select,
+            tags=tags,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "content_type",
+                "name",
+                "label",
+                "sync_token",
+                "client_request_id",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def put_feature_flag(
+        self,
+        name: str,
+        entity: Optional[_models.FeatureFlag] = None,
+        *,
+        label: Optional[str] = None,
+        sync_token: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.FeatureFlag:
+        """Creates a feature flag.
+
+        Creates a feature flag.
+
+        :param name: The name of the feature flag to create. Required.
+        :type name: str
+        :param entity: The feature flag to create. Default value is None.
+        :type entity: ~azure.appconfiguration._generated.models.FeatureFlag
+        :keyword label: The label of the feature flag to create. Default value is None.
+        :paramtype label: str
+        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
+         None.
+        :paramtype sync_token: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: FeatureFlag. The FeatureFlag is compatible with MutableMapping
+        :rtype: ~azure.appconfiguration._generated.models.FeatureFlag
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop(
+            "content_type",
+            _headers.pop(
+                "Content-Type", 'application/json;profile="https://azconfig.io/mime-profiles/ff";charset=utf-8'
+            ),
+        )
+        content_type = content_type if entity else None
+        cls: ClsType[_models.FeatureFlag] = kwargs.pop("cls", None)
+
+        if entity is not None:
+            _content = json.dumps(entity, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        else:
+            _content = None
+
+        _request = build_feature_flag_client_put_feature_flag_request(
+            name=name,
+            label=label,
+            sync_token=sync_token,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.FeatureFlag, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "name",
+                "label",
+                "sync_token",
+                "client_request_id",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def delete_feature_flag(
+        self,
+        name: str,
+        *,
+        label: Optional[str] = None,
+        sync_token: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> Optional[_models.FeatureFlag]:
+        """Deletes a feature flag.
+
+        Deletes a feature flag.
+
+        :param name: The name of the feature flag to delete. Required.
+        :type name: str
+        :keyword label: The label of the feature flag to delete. Default value is None.
+        :paramtype label: str
+        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
+         None.
+        :paramtype sync_token: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: FeatureFlag or None. The FeatureFlag is compatible with MutableMapping
+        :rtype: ~azure.appconfiguration._generated.models.FeatureFlag or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Optional[_models.FeatureFlag]] = kwargs.pop("cls", None)
+
+        _request = build_feature_flag_client_delete_feature_flag_request(
+            name=name,
+            label=label,
+            sync_token=sync_token,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+            if _stream:
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            else:
+                deserialized = _deserialize(_models.FeatureFlag, response.json())
+
+        if response.status_code == 204:
+            response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "name",
+                "label",
+                "after",
+                "select",
+                "tags",
+                "sync_token",
+                "client_request_id",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def get_feature_flag_revisions(
+        self,
+        *,
+        name: Optional[str] = None,
+        label: Optional[str] = None,
+        after: Optional[str] = None,
+        select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+        tags: Optional[list[str]] = None,
+        sync_token: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.FeatureFlag"]:
+        """Gets a list of feature flag revisions.
+
+        Gets a list of feature flag revisions.
+
+        :keyword name: A filter used to match names. Default value is None.
+        :paramtype name: str
+        :keyword label: A filter used to match labels. Syntax reference:
+         `https://aka.ms/azconfig/docs/restapirevisions
+         <https://aka.ms/azconfig/docs/restapirevisions>`_. Default value is None.
+        :paramtype label: str
+        :keyword after: Instructs the server to return elements that appear after the element referred
+         to by the specified token. Default value is None.
+        :paramtype after: str
+        :keyword select: Used to select what fields are present in the returned resource(s). Default
+         value is None.
+        :paramtype select: list[str or ~azure.appconfiguration.models.FeatureFlagFields]
+        :keyword tags: A filter used to query by tags. Syntax reference:
+         `https://aka.ms/azconfig/docs/restapirevisions
+         <https://aka.ms/azconfig/docs/restapirevisions>`_. Default value is None.
+        :paramtype tags: list[str]
+        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
+         None.
+        :paramtype sync_token: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An iterator like instance of FeatureFlag
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration._generated.models.FeatureFlag]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.FeatureFlag]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_feature_flag_client_get_feature_flag_revisions_request(
+                    name=name,
+                    label=label,
+                    after=after,
+                    select=select,
+                    tags=tags,
+                    sync_token=sync_token,
+                    etag=etag,
+                    match_condition=match_condition,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.FeatureFlag],
+                deserialized.get("items", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("@nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.Error,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "name", "label", "after", "select", "tags", "client_request_id"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def check_feature_flag_revisions(
+        self,
+        *,
+        name: Optional[str] = None,
+        label: Optional[str] = None,
+        after: Optional[str] = None,
+        select: Optional[list[Union[str, _models.FeatureFlagFields]]] = None,
+        tags: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> bool:
+        """Requests the headers and status of the given resource.
+
+        Requests the headers and status of the given resource.
+
+        :keyword name: A filter used to match names. Default value is None.
+        :paramtype name: str
+        :keyword label: A filter used to match labels. Syntax reference:
+         `https://aka.ms/azconfig/docs/restapirevisions
+         <https://aka.ms/azconfig/docs/restapirevisions>`_. Default value is None.
+        :paramtype label: str
+        :keyword after: Instructs the server to return elements that appear after the element referred
+         to by the specified token. Default value is None.
+        :paramtype after: str
+        :keyword select: Used to select what fields are present in the returned resource(s). Default
+         value is None.
+        :paramtype select: list[str or ~azure.appconfiguration.models.FeatureFlagFields]
+        :keyword tags: A filter used to query by tags. Syntax reference:
+         `https://aka.ms/azconfig/docs/restapirevisions
+         <https://aka.ms/azconfig/docs/restapirevisions>`_. Default value is None.
+        :paramtype tags: list[str]
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_feature_flag_client_check_feature_flag_revisions_request(
+            name=name,
+            label=label,
+            after=after,
+            select=select,
+            tags=tags,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+        return 200 <= response.status_code <= 299
 
 
 class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-public-methods
@@ -1353,7 +2834,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     @distributed_trace
     @api_version_validation(
         params_added_on={"2024-09-01": ["tags"]},
-        api_versions_list=["2023-11-01", "2024-09-01", "2026-04-01"],
+        api_versions_list=["2023-11-01", "2024-09-01", "2026-04-01", "2026-05-01-preview"],
     )
     def get_key_value(
         self,
@@ -1741,7 +3222,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     @distributed_trace
     @api_version_validation(
         params_added_on={"2024-09-01": ["tags"]},
-        api_versions_list=["2023-11-01", "2024-09-01", "2026-04-01"],
+        api_versions_list=["2023-11-01", "2024-09-01", "2026-04-01", "2026-05-01-preview"],
     )
     def check_key_value(
         self,
@@ -2676,6 +4157,10 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
         return 200 <= response.status_code <= 299
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-05-01-preview": ["resource_type"]},
+        api_versions_list=["2023-11-01", "2024-09-01", "2026-04-01", "2026-05-01-preview"],
+    )
     def get_labels(
         self,
         *,
@@ -2684,6 +4169,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[list[Union[str, _models.LabelFields]]] = None,
+        resource_type: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.Label"]:
         """Gets a list of labels.
@@ -2705,6 +4191,9 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
         :keyword select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :paramtype select: list[str or ~azure.appconfiguration.models.LabelFields]
+        :keyword resource_type: A filter used to indicate the resource type of the labels. Accepted
+         values: 'kv' for key-value labels, 'ff' for feature flag labels. Default value is None.
+        :paramtype resource_type: str
         :return: An iterator like instance of Label
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration._generated.models.Label]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2731,6 +4220,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
                     after=after,
                     accept_datetime=accept_datetime,
                     select=select,
+                    resource_type=resource_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2799,6 +4289,10 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-05-01-preview": ["resource_type"]},
+        api_versions_list=["2023-11-01", "2024-09-01", "2026-04-01", "2026-05-01-preview"],
+    )
     def check_labels(
         self,
         *,
@@ -2807,6 +4301,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[list[Union[str, _models.LabelFields]]] = None,
+        resource_type: Optional[str] = None,
         **kwargs: Any
     ) -> bool:
         """Requests the headers and status of the given resource.
@@ -2828,6 +4323,9 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
         :keyword select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :paramtype select: list[str or ~azure.appconfiguration.models.LabelFields]
+        :keyword resource_type: A filter used to indicate the resource type of the labels. Accepted
+         values: 'kv' for key-value labels, 'ff' for feature flag labels. Default value is None.
+        :paramtype resource_type: str
         :return: bool
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2851,6 +4349,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
             after=after,
             accept_datetime=accept_datetime,
             select=select,
+            resource_type=resource_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

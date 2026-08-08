@@ -40,8 +40,10 @@ def add_sanitizers(test_proxy, patch_sleep, patch_async_sleep):
     add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=tenant_id)
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3424: $..to (feature flag percentile allocation bounds)
+    #  - AZSDK3425: $..from (feature flag percentile allocation bounds)
     #  - AZSDK3447: $.key
     #  - AZSDK3490: $..etag
     #  - AZSDK3493: $..name
     #  - AZSDK4001: host name -> Sanitized
-    remove_batch_sanitizers(["AZSDK3447", "AZSDK3490", "AZSDK3493", "AZSDK4001"])
+    remove_batch_sanitizers(["AZSDK3424", "AZSDK3425", "AZSDK3447", "AZSDK3490", "AZSDK3493", "AZSDK4001"])
