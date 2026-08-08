@@ -18,6 +18,18 @@ extends:
       ServiceDirectory: cosmos
       VariableGroups:
         - 'Test Secrets for Cosmos Live Tests - user administered'
+      # Key-auth legs bind to fixed, Cosmos-team-owned accounts (RG sdk-ci) instead of the
+      # account this pipeline provisions. The resolver runs after the ARM deployment and
+      # overwrites ACCOUNT_HOST/ACCOUNT_KEY, so the AAD legs -- which need the per-tenant
+      # sqlRoleAssignment that test-resources.bicep creates, and set no AccountSelector --
+      # keep using the provisioned account untouched.
+      # Provisioning stays on for now; turning it off for the key legs is the follow-up that
+      # actually makes them survive the ~90-day tenant rotation.
+      # See sdk/cosmos/pipeline/README.md.
+      BeforeTestSteps:
+        - template: /sdk/cosmos/pipeline/resolve-test-account-steps.yml
+          parameters:
+            AccountSelector: $(AccountSelector)
       EnvVars:
         GSI_ACCOUNT_HOST: $(gsi-pipeline-uri)
         GSI_ACCOUNT_KEY: $(gsi-pipeline-key)

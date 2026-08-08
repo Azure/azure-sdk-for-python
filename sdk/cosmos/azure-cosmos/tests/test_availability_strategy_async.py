@@ -92,6 +92,9 @@ QUERY_PK = "query_pk"
 READ_ALL = "read_all"
 CHANGE_FEED = "change_feed"
 
+STEADY_STATE_HEDGING_THRESHOLD_MS = 5000
+FAULT_INJECTION_DELAY_MS = 5000
+
 # Non-transient status codes
 NON_TRANSIENT_STATUS_CODES = [
     (400, None),
@@ -378,10 +381,10 @@ class TestAsyncAvailabilityStrategy:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
-        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),
-        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),
-        ({'threshold_ms':150, 'threshold_steps_ms':50},
-         {'threshold_ms':150, 'threshold_steps_ms':50})
+        (None, {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}),
+        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}, None),
+        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50},
+         {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50})
     ])
     async def test_availability_strategy_in_steady_state_async(
             self,
@@ -446,7 +449,7 @@ class TestAsyncAvailabilityStrategy:
                                FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
-            1000,  # Add delay to trigger hedging
+            FAULT_INJECTION_DELAY_MS,
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
         custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
@@ -847,9 +850,11 @@ class TestAsyncAvailabilityStrategy:
     @pytest.mark.parametrize("operation", [READ, QUERY_PK, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     async def test_per_partition_circular_breaker_with_cancelled_first_future_async(self, operation, setup):
         # QUERY, READ_ALL are not included because currently they are not targeting to a specific pkRange
-        os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
-        os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"] = "5"
-        os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"] = "5"
+        previous_env = test_config.set_environment_variables(
+            AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER="True",
+            AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE="5",
+            AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ="5",
+        )
 
         try:
             """Test that when per partition circular breaker is enabled and after hitting the threshold, subsequent requests go directly to second region.
@@ -938,9 +943,7 @@ class TestAsyncAvailabilityStrategy:
             await setup_with_fault_injection['client'].close()
             await setup_without_fault['client'].close()
         finally:
-            del os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"]
-            del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"]
-            del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"]
+            test_config.restore_environment_variables(previous_env)
         await self._clean_up_container(setup['client_without_fault'], setup_with_fault_injection['db'].id, setup_with_fault_injection['col'].id)
 
     @pytest.mark.asyncio

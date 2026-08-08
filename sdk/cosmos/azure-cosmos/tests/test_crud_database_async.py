@@ -10,7 +10,6 @@ import os.path
 import time
 import unittest
 import urllib.parse as urllib
-import uuid
 
 import pytest
 import requests
@@ -96,7 +95,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_database_crud_async(self):
-        database_id = str(uuid.uuid4())
+        database_id = test_config.unique_database_id()
         created_db = await self.key_client.create_database(database_id)
         assert created_db.id == database_id
         # query databases.
@@ -135,7 +134,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_database_level_offer_throughput_async(self):
         # Create a database with throughput
         offer_throughput = 1000
-        database_id = str(uuid.uuid4())
+        database_id = test_config.unique_database_id()
         created_db = await self.key_client.create_database(
             id=database_id,
             offer_throughput=offer_throughput
@@ -155,8 +154,8 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_sql_query_crud_async(self):
         # create two databases.
-        db1 = await self.key_client.create_database('database 1' + str(uuid.uuid4()))
-        db2 = await self.key_client.create_database('database 2' + str(uuid.uuid4()))
+        db1 = await self.key_client.create_database(test_config.unique_database_id("db1"))
+        db2 = await self.key_client.create_database(test_config.unique_database_id("db2"))
 
         # query with parameters.
         databases = [database async for database in self.key_client.query_databases(

@@ -72,7 +72,7 @@ class TestAutoScale(unittest.TestCase):
             self.created_database.delete_container(container_id)
 
     def test_autoscale_create_database(self):
-        database_id = "db_auto_scale_" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("auto-scale")
         try:
             # Testing auto_scale_settings for the create_database method
             created_database = self.key_client.create_database(database_id, offer_throughput=ThroughputProperties(
@@ -87,7 +87,7 @@ class TestAutoScale(unittest.TestCase):
             self.key_client.delete_database(created_database.id)
 
             # Testing auto_scale_settings for the create_database_if_not_exists method
-            database_id = "db_auto_scale_2_" + str(uuid.uuid4())
+            database_id = test_config.unique_database_id("auto-scale-2")
             created_database = self.key_client.create_database_if_not_exists(database_id,
                                                                          offer_throughput=ThroughputProperties(
                                                                              auto_scale_max_throughput=9000,
@@ -101,7 +101,7 @@ class TestAutoScale(unittest.TestCase):
             self.key_client.delete_database(database_id)
 
     def test_autoscale_replace_throughput(self):
-        database_id = "replace_db" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("replace-db")
         container_id = None
         try:
             created_database = self.key_client.create_database(database_id, offer_throughput=ThroughputProperties(
