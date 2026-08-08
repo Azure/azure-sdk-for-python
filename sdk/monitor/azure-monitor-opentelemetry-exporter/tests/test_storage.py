@@ -4,6 +4,7 @@
 import errno
 import os
 import shutil
+import tempfile
 import unittest
 from unittest import mock
 
@@ -39,7 +40,7 @@ def throw(exc_type, *args, **kwargs):
 
 
 def clean_folder(folder):
-    if os.path.isfile(folder):
+    if os.path.isdir(folder):
         for filename in os.listdir(folder):
             file_path = os.path.join(folder, filename)
             try:
@@ -53,16 +54,12 @@ def clean_folder(folder):
 
 # pylint: disable=unused-variable
 class TestLocalFileBlob(unittest.TestCase):
-    @classmethod
-    def setup_class(cls):
-        os.makedirs(TEST_FOLDER, exist_ok=True)
-
-    @classmethod
-    def tearDownClass(cls):
-        shutil.rmtree(TEST_FOLDER, True)
+    def setUp(self):
+        global TEST_FOLDER
+        TEST_FOLDER = tempfile.mkdtemp()
 
     def tearDown(self):
-        clean_folder(TEST_FOLDER)
+        shutil.rmtree(TEST_FOLDER, ignore_errors=True)
 
     def test_delete(self):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "foobar"))
@@ -320,9 +317,12 @@ class TestLocalFileBlob(unittest.TestCase):
 
 # pylint: disable=protected-access, too-many-public-methods
 class TestLocalFileStorage(unittest.TestCase):
-    @classmethod
-    def tearDownClass(cls):
-        shutil.rmtree(TEST_FOLDER, True)
+    def setUp(self):
+        global TEST_FOLDER
+        TEST_FOLDER = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(TEST_FOLDER, ignore_errors=True)
 
     def test_get_nothing(self):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "test", "a")) as stor:
@@ -346,6 +346,27 @@ class TestLocalFileStorage(unittest.TestCase):
                 with mock.patch("os.rename", side_effect=throw(Exception)):
                     self.assertIsNone(stor.get())
             self.assertIsNone(stor.get())
+
+    def test_toggle_disable_makes_put_and_gets_noop(self):
+        """disable() turns put()/gets() into no-ops without tearing down the instance."""
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "toggle")) as stor:
+            self.assertTrue(stor._active)
+            stor.disable()
+            self.assertFalse(stor._active)
+            result = stor.put((1, 2, 3))
+            self.assertEqual(result, StorageExportResult.CLIENT_STORAGE_DISABLED)
+            self.assertIsNone(stor.get())
+            self.assertEqual(list(stor.gets()), [])
+
+    def test_toggle_reenable_resumes_put_and_gets(self):
+        """enable() after disable() resumes persistence on the same instance and drains prior blobs."""
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "toggle2")) as stor:
+            stor.disable()
+            self.assertEqual(stor.put((1, 2, 3)), StorageExportResult.CLIENT_STORAGE_DISABLED)
+            stor.enable()
+            self.assertTrue(stor._active)
+            self.assertEqual(stor.put((1, 2, 3), 0), StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
+            self.assertEqual(stor.get().get(), (1, 2, 3))
 
     def test_put(self):
         test_input = (1, 2, 3)
@@ -374,7 +395,7 @@ class TestLocalFileStorage(unittest.TestCase):
         os.makedirs(test_path, exist_ok=True)
         with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
             with LocalFileStorage(test_path, 1) as stor:
-                stor.put(test_input)
+                stor.put(test_input, lease_period=0)
                 self.assertFalse(stor._check_storage_size())
 
     def test_check_storage_size_not_full(self):

@@ -3,9 +3,7 @@
     "packageJsonUrl": "https://github.com/Azure/azure-rest-api-specs/blob/main/package.json",
     "packages": [
       "@azure-tools/openai-typespec",
-      "@typespec/openapi3",
-      "@azure-tools/typespec-liftr-base",
-      "@azure-tools/typespec-azure-portal-core"
+      "@azure-tools/typespec-liftr-base"
     ]
   }
 }

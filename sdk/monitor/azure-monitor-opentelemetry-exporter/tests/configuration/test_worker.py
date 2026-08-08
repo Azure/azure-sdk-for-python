@@ -35,8 +35,8 @@ class TestConfigurationWorker(unittest.TestCase):
             try:
                 # Verify initial state
                 self.assertEqual(worker._configuration_manager, self.mock_configuration_manager)
-                self.assertEqual(worker._default_refresh_interval, 3600)
-                self.assertEqual(worker._refresh_interval, 3600)
+                self.assertEqual(worker._default_refresh_interval_s, 3600)
+                self.assertEqual(worker._refresh_interval_s, 3600)
                 self.assertTrue(worker._running)
 
                 # Verify thread was created and started
@@ -56,13 +56,13 @@ class TestConfigurationWorker(unittest.TestCase):
             worker = _ConfigurationWorker(self.mock_configuration_manager, custom_interval)
 
             try:
-                self.assertEqual(worker._refresh_interval, custom_interval)
-                self.assertEqual(worker.get_refresh_interval(), custom_interval)
+                self.assertEqual(worker._refresh_interval_s, custom_interval)
+                self.assertEqual(worker.get_refresh_interval_s(), custom_interval)
             finally:
                 worker.shutdown()
 
     def test_get_refresh_interval_thread_safe(self):
-        """Test that get_refresh_interval is thread-safe."""
+        """Test that get_refresh_interval_s is thread-safe."""
         # Use a long startup delay so the background refresh thread doesn't
         # change the interval during the test (avoids race condition).
         with patch("random.uniform", return_value=300):
@@ -75,7 +75,7 @@ class TestConfigurationWorker(unittest.TestCase):
                 results = []
 
                 def get_interval():
-                    results.append(worker.get_refresh_interval())
+                    results.append(worker.get_refresh_interval_s())
 
                 threads = [threading.Thread(target=get_interval) for _ in range(10)]
 
@@ -150,7 +150,7 @@ class TestConfigurationWorker(unittest.TestCase):
                     time.sleep(0.01)
 
                 # Should have updated to the new interval
-                current_interval = worker.get_refresh_interval()
+                current_interval = worker.get_refresh_interval_s()
                 self.assertIn(current_interval, [1800, 3600])  # Could be either depending on timing
 
             finally:
@@ -345,15 +345,15 @@ class TestConfigurationWorker(unittest.TestCase):
             worker = _ConfigurationWorker(self.mock_configuration_manager, 1000)
 
             try:
-                # Test that get_refresh_interval works normally
-                interval = worker.get_refresh_interval()
+                # Test that get_refresh_interval_s works normally
+                interval = worker.get_refresh_interval_s()
                 self.assertEqual(interval, 1000)
 
                 # Test thread safety by accessing from current thread
                 # (We can't easily test cross-thread locking without risking deadlock)
                 with worker._lock:
                     # While holding lock, verify we can still access internal state
-                    self.assertEqual(worker._refresh_interval, 1000)
+                    self.assertEqual(worker._refresh_interval_s, 1000)
                     self.assertTrue(worker._running)
 
             finally:

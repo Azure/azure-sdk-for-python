@@ -167,6 +167,62 @@ jobs:
               Pool: $(Pool)
               ${{ insert }}: ${{ parameters.EnvVars }}
 
+      # This is a heuristic to detect compiled requirements in the service 
+      # directory. If compiled requirements are found, install dependencies for
+      # and configure cibuildwheel. 
+      - pwsh: |
+          $ErrorActionPreference = 'Stop'
+          $found = @()
+          foreach ($dir in "${{ parameters.ServiceDirectory }}".Split('|') | Where-Object { $_ }) {
+            $root = Join-Path "$(Build.SourcesDirectory)" "sdk" $dir.Trim()
+            if (-not (Test-Path $root)) { continue }
+            $found += Get-ChildItem -Path $root -Filter pyproject.toml -Recurse -ErrorAction SilentlyContinue `
+              | Where-Object { (Get-Content $_.FullName -Raw) -match '(?m)^\[tool\.cibuildwheel\]' }
+          }
+          if ($found) {
+            $found | ForEach-Object { Write-Host "Found compiled package: $($_.Directory.Name)" }
+            Write-Host "##vso[task.setvariable variable=CIBUILDWHEEL_DEV_REQ]true"
+          }
+          else {
+            Write-Host "No [tool.cibuildwheel] packages under sdk/${{ parameters.ServiceDirectory }}; nothing to configure."
+          }
+        displayName: 'Check for compiled dev requirements'
+
+      - pwsh: |
+          Write-Host "##vso[task.setvariable variable=CIBW_ARCHS]native"
+          Write-Host "##vso[task.setvariable variable=CIBW_SKIP]pp* *musllinux*"
+          Write-Host "##vso[task.setvariable variable=CIBW_TEST_SKIP]*"
+          # CIBW_ENVIRONMENT_PASS_LINUX, not CIBW_ENVIRONMENT: the latter would clobber the package's
+          # own [tool.cibuildwheel].environment (CFLAGS). PIP_INDEX_URL is set by the time the test step
+          # runs (use-python-version.yml, then auth-dev-feed.yml inside build-test.yml).
+          Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL"
+        displayName: 'Configure cibuildwheel for dev requirement builds'
+        condition: and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+
+      # Windows has no cp310 interpreter on the agent and cibuildwheel fetches one from api.nuget.org,
+      # which is blocked. Pre-provision it from the Azure DevOps feed into the cibuildwheel cache.
+      # Mirrors steps/build-package-artifacts.yml, minus pythonarm64 (CIBW_ARCHS=native drops win_arm64).
+      - task: NuGetAuthenticate@1
+        displayName: 'Authenticate to NuGet feed'
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+
+      - pwsh: |
+          $ErrorActionPreference = 'Stop'
+          $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+          $version = "3.10.11"
+          $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
+          $nugetCpython = Join-Path $cache "nuget-cpython"
+          New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
+          $nuget = (Get-Command nuget).Source
+          & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
+          if ($LASTEXITCODE) {
+            Write-Error "Failed to download python $version"
+            exit 1
+          }
+          Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+        displayName: 'Pre-provision CPython for cibuildwheel'
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+
       - template: /eng/pipelines/templates/steps/build-test.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}

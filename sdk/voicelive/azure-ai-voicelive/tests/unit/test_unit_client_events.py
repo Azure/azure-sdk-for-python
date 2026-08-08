@@ -20,7 +20,6 @@ from azure.ai.voicelive.models import (
     ClientEventResponseCancel,
     ClientEventInputTextDelta,
     ClientEventInputTextDone,
-    ClientEventRtcCallSdpCreate,
     # Event Types
     ClientEventType,
     # Supporting Models
@@ -42,7 +41,7 @@ class TestClientEventSessionUpdate:
     def test_create_session_update_with_request_session(self):
         """Test creating session update with RequestSession object."""
         session = RequestSession(
-            model="gpt-4o-realtime-preview",
+            model="gpt-realtime",
             modalities=[Modality.TEXT, Modality.AUDIO],
             voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY),
             temperature=0.7,
@@ -56,7 +55,7 @@ class TestClientEventSessionUpdate:
 
     def test_create_session_update_with_event_id(self):
         """Test creating session update with event ID."""
-        session = RequestSession(model="gpt-4o-realtime-preview")
+        session = RequestSession(model="gpt-realtime")
         event_id = "session-update-123"
 
         event = ClientEventSessionUpdate(session=session, event_id=event_id)
@@ -66,7 +65,7 @@ class TestClientEventSessionUpdate:
 
     def test_create_session_update_with_dict(self):
         """Test creating session update with dictionary session."""
-        session_dict = {"model": "gpt-4o-realtime-preview", "modalities": ["text", "audio"], "temperature": 0.8}
+        session_dict = {"model": "gpt-realtime", "modalities": ["text", "audio"], "temperature": 0.8}
 
         event = ClientEventSessionUpdate(session=session_dict)
 
@@ -250,30 +249,6 @@ class TestClientEventResponse:
         assert event.event_id == event_id
 
 
-class TestClientEventRtcCall:
-    """Test RTC call client events."""
-
-    def test_rtc_call_sdp_create_basic(self):
-        """Test creating an RTC SDP offer event."""
-        event = ClientEventRtcCallSdpCreate(sdp_offer="v=0\r\no=- 1 2 IN IP4 127.0.0.1")
-
-        assert event.type == ClientEventType.RTC_CALL_SDP_CREATE
-        assert event.sdp_offer.startswith("v=0")
-        assert event.session is None
-
-    def test_rtc_call_sdp_create_with_session(self):
-        """Test creating an RTC SDP offer event with an initial session."""
-        session = RequestSession(model="gpt-4o-realtime-preview", modalities=[Modality.AUDIO])
-        event = ClientEventRtcCallSdpCreate(
-            sdp_offer="v=0\r\no=- 1 2 IN IP4 127.0.0.1",
-            session=session,
-            event_id="rtc-evt-1",
-        )
-
-        assert event.event_id == "rtc-evt-1"
-        assert event.session == session
-
-
 class TestClientEventInputText:
     """Test streaming text input client events."""
 
@@ -302,7 +277,7 @@ class TestClientEventSerialization:
 
     def test_session_update_dict_access(self):
         """Test that session update events support dict-like access."""
-        session = RequestSession(model="gpt-4o-realtime-preview")
+        session = RequestSession(model="gpt-realtime")
         event = ClientEventSessionUpdate(session=session)
 
         # Test that the event has expected attributes
@@ -339,7 +314,7 @@ class TestClientEventIntegration:
         """Test a complete conversation flow with multiple events."""
         # Session update
         session = RequestSession(
-            model="gpt-4o-realtime-preview",
+            model="gpt-realtime",
             modalities=[Modality.TEXT, Modality.AUDIO],
             voice=OpenAIVoice(name=OpenAIVoiceName.SHIMMER),
         )

@@ -119,6 +119,23 @@ namespace azure.servicebus
                 **kwargs: Any
             ) -> ServiceBusSender: ...
 
+        def list_queue_sessions(
+                self, 
+                queue_name: str, 
+                *, 
+                state_updated_after: Optional[datetime] = ..., 
+                timeout: Optional[float] = ...
+            ) -> ItemPaged[str]: ...
+
+        def list_subscription_sessions(
+                self, 
+                topic_name: str, 
+                subscription_name: str, 
+                *, 
+                state_updated_after: Optional[datetime] = ..., 
+                timeout: Optional[float] = ...
+            ) -> ItemPaged[str]: ...
+
 
     class azure.servicebus.ServiceBusConnectionStringProperties(DictMixin):
         property endpoint: str    # Read-only
@@ -595,6 +612,23 @@ namespace azure.servicebus.aio
                 socket_timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> ServiceBusSender: ...
+
+        def list_queue_sessions(
+                self, 
+                queue_name: str, 
+                *, 
+                state_updated_after: Optional[datetime] = ..., 
+                timeout: Optional[float] = ...
+            ) -> AsyncItemPaged[str]: ...
+
+        def list_subscription_sessions(
+                self, 
+                topic_name: str, 
+                subscription_name: str, 
+                *, 
+                state_updated_after: Optional[datetime] = ..., 
+                timeout: Optional[float] = ...
+            ) -> AsyncItemPaged[str]: ...
 
 
     class azure.servicebus.aio.ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin): implements AsyncContextManager , AsyncIterable , AsyncIterator 

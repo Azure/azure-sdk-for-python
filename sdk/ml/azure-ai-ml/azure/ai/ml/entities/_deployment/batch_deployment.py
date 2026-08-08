@@ -10,11 +10,17 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeployment as BatchDeploymentData
-from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeploymentProperties as RestBatchDeployment
-from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchOutputAction
-from azure.ai.ml._restclient.v2024_01_01_preview.models import CodeConfiguration as RestCodeConfiguration
-from azure.ai.ml._restclient.v2024_01_01_preview.models import IdAssetReference
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    BatchDeployment as BatchDeploymentData,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    BatchDeploymentProperties as RestBatchDeployment,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import BatchOutputAction
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    CodeConfiguration as RestCodeConfiguration,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
@@ -24,11 +30,18 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
-from .model_batch_deployment_settings import ModelBatchDeploymentSettings as BatchDeploymentSettings
+from .model_batch_deployment_settings import (
+    ModelBatchDeploymentSettings as BatchDeploymentSettings,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -286,7 +299,7 @@ class BatchDeployment(Deployment):
                 else None
             ),
             error_threshold=self.error_threshold,
-            retry_settings=self.retry_settings._to_rest_object() if self.retry_settings else None,
+            retry_settings=(self.retry_settings._to_rest_object() if self.retry_settings else None),
             logging_level=self.logging_level,
             mini_batch_size=self.mini_batch_size,
             max_concurrency_per_instance=self.max_concurrency_per_instance,

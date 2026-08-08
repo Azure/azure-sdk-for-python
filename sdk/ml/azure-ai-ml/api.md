@@ -6685,7 +6685,7 @@ namespace azure.ai.ml.entities
 
 
     @experimental
-    class azure.ai.ml.entities.ModelPackage(Resource, PackageRequest):
+    class azure.ai.ml.entities.ModelPackage(Resource):
         property base_path: str    # Read-only
         property creation_context: Optional[SystemData]    # Read-only
         property id: Optional[str]    # Read-only
@@ -9908,14 +9908,14 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: ServiceClient2020404Preview, 
+                service_client: ServiceClient042024PreviewArm, 
                 connections_operations: WorkspaceConnectionsOperations
             ): ...
 
         def list(
                 self, 
                 connection_name: str, 
-                **kwargs
+                **kwargs: Any
             ) -> Iterable[AzureOpenAIDeployment]: ...
 
 
@@ -10061,7 +10061,7 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: Union[ServiceClient012024, ServiceClient102021Dataplane], 
+                service_client: ServiceClient012024, 
                 all_operations: OperationsContainer, 
                 preflight_operation: Optional[DeploymentsOperations] = None, 
                 **kwargs: Dict
@@ -10141,7 +10141,7 @@ namespace azure.ai.ml.operations
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
                 service_client: ServiceClient022023Preview, 
-                service_client_2024: ServiceClient042024Preview, 
+                service_client_2024_arm: ServiceClient042024PreviewArm, 
                 **kwargs: Dict
             ) -> None: ...
 
@@ -10233,8 +10233,7 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane], 
-                service_client_012024_preview: ServiceClient012024_preview, 
+                service_client: ServiceClient042023_preview, 
                 datastore_operations: DatastoreOperations, 
                 **kwargs: Any
             ): ...
@@ -10326,7 +10325,6 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                serviceclient_2024_01_01_preview: ServiceClient012024Preview, 
                 serviceclient_2024_10_01_preview: ServiceClient102024Preview, 
                 **kwargs: Dict
             ): ...
@@ -10419,6 +10417,7 @@ namespace azure.ai.ml.operations
                 self, 
                 name: str, 
                 version: Optional[str] = None, 
+                label: Optional[str] = None, 
                 **kwargs: Any
             ) -> DeploymentTemplate: ...
 
@@ -10453,7 +10452,7 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: Union[ServiceClient042023Preview, ServiceClient102021Dataplane], 
+                service_client: ServiceClient042023Preview, 
                 all_operations: OperationsContainer, 
                 **kwargs: Any
             ): ...
@@ -10514,7 +10513,7 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane], 
+                service_client: ServiceClient082023Preview, 
                 datastore_operations: DatastoreOperations, 
                 all_operations: Optional[OperationsContainer] = None, 
                 **kwargs: dict
@@ -10880,6 +10879,14 @@ namespace azure.ai.ml.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        @monitor_with_activity(ops_logger, 'Job.Delete', ActivityType.PUBLICAPI)
+        def begin_delete(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
         @monitor_with_telemetry_mixin(ops_logger, 'Job.CreateOrUpdate', ActivityType.PUBLICAPI)
         def create_or_update(
                 self, 
@@ -11001,7 +11008,7 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane], 
+                service_client: ServiceClient082023Preview, 
                 datastore_operations: DatastoreOperations, 
                 service_client_model_dataplane: ServiceClientModelDataPlane = None, 
                 all_operations: Optional[OperationsContainer] = None, 
@@ -11265,7 +11272,6 @@ namespace azure.ai.ml.operations
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
                 service_client_06_2023_preview: ServiceClient062023Preview, 
-                service_client_01_2024_preview: ServiceClient012024Preview, 
                 all_operations: OperationsContainer, 
                 credential: TokenCredential, 
                 **kwargs: Any

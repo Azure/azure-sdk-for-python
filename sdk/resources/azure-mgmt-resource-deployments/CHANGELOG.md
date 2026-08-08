@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2026-07-20)
+
+### Other Changes
+
+  - First GA
+
 ## 1.0.0b2 (2026-05-21)
 
 ### Features Added

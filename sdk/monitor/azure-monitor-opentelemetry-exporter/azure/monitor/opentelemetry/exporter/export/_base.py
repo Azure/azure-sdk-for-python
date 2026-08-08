@@ -8,11 +8,11 @@ import time
 import sys
 from pathlib import Path
 from enum import Enum
-from typing import List, Optional, Any
+from typing import Dict, List, Optional, Any
 from urllib.parse import urlparse
 import psutil
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     HttpLoggingPolicy,
@@ -42,6 +42,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_THROTTLE_NAME,
     _RETRYABLE_STATUS_CODES,
     _THROTTLE_STATUS_CODES,
+    _ONE_SETTINGS_FEATURE_LOCAL_STORAGE,
     DropCode,
     _exception_categories,
 )
@@ -49,11 +50,21 @@ from azure.monitor.opentelemetry.exporter._connection_string_parser import (
     ConnectionStringParser,
 )
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._configuration._state import (
+    get_configuration_manager,
+)
+from azure.monitor.opentelemetry.exporter._configuration._utils import (
+    evaluate_feature,
+)
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
     _get_sha256_hash,
     _get_retry_delay_from_headers,
+    _get_os_name,
+    _get_rp_name,
+    _get_attach_type_name,
 )
+from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter.export._rate_limiter import (
     _TokenBucketRateLimiter,
     _DEFAULT_MAX_ENVELOPES_PER_SECOND,
@@ -110,10 +121,6 @@ class BaseExporter:
         :rtype: None
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
-
-        # TODO: Uncomment configuration changes once testing is completed
-        # Get the configuration manager
-        # self._configuration_manager = get_configuration_manager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
         # We do not need to use entra Id if this is a sdkStats exporter
@@ -194,26 +201,38 @@ class BaseExporter:
             policies=policies,
             **kwargs,
         )
-        # TODO: Uncomment configuration changes once testing is completed
-        # if self._configuration_manager:
-        #     self._configuration_manager.initialize(
-        #         os=_get_os(),
-        #         rp=_get_rp(),
-        #         attach=_get_attach_type(),
-        #         component="ext",
-        #         version=ext_version,
-        #         region=self._region,
-        #     )
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
-            self.storage = LocalFileStorage(  # pyright: ignore
-                path=self._storage_directory,  # type: ignore
-                max_size=self._storage_max_size,
-                maintenance_period=self._storage_maintenance_period,
-                retention_period=self._storage_retention_period,
-                name="{} Storage".format(self.__class__.__name__),
-                lease_period=self._storage_min_retry_interval,
-            )
+            self._enable_local_storage()
+
+        # Register a OneSettings callback so local (offline) storage can be toggled remotely via the
+        # FEATURE_LOCAL_STORAGE feature flag. The customer-sdkstats exporter participates because it
+        # writes to the same on-disk folder as the main exporter (keyed on the customer's ikey), so it
+        # must follow the same remote kill-switch; its own manager still applies the user's static
+        # disable_offline_storage, and the callback's hard gate never re-enables a user opt-out. The
+        # statsbeat exporter is skipped: it never persists to disk (isolated Microsoft-ikey folder) and
+        # does not participate in the remote toggle.
+        # get_configuration_manager() returns None when the control plane is disabled via env var,
+        # in which case OneSettings is skipped entirely and storage keeps its statically configured
+        # state.
+        if not self._is_stats_exporter():
+            config_manager = get_configuration_manager()
+            if config_manager:
+                # Start the control-plane worker (idempotent) and describe this process to OneSettings
+                # so feature flags can be targeted (os/rp/attach/component/version/region/ikey).
+                config_manager.initialize(
+                    os=_get_os_name(),
+                    rp=_get_rp_name(),
+                    attach=_get_attach_type_name(),
+                    component="ext",
+                    version=ext_version,
+                    region=self._region,
+                    ikey=self._instrumentation_key,
+                )
+                # register_callback also replays any already-cached configuration to this callback,
+                # so a late-created exporter immediately honors an existing kill-switch. The replay is
+                # centralized in the configuration manager; no feature-specific handling is needed here.
+                config_manager.register_callback(self._local_storage_configuration_callback)
 
         # statsbeat initialization
         if self._should_collect_stats():
@@ -244,10 +263,13 @@ class BaseExporter:
     _MAX_STORAGE_DRAIN_BATCH = 10
 
     def _transmit_from_storage(self) -> None:
-        if not self.storage:
+        # self.storage is None only when the user opted out of offline storage (it is constructed
+        # once at init and never nulled by the remote toggle, which only flips it active/inactive).
+        storage = self.storage
+        if not storage:
             return
         drained = 0
-        for blob in self.storage.gets():
+        for blob in storage.gets():
             if drained >= self._MAX_STORAGE_DRAIN_BATCH:
                 break
             # give a few more seconds for blob lease operation
@@ -271,15 +293,18 @@ class BaseExporter:
                 drained += 1
 
     def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
-        if self.storage:
+        # self.storage is None only when the user opted out of offline storage (it is constructed
+        # once at init and never nulled by the remote toggle, which only flips it active/inactive).
+        storage = self.storage
+        if storage:
             if result == ExportResult.FAILED_RETRYABLE:
                 envelopes_to_store = [x.as_dict() for x in envelopes]
                 if self._retry_after_delay_seconds is not None:
-                    result_from_storage_put = self.storage.put(
+                    result_from_storage_put = storage.put(
                         envelopes_to_store, lease_period=self._retry_after_delay_seconds
                     )
                 else:
-                    result_from_storage_put = self.storage.put(envelopes_to_store)
+                    result_from_storage_put = storage.put(envelopes_to_store)
                 if self._should_collect_customer_sdkstats():
                     track_dropped_items_from_storage(result_from_storage_put, envelopes)
                 self._retry_after_delay_seconds = None
@@ -341,8 +366,9 @@ class BaseExporter:
                         granted + len(overflow),
                         len(overflow),
                     )
-                    if self.storage:
-                        self.storage.put([x.as_dict() for x in overflow])
+                    storage = self.storage
+                    if storage:
+                        storage.put([x.as_dict() for x in overflow])
                     else:
                         logger.warning(
                             "Rate limiter deferred %d envelopes but offline "
@@ -426,14 +452,15 @@ class BaseExporter:
                                     error.message,
                                     (envelopes[error.index] if error.index is not None else ""),
                                 )
-                    if self.storage and resend_envelopes:
+                    storage = self.storage
+                    if storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
                         lease_period = (
                             retry_after_delay_seconds
                             if retry_after_delay_seconds is not None
                             else self._storage_min_retry_interval
                         )
-                        result_from_storage = self.storage.put(envelopes_to_store, lease_period)
+                        result_from_storage = storage.put(envelopes_to_store, lease_period)
                         if self._should_collect_customer_sdkstats():
                             track_dropped_items_from_storage(result_from_storage, resend_envelopes)
                         self._consecutive_redirects = 0
@@ -594,6 +621,21 @@ class BaseExporter:
                         exc_type = request_error.__class__.__name__  # type: ignore
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
+            except ServiceResponseError as response_error:
+                # The request was sent but the client failed to receive a response
+                # (e.g. read timeout).
+                logger.warning("Retrying due to server response error: %s.", response_error.message)
+
+                # Track retry items in customer sdkstats for client-side exceptions
+                if self._should_collect_customer_sdkstats():
+                    track_retry_items(envelopes, response_error)
+
+                if self._should_collect_stats():
+                    exc_type = response_error.exc_type
+                    if exc_type is None or exc_type is type(None):  # pylint: disable=unidiomatic-typecheck
+                        exc_type = response_error.__class__.__name__  # type: ignore
+                    _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
+                result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
                 logger.exception(  # pylint: disable=do-not-log-exceptions-if-not-debug, do-not-use-logging-exception
                     "Envelopes could not be exported and are not retryable: %s.", ex
@@ -642,6 +684,55 @@ class BaseExporter:
         # No spans to export
         self._consecutive_redirects = 0
         return ExportResult.SUCCESS
+
+    # OneSettings configuration-change callback: toggles local (offline) storage.
+    def _local_storage_configuration_callback(self, settings: Dict[str, str]) -> None:
+        """Toggle local (offline) storage in response to a OneSettings configuration change.
+
+        OneSettings acts as a remote kill-switch via the FEATURE_LOCAL_STORAGE feature flag:
+        it can force storage off, and re-enable it only when the user did not explicitly opt out
+        with ``disable_offline_storage=True``. A user opt-out is a hard gate that OneSettings can
+        never override.
+
+        :param settings: Configuration settings from OneSettings.
+        :type settings: dict[str, str]
+        """
+        # The user's explicit opt-out is a hard gate - never override it.
+        if self._disable_offline_storage:
+            return
+        local_storage_enabled = evaluate_feature(_ONE_SETTINGS_FEATURE_LOCAL_STORAGE, settings)
+        # None means the flag is absent/invalid; leave the current storage state unchanged.
+        if local_storage_enabled is None:
+            return
+        if local_storage_enabled:
+            self._enable_local_storage()
+        else:
+            self._disable_local_storage()
+
+    def _enable_local_storage(self) -> None:
+        # Construct the local file storage once (on first enable / exporter init), then keep the
+        # instance for the exporter's lifetime. A remote re-enable just flips the toggle back on
+        # rather than recreating storage or its maintenance thread.
+        if self.storage is not None:
+            self.storage.enable()
+            return
+        if self._storage_directory is None:
+            self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
+        self.storage = LocalFileStorage(  # pyright: ignore
+            path=self._storage_directory,  # type: ignore
+            max_size=self._storage_max_size,
+            maintenance_period=self._storage_maintenance_period,
+            retention_period=self._storage_retention_period,
+            name="{} Storage".format(self.__class__.__name__),
+            lease_period=self._storage_min_retry_interval,
+        )
+
+    def _disable_local_storage(self) -> None:
+        # Flip the remote toggle off so put()/gets() no-op. The storage instance and its maintenance
+        # thread are left running (torn down only at exporter shutdown), and any telemetry already
+        # persisted to disk is left in place so it can still be retried if storage is re-enabled.
+        if self.storage is not None:
+            self.storage.disable()
 
     # check to see whether its the case of stats collection
     def _should_collect_stats(self):

@@ -9,6 +9,7 @@ from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+from azure.core.serialization import as_attribute_dict
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -70,12 +71,12 @@ class TestParallelComponentEntity:
             "properties.component_spec._source",
             "properties.properties.client_component_hash",
         ]
-        component_dict = component._to_rest_object().as_dict()
+        component_dict = as_attribute_dict(component._to_rest_object())
         component_dict = pydash.omit(component_dict, *omit_fields)
 
         yaml_path = "./tests/test_configs/components/basic_parallel_component_score.yml"
         yaml_component = load_component(source=yaml_path)
-        yaml_component_dict = yaml_component._to_rest_object().as_dict()
+        yaml_component_dict = as_attribute_dict(yaml_component._to_rest_object())
         yaml_component_dict = pydash.omit(yaml_component_dict, *omit_fields)
 
         assert component_dict == yaml_component_dict

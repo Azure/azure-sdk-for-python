@@ -430,6 +430,7 @@ namespace azure.communication.callautomation
                 self, 
                 target_participant: CommunicationIdentifier, 
                 *, 
+                operation_callback_url: Optional[str] = ..., 
                 operation_context: Optional[str] = ..., 
                 **kwargs
             ) -> None: ...
@@ -1511,6 +1512,7 @@ namespace azure.communication.callautomation.aio
                 self, 
                 target_participant: CommunicationIdentifier, 
                 *, 
+                operation_callback_url: Optional[str] = ..., 
                 operation_context: Optional[str] = ..., 
                 **kwargs
             ) -> None: ...

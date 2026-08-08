@@ -1379,20 +1379,6 @@ namespace azure.mgmt.guestconfig.types
         vm: VMInfo
 
 
-    class azure.mgmt.guestconfig.types.AssignmentReportDetails(TypedDict, total=False):
-        key "complianceStatus": Union[str, ComplianceStatus]
-        key "endTime": str
-        key "jobId": str
-        key "operationType": Union[str, Type]
-        key "startTime": str
-        compliance_status: Union[str, ComplianceStatus]
-        end_time: str
-        job_id: str
-        operation_type: Union[str, Type]
-        resources: list[AssignmentReportResource]
-        start_time: str
-
-
     class azure.mgmt.guestconfig.types.AssignmentReportResource(TypedDict, total=False):
         key "complianceStatus": Union[str, ComplianceStatus]
         key "properties": Any
@@ -1439,18 +1425,6 @@ namespace azure.mgmt.guestconfig.types
         refresh_frequency_mins: float
 
 
-    class azure.mgmt.guestconfig.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorResponseError', module='types')
-        error: ErrorResponseError
-
-
-    class azure.mgmt.guestconfig.types.ErrorResponseError(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        code: str
-        message: str
-
-
     class azure.mgmt.guestconfig.types.GuestConfigurationAssignment(ProxyResource):
         key "id": str
         key "location": str
@@ -1493,40 +1467,6 @@ namespace azure.mgmt.guestconfig.types
         vmss_vm_list: list[VMSSVMInfo]
 
 
-    class azure.mgmt.guestconfig.types.GuestConfigurationAssignmentReport(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('GuestConfigurationAssignmentReportProperties', module='types')
-        id: str
-        name: str
-        properties: GuestConfigurationAssignmentReportProperties
-
-
-    class azure.mgmt.guestconfig.types.GuestConfigurationAssignmentReportList(TypedDict, total=False):
-        key "nextLink": str
-        next_link: str
-        value: list[GuestConfigurationAssignmentReport]
-
-
-    class azure.mgmt.guestconfig.types.GuestConfigurationAssignmentReportProperties(TypedDict, total=False):
-        key "assignment": ForwardRef('AssignmentInfo', module='types')
-        key "complianceStatus": Union[str, ComplianceStatus]
-        key "details": Optional[AssignmentReportDetails]
-        key "endTime": str
-        key "reportId": str
-        key "startTime": str
-        key "vm": ForwardRef('VMInfo', module='types')
-        key "vmssResourceId": str
-        assignment: AssignmentInfo
-        compliance_status: Union[str, ComplianceStatus]
-        details: AssignmentReportDetails
-        end_time: str
-        report_id: str
-        start_time: str
-        vm: VMInfo
-        vmss_resource_id: str
-
-
     class azure.mgmt.guestconfig.types.GuestConfigurationNavigation(TypedDict, total=False):
         key "assignmentSource": Optional[str]
         key "assignmentType": Union[str, AssignmentType]
@@ -1552,31 +1492,6 @@ namespace azure.mgmt.guestconfig.types
         kind: Union[str, Kind]
         name: str
         version: str
-
-
-    class azure.mgmt.guestconfig.types.Operation(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "name": str
-        key "properties": ForwardRef('OperationProperties', module='types')
-        display: OperationDisplay
-        name: str
-        properties: OperationProperties
-
-
-    class azure.mgmt.guestconfig.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
-    class azure.mgmt.guestconfig.types.OperationProperties(TypedDict, total=False):
-        key "statusCode": str
-        status_code: str
 
 
     class azure.mgmt.guestconfig.types.ProxyResource(TypedDict, total=False):

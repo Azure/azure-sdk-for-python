@@ -134,5 +134,5 @@
         "azure.mgmt.relay.operations.NamespacesOperations.check_name_availability": "Microsoft.Relay.NamespacesOperationGroup.checkNameAvailability",
         "azure.mgmt.relay.aio.operations.NamespacesOperations.check_name_availability": "Microsoft.Relay.NamespacesOperationGroup.checkNameAvailability"
     },
-    "CrossLanguageVersion": "52ef10b94093"
+    "CrossLanguageVersion": "c5b063e0f415"
 }
