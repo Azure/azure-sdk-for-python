@@ -7,6 +7,7 @@
 from io import SEEK_SET, UnsupportedOperation
 from typing import Any, cast, Dict, IO, Optional, TypeVar, TYPE_CHECKING
 
+from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 
 from ._encryption import (
@@ -18,7 +19,7 @@ from ._encryption import (
     get_adjusted_upload_size,
     get_blob_encryptor_and_padder,
 )
-from ._generated.models import AppendPositionAccessConditions, BlockLookupList, ModifiedAccessConditions
+from ._generated.models import BlockLookupList
 from ._shared.models import StorageErrorCode
 from ._shared.response_handlers import process_storage_error, return_response_headers
 from ._shared.uploads import (
@@ -39,7 +40,6 @@ if TYPE_CHECKING:
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
 
-
 def _convert_mod_error(error):
     message = error.message.replace(
         "The condition specified using HTTP conditional header(s) is not met.", "The specified blob already exists."
@@ -50,13 +50,13 @@ def _convert_mod_error(error):
     raise overwrite_error
 
 
-def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
+def _any_conditions(condition_kwargs):
+    match_condition = condition_kwargs.get("match_condition")
     return any(
         [
-            modified_access_conditions.if_modified_since,
-            modified_access_conditions.if_unmodified_since,
-            modified_access_conditions.if_none_match,
-            modified_access_conditions.if_match,
+            condition_kwargs.get("if_modified_since"),
+            condition_kwargs.get("if_unmodified_since"),
+            match_condition not in (None, MatchConditions.Unconditionally),
         ]
     )
 
@@ -74,14 +74,35 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
     **kwargs: Any,
 ) -> Dict[str, Any]:
     try:
-        if not overwrite and not _any_conditions(**kwargs):
-            kwargs["modified_access_conditions"].if_none_match = "*"
+        # Stage block generated operation does not accept access conditions.
+        # upload and commit_block_list do accept those, so strip them before staging blocks.
+        access_condition_kwargs = {
+            "if_modified_since": kwargs.pop("if_modified_since", None),
+            "if_unmodified_since": kwargs.pop("if_unmodified_since", None),
+            "match_condition": kwargs.pop("match_condition", None),
+            "etag": kwargs.pop("etag", None),
+            "if_tags": kwargs.pop("if_tags", None),
+        }
+        access_condition_kwargs = {k: v for k, v in access_condition_kwargs.items() if v is not None}
+        if_modified_since = access_condition_kwargs.get("if_modified_since")
+        if_unmodified_since = access_condition_kwargs.get("if_unmodified_since")
+        match_condition = access_condition_kwargs.get("match_condition")
+        etag = access_condition_kwargs.get("etag")
+        if_tags = access_condition_kwargs.get("if_tags")
+        if not overwrite and not _any_conditions(access_condition_kwargs):
+            match_condition = MatchConditions.IfMissing
+            access_condition_kwargs["match_condition"] = match_condition
         adjusted_count = length
         if (encryption_options.get("key") is not None) and (adjusted_count is not None):
             adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options["version"])
-        blob_headers = kwargs.pop("blob_headers", None)
         tier = kwargs.pop("standard_blob_tier", None)
         blob_tags_string = kwargs.pop("blob_tags_string", None)
+        blob_cache_control = kwargs.pop("blob_cache_control", None)
+        blob_content_type = kwargs.pop("blob_content_type", None)
+        blob_content_md5 = kwargs.pop("blob_content_md5", None)
+        blob_content_encoding = kwargs.pop("blob_content_encoding", None)
+        blob_content_language = kwargs.pop("blob_content_language", None)
+        blob_content_disposition = kwargs.pop("blob_content_disposition", None)
 
         immutability_policy = kwargs.pop("immutability_policy", None)
         immutability_policy_expiry = None if immutability_policy is None else immutability_policy.expiry_time
@@ -102,7 +123,6 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
             response = client.upload(
                 body=data,  # type: ignore [arg-type]
                 content_length=adjusted_count,
-                blob_http_headers=blob_headers,
                 headers=headers,
                 cls=return_response_headers,
                 validate_content=validate_content,
@@ -113,6 +133,17 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 immutability_policy_expiry=immutability_policy_expiry,
                 immutability_policy_mode=immutability_policy_mode,
                 legal_hold=legal_hold,
+                blob_cache_control=blob_cache_control,
+                blob_content_type=blob_content_type,
+                blob_content_md5=blob_content_md5,
+                blob_content_encoding=blob_content_encoding,
+                blob_content_language=blob_content_language,
+                blob_content_disposition=blob_content_disposition,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                match_condition=match_condition,
+                etag=etag,
+                if_tags=if_tags,
                 **kwargs,
             )
 
@@ -187,7 +218,6 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
             Dict[str, Any],
             client.commit_block_list(
                 block_lookup,
-                blob_http_headers=blob_headers,
                 cls=return_response_headers,
                 validate_content=validate_content,
                 headers=headers,
@@ -196,6 +226,17 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 immutability_policy_expiry=immutability_policy_expiry,
                 immutability_policy_mode=immutability_policy_mode,
                 legal_hold=legal_hold,
+                blob_cache_control=blob_cache_control,
+                blob_content_type=blob_content_type,
+                blob_content_md5=blob_content_md5,
+                blob_content_encoding=blob_content_encoding,
+                blob_content_language=blob_content_language,
+                blob_content_disposition=blob_content_disposition,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                match_condition=match_condition,
+                etag=etag,
+                if_tags=if_tags,
                 **kwargs,
             ),
         )
@@ -221,12 +262,12 @@ def upload_page_blob(
     **kwargs: Any,
 ) -> Dict[str, Any]:
     try:
-        if not overwrite and not _any_conditions(**kwargs):
-            kwargs["modified_access_conditions"].if_none_match = "*"
+        if not overwrite and not _any_conditions(kwargs):
+            kwargs["match_condition"] = MatchConditions.IfMissing
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
-            raise ValueError(f"Invalid page blob size: {length}. " "The size must be aligned to a 512-byte boundary.")
+            raise ValueError(f"Invalid page blob size: {length}. The size must be aligned to a 512-byte boundary.")
         tier = None
         if kwargs.get("premium_page_blob_tier"):
             premium_page_blob_tier = kwargs.pop("premium_page_blob_tier")
@@ -243,18 +284,30 @@ def upload_page_blob(
 
         blob_tags_string = kwargs.pop("blob_tags_string", None)
         progress_hook = kwargs.pop("progress_hook", None)
+        # Content settings are only valid for create(), so strip them before chunk uploads.
+        blob_cache_control = kwargs.pop("blob_cache_control", None)
+        blob_content_type = kwargs.pop("blob_content_type", None)
+        blob_content_md5 = kwargs.pop("blob_content_md5", None)
+        blob_content_encoding = kwargs.pop("blob_content_encoding", None)
+        blob_content_language = kwargs.pop("blob_content_language", None)
+        blob_content_disposition = kwargs.pop("blob_content_disposition", None)
 
         response = cast(
             Dict[str, Any],
             client.create(
                 content_length=0,
-                blob_content_length=length,
+                size=length,
                 blob_sequence_number=None,  # type: ignore [arg-type]
-                blob_http_headers=kwargs.pop("blob_headers", None),
                 blob_tags_string=blob_tags_string,
                 tier=tier,
                 cls=return_response_headers,
                 headers=headers,
+                blob_cache_control=blob_cache_control,
+                blob_content_type=blob_content_type,
+                blob_content_md5=blob_content_md5,
+                blob_content_encoding=blob_content_encoding,
+                blob_content_language=blob_content_language,
+                blob_content_disposition=blob_content_disposition,
                 **kwargs,
             ),
         )
@@ -267,7 +320,8 @@ def upload_page_blob(
                 kwargs["encryptor"] = encryptor
                 kwargs["padder"] = padder
 
-        kwargs["modified_access_conditions"] = ModifiedAccessConditions(if_match=response["etag"])
+        kwargs["etag"] = response["etag"]
+        kwargs["match_condition"] = MatchConditions.IfNotModified
         return cast(
             Dict[str, Any],
             upload_data_chunks(
@@ -308,20 +362,29 @@ def upload_append_blob(  # pylint: disable=unused-argument
     try:
         if length == 0:
             return {}
-        blob_headers = kwargs.pop("blob_headers", None)
-        append_conditions = AppendPositionAccessConditions(
-            max_size=kwargs.pop("maxsize_condition", None), append_position=None
-        )
+        maxsize_condition = kwargs.pop("maxsize_condition", None)
         blob_tags_string = kwargs.pop("blob_tags_string", None)
         progress_hook = kwargs.pop("progress_hook", None)
+        # Content settings are only valid for create(), so strip them before chunk uploads.
+        blob_cache_control = kwargs.pop("blob_cache_control", None)
+        blob_content_type = kwargs.pop("blob_content_type", None)
+        blob_content_md5 = kwargs.pop("blob_content_md5", None)
+        blob_content_encoding = kwargs.pop("blob_content_encoding", None)
+        blob_content_language = kwargs.pop("blob_content_language", None)
+        blob_content_disposition = kwargs.pop("blob_content_disposition", None)
 
         try:
             if overwrite:
                 client.create(
                     content_length=0,
-                    blob_http_headers=blob_headers,
                     headers=headers,
                     blob_tags_string=blob_tags_string,
+                    blob_cache_control=blob_cache_control,
+                    blob_content_type=blob_content_type,
+                    blob_content_md5=blob_content_md5,
+                    blob_content_encoding=blob_content_encoding,
+                    blob_content_language=blob_content_language,
+                    blob_content_disposition=blob_content_disposition,
                     **kwargs,
                 )
             return cast(
@@ -334,7 +397,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
                     stream=stream,
                     max_concurrency=max_concurrency,
                     validate_content=validate_content,
-                    append_position_access_conditions=append_conditions,
+                    max_size=maxsize_condition,
                     progress_hook=progress_hook,
                     headers=headers,
                     **kwargs,
@@ -353,9 +416,14 @@ def upload_append_blob(  # pylint: disable=unused-argument
                     raise error from exc
             client.create(
                 content_length=0,
-                blob_http_headers=blob_headers,
                 headers=headers,
                 blob_tags_string=blob_tags_string,
+                blob_cache_control=blob_cache_control,
+                blob_content_type=blob_content_type,
+                blob_content_md5=blob_content_md5,
+                blob_content_encoding=blob_content_encoding,
+                blob_content_language=blob_content_language,
+                blob_content_disposition=blob_content_disposition,
                 **kwargs,
             )
             return cast(
@@ -368,7 +436,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
                     stream=stream,
                     max_concurrency=max_concurrency,
                     validate_content=validate_content,
-                    append_position_access_conditions=append_conditions,
+                    max_size=maxsize_condition,
                     progress_hook=progress_hook,
                     headers=headers,
                     **kwargs,

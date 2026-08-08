@@ -23,6 +23,11 @@ provided with the request.
 unique block ids for each block rather than using a sequential count.
 The length of the new block ids will be the same as previous versions to ensure backwards compatibility.
 
+### Other Changes
+- Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
+  and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
+  models instead of generated internal types.
+
 ## 12.30.0 (2026-06-08)
 
 ### Features Added

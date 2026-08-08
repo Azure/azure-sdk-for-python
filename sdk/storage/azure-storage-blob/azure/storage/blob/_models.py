@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -6,6 +7,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
+import sys
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Union, TYPE_CHECKING
 
@@ -14,15 +16,23 @@ from azure.core.paging import PageIterator
 from azure.core.exceptions import HttpResponseError
 
 from ._shared import decode_base64_to_bytes
+from ._shared.request_handlers import serialize_iso
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
+from ._generated.models._patch import _BackCompatMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
+from ._generated.models import SignedIdentifier as GenSignedIdentifier
 from ._generated.models import ArrowField
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -35,10 +45,12 @@ def parse_page_list(page_list: "PageList") -> List["PageRange"]:
     page_ranges = page_list.page_range
     clear_ranges = page_list.clear_range
 
+    # Change in TypeSpec model_base generation
+    # optional properties that are empty will not be set to an empty list but to None
     if page_ranges is None:
-        raise ValueError("PageList's 'page_range' is malformed or None.")
+        page_ranges = []
     if clear_ranges is None:
-        raise ValueError("PageList's 'clear_ranges' is malformed or None.")
+        clear_ranges = []
 
     ranges = []
     p_i, c_i = 0, 0
@@ -172,7 +184,7 @@ class BlobImmutabilityPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MUTABLE = "Mutable"
 
 
-class RetentionPolicy(GeneratedRetentionPolicy):
+class RetentionPolicy(_BackCompatMixin):
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -186,15 +198,24 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     """
 
     enabled: bool = False
+    """Indicates whether a retention policy is enabled for the storage service."""
     days: Optional[int] = None
+    """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
+
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
+    }
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
+        self.enabled = enabled
+        self.days = days
+        self.allow_permanent_delete = None
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
         return cls(
@@ -202,8 +223,11 @@ class RetentionPolicy(GeneratedRetentionPolicy):
             days=generated.days,
         )
 
+    def _to_generated(self) -> GeneratedRetentionPolicy:
+        return GeneratedRetentionPolicy(enabled=self.enabled, days=self.days)
 
-class BlobAnalyticsLogging(GeneratedLogging):
+
+class BlobAnalyticsLogging(_BackCompatMixin):
     """Azure Analytics Logging settings.
 
     :keyword str version:
@@ -230,6 +254,14 @@ class BlobAnalyticsLogging(GeneratedLogging):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
 
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "delete": {"key": "Delete", "type": "bool"},
+        "read": {"key": "Read", "type": "bool"},
+        "write": {"key": "Write", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get("version", "1.0")
         self.delete = kwargs.get("delete", False)
@@ -238,7 +270,7 @@ class BlobAnalyticsLogging(GeneratedLogging):
         self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
         return cls(
@@ -251,8 +283,17 @@ class BlobAnalyticsLogging(GeneratedLogging):
             ),
         )
 
+    def _to_generated(self) -> GeneratedLogging:
+        return GeneratedLogging(
+            version=self.version,
+            delete=self.delete,
+            read=self.read,
+            write=self.write,
+            retention_policy=self.retention_policy._to_generated(),  # pylint: disable=protected-access
+        )
 
-class Metrics(GeneratedMetrics):
+
+class Metrics(_BackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates
     for blobs.
 
@@ -277,6 +318,13 @@ class Metrics(GeneratedMetrics):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
 
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get("version", "1.0")
         self.enabled = kwargs.get("enabled", False)
@@ -284,7 +332,7 @@ class Metrics(GeneratedMetrics):
         self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
         return cls(
@@ -296,8 +344,16 @@ class Metrics(GeneratedMetrics):
             ),
         )
 
+    def _to_generated(self) -> GeneratedMetrics:
+        return GeneratedMetrics(
+            version=self.version,
+            enabled=self.enabled,
+            include_apis=self.include_apis,
+            retention_policy=self.retention_policy._to_generated(),  # pylint: disable=protected-access
+        )
 
-class StaticWebsite(GeneratedStaticWebsite):
+
+class StaticWebsite(_BackCompatMixin):
     """The properties that enable an account to host a static website.
 
     :keyword bool enabled:
@@ -320,6 +376,13 @@ class StaticWebsite(GeneratedStaticWebsite):
     default_index_document_path: Optional[str]
     """Absolute path of the default index page."""
 
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "index_document": {"key": "IndexDocument", "type": "str"},
+        "error_document404_path": {"key": "ErrorDocument404Path", "type": "str"},
+        "default_index_document_path": {"key": "DefaultIndexDocumentPath", "type": "str"},
+    }
+
     def __init__(self, **kwargs: Any) -> None:
         self.enabled = kwargs.get("enabled", False)
         if self.enabled:
@@ -332,7 +395,7 @@ class StaticWebsite(GeneratedStaticWebsite):
             self.default_index_document_path = None
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
         return cls(
@@ -342,8 +405,16 @@ class StaticWebsite(GeneratedStaticWebsite):
             default_index_document_path=generated.default_index_document_path,
         )
 
+    def _to_generated(self) -> GeneratedStaticWebsite:
+        return GeneratedStaticWebsite(
+            enabled=self.enabled,
+            index_document=self.index_document,
+            error_document404_path=self.error_document404_path,
+            default_index_document_path=self.default_index_document_path,
+        )
 
-class CorsRule(GeneratedCorsRule):
+
+class CorsRule(_BackCompatMixin):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -385,6 +456,14 @@ class CorsRule(GeneratedCorsRule):
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
+    _attribute_map = {
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
+    }
+
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ",".join(allowed_origins)
         self.allowed_methods = ",".join(allowed_methods)
@@ -411,7 +490,7 @@ class CorsRule(GeneratedCorsRule):
         return generated_cors_list
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated: Any) -> Self:
         return cls(
             [generated.allowed_origins],
             [generated.allowed_methods],
@@ -1017,7 +1096,7 @@ class ContainerSasPermissions(object):
         return parsed
 
 
-class AccessPolicy(GenAccessPolicy):
+class AccessPolicy(_BackCompatMixin):
     """Access Policy class used by the set and get access policy methods in each service.
 
     A stored access policy can specify the start time, expiry time, and
@@ -1061,13 +1140,19 @@ class AccessPolicy(GenAccessPolicy):
     :paramtype start: Optional[Union[str, datetime]]
     """
 
-    permission: Optional[Union[ContainerSasPermissions, str]]  # type: ignore [assignment]
+    permission: Optional[Union["ContainerSasPermissions", str]]
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]]  # type: ignore [assignment]
+    expiry: Optional[Union["datetime", str]]
     """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]]  # type: ignore [assignment]
+    start: Optional[Union["datetime", str]]
     """The time at which the shared access signature becomes valid."""
+
+    _attribute_map = {
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
+        "permission": {"key": "Permission", "type": "str"},
+    }
 
     def __init__(
         self,
@@ -1078,6 +1163,57 @@ class AccessPolicy(GenAccessPolicy):
         self.start = start
         self.expiry = expiry
         self.permission = permission
+
+    def _to_generated(self) -> GenAccessPolicy:
+        permission = self.permission
+        if permission is not None and not isinstance(permission, str):
+            permission = str(permission)
+        return GenAccessPolicy(
+            start=serialize_iso(self.start),
+            expiry=serialize_iso(self.expiry),
+            permission=permission,
+        )
+
+    @classmethod
+    def _from_generated(cls, generated: Optional[GenAccessPolicy]) -> Optional["AccessPolicy"]:
+        if generated is None:
+            return None
+        return cls(
+            permission=generated.permission,
+            expiry=generated.expiry if generated.expiry else None,
+            start=generated.start if generated.start else None,
+        )
+
+
+class SignedIdentifier(object):  # pylint: disable=protected-access
+    """A stored access policy identifier for container access policies.
+
+    :param str id: The identifier name of the stored access policy.
+    :param access_policy: The access policy associated with this identifier.
+    :type access_policy: Optional[~azure.storage.blob.AccessPolicy]
+    """
+
+    id: str
+    access_policy: Optional["AccessPolicy"]
+
+    def __init__(self, id: str, access_policy: Optional["AccessPolicy"] = None) -> None:
+        self.id = id
+        self.access_policy = access_policy
+
+    def _to_generated(self) -> GenSignedIdentifier:
+        # pylint: disable-next=protected-access
+        generated_access_policy = self.access_policy._to_generated() if self.access_policy is not None else None
+        return GenSignedIdentifier(
+            id=self.id,
+            access_policy=generated_access_policy,
+        )
+
+    @classmethod
+    def _from_generated(cls, generated: GenSignedIdentifier) -> "SignedIdentifier":
+        return cls(
+            id=generated.id,
+            access_policy=AccessPolicy._from_generated(generated.access_policy),  # pylint: disable=protected-access
+        )
 
 
 class BlobSasPermissions(object):
@@ -1326,7 +1462,7 @@ class DelimitedTextDialect(DictMixin):
         self.has_header = kwargs.pop("has_header", False)
 
 
-class ArrowDialect(ArrowField):
+class ArrowDialect(_BackCompatMixin):
     """field of an arrow schema.
 
     All required parameters must be populated in order to send to Azure.
@@ -1337,8 +1473,37 @@ class ArrowDialect(ArrowField):
     :keyword int scale: The scale of the field.
     """
 
-    def __init__(self, type, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
-        super(ArrowDialect, self).__init__(type=type, **kwargs)
+    type: str
+    """Arrow field type."""
+    name: Optional[str]
+    """The name of the field."""
+    precision: Optional[int]
+    """The precision of the field."""
+    scale: Optional[int]
+    """The scale of the field."""
+
+    _attribute_map = {
+        "type": {"key": "Type", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "precision": {"key": "Precision", "type": "int"},
+        "scale": {"key": "Scale", "type": "int"},
+    }
+
+    _xml_map = {"name": "Field"}
+
+    def __init__(self, type: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        self.type = type
+        self.name = kwargs.get("name")
+        self.precision = kwargs.get("precision")
+        self.scale = kwargs.get("scale")
+
+    def _to_generated(self) -> ArrowField:
+        return ArrowField(
+            type=self.type,
+            name=self.name,
+            precision=self.precision,
+            scale=self.scale,
+        )
 
 
 class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1479,9 +1644,7 @@ class BlobProperties(DictMixin):
         self.snapshot = kwargs.get("x-ms-snapshot")
         self.version_id = kwargs.get("x-ms-version-id")
         self.is_current_version = kwargs.get("x-ms-is-current-version")
-        self.blob_type = (
-            BlobType(kwargs["x-ms-blob-type"]) if (kwargs.get("x-ms-blob-type")) else None  # type: ignore [assignment]
-        )
+        self.blob_type = BlobType(kwargs["x-ms-blob-type"]) if kwargs.get("x-ms-blob-type") else None  # type: ignore [assignment]
         self.metadata = kwargs.get("metadata")  # type: ignore [assignment]
         self.encrypted_metadata = kwargs.get("encrypted_metadata")
         self.last_modified = kwargs.get("Last-Modified")  # type: ignore [assignment]
