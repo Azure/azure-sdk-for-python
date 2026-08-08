@@ -35,6 +35,7 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
     PLATFORM_ERROR_TAG,
     USER_ID,
 )
+from azure.ai.agentserver.core._tracing import _BAGGAGE_SESSION_ID
 
 from ._constants import InvocationConstants
 from ._invocation_ws import _WSHandlerMixin
@@ -521,7 +522,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             "azure.ai.agentserver.invocation_id", invocation_id, context=ctx,
         )
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", session_id, context=ctx,
+            _BAGGAGE_SESSION_ID, session_id, context=ctx,
         )
         baggage_token = _otel_context.attach(ctx)
 

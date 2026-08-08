@@ -25,7 +25,7 @@ tracing exporters, and span operations:
 **Span operations:**
 
 - :class:`TraceContextMiddleware` — ASGI middleware that extracts W3C trace
-  context and baggage from incoming headers
+  context and baggage from incoming request headers
 - :func:`end_span` / :func:`record_error` — span lifecycle helpers
 - :func:`trace_stream` — wrap streaming responses with span lifecycle
 - :func:`set_current_span` / :func:`detach_context` — explicit context management
@@ -465,10 +465,11 @@ class TraceContextMiddleware:
     """Pure-ASGI middleware that propagates W3C trace context and baggage.
 
     Extracts ``traceparent``, ``tracestate``, and ``baggage`` headers from
-    incoming HTTP requests using the standard W3C propagators and attaches
-    the resulting context for the duration of the request.  This ensures
-    that any spans created downstream (e.g. by agent-framework / MAF) are
-    automatically children of the caller's trace.
+    incoming HTTP requests and WebSocket connections using the standard W3C
+    propagators and attaches the resulting context for the duration of the
+    request or connection.  This ensures that any spans created downstream
+    (e.g. by agent-framework / MAF) are automatically children of the
+    caller's trace.
 
     This middleware does **not** create its own span — it only propagates
     the incoming context so that downstream instrumentation inherits it.
@@ -481,7 +482,7 @@ class TraceContextMiddleware:
         self.app = app
 
     async def __call__(self, scope: Any, receive: Any, send: Any) -> None:
-        if scope["type"] != "http":
+        if scope["type"] not in ("http", "websocket"):
             await self.app(scope, receive, send)
             return
 
