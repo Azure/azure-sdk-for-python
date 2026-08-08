@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from typing import TypeVar
+from urllib.parse import urlparse
 from azure.core.exceptions import TooManyRedirectsError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
 from azure.core.pipeline.transport import (
@@ -32,8 +33,8 @@ from azure.core.pipeline.transport import (
 )
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from . import AsyncHTTPPolicy
-from ._redirect import RedirectPolicyBase, domain_changed
-from ._utils import get_domain
+from ._redirect import RedirectPolicyBase
+from ._utils import domain_changed
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
@@ -71,7 +72,7 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy[HTTPRequestType, A
         """
         redirects_remaining = True
         redirect_settings = self.configure_redirects(request.context.options)
-        original_domain = get_domain(request.http_request.url) if redirect_settings["allow"] else None
+        original_domain = urlparse(request.http_request.url) if redirect_settings["allow"] else None
         while redirects_remaining:
             response = await self.next.send(request)
             redirect_location = self.get_redirect_location(response)

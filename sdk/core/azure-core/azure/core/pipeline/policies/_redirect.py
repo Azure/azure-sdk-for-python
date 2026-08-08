@@ -40,7 +40,7 @@ from azure.core.pipeline.transport import (
 )
 from azure.core.rest import HttpResponse, HttpRequest, AsyncHttpResponse
 from ._base import HTTPPolicy, RequestHistory
-from ._utils import get_domain
+from ._utils import domain_changed
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 AllHttpResponseType = TypeVar(
@@ -54,22 +54,6 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 ClsRedirectPolicy = TypeVar("ClsRedirectPolicy", bound="RedirectPolicyBase")
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def domain_changed(original_domain: Optional[str], url: str) -> bool:
-    """Checks if the domain has changed.
-
-    :param str original_domain: The original domain.
-    :param str url: The new url.
-    :rtype: bool
-    :return: Whether the domain has changed.
-    """
-    domain = get_domain(url)
-    if not original_domain:
-        return False
-    if original_domain == domain:
-        return False
-    return True
 
 
 class RedirectPolicyBase:
@@ -200,7 +184,7 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy[HTTPRequestType, HTTPRespons
         """
         retryable: bool = True
         redirect_settings = self.configure_redirects(request.context.options)
-        original_domain = get_domain(request.http_request.url) if redirect_settings["allow"] else None
+        original_domain = urlparse(request.http_request.url) if redirect_settings["allow"] else None
         while retryable:
             response = self.next.send(request)
             redirect_location = self.get_redirect_location(response)

@@ -27,7 +27,7 @@ import datetime
 import email.utils
 import urllib.parse
 from typing import Optional, Set, cast, Union, Tuple
-from urllib.parse import urlparse
+from urllib.parse import urlparse, ParseResult
 
 from azure.core.pipeline.transport import (
     HttpResponse as LegacyHttpResponse,
@@ -43,6 +43,41 @@ from .. import PipelineResponse
 
 AllHttpResponseType = Union[HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse]
 HTTPRequestType = Union[HttpRequest, LegacyHttpRequest]
+
+# Default ports corresponding to a scheme.
+DEFAULT_PORTS = {"http": 80, "https": 443}
+
+
+def domain_changed(original_domain: Optional[ParseResult], url: str) -> bool:
+    """Checks if the domain has changed between the original request and a redirect target.
+
+    The domain is considered changed if the hostname, port, or scheme differs. ``urlparse``
+    already normalizes the hostname and scheme to lowercase, so no additional normalization
+    is required. An absent port and the scheme's default port (e.g. 80 for http) are treated
+    as equivalent when the scheme is unchanged.
+
+    :param original_domain: The parsed URL of the original request, or ``None`` if redirects
+     are disabled.
+    :type original_domain: ~urllib.parse.ParseResult or None
+    :param str url: The redirect target url.
+    :rtype: bool
+    :return: Whether the domain has changed.
+    """
+    if not original_domain:
+        return False
+    redirect_domain = urlparse(url)
+    if original_domain.hostname != redirect_domain.hostname:
+        return True
+
+    changed_port = original_domain.port != redirect_domain.port
+    changed_scheme = original_domain.scheme != redirect_domain.scheme
+
+    # Treat an absent port and the scheme's default port as equivalent when the scheme matches.
+    default_port = (DEFAULT_PORTS.get(original_domain.scheme), None)
+    if not changed_scheme and original_domain.port in default_port and redirect_domain.port in default_port:
+        return False
+
+    return changed_port or changed_scheme
 
 
 def _parse_http_date(text: str) -> datetime.datetime:
@@ -94,16 +129,6 @@ def get_retry_after(response: PipelineResponse[HTTPRequestType, AllHttpResponseT
             parsed_retry_after = parse_retry_after(retry_after)
             return parsed_retry_after / 1000.0
     return None
-
-
-def get_domain(url: str) -> str:
-    """Get the domain of an url.
-
-    :param str url: The url.
-    :rtype: str
-    :return: The domain of the url.
-    """
-    return str(urlparse(url).netloc).lower()
 
 
 def get_challenge_parameter(headers, challenge_scheme: str, challenge_parameter: str) -> Optional[str]:
