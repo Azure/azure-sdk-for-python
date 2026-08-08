@@ -1,0 +1,105 @@
+name: Bug Scouter Invoke
+
+on:
+  workflow_run:
+    workflows: [Bug Scouter Build]
+    types: [completed]
+
+permissions: {}
+
+concurrency:
+  group: bug-scouter-invoke-${{ github.event.workflow_run.id }}
+  cancel-in-progress: false
+
+jobs:
+  invoke:
+    name: Validate, invoke, and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    environment: bug-scouter-prod
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+      issues: write
+      statuses: write
+    steps:
+      - name: Checkout trusted automation only
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.11'
+
+      - name: Resolve live pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          python .github/scripts/prepare_bugscouter.py
+          --event "$GITHUB_EVENT_PATH"
+          --output "$RUNNER_TEMP/bugscouter-request.json"
+          --resolve-only
+
+      - name: Publish build failure
+        if: github.event.workflow_run.conclusion != 'success'
+        env:
+          BUILD_OUTCOME: ${{ github.event.workflow_run.conclusion }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          python .github/scripts/run_bugscouter.py
+          --request "$RUNNER_TEMP/bugscouter-request.json"
+          --endpoint "${{ vars.BUGSCOUTER_FOUNDRY_ENDPOINT }}"
+          --storage-account "${{ vars.BUGSCOUTER_STORAGE_ACCOUNT }}"
+          --container "${{ vars.BUGSCOUTER_STORAGE_CONTAINER }}"
+          --output "$RUNNER_TEMP/bugscouter-result.json"
+          --target-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --publish
+
+      - name: Download and validate exact-SHA inputs
+        if: github.event.workflow_run.conclusion == 'success'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          python .github/scripts/prepare_bugscouter.py
+          --event "$GITHUB_EVENT_PATH"
+          --artifact "$RUNNER_TEMP/bugscouter-input"
+          --output "$RUNNER_TEMP/bugscouter-request.json"
+
+      - name: Sign in to Azure with OIDC
+        if: github.event.workflow_run.conclusion == 'success'
+        id: azure-login
+        continue-on-error: true
+        uses: azure/login@f5d393ae46f8fde4be8b75f32e3fc50e654ad0ca # v3
+        with:
+          client-id: ${{ vars.BUGSCOUTER_AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.BUGSCOUTER_AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.BUGSCOUTER_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Invoke and publish Bug Scouter
+        if: github.event.workflow_run.conclusion == 'success'
+        env:
+          AZURE_LOGIN_OUTCOME: ${{ steps.azure-login.outcome }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          python .github/scripts/run_bugscouter.py
+          --request "$RUNNER_TEMP/bugscouter-request.json"
+          --endpoint "${{ vars.BUGSCOUTER_FOUNDRY_ENDPOINT }}"
+          --storage-account "${{ vars.BUGSCOUTER_STORAGE_ACCOUNT }}"
+          --container "${{ vars.BUGSCOUTER_STORAGE_CONTAINER }}"
+          --output "$RUNNER_TEMP/bugscouter-result.json"
+          --target-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --publish
+
+      - name: Upload Bug Scouter result
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: bug-scouter-result-${{ github.event.workflow_run.head_sha }}
+          path: ${{ runner.temp }}/bugscouter-result.json
+          if-no-files-found: warn
+          retention-days: 7
