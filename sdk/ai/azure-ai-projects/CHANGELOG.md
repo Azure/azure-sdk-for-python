@@ -1,5 +1,30 @@
 # Release History
 
+## 2.5.0 (Unreleased)
+
+### Features Added
+
+Placeholder
+
+### Breaking Changes
+
+Placeholder
+
+### Bugs Fixed
+
+Placeholder
+
+### Sample updates
+
+* Added `sample_dataset_generation_job_simpleqna_for_finetuning_async.py` under `samples/datasets/`, demonstrating asynchronous generation of a SimpleQnA dataset for fine-tuning.
+* Added logging samples under `samples/logs/`:
+  * `sample_log_all.py` demonstrating combined logging for Azure SDK and `.get_openai_client()` operations.
+  * `sample_log_from_openai_client.py` demonstrating logging for an OpenAI client created from `.get_openai_client()`.
+  * `sample_log_from_sdk.py` demonstrating logging for Azure AI Projects SDK client operations.
+  * `sample_log_to_console.py` demonstrating console logging configuration.
+  * `sample_log_with_logging_disabled.py` demonstrating redacted logging behavior when `logging_enable` is not enabled.
+* Renamed optimization polling samples `sample_optimization_job_basic_polling.py` and `sample_optimization_job_basic_polling_async.py` to `sample_optimization_job_advanced_app_polling.py` and `sample_optimization_job_advanced_app_polling_async.py`.
+
 ## 2.4.0 (2026-07-24)
 
 ### Features Added
