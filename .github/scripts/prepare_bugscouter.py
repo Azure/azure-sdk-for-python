@@ -16,6 +16,11 @@ from pathlib import Path
 
 EXPECTED_REPOSITORY = "Azure/azure-sdk-for-python"
 EXPECTED_WORKFLOW = "Bug Scouter Build"
+OPT_IN_LABEL = "bug-scouter"
+MAX_BUG_BASH_DOCUMENT_CHARS = 190_000
+MAX_DIFF_BYTES = 160_000
+MAX_GITHUB_JSON_BYTES = 2 * 1024 * 1024
+MAX_GITHUB_PAGES = 10
 MAX_DOCUMENT_BYTES = 2 * 1024 * 1024
 MAX_MANIFEST_BYTES = 16 * 1024
 MAX_WHEEL_BYTES = 200 * 1024 * 1024
@@ -48,12 +53,55 @@ def _github_json(path: str, token: str):
     )
     try:
         with urllib.request.urlopen(request, timeout=60) as response:
-            return json.loads(response.read().decode("utf-8"))
+            payload = response.read(MAX_GITHUB_JSON_BYTES + 1)
+            if len(payload) > MAX_GITHUB_JSON_BYTES:
+                raise ValueError(
+                    "GitHub JSON response exceeds the maximum allowed size"
+                )
+            return json.loads(payload.decode("utf-8"))
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")
         raise RuntimeError(
             f"GitHub API request failed with HTTP {exc.code}: {detail}"
         ) from exc
+
+
+def _github_text(path: str, token: str, *, accept: str, max_bytes: int) -> str:
+    request = urllib.request.Request(
+        f"https://api.github.com/{path.lstrip('/')}",
+        headers={
+            "Accept": accept,
+            "Authorization": f"Bearer {token}",
+            "User-Agent": "bug-scouter-github-action",
+            "X-GitHub-Api-Version": "2022-11-28",
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            payload = response.read(max_bytes + 1)
+            if len(payload) > max_bytes:
+                raise ValueError("pull request diff exceeds the maximum allowed size")
+            return payload.decode("utf-8")
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(
+            f"GitHub API request failed with HTTP {exc.code}: {detail}"
+        ) from exc
+
+
+def _github_pages(path: str, token: str) -> list[dict]:
+    separator = "&" if "?" in path else "?"
+    items = []
+    for page in range(1, MAX_GITHUB_PAGES + 1):
+        result = _github_json(f"{path}{separator}per_page=100&page={page}", token)
+        if not isinstance(result, list) or not all(
+            isinstance(item, dict) for item in result
+        ):
+            raise RuntimeError("GitHub returned an invalid paginated response")
+        items.extend(result)
+        if len(result) < 100:
+            return items
+    raise ValueError("pull request discussion exceeds the maximum allowed pages")
 
 
 def _github_pull(repository: str, number: int, token: str) -> dict:
@@ -111,12 +159,90 @@ def _validate_live_pull(values: dict, pull_request: dict) -> dict:
     )
     if base_repository != values["repository"]:
         raise ValueError("pull request base repository is invalid")
+    labels = pull_request.get("labels")
+    if not isinstance(labels, list) or OPT_IN_LABEL not in {
+        str(label.get("name") or "") for label in labels if isinstance(label, dict)
+    }:
+        raise ValueError(f"pull request does not have the {OPT_IN_LABEL} label")
+    base_sha = str((pull_request.get("base") or {}).get("sha") or "").lower()
+    if len(base_sha) != 40 or any(
+        character not in "0123456789abcdef" for character in base_sha
+    ):
+        raise ValueError("pull request base SHA is invalid")
     return {
         **values,
         "pr_number": int(pull_request["number"]),
         "pr_title": str(pull_request.get("title") or ""),
+        "pr_body": str(pull_request.get("body") or ""),
+        "base_sha": base_sha,
         "html_url": str(pull_request.get("html_url") or ""),
     }
+
+
+def _discussion_entry(item: dict, *, kind: str) -> str | None:
+    body = str(item.get("body") or "").strip()
+    if "<!-- bug-scouter:" in body:
+        return None
+    author = str((item.get("user") or {}).get("login") or "unknown")
+    timestamp = str(item.get("submitted_at") or item.get("created_at") or "unknown")
+    details = [f"author={author}", f"time={timestamp}"]
+    if kind == "review":
+        details.append(f"state={str(item.get('state') or 'unknown')}")
+    if kind == "inline review comment":
+        details.append(f"path={str(item.get('path') or 'unknown')}")
+        details.append(f"line={str(item.get('line') or 'unknown')}")
+    return f"### {kind.title()} ({', '.join(details)})\n{body or '(no written body)'}"
+
+
+def _discussion_section(title: str, items: list[dict], *, kind: str) -> str:
+    entries = [
+        entry
+        for item in items
+        if (entry := _discussion_entry(item, kind=kind)) is not None
+    ]
+    return f"## {title}\n" + ("\n\n".join(entries) if entries else "(none)")
+
+
+def _build_bug_bash_document(request: dict, readme: str, token: str) -> str:
+    repository = request["repository"]
+    pr_number = request["pr_number"]
+    issue_comments = _github_pages(
+        f"repos/{repository}/issues/{pr_number}/comments", token
+    )
+    reviews = _github_pages(f"repos/{repository}/pulls/{pr_number}/reviews", token)
+    review_comments = _github_pages(
+        f"repos/{repository}/pulls/{pr_number}/comments", token
+    )
+    diff = _github_text(
+        f"repos/{repository}/compare/{request['base_sha']}...{request['head_sha']}",
+        token,
+        accept="application/vnd.github.diff",
+        max_bytes=MAX_DIFF_BYTES,
+    )
+    sections = [
+        "# Bug Bash Instructions from Pull Request",
+        (
+            "Use the PR title, description, discussion, reviews, inline review "
+            "comments, and exact code diff below as the bug-bash instructions. "
+            "Use the package README only as supporting API documentation."
+        ),
+        f"## PR Title\n{request['pr_title'] or '(none)'}",
+        f"## PR Description\n{request['pr_body'] or '(none)'}",
+        _discussion_section("PR Conversation", issue_comments, kind="comment"),
+        _discussion_section("Reviews", reviews, kind="review"),
+        _discussion_section(
+            "Inline Review Comments", review_comments, kind="inline review comment"
+        ),
+        (
+            f"## Exact Code Diff ({request['base_sha']}...{request['head_sha']})\n"
+            f"```diff\n{diff}\n```"
+        ),
+        f"## Package README (Supporting Context)\n{readme}",
+    ]
+    document = "\n\n".join(sections)
+    if len(document) > MAX_BUG_BASH_DOCUMENT_CHARS:
+        raise ValueError("pull request context exceeds the maximum allowed size")
+    return document
 
 
 def _resolve_pull(values: dict, token: str) -> dict:
@@ -294,10 +420,19 @@ def prepare(event: dict, artifact_directory: Path, token: str) -> dict:
         raise ValueError("build workflow did not complete successfully")
     _download_artifact(artifact_directory, request, token)
     wheel_path, document_path = _validate_artifact(artifact_directory, request)
+    bug_bash_document = _build_bug_bash_document(
+        request, document_path.read_text(encoding="utf-8"), token
+    )
+    final_request = _validate_live_pull(
+        request, _github_pull(request["repository"], request["pr_number"], token)
+    )
+    if final_request["base_sha"] != request["base_sha"]:
+        raise ValueError("pull request base SHA changed while collecting context")
     return {
-        **request,
+        **final_request,
         "wheel": str(wheel_path),
         "document": str(document_path),
+        "bug_bash_document": bug_bash_document,
     }
 
 

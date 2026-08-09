@@ -22,6 +22,7 @@ def _request(tmp_path=None):
         "head_repository": "contributor/azure-sdk-for-python",
         "pr_title": "Test PR",
         "html_url": "https://github.com/Azure/azure-sdk-for-python/pull/7",
+        "bug_bash_document": "# PR context\nTest null and retry behavior.",
     }
     if tmp_path:
         wheel = tmp_path / "azure_ai_ml-1.0.0-py3-none-any.whl"
@@ -43,6 +44,47 @@ def test_request_values_rejects_other_repository():
     request["repository"] = "attacker/repo"
     with pytest.raises(ValueError, match="repository"):
         run_bugscouter._request_values(request)
+
+
+@pytest.mark.parametrize(
+    "document", [None, "", "x" * 190_001], ids=["missing", "empty", "oversized"]
+)
+def test_request_values_rejects_invalid_required_document(document):
+    request = _request()
+    request["bug_bash_document"] = document
+
+    with pytest.raises(ValueError, match="bug-bash document"):
+        run_bugscouter._request_values(request, require_document=True)
+
+
+@pytest.mark.parametrize(
+    "pull, message",
+    [
+        (
+            {
+                "state": "open",
+                "head": {"sha": "a" * 40},
+                "labels": [],
+            },
+            "bug-scouter label",
+        ),
+        (
+            {
+                "state": "open",
+                "head": {"sha": "b" * 40},
+                "labels": [{"name": "bug-scouter"}],
+            },
+            "head SHA",
+        ),
+    ],
+)
+def test_validate_live_authorization_fails_closed(monkeypatch, pull, message):
+    monkeypatch.setattr(
+        run_bugscouter, "_github_request", lambda *_args, **_kwargs: pull
+    )
+
+    with pytest.raises(ValueError, match=message):
+        run_bugscouter._validate_live_authorization(_request(), "token")
 
 
 def test_azure_token_uses_requested_resource(monkeypatch):
@@ -72,6 +114,10 @@ def test_invoke_deletes_staged_blob_after_failure(tmp_path, monkeypatch):
     )
     monkeypatch.setattr(run_bugscouter, "_azure_token", lambda *_args: "token")
     monkeypatch.setattr(
+        run_bugscouter, "_validate_live_authorization", lambda *_args: None
+    )
+    monkeypatch.setenv("GITHUB_TOKEN", "github-token")
+    monkeypatch.setattr(
         run_bugscouter,
         "_request_json",
         lambda *_args, **_kwargs: (_ for _ in ()).throw(
@@ -92,6 +138,52 @@ def test_invoke_deletes_staged_blob_after_failure(tmp_path, monkeypatch):
         run_bugscouter.invoke(args, _request(tmp_path))
 
     assert deleted and deleted[0].endswith(".whl")
+
+
+def test_invoke_sends_generated_pr_context(tmp_path, monkeypatch):
+    payloads = []
+    responses = iter(
+        [
+            ({"invocation_id": "invocation"}, {}),
+            (
+                {"state": "completed", "result": {"status": "ok", "real_bug_count": 0}},
+                {},
+            ),
+        ]
+    )
+    monkeypatch.setattr(run_bugscouter, "_upload_blob", lambda *_args: None)
+    monkeypatch.setattr(run_bugscouter, "_delete_blob", lambda *_args: None)
+    monkeypatch.setattr(run_bugscouter, "_azure_token", lambda *_args: "token")
+    monkeypatch.setattr(
+        run_bugscouter, "_validate_live_authorization", lambda *_args: None
+    )
+    monkeypatch.setenv("GITHUB_TOKEN", "github-token")
+
+    def request_json(_method, _url, *, token, payload=None):
+        assert token == "token"
+        if payload is not None:
+            payloads.append(payload)
+        return next(responses)
+
+    monkeypatch.setattr(run_bugscouter, "_request_json", request_json)
+    args = type(
+        "Args",
+        (),
+        {
+            "storage_account": "account",
+            "container": "container",
+            "endpoint": "https://example",
+            "timeout_minutes": 1,
+            "poll_seconds": 0,
+        },
+    )()
+
+    result = run_bugscouter.invoke(args, _request(tmp_path))
+
+    assert result["state"] == "completed"
+    assert payloads[0]["bug_bash_document"] == (
+        "# PR context\nTest null and retry behavior."
+    )
 
 
 def test_publish_sets_failure_and_updates_existing_comment(monkeypatch):
@@ -161,6 +253,28 @@ def test_publish_suppresses_mentions_and_creates_success_comment(monkeypatch):
     )
 
 
+def test_publish_build_failure_before_context_collection(monkeypatch):
+    calls = []
+    request = _request()
+    request.pop("bug_bash_document")
+
+    def github_request(method, path, token, payload=None):
+        calls.append((method, path, payload))
+        if "comments?per_page=100" in path:
+            return []
+        return {"html_url": "https://example/comment"}
+
+    monkeypatch.setattr(run_bugscouter, "_github_request", github_request)
+    run_bugscouter.publish(
+        request,
+        {"state": "failed", "error": "build failed"},
+        github_token="token",
+        target_url="https://example/run",
+    )
+
+    assert calls[0][2]["state"] == "error"
+
+
 def test_main_publishes_oidc_failure(tmp_path, monkeypatch):
     request_path = tmp_path / "request.json"
     request_path.write_text(json.dumps(_request()), encoding="utf-8")
@@ -195,6 +309,44 @@ def test_main_publishes_oidc_failure(tmp_path, monkeypatch):
     assert run_bugscouter.main() == 2
     assert published[0]["state"] == "failed"
     assert "OIDC login failure" in output_path.read_text(encoding="utf-8")
+
+
+def test_main_publishes_context_preparation_failure(tmp_path, monkeypatch):
+    request = _request()
+    request.pop("bug_bash_document")
+    request_path = tmp_path / "request.json"
+    request_path.write_text(json.dumps(request), encoding="utf-8")
+    output_path = tmp_path / "result.json"
+    published = []
+    monkeypatch.setattr(
+        run_bugscouter,
+        "_parse_args",
+        lambda: type(
+            "Args",
+            (),
+            {
+                "request": str(request_path),
+                "output": str(output_path),
+                "publish": True,
+                "target_url": "https://example/run",
+            },
+        )(),
+    )
+    monkeypatch.setattr(
+        run_bugscouter, "invoke", lambda *_args: pytest.fail("invoke must not run")
+    )
+    monkeypatch.setattr(
+        run_bugscouter,
+        "publish",
+        lambda _request, response, **_kwargs: published.append(response)
+        or "https://example/comment",
+    )
+    monkeypatch.setenv("GITHUB_TOKEN", "token")
+    monkeypatch.setenv("PREPARATION_OUTCOME", "failure")
+
+    assert run_bugscouter.main() == 2
+    assert published[0]["state"] == "failed"
+    assert "context preparation failure" in output_path.read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize("value", [None, True, -1, "unknown", 10_001])
@@ -259,6 +411,10 @@ def test_invoke_refreshes_expired_token(tmp_path, monkeypatch):
     monkeypatch.setattr(run_bugscouter, "_upload_blob", lambda *_args: None)
     monkeypatch.setattr(run_bugscouter, "_delete_blob", lambda *_args: None)
     monkeypatch.setattr(run_bugscouter, "_azure_token", lambda *_args: next(tokens))
+    monkeypatch.setattr(
+        run_bugscouter, "_validate_live_authorization", lambda *_args: None
+    )
+    monkeypatch.setenv("GITHUB_TOKEN", "github-token")
 
     def request_json(*_args, **_kwargs):
         response = next(responses)

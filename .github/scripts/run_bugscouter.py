@@ -16,6 +16,7 @@ from pathlib import Path
 EXPECTED_REPOSITORY = "Azure/azure-sdk-for-python"
 MAX_SUMMARY_CHARACTERS = 60_000
 MAX_BUG_COUNT = 10_000
+MAX_BUG_BASH_DOCUMENT_CHARACTERS = 190_000
 
 
 class HttpResponseError(RuntimeError):
@@ -86,7 +87,7 @@ def _azure_token(resource: str) -> str:
     return token
 
 
-def _request_values(request: dict) -> dict:
+def _request_values(request: dict, *, require_document: bool = False) -> dict:
     if request.get("repository") != EXPECTED_REPOSITORY:
         raise ValueError("request repository is invalid")
     head_sha = str(request.get("head_sha") or "").lower()
@@ -94,7 +95,15 @@ def _request_values(request: dict) -> dict:
         character not in "0123456789abcdef" for character in head_sha
     ):
         raise ValueError("request head SHA is invalid")
-    return {
+    bug_bash_document = request.get("bug_bash_document")
+    if require_document:
+        if not isinstance(bug_bash_document, str) or not bug_bash_document.strip():
+            raise ValueError("request bug-bash document is missing")
+        if len(bug_bash_document) > MAX_BUG_BASH_DOCUMENT_CHARACTERS:
+            raise ValueError(
+                "request bug-bash document exceeds the maximum allowed size"
+            )
+    values = {
         "repository": EXPECTED_REPOSITORY,
         "run_id": int(request["run_id"]),
         "pr_number": int(request["pr_number"]),
@@ -103,6 +112,9 @@ def _request_values(request: dict) -> dict:
         "pr_title": str(request.get("pr_title") or ""),
         "html_url": str(request.get("html_url") or ""),
     }
+    if require_document:
+        values["bug_bash_document"] = bug_bash_document
+    return values
 
 
 def _upload_blob(args, blob_name: str, wheel_path: Path) -> None:
@@ -156,11 +168,14 @@ def _delete_blob(args, blob_name: str) -> None:
 
 
 def invoke(args, request: dict) -> dict:
-    values = _request_values(request)
+    values = _request_values(request, require_document=True)
     wheel_path = Path(request["wheel"]).resolve()
-    document_path = Path(request["document"]).resolve()
-    if not wheel_path.is_file() or not document_path.is_file():
-        raise RuntimeError("validated wheel or document no longer exists")
+    if not wheel_path.is_file():
+        raise RuntimeError("validated wheel no longer exists")
+    github_token = os.environ.get("GITHUB_TOKEN", "")
+    if not github_token:
+        raise RuntimeError("GITHUB_TOKEN is required to authorize invocation")
+    _validate_live_authorization(values, github_token)
 
     wheel_hash = hashlib.sha256(wheel_path.read_bytes()).hexdigest()
     owner, repository_name = values["repository"].split("/", 1)
@@ -179,7 +194,7 @@ def invoke(args, request: dict) -> dict:
             "wheel_filename": wheel_path.name,
             "wheel_blob_name": blob_name,
             "wheel_sha256": wheel_hash,
-            "bug_bash_document": document_path.read_text(encoding="utf-8"),
+            "bug_bash_document": values["bug_bash_document"],
         }
         token = _azure_token("https://ai.azure.com")
         started, headers = _request_json(
@@ -242,6 +257,24 @@ def _github_request(method: str, path: str, token: str, payload: dict | None = N
         payload=payload,
     )
     return result
+
+
+def _validate_live_authorization(request: dict, token: str) -> None:
+    repository = request["repository"]
+    pr_number = request["pr_number"]
+    pull_request = _github_request(
+        "GET", f"repos/{repository}/pulls/{pr_number}", token
+    )
+    if not isinstance(pull_request, dict) or pull_request.get("state") != "open":
+        raise ValueError("pull request is not open")
+    live_sha = str((pull_request.get("head") or {}).get("sha") or "").lower()
+    if live_sha != request["head_sha"]:
+        raise ValueError("pull request head SHA changed before invocation")
+    labels = pull_request.get("labels")
+    if not isinstance(labels, list) or "bug-scouter" not in {
+        str(label.get("name") or "") for label in labels if isinstance(label, dict)
+    }:
+        raise ValueError("pull request does not have the bug-scouter label")
 
 
 def _safe_summary(value: object, fallback: str) -> str:
@@ -356,6 +389,9 @@ def main() -> int:
         build_outcome = os.environ.get("BUILD_OUTCOME", "")
         if build_outcome and build_outcome != "success":
             raise RuntimeError(f"Bug Scouter build {build_outcome}")
+        preparation_outcome = os.environ.get("PREPARATION_OUTCOME", "")
+        if preparation_outcome and preparation_outcome != "success":
+            raise RuntimeError(f"Bug Scouter context preparation {preparation_outcome}")
         login_outcome = os.environ.get("AZURE_LOGIN_OUTCOME", "")
         if login_outcome and login_outcome != "success":
             raise RuntimeError(f"Azure OIDC login {login_outcome}")

@@ -22,6 +22,7 @@ jobs:
       contents: read
       id-token: write
       issues: write
+      pull-requests: read
       statuses: write
     steps:
       - name: Checkout trusted automation only
@@ -69,6 +70,21 @@ jobs:
           --event "$GITHUB_EVENT_PATH"
           --artifact "$RUNNER_TEMP/bugscouter-input"
           --output "$RUNNER_TEMP/bugscouter-request.json"
+
+      - name: Publish context preparation failure
+        if: failure() && github.event.workflow_run.conclusion == 'success'
+        env:
+          PREPARATION_OUTCOME: failure
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          python .github/scripts/run_bugscouter.py
+          --request "$RUNNER_TEMP/bugscouter-request.json"
+          --endpoint "${{ vars.BUGSCOUTER_FOUNDRY_ENDPOINT }}"
+          --storage-account "${{ vars.BUGSCOUTER_STORAGE_ACCOUNT }}"
+          --container "${{ vars.BUGSCOUTER_STORAGE_CONTAINER }}"
+          --output "$RUNNER_TEMP/bugscouter-result.json"
+          --target-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --publish
 
       - name: Sign in to Azure with OIDC
         if: github.event.workflow_run.conclusion == 'success'
