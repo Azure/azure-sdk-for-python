@@ -63,6 +63,31 @@ pub(crate) fn read_database_async<'py>(
     run_read_database_operation_async(py, handle, modifiers, database_id, "read_database_async")
 }
 
+/// Delete a database and return the service response.
+/// A successful delete has status 204 and an empty body.
+#[pyfunction]
+pub(crate) fn delete_database<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let (database_id, modifiers) =
+        extract_database_prepared_inputs(prepared, DELETE_DATABASE_ID_REQUIRED)?;
+    run_delete_database_operation(py, handle, modifiers, database_id, "delete_database")
+}
+
+/// Return an awaitable that deletes a database.
+#[pyfunction]
+pub(crate) fn delete_database_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (database_id, modifiers) =
+        extract_database_prepared_inputs(prepared, DELETE_DATABASE_ID_REQUIRED)?;
+    run_delete_database_operation_async(py, handle, modifiers, database_id, "delete_database_async")
+}
+
 /// Read one page of the account's databases, for `client.list_databases()`.
 ///
 /// This is where a prepared Python request crosses into Rust. It reads the
@@ -70,9 +95,6 @@ pub(crate) fn read_database_async<'py>(
 /// It uses `extract_account_prepared_modifiers` rather than the extractor the
 /// container-scoped operations use, because at account scope there is no
 /// container link or partition key to read.
-///
-/// Without this entry point Python could not reach the driver's database feed,
-/// and `list_databases` would always run on the legacy path.
 #[pyfunction]
 pub(crate) fn list_databases<'py>(
     py: Python<'py>,
@@ -92,4 +114,28 @@ pub(crate) fn list_databases_async<'py>(
 ) -> PyResult<Bound<'py, PyAny>> {
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     run_list_databases_operation_async(py, handle, modifiers, "list_databases_async")
+}
+
+/// Run a database query and return one page of matching databases.
+#[pyfunction]
+pub(crate) fn query_databases<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let modifiers = extract_account_prepared_modifiers(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_query_databases_operation(py, handle, modifiers, body_bytes, "query_databases")
+}
+
+/// Return an awaitable that runs one page of a database query.
+#[pyfunction]
+pub(crate) fn query_databases_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let modifiers = extract_account_prepared_modifiers(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_query_databases_operation_async(py, handle, modifiers, body_bytes, "query_databases_async")
 }

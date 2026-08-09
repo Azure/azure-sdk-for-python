@@ -27,19 +27,25 @@ use crate::feed_range_subset::compute_is_feed_range_subset;
 use crate::runtime::require_runtime_context;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// Describes which Python partition-key form produced the parsed key.
 pub(super) enum FeedRangePartitionKeySource {
+    /// A normal partition-key value.
     Standard,
+    /// The empty header used for Python's internal empty-key marker.
     EmptySentinel,
+    /// A caller supplied an empty sequence as the partition key.
     ExplicitEmptySequence,
 }
 
 #[derive(Clone, Debug)]
+/// A parsed partition key and the Python form that produced it.
 pub(super) struct FeedRangePartitionKeyInput {
     pub(super) partition_key: PartitionKey,
     pub(super) source: FeedRangePartitionKeySource,
 }
 
 #[derive(Debug)]
+/// Values returned to Python for a feed range.
 pub(super) struct FeedRangeFromPartitionKeyPayload {
     pub(super) min: String,
     pub(super) max: String,
@@ -47,6 +53,7 @@ pub(super) struct FeedRangeFromPartitionKeyPayload {
 }
 
 #[derive(Debug)]
+/// Errors that preserve the Python behavior of feed-range calculation.
 pub(super) enum FeedRangeFromPartitionKeyError {
     Cosmos(CosmosError),
     Validation(String),
@@ -54,6 +61,7 @@ pub(super) enum FeedRangeFromPartitionKeyError {
     LegacyType(String),
 }
 
+/// Handle empty partition-key forms whose result depends on the container definition.
 pub(super) fn maybe_handle_feed_range_partition_key_special_case(
     definition: &PartitionKeyDefinition,
     source: FeedRangePartitionKeySource,
@@ -291,6 +299,7 @@ async fn run_feed_range_from_partition_key_future(
         is_max_inclusive,
     })
 }
+/// Check whether the child range in the request body is inside the parent range.
 pub(crate) fn run_is_feed_range_subset_operation<'py>(
     py: Python<'py>,
     body_bytes: Vec<u8>,

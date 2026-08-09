@@ -69,6 +69,7 @@ class TestStampContainerRid(unittest.TestCase):
         seen = {}
 
         def capture(link):
+            """Record the container link the helper hands over, then return a stub rid."""
             seen["link"] = link
             return "rid-x"
 
@@ -80,6 +81,7 @@ class TestStampContainerRid(unittest.TestCase):
         call_count = {"n": 0}
 
         def counting_get_rid(_link):
+            """Tally each lookup so the test can prove exactly one was made."""
             call_count["n"] += 1
             return "rid"
 
@@ -91,6 +93,7 @@ class TestStampContainerRid(unittest.TestCase):
         call_count = {"n": 0}
 
         def counting_get_rid(_link):
+            """Tally each lookup so the test can prove none was made."""
             call_count["n"] += 1
             return "rid"
 
@@ -107,6 +110,7 @@ class TestStampContainerRid(unittest.TestCase):
         options = {"existing": "value"}
 
         def failing_get_rid(_link):
+            """Stand in for a rid lookup that fails, e.g. an unreachable service."""
             raise RuntimeError("rid lookup failed")
 
         with self.assertRaises(RuntimeError):
@@ -185,6 +189,7 @@ class TestParityWithLegacyEnsureContainerRid(unittest.TestCase):
         cache = {}
 
         def refresh(link):
+            """Populate the fake container cache, standing in for a metadata refresh."""
             cache[link] = {"_rid": "rid-refreshed"}
 
         legacy_options = {}
@@ -198,6 +203,7 @@ class TestParityWithLegacyEnsureContainerRid(unittest.TestCase):
         helper_options = {}
 
         def helper_get_rid(link):
+            """Resolve the rid the way a caller would: refresh on a cache miss, then read."""
             if link not in cache:
                 refresh(link)
             return cache[link]["_rid"]

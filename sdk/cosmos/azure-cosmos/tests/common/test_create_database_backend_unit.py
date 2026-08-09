@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 """Unit coverage for account-level database backend routing (no network).
 
 Three public methods land here. ``create_database`` sends one request.
@@ -60,6 +65,7 @@ from azure.cosmos import _base as base
 from azure.cosmos._backend.base import BackendResponse, CosmosBackend
 from azure.cosmos._backend.base import (
     OP_CREATE_DATABASE,
+    OP_DELETE_DATABASE,
     OP_READ_DATABASE,
     OP_TO_BINDING_METHOD,
 )
@@ -70,6 +76,7 @@ from azure.cosmos._cosmos_client_connection import (
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos._helpers._request_prep import (
     build_create_database_prepared,
+    build_delete_database_prepared,
     build_read_database_prepared,
     is_read_database_rust_eligible,
 )
@@ -88,6 +95,7 @@ from azure.cosmos.offer import ThroughputProperties
 
 
 def _created_response() -> BackendResponse:
+    """Return a successful fake database-create response."""
     # A canned "201 Created" reply from the rust backend: the new database's body
     # plus a request-charge header, used by the fake backends below.
     return BackendResponse(
@@ -210,6 +218,7 @@ def test_read_database_prepared_preserves_legacy_option_headers():
     ],
 )
 def test_read_database_prepared_omits_falsy_legacy_headers(option_key):
+    """Prove empty Python-only options do not become request headers."""
     prepared = build_read_database_prepared("db1", {option_key: None})
 
     assert option_key not in prepared.headers
@@ -224,6 +233,7 @@ def test_read_database_prepared_preserves_legacy_id_stringification():
 
 @pytest.mark.parametrize("database_id", ["", "/", "///"])
 def test_read_database_prepared_rejects_empty_normalized_id(database_id):
+    """Prove an empty database ID fails before a request is sent."""
     with pytest.raises(ValueError, match="Failed Parsing ResourceID from link: /dbs/"):
         build_read_database_prepared(database_id, {})
 
@@ -254,6 +264,7 @@ def test_read_database_prepared_rejects_empty_normalized_id(database_id):
 def test_read_database_rust_eligibility_never_drops_transport_kwargs(
     request_options, operation_kwargs, expected
 ):
+    """Prove transport options keep a read on Python when Rust cannot honor them."""
     assert (
         is_read_database_rust_eligible(request_options, operation_kwargs)
         is expected
@@ -261,6 +272,7 @@ def test_read_database_rust_eligibility_never_drops_transport_kwargs(
 
 
 def test_sync_connection_read_database_forwards_initial_headers():
+    """Prove sync database reads preserve caller-supplied initial headers."""
     connection = SimpleNamespace(
         Read=MagicMock(return_value={"id": "db1"}),
         default_headers={
@@ -312,11 +324,13 @@ class _RustBackend(CosmosBackend):
     name = "rust"
 
     def __init__(self, response=None, responses=None):
+        """Store the canned reply (or queue of replies) the stub will return on each ``execute`` call."""
         self.responses = list(responses or [response or _created_response()])
         self.prepared = None
         self.prepared_requests = []
 
     def execute(self, prepared):
+        """Record the prepared request and return the next canned reply from the queue."""
         self.prepared = prepared
         self.prepared_requests.append(prepared)
         if len(self.responses) > 1:
@@ -387,9 +401,11 @@ def test_sync_read_database_keeps_legacy_path_and_read_timeout():
     hook_calls = []
 
     def response_hook(headers, body):
+        """Append the headers and body to hook_calls so the test can assert on them."""
         hook_calls.append((headers, body))
 
     def legacy_read(_link, *, options, **kwargs):
+        """Invoke the caller's response_hook and return the canned legacy body."""
         kwargs["response_hook"](response_headers, legacy_body)
         return legacy_body
 
@@ -819,11 +835,13 @@ class _AsyncRustBackend(AsyncCosmosBackend):
     name = "rust"
 
     def __init__(self, response=None, responses=None):
+        """Store the canned reply (or queue of replies) the async stub will return on each ``execute`` call."""
         self.prepared = None
         self.prepared_requests = []
         self.responses = list(responses or [response or _created_response()])
 
     async def execute(self, prepared):
+        """Record the prepared request and return the next canned reply from the queue."""
         self.prepared = prepared
         self.prepared_requests.append(prepared)
         if len(self.responses) > 1:
@@ -836,6 +854,7 @@ def test_async_helper_routes_to_rust():
     and returns the created database. The async ``response_hook`` fires once with
     the response headers and database body, matching legacy async behavior."""
     async def run():
+        """Run the async create through the Rust backend and assert the hook and returned database."""
         connection = SimpleNamespace(last_response_headers={})
         backend = _AsyncRustBackend()
         hook_calls = []
@@ -859,6 +878,7 @@ def test_async_helper_routes_to_rust():
 def test_async_read_database_routes_to_rust():
     """Async database reads use the existing Rust read binding."""
     async def run():
+        """Confirm the async read helper dispatches to Rust and fires the hook with the returned database body."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
             last_response_headers={},
@@ -934,7 +954,9 @@ def test_resolve_initial_headers_layers_caller_headers_over_defaults(options, ex
 
 
 def test_async_connection_read_database_forwards_initial_headers():
+    """Prove async database reads preserve caller-supplied initial headers."""
     async def run():
+        """Call ``AsyncClientConnection.ReadDatabase`` and verify caller headers are merged into the upstream call."""
         connection = SimpleNamespace(Read=AsyncMock(return_value={"id": "db1"}))
         connection.default_headers = {
             "x-ms-version": "2020-07-15",
@@ -967,11 +989,13 @@ def test_async_connection_read_database_forwards_initial_headers():
 def test_async_read_database_keeps_legacy_read_timeout():
     """Async per-call socket timeouts continue through the legacy transport."""
     async def run():
+        """Verify that a ``read_timeout`` kwarg routes the async read to legacy and fires the hook once."""
         response_headers = {"x-ms-request-charge": "1.0"}
         legacy_body = {"id": "db1", "_rid": "legacy"}
         hook_calls = []
 
         async def legacy_read(_link, *, options, **kwargs):
+            """Invoke the caller's response_hook and return the canned legacy body."""
             kwargs["response_hook"](response_headers, legacy_body)
             return legacy_body
 
@@ -1012,6 +1036,7 @@ def test_async_read_database_maps_not_found_and_skips_hook():
     payload where they expect database properties.
     """
     async def run():
+        """Confirm a Rust 404 response raises ``CosmosResourceNotFoundError`` and the hook is never called."""
         backend = _AsyncRustBackend(
             BackendResponse(
                 status_code=404,
@@ -1082,6 +1107,7 @@ def test_read_database_falls_back_to_legacy_for_options_rust_cannot_honor(
 
 
 def test_read_database_falls_back_when_driver_would_replace_initial_header():
+    """Prove sync reads use Python when Rust would change a caller header."""
     request_options = {"initialHeaders": {"Accept": "application/custom"}}
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(return_value={"id": "db1", "_rid": "legacy"}),
@@ -1118,6 +1144,7 @@ def test_async_read_database_falls_back_to_legacy_for_options_rust_cannot_honor(
 ):
     """Async twin of the single-read fallback."""
     async def run():
+        """Read with an unsupported kwarg and confirm legacy is used and Rust backend is untouched."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "legacy"}),
             last_response_headers={},
@@ -1140,7 +1167,9 @@ def test_async_read_database_falls_back_to_legacy_for_options_rust_cannot_honor(
 
 
 def test_async_read_database_falls_back_when_driver_would_replace_initial_header():
+    """Prove async reads use Python when Rust would change a caller header."""
     async def run():
+        """Read with a caller-owned header Rust would overwrite and confirm legacy is used instead."""
         request_options = {"initialHeaders": {"x-ms-version": "2018-12-31"}}
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "legacy"}),
@@ -1166,6 +1195,7 @@ def test_async_read_database_falls_back_when_driver_would_replace_initial_header
 def test_async_database_proxy_read_selects_rust_backend():
     """The public async proxy delegates its read through the stored backend."""
     async def run():
+        """Read via the public async proxy and confirm Rust serves the request, not the legacy connection."""
         backend = _AsyncRustBackend(
             BackendResponse(
                 status_code=200,
@@ -1192,6 +1222,7 @@ def test_async_database_proxy_read_selects_rust_backend():
 def test_async_database_proxy_read_drops_deprecated_session_token():
     """The async proxy also drops the deprecated token before Rust dispatch."""
     async def run():
+        """Pass a deprecated ``session_token`` through the async proxy and confirm it is absent from the Rust request."""
         backend = _AsyncRustBackend(
             BackendResponse(
                 status_code=200,
@@ -1217,6 +1248,7 @@ def test_async_helper_does_not_call_response_hook_on_failure():
     hook would hand them an error payload where they expect database properties.
     """
     async def run():
+        """Trigger a 409 from the async backend and confirm the response hook is never called."""
         backend = _AsyncRustBackend(
             BackendResponse(
                 status_code=409,
@@ -1247,6 +1279,7 @@ def test_async_helper_keeps_legacy_create_database_behind_boundary():
     """Async twin: with no rust backend, the async coordinator awaits the legacy
     ``CreateDatabase`` call directly, passing database/options/extra kwargs through."""
     async def run():
+        """Create via legacy-only path (no backend) and confirm the async ``CreateDatabase`` is awaited with correct args."""
         connection = SimpleNamespace(
             CreateDatabase=AsyncMock(return_value={"id": "db1"}),
             last_response_headers={"x-ms-request-charge": "4.0"},
@@ -1276,6 +1309,7 @@ def test_async_helper_uses_legacy_when_read_timeout_is_requested():
     legacy call (which honors it), the rust backend is never touched, and the
     ``response_hook`` still fires with the response headers and database body."""
     async def run():
+        """Create with a ``read_timeout`` option and confirm the Rust backend is bypassed and the hook fires."""
         connection = SimpleNamespace(
             CreateDatabase=AsyncMock(return_value={"id": "db1"}),
             last_response_headers={"x-ms-request-charge": "4.25"},
@@ -1305,6 +1339,7 @@ def test_async_if_not_exists_legacy_reads_then_creates_only_on_404():
     ``response_hook`` fires once with the created database. The read leg drops the
     internal ``response_hook`` kwarg so the hook can't be invoked twice."""
     async def run():
+        """Read returns 404 on the legacy async path, triggering a create; assert hook fires once with the created body."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(
                 side_effect=CosmosResourceNotFoundError(status_code=404, message="missing")
@@ -1387,6 +1422,7 @@ def test_async_public_create_database_returns_proxy_and_properties():
     proxy and the created database's properties; the async ``response_hook`` receives
     the headers and created database."""
     async def run():
+        """Call the public async ``create_database`` and verify the proxy, properties, and hook payload are correct."""
         client = object.__new__(AsyncCosmosClient)
         client.client_connection = SimpleNamespace(last_response_headers={})
         client._backend = _AsyncRustBackend()
@@ -1439,6 +1475,7 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
     assert sync_backend.prepared.op == OP_READ_DATABASE
 
     async def run():
+        """Call the public async ``create_database_if_not_exists`` with an existing database and verify Rust serves the read."""
         async_client = object.__new__(AsyncCosmosClient)
         async_client.client_connection = SimpleNamespace(
             ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
@@ -1508,6 +1545,7 @@ def test_async_database_operations_really_ignore_inapplicable_conditions(method_
     """Async twin of
     ``test_sync_database_operations_really_ignore_inapplicable_conditions``."""
     async def run():
+        """Pass inapplicable conditions to the async method and confirm they are warned about and absent from the Rust request."""
         client = object.__new__(AsyncCosmosClient)
         client.client_connection = SimpleNamespace(
             ReadDatabase=AsyncMock(return_value={"id": "db1"}),
@@ -1570,6 +1608,7 @@ def test_async_if_not_exists_uses_python_coordinator_with_rust_selected():
     """Async twin: the database already exists, so the read is the only request
     sent and no legacy call is made."""
     async def run():
+        """Read an existing database via the async coordinator and confirm only a Rust read is dispatched."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
             CreateDatabase=AsyncMock(),
@@ -1611,6 +1650,7 @@ def test_async_if_not_exists_rust_404_then_rust_create_without_legacy_calls():
     behavior has to be proven twice.
     """
     async def run():
+        """Send read-then-create through the async Rust backend and confirm options are split correctly across both requests."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
             CreateDatabase=AsyncMock(side_effect=AssertionError("legacy create called")),
@@ -1661,6 +1701,7 @@ def test_async_if_not_exists_rust_create_race_propagates_conflict():
     """Async twin: a database created by someone else between the two requests
     surfaces as a conflict error instead of a silent success."""
     async def run():
+        """Read returns 404 then create returns 409; confirm the conflict error propagates and no legacy call is made."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
             CreateDatabase=AsyncMock(side_effect=AssertionError("legacy create called")),
@@ -1706,6 +1747,7 @@ def test_async_if_not_exists_legacy_existing_skips_create_and_strips_create_only
     strips provisioning-only options (offerThroughput, autoUpgradePolicy) from the
     ReadDatabase call while keeping others (e.g. throughputBucket)."""
     async def run():
+        """Read returns the existing database; confirm provisioning-only options are stripped from the read and create is never called."""
         hook_calls = []
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "existing"}),
@@ -1744,6 +1786,7 @@ def test_async_if_not_exists_legacy_existing_skips_create_and_strips_create_only
 def test_async_if_not_exists_legacy_preserves_read_timeout_on_both_legs():
     """Async twin: one per-call socket timeout applies to the read and the create."""
     async def run():
+        """Confirm a ``read_timeout`` kwarg is forwarded to both the async read and create legacy calls."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(
                 side_effect=CosmosResourceNotFoundError(status_code=404, message="missing")
@@ -1789,6 +1832,7 @@ def test_async_if_not_exists_read_timeout_never_crosses_from_rust_to_legacy(
     """Async twin: an unsupported socket timeout fails without engine mixing, and
     without sending either request."""
     async def run():
+        """Attempt ``create_database_if_not_exists`` with a Rust-incompatible option and confirm it raises ``NotImplementedError`` before any request is sent."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(return_value={"id": "db1"}),
             CreateDatabase=AsyncMock(),
@@ -1837,6 +1881,7 @@ def test_sync_if_not_exists_non_404_read_error_propagates_without_create():
 def test_async_if_not_exists_non_404_read_error_propagates_without_create():
     """Async twin of the non-404 read-error propagation test."""
     async def run():
+        """Read raises a non-404 error on the async legacy path; confirm it propagates and create is never called."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(
                 side_effect=CosmosResourceExistsError(status_code=409, message="conflict")
@@ -1852,5 +1897,341 @@ def test_async_if_not_exists_non_404_read_error_propagates_without_create():
             )
 
         connection.CreateDatabase.assert_not_awaited()
+
+    asyncio.run(run())
+
+
+# ---------------------------------------------------------------------------
+# delete_database
+# ---------------------------------------------------------------------------
+
+
+def _deleted_response() -> BackendResponse:
+    """Return a successful fake database-delete response."""
+    # A canned "204 No Content" reply: what the service returns for a successful
+    # delete. There is no body, which is exactly what the parse step has to
+    # tolerate.
+    return BackendResponse(
+        status_code=204,
+        headers=CaseInsensitiveDict({"x-ms-request-charge": "4.24"}),
+        body=b"",
+    )
+
+
+def test_delete_database_is_registered_as_single_response_operation():
+    """Delete-database is a single-reply operation, so it dispatches to the
+    binding's ``delete_database`` entry point rather than the paged query path."""
+    assert OP_TO_BINDING_METHOD[OP_DELETE_DATABASE] == "delete_database"
+
+
+@pytest.mark.parametrize(
+    "database_link,expected_id",
+    [
+        ("dbs/db1", "db1"),
+        ("dbs/db1/", "db1"),
+        ("/dbs/db1/", "db1"),
+        ("dbs/my db", "my db"),
+    ],
+)
+def test_delete_database_prepared_derives_the_id_from_the_link(database_link, expected_id):
+    """The binding names the database, while the legacy path passes the whole
+    ``dbs/{id}`` link. The link forms the legacy parser accepts must all reduce to
+    the same name here, or the two paths would delete different databases -- or
+    the Rust path would delete nothing and report success."""
+    prepared = build_delete_database_prepared(database_link, {})
+
+    assert prepared.op == OP_DELETE_DATABASE
+    assert prepared.item_id == expected_id
+    assert prepared.body_bytes == b""
+    assert prepared.container_link == ""
+    assert prepared.partition_key_header == "[]"
+
+
+@pytest.mark.parametrize("database_link", ["dbs/", "dbs", "/dbs/", ""])
+def test_delete_database_prepared_rejects_a_link_with_no_id(database_link):
+    """A link with no name raises the same error the legacy link parser raises,
+    rather than sending an account-level request that fails later with a different
+    service error."""
+    with pytest.raises(ValueError, match="Failed Parsing ResourceID from link"):
+        build_delete_database_prepared(database_link, {})
+
+
+def test_delete_database_prepared_drops_headers_the_legacy_path_suppresses():
+    """A database is a master resource: the legacy path attaches no session token
+    and drops the intended-collection-rid header. The Rust request has to carry the
+    same headers, while keeping the options the customer did set."""
+    prepared = build_delete_database_prepared(
+        "dbs/db1",
+        {
+            "sessionToken": "session",
+            Constants.ContainerRID: "rid1",
+            "throughputBucket": 7,
+        },
+        kwargs={"timeout": 3.5},
+    )
+
+    assert "sessionToken" not in prepared.headers
+    assert Constants.ContainerRID not in prepared.headers
+    assert prepared.headers["throughputBucket"] == 7
+    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+
+
+def test_sync_delete_database_routes_to_rust_and_never_calls_legacy():
+    """On a rust-backed client the delete runs through the backend, records the
+    response headers on the connection, and returns nothing. A 204 with no body is
+    a success, not a parse failure."""
+    connection = SimpleNamespace(
+        DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
+        last_response_headers={},
+    )
+    backend = _RustBackend(_deleted_response())
+
+    result = DatabaseHelper(connection, backend).delete_database(
+        "dbs/db1",
+        {"throughputBucket": 7},
+        kwargs={"timeout": 3.5},
+    )
+
+    assert result is None
+    assert backend.prepared.op == OP_DELETE_DATABASE
+    assert backend.prepared.item_id == "db1"
+    assert backend.prepared.headers["throughputBucket"] == 7
+    assert connection.last_response_headers["x-ms-request-charge"] == "4.24"
+    connection.DeleteDatabase.assert_not_called()
+
+
+def test_sync_delete_database_raises_not_found_for_a_missing_database():
+    """The parse step is what turns a 404 into the typed error. Dropping the parse
+    because the delete returns nothing would turn a failed delete into a silent
+    success."""
+    connection = SimpleNamespace(
+        DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
+        last_response_headers={},
+    )
+    backend = _RustBackend(
+        BackendResponse(
+            status_code=404,
+            headers=CaseInsensitiveDict({}),
+            body=b'{"message":"Resource Not Found"}',
+        )
+    )
+
+    with pytest.raises(CosmosResourceNotFoundError):
+        DatabaseHelper(connection, backend).delete_database("dbs/db1", {})
+
+
+def test_sync_delete_database_keeps_legacy_path_for_read_timeout():
+    """A socket-level ``read_timeout`` has no per-request equivalent on the Rust
+    path, so the delete stays on legacy rather than accepting the number and not
+    applying it."""
+    connection = SimpleNamespace(
+        DeleteDatabase=MagicMock(return_value=None),
+        last_response_headers={},
+    )
+    backend = _RustBackend(_deleted_response())
+
+    DatabaseHelper(connection, backend).delete_database(
+        "dbs/db1",
+        {Constants.Kwargs.READ_TIMEOUT: 2},
+        kwargs={},
+    )
+
+    assert backend.prepared is None
+    connection.DeleteDatabase.assert_called_once()
+    assert connection.DeleteDatabase.call_args.args[0] == "dbs/db1"
+
+
+def test_async_delete_database_routes_to_rust_and_never_calls_legacy():
+    """Prove async database deletion uses Rust and does not call Python."""
+    async def run():
+        """Drive the async delete through Rust and verify the backend was used, not legacy."""
+        connection = SimpleNamespace(
+            DeleteDatabase=AsyncMock(side_effect=AssertionError("legacy delete called")),
+            last_response_headers={},
+        )
+        backend = _AsyncRustBackend(_deleted_response())
+
+        result = await AsyncDatabaseHelper(connection, backend).delete_database(
+            "dbs/db1",
+            {"throughputBucket": 7},
+            kwargs={"timeout": 3.5},
+        )
+
+        assert result is None
+        assert backend.prepared.op == OP_DELETE_DATABASE
+        assert backend.prepared.item_id == "db1"
+        assert connection.last_response_headers["x-ms-request-charge"] == "4.24"
+        connection.DeleteDatabase.assert_not_awaited()
+
+    asyncio.run(run())
+
+
+def test_async_delete_database_keeps_legacy_path_for_read_timeout():
+    """Prove async database deletion uses Python for ``read_timeout``."""
+    async def run():
+        """Drive the async delete with ``read_timeout`` and verify legacy was used, not Rust."""
+        connection = SimpleNamespace(
+            DeleteDatabase=AsyncMock(return_value=None),
+            last_response_headers={},
+        )
+        backend = _AsyncRustBackend(_deleted_response())
+
+        await AsyncDatabaseHelper(connection, backend).delete_database(
+            "dbs/db1",
+            {Constants.Kwargs.READ_TIMEOUT: 2},
+            kwargs={},
+        )
+
+        assert backend.prepared is None
+        connection.DeleteDatabase.assert_awaited_once()
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize(
+    "database_argument",
+    ["db1", {"id": "db1", "_self": "dbs/db1/"}],
+    ids=["name", "properties"],
+)
+def test_public_sync_delete_database_accepts_every_argument_form(database_argument):
+    """``delete_database`` takes a name, a properties mapping, or a proxy. All three
+    have to reach the backend as the same database, because the reduction from
+    argument to link happens once and the Rust request derives its name from it."""
+    client = object.__new__(CosmosClient)
+    client.client_connection = SimpleNamespace(
+        DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
+        last_response_headers={},
+    )
+    backend = _RustBackend(_deleted_response())
+    client._backend = backend
+
+    assert client.delete_database(database_argument) is None
+    assert backend.prepared.op == OP_DELETE_DATABASE
+    assert backend.prepared.item_id == "db1"
+
+
+def test_public_sync_delete_database_accepts_a_proxy():
+    """The proxy form of the same check."""
+    client = object.__new__(CosmosClient)
+    client.client_connection = SimpleNamespace(
+        DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
+        last_response_headers={},
+    )
+    backend = _RustBackend(_deleted_response())
+    client._backend = backend
+
+    client.delete_database(DatabaseProxy(client.client_connection, "db1"))
+
+    assert backend.prepared.item_id == "db1"
+
+
+def test_public_sync_delete_database_fires_response_hook_with_headers_only():
+    """The public hook for a delete takes the headers alone -- there is no body to
+    hand it. Routing through the coordinator must not change that signature."""
+    client = object.__new__(CosmosClient)
+    client.client_connection = SimpleNamespace(
+        DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
+        last_response_headers={},
+    )
+    client._backend = _RustBackend(_deleted_response())
+    hook_calls = []
+
+    client.delete_database("db1", response_hook=lambda headers: hook_calls.append(headers))
+
+    assert len(hook_calls) == 1
+    assert hook_calls[0]["x-ms-request-charge"] == "4.24"
+
+
+def test_sync_delete_database_forwards_the_conditions_it_warns_about():
+    """The sync method warns once each for ``session_token``, ``etag`` and
+    ``match_condition`` -- but, exactly as in the released v4 SDK, it still forwards
+    them to ``build_options``. So ``match_condition`` really does put an ``If-Match``
+    on the wire; only ``session_token`` is dropped, because a database is a master
+    resource and the legacy ``GetHeaders`` never attaches a session token to one.
+    Treating the warnings as if they meant "silently discarded" would make the rust
+    path send an unconditional delete for a caller who asked for a conditional one."""
+    client = object.__new__(CosmosClient)
+    client.client_connection = SimpleNamespace(
+        DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
+        last_response_headers={},
+    )
+    backend = _RustBackend(_deleted_response())
+    client._backend = backend
+
+    with pytest.warns(UserWarning) as warnings_seen:
+        client.delete_database(
+            "db1",
+            session_token="session",
+            etag="etag",
+            match_condition=MatchConditions.IfNotModified,
+        )
+
+    assert len(warnings_seen) == 3
+    prepared = backend.prepared
+    assert prepared is not None
+    assert prepared.item_id == "db1"
+    assert prepared.headers["If-Match"] == "etag"
+    assert "sessionToken" not in prepared.headers
+    assert "x-ms-session-token" not in prepared.headers
+
+
+def test_sync_delete_database_stays_on_legacy_when_build_options_leaves_an_etag():
+    """``MatchConditions.IfPresent`` sets ``If-Match: *`` and -- a quirk of
+    ``_get_match_headers`` that predates the rust path -- leaves ``etag`` behind in
+    the kwargs. A leftover kwarg is exactly what the eligibility gate exists to catch:
+    it means something the rust request builder has not accounted for, so the call
+    stays on the legacy transport, which receives the kwarg just as it does in v4."""
+    client = object.__new__(CosmosClient)
+    client.client_connection = SimpleNamespace(
+        DeleteDatabase=MagicMock(),
+        last_response_headers={},
+    )
+    backend = _RustBackend(_deleted_response())
+    client._backend = backend
+
+    with pytest.warns(UserWarning) as warnings_seen:
+        client.delete_database(
+            "db1",
+            session_token="session",
+            etag="etag",
+            match_condition=MatchConditions.IfPresent,
+        )
+
+    assert len(warnings_seen) == 3
+    assert backend.prepared is None
+    call = client.client_connection.DeleteDatabase.call_args
+    assert call.kwargs["options"]["accessCondition"] == {"type": "IfMatch", "condition": "*"}
+    assert call.kwargs["etag"] == "etag"
+
+
+def test_async_delete_database_forwards_the_conditions_it_warns_about():
+    """Prove the async method forwards conditions and emits ``DeprecationWarning``
+    warns with ``UserWarning``. That difference predates the rust path and routing
+    through the coordinator must not change it."""
+    async def run():
+        """Verify the async public method forwards conditions to ``build_options`` and emits ``DeprecationWarning``."""
+        client = object.__new__(AsyncCosmosClient)
+        client.client_connection = SimpleNamespace(
+            DeleteDatabase=AsyncMock(side_effect=AssertionError("legacy delete called")),
+            last_response_headers={},
+        )
+        backend = _AsyncRustBackend(_deleted_response())
+        client._backend = backend
+
+        with pytest.warns(DeprecationWarning) as warnings_seen:
+            await client.delete_database(
+                "db1",
+                session_token="session",
+                etag="etag",
+                match_condition=MatchConditions.IfNotModified,
+            )
+
+        assert len(warnings_seen) == 3
+        prepared = backend.prepared
+        assert prepared is not None
+        assert prepared.item_id == "db1"
+        assert prepared.headers["If-Match"] == "etag"
+        assert "sessionToken" not in prepared.headers
+        assert "x-ms-session-token" not in prepared.headers
 
     asyncio.run(run())

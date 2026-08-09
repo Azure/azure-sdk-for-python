@@ -329,6 +329,7 @@ class AsyncTokenCredentialBridge:
 
     @staticmethod
     def _run_loop(loop: asyncio.AbstractEventLoop) -> None:
+        """Run and close the background event loop."""
         # Run the bridge's own event loop (the one created in _ensure_loop) until
         # close() stops it, then drain and close it. Draining cancels any task still
         # pending (such as an in-flight token fetch) and shuts down the loop's async
@@ -347,6 +348,7 @@ class AsyncTokenCredentialBridge:
 
     @staticmethod
     def _drain_loop(loop: asyncio.AbstractEventLoop) -> None:
+        """Cancel pending token calls and close async generators."""
         # Cancel still-pending tasks and run them so the cancellation takes effect,
         # then shut down the loop's async generators. Cancelling an in-flight token
         # task also completes the future a blocked get_token is waiting on, so close()
@@ -375,6 +377,7 @@ class AsyncTokenCredentialBridge:
             _LOGGER.debug("Async-credential bridge loop drain hit an error", exc_info=True)
 
     def _ensure_loop(self) -> asyncio.AbstractEventLoop:
+        """Return the background event loop, starting its thread when needed."""
         # Start the background thread the first time a token is needed.
         loop = self._loop
         if loop is not None:

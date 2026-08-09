@@ -10,6 +10,7 @@ use super::response::tuple_from_container_metadata_result;
 use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
 
+/// Resolve a container and return its resource id and partition key definition.
 pub(crate) fn resolve_container_metadata<'py>(
     py: Python<'py>,
     handle: &str,
@@ -26,6 +27,7 @@ pub(crate) fn resolve_container_metadata<'py>(
     tuple_from_container_metadata_result(py, result)
 }
 
+/// Return an awaitable that resolves a container's metadata.
 pub(crate) fn resolve_container_metadata_async<'py>(
     py: Python<'py>,
     handle: &str,

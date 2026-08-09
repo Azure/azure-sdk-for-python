@@ -32,6 +32,7 @@ class AsyncContainerMetadataProvider:
         ensure_container_cached: Optional[Callable[[Dict[str, Any]], Awaitable[Any]]] = None,
         resolve_through_backend: Optional[Callable[[str], Awaitable[Any]]] = None,
     ) -> None:
+        """Store the functions used to read and cache container properties."""
         self._client_connection = client_connection
         self._ensure_container_cached = ensure_container_cached
         self._resolve_through_backend = resolve_through_backend

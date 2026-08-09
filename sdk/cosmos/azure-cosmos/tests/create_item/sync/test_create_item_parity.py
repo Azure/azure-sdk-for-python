@@ -583,6 +583,7 @@ def test_L5_duplicate_id_raises_typed_exception(container_for):
 # ---------------------------------------------------------------------------
 
 def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
+    """Confirm customers receive the documented deprecation warning."""
     matches = [w for w in recorded
                if issubclass(w.category, DeprecationWarning)
                and kwarg_name in str(w.message)]

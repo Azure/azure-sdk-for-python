@@ -34,6 +34,7 @@ from azure.cosmos.aio._backend.rust import AsyncRustBackend
 
 
 def _replace_prepared() -> PreparedRequest:
+    """Build a replace request for the item routing tests."""
     return PreparedRequest(
         op=OP_REPLACE_ITEM,
         container_link="dbs/d/colls/c",

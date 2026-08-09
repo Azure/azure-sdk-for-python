@@ -29,6 +29,7 @@ from azure.cosmos.aio._backend.rust import AsyncRustBackend
 
 
 def _upsert_prepared() -> PreparedRequest:
+    """Build an upsert request for the operation routing tests."""
     return PreparedRequest(
         op=OP_UPSERT_ITEM,
         container_link="dbs/d/colls/c",

@@ -51,10 +51,12 @@ use crate::wire::{
     extract_create_item_id, extract_database_prepared_inputs,
     extract_read_feed_ranges_force_refresh, extract_required_item_id,
     run_create_database_operation, run_create_database_operation_async,
+    run_delete_database_operation, run_delete_database_operation_async,
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
     run_item_operation, run_item_operation_async, run_list_databases_operation,
-    run_list_databases_operation_async, run_query_operation, run_query_operation_async,
+    run_list_databases_operation_async, run_query_databases_operation,
+    run_query_databases_operation_async, run_query_operation, run_query_operation_async,
     run_read_all_items_operation, run_read_all_items_operation_async, run_read_database_operation,
     run_read_database_operation_async, run_read_feed_ranges_operation,
     run_read_feed_ranges_operation_async, run_read_offer_operation, run_read_offer_operation_async,
@@ -65,6 +67,8 @@ const REPLACE_ITEM_ID_REQUIRED: &str = "replace_item: PreparedRequest.item_id is
 const REPLACE_OFFER_ID_REQUIRED: &str = "replace_offer: PreparedRequest.item_id is required (the offer RID to overwrite, resolved from the throughput offer's `_self`)";
 const DELETE_ITEM_ID_REQUIRED: &str =
     "delete_item: PreparedRequest.item_id is required for delete operations";
+const DELETE_DATABASE_ID_REQUIRED: &str =
+    "delete_database: PreparedRequest.item_id is required (the id of the database to delete)";
 const READ_ITEM_ID_REQUIRED: &str =
     "read_item: PreparedRequest.item_id is required for read operations";
 const PATCH_ITEM_ID_REQUIRED: &str = "patch_item: PreparedRequest.item_id is required (the id of the document to patch, resolved from the `item` argument)";
@@ -219,9 +223,14 @@ mod items;
 mod offers;
 mod query;
 
-pub(crate) use containers::{resolve_container_metadata, resolve_container_metadata_async};
+pub(crate) use containers::{
+    create_container, create_container_async, list_containers, list_containers_async,
+    query_containers, query_containers_async, read_container, read_container_async,
+    resolve_container_metadata, resolve_container_metadata_async,
+};
 pub(crate) use databases::{
-    create_database, create_database_async, list_databases, list_databases_async, read_database,
+    create_database, create_database_async, delete_database, delete_database_async, list_databases,
+    list_databases_async, query_databases, query_databases_async, read_database,
     read_database_async,
 };
 pub(crate) use feed_range::{

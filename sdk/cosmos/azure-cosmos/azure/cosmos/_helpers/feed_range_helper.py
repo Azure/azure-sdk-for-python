@@ -58,6 +58,7 @@ def _container_rid(
     container_link: str,
     properties: Mapping[str, Any],
 ) -> str:
+    """Return the container resource id from properties or the connection cache."""
     rid = properties.get("_rid")
     if isinstance(rid, str):
         return rid

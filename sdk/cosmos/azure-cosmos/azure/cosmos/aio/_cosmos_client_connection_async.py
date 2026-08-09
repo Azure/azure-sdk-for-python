@@ -51,10 +51,14 @@ from .. import _base as base
 from .._availability_strategy_config import CrossRegionHedgingStrategy, validate_client_hedging_strategy
 from .._backend.base import (
     OP_LIST_DATABASES,
+    OP_QUERY_DATABASES,
+    OP_LIST_CONTAINERS,
+    OP_QUERY_CONTAINERS,
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
     LegacyOperation,
     PageNotSupportedByBackendError,
+    PreparedQuery,
 )
 from .._base import _build_properties_cache
 from .. import documents
@@ -82,9 +86,15 @@ from .._query_advisor import get_query_advice_info
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
 from .._query_rust_routing import (
     build_list_databases_prepared_query,
+    build_query_databases_prepared_query,
+    build_list_containers_prepared_query,
+    build_query_containers_prepared_query,
     build_read_all_items_prepared_query,
     build_query_items_prepared_query,
     can_use_rust_backend_for_list_databases_page,
+    can_use_rust_backend_for_query_databases_page,
+    can_use_rust_backend_for_list_containers_page,
+    can_use_rust_backend_for_query_containers_page,
     can_use_rust_backend_for_query_page,
     can_use_rust_backend_for_read_all_items_page,
     parse_and_finalize_rust_page,
@@ -3200,6 +3210,36 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         req_headers=list_headers,
                     )
                 build_prepared_page = _build_list_databases_page
+            elif resource_type == http_constants.ResourceType.Collection:
+                page_op = OP_LIST_CONTAINERS
+                rust_eligible = can_use_rust_backend_for_list_containers_page(
+                    path=path,
+                    options=options,
+                    kwargs=kwargs,
+                    is_query_plan=is_query_plan,
+                    resource_type=resource_type,
+                )
+
+                async def _build_list_containers_page():
+                    nonlocal rust_request_headers
+                    list_headers = base.GetHeaders(
+                        self,
+                        initial_headers,
+                        "get",
+                        path,
+                        id_,
+                        resource_type,
+                        documents._OperationType.ReadFeed,
+                        options,
+                        None,
+                    )
+                    rust_request_headers = list_headers
+                    return build_list_containers_prepared_query(
+                        path=path,
+                        options=options,
+                        req_headers=list_headers,
+                    )
+                build_prepared_page = _build_list_containers_page
             else:
                 page_op = OP_READ_ALL_ITEMS
                 rust_eligible = can_use_rust_backend_for_read_all_items_page(
@@ -3291,14 +3331,67 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             await base.set_session_token_header_async(self, req_headers, path, request_params, options,
                                                       partition_key_range_id)
 
-        rust_eligible = can_use_rust_backend_for_query_page(
-            query_payload=query,
-            options=options,
-            kwargs=kwargs,
-            container_properties=container_property,
-            is_query_plan=is_query_plan,
-            resource_type=resource_type,
-        )
+        # A feed of databases is account-scoped: no container, no partition key,
+        # and its own binding entry point. The feed-range block below is reached
+        # by both branches but does nothing for a database feed, because that
+        # feed never carries a ``feed_range`` kwarg, a partition key in options,
+        # or container properties -- the three things that block is keyed on.
+        if resource_type == http_constants.ResourceType.Database:
+            page_op = OP_QUERY_DATABASES
+            rust_eligible = can_use_rust_backend_for_query_databases_page(
+                query_payload=query,
+                options=options,
+                kwargs=kwargs,
+                is_query_plan=is_query_plan,
+                resource_type=resource_type,
+            )
+
+            async def _build_query_page() -> PreparedQuery:
+                return build_query_databases_prepared_query(
+                    query_payload=query,
+                    options=options,
+                    req_headers=req_headers,
+                )
+        elif resource_type == http_constants.ResourceType.Collection:
+            # A feed of containers is database-scoped. Same shape as the
+            # database feed above -- no partition key, its own binding entry
+            # point -- but the owning database has to reach the Rust side, so the
+            # builder parses it out of ``path``.
+            page_op = OP_QUERY_CONTAINERS
+            rust_eligible = can_use_rust_backend_for_query_containers_page(
+                path=path,
+                query_payload=query,
+                options=options,
+                kwargs=kwargs,
+                is_query_plan=is_query_plan,
+                resource_type=resource_type,
+            )
+
+            async def _build_query_page() -> PreparedQuery:
+                return build_query_containers_prepared_query(
+                    path=path,
+                    query_payload=query,
+                    options=options,
+                    req_headers=req_headers,
+                )
+        else:
+            page_op = OP_QUERY_ITEMS
+            rust_eligible = can_use_rust_backend_for_query_page(
+                query_payload=query,
+                options=options,
+                kwargs=kwargs,
+                container_properties=container_property,
+                is_query_plan=is_query_plan,
+                resource_type=resource_type,
+            )
+
+            async def _build_query_page() -> PreparedQuery:
+                return build_query_items_prepared_query(
+                    path=path,
+                    query_payload=query,
+                    options=options,
+                    req_headers=req_headers,
+                )
 
         # Check if the overlapping ranges can be populated
         feed_range_epk = None
@@ -3681,14 +3774,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 response_hook(self.last_response_headers, result)
             return __GetBodiesFromQueryResult(result)
 
-        async def _build_prepared_query_page():
-            return build_query_items_prepared_query(
-                path=path,
-                query_payload=query,
-                options=options,
-                req_headers=req_headers,
-            )
-
         def _parse_rust_query_page(page):
             parsed_page = parse_and_finalize_rust_page(
                 page=page,
@@ -3701,8 +3786,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             return __GetBodiesFromQueryResult(parsed_page.body)
 
         return await coerce_async_backend(self._backend).run_page_operation(
-            build_prepared=_build_prepared_query_page,
-            legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=_run_legacy_query_page),
+            build_prepared=_build_query_page,
+            legacy_operation=LegacyOperation(op=page_op, invoke=_run_legacy_query_page),
             parse_response=_parse_rust_query_page,
             rust_eligible=rust_eligible,
             fallback_exceptions=(PageNotSupportedByBackendError,),

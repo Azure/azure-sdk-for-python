@@ -807,9 +807,24 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs['throughput_bucket'] = throughput_bucket
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
+        # NOT dropped before ``_build_options``. ``_get_match_headers`` (called by
+        # ``build_options``) pops ``etag`` / ``match_condition`` itself and turns
+        # them into ``request_options["accessCondition"]``, which both engines
+        # render as an ``If-Match`` / ``If-None-Match`` header -- and the service
+        # enforces it, returning 412 when the database has changed. Popping them
+        # here removed a caller's optimistic-concurrency guard and let a guarded
+        # delete destroy a database it should have refused to touch. It also
+        # swallowed the ``ValueError`` that ``etag`` without ``match_condition``
+        # is supposed to raise. ``session_token`` is likewise consumed by
+        # ``build_options`` (COMMON_OPTIONS), so none of the three ever survive
+        # into the kwargs the eligibility gate inspects.
         request_options = _build_options(kwargs)
         database_link = _get_database_link(database)
-        await self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
+        await AsyncDatabaseHelper(self.client_connection, self._backend).delete_database(
+            database_link,
+            request_options,
+            kwargs=kwargs,
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
 

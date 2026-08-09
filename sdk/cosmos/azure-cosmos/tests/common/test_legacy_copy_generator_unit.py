@@ -1,4 +1,4 @@
-﻿# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
@@ -31,6 +31,7 @@ _ENFORCER_PATH = _TESTS_DIR / "common" / "test_legacy_migration_enforcer_unit.py
 
 
 def _load_module_by_path(path, name):
+    """Load a test support script from its repository path."""
     spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(spec)
     sys.modules[name] = module
@@ -42,6 +43,7 @@ _gen = _load_module_by_path(_GENERATOR_PATH, "_legacy_copy_generator_under_test"
 
 
 def _norm(text):
+    """Normalize line endings and the final newline for text comparison."""
     return text.replace("\r\n", "\n").rstrip("\n") + "\n"
 
 
@@ -55,6 +57,7 @@ class TestGeneratorReproducesCanonicalExemplars(unittest.TestCase):
     }
 
     def test_exemplars_reproduced_byte_for_byte(self):
+        """Prove generated tests match the committed examples."""
         for spec_attr, rel in self._GOLDEN.items():
             with self.subTest(exemplar=rel):
                 committed = (_TESTS_DIR / rel).read_text(encoding="utf-8")
@@ -65,6 +68,7 @@ class TestGeneratorReproducesCanonicalExemplars(unittest.TestCase):
                 )
 
     def test_init_py_reproduced(self):
+        """Prove generated package files match the committed package marker."""
         committed = (
             _TESTS_DIR / "create_item" / "sync" / "legacy" / "__init__.py"
         ).read_text(encoding="utf-8")
@@ -84,6 +88,7 @@ class TestGeneratedOutputPassesEnforcer(unittest.TestCase):
     )
 
     def test_bundled_specs_generate_enforcer_clean_tree(self):
+        """Prove every bundled test description passes structural checks."""
         enforcer = _load_module_by_path(_ENFORCER_PATH, "_legacy_enforcer_under_test")
         original_tests_dir = enforcer._TESTS_DIR
         original_pkg_root = enforcer._PKG_ROOT
@@ -106,6 +111,7 @@ class TestGeneratedShapesAreWellFormed(unittest.TestCase):
     """The async and instance-fixture surfaces render the right scaffold."""
 
     def test_async_none_options_is_well_formed(self):
+        """Prove an async generated test opens, uses, and closes a Rust client."""
         text = _gen.render_legacy_file(_gen.CREATE_ITEM_AIO_NONE_OPTIONS)
         for needle in (
             "from azure.cosmos.aio import CosmosClient",
@@ -121,6 +127,7 @@ class TestGeneratedShapesAreWellFormed(unittest.TestCase):
             self.assertIn(needle, text, needle)
 
     def test_sync_read_item_family_is_well_formed(self):
+        """Prove a sync generated read test keeps its source and Rust selection."""
         text = _gen.render_legacy_file(_gen.READ_ITEM_SYNC_NONE_OPTIONS)
         self.assertIn('_backend="rust"', text)
         self.assertIn("def setUp(self) -> None:", text)

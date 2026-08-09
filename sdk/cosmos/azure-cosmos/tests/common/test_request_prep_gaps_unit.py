@@ -173,6 +173,7 @@ def test_percall_value_wins_over_default():
 
 
 def _create_headers(*, default, kwargs):
+    """Return headers prepared for an item create request."""
     prepared, _ = build_create_item_prepared(
         container_link="dbs/d/colls/orders",
         body={"id": "o", "pk": "a"},
@@ -185,6 +186,7 @@ def _create_headers(*, default, kwargs):
 
 
 def _upsert_headers(*, default, kwargs):
+    """Return headers prepared for an item upsert request."""
     return build_upsert_item_prepared(
         container_link="dbs/d/colls/orders",
         body={"id": "o", "pk": "a"},
@@ -196,6 +198,7 @@ def _upsert_headers(*, default, kwargs):
 
 
 def _replace_headers(*, default, kwargs):
+    """Return headers prepared for an item replace request."""
     return build_replace_item_prepared(
         container_link="dbs/d/colls/orders",
         body={"id": "o", "pk": "a"},
@@ -208,6 +211,7 @@ def _replace_headers(*, default, kwargs):
 
 
 def _patch_headers(*, default, kwargs):
+    """Return headers prepared for an item patch request."""
     return build_patch_item_prepared(
         container_link="dbs/d/colls/orders",
         item_id="o",

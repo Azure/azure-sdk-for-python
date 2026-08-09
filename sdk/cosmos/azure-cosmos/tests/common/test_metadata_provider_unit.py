@@ -37,10 +37,14 @@ _MULTI_DEF = {"kind": "MultiHash", "paths": ["/a", "/b"], "version": 2}
 # ---------------------------------------------------------------------------
 
 class TestPureExtractor(unittest.TestCase):
+    """Check partition-key extraction from item bodies."""
+
     def test_single_hash_reads_leaf_value(self):
+        """Prove a single-path key returns the matching item value."""
         self.assertEqual(extract_partition_key_value(_HASH_DEF, {"pk": "customerA"}), "customerA")
 
     def test_single_hash_nested_path(self):
+        """Prove a nested key path returns the nested item value."""
         definition = {"kind": "Hash", "paths": ["/address/city"]}
         self.assertEqual(
             extract_partition_key_value(definition, {"address": {"city": "Seattle"}}),
@@ -48,15 +52,18 @@ class TestPureExtractor(unittest.TestCase):
         )
 
     def test_single_hash_missing_path_is_undefined(self):
+        """Prove a missing user key produces the undefined marker."""
         value = extract_partition_key_value(_HASH_DEF, {"id": "x"})
         self.assertIsInstance(value, _Undefined)
 
     def test_single_hash_missing_path_system_key_is_empty(self):
+        """Prove a missing system key produces the empty marker."""
         definition = {"kind": "Hash", "paths": ["/pk"], "systemKey": True}
         value = extract_partition_key_value(definition, {"id": "x"})
         self.assertIsInstance(value, _Empty)
 
     def test_multi_hash_reads_each_level(self):
+        """Prove a hierarchical key preserves all values in path order."""
         self.assertEqual(
             extract_partition_key_value(_MULTI_DEF, {"a": "x", "b": "y"}),
             ["x", "y"],
@@ -72,13 +79,17 @@ class TestPureExtractor(unittest.TestCase):
 # ---------------------------------------------------------------------------
 
 def _cc_with_props(props):
+    """Return a fake connection with cached container properties."""
     cc = MagicMock()
     cc._container_properties_cache = {_LINK: props}
     return cc
 
 
 class TestSyncProvider(unittest.TestCase):
+    """Check synchronous container metadata lookup and extraction."""
+
     def test_rust_metadata_response_bypasses_legacy_container_cache(self):
+        """Prove Rust metadata supplies the ID and partition-key definition."""
         cc = MagicMock()
         cc._container_properties_cache = {}
         resolver = MagicMock(
@@ -99,14 +110,17 @@ class TestSyncProvider(unittest.TestCase):
         cc._refresh_container_properties_cache.assert_not_called()
 
     def test_container_rid_from_cache_hit(self):
+        """Prove a cached container resource ID is returned directly."""
         provider = ContainerMetadataProvider(_cc_with_props({"_rid": "R", "partitionKey": _HASH_DEF}))
         self.assertEqual(provider.container_rid(_LINK, {}), "R")
 
     def test_container_rid_none_when_absent(self):
+        """Prove missing cached resource IDs return ``None``."""
         provider = ContainerMetadataProvider(_cc_with_props({"partitionKey": _HASH_DEF}))
         self.assertIsNone(provider.container_rid(_LINK, {}))
 
     def test_container_rid_cache_miss_triggers_one_refresh(self):
+        """Prove a cache miss refreshes metadata once before returning the ID."""
         cc = MagicMock()
         cache = {}
         cc._container_properties_cache = cache
@@ -118,6 +132,7 @@ class TestSyncProvider(unittest.TestCase):
         cc._refresh_container_properties_cache.assert_called_once_with(_LINK)
 
     def test_extract_partition_key_from_body(self):
+        """Prove the provider extracts and stores a body partition key."""
         provider = ContainerMetadataProvider(_cc_with_props({"_rid": "R", "partitionKey": _HASH_DEF}))
         options = {}
         value = provider.extract_partition_key(_LINK, {"pk": "v"}, options)
@@ -135,6 +150,7 @@ class TestSyncProvider(unittest.TestCase):
         cc._refresh_container_properties_cache.assert_not_called()
 
     def test_extract_partition_key_empty_when_no_definition(self):
+        """Prove containers without a key definition return the empty marker."""
         provider = ContainerMetadataProvider(_cc_with_props({"_rid": "R"}))
         value = provider.extract_partition_key(_LINK, {"pk": "v"}, {})
         self.assertIsInstance(value, _Empty)
@@ -145,7 +161,10 @@ class TestSyncProvider(unittest.TestCase):
 # ---------------------------------------------------------------------------
 
 class TestAsyncProvider(unittest.TestCase):
+    """Check asynchronous container metadata lookup and extraction."""
+
     def test_async_rust_metadata_response_bypasses_legacy_container_cache(self):
+        """Prove async Rust metadata supplies the ID and hierarchical key."""
         cc = MagicMock()
         cc._container_properties_cache = {}
         resolver = AsyncMock(
@@ -173,6 +192,7 @@ class TestAsyncProvider(unittest.TestCase):
         cc._refresh_container_properties_cache.assert_not_called()
 
     def test_async_container_rid_cache_miss_awaits_refresh(self):
+        """Prove an async cache miss waits for one metadata refresh."""
         cc = MagicMock()
         cache = {}
         cc._container_properties_cache = cache
@@ -188,6 +208,7 @@ class TestAsyncProvider(unittest.TestCase):
         cc._refresh_container_properties_cache.assert_awaited_once_with(_LINK)
 
     def test_async_extract_partition_key_from_body(self):
+        """Prove async extraction preserves hierarchical key order."""
         cc = MagicMock()
         cc._container_properties_cache = {_LINK: {"_rid": "R", "partitionKey": _MULTI_DEF}}
         provider = AsyncContainerMetadataProvider(cc)

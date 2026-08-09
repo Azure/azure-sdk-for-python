@@ -56,6 +56,7 @@ pub(crate) fn is_feed_range_subset<'py>(
     run_is_feed_range_subset_operation(py, body_bytes)
 }
 
+/// Return an awaitable that reads a container's partition-key ranges.
 #[pyfunction]
 pub(crate) fn read_feed_ranges_async<'py>(
     py: Python<'py>,

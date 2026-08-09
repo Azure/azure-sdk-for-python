@@ -81,6 +81,7 @@ _WIRE_NAME_PASSTHROUGH = frozenset({"prefer"})
 
 
 def _rust_camelcase_option_keys() -> set:
+    """Return Rust option names that represent Python-style request keys."""
     return {
         k for k in _rust_recognised_keys()
         if k.isalpha() and k not in _WIRE_NAME_PASSTHROUGH

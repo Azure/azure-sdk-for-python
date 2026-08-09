@@ -96,6 +96,7 @@ def _iter_test_functions(tree):
 
 
 def _label(path, class_name, func_name):
+    """Return a readable file and test name for failure messages."""
     qualified = (class_name + "." if class_name else "") + func_name
     return "{}::{}".format(_rel(path), qualified)
 

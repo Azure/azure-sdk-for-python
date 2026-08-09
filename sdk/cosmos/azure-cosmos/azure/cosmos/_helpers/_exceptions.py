@@ -44,6 +44,7 @@ class _ResponseAdapter:
     """
 
     def __init__(self, backend_response: BackendResponse) -> None:
+        """Copy the public response fields used by Cosmos exceptions."""
         self._inner = backend_response
         self.status_code = backend_response.status_code
         self.headers = backend_response.headers if backend_response.headers is not None else {}

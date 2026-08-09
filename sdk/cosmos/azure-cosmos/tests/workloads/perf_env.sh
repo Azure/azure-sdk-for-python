@@ -96,11 +96,11 @@ export COSMOS_ENABLE_DIAGNOSTICS_LOGGING="${COSMOS_ENABLE_DIAGNOSTICS_LOGGING:-f
 # ---- Results sink (separate database/container so it never competes) -------
 # A separate account is safest, but a separate container with its own throughput
 # in the same account is acceptable (the reporter writes only a handful of docs
-# per interval). We default to the same account, a separate perfdb/perfresults.
+# per interval). We default to the same account, a separate perfdb/perfresults-v2.
 export PERF_ENABLED="${PERF_ENABLED:-true}"
 export RESULTS_COSMOS_URI="${RESULTS_COSMOS_URI:-$COSMOS_URI}"
 export RESULTS_COSMOS_DATABASE="${RESULTS_COSMOS_DATABASE:-perfdb}"
-export RESULTS_COSMOS_CONTAINER="${RESULTS_COSMOS_CONTAINER:-perfresults}"
+export RESULTS_COSMOS_CONTAINER="${RESULTS_COSMOS_CONTAINER:-perfresults-v2}"
 # One results row per interval. 300s (5 min) is the default; the long runs here
 # span hours, so plenty of rows accumulate to drop warmup and read a settled tail.
 export PERF_REPORT_INTERVAL="${PERF_REPORT_INTERVAL:-300}"

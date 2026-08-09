@@ -66,7 +66,10 @@ from .._base import _validate_resource
 from .._availability_strategy_config import DEFAULT_THRESHOLD_MS
 from .._backend.base import (
     OP_CREATE_DATABASE,
+    OP_CREATE_CONTAINER,
+    OP_READ_CONTAINER,
     OP_CREATE_ITEM,
+    OP_DELETE_DATABASE,
     OP_DELETE_ITEM,
     OP_PATCH_ITEM,
     OP_READ_DATABASE,
@@ -396,6 +399,124 @@ def is_read_database_rust_eligible(
     return _timeout_is_representable(operation_kwargs)
 
 
+def build_delete_database_prepared(
+    database_link: Any,
+    request_options: Mapping[str, Any],
+    *,
+    kwargs: Optional[Mapping[str, Any]] = None,
+) -> PreparedRequest:
+    """Build the Rust request that deletes a database."""
+    delete_options = dict(request_options)
+    # Same suppression as the read: a database is a master resource, so the legacy
+    # session layer attaches no session token and ``_base.GetHeaders`` drops
+    # x-ms-cosmos-intended-collection-rid when resource_type == 'dbs'.
+    delete_options.pop("sessionToken", None)
+    delete_options.pop(Constants.ContainerRID, None)
+    database_id = _database_id_from_link(database_link)
+    return PreparedRequest(
+        op=OP_DELETE_DATABASE,
+        container_link="",
+        body_bytes=b"",
+        partition_key_header="[]",
+        headers=_account_level_headers(delete_options, kwargs),
+        item_id=database_id,
+    )
+
+
+def _database_id_from_link(database_link: Any) -> str:
+    """Return the database name from a ``dbs/{id}`` link."""
+    normalized = str(database_link).strip("/")
+    if not normalized.startswith("dbs/"):
+        # Every caller reaches this through ``_get_database_link``, which always
+        # emits ``dbs/{id}``. Anything else -- including a bare ``dbs`` -- means the
+        # id is missing, so refuse rather than deleting a database named "dbs".
+        raise ValueError("Failed Parsing ResourceID from link: /{}/".format(normalized))
+    normalized = normalized[len("dbs/"):].strip("/")
+    if not normalized:
+        raise ValueError("Failed Parsing ResourceID from link: /dbs/")
+    return normalized
+
+
+def is_delete_database_rust_eligible(
+    request_options: Mapping[str, Any],
+    operation_kwargs: Mapping[str, Any],
+) -> bool:
+    """Return whether Rust supports every option on this database delete."""
+    return is_read_database_rust_eligible(request_options, operation_kwargs)
+
+
+def build_create_container_prepared(
+    database_link: Any,
+    container_definition: Mapping[str, Any],
+    request_options: Mapping[str, Any],
+    *,
+    kwargs: Optional[Mapping[str, Any]] = None,
+) -> PreparedRequest:
+    """Build the Rust request that creates a container in a database."""
+    _validate_resource(container_definition)
+    create_options = dict(request_options)
+    create_options.pop("sessionToken", None)
+    return PreparedRequest(
+        op=OP_CREATE_CONTAINER,
+        container_link="",
+        body_bytes=serialize_body_to_bytes(container_definition),
+        partition_key_header="[]",
+        headers=_account_level_headers(create_options, kwargs),
+        item_id=_database_id_from_link(database_link),
+    )
+
+
+def is_create_container_rust_eligible(
+    request_options: Mapping[str, Any],
+    operation_kwargs: Mapping[str, Any],
+) -> bool:
+    """Return whether Rust supports every option on this container create."""
+    if request_options.get(Constants.ContainerRID) is not None:
+        return False
+    return is_read_database_rust_eligible(request_options, operation_kwargs)
+
+
+def build_read_container_prepared(
+    container_link: Any,
+    request_options: Mapping[str, Any],
+    *,
+    kwargs: Optional[Mapping[str, Any]] = None,
+) -> PreparedRequest:
+    """Build the Rust request that reads a container."""
+    read_options = dict(request_options)
+    read_options.pop("sessionToken", None)
+    return PreparedRequest(
+        op=OP_READ_CONTAINER,
+        container_link=_normalized_container_link(container_link),
+        body_bytes=b"",
+        partition_key_header="[]",
+        headers=_account_level_headers(read_options, kwargs),
+    )
+
+
+def _normalized_container_link(container_link: Any) -> str:
+    """Validate and return ``dbs/{db}/colls/{container}``."""
+    normalized = str(container_link).strip("/")
+    parts = normalized.split("/")
+    if len(parts) != 4 or parts[0] != "dbs" or parts[2] != "colls" or not parts[1] or not parts[3]:
+        raise ValueError(
+            "Failed Parsing ResourceID from link: /{}".format(normalized)
+        )
+    return normalized
+
+
+def is_read_container_rust_eligible(
+    request_options: Mapping[str, Any],
+    operation_kwargs: Mapping[str, Any],
+) -> bool:
+    """Return whether Rust supports every option on this container read."""
+    if request_options.get("populatePartitionKeyRangeStatistics") is not None:
+        return False
+    if request_options.get("populateQuotaInfo") is not None:
+        return False
+    return is_read_database_rust_eligible(request_options, operation_kwargs)
+
+
 def overrides_driver_owned_header(request_options: Mapping[str, Any]) -> bool:
     """Return whether ``initial_headers`` sets a header the driver would replace.
 
@@ -528,14 +649,21 @@ def flatten_options_to_headers(options: Mapping[str, Any]) -> Dict[str, Any]:
             # constant's note). Skip so it never rides as a bogus header on the
             # Rust path; the legacy path ignores it in GetHeaders regardless.
             continue
-        if option_key == "initialHeaders" and isinstance(option_value, dict):
+        if option_key == "initialHeaders":
             # Keep customer headers as a nested dict so the binding can forward
             # them verbatim -- including non-``x-ms-`` names it would otherwise
             # drop -- without confusing them with internal option-keys (which
             # keeps the COSMOS_WIRE_STRICT option-key guard meaningful). The
             # legacy path handles initial_headers separately, and this helper is
             # rust-prep-only, so only the rust point path is affected.
-            headers["initialHeaders"] = dict(option_value)
+            #
+            # Anything that is not a dict carries no headers and is dropped. A
+            # public method that forwards ``initial_headers=None`` unguarded --
+            # ``create_container_if_not_exists`` does, when falling through to
+            # the create -- puts a ``None`` here, and copying that through as a
+            # header value makes the binding reject the whole request.
+            if isinstance(option_value, dict):
+                headers["initialHeaders"] = dict(option_value)
             continue
         if option_key == "availabilityStrategy":
             # Normalize the per-request hedging control to the compact string the

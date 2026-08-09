@@ -63,6 +63,7 @@ from .._backend.base import (
     CosmosBackend,
     LegacyOperation,
     OP_CREATE_DATABASE,
+    OP_DELETE_DATABASE,
     OP_READ_DATABASE,
 )
 from .._backend.legacy import coerce_backend
@@ -70,7 +71,9 @@ from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
 from .._helpers._request_prep import (
     build_create_database_prepared,
+    build_delete_database_prepared,
     build_read_database_prepared,
+    is_delete_database_rust_eligible,
     is_read_database_rust_eligible,
     RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
 )
@@ -81,6 +84,7 @@ class DatabaseHelper:
     """Route database operations through the selected backend boundary."""
 
     def __init__(self, client_connection: Any, backend: Optional[CosmosBackend]) -> None:
+        """Store the client connection and selected implementation."""
         self._client_connection = client_connection
         self._backend = coerce_backend(backend)
 
@@ -182,6 +186,44 @@ class DatabaseHelper:
             ),
         )
         return result
+
+    def delete_database(
+        self,
+        database_link: Any,
+        request_options: Mapping[str, Any],
+        *,
+        kwargs: Optional[Mapping[str, Any]] = None,
+    ) -> None:
+        """Delete a database.
+
+        The response is still parsed so service errors and response headers are
+        handled before this method returns ``None``.
+        """
+        operation_kwargs = dict(kwargs or {})
+        operation_kwargs.pop("response_hook", None)
+        self._backend.run_operation(
+            build_prepared=lambda: build_delete_database_prepared(
+                database_link,
+                request_options,
+                kwargs=operation_kwargs,
+            ),
+            legacy_operation=LegacyOperation(
+                op=OP_DELETE_DATABASE,
+                invoke=lambda: self._client_connection.DeleteDatabase(
+                    database_link,
+                    options=request_options,
+                    **operation_kwargs,
+                ),
+            ),
+            parse_response=lambda response: parse_backend_response(
+                response,
+                client_connection=self._client_connection,
+            ),
+            rust_eligible=is_delete_database_rust_eligible(
+                request_options,
+                operation_kwargs,
+            ),
+        )
 
     def create_database_if_not_exists(
         self,

@@ -48,14 +48,15 @@ from ._helpers._item_dispatch import (
     pick_backend,
 )
 from ._helpers.item_helper import ItemHelper
+from ._helpers.container_helper import ContainerHelper
 from ._helpers.feed_range_helper import (
     feed_range_from_partition_key as _feed_range_from_partition_key,
     is_feed_range_subset as _is_feed_range_subset,
     read_feed_ranges as _read_feed_ranges,
 )
 from ._helpers.throughput_helper import (
-    get_throughput as _get_throughput,
-    replace_throughput as _replace_container_throughput,
+    get_container_throughput as _get_throughput,
+    replace_container_throughput as _replace_container_throughput,
 )
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
@@ -224,7 +225,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
-        container = self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
+        container = ContainerHelper(
+            self.client_connection,
+            pick_backend(self.client_connection),
+        ).read_container(
+            self.container_link,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
+        )
         # Only cache Container Properties that will not change in the lifetime of the container
         self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
                                                                _build_properties_cache(container, self.container_link))
@@ -391,10 +400,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['session_token'] = session_token
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        if consistency_level is not None:
-            kwargs['consistencyLevel'] = consistency_level
         if excluded_locations is not None:
-            kwargs['excludedLocations'] = excluded_locations
+            kwargs['excluded_locations'] = excluded_locations
         if priority is not None:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
@@ -404,6 +411,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         kwargs['max_concurrency'] = max_concurrency
         query_options = build_options(kwargs)
+        # consistency_level has no entry in the common kwarg-to-option map, so we write the
+        # option key directly. Leaving it in kwargs would forward it to the transport.
+        if consistency_level is not None:
+            query_options['consistencyLevel'] = consistency_level
         self._get_properties_with_options(query_options)
         query_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         query_options["enableCrossPartitionQuery"] = True

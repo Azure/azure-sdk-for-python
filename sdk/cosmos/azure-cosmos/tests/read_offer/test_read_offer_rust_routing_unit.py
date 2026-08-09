@@ -51,20 +51,19 @@ from __future__ import annotations
 
 import json
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from azure.cosmos import http_constants
 from azure.cosmos import _runtime_constants as runtime_constants
-from azure.cosmos._backend.base import BackendResponse, OP_READ_OFFER, OP_TO_BINDING_METHOD
+from azure.cosmos._backend.base import OP_READ_OFFER, OP_TO_BINDING_METHOD
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._offer_rust_routing import (
     build_read_offer_prepared_request,
     can_use_rust_backend_for_read_offer,
     parse_read_offer_payload,
-    try_read_offer_with_rust_backend,
-    try_read_offer_with_rust_backend_async,
+    prepare_read_offer_request,
+    prepare_read_offer_request_async,
 )
 
 _OFFER_QUERY = {
@@ -74,16 +73,19 @@ _OFFER_QUERY = {
 
 
 def test_gate_is_off_without_backend():
+    """A Python client does not attempt the Rust throughput-read path."""
     assert can_use_rust_backend_for_read_offer(backend=None, options={}, kwargs={}) is False
 
 
 def test_gate_is_on_with_backend_and_no_kwargs():
+    """A Rust-backed client with no extra kwargs routes its throughput read through Rust."""
     # The binding now exposes an offer entry point, so a Rust-backed client with no
     # extra kwargs routes its throughput read through Rust.
     assert can_use_rust_backend_for_read_offer(backend=object(), options={}, kwargs={}) is True
 
 
 def test_gate_is_off_with_kwargs():
+    """Extra kwargs keep the throughput read on Python until each knob is mirrored on Rust."""
     # Legacy forwards extra kwargs into QueryOffers; keep those on legacy until each
     # knob is mirrored on the Rust path.
     assert (
@@ -95,6 +97,7 @@ def test_gate_is_off_with_kwargs():
 
 
 def test_gate_is_off_with_read_timeout():
+    """A per-call socket timeout keeps the throughput read on Python."""
     assert (
         can_use_rust_backend_for_read_offer(
             backend=object(),
@@ -106,6 +109,7 @@ def test_gate_is_off_with_read_timeout():
 
 
 def test_gate_is_off_with_availability_strategy():
+    """A per-call availability strategy keeps the throughput read on Python."""
     assert (
         can_use_rust_backend_for_read_offer(
             backend=object(),
@@ -117,6 +121,7 @@ def test_gate_is_off_with_availability_strategy():
 
 
 def test_op_read_offer_mapped_to_binding_method():
+    """``OP_READ_OFFER`` maps to the binding's ``read_offer`` method so a rename cannot silently unroute the operation."""
     # The op discriminator is mapped to the binding's `read_offer` function (the
     # async backend appends `_async` to reach `read_offer_async`).
     assert OP_READ_OFFER == "read_offer"
@@ -124,6 +129,7 @@ def test_op_read_offer_mapped_to_binding_method():
 
 
 def test_builds_prepared_request_as_non_partitioned_query():
+    """The Rust request queries the account-level offer with the required context."""
     prepared = build_read_offer_prepared_request(
         container_link="/dbs/db/colls/coll/",
         offer_query=_OFFER_QUERY,
@@ -146,6 +152,7 @@ def test_builds_prepared_request_as_non_partitioned_query():
 
 
 def test_prepared_request_mirrors_timeout_and_excluded_locations():
+    """Rust receives the caller's timeout and excluded locations."""
     prepared = build_read_offer_prepared_request(
         container_link="dbs/db/colls/coll",
         offer_query=_OFFER_QUERY,
@@ -160,74 +167,95 @@ def test_prepared_request_mirrors_timeout_and_excluded_locations():
 
 
 def test_parser_returns_offer_records_unchanged():
+    """Valid offer records keep the service response shape used by public methods."""
     offers = [{"id": "off-1", "offerType": "Invalid", "content": {"offerThroughput": 400}}]
     assert parse_read_offer_payload({"Offers": offers}) == offers
 
 
 def test_parser_returns_empty_list_for_no_offers():
+    """A resource with no offer produces an empty offer list."""
     assert parse_read_offer_payload({"Offers": []}) == []
 
 
 def test_parser_rejects_missing_offers_field():
+    """A missing offer list raises a clear parsing error."""
     with pytest.raises(ValueError):
         parse_read_offer_payload({})
 
 
 def test_parser_rejects_non_list_offers():
+    """An incorrectly shaped offer list raises a clear parsing error."""
     with pytest.raises(ValueError):
         parse_read_offer_payload({"Offers": {"id": "off-1"}})
 
 
 def test_parser_rejects_non_object_offer_entry():
+    """Each returned offer must be an object."""
     with pytest.raises(ValueError):
         parse_read_offer_payload({"Offers": ["not-an-object"]})
 
 
-def test_try_read_offer_returns_none_when_backend_missing():
-    client_connection = SimpleNamespace(_backend=None)
-    assert (
-        try_read_offer_with_rust_backend(
-            client_connection=client_connection,
-            container_link="dbs/db/colls/coll",
-            offer_query=_OFFER_QUERY,
-            options={},
-        )
-        is None
-    )
-
-
-def test_try_read_offer_executes_backend_with_legacy_prepared_headers(monkeypatch):
-    captured = {}
-    backend = MagicMock()
-    backend.execute.return_value = BackendResponse(
-        status_code=200,
-        headers={"x-ms-request-charge": "1.0"},
-        body=b'{"Offers":[{"id":"off-1","content":{"offerThroughput":400}}]}',
-    )
-    client_connection = SimpleNamespace(
-        _backend=backend,
+def _offer_read_connection():
+    """Return a minimal client-connection stub suitable for offer-read tests."""
+    return SimpleNamespace(
         default_headers={"x-ms-user-agent": "ua"},
         _query_compatibility_mode="Default",
         last_response_headers=None,
     )
 
+
+def _patch_offer_read_headers(monkeypatch, captured, *, is_async=False):
+    """Supply the headers that the request builder must preserve."""
+
     def _fake_get_headers(_client, headers, *_args):
+        """Capture input headers and inject an intended-collection-rid for assertions."""
         captured["input_headers"] = dict(headers)
         result = dict(headers)
         result["x-ms-cosmos-intended-collection-rid"] = "rid-1"
         return result
 
-    def _fake_set_session_token_header(_client, req_headers, _path, _request_params, _options):
-        req_headers["x-ms-session-token"] = "0:-1#1"
-
     monkeypatch.setattr("azure.cosmos._offer_rust_routing.base.GetHeaders", _fake_get_headers)
-    monkeypatch.setattr(
-        "azure.cosmos._offer_rust_routing.base.set_session_token_header",
-        _fake_set_session_token_header,
+
+    if is_async:
+        async def _fake_set(_client, req_headers, _path, _request_params, _options):
+            """Stand in for ``set_session_token_header_async``; injects a session token header."""
+            req_headers["x-ms-session-token"] = "0:-1#1"
+
+        monkeypatch.setattr(
+            "azure.cosmos._offer_rust_routing.base.set_session_token_header_async", _fake_set
+        )
+    else:
+        def _fake_set(_client, req_headers, _path, _request_params, _options):
+            """Stand in for ``set_session_token_header``; injects a session token header."""
+            req_headers["x-ms-session-token"] = "0:-1#1"
+
+        monkeypatch.setattr(
+            "azure.cosmos._offer_rust_routing.base.set_session_token_header", _fake_set
+        )
+
+
+def _assert_offer_read_prepared(prepared, captured):
+    """Verify that a prepared offer-read request carries all required headers and fields."""
+    assert prepared.op == OP_READ_OFFER
+    # An empty partition key lets the service find the account-level offer.
+    assert prepared.partition_key_header == "[]"
+    assert prepared.headers["x-ms-cosmos-intended-collection-rid"] == "rid-1"
+    assert prepared.headers["x-ms-session-token"] == "0:-1#1"
+    assert prepared.headers[Constants.Kwargs.EXCLUDED_LOCATIONS] == ["West US"]
+    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 7
+    assert (
+        captured["input_headers"][http_constants.HttpHeaders.ContentType]
+        == runtime_constants.MediaTypes.QueryJson
     )
 
-    offers = try_read_offer_with_rust_backend(
-        client_connection=client_connection,
+
+def test_prepare_read_offer_request_carries_the_legacy_headers(monkeypatch):
+    """The Rust request keeps headers prepared by the Python SDK."""
+    captured = {}
+    _patch_offer_read_headers(monkeypatch, captured)
+
+    prepared = prepare_read_offer_request(
+        client_connection=_offer_read_connection(),
         container_link="dbs/db/colls/coll/",
         offer_query=_OFFER_QUERY,
         options={
@@ -236,55 +264,17 @@ def test_try_read_offer_executes_backend_with_legacy_prepared_headers(monkeypatc
         },
     )
 
-    assert offers == [{"id": "off-1", "content": {"offerThroughput": 400}}]
-    assert (
-        captured["input_headers"][http_constants.HttpHeaders.ContentType]
-        == runtime_constants.MediaTypes.QueryJson
-    )
-    prepared = backend.execute.call_args.args[0]
-    assert prepared.op == OP_READ_OFFER
-    assert prepared.partition_key_header == "[]"
-    assert prepared.headers["x-ms-cosmos-intended-collection-rid"] == "rid-1"
-    assert prepared.headers["x-ms-session-token"] == "0:-1#1"
-    assert prepared.headers[Constants.Kwargs.EXCLUDED_LOCATIONS] == ["West US"]
-    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 7
+    _assert_offer_read_prepared(prepared, captured)
 
 
 @pytest.mark.asyncio
-async def test_try_read_offer_async_executes_backend_with_legacy_prepared_headers(monkeypatch):
+async def test_prepare_read_offer_request_async_carries_the_legacy_headers(monkeypatch):
+    """The async request keeps the same required headers as the sync request."""
     captured = {}
-    backend = SimpleNamespace()
-    backend.execute = AsyncMock(
-        return_value=BackendResponse(
-            status_code=200,
-            headers={"x-ms-request-charge": "1.0"},
-            body=b'{"Offers":[{"id":"off-1","content":{"offerThroughput":400}}]}',
-        )
-    )
-    client_connection = SimpleNamespace(
-        _backend=backend,
-        default_headers={"x-ms-user-agent": "ua"},
-        _query_compatibility_mode="Default",
-        last_response_headers=None,
-    )
+    _patch_offer_read_headers(monkeypatch, captured, is_async=True)
 
-    def _fake_get_headers(_client, headers, *_args):
-        captured["input_headers"] = dict(headers)
-        result = dict(headers)
-        result["x-ms-cosmos-intended-collection-rid"] = "rid-1"
-        return result
-
-    async def _fake_set_session_token_header_async(_client, req_headers, _path, _request_params, _options):
-        req_headers["x-ms-session-token"] = "0:-1#1"
-
-    monkeypatch.setattr("azure.cosmos._offer_rust_routing.base.GetHeaders", _fake_get_headers)
-    monkeypatch.setattr(
-        "azure.cosmos._offer_rust_routing.base.set_session_token_header_async",
-        _fake_set_session_token_header_async,
-    )
-
-    offers = await try_read_offer_with_rust_backend_async(
-        client_connection=client_connection,
+    prepared = await prepare_read_offer_request_async(
+        client_connection=_offer_read_connection(),
         container_link="dbs/db/colls/coll/",
         offer_query=_OFFER_QUERY,
         options={
@@ -293,15 +283,4 @@ async def test_try_read_offer_async_executes_backend_with_legacy_prepared_header
         },
     )
 
-    assert offers == [{"id": "off-1", "content": {"offerThroughput": 400}}]
-    assert (
-        captured["input_headers"][http_constants.HttpHeaders.ContentType]
-        == runtime_constants.MediaTypes.QueryJson
-    )
-    prepared = backend.execute.await_args.args[0]
-    assert prepared.op == OP_READ_OFFER
-    assert prepared.partition_key_header == "[]"
-    assert prepared.headers["x-ms-cosmos-intended-collection-rid"] == "rid-1"
-    assert prepared.headers["x-ms-session-token"] == "0:-1#1"
-    assert prepared.headers[Constants.Kwargs.EXCLUDED_LOCATIONS] == ["West US"]
-    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 7
+    _assert_offer_read_prepared(prepared, captured)

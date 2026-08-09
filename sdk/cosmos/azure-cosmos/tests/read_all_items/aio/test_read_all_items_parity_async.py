@@ -36,6 +36,7 @@ pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
 @pytest.fixture
 def container_for(request):
+    """Create an isolated partitioned container for one parity test."""
     client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
     db = client.create_database_if_not_exists("parity_db")
     container_id = "parity_read_all_async_" + request.node.name + "_" + uuid.uuid4().hex[:6]
@@ -48,6 +49,7 @@ def container_for(request):
 
 
 async def _seed_docs(container, run_id: str) -> list[str]:
+    """Create test items across partition keys and return their sorted IDs."""
     expected_ids = []
     for i in range(3):
         doc_id = "{}-doc-{}".format(run_id, i)
@@ -57,6 +59,7 @@ async def _seed_docs(container, run_id: str) -> list[str]:
 
 
 def _collect_run_ids(items, run_id: str) -> list[str]:
+    """Return sorted IDs belonging to the current test run."""
     return sorted(item["id"] for item in items if item.get("run_id") == run_id)
 
 

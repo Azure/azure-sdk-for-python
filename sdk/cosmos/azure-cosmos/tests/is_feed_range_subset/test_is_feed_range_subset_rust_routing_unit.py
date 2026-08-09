@@ -29,6 +29,7 @@ from azure.cosmos._feed_ranges_rust_routing import (
 
 
 def _feed_range(range_min, range_max, is_min_inclusive=True, is_max_inclusive=False):
+    """Build a public feed range from explicit boundaries."""
     return FeedRangeInternalEpk(
         Range(range_min, range_max, is_min_inclusive, is_max_inclusive)
     ).to_dict()
@@ -39,10 +40,12 @@ def _feed_range(range_min, range_max, is_min_inclusive=True, is_max_inclusive=Fa
 # ---------------------------------------------------------------------------
 
 def test_gate_requires_backend():
+    """Python handles the check when Rust is unavailable."""
     assert can_use_rust_backend_for_is_feed_range_subset(backend=None) is False
 
 
 def test_gate_allows_backend():
+    """Rust handles a supported subset check."""
     assert can_use_rust_backend_for_is_feed_range_subset(backend=object()) is True
 
 
@@ -51,6 +54,7 @@ def test_gate_allows_backend():
 # ---------------------------------------------------------------------------
 
 def test_builds_prepared_request_with_both_feed_ranges_in_body():
+    """The Rust request contains the correct parent and child feed ranges."""
     parent = _feed_range("", "FF")
     child = _feed_range("3F", "7F")
     prepared = build_is_feed_range_subset_prepared_request(
@@ -71,14 +75,17 @@ def test_builds_prepared_request_with_both_feed_ranges_in_body():
 
 @pytest.mark.parametrize("value", [True, False])
 def test_parses_boolean_answer(value):
+    """Rust Boolean results preserve the Python public result."""
     assert parse_is_feed_range_subset_payload({"IsSubset": value}) is value
 
 
 def test_parser_rejects_missing_is_subset():
+    """A missing result raises the expected public parsing error."""
     with pytest.raises(ValueError):
         parse_is_feed_range_subset_payload({})
 
 
 def test_parser_rejects_non_boolean_is_subset():
+    """A non-Boolean result raises the expected public parsing error."""
     with pytest.raises(ValueError):
         parse_is_feed_range_subset_payload({"IsSubset": "true"})

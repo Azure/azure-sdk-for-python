@@ -48,6 +48,9 @@ from . import _utils
 from . import http_constants
 from ._backend.base import (
     OP_LIST_DATABASES,
+    OP_LIST_CONTAINERS,
+    OP_QUERY_CONTAINERS,
+    OP_QUERY_DATABASES,
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
     BackendResponse,
@@ -62,13 +65,23 @@ from ._helpers._response_parse import parse_backend_response
 from ._query_advisor import get_query_advice_info
 from .partition_key import _build_partition_key_from_properties
 
-_LIST_DATABASES_ALLOWED_INTERNAL_KWARGS = frozenset({
+# Internal keywords the four master-resource feeds -- list/query databases and
+# list/query containers -- recognize. Anything else in ``kwargs`` means the caller
+# asked for something these pages do not carry, so the request stays on the legacy
+# path.
+_MASTER_FEED_ALLOWED_INTERNAL_KWARGS = frozenset({
     Constants.OperationStartTime,
 })
 _RUST_DRIVER_OWNED_REQUEST_HEADERS = frozenset({
     "accept",
     "authorization",
     "cache-control",
+    # A query page carries ``Content-Type: application/query+json``. The driver
+    # writes that itself for every query operation, so ours is redundant; the
+    # Rust wire layer drops it and, under COSMOS_WIRE_STRICT, rejects it as an
+    # untranslated option key. Dropping it here keeps the wire bytes identical
+    # and lets strict mode run.
+    "content-type",
     "user-agent",
     "x-ms-date",
     "x-ms-version",
@@ -195,12 +208,13 @@ def can_use_rust_backend_for_read_all_items_page(
     return True
 
 
-def can_use_rust_backend_for_list_databases_page(
+def _master_feed_page_is_rust_eligible(
     *,
     options: Mapping[str, Any],
     kwargs: Mapping[str, Any],
     is_query_plan: bool,
     resource_type: str,
+    expected_resource_type: str,
 ) -> bool:
     """Return True when one page of ``client.list_databases()`` can run on Rust.
 
@@ -217,7 +231,7 @@ def can_use_rust_backend_for_list_databases_page(
     """
     if is_query_plan:
         return False
-    if resource_type != http_constants.ResourceType.Database:
+    if resource_type != expected_resource_type:
         return False
     if options.get("changeFeedState") is not None:
         return False
@@ -232,11 +246,119 @@ def can_use_rust_backend_for_list_databases_page(
         return False
     if Constants.Kwargs.AVAILABILITY_STRATEGY in options:
         return False
-    if set(kwargs).difference(_LIST_DATABASES_ALLOWED_INTERNAL_KWARGS):
+    if set(kwargs).difference(_MASTER_FEED_ALLOWED_INTERNAL_KWARGS):
         return False
     if overrides_driver_owned_header(options):
         return False
     return True
+
+
+def _container_feed_page_is_rust_eligible(
+    *,
+    options: Mapping[str, Any],
+    kwargs: Mapping[str, Any],
+    is_query_plan: bool,
+    resource_type: str,
+) -> bool:
+    """Return whether Rust supports this container feed page."""
+    return _master_feed_page_is_rust_eligible(
+        options=options,
+        kwargs=kwargs,
+        is_query_plan=is_query_plan,
+        resource_type=resource_type,
+        expected_resource_type=http_constants.ResourceType.Collection,
+    )
+
+
+def can_use_rust_backend_for_list_containers_page(
+    *,
+    path: str,
+    options: Mapping[str, Any],
+    kwargs: Mapping[str, Any],
+    is_query_plan: bool,
+    resource_type: str,
+) -> bool:
+    """Return whether Rust supports this ``list_containers`` page."""
+    if not _database_link_from_colls_path(path):
+        return False
+    return _container_feed_page_is_rust_eligible(
+        options=options,
+        kwargs=kwargs,
+        is_query_plan=is_query_plan,
+        resource_type=resource_type,
+    )
+
+
+def can_use_rust_backend_for_query_containers_page(
+    *,
+    path: str,
+    query_payload: Optional[Union[str, dict[str, Any]]],
+    options: Mapping[str, Any],
+    kwargs: Mapping[str, Any],
+    is_query_plan: bool,
+    resource_type: str,
+) -> bool:
+    """Return whether Rust supports this ``query_containers`` page."""
+    if query_payload is None:
+        return False
+    # Same reason as the database query gate: the legacy-only SqlQuery mode
+    # leaves the payload a bare string and posts it as ``text/plain``, while the
+    # driver always posts ``application/query+json``. Different bytes on the
+    # wire, so keep that case on legacy.
+    if not isinstance(query_payload, dict):
+        return False
+    if not _database_link_from_colls_path(path):
+        return False
+    return _container_feed_page_is_rust_eligible(
+        options=options,
+        kwargs=kwargs,
+        is_query_plan=is_query_plan,
+        resource_type=resource_type,
+    )
+
+
+def can_use_rust_backend_for_list_databases_page(
+    *,
+    options: Mapping[str, Any],
+    kwargs: Mapping[str, Any],
+    is_query_plan: bool,
+    resource_type: str,
+) -> bool:
+    """Return whether Rust supports this ``list_databases`` page."""
+    return _master_feed_page_is_rust_eligible(
+        options=options,
+        kwargs=kwargs,
+        is_query_plan=is_query_plan,
+        resource_type=resource_type,
+        expected_resource_type=http_constants.ResourceType.Database,
+    )
+
+
+def can_use_rust_backend_for_query_databases_page(
+    *,
+    query_payload: Optional[Union[str, dict[str, Any]]],
+    options: Mapping[str, Any],
+    kwargs: Mapping[str, Any],
+    is_query_plan: bool,
+    resource_type: str,
+) -> bool:
+    """Return whether Rust supports this ``query_databases`` page."""
+    if query_payload is None or is_query_plan:
+        return False
+    # By the time the query reaches here it has been normalized: the default
+    # query mode always yields a dict, and the legacy-only SqlQuery mode leaves
+    # it a bare string that legacy posts as ``text/plain``. The driver always
+    # posts ``application/query+json``, so a string here means the two paths
+    # would put different bytes on the wire. Keep that case on legacy.
+    if not isinstance(query_payload, dict):
+        return False
+    return _master_feed_page_is_rust_eligible(
+        options=options,
+        kwargs=kwargs,
+        is_query_plan=is_query_plan,
+        resource_type=resource_type,
+        expected_resource_type=http_constants.ResourceType.Database,
+    )
 
 
 def _build_prepared_headers_for_rust_feed_dispatch(
@@ -284,6 +406,7 @@ def _resolve_partition_key_header_for_feed_dispatch(
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> str:
+    """Return the serialized partition key used to scope the page."""
     partition_key_header = req_headers.get(http_constants.HttpHeaders.PartitionKey)
     if isinstance(partition_key_header, str):
         return partition_key_header
@@ -293,6 +416,7 @@ def _resolve_partition_key_header_for_feed_dispatch(
 
 
 def _extract_container_link_from_docs_path(path: str) -> str:
+    """Return the container link from a document-feed path."""
     normalized_path = base.TrimBeginningAndEndingSlashes(path)
     return normalized_path[: -len("/docs")] if normalized_path.endswith("/docs") else normalized_path
 
@@ -363,23 +487,12 @@ def build_read_all_items_prepared_query(
     )
 
 
-def build_list_databases_prepared_query(
+def _build_prepared_headers_for_database_feed_dispatch(
     *,
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
-) -> PreparedQuery:
-    """Build the request for one page of ``client.list_databases()``.
-
-    ``container_link`` is empty because this operation is scoped to the whole
-    account rather than to one container -- it is the only prepared page built
-    that way. Page size and continuation ride as typed fields so the binding does
-    not have to read them back out of headers. A non-Cosmos header the customer
-    passed through ``initial_headers`` is forwarded separately so the driver
-    sends it through untouched.
-
-    Without this the Rust page would have no request to send, and every
-    ``list_databases`` call would stay on the legacy path.
-    """
+) -> dict[str, Any]:
+    """Return headers for a database or container feed request."""
     prepared_headers = _build_prepared_headers_for_rust_feed_dispatch(
         options=options,
         req_headers=req_headers,
@@ -401,12 +514,98 @@ def build_list_databases_prepared_query(
             for name in customer_headers_for_binding:
                 prepared_headers.pop(name, None)
             prepared_headers["initialHeaders"] = customer_headers_for_binding
+    return prepared_headers
+
+
+def build_list_databases_prepared_query(
+    *,
+    options: Mapping[str, Any],
+    req_headers: Mapping[str, Any],
+) -> PreparedQuery:
+    """Build the Rust request for one page of ``list_databases``."""
     return PreparedQuery(
         op=OP_LIST_DATABASES,
         container_link="",
         max_item_count=options.get("maxItemCount"),
         continuation=options.get("continuation"),
-        headers=prepared_headers,
+        headers=_build_prepared_headers_for_database_feed_dispatch(
+            options=options,
+            req_headers=req_headers,
+        ),
+    )
+
+
+def build_query_databases_prepared_query(
+    *,
+    query_payload: Mapping[str, Any],
+    options: Mapping[str, Any],
+    req_headers: Mapping[str, Any],
+) -> PreparedQuery:
+    """Build the Rust request for one page of ``query_databases``."""
+    return PreparedQuery(
+        op=OP_QUERY_DATABASES,
+        container_link="",
+        query=query_payload.get("query"),
+        parameters=tuple(query_payload.get("parameters") or ()),
+        max_item_count=options.get("maxItemCount"),
+        continuation=options.get("continuation"),
+        headers=_build_prepared_headers_for_database_feed_dispatch(
+            options=options,
+            req_headers=req_headers,
+        ),
+    )
+
+
+def _database_link_from_colls_path(path: str) -> str:
+    """Return the database link from a container-feed path, or ``""``."""
+    normalized_path = base.TrimBeginningAndEndingSlashes(path)
+    if not normalized_path.endswith("/colls"):
+        return ""
+    database_link = normalized_path[: -len("/colls")]
+    parts = database_link.split("/")
+    if len(parts) != 2 or parts[0] != "dbs" or not parts[1]:
+        return ""
+    return database_link
+
+
+def build_list_containers_prepared_query(
+    *,
+    path: str,
+    options: Mapping[str, Any],
+    req_headers: Mapping[str, Any],
+) -> PreparedQuery:
+    """Build the Rust request for one page of ``list_containers``."""
+    return PreparedQuery(
+        op=OP_LIST_CONTAINERS,
+        container_link=_database_link_from_colls_path(path),
+        max_item_count=options.get("maxItemCount"),
+        continuation=options.get("continuation"),
+        headers=_build_prepared_headers_for_database_feed_dispatch(
+            options=options,
+            req_headers=req_headers,
+        ),
+    )
+
+
+def build_query_containers_prepared_query(
+    *,
+    path: str,
+    query_payload: Mapping[str, Any],
+    options: Mapping[str, Any],
+    req_headers: Mapping[str, Any],
+) -> PreparedQuery:
+    """Build the Rust request for one page of ``query_containers``."""
+    return PreparedQuery(
+        op=OP_QUERY_CONTAINERS,
+        container_link=_database_link_from_colls_path(path),
+        query=query_payload.get("query"),
+        parameters=tuple(query_payload.get("parameters") or ()),
+        max_item_count=options.get("maxItemCount"),
+        continuation=options.get("continuation"),
+        headers=_build_prepared_headers_for_database_feed_dispatch(
+            options=options,
+            req_headers=req_headers,
+        ),
     )
 
 

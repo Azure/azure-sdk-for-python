@@ -166,3 +166,44 @@ def test_L3_invalid_query_raises_same_type(container_for):
     )
     comparison.print_report()
     comparison.assert_exception_parity()
+
+
+def test_L4_populate_index_metrics_parity(container_for):
+    """A supported metrics option uses Rust and returns the same public value."""
+
+    def _do(client):
+        """Run the index-metrics query against one backend and return the metrics keys."""
+        container = client.get_database_client("parity_db").get_container_client(container_for.id)
+        pk_value = "pk-" + uuid.uuid4().hex[:8]
+        container.create_item({"id": uuid.uuid4().hex, "pk": pk_value, "value": 1})
+        captured = {}
+
+        def _capture(headers, *_args):
+            """Collect response headers for later assertion."""
+            captured.update(headers)
+
+        def _query():
+            """Execute the query and return the parsed index-metrics keys."""
+            list(
+                container.query_items(
+                    query="SELECT * FROM c WHERE c.pk = @pk",
+                    parameters=[{"name": "@pk", "value": pk_value}],
+                    partition_key=pk_value,
+                    populate_index_metrics=True,
+                    response_hook=_capture,
+                )
+            )
+            metrics = captured.get("x-ms-cosmos-index-utilization")
+            return sorted(metrics.keys()) if isinstance(metrics, dict) else metrics
+
+        return run_target_operation(client, _query)
+
+    comparison = run_on_both_backends(
+        _do,
+        description="[L4] populate index metrics",
+    )
+    comparison.print_report()
+    comparison.assert_functional_parity()
+    assert comparison.rust.return_value, (
+        "rust backend must return parsed index metrics, not an empty dict"
+    )

@@ -52,6 +52,7 @@ pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
 @pytest.fixture
 def container_for(request):
+    """A dedicated-throughput throwaway container, so ``get_throughput`` has an offer to return."""
     # Fresh throwaway container per test, deleted afterward, so tests don't share data.
     # The container is created with dedicated throughput (offer_throughput) because
     # get_throughput only returns an offer when the container owns one.
@@ -71,6 +72,7 @@ def container_for(request):
 
 
 def _normalize_throughput(throughput_properties):
+    """Strip server-stamped fields, keeping only the customer-visible RU/s numbers for comparison."""
     # Reduce the throughput object to the customer-visible numbers, so the two engines
     # compare equal regardless of server-stamped fields (id/_rid/_ts) on the raw offer.
     return {
@@ -85,6 +87,7 @@ def test_get_throughput_baseline(container_for):
     # Without this, a basic divergence in the reported RU/s would go unnoticed.
 
     def _do(client):
+        """Run ``get_throughput`` on the given client and return normalised throughput numbers."""
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         return _normalize_throughput(container.get_throughput())
 

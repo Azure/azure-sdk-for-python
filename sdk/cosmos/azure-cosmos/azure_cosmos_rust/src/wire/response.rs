@@ -139,11 +139,91 @@ pub(super) fn tuple_from_database_feed_result<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    tuple_from_database_feed_result_for(py, response_result, "list_databases")
+}
+
+/// Convert a database-query result into a `Databases` response tuple.
+/// Unsupported query plans are returned as `UnsupportedQueryFeatureError`.
+pub(super) fn tuple_from_query_databases_result<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    if let Err(cosmos_error) = &response_result {
+        if cosmos_error.status() == CosmosStatus::CLIENT_UNSUPPORTED_QUERY_FEATURE {
+            return Err(UnsupportedQueryFeatureError::new_err(
+                cosmos_error.to_string(),
+            ));
+        }
+    }
+    tuple_from_database_feed_result_for(py, response_result, "query_databases")
+}
+
+/// Convert a container-feed result into a `DocumentCollections` response tuple.
+pub(super) fn tuple_from_container_feed_result<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    tuple_from_named_feed_result_for(
+        py,
+        response_result,
+        "list_containers",
+        b"DocumentCollections",
+        br#"{"DocumentCollections":[]}"#,
+    )
+}
+
+/// Convert a container-query result into a `DocumentCollections` response tuple.
+/// Unsupported query plans are returned as `UnsupportedQueryFeatureError`.
+pub(super) fn tuple_from_query_containers_result<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    if let Err(cosmos_error) = &response_result {
+        if cosmos_error.status() == CosmosStatus::CLIENT_UNSUPPORTED_QUERY_FEATURE {
+            return Err(UnsupportedQueryFeatureError::new_err(
+                cosmos_error.to_string(),
+            ));
+        }
+    }
+    tuple_from_named_feed_result_for(
+        py,
+        response_result,
+        "query_containers",
+        b"DocumentCollections",
+        br#"{"DocumentCollections":[]}"#,
+    )
+}
+
+/// Convert a database feed using the operation name in transport errors.
+fn tuple_from_database_feed_result_for<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+    operation_name: &str,
+) -> PyResult<Bound<'py, PyTuple>> {
+    tuple_from_named_feed_result_for(
+        py,
+        response_result,
+        operation_name,
+        b"Databases",
+        br#"{"Databases":[]}"#,
+    )
+}
+
+/// Convert a resource feed into the named JSON array used by Python.
+fn tuple_from_named_feed_result_for<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+    operation_name: &str,
+    envelope_key: &[u8],
+    empty_body: &[u8],
+) -> PyResult<Bound<'py, PyTuple>> {
     match response_result {
-        Ok(Some(response)) => backend_response_tuple_from_database_feed_success(py, response),
+        Ok(Some(response)) => {
+            backend_response_tuple_from_named_feed_success(py, response, envelope_key)
+        }
         Ok(None) => {
             let response_headers = PyDict::new_bound(py);
-            backend_response_tuple(py, 200, 0, response_headers, br#"{"Databases":[]}"#, None)
+            backend_response_tuple(py, 200, 0, response_headers, empty_body, None)
         }
         Err(cosmos_error) => {
             if let Some(raw_http_error) =
@@ -153,7 +233,7 @@ pub(super) fn tuple_from_database_feed_result<'py>(
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
                 Err(DriverTransportError::new_err(format!(
-                    "driver list_databases failed: {cosmos_error}"
+                    "driver {operation_name} failed: {cosmos_error}"
                 )))
             }
         }
@@ -320,12 +400,7 @@ fn backend_response_tuple_from_success<'py>(
     response: azure_data_cosmos_driver::models::CosmosResponse,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let status = response.status();
-    let status_code = u16::from(status.status_code()) as i64;
-    // SubStatusCode wraps a u16; use ``.value()`` to read it.
-    let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
-    // Combine this operation's per-attempt wire diagnostics into the process-wide
-    // attempt/retry counters before stringifying them (see BINDING_ATTEMPT_COUNT).
-    // `diagnostics()` is a low-cost Arc clone; the read touches only in-memory records.
+    let (status_code, sub_status) = status_code_and_sub_status(status);
     let diagnostics = record_diagnostics(response.diagnostics());
     // dict keyed by the actual `x-ms-...` wire-header names. This is what
     // the Python parser (`_helpers/_response_parse.py`) reads to populate
@@ -333,8 +408,7 @@ fn backend_response_tuple_from_success<'py>(
     // does e.g. `last_response_headers["etag"]` keeps working on the
     // Rust path.
     let driver_headers = response.headers();
-    let response_headers = PyDict::new_bound(py);
-    write_response_headers(&response_headers, driver_headers)?;
+    let response_headers = response_headers_dict(py, driver_headers)?;
 
     match response.into_body() {
         ResponseBody::NoPayload => backend_response_tuple(
@@ -399,18 +473,7 @@ fn query_response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
     named_feed_response_body_to_vec(body, b"Documents")
 }
 
-/// Convert a successful database feed response into the Python backend tuple,
-/// wrapping item rows in the legacy `{"Databases":[...]}` envelope.
-fn backend_response_tuple_from_database_feed_success<'py>(
-    py: Python<'py>,
-    response: azure_data_cosmos_driver::models::CosmosResponse,
-) -> PyResult<Bound<'py, PyTuple>> {
-    backend_response_tuple_from_named_feed_success(py, response, b"Databases")
-}
-
-/// Offer version of `backend_response_tuple_from_feed_success`: identical status /
-/// diagnostics / header handling, but the body rows are wrapped in the
-/// `{"Offers":[...]}` envelope instead of `{"Documents":[...]}`.
+/// Convert a successful offer-feed response into an `Offers` tuple.
 fn backend_response_tuple_from_offer_feed_success<'py>(
     py: Python<'py>,
     response: azure_data_cosmos_driver::models::CosmosResponse,
@@ -418,17 +481,21 @@ fn backend_response_tuple_from_offer_feed_success<'py>(
     backend_response_tuple_from_named_feed_success(py, response, b"Offers")
 }
 
+/// Convert a successful feed response into the Python backend tuple, wrapping the
+/// driver's rows in the legacy envelope named by `envelope_name`.
+///
+/// One function serves `Documents`, `Databases`, `Offers`, and
+/// `DocumentCollections`. Without the envelope a customer looping over a feed
+/// would see different keys depending on which backend served the call.
 fn backend_response_tuple_from_named_feed_success<'py>(
     py: Python<'py>,
     response: azure_data_cosmos_driver::models::CosmosResponse,
     envelope_name: &[u8],
 ) -> PyResult<Bound<'py, PyTuple>> {
     let status = response.status();
-    let status_code = u16::from(status.status_code()) as i64;
-    let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
+    let (status_code, sub_status) = status_code_and_sub_status(status);
     let diagnostics = record_diagnostics(response.diagnostics());
-    let response_headers = PyDict::new_bound(py);
-    write_response_headers(&response_headers, response.headers())?;
+    let response_headers = response_headers_dict(py, response.headers())?;
     match response.into_body() {
         // Pass existing bytes straight to Python without allocating a Vec. The
         // helper keeps its Bytes arm for callers that require an owned body.
@@ -586,14 +653,10 @@ fn backend_response_tuple_from_cosmos_error<'py>(
     };
 
     let status = response.status();
-    let status_code = u16::from(status.status_code()) as i64;
-    let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
-    // Wire-error responses still made real attempts -- combine them in too so the
-    // counters cover the full round-trip count, not just successes.
+    let (status_code, sub_status) = status_code_and_sub_status(status);
     let diagnostics = record_diagnostics(response.diagnostics());
 
-    let response_headers = PyDict::new_bound(py);
-    write_response_headers(&response_headers, response.headers())?;
+    let response_headers = response_headers_dict(py, response.headers())?;
 
     let body_vec = response_body_to_vec(response.body().clone())?;
     Ok(Some(backend_response_tuple(
@@ -636,10 +699,8 @@ fn backend_response_tuple_from_feed_error_parts<'py>(
     body: ResponseBody,
     diagnostics: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let status_code = u16::from(status.status_code()) as i64;
-    let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
-    let response_headers = PyDict::new_bound(py);
-    write_response_headers(&response_headers, driver_headers)?;
+    let (status_code, sub_status) = status_code_and_sub_status(status);
+    let response_headers = response_headers_dict(py, driver_headers)?;
     let body_vec = query_response_body_to_vec(body)?;
     backend_response_tuple(
         py,
@@ -651,130 +712,31 @@ fn backend_response_tuple_from_feed_error_parts<'py>(
     )
 }
 
+/// Return the HTTP status and Cosmos substatus used by the Python response tuple.
+/// Missing substatus values become zero.
+fn status_code_and_sub_status(status: CosmosStatus) -> (i64, i64) {
+    (
+        u16::from(status.status_code()) as i64,
+        status.sub_status().map(|s| s.value() as i64).unwrap_or(0),
+    )
+}
+
 /// Copy every populated field on the driver's `CosmosResponseHeaders` into a
 /// Python dict keyed by the wire-header name the Python parser expects.
 ///
-/// Only fields that are `Some(_)` are written, so callers that read a missing
-/// header get `KeyError` rather than `None` (matches what the legacy
-/// core-Python path emits today).
-fn write_response_headers(
-    out: &Bound<'_, PyDict>,
+/// Only fields that are `Some(_)` are written, so a caller reading a header the
+/// service did not send gets `KeyError` rather than `None`, which is what the
+/// legacy core-Python path emits today. Values stay as strings, including the
+/// encoded index metrics.
+fn response_headers_dict<'py>(
+    py: Python<'py>,
     h: &azure_data_cosmos_driver::models::CosmosResponseHeaders,
-) -> PyResult<()> {
-    if let Some(v) = h.activity_id.as_ref() {
-        out.set_item("x-ms-activity-id", v.as_str())?;
+) -> PyResult<Bound<'py, PyDict>> {
+    let out = PyDict::new_bound(py);
+    for (name, value) in h.to_raw_headers().iter() {
+        out.set_item(name.as_str(), value.as_str())?;
     }
-    if let Some(v) = h.request_charge {
-        // RequestCharge wraps an f64; render with the same formatting as the
-        // legacy path (no trailing zero stripping; let Display do its job).
-        out.set_item("x-ms-request-charge", format!("{}", f64::from(v)))?;
-    }
-    if let Some(v) = h.session_token.as_ref() {
-        out.set_item("x-ms-session-token", v.as_str())?;
-    }
-    if let Some(v) = h.etag.as_ref() {
-        out.set_item("etag", v.to_string())?;
-    }
-    if let Some(v) = h.continuation.as_ref() {
-        out.set_item("x-ms-continuation", v.as_str())?;
-    }
-    if let Some(v) = h.item_count {
-        out.set_item("x-ms-item-count", v)?;
-    }
-    if let Some(v) = h.substatus {
-        // SubStatusCode wraps a u16; ``.value()`` reads it.
-        out.set_item("x-ms-substatus", v.value() as u32)?;
-    }
-    if let Some(v) = h.index_metrics.as_ref() {
-        out.set_item("x-ms-cosmos-index-utilization", v.as_str())?;
-    }
-    if let Some(v) = h.query_metrics.as_ref() {
-        out.set_item("x-ms-documentdb-query-metrics", v.as_str())?;
-    }
-    if let Some(v) = h.server_duration_ms {
-        out.set_item("x-ms-request-duration-ms", v)?;
-    }
-    if let Some(v) = h.lsn {
-        out.set_item("lsn", v)?;
-    }
-    if let Some(v) = h.item_lsn {
-        out.set_item("x-ms-item-lsn", v)?;
-    }
-    if let Some(v) = h.local_lsn {
-        out.set_item("x-ms-cosmos-llsn", v)?;
-    }
-    if let Some(v) = h.item_local_lsn {
-        out.set_item("x-ms-cosmos-item-llsn", v)?;
-    }
-    if let Some(v) = h.global_committed_lsn {
-        out.set_item("x-ms-global-committed-lsn", v)?;
-    }
-    if let Some(v) = h.quorum_acked_lsn {
-        out.set_item("x-ms-quorum-acked-lsn", v)?;
-    }
-    if let Some(v) = h.quorum_acked_local_lsn {
-        out.set_item("x-ms-cosmos-quorum-acked-llsn", v)?;
-    }
-    if let Some(v) = h.retry_after_ms {
-        out.set_item("x-ms-retry-after-ms", v)?;
-    }
-    if let Some(v) = h.correlated_activity_id.as_ref() {
-        out.set_item("x-ms-cosmos-correlated-activityid", v.as_str())?;
-    }
-    if let Some(v) = h.transport_request_id {
-        out.set_item("x-ms-transport-request-id", v)?;
-    }
-    if let Some(v) = h.number_of_read_regions {
-        out.set_item("x-ms-number-of-read-regions", v)?;
-    }
-    if let Some(v) = h.last_state_change_utc.as_ref() {
-        out.set_item("x-ms-last-state-change-utc", v.as_str())?;
-    }
-    if let Some(v) = h.offer_replace_pending {
-        out.set_item("x-ms-offer-replace-pending", v)?;
-    }
-    // Additional modeled fields the driver populates that the legacy path also put in
-    // last_response_headers: partition-key-range id, internal partition id,
-    // resource quota and usage, gateway and service version, script log
-    // results, the tentative-writes flag, and index-transformation /
-    // lazy-indexing progress.
-    // x-ms-alt-content-path / x-ms-content-path / x-ms-schemaversion are still
-    // pub(crate) on the driver (owner_full_name / owner_id / schema_version) and
-    // will appear here once the driver makes them public.
-    if let Some(v) = h.gateway_version.as_ref() {
-        out.set_item("x-ms-gatewayversion", v.as_str())?;
-    }
-    if let Some(v) = h.service_version.as_ref() {
-        out.set_item("x-ms-serviceversion", v.as_str())?;
-    }
-    if let Some(v) = h.resource_quota.as_ref() {
-        out.set_item("x-ms-resource-quota", v.as_str())?;
-    }
-    if let Some(v) = h.resource_usage.as_ref() {
-        out.set_item("x-ms-resource-usage", v.as_str())?;
-    }
-    if let Some(v) = h.has_tentative_writes {
-        out.set_item("x-ms-cosmos-allow-tentative-writes", v)?;
-    }
-    if let Some(v) = h.partition_key_range_id.as_ref() {
-        out.set_item("x-ms-documentdb-partitionkeyrangeid", v.as_str())?;
-    }
-    if let Some(v) = h.internal_partition_id.as_ref() {
-        out.set_item("x-ms-cosmos-internal-partition-id", v.as_str())?;
-    }
-    if let Some(v) = h.log_results.as_ref() {
-        out.set_item("x-ms-documentdb-script-log-results", v.as_str())?;
-    }
-    if let Some(v) = h.collection_index_transformation_progress {
-        out.set_item(
-            "x-ms-documentdb-collection-index-transformation-progress",
-            v,
-        )?;
-    }
-    if let Some(v) = h.collection_lazy_indexing_progress {
-        out.set_item("x-ms-documentdb-collection-lazy-indexing-progress", v)?;
-    }
-    Ok(())
+    Ok(out)
 }
 
 #[cfg(test)]
@@ -782,9 +744,9 @@ mod tests {
     use super::{
         backend_response_tuple_from_feed_error_parts, feed_range_to_response_body,
         named_feed_response_body_to_vec, record_diagnostics_for_responseless, response_body_to_vec,
-        tuple_from_database_feed_result, tuple_from_feed_result,
-        tuple_from_partition_key_ranges_result, tuple_from_result, write_response_headers,
-        DriverTransportError, FeedRangeFromPartitionKeyPayload, UnsupportedQueryFeatureError,
+        response_headers_dict, tuple_from_database_feed_result, tuple_from_feed_result,
+        tuple_from_partition_key_ranges_result, tuple_from_result, DriverTransportError,
+        FeedRangeFromPartitionKeyPayload, UnsupportedQueryFeatureError,
     };
     use azure_core::Bytes;
     use azure_data_cosmos_driver::error::{CosmosError, CosmosStatus};
@@ -856,9 +818,9 @@ mod tests {
                         .get_item("x-ms-retry-after-ms")
                         .unwrap()
                         .unwrap()
-                        .extract::<u64>()
+                        .extract::<String>()
                         .unwrap(),
-                    17
+                    "17"
                 );
                 assert_eq!(
                     tuple.get_item(3).unwrap().extract::<Vec<u8>>().unwrap(),
@@ -952,10 +914,9 @@ mod tests {
     }
 
     #[test]
-    fn write_response_headers_maps_present_fields_and_skips_missing() {
+    fn response_headers_dict_maps_present_fields_and_skips_missing() {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let out = PyDict::new_bound(py);
             let mut headers = CosmosResponseHeaders::new();
             headers.continuation = Some("ct-1".to_string());
             headers.item_count = Some(7);
@@ -970,54 +931,69 @@ mod tests {
             headers.collection_index_transformation_progress = Some(88);
             headers.collection_lazy_indexing_progress = Some(91);
 
-            write_response_headers(&out, &headers).expect("header copy should succeed");
+            let out = response_headers_dict(py, &headers).expect("header copy should succeed");
 
-            assert_eq!(
-                out.get_item("x-ms-continuation")
-                    .expect("dict lookup should succeed")
-                    .expect("continuation should be present")
-                    .extract::<String>()
-                    .expect("continuation must be string"),
-                "ct-1"
-            );
-            assert_eq!(
-                out.get_item("x-ms-item-count")
-                    .expect("dict lookup should succeed")
-                    .expect("item count should be present")
-                    .extract::<u32>()
-                    .expect("item count must be u32"),
-                7
-            );
-            assert_eq!(
-                out.get_item("x-ms-request-duration-ms")
-                    .expect("dict lookup should succeed")
-                    .expect("request duration should be present")
-                    .extract::<f64>()
-                    .expect("request duration must be f64"),
-                12.5
-            );
-            assert_eq!(
-                out.get_item("x-ms-cosmos-allow-tentative-writes")
-                    .expect("dict lookup should succeed")
-                    .expect("tentative writes should be present")
-                    .extract::<bool>()
-                    .expect("tentative writes must be bool"),
-                true
-            );
-            assert_eq!(
-                out.get_item("x-ms-documentdb-collection-index-transformation-progress")
-                    .expect("dict lookup should succeed")
-                    .expect("index transformation progress should be present")
-                    .extract::<i64>()
-                    .expect("index transformation progress must be i64"),
-                88
-            );
+            // Every value is the string the service sends, matching what the
+            // legacy path reads off the HTTP response.
+            for (name, expected) in [
+                ("x-ms-continuation", "ct-1"),
+                ("x-ms-item-count", "7"),
+                ("x-ms-request-duration-ms", "12.5"),
+                ("lsn", "42"),
+                ("x-ms-retry-after-ms", "250"),
+                ("x-ms-gatewayversion", "gateway/1"),
+                ("x-ms-serviceversion", "2026-07-01"),
+                ("x-ms-cosmos-allow-tentative-writes", "True"),
+                ("x-ms-documentdb-partitionkeyrangeid", "3"),
+                ("x-ms-cosmos-internal-partition-id", "p-1"),
+                (
+                    "x-ms-documentdb-collection-index-transformation-progress",
+                    "88",
+                ),
+                ("x-ms-documentdb-collection-lazy-indexing-progress", "91"),
+            ] {
+                assert_eq!(
+                    out.get_item(name)
+                        .expect("dict lookup should succeed")
+                        .unwrap_or_else(|| panic!("{name} should be present"))
+                        .extract::<String>()
+                        .unwrap_or_else(|_| panic!("{name} must be a string")),
+                    expected
+                );
+            }
 
             assert!(
                 out.get_item("x-ms-activity-id")
                     .expect("dict lookup should succeed")
                     .is_none(),
                 "missing driver fields must not be emitted"
+            );
+        });
+    }
+
+    #[test]
+    fn response_headers_dict_reencodes_index_metrics_to_base64() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let mut headers = CosmosResponseHeaders::new();
+            // The driver stores this decoded; Python base64-decodes whatever we
+            // hand it, so it has to leave here in the encoded wire form.
+            headers.index_metrics = Some(r#"{"UtilizedIndexes":[]}"#.to_string());
+
+            let out = response_headers_dict(py, &headers).expect("header copy should succeed");
+
+            let emitted = out
+                .get_item("x-ms-cosmos-index-utilization")
+                .expect("dict lookup should succeed")
+                .expect("index utilization should be present")
+                .extract::<String>()
+                .expect("index utilization must be a string");
+
+            let decoded =
+                azure_core::base64::decode(&emitted).expect("emitted value must be valid base64");
+            assert_eq!(
+                String::from_utf8(decoded).expect("decoded value must be utf-8"),
+                r#"{"UtilizedIndexes":[]}"#
             );
         });
     }

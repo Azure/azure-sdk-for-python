@@ -35,6 +35,7 @@ pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosRustAAD,
 
 @pytest.fixture
 def container_for(request):
+    """Create a unique container for one token-authentication test."""
     client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
     db = client.create_database_if_not_exists("parity_db")
     cname = "auth_" + request.node.name + "_" + uuid.uuid4().hex[:6]

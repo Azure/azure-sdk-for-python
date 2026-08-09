@@ -290,20 +290,21 @@ class BackendComparison:
         "raw-headers accessor on the diagnostics object — half-landed "
         "(error path shipped in driver v0.4.0; success path still open)",
     )
-    _PUSHBACK_TYPED_HEADERS: ClassVar[Tuple[int, str]] = (
-        7,
-        "five typed headers missing from CosmosResponseHeaders — open "
-        "against driver v0.4.0",
-    )
     _PUSHBACK_CONTAINER_IDENTITY: ClassVar[Tuple[int, str]] = (
-        8,
+        7,
         "container-identity headers parsed but pub(crate) in the driver "
         "— wont-fix (revisit only with a customer escalation)",
     )
     _PUSHBACK_DIAGNOSTIC_HEADERS: ClassVar[Tuple[int, str]] = (
-        21,
+        17,
         "diagnostic/networking headers that differ by backend — low "
         "customer impact, tracked for audit-signal cleanup",
+    )
+    _PUSHBACK_THROUGHPUT_RANGE_HEADERS: ClassVar[Tuple[int, str]] = (
+        29,
+        "the offer response headers reporting the throughput range a "
+        "database or container is allowed to be set to are not surfaced "
+        "on the rust path",
     )
     _HEADER_TO_PUSHBACK: ClassVar[Dict[str, Tuple[int, str]]] = {
         # #6 — HTTP framing headers azure-core surfaces but the rust
@@ -312,17 +313,12 @@ class BackendComparison:
         "server": _PUSHBACK_RAW_HEADERS,
         "content-type": _PUSHBACK_RAW_HEADERS,
         "content-length": _PUSHBACK_RAW_HEADERS,
+        "content-location": _PUSHBACK_RAW_HEADERS,
         "cache-control": _PUSHBACK_RAW_HEADERS,
         "pragma": _PUSHBACK_RAW_HEADERS,
         "strict-transport-security": _PUSHBACK_RAW_HEADERS,
-        # #7 — five typed Cosmos headers not modelled on
-        # CosmosResponseHeaders.
-        "x-ms-cosmos-physical-partition-id": _PUSHBACK_TYPED_HEADERS,
-        "x-ms-current-replica-set-size": _PUSHBACK_TYPED_HEADERS,
-        "x-ms-current-write-quorum": _PUSHBACK_TYPED_HEADERS,
-        "x-ms-xp-role": _PUSHBACK_TYPED_HEADERS,
-        "x-ms-schemaversion": _PUSHBACK_TYPED_HEADERS,
-        # #8 — container-identity headers explicitly declined.
+        "transfer-encoding": _PUSHBACK_RAW_HEADERS,
+        # #7 — container-identity headers explicitly declined.
         "x-ms-alt-content-path": _PUSHBACK_CONTAINER_IDENTITY,
         "x-ms-content-path": _PUSHBACK_CONTAINER_IDENTITY,
         # #21 — diagnostic/networking headers that differ by backend
@@ -330,6 +326,14 @@ class BackendComparison:
         "x-ms-thinclient-route-via-proxy": _PUSHBACK_DIAGNOSTIC_HEADERS,
         "x-ms-cosmos-internal-partition-id": _PUSHBACK_DIAGNOSTIC_HEADERS,
         "x-ms-cosmos-sdk-diagnostics": _PUSHBACK_DIAGNOSTIC_HEADERS,
+        "x-ms-cosmos-query-execution-info": _PUSHBACK_DIAGNOSTIC_HEADERS,
+        "x-ms-cosmos-is-partition-key-delete-pending": _PUSHBACK_DIAGNOSTIC_HEADERS,
+        # #29 — offer-response headers reporting the allowed throughput
+        # range. Only appear on offer responses, so only throughput
+        # audits see them.
+        "x-ms-cosmos-min-throughput": _PUSHBACK_THROUGHPUT_RANGE_HEADERS,
+        "x-ms-cosmos-offer-max-allowed-throughput": _PUSHBACK_THROUGHPUT_RANGE_HEADERS,
+        "x-ms-cosmos-instant-scale-up-value": _PUSHBACK_THROUGHPUT_RANGE_HEADERS,
     }
 
     def _is_header_diff(self, line: str) -> bool:
@@ -633,12 +637,14 @@ _DEFAULT_IGNORED_BODY_FIELDS = frozenset({
 
 def _filtered_headers(h: Optional[Dict[str, str]],
                       ignored: frozenset) -> Dict[str, str]:
+    """Return comparable response headers with ignored names removed."""
     if h is None:
         return {}
     return {k.lower(): v for k, v in h.items() if k.lower() not in ignored}
 
 
 def _filtered_body(b: Any, ignored: frozenset) -> Any:
+    """Remove service-generated fields from one result or result list."""
     if isinstance(b, dict):
         return {k: v for k, v in b.items() if k not in ignored}
     # List-returning operations (e.g. read_items) hand back a list of
@@ -688,7 +694,11 @@ _EXCEPTION_MESSAGE_NOISE = [
     (re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"), "<ts>"),
     # The service-generated replica identifier in a not-found Request URI.
     # Separate backend calls can legitimately reach different replicas.
-    (re.compile(r"(?<=/replicas/)\d+(?=s\b)"), "<replica>"),
+    # The trailing letter says which kind answered -- ``p`` for the primary,
+    # ``s`` for a secondary -- and that also varies per call, so both the
+    # number and the letter have to be redacted or the comparison flakes
+    # whenever the two backends happen to land on different replica kinds.
+    (re.compile(r"(?<=/replicas/)\d+[ps]\b"), "<replica>"),
     # Collapse any whitespace run -- including embedded newlines from
     # the driver's multi-line diagnostics dump -- to a single space so
     # platform line-endings don't matter.
@@ -873,6 +883,7 @@ def _observed_backend_name(client: Any) -> str:
 
 
 def _assert_expected_backend(client: Any, expected: str) -> None:
+    """Fail when a client uses a different backend than requested."""
     observed = _observed_backend_name(client)
     if observed != expected:
         raise AssertionError(
@@ -883,6 +894,7 @@ def _assert_expected_backend(client: Any, expected: str) -> None:
 
 
 def _binding_operation_count() -> int:
+    """Return the number of operations observed by the Rust extension."""
     try:
         from azure.cosmos import _rust
         counter = getattr(_rust, "operation_count", None)
@@ -894,6 +906,7 @@ def _binding_operation_count() -> int:
 
 
 def _rust_fallback_count() -> int:
+    """Return the number of Rust calls that continued through Python."""
     from azure.cosmos._backend.base import rust_compatibility_fallback_count
     return rust_compatibility_fallback_count()
 

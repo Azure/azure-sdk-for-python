@@ -44,6 +44,9 @@ from azure.cosmos._backend.base import (
     OP_TO_BINDING_METHOD,
     OP_FEED_RANGE_FROM_PARTITION_KEY,
     OP_LIST_DATABASES,
+    OP_QUERY_DATABASES,
+    OP_LIST_CONTAINERS,
+    OP_QUERY_CONTAINERS,
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
     OP_READ_FEED_RANGES,
@@ -56,7 +59,11 @@ from azure.cosmos._backend.base import (
 )
 from azure.cosmos._backend.base import raise_account_read_unsupported
 from azure.cosmos._backend import _driver_registry
-from azure.cosmos._backend._shared import configure_packaged_query_plan_interop
+from azure.cosmos._backend._shared import (
+    configure_packaged_query_plan_interop,
+    driver_transport_error_type,
+    driver_unsupported_query_error_type,
+)
 from azure.cosmos._backend._driver_registry import (
     StrictEngineIsolationError,
     ProxyPolicyConflictError,
@@ -168,6 +175,28 @@ def test_configure_packaged_query_plan_interop_preserves_explicit_directory(
 
 
 @pytest.mark.parametrize(
+    "resolver",
+    [driver_transport_error_type, driver_unsupported_query_error_type],
+)
+def test_binding_error_type_matches_nothing_without_extension(resolver):
+    """Prove a missing Rust error type cannot match unrelated exceptions."""
+    assert resolver(None) == ()
+
+
+@pytest.mark.parametrize(
+    ("resolver", "error_name"),
+    [
+        (driver_transport_error_type, "DriverTransportError"),
+        (driver_unsupported_query_error_type, "UnsupportedQueryFeatureError"),
+    ],
+)
+def test_binding_error_type_rejects_stale_extension(resolver, error_name):
+    """Prove stale Rust error types are not reused after a module change."""
+    with pytest.raises(RuntimeError, match=error_name):
+        resolver(object())
+
+
+@pytest.mark.parametrize(
     "module_name",
     [
         "azure.cosmos._backend.rust",
@@ -200,6 +229,10 @@ def test_backend_import_configures_packaged_query_plan_interop(module_name):
         os.environ.pop("AZURE_COSMOS_QUERYPLANINTEROP_DIR", None)
         fake_rust = types.ModuleType("azure.cosmos._rust")
         fake_rust.__file__ = str(package_directory / "_rust.pyd")
+        fake_rust.DriverTransportError = type("DriverTransportError", (RuntimeError,), {{}})
+        fake_rust.UnsupportedQueryFeatureError = type(
+            "UnsupportedQueryFeatureError", (RuntimeError,), {{}}
+        )
         azure.cosmos._rust = fake_rust
         sys.modules["azure.cosmos._rust"] = fake_rust
         sys.modules.pop({module_name!r}, None)
@@ -258,6 +291,7 @@ _IMPORT_RE = re.compile(
 
 
 def _iter_py_files():
+    """Yield Python source files included in the import-boundary check."""
     for path in _PKG_ROOT.rglob("*.py"):
         if "__pycache__" in path.parts:
             continue
@@ -267,6 +301,7 @@ def _iter_py_files():
 # Read each source file once and keep its import lines, so the test below can
 # scan that list instead of re-reading every file for each guarded name.
 def _collect_import_lines():
+    """Return backend imports found outside their approved files."""
     cached = []
     for py in _iter_py_files():
         rel = py.relative_to(_PKG_ROOT)
@@ -452,6 +487,7 @@ def test_rust_backend_dispatches_to_binding(monkeypatch):
 
 
 def test_rust_backend_resolves_container_metadata_through_binding(monkeypatch):
+    """Prove sync Rust requests resolve container metadata through Rust."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "handle-1"
     fake_module.resolve_container_metadata.return_value = (
@@ -474,7 +510,10 @@ def test_rust_backend_resolves_container_metadata_through_binding(monkeypatch):
 
 
 def test_rust_backend_metadata_resolution_allows_older_binding(monkeypatch):
+    """Prove sync metadata reads work with an older Rust extension."""
     class OlderBinding:
+        """Provide only the entry point available in an older extension."""
+
         @staticmethod
         def init_client(*_args):
             return "handle-1"
@@ -531,10 +570,16 @@ def test_paged_operations_are_not_single_response_operations():
     assert OP_QUERY_ITEMS not in OP_TO_BINDING_METHOD
     assert OP_READ_ALL_ITEMS not in OP_TO_BINDING_METHOD
     assert OP_LIST_DATABASES not in OP_TO_BINDING_METHOD
+    assert OP_QUERY_DATABASES not in OP_TO_BINDING_METHOD
+    assert OP_LIST_CONTAINERS not in OP_TO_BINDING_METHOD
+    assert OP_QUERY_CONTAINERS not in OP_TO_BINDING_METHOD
     assert QUERY_TO_BINDING_METHOD == {
         OP_QUERY_ITEMS: "query_items",
         OP_READ_ALL_ITEMS: "read_all_items",
         OP_LIST_DATABASES: "list_databases",
+        OP_QUERY_DATABASES: "query_databases",
+        OP_LIST_CONTAINERS: "list_containers",
+        OP_QUERY_CONTAINERS: "query_containers",
     }
 
 
@@ -544,6 +589,8 @@ def test_rust_backend_surfaces_driver_query_capability_rejection(monkeypatch):
     can fall back to the legacy path instead of surfacing a raw driver error.
     """
     class _UnsupportedQueryFeatureError(RuntimeError):
+        """Represent a query feature rejected by the Rust driver."""
+
         pass
 
     fake_module = MagicMock()
@@ -869,6 +916,7 @@ def test_async_rust_backend_dispatches_to_binding(monkeypatch):
 
 
 def test_async_rust_backend_resolves_container_metadata_through_binding(monkeypatch):
+    """Prove async Rust requests resolve container metadata through Rust."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "handle-1"
     fake_module.resolve_container_metadata_async = AsyncMock(
@@ -897,7 +945,10 @@ def test_async_rust_backend_resolves_container_metadata_through_binding(monkeypa
 
 
 def test_async_rust_backend_metadata_resolution_allows_older_binding(monkeypatch):
+    """Prove async metadata reads work with an older Rust extension."""
     class OlderBinding:
+        """Provide only the entry point available in an older extension."""
+
         @staticmethod
         def init_client(*_args):
             return "handle-1"
@@ -979,6 +1030,8 @@ def test_async_rust_backend_surfaces_driver_query_capability_rejection(monkeypat
     ``QueryNotSupportedByBackendError`` for legacy fallback.
     """
     class _UnsupportedQueryFeatureError(RuntimeError):
+        """Represent an async query feature rejected by the Rust driver."""
+
         pass
 
     fake_module = MagicMock()
@@ -1441,6 +1494,8 @@ def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
     """
 
     class _RustDispatchBackend(CosmosBackend):
+        """Return a fixed response while recording the prepared request."""
+
         name = BACKEND_NAME_RUST
 
         def __init__(self, response):
@@ -1632,6 +1687,7 @@ def test_async_factory_carries_preferred_locations_into_rust_backend(monkeypatch
 
 
 def test_sync_factory_carries_transport_timeouts_into_rust_backend(monkeypatch):
+    """Prove sync backend creation preserves transport timeouts."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     backend = make_backend(
         BACKEND_NAME_RUST,
@@ -1648,6 +1704,7 @@ def test_sync_factory_carries_transport_timeouts_into_rust_backend(monkeypatch):
 
 
 def test_async_factory_carries_transport_timeouts_into_rust_backend(monkeypatch):
+    """Prove async backend creation preserves transport timeouts."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     backend = make_async_backend(
         BACKEND_NAME_RUST,
@@ -1664,6 +1721,7 @@ def test_async_factory_carries_transport_timeouts_into_rust_backend(monkeypatch)
 
 
 def test_sync_client_carries_effective_default_transport_timeouts(monkeypatch):
+    """Prove sync clients pass effective default timeouts to Rust."""
     monkeypatch.setattr(
         sync_cosmos_client_module, "CosmosClientConnection", MagicMock()
     )
@@ -1681,6 +1739,7 @@ def test_sync_client_carries_effective_default_transport_timeouts(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_async_client_carries_explicit_transport_timeouts(monkeypatch):
+    """Prove async clients pass explicit transport timeouts to Rust."""
     monkeypatch.setattr(
         async_cosmos_client_module, "CosmosClientConnection", MagicMock()
     )
@@ -1947,6 +2006,7 @@ def test_resolve_client_transport_timeouts_honors_alias_and_custom_policy():
 
 
 def test_build_client_config_carries_transport_timeouts():
+    """Prove Rust client configuration includes transport timeouts."""
     config = build_client_config(
         None,
         connection_timeout_seconds=1.25,
@@ -1970,6 +2030,7 @@ def test_build_client_config_carries_transport_timeouts():
 def test_build_client_config_rejects_driver_unsupported_transport_timeouts(
     kwargs, message
 ):
+    """Prove unsupported timeout values fail instead of changing silently."""
     with pytest.raises(ValueError, match=message):
         build_client_config(None, **kwargs)
 
@@ -2083,6 +2144,7 @@ def test_register_proxy_policy_tolerates_none_config():
 
 
 def test_register_transport_timeout_policy_accepts_equal_values():
+    """Prove shared engines accept matching timeout settings."""
     config = build_client_config(
         None,
         connection_timeout_seconds=5,
@@ -2100,6 +2162,7 @@ def test_register_transport_timeout_policy_accepts_equal_values():
     ],
 )
 def test_register_transport_timeout_policy_rejects_conflicts(first, second):
+    """Prove shared engines reject conflicting timeout settings."""
     register_transport_timeout_policy(
         build_client_config(
             None,
@@ -2677,6 +2740,7 @@ def _new_rust_backend():
 
 
 def _new_async_rust_backend():
+    """Build an async Rust backend with standard fake dependencies."""
     return AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
 
 
@@ -3467,6 +3531,7 @@ def test_make_async_backend_rejects_connection_cert_on_rust(monkeypatch):
 
 
 def _rust_backend(url, config=None, strict=False):
+    """Build a sync Rust backend with standard fake dependencies."""
     return RustBackend(
         endpoint=url, master_key="k", client_config=config, strict_isolation=strict
     )
@@ -3953,6 +4018,7 @@ def test_make_backend_strict_isolation_from_env(monkeypatch):
 
 
 def _transport_test_request():
+    """Return a prepared request used by transport-error tests."""
     return PreparedRequest(
         op="read_item",
         container_link="dbs/d/colls/c",
@@ -3960,6 +4026,11 @@ def _transport_test_request():
         partition_key_header='["a"]',
         headers={},
     )
+
+
+class _FakeDriverTransportError(RuntimeError):
+    """Represent a transport failure raised by the fake Rust driver."""
+    pass
 
 
 def test_sync_backend_maps_transport_error_to_service_response_error(monkeypatch):
@@ -3971,6 +4042,9 @@ def test_sync_backend_maps_transport_error_to_service_response_error(monkeypatch
     backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
     backend._handle = "handle"  # skip the (blocking) handle build
     monkeypatch.setattr(rust_mod, "_rust_module", object())  # pretend binding present
+    monkeypatch.setattr(
+        rust_mod, "_DRIVER_TRANSPORT_ERROR", _FakeDriverTransportError
+    )
 
     transport_exc_type = rust_mod._DRIVER_TRANSPORT_ERROR
     message = "driver execute_singleton_operation failed: status 503 (ServiceUnavailable): boom"
@@ -3994,6 +4068,9 @@ def test_async_backend_maps_transport_error_to_service_response_error(monkeypatc
     backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
     backend._handle = "handle"  # skip the (background-thread) handle build
     monkeypatch.setattr(async_rust_mod, "_rust_module", object())
+    monkeypatch.setattr(
+        async_rust_mod, "_DRIVER_TRANSPORT_ERROR", _FakeDriverTransportError
+    )
 
     transport_exc_type = async_rust_mod._DRIVER_TRANSPORT_ERROR
     message = "driver execute_singleton_operation failed: status 503 (ServiceUnavailable): boom"
@@ -4020,6 +4097,9 @@ def test_sync_list_databases_transport_error_does_not_replay_legacy(monkeypatch)
     backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
     backend._handle = "handle"
     monkeypatch.setattr(rust_mod, "_rust_module", object())
+    monkeypatch.setattr(
+        rust_mod, "_DRIVER_TRANSPORT_ERROR", _FakeDriverTransportError
+    )
     transport_exc_type = rust_mod._DRIVER_TRANSPORT_ERROR
 
     def boom(_handle, _prepared):
@@ -4049,6 +4129,9 @@ def test_async_list_databases_transport_error_does_not_replay_legacy(monkeypatch
     backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
     backend._handle = "handle"
     monkeypatch.setattr(async_rust_mod, "_rust_module", object())
+    monkeypatch.setattr(
+        async_rust_mod, "_DRIVER_TRANSPORT_ERROR", _FakeDriverTransportError
+    )
     transport_exc_type = async_rust_mod._DRIVER_TRANSPORT_ERROR
 
     async def boom(_handle, _prepared):

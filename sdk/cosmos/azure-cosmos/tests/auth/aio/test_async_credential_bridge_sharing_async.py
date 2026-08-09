@@ -41,6 +41,7 @@ _SHARED_CLIENT_COUNT = 4
 
 
 def _bridge_thread_count() -> int:
+    """Return the number of active asynchronous credential worker threads."""
     return sum(1 for t in threading.enumerate() if t.name == _BRIDGE_THREAD_NAME)
 
 

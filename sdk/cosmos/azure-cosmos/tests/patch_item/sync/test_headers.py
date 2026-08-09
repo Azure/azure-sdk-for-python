@@ -26,11 +26,13 @@ request_throughput_bucket_number = 3
 
 
 def request_raw_response_hook(response):
+    """Verify the prepared request contains the customer's bucket."""
     assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
             == str(request_throughput_bucket_number))
 
 
 class TestHeaders(unittest.TestCase):
+    """Verify sync patch request headers and the resulting item."""
 
     @classmethod
     def setUpClass(cls):

@@ -37,6 +37,7 @@ from typing import Any, Callable, Mapping, Optional
 from ... import exceptions
 from ..._backend.base import (
     OP_CREATE_DATABASE,
+    OP_DELETE_DATABASE,
     OP_READ_DATABASE,
     LegacyOperation,
 )
@@ -44,7 +45,9 @@ from ..._constants import _Constants as Constants
 from ..._cosmos_responses import CosmosDict
 from ..._helpers._request_prep import (
     build_create_database_prepared,
+    build_delete_database_prepared,
     build_read_database_prepared,
+    is_delete_database_rust_eligible,
     is_read_database_rust_eligible,
     RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
 )
@@ -57,6 +60,7 @@ class AsyncDatabaseHelper:
     """Route async database operations through the selected backend boundary."""
 
     def __init__(self, client_connection: Any, backend: Optional[AsyncCosmosBackend]) -> None:
+        """Store the client connection and selected implementation."""
         self._client_connection = client_connection
         self._backend = coerce_async_backend(backend)
 
@@ -150,6 +154,49 @@ class AsyncDatabaseHelper:
             ),
         )
         return result
+
+    async def delete_database(
+        self,
+        database_link: Any,
+        request_options: Mapping[str, Any],
+        *,
+        kwargs: Optional[Mapping[str, Any]] = None,
+    ) -> None:
+        """Delete a database."""
+        operation_kwargs = dict(kwargs or {})
+        operation_kwargs.pop("response_hook", None)
+
+        async def build_prepared():
+            """Build the prepared delete-database request.
+
+            The async backend awaits this callback, so the shared synchronous
+            builder is wrapped in a coroutine rather than passed directly.
+            """
+            return build_delete_database_prepared(
+                database_link,
+                request_options,
+                kwargs=operation_kwargs,
+            )
+
+        await self._backend.run_operation(
+            build_prepared=build_prepared,
+            legacy_operation=LegacyOperation(
+                op=OP_DELETE_DATABASE,
+                invoke=lambda: self._client_connection.DeleteDatabase(
+                    database_link,
+                    options=request_options,
+                    **operation_kwargs,
+                ),
+            ),
+            parse_response=lambda response: parse_backend_response(
+                response,
+                client_connection=self._client_connection,
+            ),
+            rust_eligible=is_delete_database_rust_eligible(
+                request_options,
+                operation_kwargs,
+            ),
+        )
 
     async def create_database_if_not_exists(
         self,

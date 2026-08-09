@@ -33,6 +33,11 @@ from azure.cosmos.aio import _container as async_container_module
 #: Each names a symptom of the anti-pattern the audit flagged: reading the raw
 #: ``_backend`` attribute, naming a Rust routing gate/executor, or the bare
 #: identifier a case-insensitive "Rust" match would catch in code (not prose).
+#:
+#: There are no offer ``try_*_with_rust_backend`` entries here because those
+#: executors no longer exist: engine selection for the offer operations runs
+#: through ``CosmosBackend.run_operation`` like every other operation, so there
+#: is no second executor for a proxy to reach for.
 _FORBIDDEN_SUBSTRINGS = (
     'getattr(self.client_connection, "_backend"',
     "getattr(self.client_connection, '_backend'",
@@ -41,8 +46,6 @@ _FORBIDDEN_SUBSTRINGS = (
     "can_use_rust_backend_for_read_feed_ranges",
     "can_use_rust_backend_for_feed_range_from_partition_key",
     "can_use_rust_backend_for_is_feed_range_subset",
-    "try_read_offer_with_rust_backend",
-    "try_replace_offer_with_rust_backend",
     "try_read_feed_ranges_with_rust_backend",
     "try_feed_range_from_partition_key_with_rust_backend",
     "try_is_feed_range_subset_with_rust_backend",
@@ -59,10 +62,12 @@ _THROUGHPUT_AND_FEED_RANGE_METHODS = (
 
 
 def _read_source(module) -> str:
+    """Read the source file for a loaded container module."""
     return pathlib.Path(inspect.getfile(module)).read_text(encoding="utf-8")
 
 
 def _container_class(tree: ast.AST):
+    """Return the ``ContainerProxy`` class from a parsed module."""
     for node in tree.body:
         if isinstance(node, ast.ClassDef) and node.name == "ContainerProxy":
             return node
@@ -70,6 +75,7 @@ def _container_class(tree: ast.AST):
 
 
 def _method_source(tree: ast.AST, source: str, method_name: str) -> str:
+    """Return one public container method's source text."""
     class_node = _container_class(tree)
     for node in class_node.body:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == method_name:
@@ -86,9 +92,11 @@ class _NoRustRoutingInContainerBase:
     module = None  # set by subclass
 
     def _source(self) -> str:
+        """Return the source of the container module the subclass points at."""
         return _read_source(self.module)
 
     def test_module_source_has_no_forbidden_backend_inspection_or_rust_naming(self):
+        """Prove container modules contain no direct implementation checks."""
         source = self._source()
         hits = [needle for needle in _FORBIDDEN_SUBSTRINGS if needle in source]
         self.assertEqual(
@@ -137,10 +145,12 @@ class _NoRustRoutingInContainerBase:
 
 
 class TestSyncContainerHasNoRustRouting(_NoRustRoutingInContainerBase, unittest.TestCase):
+    """Apply source checks to the synchronous container API."""
     module = sync_container_module
 
 
 class TestAsyncContainerHasNoRustRouting(_NoRustRoutingInContainerBase, unittest.TestCase):
+    """Apply source checks to the asynchronous container API."""
     module = async_container_module
 
 

@@ -31,6 +31,7 @@ from azure.cosmos._backend.base import (
     CosmosBackend,
     LegacyOperation,
     OP_LIST_DATABASES,
+    OP_QUERY_DATABASES,
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
     PreparedQuery,
@@ -53,6 +54,7 @@ from azure.cosmos.partition_key import _Empty
 from azure.cosmos._query_rust_routing import (
     _build_prepared_headers_for_rust_feed_dispatch,
     can_use_rust_backend_for_list_databases_page,
+    can_use_rust_backend_for_query_databases_page,
     can_use_rust_backend_for_query_page,
     can_use_rust_backend_for_read_all_items_page,
 )
@@ -180,6 +182,7 @@ class _SequencedAsyncBackend(AsyncCosmosBackend):
 
 
 def _new_sync_connection() -> SyncConnection:
+    """Create a synchronous connection for routing tests."""
     conn = SyncConnection.__new__(SyncConnection)
     conn._backend = None
     conn._query_compatibility_mode = SyncConnection._QueryCompatibilityMode.Query
@@ -202,6 +205,7 @@ def _new_sync_connection() -> SyncConnection:
 
 
 def _new_async_connection() -> AsyncConnection:
+    """Create an asynchronous connection for routing tests."""
     conn = AsyncConnection.__new__(AsyncConnection)
     conn._backend = None
     conn._query_compatibility_mode = AsyncConnection._QueryCompatibilityMode.Query
@@ -232,6 +236,7 @@ def _run_sync_query_feed(
     response_headers=None,
     **kwargs,
 ):
+    """Run one synchronous item-query page through the shared connection."""
     return conn._CosmosClientConnection__QueryFeed(
         "/dbs/db/colls/c/docs/",
         http_constants.ResourceType.Document,
@@ -255,6 +260,7 @@ async def _run_async_query_feed(
     response_headers=None,
     **kwargs,
 ):
+    """Run one asynchronous item-query page through the shared connection."""
     return await conn._CosmosClientConnection__QueryFeed(
         "/dbs/db/colls/c/docs/",
         http_constants.ResourceType.Document,
@@ -1771,6 +1777,7 @@ def test_async_unrelated_not_implemented_error_is_not_replayed():
 
 
 def test_sync_empty_page_iterator_is_not_replayed():
+    """A missing Rust page raises one public error and does not repeat the call."""
     class _EmptyBackend(CosmosBackend):
         def execute(self, prepared):
             raise AssertionError("single-response execution is not expected")
@@ -1794,6 +1801,7 @@ def test_sync_empty_page_iterator_is_not_replayed():
 
 
 def test_async_empty_page_iterator_is_not_replayed():
+    """A missing async Rust page raises one public error and is not repeated."""
     class _EmptyBackend(AsyncCosmosBackend):
         async def execute(self, prepared):
             raise AssertionError("single-response execution is not expected")
@@ -1825,6 +1833,7 @@ def test_async_empty_page_iterator_is_not_replayed():
 
 
 def test_sync_missing_backend_attribute_is_not_silently_treated_as_legacy():
+    """A broken connection state raises its public error instead of using Python."""
     conn = _new_sync_connection()
     del conn._backend
 
@@ -1837,6 +1846,7 @@ def test_sync_missing_backend_attribute_is_not_silently_treated_as_legacy():
 
 
 def test_async_missing_backend_attribute_is_not_silently_treated_as_legacy():
+    """A broken async connection state raises instead of using Python."""
     async def _run():
         conn = _new_async_connection()
         del conn._backend
@@ -1946,5 +1956,291 @@ def test_async_read_all_legacy_fallback_updates_session(monkeypatch):
         assert conn.last_response_headers["x-ms-session-token"] == "st-async-1"
         assert response_headers["x-ms-session-token"] == "st-async-1"
         assert len(update_calls) == 1
+
+    asyncio.run(_run())
+
+
+# Database-query routing preserves query text, options, pages, and continuations.
+
+
+def _run_sync_database_query_feed(conn, *, query, options, **kwargs):
+    """Run one synchronous database-query page."""
+    return conn._CosmosClientConnection__QueryFeed(
+        "/dbs",
+        http_constants.ResourceType.Database,
+        "",
+        lambda result: result["Databases"],
+        lambda _connection, body: body,
+        query,
+        options,
+        **kwargs,
+    )
+
+
+async def _run_async_database_query_feed(conn, *, query, options, **kwargs):
+    """Run one asynchronous database-query page."""
+    return await conn._CosmosClientConnection__QueryFeed(
+        "/dbs",
+        http_constants.ResourceType.Database,
+        "",
+        lambda result: result["Databases"],
+        lambda _connection, body: body,
+        query,
+        options,
+        **kwargs,
+    )
+
+
+@pytest.mark.parametrize(
+    ("query_payload", "options", "is_query_plan", "resource_type"),
+    [
+        (None, {}, False, http_constants.ResourceType.Database),
+        ({"query": "SELECT * FROM root r"}, {}, True, http_constants.ResourceType.Database),
+        ({"query": "SELECT * FROM root r"}, {}, False, http_constants.ResourceType.Document),
+        (
+            {"query": "SELECT * FROM root r"},
+            {"changeFeedState": object()},
+            False,
+            http_constants.ResourceType.Database,
+        ),
+        (
+            {"query": "SELECT * FROM root r"},
+            {Constants.Kwargs.AVAILABILITY_STRATEGY: False},
+            False,
+            http_constants.ResourceType.Database,
+        ),
+        (
+            "SELECT * FROM root r",
+            {},
+            False,
+            http_constants.ResourceType.Database,
+        ),
+    ],
+)
+def test_query_databases_gate_rejects_shapes_rust_cannot_serve(
+    query_payload, options, is_query_plan, resource_type
+):
+    """Unsupported database-query shapes use Python."""
+    assert not can_use_rust_backend_for_query_databases_page(
+        query_payload=query_payload,
+        options=options,
+        kwargs={},
+        is_query_plan=is_query_plan,
+        resource_type=resource_type,
+    )
+
+
+def test_query_databases_gate_accepts_a_plain_account_query():
+    """A supported parameterized database query uses Rust."""
+    assert can_use_rust_backend_for_query_databases_page(
+        query_payload={
+            "query": "SELECT * FROM root r WHERE r.id = @id",
+            "parameters": [{"name": "@id", "value": "db-1"}],
+        },
+        options={"maxItemCount": 10},
+        kwargs={},
+        is_query_plan=False,
+        resource_type=http_constants.ResourceType.Database,
+    )
+
+
+def test_sync_query_databases_backend_delegates_account_query(monkeypatch):
+    """Rust receives the database query, parameters, page options, and headers."""
+    conn = _new_sync_connection()
+    backend = _CapturingSyncBackend(
+        BackendResponse(
+            status_code=200,
+            headers=CaseInsensitiveDict({"x-ms-continuation": "db-ct"}),
+            body=b'{"Databases":[{"id":"db-1"}]}',
+        )
+    )
+    conn._backend = backend
+    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: dict(args[1]))
+    monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
+
+    result, headers = _run_sync_database_query_feed(
+        conn,
+        query={
+            "query": "SELECT * FROM root r WHERE r.id = @id",
+            "parameters": [{"name": "@id", "value": "db-1"}],
+        },
+        options={
+            "maxItemCount": 1,
+            "continuation": "start",
+            "initialHeaders": {
+                "x-test-header": "yes",
+                "x-ms-cosmos-throughput-bucket": "7",
+            },
+        },
+    )
+
+    assert result == [{"id": "db-1"}]
+    assert headers["x-ms-continuation"] == "db-ct"
+    assert backend.prepared.op == OP_QUERY_DATABASES
+    assert backend.prepared.container_link == ""
+    assert backend.prepared.partition_key_header is None
+    assert backend.prepared.query == "SELECT * FROM root r WHERE r.id = @id"
+    assert backend.prepared.parameters == ({"name": "@id", "value": "db-1"},)
+    assert backend.prepared.max_item_count == 1
+    assert backend.prepared.continuation == "start"
+    assert backend.prepared.headers["x-ms-cosmos-throughput-bucket"] == "7"
+    assert backend.prepared.headers["initialHeaders"] == {"x-test-header": "yes"}
+
+
+def test_query_databases_binding_request_carries_the_query_body():
+    """The Rust request contains the complete database query body."""
+    binding_request = _sync_binding_request_from_page(
+        PreparedQuery(
+            op=OP_QUERY_DATABASES,
+            container_link="",
+            query="SELECT * FROM root r WHERE r.id = @id",
+            parameters=({"name": "@id", "value": "db-1"},),
+            max_item_count=2,
+            continuation="token",
+            headers={},
+        )
+    )
+
+    assert binding_request.op == OP_QUERY_DATABASES
+    assert binding_request.container_link == ""
+    assert json.loads(binding_request.body_bytes) == {
+        "query": "SELECT * FROM root r WHERE r.id = @id",
+        "parameters": [{"name": "@id", "value": "db-1"}],
+    }
+    assert binding_request.headers["x-ms-max-item-count"] == "2"
+    assert binding_request.headers["x-ms-continuation"] == "token"
+
+
+@pytest.mark.parametrize(
+    "options, kwargs",
+    [
+        ({"initialHeaders": {"user-agent": "custom"}}, {}),
+        ({Constants.Kwargs.READ_TIMEOUT: 0.5}, {}),
+        ({Constants.Kwargs.TIMEOUT: 0.5}, {Constants.Kwargs.TIMEOUT: 0.5}),
+        ({Constants.Kwargs.AVAILABILITY_STRATEGY: False}, {}),
+        ({}, {"raw_request_hook": lambda _request: None}),
+    ],
+)
+def test_query_databases_backend_falls_back_for_unrepresentable_options(monkeypatch, options, kwargs):
+    """Unsupported database-query options use Python."""
+    conn = _new_sync_connection()
+    backend = _CapturingSyncBackend(BackendResponse(status_code=200))
+    conn._backend = backend
+    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
+    monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
+    monkeypatch.setattr(
+        conn,
+        "_CosmosClientConnection__Post",
+        lambda *args, **kwargs: ({"Databases": []}, CaseInsensitiveDict()),
+    )
+    monkeypatch.setattr(conn, "_UpdateSessionIfRequired", lambda *args, **kwargs: None)
+
+    result, _ = _run_sync_database_query_feed(
+        conn,
+        query={"query": "SELECT * FROM root r"},
+        options=options,
+        **kwargs,
+    )
+
+    assert result == []
+    assert backend.prepared is None
+
+
+def test_sync_query_databases_pages_carry_the_continuation_token(monkeypatch):
+    """Database-query pages stay ordered and carry the continuation forward."""
+    conn = _new_sync_connection()
+    backend = _SequencedSyncBackend()
+    conn._backend = backend
+    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
+    monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
+
+    query = {"query": "SELECT * FROM root r"}
+    first_page, first_headers = _run_sync_database_query_feed(
+        conn, query=query, options={"maxItemCount": 1}
+    )
+    second_page, _ = _run_sync_database_query_feed(
+        conn,
+        query=query,
+        options={"maxItemCount": 1, "continuation": first_headers["x-ms-continuation"]},
+    )
+
+    assert first_page == [{"id": "db-1"}]
+    assert second_page == [{"id": "db-2"}]
+    assert [request.op for request in backend.prepared] == [OP_QUERY_DATABASES] * 2
+    assert [request.continuation for request in backend.prepared] == [None, "next-db-page"]
+    assert [request.max_item_count for request in backend.prepared] == [1, 1]
+
+
+def test_async_query_databases_backend_delegates_account_query(monkeypatch):
+    """Async Rust receives the complete database query and page options."""
+    async def _run() -> None:
+        """Wire a capturing backend and assert the full query request is forwarded."""
+        conn = _new_async_connection()
+        backend = _CapturingAsyncBackend(
+            BackendResponse(
+                status_code=200,
+                headers=CaseInsensitiveDict({"x-ms-continuation": "db-ct"}),
+                body=b'{"Databases":[{"id":"db-1"}]}',
+            )
+        )
+        conn._backend = backend
+        monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: dict(args[1]))
+
+        async def _set_session(*_args, **_kwargs):
+            """No-op stub: suppresses session-token header writes during the test."""
+            return None
+
+        monkeypatch.setattr(base_helpers, "set_session_token_header_async", _set_session)
+
+        result = await _run_async_database_query_feed(
+            conn,
+            query={
+                "query": "SELECT * FROM root r WHERE r.id = @id",
+                "parameters": [{"name": "@id", "value": "db-1"}],
+            },
+            options={"maxItemCount": 1},
+        )
+
+        assert result == [{"id": "db-1"}]
+        assert backend.prepared.op == OP_QUERY_DATABASES
+        assert backend.prepared.container_link == ""
+        assert backend.prepared.partition_key_header is None
+        assert backend.prepared.query == "SELECT * FROM root r WHERE r.id = @id"
+        assert backend.prepared.parameters == ({"name": "@id", "value": "db-1"},)
+        assert backend.prepared.max_item_count == 1
+
+    asyncio.run(_run())
+
+
+def test_async_query_databases_pages_carry_the_continuation_token(monkeypatch):
+    """Async database-query pages preserve contents and continuation behavior."""
+    async def _run() -> None:
+        """Page through two sequenced responses and confirm continuation tokens thread through."""
+        conn = _new_async_connection()
+        backend = _SequencedAsyncBackend()
+        conn._backend = backend
+        monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
+
+        async def _set_session(*_args, **_kwargs):
+            """No-op stub: suppresses session-token header writes during the test."""
+            return None
+
+        monkeypatch.setattr(base_helpers, "set_session_token_header_async", _set_session)
+
+        query = {"query": "SELECT * FROM root r"}
+        response_headers = CaseInsensitiveDict()
+        first_page = await _run_async_database_query_feed(
+            conn, query=query, options={"maxItemCount": 1}, response_headers=response_headers
+        )
+        second_page = await _run_async_database_query_feed(
+            conn,
+            query=query,
+            options={"maxItemCount": 1, "continuation": response_headers["x-ms-continuation"]},
+        )
+
+        assert first_page == [{"id": "db-1"}]
+        assert second_page == [{"id": "db-2"}]
+        assert [request.op for request in backend.prepared] == [OP_QUERY_DATABASES] * 2
+        assert [request.continuation for request in backend.prepared] == [None, "next-db-page"]
 
     asyncio.run(_run())

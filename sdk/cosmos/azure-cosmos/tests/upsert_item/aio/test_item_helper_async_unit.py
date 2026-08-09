@@ -29,6 +29,7 @@ from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
 
 
 def _connection_with_cache(rid="rid"):
+    """Provide cached routing data for async upsert tests."""
     cc = MagicMock()
     cc._container_properties_cache = {"dbs/db/colls/c": {"_rid": rid}}
     # Write-with-body: the helper awaits the partition key out of the body.

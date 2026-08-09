@@ -28,6 +28,7 @@ pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
 @pytest.fixture(scope="module")
 def database_ids():
+    """Create database IDs that must appear in every backend result."""
     ids = ["parity_list_db_aio_{}_{}".format(index, uuid.uuid4().hex[:12]) for index in range(3)]
     client = SyncCosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
     try:
@@ -125,7 +126,12 @@ async def test_list_databases_options_hook_and_ignored_session_token_async(datab
                 "target_ids": sorted(row["id"] for row in rows if row.get("id") in database_ids),
                 "hook_count": len(hook_calls),
                 "hook_received_mapping": bool(hook_calls) and isinstance(hook_calls[0], Mapping),
-                "warning_categories": [warning.category.__name__ for warning in caught],
+                # Ignore unrelated cleanup warnings captured during the call.
+                "warning_categories": [
+                    warning.category.__name__
+                    for warning in caught
+                    if not issubclass(warning.category, ResourceWarning)
+                ],
                 "warning_mentions_session_token": any(
                     "session_token" in str(warning.message) for warning in caught
                 ),

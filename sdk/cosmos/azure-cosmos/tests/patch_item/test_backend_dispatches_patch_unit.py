@@ -26,6 +26,7 @@ from azure.cosmos.aio._backend.rust import AsyncRustBackend
 
 
 def _patch_prepared() -> PreparedRequest:
+    """Build a patch request for the item routing tests."""
     return PreparedRequest(
         op=OP_PATCH_ITEM,
         container_link="dbs/d/colls/c",

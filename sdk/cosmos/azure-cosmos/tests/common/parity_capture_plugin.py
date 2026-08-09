@@ -205,17 +205,20 @@ _OP_REGISTRY: Dict[str, Dict[str, Callable[[], Tuple[Any, str, str]]]] = {}
 
 def _register_op(op: str, *, sync: Callable[[], Tuple[Any, str, str]],
                  aio: Callable[[], Tuple[Any, str, str]]) -> None:
+    """Register synchronous and asynchronous methods for one operation."""
     _OP_REGISTRY[op] = {"sync": sync, "aio": aio}
 
 
 # create_item ----------------------------------------------------------------
 
 def _sync_create_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``create_item`` method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "create_item"
 
 
 def _aio_create_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``create_item`` method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "create_item"
 
@@ -226,11 +229,13 @@ _register_op("create_item", sync=_sync_create_item_target, aio=_aio_create_item_
 # create_database -------------------------------------------------------------
 
 def _sync_create_database_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``create_database`` method to record."""
     from azure.cosmos import cosmos_client as _sync_client_mod
     return _sync_client_mod, "CosmosClient", "create_database"
 
 
 def _aio_create_database_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``create_database`` method to record."""
     from azure.cosmos.aio import _cosmos_client as _aio_client_mod
     return _aio_client_mod, "CosmosClient", "create_database"
 
@@ -245,11 +250,13 @@ _register_op(
 # list_databases ---------------------------------------------------------------
 
 def _sync_list_databases_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``list_databases`` method to record."""
     from azure.cosmos import cosmos_client as _sync_client_mod
     return _sync_client_mod, "CosmosClient", "list_databases"
 
 
 def _aio_list_databases_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``list_databases`` method to record."""
     from azure.cosmos.aio import _cosmos_client as _aio_client_mod
     return _aio_client_mod, "CosmosClient", "list_databases"
 
@@ -261,14 +268,37 @@ _register_op(
 )
 
 
+# query_databases -------------------------------------------------------------
+
+def _sync_query_databases_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``query_databases`` method to record."""
+    from azure.cosmos import cosmos_client as _sync_client_mod
+    return _sync_client_mod, "CosmosClient", "query_databases"
+
+
+def _aio_query_databases_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``query_databases`` method to record."""
+    from azure.cosmos.aio import _cosmos_client as _aio_client_mod
+    return _aio_client_mod, "CosmosClient", "query_databases"
+
+
+_register_op(
+    "query_databases",
+    sync=_sync_query_databases_target,
+    aio=_aio_query_databases_target,
+)
+
+
 # read_database ---------------------------------------------------------------
 
 def _sync_read_database_target() -> Tuple[Any, str, str]:
+    """Return the synchronous database ``read`` method to record."""
     from azure.cosmos import database as _sync_database_mod
     return _sync_database_mod, "DatabaseProxy", "read"
 
 
 def _aio_read_database_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous database ``read`` method to record."""
     from azure.cosmos.aio import _database as _aio_database_mod
     return _aio_database_mod, "DatabaseProxy", "read"
 
@@ -283,11 +313,13 @@ _register_op(
 # delete_item ----------------------------------------------------------------
 
 def _sync_delete_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``delete_item`` method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "delete_item"
 
 
 def _aio_delete_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``delete_item`` method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "delete_item"
 
@@ -298,11 +330,13 @@ _register_op("delete_item", sync=_sync_delete_item_target, aio=_aio_delete_item_
 # read_item ------------------------------------------------------------------
 
 def _sync_read_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``read_item`` method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "read_item"
 
 
 def _aio_read_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``read_item`` method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "read_item"
 
@@ -313,11 +347,13 @@ _register_op("read_item", sync=_sync_read_item_target, aio=_aio_read_item_target
 # upsert_item ----------------------------------------------------------------
 
 def _sync_upsert_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``upsert_item`` method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "upsert_item"
 
 
 def _aio_upsert_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``upsert_item`` method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "upsert_item"
 
@@ -328,11 +364,13 @@ _register_op("upsert_item", sync=_sync_upsert_item_target, aio=_aio_upsert_item_
 # replace_item ---------------------------------------------------------------
 
 def _sync_replace_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``replace_item`` method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "replace_item"
 
 
 def _aio_replace_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``replace_item`` method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "replace_item"
 
@@ -343,11 +381,13 @@ _register_op("replace_item", sync=_sync_replace_item_target, aio=_aio_replace_it
 # patch_item -----------------------------------------------------------------
 
 def _sync_patch_item_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``patch_item`` method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "patch_item"
 
 
 def _aio_patch_item_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``patch_item`` method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "patch_item"
 
@@ -358,11 +398,13 @@ _register_op("patch_item", sync=_sync_patch_item_target, aio=_aio_patch_item_tar
 # query_items -----------------------------------------------------------------
 
 def _sync_query_items_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``query_items`` method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "query_items"
 
 
 def _aio_query_items_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``query_items`` method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "query_items"
 
@@ -373,11 +415,13 @@ _register_op("query_items", sync=_sync_query_items_target, aio=_aio_query_items_
 # read_all_items --------------------------------------------------------------
 
 def _sync_read_all_items_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``read_all_items`` method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "read_all_items"
 
 
 def _aio_read_all_items_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``read_all_items`` method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "read_all_items"
 
@@ -393,11 +437,13 @@ _register_op("read_all_items", sync=_sync_read_all_items_target, aio=_aio_read_a
 # two-column read_items audit (core-python vs rust) could not be generated.
 
 def _sync_read_items_target() -> Tuple[Any, str, str]:
+    """Return the synchronous batch ``read_items`` method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "read_items"
 
 
 def _aio_read_items_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous batch ``read_items`` method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "read_items"
 
@@ -408,11 +454,13 @@ _register_op("read_items", sync=_sync_read_items_target, aio=_aio_read_items_tar
 # read_feed_ranges -------------------------------------------------------------
 
 def _sync_read_feed_ranges_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``read_feed_ranges`` method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "read_feed_ranges"
 
 
 def _aio_read_feed_ranges_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``read_feed_ranges`` method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "read_feed_ranges"
 
@@ -423,11 +471,13 @@ _register_op("read_feed_ranges", sync=_sync_read_feed_ranges_target, aio=_aio_re
 # feed_range_from_partition_key ------------------------------------------------
 
 def _sync_feed_range_from_partition_key_target() -> Tuple[Any, str, str]:
+    """Return the synchronous feed-range lookup method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "feed_range_from_partition_key"
 
 
 def _aio_feed_range_from_partition_key_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous feed-range lookup method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "feed_range_from_partition_key"
 
@@ -448,11 +498,13 @@ _register_op(
 # rust) could not be generated at all.
 
 def _sync_is_feed_range_subset_target() -> Tuple[Any, str, str]:
+    """Return the synchronous feed-range subset method to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "is_feed_range_subset"
 
 
 def _aio_is_feed_range_subset_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous feed-range subset method to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "is_feed_range_subset"
 
@@ -471,11 +523,13 @@ _register_op(
 # (core-python vs rust) could not be generated at all.
 
 def _sync_read_offer_target() -> Tuple[Any, str, str]:
+    """Return the synchronous container throughput read to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "get_throughput"
 
 
 def _aio_read_offer_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous container throughput read to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "get_throughput"
 
@@ -490,11 +544,13 @@ _register_op("read_offer", sync=_sync_read_offer_target, aio=_aio_read_offer_tar
 # replace_throughput audit (core-python vs rust) could not be generated at all.
 
 def _sync_replace_throughput_target() -> Tuple[Any, str, str]:
+    """Return the synchronous container throughput update to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "replace_throughput"
 
 
 def _aio_replace_throughput_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous container throughput update to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "replace_throughput"
 
@@ -504,6 +560,180 @@ _register_op(
     sync=_sync_replace_throughput_target,
     aio=_aio_replace_throughput_target,
 )
+
+
+# get_database_throughput -----------------------------------------------------
+# The two registrations above patch ContainerProxy, so they see only container
+# offers. A database can own throughput too (shared throughput across all its
+# containers), and that is a different method on a different class. Patching
+# ContainerProxy would never intercept it, so the database throughput read needs
+# its own registration or its audit could not be generated at all.
+#
+# DatabaseProxy.read_offer is the deprecated alias and forwards to
+# get_throughput, so patching get_throughput records read_offer calls too.
+
+def _sync_get_database_throughput_target() -> Tuple[Any, str, str]:
+    """Return the synchronous database throughput read to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "get_throughput"
+
+
+def _aio_get_database_throughput_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous database throughput read to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "get_throughput"
+
+
+_register_op(
+    "get_database_throughput",
+    sync=_sync_get_database_throughput_target,
+    aio=_aio_get_database_throughput_target,
+)
+
+
+# replace_database_throughput -------------------------------------------------
+# The database counterpart of replace_throughput above: the read-modify-write
+# that changes a database's shared RU/s. Same reason for a separate entry -- it
+# lives on DatabaseProxy, so the ContainerProxy patch never sees it.
+
+def _sync_replace_database_throughput_target() -> Tuple[Any, str, str]:
+    """Return the synchronous database throughput update to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "replace_throughput"
+
+
+def _aio_replace_database_throughput_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous database throughput update to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "replace_throughput"
+
+
+_register_op(
+    "replace_database_throughput",
+    sync=_sync_replace_database_throughput_target,
+    aio=_aio_replace_database_throughput_target,
+)
+
+
+# create_container ------------------------------------------------------------
+# The customer call that makes a new container. Lives on DatabaseProxy, so none
+# of the ContainerProxy registrations above would ever intercept it.
+
+def _sync_create_container_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``create_container`` method to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "create_container"
+
+
+def _aio_create_container_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``create_container`` method to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "create_container"
+
+
+_register_op(
+    "create_container",
+    sync=_sync_create_container_target,
+    aio=_aio_create_container_target,
+)
+
+
+# create_container_if_not_exists ----------------------------------------------
+# Reads the container first and creates it only on a 404, so one customer call
+# can produce either one request or two. Patching create_container alone would
+# record the create leg without recording which path the call actually took.
+
+def _sync_create_container_if_not_exists_target() -> Tuple[Any, str, str]:
+    """Return the synchronous conditional container create to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "create_container_if_not_exists"
+
+
+def _aio_create_container_if_not_exists_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous conditional container create to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "create_container_if_not_exists"
+
+
+_register_op(
+    "create_container_if_not_exists",
+    sync=_sync_create_container_if_not_exists_target,
+    aio=_aio_create_container_if_not_exists_target,
+)
+
+
+# read_container --------------------------------------------------------------
+# ContainerProxy.read returns the container's own definition -- partition key,
+# indexing policy, and the optional quota and statistics blocks. Named
+# read_container rather than read so the op name says which resource it reads.
+
+def _sync_read_container_target() -> Tuple[Any, str, str]:
+    """Return the synchronous container ``read`` method to record."""
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "read"
+
+
+def _aio_read_container_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous container ``read`` method to record."""
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "read"
+
+
+_register_op(
+    "read_container",
+    sync=_sync_read_container_target,
+    aio=_aio_read_container_target,
+)
+
+
+# list_containers -------------------------------------------------------------
+# A feed op: the method returns a pager and the HTTP call happens on drain, so
+# both ops below are listed in _LAZY_CAPTURE_OPS. Routing lives inside
+# __QueryFeed's ResourceType.Collection branch, not in DatabaseProxy, so the
+# public method here is only the observation point.
+
+def _sync_list_containers_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``list_containers`` method to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "list_containers"
+
+
+def _aio_list_containers_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``list_containers`` method to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "list_containers"
+
+
+_register_op(
+    "list_containers",
+    sync=_sync_list_containers_target,
+    aio=_aio_list_containers_target,
+)
+
+
+# query_containers ------------------------------------------------------------
+# Only a dictionary-shaped query reaches
+# Rust; a bare string query stays on legacy by design, because legacy posts it
+# as text/plain while the driver always posts application/query+json.
+
+def _sync_query_containers_target() -> Tuple[Any, str, str]:
+    """Return the synchronous ``query_containers`` method to record."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "query_containers"
+
+
+def _aio_query_containers_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous ``query_containers`` method to record."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "query_containers"
+
+
+_register_op(
+    "query_containers",
+    sync=_sync_query_containers_target,
+    aio=_aio_query_containers_target,
+)
+
 
 
 # ---------------------------------------------------------------------------
@@ -601,6 +831,7 @@ def _coerce_json_safe(value: Any) -> Any:
 
 
 def _serialise_exception(exc: BaseException) -> Dict[str, Any]:
+    """Return public exception details in JSON-safe form."""
     return {
         "type": type(exc).__name__,
         "message": str(exc),
@@ -610,6 +841,7 @@ def _serialise_exception(exc: BaseException) -> Dict[str, Any]:
 
 
 def _snapshot_headers(container_self: Any) -> Dict[str, str]:
+    """Return the latest response headers from a client connection."""
     try:
         cc = container_self.client_connection
         h = getattr(cc, "last_response_headers", None) or {}
@@ -622,6 +854,7 @@ def _snapshot_headers(container_self: Any) -> Dict[str, str]:
 
 
 def _snapshot_result_headers(result: Any, container_self: Any) -> Dict[str, str]:
+    """Prefer aggregate result headers, then use connection headers."""
     getter = getattr(result, "get_response_headers", None)
     if callable(getter):
         try:
@@ -632,6 +865,7 @@ def _snapshot_result_headers(result: Any, container_self: Any) -> Dict[str, str]
 
 
 def _rust_operation_count() -> Optional[int]:
+    """Return the Rust operation count when the extension exposes it."""
     try:
         from azure.cosmos import _rust
         counter = getattr(_rust, "operation_count", None)
@@ -643,11 +877,13 @@ def _rust_operation_count() -> Optional[int]:
 
 
 def _rust_fallback_count() -> int:
+    """Return the number of Rust calls that continued through Python."""
     from azure.cosmos._backend.base import rust_compatibility_fallback_count
     return rust_compatibility_fallback_count()
 
 
 def _execution_evidence(before: Optional[int], fallback_before: int) -> Dict[str, Any]:
+    """Describe which implementation completed the recorded call."""
     after = _rust_operation_count()
     fallback_delta = max(0, _rust_fallback_count() - fallback_before)
     if before is None or after is None:
@@ -742,10 +978,17 @@ def _emit_block(payload: Dict[str, Any]) -> None:
 # cosmos test suite is single-threaded per worker so this is not a
 # concrete issue.
 
-_LAZY_CAPTURE_OPS = frozenset(("read_feed_ranges", "list_databases"))
+_LAZY_CAPTURE_OPS = frozenset((
+    "read_feed_ranges",
+    "list_databases",
+    "query_databases",
+    "list_containers",
+    "query_containers",
+))
 
 def _build_sync_wrapper(op_name: str, surface: str,
                         original: Callable[..., Any]) -> Callable[..., Any]:
+    """Wrap a synchronous method to record its request and response."""
     def _wrapper(self_container, *args, **kwargs):
         nodeid = _STATE.current_nodeid
         if nodeid is None:
@@ -922,6 +1165,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
 
 def _build_aio_wrapper(op_name: str, surface: str,
                        original: Callable[..., Any]) -> Callable[..., Any]:
+    """Wrap an asynchronous method to record its request and response."""
     async def _wrapper(self_container, *args, **kwargs):
         nodeid = _STATE.current_nodeid
         if nodeid is None:
@@ -1019,6 +1263,7 @@ def _install_patches(op_name: str) -> None:
 
 
 def _revert_patches() -> None:
+    """Restore every method replaced by this plugin."""
     while _STATE.patches:
         cls, method_name, original, _surface = _STATE.patches.pop()
         try:
@@ -1032,6 +1277,7 @@ def _revert_patches() -> None:
 # ---------------------------------------------------------------------------
 
 def pytest_sessionstart(session):  # pylint: disable=unused-argument
+    """Enable recording when the requested operation is configured."""
     op = os.environ.get(ENV_CAPTURE_OP, "").strip()
     if not op:
         return
@@ -1052,6 +1298,7 @@ def pytest_sessionstart(session):  # pylint: disable=unused-argument
 
 
 def pytest_sessionfinish(session, exitstatus):  # pylint: disable=unused-argument
+    """Restore wrapped methods after a recording session."""
     if _STATE.active_op is None:
         return
     _revert_patches()

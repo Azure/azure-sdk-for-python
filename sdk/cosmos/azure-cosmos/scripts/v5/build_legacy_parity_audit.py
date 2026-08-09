@@ -564,10 +564,26 @@ def _build_call_outcome(cb: Optional[CaptureBlock], backend: str):
     )
 
 
+# The bare 32-hex form needs hex guards on both sides so we do not carve a
+# uuid-shaped slice out of a longer hex run. The hyphenated 8-4-4-4-12 form is
+# self-delimiting, so it takes no leading guard: v4 tests build ids by
+# concatenation such as ``'database 1' + str(uuid.uuid4())``, which glues a hex
+# digit onto the front of the uuid and would otherwise defeat the guard.
 _REQUEST_UUID_RE = re.compile(
-    r"(?i)(?<![0-9a-f])(?:[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f]{4}-"
-    r"[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?![0-9a-f])"
+    r"(?i)(?:(?<![0-9a-f])[0-9a-f]{32}(?![0-9a-f])"
+    r"|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?![0-9a-f]))"
 )
+
+# Proxy objects render as a resource path, for example
+# ``<ContainerProxy [dbs/SomeDatabase/colls/SomeContainer]>``. The database
+# segment of that path is scaffolding: the original v4 test runs inside a
+# shared database named by ``test_config``, while its legacy copy creates its
+# own database so it can be deleted afterwards. Those two names can never
+# match, and a mismatch there says nothing about the engine under test, so the
+# segment is replaced before the two columns are compared. Everything after the
+# database segment -- the resource kind and the resource id -- is left alone,
+# so a container coming back under the wrong name is still reported.
+_RESOURCE_DATABASE_RE = re.compile(r"dbs/[^/\]]+")
 
 
 def _normalized_request(value: Any) -> Any:
@@ -580,7 +596,7 @@ def _normalized_request(value: Any) -> Any:
     if isinstance(value, list):
         return [_normalized_request(item) for item in value]
     if isinstance(value, str):
-        return _REQUEST_UUID_RE.sub("<uuid>", value)
+        return _RESOURCE_DATABASE_RE.sub("dbs/<database>", _REQUEST_UUID_RE.sub("<uuid>", value))
     return value
 
 

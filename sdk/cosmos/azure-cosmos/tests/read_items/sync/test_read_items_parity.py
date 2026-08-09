@@ -64,6 +64,7 @@ def seeded():
 
 
 def _run(container_id, items, description, request_kwargs):
+    """Compare the customer-visible items returned by both backends."""
     def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_id)
         result = container.read_items(items=items)

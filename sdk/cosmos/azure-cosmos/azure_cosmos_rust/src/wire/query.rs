@@ -42,6 +42,7 @@ pub(super) enum QueryTarget {
     CrossPartition,
 }
 
+/// Selects the driver operation used by `read_all_items`.
 enum ReadAllItemsExecution {
     ReadFeed(PartitionKey),
     Query,

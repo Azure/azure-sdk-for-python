@@ -25,6 +25,7 @@ from azure.cosmos.container import ContainerProxy as SyncContainerProxy
 
 
 def _offer(throughput: int = 400) -> Dict[str, Any]:
+    """Return a minimal offer document with the given ``offerThroughput`` value."""
     return {
         "id": "off-1",
         "_rid": "AAAAAA==",
@@ -49,10 +50,14 @@ def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pyte
     replace_offer_called = False
 
     class _Backend:
+        """A backend stub that records every ``run_operation`` call it receives."""
+
         def __init__(self) -> None:
+            """Initialise the call log."""
             self.calls: List[str] = []
 
         def run_operation(self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any) -> Any:
+            """Assert rust eligibility, record the operation name, and return a canned offer."""
             assert rust_eligible is True
             self.calls.append(legacy_operation.op)
             return [_offer()] if legacy_operation.op == "read_offer" else _offer(500)
@@ -60,11 +65,13 @@ def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pyte
     backend = _Backend()
 
     def _query_offers(*_args: Any, **_kwargs: Any) -> List[Dict[str, Any]]:
+        """Flag that the legacy ``QueryOffers`` path was reached and return a canned offer."""
         nonlocal query_offers_called
         query_offers_called = True
         return [_offer()]
 
     def _replace_offer(*_args: Any, **_kwargs: Any) -> Dict[str, Any]:
+        """Flag that the legacy ``ReplaceOffer`` path was reached and return a canned offer."""
         nonlocal replace_offer_called
         replace_offer_called = True
         return _offer(500)
@@ -77,6 +84,7 @@ def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pyte
     )
 
     def _gate(*, backend: Any, options: Dict[str, Any], kwargs: Dict[str, Any]) -> bool:
+        """Capture gate inputs for assertion and always approve Rust eligibility."""
         gate_inputs["backend"] = backend
         gate_inputs["options"] = dict(options)
         gate_inputs["kwargs"] = dict(kwargs)
@@ -108,14 +116,19 @@ def test_sync_replace_throughput_falls_back_on_read_timeout(monkeypatch: pytest.
     replaced: Dict[str, Any] = {}
 
     def _query_offers(*_args: Any, **_kwargs: Any) -> List[Dict[str, Any]]:
+        """Return the source offer, standing in for a ``QueryOffers`` legacy call."""
         return [source_offer]
 
     def _replace_offer(*_args: Any, **kwargs: Any) -> Dict[str, Any]:
+        """Capture the offer passed to ``ReplaceOffer`` and return it as-is."""
         replaced["offer"] = kwargs["offer"]
         return kwargs["offer"]
 
     class _Backend:
+        """A backend stub that enforces rust-ineligibility and invokes the legacy operation."""
+
         def run_operation(self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any) -> Any:
+            """Assert the call is rust-ineligible, then delegate to the legacy operation."""
             assert rust_eligible is False
             return legacy_operation.invoke()
 
@@ -144,6 +157,7 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
     container.container_link = "dbs/db/colls/coll"
 
     async def _get_properties() -> Dict[str, Any]:
+        """Return canned container properties including ``_self`` and ``_rid``."""
         return {"_self": "dbs/db/colls/coll", "_rid": "collRid"}
 
     container._get_properties = _get_properties
@@ -153,12 +167,16 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
     replace_offer_called = False
 
     class _Backend:
+        """A backend stub that records every ``run_operation`` call it receives."""
+
         def __init__(self) -> None:
+            """Initialise the call log."""
             self.calls: List[str] = []
 
         async def run_operation(
             self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any
         ) -> Any:
+            """Assert rust eligibility, record the operation name, and return a canned offer."""
             assert rust_eligible is True
             self.calls.append(legacy_operation.op)
             return [_offer()] if legacy_operation.op == "read_offer" else _offer(500)
@@ -166,19 +184,25 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
     backend = _Backend()
 
     def _query_offers(*_args: Any, **_kwargs: Any) -> Any:
+        """Flag that the legacy ``QueryOffers`` path was reached and return an empty async iterator."""
         nonlocal query_offers_called
         query_offers_called = True
 
         class _EmptyAsyncIterator:
+            """Yield nothing, standing in for a database that has no offer."""
+
             def __aiter__(self) -> "_EmptyAsyncIterator":
+                """Return self as the async iterator."""
                 return self
 
             async def __anext__(self) -> Dict[str, Any]:
+                """Immediately signal exhaustion."""
                 raise StopAsyncIteration
 
         return _EmptyAsyncIterator()
 
     async def _replace_offer(*_args: Any, **_kwargs: Any) -> Dict[str, Any]:
+        """Flag that the legacy ``ReplaceOffer`` path was reached and return a canned offer."""
         nonlocal replace_offer_called
         replace_offer_called = True
         return _offer(500)
@@ -191,6 +215,7 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
     )
 
     def _gate(*, backend: Any, options: Dict[str, Any], kwargs: Dict[str, Any]) -> bool:
+        """Capture gate inputs for assertion and always approve Rust eligibility."""
         gate_inputs["backend"] = backend
         gate_inputs["options"] = dict(options)
         gate_inputs["kwargs"] = dict(kwargs)
@@ -221,34 +246,45 @@ async def test_async_replace_throughput_falls_back_on_read_timeout(
     replaced: Dict[str, Any] = {}
 
     async def _get_properties() -> Dict[str, Any]:
+        """Return canned container properties including ``_self`` and ``_rid``."""
         return {"_self": "dbs/db/colls/coll", "_rid": "collRid"}
 
     class _SingleAsyncOffer:
+        """Async iterator that yields a single offer document then stops."""
+
         def __init__(self, row: Dict[str, Any]) -> None:
+            """Store the offer row to yield."""
             self._row = row
             self._yielded = False
 
         def __aiter__(self) -> "_SingleAsyncOffer":
+            """Return self as the async iterator."""
             return self
 
         async def __anext__(self) -> Dict[str, Any]:
+            """Yield the stored offer once, then raise ``StopAsyncIteration``."""
             if self._yielded:
                 raise StopAsyncIteration
             self._yielded = True
             return self._row
 
     def _query_offers(*_args: Any, **_kwargs: Any) -> _SingleAsyncOffer:
+        """Return a single-row async iterator over the source offer."""
         return _SingleAsyncOffer(source_offer)
 
     async def _replace_offer(*_args: Any, **kwargs: Any) -> Dict[str, Any]:
+        """Capture the offer passed to ``ReplaceOffer`` and return it as-is."""
         replaced["offer"] = kwargs["offer"]
         return kwargs["offer"]
 
     container._get_properties = _get_properties
     class _Backend:
+        """A backend stub that enforces rust-ineligibility and awaits the legacy operation."""
+
         async def run_operation(
             self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any
         ) -> Any:
+            """Assert the call is rust-ineligible, then await the legacy operation."""
             assert rust_eligible is False
             return await legacy_operation.invoke()
 

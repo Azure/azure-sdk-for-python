@@ -21,6 +21,7 @@ from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 
 
 def _make_offer() -> Dict[str, Any]:
+    """Return a minimal offer document with an initial ``offerThroughput`` of 400."""
     return {
         "id": "off-1",
         "_rid": "AAAAAA==",
@@ -40,9 +41,11 @@ def test_sync_fallback_replace_offer_uses_mutated_offer_object(monkeypatch):
     captured: Dict[str, Any] = {}
 
     def _query_offers(*_args, **_kwargs) -> List[Dict[str, Any]]:
+        """Return the source offer, standing in for a ``QueryOffers`` legacy call."""
         return [source_offer]
 
     def _replace_offer(*_args, **kwargs) -> Dict[str, Any]:
+        """Capture the offer passed to ``ReplaceOffer`` and return it as-is."""
         captured["offer"] = kwargs["offer"]
         return kwargs["offer"]
 
@@ -58,6 +61,7 @@ def test_sync_fallback_replace_offer_uses_mutated_offer_object(monkeypatch):
     def _mark_only_mutated_copy(
         *, throughput: Any, new_throughput_properties: Dict[str, Any]
     ) -> None:
+        """Set a marker on the mutated copy only, leaving the source offer untouched."""
         del throughput
         new_throughput_properties["__mutated_marker__"] = True
 
@@ -70,14 +74,19 @@ def test_sync_fallback_replace_offer_uses_mutated_offer_object(monkeypatch):
 
 
 class _AsyncIterable:
+    """Async iterator over a fixed list of rows, standing in for a paginated query result."""
+
     def __init__(self, rows: Iterable[Dict[str, Any]]) -> None:
+        """Store the rows and initialise the cursor."""
         self._rows = list(rows)
         self._index = 0
 
     def __aiter__(self) -> "_AsyncIterable":
+        """Return self as the async iterator."""
         return self
 
     async def __anext__(self) -> Dict[str, Any]:
+        """Yield the next row or raise ``StopAsyncIteration`` when exhausted."""
         if self._index >= len(self._rows):
             raise StopAsyncIteration
         row = self._rows[self._index]
@@ -95,9 +104,11 @@ async def test_async_fallback_replace_offer_uses_mutated_offer_object(monkeypatc
     captured: Dict[str, Any] = {}
 
     def _query_offers(*_args, **_kwargs) -> _AsyncIterable:
+        """Wrap the source offer in an ``_AsyncIterable``, standing in for ``QueryOffers``."""
         return _AsyncIterable([source_offer])
 
     async def _replace_offer(*_args, **kwargs) -> Dict[str, Any]:
+        """Capture the offer passed to ``ReplaceOffer`` and return it as-is."""
         captured["offer"] = kwargs["offer"]
         return kwargs["offer"]
 
@@ -109,6 +120,7 @@ async def test_async_fallback_replace_offer_uses_mutated_offer_object(monkeypatc
     container.container_link = "dbs/db/colls/coll"
 
     async def _get_properties() -> Dict[str, Any]:
+        """Return canned container properties including ``_self`` and ``_rid``."""
         return {"_self": "dbs/db/colls/coll", "_rid": "collRid"}
 
     container._get_properties = _get_properties
@@ -116,6 +128,7 @@ async def test_async_fallback_replace_offer_uses_mutated_offer_object(monkeypatc
     def _mark_only_mutated_copy(
         *, throughput: Any, new_throughput_properties: Dict[str, Any]
     ) -> None:
+        """Set a marker on the mutated copy only, leaving the source offer untouched."""
         del throughput
         new_throughput_properties["__mutated_marker__"] = True
 

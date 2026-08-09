@@ -33,6 +33,7 @@ from azure.cosmos._backend.base import normalize_response_headers
 # --- Empty / None inputs -------------------------------------------------
 
 def test_returns_none_for_none_input():
+    """Prove a missing header collection remains absent."""
     assert normalize_response_headers(None) is None
 
 
@@ -45,6 +46,7 @@ def test_returns_none_for_empty_mapping():
 # --- Passthrough for unrelated headers ----------------------------------
 
 def test_unrelated_headers_flow_through_unchanged():
+    """Prove ordinary service headers retain their names and values."""
     headers = {
         "etag": '"abc"',
         "x-ms-request-charge": "5.71",
@@ -59,6 +61,7 @@ def test_unrelated_headers_flow_through_unchanged():
 
 
 def test_result_is_case_insensitive():
+    """Prove customers can read response headers with any letter case."""
     headers = {"ETag": '"abc"'}
     result = normalize_response_headers(headers)
     # Whatever case the caller wrote, lookups in any case must hit.

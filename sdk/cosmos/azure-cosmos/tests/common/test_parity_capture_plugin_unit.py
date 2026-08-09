@@ -21,6 +21,7 @@ _PLUGIN_PATH = _REPO_ROOT / "tests" / "common" / "parity_capture_plugin.py"
 # Load the plugin straight from its file instead of importing it as a package, so
 # these tests exercise the real plugin module without pytest having to register it.
 def _load_plugin():
+    """Load the plugin without registering it with pytest."""
     mod_name = "_parity_capture_plugin_under_test"
     if mod_name in sys.modules:
         return sys.modules[mod_name]
@@ -200,6 +201,8 @@ class PluginRegistryTests(unittest.TestCase):
         # different and the parity report would show a false diff.
 
         class _Dummy:
+            """Provide a representation containing a process-local address."""
+
             def __repr__(self):
                 return "<Dummy object at 0x1234ABCD>"
 
@@ -224,10 +227,14 @@ class PluginRegistryTests(unittest.TestCase):
         """List/read-many captures must use the result's aggregate headers."""
 
         class _Result:
+            """Provide aggregate response headers from a paged result."""
+
             def get_response_headers(self):
                 return {"x-ms-request-charge": "4.5"}
 
         class _Container:
+            """Provide lower-priority headers from the client connection."""
+
             client_connection = type(
                 "_Connection",
                 (),

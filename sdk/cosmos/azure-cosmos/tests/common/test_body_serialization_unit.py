@@ -183,6 +183,8 @@ class TestUnknownTypeRaisesLoudly(unittest.TestCase):
     def test_object_input_raises_type_error(self):
         """A custom class instance is not a body shape we accept; the error names the type."""
         class Custom:
+            """Represent an unsupported request-body type."""
+
             pass
 
         with self.assertRaises(TypeError) as ctx:

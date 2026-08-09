@@ -12,17 +12,20 @@ from common import _parity_helpers
 
 
 class _Connection:
+    """Provide the connection fields read by the comparison helper."""
     def __init__(self, backend):
         self._backend = backend
         self.last_response_headers = {}
 
 
 class _Client:
+    """Provide a minimal client with a selected request implementation."""
     def __init__(self, backend):
         self.client_connection = _Connection(backend)
 
 
 class _RustBackend:
+    """Identify a fake request implementation as Rust."""
     name = "rust"
 
 

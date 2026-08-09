@@ -79,7 +79,7 @@ def _connect():
     uri = os.environ.get("RESULTS_COSMOS_URI")
     key = os.environ.get("RESULTS_COSMOS_KEY")
     db = os.environ.get("RESULTS_COSMOS_DATABASE", "perfdb")
-    cont = os.environ.get("RESULTS_COSMOS_CONTAINER", "perfresults")
+    cont = os.environ.get("RESULTS_COSMOS_CONTAINER", "perfresults-v2")
     if not uri or not key:
         print(
             "ERROR: RESULTS_COSMOS_URI / RESULTS_COSMOS_KEY not set. "

@@ -31,6 +31,7 @@ mod transport_error {
          client-side validation, or a pre-HTTP timeout)."
     );
 }
+/// Raised when the driver fails before receiving a service response.
 pub use transport_error::DriverTransportError;
 
 #[allow(unexpected_cfgs)]
@@ -42,4 +43,5 @@ mod unsupported_query_error {
         "The Cosmos driver cannot execute this query plan."
     );
 }
+/// Raised when the driver cannot run a query plan.
 pub use unsupported_query_error::UnsupportedQueryFeatureError;

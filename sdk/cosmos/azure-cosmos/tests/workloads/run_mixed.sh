@@ -10,7 +10,7 @@
 #   MIXED_BACKENDS=rust ./run_mixed.sh 900       # rust
 #   MIXED_BACKENDS="core-python rust" ./run_mixed.sh 900
 # Mix defaults to a read-heavy app profile; override with WORKLOAD_MIX.
-# Results land in perfdb/perfresults tagged mixed-blend-<backend>-<stamp>;
+# Results land in perfdb/perfresults-v2 tagged mixed-blend-<backend>-<stamp>;
 # read them back with mixed_report.py.
 set -uo pipefail
 cd "$(dirname "$0")"
@@ -42,7 +42,7 @@ export PERF_REPORT_INTERVAL="${PERF_REPORT_INTERVAL:-60}"
 echo "=== Mixed/blended workload run ==="
 echo "    stamp=${STAMP} dur=${DURATION}s backends=${BACKENDS[*]}"
 echo "    mix=${WORKLOAD_MIX}  concurrency=${COSMOS_CONCURRENT_REQUESTS}"
-echo "    container=${COSMOS_DATABASE}/${COSMOS_CONTAINER}  results -> perfdb/perfresults (mixed-%)"
+echo "    container=${COSMOS_DATABASE}/${COSMOS_CONTAINER}  results -> perfdb/perfresults-v2 (mixed-%)"
 echo
 overall_rc=0
 

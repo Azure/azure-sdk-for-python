@@ -120,6 +120,10 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         client.availability_strategy = None
         client.availability_strategy_executor = None
         client.availability_strategy_max_concurrency = None
+        # ``__QueryFeed`` dispatches through ``coerce_backend(self._backend)``.
+        # ``None`` is the core-python selection, which is what these tests
+        # exercise; without the attribute the dispatch raises before it runs.
+        client._backend = None
         return client
 
     def test_queryfeed_internal_capture_uses_options_dict(self):
@@ -1183,6 +1187,9 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         conn._routing_map_provider = MockRoutingMapProvider()
         conn.session = None
         conn.connection_policy = MagicMock()
+        # Core-python selection: ``coerce_backend`` maps ``None`` to the legacy
+        # backend, which is the path this test exercises.
+        conn._backend = None
 
         capture_dict = {}
         options = {

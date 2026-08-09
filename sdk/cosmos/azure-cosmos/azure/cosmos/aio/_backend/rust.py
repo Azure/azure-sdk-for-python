@@ -27,6 +27,9 @@ import threading
 from typing import Any, AsyncIterator, Optional
 
 from azure.cosmos._backend.base import (
+    OP_LIST_DATABASES,
+    OP_LIST_CONTAINERS,
+    OP_READ_ALL_ITEMS,
     OP_TO_BINDING_METHOD,
     PageNotSupportedByBackendError,
     QUERY_TO_BINDING_METHOD,
@@ -51,6 +54,10 @@ from azure.core.exceptions import ServiceResponseError
 from .base import AsyncCosmosBackend, BackendResponse
 
 _LOGGER = logging.getLogger(__name__)
+
+# Paged feeds that take no SQL, so their binding request carries an empty body.
+# Every other paged op is a query and must supply one.
+_PARAMETERLESS_FEED_OPS = frozenset({OP_READ_ALL_ITEMS, OP_LIST_DATABASES, OP_LIST_CONTAINERS})
 
 # Imported once when this module loads; not changed afterwards.
 _rust_module: Optional[Any] = None
@@ -92,18 +99,12 @@ def _resolve_async_page_dispatch(op: str) -> Optional[Any]:
 
 
 def _binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
-    """Adapt the page contract to the binding's current request object.
-
-    ``query_items`` carries its SQL and parameters as a JSON body;
-    ``read_all_items`` and ``list_databases`` are parameterless feeds and send
-    none. The typed paging fields become the ``x-ms-continuation`` /
-    ``x-ms-max-item-count`` headers the binding forwards to the driver.
-    """
-    if prepared.op in ("read_all_items", "list_databases"):
+    """Convert a prepared page request to the request shape accepted by Rust."""
+    if prepared.op in _PARAMETERLESS_FEED_OPS:
         body = b""
     else:
         if prepared.query is None:
-            raise ValueError("query_items requires PreparedQuery.query.")
+            raise ValueError("{} requires PreparedQuery.query.".format(prepared.op))
         payload: dict[str, Any] = {"query": prepared.query}
         if prepared.parameters:
             payload["parameters"] = list(prepared.parameters)
@@ -178,6 +179,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         token_credential: Optional[Any] = None,
         strict_isolation: bool = False,
     ) -> None:
+        """Store client settings and prepare lazy Rust driver initialization."""
         # Backend-specific fields first, so they exist even if the shared init's
         # strict-mode registration raises and the finalizer then runs.
         # _build_lock lets only one build run at a time, so init_client is called once
@@ -200,6 +202,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         )
 
     def _build_handle(self) -> str:
+        """Create or share the Rust driver handle on a worker thread."""
         # Runs on a background thread; init_client makes a network call that can take
         # seconds. _build_lock makes that call happen once. It is held during the call,
         # but _handle_lock is not, so close() (which only takes _handle_lock) never
@@ -235,6 +238,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         return new_handle
 
     def _take_handle_for_close(self) -> Optional[str]:
+        """Mark the client closed and remove its current Rust handle."""
         with self._handle_lock:
             self._closing = True
             handle = self._handle
@@ -242,6 +246,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             return handle
 
     async def _ensure_handle(self) -> str:
+        """Return the Rust handle, sharing one initialization across callers."""
         # If the handle is already built, return it without locking.
         handle = self._handle
         if handle is not None:
@@ -287,6 +292,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             await loop.run_in_executor(None, _close_handle_quietly, handle)
 
     def __del__(self) -> None:
+        """Release resources if the client was not closed explicitly."""
         # Fallback for a client that was never closed explicitly; prefer calling
         # close() (or `async with`). The teardown calls into the Rust driver
         # (close_client) and may join the credential-bridge thread, both of which
@@ -306,6 +312,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
                 return
 
             def _blocking_teardown() -> None:
+                """Release resources that may briefly block the current thread."""
                 close_credential_bridge_quietly(credential)
                 if handle is not None:
                     _close_handle_quietly(handle)

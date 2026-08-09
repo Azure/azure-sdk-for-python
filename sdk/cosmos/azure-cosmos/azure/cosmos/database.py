@@ -30,16 +30,20 @@ from azure.core.paging import ItemPaged
 from azure.cosmos.partition_key import PartitionKey
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options, _set_throughput_options, _deserialize_throughput, _replace_throughput
+from ._base import build_options, _set_throughput_options
 from .container import ContainerProxy
 from .offer import Offer, ThroughputProperties
-from .http_constants import StatusCodes as _StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
 from ._cosmos_responses import CosmosDict
 from ._helpers._item_dispatch import pick_backend
+from ._helpers.container_helper import ContainerHelper
 from ._helpers.database_helper import DatabaseHelper
+from ._helpers.throughput_helper import (
+    get_database_throughput,
+    replace_database_throughput,
+)
 
 __all__ = ("DatabaseProxy",)
 
@@ -451,10 +455,27 @@ class DatabaseProxy(object):
             definition["changeFeedPolicy"] = change_feed_policy
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
+        # NOT dropped before ``build_options``. ``_get_match_headers`` pops
+        # ``etag`` / ``match_condition`` itself and records them as
+        # ``request_options["accessCondition"]``; ``_base.GetHeaders`` on the
+        # legacy path and ``flatten_options_to_headers`` on the Rust path both
+        # turn that into ``If-Match`` / ``If-None-Match``. Popping them here
+        # diverged from v4 on both engines and also swallowed the ``ValueError``
+        # that ``etag`` without ``match_condition`` must raise. ``session_token``
+        # is consumed by ``build_options`` (COMMON_OPTIONS) as well, so none of
+        # the three survive into the kwargs the eligibility gate inspects.
+        response_hook = kwargs.pop("response_hook", None)
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
-        result = self.client_connection.CreateContainer(
-            database_link=self.database_link, collection=definition, options=request_options, **kwargs
+        result = ContainerHelper(
+            self.client_connection,
+            pick_backend(self.client_connection),
+        ).create_container(
+            self.database_link,
+            definition,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
         )
 
         if not return_properties:
@@ -1346,22 +1367,14 @@ class DatabaseProxy(object):
             the throughput properties could not be retrieved.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        properties = self._get_properties()
-        link = properties["_self"]
-        query_spec = {
-            "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": link}],
-        }
-        throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
-        if not throughput_properties:
-            raise CosmosResourceNotFoundError(
-                status_code=_StatusCodes.NOT_FOUND,
-                message="Could not find ThroughputProperties for database " + self.database_link)
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, throughput_properties)
-
-        return _deserialize_throughput(throughput=throughput_properties)
+        return get_database_throughput(
+            client_connection=self.client_connection,
+            database_link=self.database_link,
+            get_properties=self._get_properties,
+            not_found_message="Could not find ThroughputProperties for database " + self.database_link,
+            response_hook=response_hook,
+            kwargs=kwargs,
+        )
 
     @distributed_trace
     def replace_throughput(
@@ -1379,22 +1392,14 @@ class DatabaseProxy(object):
             If no throughput properties exists for the database or if the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        properties = self._get_properties()
-        link = properties["_self"]
-        query_spec = {
-            "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": link}],
-        }
-        throughput_properties = list(self.client_connection.QueryOffers(query_spec))
-        if not throughput_properties:
-            raise CosmosResourceNotFoundError(
-                status_code=_StatusCodes.NOT_FOUND,
-                message="Could not find ThroughputProperties for database " + self.database_link)
-        new_offer = throughput_properties[0].copy()
-        _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
-        data = self.client_connection.ReplaceOffer(
-            offer_link=throughput_properties[0]["_self"],
-            offer=throughput_properties[0],
-            **kwargs
+        return replace_database_throughput(
+            client_connection=self.client_connection,
+            database_link=self.database_link,
+            get_properties=self._get_properties,
+            throughput=throughput,
+            not_found_message="Could not find ThroughputProperties for database " + self.database_link,
+            kwargs=kwargs,
+            # The sync method has always run the offer read with no keywords, and
+            # applied the caller's keywords only to the replace.
+            read_kwargs={},
         )
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)

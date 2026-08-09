@@ -193,9 +193,24 @@ class AsyncCosmosBackend(abc.ABC):
         try:
             pages = self.execute_pages(await build_prepared())
             try:
-                page = await anext(pages)
+                # ``pages.__anext__()`` rather than the ``anext`` builtin: the
+                # package supports Python 3.9, where that builtin does not exist.
+                page = await pages.__anext__()
             except StopAsyncIteration:
                 pass
+            finally:
+                # One page per call: the async generator is left suspended at its
+                # ``yield``. Unlike a sync generator, an abandoned async generator
+                # is not finalized by refcounting -- it is parked on the event
+                # loop's async-generator set until ``shutdown_asyncgens``, so a
+                # long-lived client paging a large feed accumulates them, and
+                # finalizing after the loop closes raises. Closing it here ends it
+                # at a deterministic point on the loop that created it. Guarded
+                # because ``execute_pages`` is documented to return an async
+                # iterator, which need not be an async generator.
+                aclose = getattr(pages, "aclose", None)
+                if aclose is not None:
+                    await aclose()
         except fallback_exceptions:
             _record_rust_compatibility_fallback()
             return await legacy_operation.invoke()

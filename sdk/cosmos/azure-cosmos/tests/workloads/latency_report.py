@@ -58,7 +58,7 @@ def _connect():
     uri = os.environ.get("RESULTS_COSMOS_URI")
     key = os.environ.get("RESULTS_COSMOS_KEY")
     db = os.environ.get("RESULTS_COSMOS_DATABASE", "perfdb")
-    cont = os.environ.get("RESULTS_COSMOS_CONTAINER", "perfresults")
+    cont = os.environ.get("RESULTS_COSMOS_CONTAINER", "perfresults-v2")
     if not uri or not key:
         print(
             "ERROR: RESULTS_COSMOS_URI / RESULTS_COSMOS_KEY not set. "
@@ -112,7 +112,9 @@ def _aggregate(container, prefix: str, run_id: str):
     rows = list(
         container.query_items(
             "SELECT c.workload_id, c.count, c.errors, c.throttled_429, "
-            "c.window_seconds, c.hist_b64, c.mean_ru, c.p99_9_ms, c.driver_commit "
+            "c.window_seconds, c.hist_b64, c.mean_ru, c.p99_9_ms, c.driver_commit, "
+            "c.config_arrival_rate, c.config_concurrency, c.config_proxy_enabled, "
+            "c.attempt_calls, c.retry_calls "
             "FROM c WHERE STARTSWITH(c.workload_id, @prefix) "
             "AND ENDSWITH(c.workload_id, @stamp)",
             parameters=[
@@ -148,11 +150,21 @@ def _aggregate(container, prefix: str, run_id: str):
                 "hist": HdrHistogram(MIN_US, MAX_US, 3),
                 "no_hist_windows": 0,
                 "scalar_p999_weighted": 0.0,  # count-weighted fallback only
+                "arrival_rates": set(),
+                "concurrencies": set(),
+                "proxy_values": set(),
+                "attempt_calls": 0,
+                "retry_calls": 0,
             }
         c = int(r.get("count", 0) or 0)
         a["count"] += c
         a["errors"] += int(r.get("errors", 0) or 0)
         a["throttled_429"] += int(r.get("throttled_429", 0) or 0)
+        a["arrival_rates"].add(float(r.get("config_arrival_rate", 0.0) or 0.0))
+        a["concurrencies"].add(int(r.get("config_concurrency", 0) or 0))
+        a["proxy_values"].add(bool(r.get("config_proxy_enabled", False)))
+        a["attempt_calls"] += int(r.get("attempt_calls", 0) or 0)
+        a["retry_calls"] += int(r.get("retry_calls", 0) or 0)
         a["window_s"] += float(r.get("window_seconds", 0.0) or 0.0)
         mr = float(r.get("mean_ru", 0.0) or 0.0)
         if mr:
@@ -188,7 +200,7 @@ def _fmt_cell(op, backend, a):
     note = "" if exact else f"  [!] {a['no_hist_windows']} window(s) lacked hist_b64 (approx)"
     return (
         f"  {op:8s} {backend:11s} count={a['count']:>9d} err={a['errors']:>4d} "
-        f"429={a['throttled_429']:>4d} rps={rps:>8.1f} "
+        f"429={a['throttled_429']:>4d} retries={a['retry_calls']:>4d} rps={rps:>8.1f} "
         f"mean={_mean_ms(a):>6.2f} p50={_pctile_ms(a,50):>6.2f} "
         f"p90={_pctile_ms(a,90):>6.2f} "
         f"p99={_pctile_ms(a,99):>6.2f} p99.9={_pctile_ms(a,99.9):>7.2f} "
@@ -203,6 +215,23 @@ def main():
     ap.add_argument("--run-id", default=None, help="run id YYYYMMDD-HHMMSSmmm (default: latest)")
     ap.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
     ap.add_argument("--prefix", default="baseline-", help="workload_id prefix (default baseline-)")
+    ap.add_argument(
+        "--point-read-gate",
+        action="store_true",
+        help="enforce the low-load Rust point-read gate",
+    )
+    ap.add_argument(
+        "--expected-rps",
+        type=float,
+        default=250.0,
+        help="required configured and achieved read rate for --point-read-gate (default 250)",
+    )
+    ap.add_argument(
+        "--max-p99-ms",
+        type=float,
+        default=10.0,
+        help="exclusive Rust p99 ceiling for --point-read-gate (default 10)",
+    )
     _prov.add_cli_flag(ap)
     args = ap.parse_args()
 
@@ -219,7 +248,7 @@ def main():
 
     backends = sorted({b for (_, b) in agg})
     print(f"=== Low-load latency baseline (prefix {args.prefix}, run id {run_id}) ===")
-    print("    conc=1, arrival=0, 1 client, no proxy -> latency = one round trip.")
+    print("    Fixed-rate arrivals, 1 client, no proxy; latency is end-to-end from scheduled arrival.")
     print("    Percentiles are POOLED across windows from merged HdrHistograms (exact).")
     print()
 
@@ -264,7 +293,57 @@ def main():
     for _l in prov_lines:
         print(_l)
     print("\n### GATE:", "FAIL" if not prov_ok else "PASS", "(rust driver provenance) ###")
-    sys.exit(0 if prov_ok else 1)
+
+    latency_ok = True
+    if args.point_read_gate:
+        checks = []
+        read = agg.get(("read", "rust"))
+        if read is None:
+            checks.append((False, "Rust read row exists"))
+        else:
+            achieved_rps = read["count"] / read["window_s"] if read["window_s"] else 0.0
+            checks.extend([
+                (read["count"] > 0, f"successful reads > 0 ({read['count']})"),
+                (read["errors"] == 0, f"errors = 0 ({read['errors']})"),
+                (
+                    read["throttled_429"] == 0,
+                    f"terminal 429 responses = 0 ({read['throttled_429']})",
+                ),
+                (
+                    read["retry_calls"] == 0,
+                    f"driver retries = 0 ({read['retry_calls']})",
+                ),
+                (
+                    read["no_hist_windows"] == 0,
+                    f"all windows have histograms (missing={read['no_hist_windows']})",
+                ),
+                (
+                    read["arrival_rates"] == {args.expected_rps},
+                    f"configured arrival rate = {args.expected_rps:g} "
+                    f"({sorted(read['arrival_rates'])})",
+                ),
+                (
+                    read["proxy_values"] == {False},
+                    f"proxy disabled ({sorted(read['proxy_values'])})",
+                ),
+                (
+                    abs(achieved_rps - args.expected_rps) <= args.expected_rps * 0.05,
+                    f"achieved rate within 5% of {args.expected_rps:g} "
+                    f"({achieved_rps:.1f})",
+                ),
+                (
+                    _pctile_ms(read, 99) < args.max_p99_ms,
+                    f"Rust p99 < {args.max_p99_ms:g} ms "
+                    f"({_pctile_ms(read, 99):.2f} ms)",
+                ),
+            ])
+        latency_ok = all(ok for ok, _ in checks)
+        print("\n### POINT-READ GATE ###")
+        for ok, message in checks:
+            print(f"  [{'PASS' if ok else 'FAIL'}] {message}")
+        print("### POINT-READ GATE:", "PASS" if latency_ok else "FAIL", "###")
+
+    sys.exit(0 if prov_ok and latency_ok else 1)
 
 
 if __name__ == "__main__":

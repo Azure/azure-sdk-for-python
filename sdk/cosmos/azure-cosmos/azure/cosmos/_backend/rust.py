@@ -27,6 +27,9 @@ from typing import Any, Iterator, Optional
 from azure.core.exceptions import ServiceResponseError
 
 from .base import (
+    OP_LIST_DATABASES,
+    OP_LIST_CONTAINERS,
+    OP_READ_ALL_ITEMS,
     OP_TO_BINDING_METHOD,
     PageNotSupportedByBackendError,
     QUERY_TO_BINDING_METHOD,
@@ -48,6 +51,10 @@ from ._shared import (
 from .constants import BACKEND_NAME_RUST
 
 _LOGGER = logging.getLogger(__name__)
+
+# Paged feeds that take no SQL, so their binding request carries an empty body.
+# Every other paged op is a query and must supply one.
+_PARAMETERLESS_FEED_OPS = frozenset({OP_READ_ALL_ITEMS, OP_LIST_DATABASES, OP_LIST_CONTAINERS})
 
 # Imported once when this module loads; not changed afterwards.
 _rust_module: Optional[Any] = None
@@ -91,16 +98,16 @@ def _resolve_page_dispatch(op: str) -> Optional[Any]:
 def _binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
     """Adapt the page contract to the binding's current request object.
 
-    ``query_items`` carries its SQL and parameters as a JSON body;
-    ``read_all_items`` and ``list_databases`` are parameterless feeds and send
-    none. The typed paging fields become the ``x-ms-continuation`` /
-    ``x-ms-max-item-count`` headers the binding forwards to the driver.
+    ``query_items`` and ``query_containers`` carry their SQL and parameters as a
+    JSON body; the parameterless feeds send none. The typed paging fields become
+    the ``x-ms-continuation`` / ``x-ms-max-item-count`` headers the binding
+    forwards to the driver.
     """
-    if prepared.op in ("read_all_items", "list_databases"):
+    if prepared.op in _PARAMETERLESS_FEED_OPS:
         body = b""
     else:
         if prepared.query is None:
-            raise ValueError("query_items requires PreparedQuery.query.")
+            raise ValueError("{} requires PreparedQuery.query.".format(prepared.op))
         payload: dict[str, Any] = {"query": prepared.query}
         if prepared.parameters:
             payload["parameters"] = list(prepared.parameters)
@@ -147,6 +154,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         token_credential: Optional[Any] = None,
         strict_isolation: bool = False,
     ) -> None:
+        """Store client settings and register process-wide Rust configuration."""
         # The sync backend has no fields beyond the shared ones, so initialize shared
         # state directly. This also registers against the endpoint and, in strict
         # isolation mode, may raise StrictEngineIsolationError for a config conflict.
@@ -209,6 +217,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             _LOGGER.debug("RustBackend.close failed for handle=%s", handle, exc_info=True)
 
     def __del__(self) -> None:
+        """Release resources if the client was not closed explicitly."""
         try:
             self.close()
         except Exception:  # pylint: disable=broad-except

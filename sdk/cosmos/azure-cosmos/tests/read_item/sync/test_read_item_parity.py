@@ -111,12 +111,14 @@ def container_for(request):
 # half is only present so each backend has a row to point at.
 
 def _new_item_factory(pk: str = "customerA"):
+    """Provide a distinct item id and partition key for each backend."""
     def _factory():
         return uuid.uuid4().hex, pk
     return _factory
 
 
 def _read_by_id_call(container_id: str, item_factory, **kwargs):
+    """Build a read that targets an item by id."""
     def _do(client):
         cont = client.get_database_client("parity_db").get_container_client(container_id)
         item_id, pk = item_factory()
@@ -126,6 +128,7 @@ def _read_by_id_call(container_id: str, item_factory, **kwargs):
 
 
 def _read_by_dict_call(container_id: str, item_factory, **kwargs):
+    """Build a read that targets an item returned by the SDK."""
     def _do(client):
         cont = client.get_database_client("parity_db").get_container_client(container_id)
         item_id, pk = item_factory()
@@ -136,6 +139,7 @@ def _read_by_dict_call(container_id: str, item_factory, **kwargs):
 
 def _run_read(container, level: str, summary: str,
               by_dict: bool = False, **kwargs) -> BackendComparison:
+    """Compare the public read result from Python and Rust."""
     builder = _read_by_dict_call if by_dict else _read_by_id_call
     description = "[{}] {} -- mode={}, kwargs={}".format(
         level, summary,
@@ -607,6 +611,7 @@ def test_L5_etag_without_match_condition_raises_value_error_up_front(container_f
 # ---------------------------------------------------------------------------
 
 def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
+    """Confirm customers receive the documented deprecation warning."""
     matches = [w for w in recorded
                if issubclass(w.category, DeprecationWarning)
                and kwarg_name in str(w.message)]

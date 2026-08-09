@@ -38,10 +38,12 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
     """``LegacyBackend`` is a real ``CosmosBackend``, never a ``None`` stand-in."""
 
     def test_legacy_backend_is_a_cosmos_backend_subclass(self):
+        """Prove the shared Python implementation is a concrete backend."""
         self.assertIsInstance(LEGACY_BACKEND, CosmosBackend)
         self.assertIsInstance(LEGACY_BACKEND, LegacyBackend)
 
     def test_legacy_backend_name_is_core_python(self):
+        """Prove the Python implementation reports its public backend name."""
         self.assertEqual(LEGACY_BACKEND.name, BACKEND_NAME_CORE_PYTHON)
 
     def test_legacy_backend_execute_is_not_prepared_request_driven(self):
@@ -80,6 +82,7 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
         self.assertEqual(parse_response_calls, [])
 
     def test_run_page_operation_always_invokes_the_legacy_operation(self):
+        """Prove paged calls use the supplied Python operation."""
         result = LEGACY_BACKEND.run_page_operation(
             build_prepared=lambda: self.fail("build_prepared must not run"),
             legacy_operation=LegacyOperation(
@@ -104,10 +107,14 @@ class TestCoerceBackendNeverReturnsNone(unittest.TestCase):
     ``Optional[CosmosBackend]`` selection to an explicit, never-``None`` backend."""
 
     def test_none_selection_coerces_to_the_shared_legacy_backend(self):
+        """Prove an unset selection resolves to the shared Python backend."""
         self.assertIs(coerce_backend(None), LEGACY_BACKEND)
 
     def test_a_real_backend_passes_through_unchanged(self):
+        """Prove an explicit backend remains selected."""
+
         class _FakeRustBackend(CosmosBackend):
+            """Provide a concrete backend for selection testing."""
             name = "rust"
 
             def execute(self, prepared):
@@ -117,11 +124,15 @@ class TestCoerceBackendNeverReturnsNone(unittest.TestCase):
         self.assertIs(coerce_backend(backend), backend)
 
     def test_coercion_result_is_never_none(self):
+        """Prove backend selection always returns a usable object."""
         for selection in (None, LEGACY_BACKEND):
             self.assertIsNotNone(coerce_backend(selection))
 
     def test_backend_boundary_owns_explicit_compatibility_fallback(self):
+        """Prove a supported Rust rejection can run the Python operation."""
+
         class _RejectingBackend(CosmosBackend):
+            """Reject a prepared request to exercise explicit fallback."""
             name = "rust"
 
             def execute(self, prepared):
@@ -141,13 +152,16 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
     """Async twin: ``AsyncLegacyBackend`` is a real ``AsyncCosmosBackend``."""
 
     def test_async_legacy_backend_is_an_async_cosmos_backend_subclass(self):
+        """Prove the shared async Python implementation is a concrete backend."""
         self.assertIsInstance(ASYNC_LEGACY_BACKEND, AsyncCosmosBackend)
         self.assertIsInstance(ASYNC_LEGACY_BACKEND, AsyncLegacyBackend)
 
     def test_async_legacy_backend_name_is_core_python(self):
+        """Prove the async Python implementation reports its public name."""
         self.assertEqual(ASYNC_LEGACY_BACKEND.name, BACKEND_NAME_CORE_PYTHON)
 
     def test_async_execute_is_not_prepared_request_driven(self):
+        """Prove direct prepared-request execution is unsupported."""
         async def _run():
             with self.assertRaises(NotImplementedError):
                 await ASYNC_LEGACY_BACKEND.execute(None)
@@ -155,6 +169,7 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
         asyncio.run(_run())
 
     def test_async_run_operation_always_invokes_the_legacy_operation(self):
+        """Prove async calls use the supplied Python operation."""
         async def _run():
             build_prepared_calls = []
 
@@ -182,6 +197,7 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
         asyncio.run(_run())
 
     def test_async_run_page_operation_always_invokes_the_legacy_operation(self):
+        """Prove async paged calls use the supplied Python operation."""
         async def _run():
             async def build_prepared():
                 self.fail("build_prepared must not run")
@@ -200,10 +216,14 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
         asyncio.run(_run())
 
     def test_none_selection_coerces_to_the_shared_async_legacy_backend(self):
+        """Prove an unset async selection resolves to the Python backend."""
         self.assertIs(coerce_async_backend(None), ASYNC_LEGACY_BACKEND)
 
     def test_a_real_async_backend_passes_through_unchanged(self):
+        """Prove an explicit async backend remains selected."""
+
         class _FakeAsyncRustBackend(AsyncCosmosBackend):
+            """Provide an async backend for selection testing."""
             name = "rust"
 
             async def execute(self, prepared):
@@ -213,8 +233,11 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
         self.assertIs(coerce_async_backend(backend), backend)
 
     def test_async_backend_boundary_owns_explicit_compatibility_fallback(self):
+        """Prove an async Rust rejection can run the Python operation."""
+
         async def _run():
             class _RejectingBackend(AsyncCosmosBackend):
+                """Reject an async prepared request to exercise fallback."""
                 name = "rust"
 
                 async def execute(self, prepared):

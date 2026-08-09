@@ -36,6 +36,7 @@ use crate::runtime::drivers;
 // ── Extracted sub-modules ────────────────────────────────────────────────────
 mod container_metadata;
 mod diagnostics;
+mod driver_runner;
 mod errors;
 mod request;
 mod response;
@@ -51,6 +52,7 @@ pub(crate) use diagnostics::{attempt_count, operation_count, retry_count};
 // pub(crate): documents/mod.rs imports these by explicit crate::wire:: path.
 pub(crate) use request::{
     extract_account_prepared_modifiers, extract_body_bytes, extract_common_prepared_inputs,
+    extract_container_feed_prepared_inputs, extract_container_point_prepared_inputs,
     extract_create_item_id, extract_database_prepared_inputs,
     extract_read_feed_ranges_force_refresh, extract_required_item_id, OpModifiers,
 };
@@ -82,16 +84,25 @@ fn lookup_driver(handle: &str) -> PyResult<Arc<CosmosDriver>> {
 }
 
 // ── Operation modules ─────────────────────────────────────────────────────────
+mod containers;
 mod databases;
 mod feed_range;
 mod items;
 mod offers;
 mod query;
 
+pub(crate) use containers::{
+    run_create_container_operation, run_create_container_operation_async,
+    run_list_containers_operation, run_list_containers_operation_async,
+    run_query_containers_operation, run_query_containers_operation_async,
+    run_read_container_operation, run_read_container_operation_async,
+};
 pub(crate) use databases::{
     run_create_database_operation, run_create_database_operation_async,
-    run_list_databases_operation, run_list_databases_operation_async, run_read_database_operation,
-    run_read_database_operation_async,
+    run_delete_database_operation, run_delete_database_operation_async,
+    run_list_databases_operation, run_list_databases_operation_async,
+    run_query_databases_operation, run_query_databases_operation_async,
+    run_read_database_operation, run_read_database_operation_async,
 };
 pub(crate) use feed_range::{
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,

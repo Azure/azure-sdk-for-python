@@ -66,6 +66,7 @@ def container_for_multihash(request):
 
 
 def _normalize_feed_range(feed_range):
+    """Return comparable public boundaries and inclusion flags."""
     range_info = feed_range["Range"]
     return (
         range_info["min"].upper(),

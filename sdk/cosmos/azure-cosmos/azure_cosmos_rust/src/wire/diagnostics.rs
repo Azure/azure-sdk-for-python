@@ -51,6 +51,7 @@ pub(crate) static BINDING_OP_COUNT: AtomicU64 = AtomicU64::new(0);
 /// `DiagnosticsContext` is a low-cost in-memory read (no I/O, no logging), so combining
 /// it in is safe even during a latency measurement without perturbing the tail.
 pub(crate) static BINDING_ATTEMPT_COUNT: AtomicU64 = AtomicU64::new(0);
+/// Number of recorded attempts whose execution context is not `initial`.
 pub(crate) static BINDING_RETRY_COUNT: AtomicU64 = AtomicU64::new(0);
 
 /// Total item operations that have entered the rust binding's driver runner in

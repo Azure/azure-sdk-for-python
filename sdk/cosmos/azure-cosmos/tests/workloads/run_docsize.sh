@@ -16,7 +16,7 @@
 #   ./run_docsize.sh 600                          # core-python + rust (default)
 #   DOCSIZE_BACKENDS=rust ./run_docsize.sh 600     # rust
 #   DOCSIZE_BACKENDS="core-python rust" ./run_docsize.sh 600
-# Results land in perfdb/perfresults tagged docsize-create-<backend>-<profile>-<stamp>;
+# Results land in perfdb/perfresults-v2 tagged docsize-create-<backend>-<profile>-<stamp>;
 # read them back with latency_report.py --prefix docsize- (backend column shows
 # <backend>-<profile>, e.g. core-python-large).
 set -uo pipefail
@@ -57,7 +57,7 @@ export WORKLOAD_OPERATIONS=create
 echo "=== Document size/shape sensitivity run ==="
 echo "    stamp=${STAMP} dur=${DURATION}s profiles=${PROFILES[*]} backends=${BACKENDS[*]}"
 echo "    op=create concurrency=${COSMOS_CONCURRENT_REQUESTS}"
-echo "    container=${COSMOS_DATABASE}/${COSMOS_CONTAINER}  results -> perfdb/perfresults (docsize-%)"
+echo "    container=${COSMOS_DATABASE}/${COSMOS_CONTAINER}  results -> perfdb/perfresults-v2 (docsize-%)"
 echo
 overall_rc=0
 

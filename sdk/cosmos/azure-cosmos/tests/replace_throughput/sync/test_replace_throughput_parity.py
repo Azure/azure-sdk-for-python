@@ -53,6 +53,7 @@ pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
 @pytest.fixture
 def container_for(request):
+    """A dedicated-throughput throwaway container, so ``replace_throughput`` has an offer to update."""
     # Fresh throwaway container per test, deleted afterward, so tests don't share data.
     # Created with dedicated throughput (offer_throughput) because replace_throughput
     # only has an offer to change when the container owns one.
@@ -72,6 +73,7 @@ def container_for(request):
 
 
 def _normalize_throughput(throughput_properties):
+    """Strip server-stamped fields, keeping only the customer-visible RU/s numbers for comparison."""
     # Reduce the throughput object to the customer-visible numbers, so the two engines
     # compare equal regardless of server-stamped fields (id/_rid/_ts) on the raw offer.
     return {
@@ -87,6 +89,7 @@ def test_replace_throughput_int_applies_same_ru(container_for):
     # same fixed target, and a scaler reading the confirmation would act on a wrong number.
 
     def _do(client):
+        """Run ``replace_throughput(500)`` on the given client and return normalised RU/s."""
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         return _normalize_throughput(container.replace_throughput(500))
 
@@ -99,6 +102,7 @@ def test_replace_throughput_object_applies_same_ru(container_for):
     """replace_throughput(ThroughputProperties) applies the same RU/s on both backends."""
 
     def _do(client):
+        """Run ``replace_throughput(ThroughputProperties(...))`` and return normalised RU/s."""
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         return _normalize_throughput(
             container.replace_throughput(ThroughputProperties(offer_throughput=500))
@@ -113,6 +117,7 @@ def test_replace_throughput_object_applies_same_ru(container_for):
 
 @pytest.fixture
 def autoscale_container_for(request):
+    """An autoscale throwaway container, so the autoscale offer body is exercised in parity tests."""
     # Fresh throwaway autoscale container per test. Autoscale is the throughput model
     # a plain int can't express, so it exercises the offer-body path that carries
     # offerAutopilotSettings rather than a single offerThroughput number.
@@ -137,6 +142,7 @@ def test_replace_throughput_autoscale_applies_same_ceiling(autoscale_container_f
     # path sends and reads them back the same way core-python does.
 
     def _do(client):
+        """Run autoscale ``replace_throughput`` and return normalised RU ceiling."""
         container = client.get_database_client("parity_db").get_container_client(autoscale_container_for.id)
         return _normalize_throughput(
             container.replace_throughput(ThroughputProperties(auto_scale_max_throughput=6000))

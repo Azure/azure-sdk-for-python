@@ -470,6 +470,7 @@ def test_L5_stale_etag_if_not_modified_raises_412(container_for):
 # ---------------------------------------------------------------------------
 
 def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
+    """Confirm customers receive the documented deprecation warning."""
     matches = [w for w in recorded
                if issubclass(w.category, DeprecationWarning)
                and kwarg_name in str(w.message)]

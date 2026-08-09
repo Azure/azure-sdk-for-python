@@ -52,7 +52,10 @@ from azure.core.utils import CaseInsensitiveDict
 
 # Operation discriminator values for ``PreparedRequest.op``.
 OP_CREATE_DATABASE = "create_database"
+OP_CREATE_CONTAINER = "create_container"
+OP_READ_CONTAINER = "read_container"
 OP_CREATE_ITEM = "create_item"
+OP_DELETE_DATABASE = "delete_database"
 OP_DELETE_ITEM = "delete_item"
 OP_READ_DATABASE = "read_database"
 OP_READ_ITEM = "read_item"
@@ -60,6 +63,9 @@ OP_UPSERT_ITEM = "upsert_item"
 OP_REPLACE_ITEM = "replace_item"
 OP_PATCH_ITEM = "patch_item"
 OP_QUERY_ITEMS = "query_items"
+OP_QUERY_DATABASES = "query_databases"
+OP_LIST_CONTAINERS = "list_containers"
+OP_QUERY_CONTAINERS = "query_containers"
 OP_READ_ALL_ITEMS = "read_all_items"
 OP_LIST_DATABASES = "list_databases"
 OP_READ_FEED_RANGES = "read_feed_ranges"
@@ -79,6 +85,9 @@ OP_REPLACE_OFFER = "replace_offer"
 OP_TO_BINDING_METHOD = {
     OP_CREATE_DATABASE: "create_database",
     OP_READ_DATABASE: "read_database",
+    OP_DELETE_DATABASE: "delete_database",
+    OP_CREATE_CONTAINER: "create_container",
+    OP_READ_CONTAINER: "read_container",
     OP_CREATE_ITEM: "create_item",
     OP_UPSERT_ITEM: "upsert_item",
     OP_REPLACE_ITEM: "replace_item",
@@ -103,6 +112,9 @@ QUERY_TO_BINDING_METHOD = {
     OP_QUERY_ITEMS: "query_items",
     OP_READ_ALL_ITEMS: "read_all_items",
     OP_LIST_DATABASES: "list_databases",
+    OP_QUERY_DATABASES: "query_databases",
+    OP_LIST_CONTAINERS: "list_containers",
+    OP_QUERY_CONTAINERS: "query_containers",
 }
 # Reserved lookup for the batch operation, matching ``OP_TO_BINDING_METHOD``.
 # Empty until that operation is added; adding a row does not change the
@@ -479,6 +491,7 @@ def rust_compatibility_fallback_count() -> int:
 
 
 def _record_rust_compatibility_fallback() -> None:
+    """Record a request retried with the Python implementation."""
     global _RUST_COMPATIBILITY_FALLBACK_COUNT  # pylint: disable=global-statement
     with _RUST_COMPATIBILITY_FALLBACK_COUNT_LOCK:
         _RUST_COMPATIBILITY_FALLBACK_COUNT += 1
@@ -641,6 +654,17 @@ class CosmosBackend(abc.ABC):
                 page = next(pages)
             except StopIteration:
                 pass
+            finally:
+                # One page per call: the iterator is left suspended at its
+                # ``yield`` and is not resumed. Closing it here finalizes it at a
+                # deterministic point instead of leaving it for the garbage
+                # collector, so a long-lived client paging a large feed does not
+                # accumulate suspended generators between collections. Guarded
+                # because ``execute_pages`` is documented to return an iterator,
+                # which need not be a generator.
+                close = getattr(pages, "close", None)
+                if close is not None:
+                    close()
         except fallback_exceptions:
             _record_rust_compatibility_fallback()
             return legacy_operation.invoke()

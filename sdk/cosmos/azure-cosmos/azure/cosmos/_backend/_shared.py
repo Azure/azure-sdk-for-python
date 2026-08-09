@@ -69,7 +69,7 @@ import logging
 import os
 import threading
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Tuple, Type, Union
 
 from .base import PreparedClientConfig, init_client_args
 from ._driver_registry import (
@@ -82,15 +82,8 @@ from ._driver_registry import (
 
 _LOGGER = logging.getLogger(__name__)
 
-
-class _UnmatchableDriverError(BaseException):
-    """An exception class that is never raised.
-
-    It exists so that code catching the binding's ``DriverTransportError`` still works
-    on an older ``_rust`` build that does not ship that class. Catching this
-    never-thrown stand-in is a safe do-nothing.
-    """
-
+_BindingErrorMatcher = Union[Type[BaseException], Tuple[Type[BaseException], ...]]
+_NO_BINDING_ERRORS: Tuple[Type[BaseException], ...] = ()
 
 _QUERY_PLAN_INTEROP_DIRECTORY_ENV = "AZURE_COSMOS_QUERYPLANINTEROP_DIR"
 
@@ -134,35 +127,51 @@ def configure_packaged_query_plan_interop(rust_module: Optional[Any]) -> None:
         )
 
 
-def driver_transport_error_type(rust_module: Optional[Any]) -> type:
+def _binding_error_type(rust_module: Optional[Any], name: str) -> _BindingErrorMatcher:
+    """Return one binding exception class for use in an ``except`` clause.
+
+    Returns an empty tuple when there is no binding at all, which is a valid
+    ``except`` target that matches nothing, so a core-python client can share
+    this code without a branch.
+
+    A binding that is present but does not export ``name`` is a hard error
+    rather than a silent miss: the backends rely on catching these classes to
+    convert driver failures into the azure-core exceptions customers handle. An
+    exception class that silently never matches would let a driver failure reach
+    the customer as a raw ``RuntimeError``, so their
+    ``except (ServiceRequestError, ServiceResponseError)`` handlers -- and the
+    SDK's automatic transport retries -- would quietly stop working. Failing at
+    lookup time points at the real cause: a stale compiled extension.
+    """
+    if rust_module is None:
+        return _NO_BINDING_ERRORS
+    exc = getattr(rust_module, name, None)
+    if isinstance(exc, type) and issubclass(exc, BaseException):
+        return exc
+    raise RuntimeError(
+        "The compiled azure.cosmos._rust extension does not export {0}; "
+        "rebuild it from the current source.".format(name)
+    )
+
+
+def driver_transport_error_type(rust_module: Optional[Any]) -> _BindingErrorMatcher:
     """Return the binding's ``DriverTransportError`` class for ``except`` use.
 
-    Why it exists: the backends convert that error into azure-core's
-    ``ServiceResponseError``. Without this, a transport failure (a failure with *no*
-    server response -- a client-side validation error or a pre-HTTP timeout) would reach
-    the customer as a raw ``RuntimeError``, and their
-    ``except (ServiceRequestError, ServiceResponseError)`` handlers and the SDK's
-    automatic transport retries would silently stop working on the Rust path.
-
-    On an older binding that does not export the type, it returns the never-raised
-    sentinel, so nothing is converted and the original error passes through unchanged.
+    The backends convert that error into azure-core's ``ServiceResponseError``.
+    A transport failure is one with *no* server response -- a client-side
+    validation error, or a timeout before any HTTP exchange.
     """
-    exc = getattr(rust_module, "DriverTransportError", None) if rust_module is not None else None
-    if isinstance(exc, type) and issubclass(exc, BaseException):
-        return exc
-    return _UnmatchableDriverError
+    return _binding_error_type(rust_module, "DriverTransportError")
 
 
-def driver_unsupported_query_error_type(rust_module: Optional[Any]) -> type:
-    """Return the binding error used when the driver rejects a query plan."""
-    exc = (
-        getattr(rust_module, "UnsupportedQueryFeatureError", None)
-        if rust_module is not None
-        else None
-    )
-    if isinstance(exc, type) and issubclass(exc, BaseException):
-        return exc
-    return _UnmatchableDriverError
+def driver_unsupported_query_error_type(rust_module: Optional[Any]) -> _BindingErrorMatcher:
+    """Return the binding class raised when the driver cannot finish a query.
+
+    The paged dispatch path catches it as its fallback signal and replays the
+    page on the legacy transport, so an unsupported query feature degrades to a
+    slower path instead of surfacing to the customer as an error.
+    """
+    return _binding_error_type(rust_module, "UnsupportedQueryFeatureError")
 
 
 def close_credential_bridge_quietly(credential: Optional[Any]) -> None:

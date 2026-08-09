@@ -16,7 +16,7 @@
 #   ./run_coldstart.sh 25                          # 25 processes/cell, core-python + rust
 #   COLD_BACKENDS=rust ./run_coldstart.sh 25        # rust
 #   COLD_BACKENDS="core-python rust" ./run_coldstart.sh 25
-# Results land in perfdb/perfresults tagged cold-<op>-<backend>-<stamp>;
+# Results land in perfdb/perfresults-v2 tagged cold-<op>-<backend>-<stamp>;
 # read them back with coldstart_report.py.
 set -uo pipefail
 cd "$(dirname "$0")"
@@ -58,7 +58,7 @@ export PERF_REPORT_INTERVAL=300
 echo "=== Cold-start run (first-call latency) ==="
 echo "    stamp=${STAMP} iterations/cell=${ITERATIONS} proc_seconds=${PROC_SECONDS}s"
 echo "    ops=${OPERATIONS[*]} backends=${BACKENDS[*]}"
-echo "    container=${COSMOS_DATABASE}/${COSMOS_CONTAINER}  results -> perfdb/perfresults (cold-%)"
+echo "    container=${COSMOS_DATABASE}/${COSMOS_CONTAINER}  results -> perfdb/perfresults-v2 (cold-%)"
 echo
 overall_rc=0
 

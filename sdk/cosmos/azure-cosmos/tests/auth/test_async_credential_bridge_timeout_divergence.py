@@ -44,6 +44,7 @@ def clean_registry():
 
 
 def test_divergent_token_timeout_warns_and_first_wins(clean_registry, caplog):
+    """Prove a later token timeout is ignored with a clear warning."""
     credential = _FakeAsyncCredential()
 
     first = AsyncTokenCredentialBridge.acquire(credential, token_timeout=1.0)
@@ -62,6 +63,7 @@ def test_divergent_token_timeout_warns_and_first_wins(clean_registry, caplog):
 
 
 def test_divergent_join_timeout_warns_and_first_wins(clean_registry, caplog):
+    """Prove a later shutdown timeout is ignored with a clear warning."""
     credential = _FakeAsyncCredential()
 
     first = AsyncTokenCredentialBridge.acquire(credential, join_timeout=2.0)
@@ -76,6 +78,7 @@ def test_divergent_join_timeout_warns_and_first_wins(clean_registry, caplog):
 
 
 def test_matching_timeouts_do_not_warn(clean_registry, caplog):
+    """Prove repeated timeout settings do not produce a misleading warning."""
     credential = _FakeAsyncCredential()
 
     # First acquire with explicit values; the second repeats them, including the

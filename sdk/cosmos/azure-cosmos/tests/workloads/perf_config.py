@@ -75,7 +75,7 @@ def get_perf_config() -> dict:
         "enabled": os.environ.get("PERF_ENABLED", "true").lower() == "true",
         "results_endpoint": os.environ.get("RESULTS_COSMOS_URI", ""),
         "results_database": os.environ.get("RESULTS_COSMOS_DATABASE", "perfdb"),
-        "results_container": os.environ.get("RESULTS_COSMOS_CONTAINER", "perfresults"),
+        "results_container": os.environ.get("RESULTS_COSMOS_CONTAINER", "perfresults-v2"),
         "report_interval": _safe_int(
             os.environ.get("PERF_REPORT_INTERVAL", "300"), 300
         ),

@@ -33,6 +33,7 @@ import azure_cosmos_build_backend as build_backend
 
 
 def _configure_test_paths(monkeypatch, tmp_path):
+    """Create isolated native-library source and package paths."""
     package_directory = tmp_path / "package"
     package_directory.mkdir()
     libs_directory = package_directory / ".libs"

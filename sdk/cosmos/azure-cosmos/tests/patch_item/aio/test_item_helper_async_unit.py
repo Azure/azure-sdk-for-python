@@ -65,6 +65,7 @@ def _async_dispatch_backend(response):
 
 
 def _connection_with_cache(rid="rid"):
+    """Provide cached routing data for async patch tests."""
     cc = MagicMock()
     cc._container_properties_cache = {"dbs/db/colls/c": {"_rid": rid}}
     cc.PatchItem = AsyncMock(return_value="async-patch-result")

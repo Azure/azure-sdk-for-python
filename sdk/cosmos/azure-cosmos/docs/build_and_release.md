@@ -6,15 +6,15 @@ pipeline** change when a Rust extension is added.
 It follows the transition from the pure-Python package model to a **proposed** v5
 native-package model: a compiled Rust extension with platform-specific wheels.
 
-Local development: Maturin builds the `azure_cosmos_rust` binding against a sibling
-`azure-sdk-for-rust` checkout for local development.
+Maturin builds the `azure_cosmos_rust` binding against a sibling
+`azure-sdk-for-rust` checkout directory(only for local development).
 
 
 ---
 
 ## Table of contents
 
-- [1. The task, and the two numbers that define it](#1-the-task-and-the-two-numbers-that-define-it)
+- [1. Current release shape: one universal wheel and one source archive](#1-current-release-shape-one-universal-wheel-and-one-source-archive)
 - [2. What's in the repos: two Rust crates](#2-whats-in-the-repos-two-rust-crates)
 - [3. Building the binding and its driver dependency](#3-building-the-binding-and-its-driver-dependency)
 - [4. The output Python can't import yet: `cdylib`](#4-the-output-python-cant-import-yet-cdylib)
@@ -36,7 +36,7 @@ Local development: Maturin builds the `azure_cosmos_rust` binding against a sibl
 ---
 
 
-## 1. The task, and the two numbers that define it
+## 1. Current release shape: one universal wheel and one source archive
 
 The build-and-ship side of **v5** — the first release where part of the SDK is written in
 Rust — changes almost every assumption baked into the current release pipeline.
@@ -53,13 +53,10 @@ Pure-Python migration baseline (azure-cosmos 4.16.2):
 ```
 
 The phrase that matters is **`py3-none-any`**: one wheel, any operating system, any CPU,
-and every Python version allowed by the package's `Requires-Python` metadata. That single
-fact — *one wheel works for every supported environment* — is something the release pipeline
-depends on in many places.
+and every Python version allowed by the package's `Requires-Python` metadata.
 
-**The problem:** the moment the SDK contains compiled Rust, `py3-none-any` becomes
-impossible, because compiled code is specific to an operating system and CPU. Almost every
-number above is about to change. Before any of that can be planned, it helps to understand
+**Problem:** the moment the SDK contains compiled Rust, `py3-none-any` becomes
+impossible, because compiled code is specific to an operating system and CPU. Before any of that can be planned, it helps to understand
 what's actually in the repo now — including files that don't usually appear in a Python
 project.
 
@@ -71,7 +68,7 @@ The Python SDK and Rust driver are in separate sibling repositories. The `azure-
 package contains the Python-owned binding source, while the driver source remains in
 `azure-sdk-for-rust`:
 
-```
+```text
 source/repos/
 ├── azure-sdk-for-python/
 │   └── sdk/cosmos/azure-cosmos/
@@ -81,10 +78,10 @@ source/repos/
 │       │   └── _rust.pyd                   ← compiled extension on Windows
 │       ├── azure_cosmos_rust/              ← Rust: the binding crate
 │       │   ├── Cargo.toml
-│       │   ├── build.rs                    ← Cargo build script; checks staged native files
-│       │   ├── query_plan_binary.rs        ← PE/ELF/Mach-O reader used by build.rs
+│       │   ├── build.rs                    ← rejects QueryPlanInterop files built for the wrong platform
+│       │   ├── query_plan_binary.rs        ← reads the target CPU from native-library files
 │       │   └── src/*.rs
-│       ├── azure_cosmos_build_backend.py   ← PEP 517 wrapper; stages .libs into the wheel
+│       ├── azure_cosmos_build_backend.py   ← adds QueryPlanInterop files to the wheel
 │       ├── Cargo.toml                      ← binding workspace manifest
 │       └── pyproject.toml                  ← Python/Maturin build manifest
 └── azure-sdk-for-rust/
@@ -93,28 +90,74 @@ source/repos/
         └── src/*.rs                        ← Rust: the driver crate
 ```
 
-There are two sets of Rust code here, and to avoid confusion this document names them the
-**driver** and the **binding**. Rust's word for a package is a **crate**, so these are the
-driver crate and the binding crate.
+The process begins when a developer or CI runs:
 
-Two Rust terms show up in that tree and are used throughout. **Cargo** is Rust's build tool
-and package manager: it resolves and downloads dependencies (`pip`'s job), packages the
-result (`setuptools`' job), and — with no Python equivalent — **compiles** the code. Every
-crate has a **`Cargo.toml`**, the manifest where Cargo reads the crate's name, its
-dependencies, and what kind of output to produce; it uses the same TOML format as
-`pyproject.toml`, so it will look familiar.
+```bash
+python -m build
+```
 
-- **The driver crate** (`azure_data_cosmos_driver/`) does the real Cosmos work: builds HTTP
-  requests, routes partitions, retries, and tracks session tokens. It is **owned by Rust SDK
-  team** and its source remains in the separate `azure-sdk-for-rust` repository.
-  The Python SDK consumes it as a dependency rather than copying it into `azure-cosmos`.
-- **The binding crate** (`azure_cosmos_rust/`) is the Python-specific adapter. It exposes
-  Python-callable functions and owns boundary work such as type translation, credential
-  callbacks, runtime bridging, exception mapping, and diagnostics before calling the driver.
-  **The Python SDK team owns this**, and it is hand-written — no tool generates it. Cosmos
-  protocol and transport behavior still belongs in the driver rather than being duplicated
-  here.
+This is the standard Python entry point for creating an installable package. It does not
+know how to compile Rust or construct this particular wheel. Instead, it reads
+`pyproject.toml` to discover the project's configured build backend:
 
+```toml
+build-backend = "azure_cosmos_build_backend"
+```
+
+That backend is `azure_cosmos_build_backend.py`, a small layer customized for
+`azure-cosmos`. Its special responsibility is handling QueryPlanInterop, the native
+query-planning library that must ship alongside the Rust extension.
+
+The backend receives a QueryPlanInterop binary built for the target platform—for example,
+Windows x64—and temporarily copies it into:
+
+```text
+azure/cosmos/.libs/
+```
+
+Here, `azure/cosmos/` is the Python package directory that customers ultimately import.
+The copy is temporary only in the source checkout. It must be present while the wheel is
+assembled so that it becomes a permanent part of the finished wheel. Once the build
+finishes, the backend removes the staged copy, preventing a Windows or x64 binary from
+being accidentally reused in a later Linux, macOS, or ARM64 build.
+
+After staging QueryPlanInterop, the backend hands the main build work to **Maturin**.
+Maturin is the bridge between Python packaging and Rust: it understands both Python wheels
+and Cargo-based Rust projects. It knows where the binding crate lives, where the Python
+source files live, and that the compiled module should be installed as
+`azure.cosmos._rust`.
+
+Maturin then invokes **Cargo**, Rust's package manager and build tool. Cargo resolves the
+Rust dependencies and compiles both Rust crates:
+
+- `azure_cosmos_rust`, the Python-facing binding.
+- `azure_data_cosmos_driver`, the Cosmos implementation engine.
+
+Although the crates live in separate repositories, the binding declares the driver as a
+dependency. Cargo follows that relationship, compiles both, and links their code into one
+native Python extension such as `_rust.pyd`.
+
+Before compilation completes, Cargo automatically runs the binding's `build.rs`. That build
+script uses `query_plan_binary.rs` to inspect the staged QueryPlanInterop binary's header.
+It verifies that the binary matches the intended operating system, CPU architecture, and
+bitness. For example, it prevents an ARM64 QueryPlanInterop DLL from being included in a
+Windows x64 wheel.
+
+Once validation and compilation succeed, Maturin assembles the final platform-specific
+wheel. Conceptually, the installed Python package looks like:
+
+```text
+azure/cosmos/
+├── Python SDK files
+├── _rust.pyd                    compiled binding and driver
+└── .libs/
+    └── Cosmos.QueryPlanInterop.dll
+```
+
+
+The customer receives one ordinary Python wheel containing the Python SDK, the compiled
+Rust implementation, and the compatible query-planning library. The customer does not need
+Maturin, Cargo, a Rust compiler, or a separate QueryPlanInterop installation.
 
 > **How the current build resolves the driver.** The binding's `Cargo.toml` declares
 > `azure_data_cosmos_driver` as a local **path dependency** pointing to the sibling
@@ -126,7 +169,7 @@ dependencies, and what kind of output to produce; it uses the same TOML format a
 > declaration must be changed to the approved published `azure_data_cosmos_driver` version;
 > the sibling path remains a local-development arrangement only.
 
-**The problem:** these are *two separate crates*, and the binding depends on the driver.
+**Problem:** these are *two separate crates*, and the binding depends on the driver.
 When a build runs, how does one `cargo build` compile both and link them together — and make
 sure they agree on the versions of the libraries they share?
 
@@ -200,20 +243,10 @@ One project-specific dependency-policy question remains: Cargo unions features r
 the binding and driver on that shared copy. Review the resulting feature set for binary size
 and dependency policy; this is not a version conflict.
 
-**The driver revision is also not pinned by Cargo.** The dependency is a relative `path`, not
-a `git` dependency with a `rev`. The Python commit therefore records neither
-`5c170b538` nor any other Rust commit; it compiles whichever sibling checkout happens to be
-at that path. The release fix is to replace this path with the approved crates.io version.
-If developers still want to test unreleased driver source, they can override that dependency
-locally without putting the override in the published manifest.
 
 **Moving to a new driver version is a binding code change, not a version bump.** This is
 easy to under-budget, because in a pure-Python project "take the new dependency" is an edit
-to one line of metadata. It is not that here. The binding is the *embedder* of the driver:
-it depends on the driver, calls the driver's APIs, and re-exposes them through PyO3. When
-the driver ships a 0.x → 0.(x+1) release, "breaking API change for embedders" means the
-binding crate's source has to be edited — renamed imports, restructured call sites, type
-substitutions — before it will even compile against the new driver.
+to one line of metadata. It is not that here. 
 
 Two consequences worth planning around:
 
@@ -221,10 +254,7 @@ Two consequences worth planning around:
   customers feel is *cadence*: a driver release that fixes a known parity gap needs
   binding edits landed first, then a new `azure-cosmos` release, before the fix is on
   PyPI.
-- **Budget the binding edits alongside the version change.** This applies directly to §12
-  item 1 — moving from the sibling path dependency to the approved crates.io version is
-  itself a driver-version change, so the first thing that step should confirm is that the
-  binding still compiles against the version selected for release.
+
 
 **Verify resolution on a clean build, don't assume it.** The branch does not commit
 **`Cargo.lock`**, the generated file recording every crate in the graph at one exact version.
@@ -247,7 +277,7 @@ the PyO3 extension, but QueryPlanInterop is loaded separately at runtime. That d
 changes both wheel contents and release validation; §9 covers the complete build, loading,
 fallback, and artifact-source model.
 
-**The new problem:** once those prerequisites are satisfied, `cargo build` produces a raw
+**Problem:** once those prerequisites are satisfied, `cargo build` produces a raw
 platform library — for example, `azure_cosmos_rust.dll` on Windows — and
 `import azure.cosmos._rust` still does nothing. Cargo built *a* file, but not one Python knows
 how to load.
@@ -292,8 +322,7 @@ platform-specific Python extension name:
 | Linux    | `_rust.abi3.so`      | `.so`                        |
 | macOS    | `_rust.abi3.so`      | `.dylib`                     |
 
-**One file, several names for it.** This document says *compiled extension*, *platform
-extension*, *native extension*, and *the `.pyd`/`.so`* — they all mean this same single file:
+The word s *compiled extension*, *platform extension*, *native extension*, and *the `.pyd`/`.so`* — they all mean this same single file:
 `_rust.pyd` on Windows, `_rust.abi3.so` on Linux and macOS. "Platform" and "native" just
 emphasize that it is machine code built for one OS/CPU; "extension" is Python's word for a
 module written in compiled code rather than `.py`.
@@ -301,7 +330,7 @@ module written in compiled code rather than `.py`.
 So Cargo's `azure_cosmos_rust.dll` has to be **renamed** to `_rust.pyd` and **placed**
 inside `azure/cosmos/` before Python can import it. Cargo does neither of those steps.
 
-**The new problem:** even after renaming the file by hand and getting Python to load it, the
+**Problem:** even after renaming the file by hand and getting Python to load it, the
 functions inside are still unreachable. They speak Rust — Rust types, Rust calling
 conventions, Rust errors. A Rust `String` is not a Python `str`; a Rust `Result` is not a
 raised exception. Something has to translate at the boundary.

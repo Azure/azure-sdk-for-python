@@ -20,6 +20,7 @@ pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
 @pytest.fixture
 def container_for(request):
+    """Provide an isolated container so each test targets only its own items."""
     client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
     db = client.create_database_if_not_exists("parity_db")
     cname = "cra_" + request.node.name + "_" + uuid.uuid4().hex[:6]

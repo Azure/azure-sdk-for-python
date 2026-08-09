@@ -38,10 +38,12 @@ _STRIP = {"_rid", "_self", "_ts", "_etag", "_attachments"}
 
 
 def _clean(item):
+    """Remove service-generated fields before comparing item content."""
     return {k: v for k, v in dict(item).items() if k not in _STRIP}
 
 
 async def _run(item_id, backend, credential):
+    """Create and read an item with the selected backend and credential."""
     async with CosmosClient(os.environ["ACCOUNT_HOST"], credential, _backend=backend) as client:
         db = await client.create_database_if_not_exists("parity_db")
         cname = "auth_aio_" + uuid.uuid4().hex[:8]

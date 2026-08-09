@@ -53,6 +53,7 @@ pub(crate) struct OpModifiers {
     pub(crate) custom_headers: HashMap<HeaderName, HeaderValue>,
 }
 
+/// Read container-scoped fields and request settings from a prepared request.
 pub(crate) fn extract_common_prepared_inputs<'py>(
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<(String, String, OpModifiers)> {
@@ -99,6 +100,7 @@ pub(crate) fn extract_account_prepared_modifiers<'py>(
     extract_op_modifiers(headers_dict)
 }
 
+/// Copy the prepared request body into Rust-owned bytes.
 pub(crate) fn extract_body_bytes<'py>(prepared: &Bound<'py, PyAny>) -> PyResult<Vec<u8>> {
     prepared.getattr("body_bytes")?.extract()
 }
@@ -109,6 +111,7 @@ struct ReadFeedRangesBody {
     force_refresh: bool,
 }
 
+/// Parse the optional `forceRefresh` setting for `read_feed_ranges`.
 pub(crate) fn parse_read_feed_ranges_force_refresh(body_bytes: &[u8]) -> PyResult<bool> {
     if body_bytes.is_empty() {
         return Ok(false);
@@ -121,6 +124,7 @@ pub(crate) fn parse_read_feed_ranges_force_refresh(body_bytes: &[u8]) -> PyResul
     Ok(parsed.force_refresh)
 }
 
+/// Read the `read_feed_ranges` refresh setting from a prepared request.
 pub(crate) fn extract_read_feed_ranges_force_refresh<'py>(
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<bool> {
@@ -128,6 +132,7 @@ pub(crate) fn extract_read_feed_ranges_force_refresh<'py>(
     parse_read_feed_ranges_force_refresh(&body_bytes)
 }
 
+/// Return the required item id or raise the supplied validation error.
 pub(crate) fn extract_required_item_id<'py>(
     prepared: &Bound<'py, PyAny>,
     error_message: &'static str,
@@ -208,6 +213,7 @@ fn parse_availability_strategy(value: &str) -> Option<AvailabilityStrategy> {
 /// ``DEFAULT_THRESHOLD_MS`` (see ``_availability_strategy_config``).
 const DEFAULT_HEDGE_THRESHOLD_MS: u64 = 500;
 
+/// Split prepared headers into driver settings and headers sent to the service.
 fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifiers> {
     let mut activity_header: Option<String> = None;
     let mut session_header: Option<String> = None;
@@ -491,21 +497,56 @@ pub(super) fn parse_container_link(link: &str) -> PyResult<(String, String)> {
     }
 }
 
+/// Parse `dbs/<db>` into a database name.
+pub(super) fn parse_database_link(link: &str) -> PyResult<String> {
+    let mut parts = link.split('/');
+    match (parts.next(), parts.next(), parts.next()) {
+        (Some("dbs"), Some(db), None) if !db.is_empty() => Ok(db.to_string()),
+        _ => Err(PyValueError::new_err(format!(
+            "database link must be 'dbs/<db>', got {link:?}"
+        ))),
+    }
+}
+
+/// Read the database name and request settings for a container feed.
+pub(crate) fn extract_container_feed_prepared_inputs<'py>(
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<(String, OpModifiers)> {
+    let link: String = prepared.getattr("container_link")?.extract()?;
+    let database_id = parse_database_link(&link)?;
+    let headers_obj = prepared.getattr("headers")?;
+    let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
+    let modifiers = extract_op_modifiers(headers_dict)?;
+    Ok((database_id, modifiers))
+}
+
+/// Read database and container names plus request settings for a container read.
+pub(crate) fn extract_container_point_prepared_inputs<'py>(
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<(String, String, OpModifiers)> {
+    let link: String = prepared.getattr("container_link")?.extract()?;
+    let (database_id, container_id) = parse_container_link(&link)?;
+    let headers_obj = prepared.getattr("headers")?;
+    let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
+    let modifiers = extract_op_modifiers(headers_dict)?;
+    Ok((database_id, container_id, modifiers))
+}
+
 /// Parse the JSON-array partition-key header into a typed `PartitionKey`.
 ///
-/// Accepts every shape the Python helper (`_helpers/_pk_wire.py`) emits:
+/// Accepts every shape the Python helper emits:
 ///
-///   * Single scalar:                 `["customerA"]`, `[123]`, `[true]`, `[null]`
-///   * Undefined (PK path missing):   `[{}]`        -> `PartitionKeyValue::undefined()`
-///   * Hierarchical (2 or 3 levels):  `["t1","r1"]`, `["t1","r1","s1"]`
+///   * Single scalar:                  `["customerA"]`, `[123]`, `[true]`, `[null]`
+///   * Undefined (PK path missing):    `[{}]`        -> `PartitionKeyValue::undefined()`
+///   * Hierarchical (2 or 3 levels):   `["t1","r1"]`, `["t1","r1","s1"]`
 ///   * Hierarchical with missing leaf: `["t1",null]`
 ///
-/// The one shape we still reject is the bare empty array `[]`, which the
-/// driver overloads to mean "cross-partition query" (`PartitionKey::EMPTY`
-/// emits the `x-ms-documentdb-query-enablecrosspartition` header instead of
-/// `x-ms-documentdb-partitionkey: []`). Until the driver splits those two
-/// concepts, we fail fast here so a partitionless-container write cannot
-/// silently land in the wrong place.
+/// The one shape still rejected is the bare empty array `[]`, which the driver
+/// overloads to mean "cross-partition query" (`PartitionKey::EMPTY` emits the
+/// `x-ms-documentdb-query-enablecrosspartition` header instead of
+/// `x-ms-documentdb-partitionkey: []`). Until the driver separates those two
+/// concepts, this fails fast so a partitionless-container write cannot silently
+/// land in the wrong place.
 pub(super) fn parse_partition_key_header(header: &str) -> PyResult<PartitionKey> {
     let parsed: Vec<serde_json::Value> = serde_json::from_str(header).map_err(|e| {
         PyValueError::new_err(format!("invalid partition_key_header {header:?}: {e}"))
@@ -635,18 +676,21 @@ fn json_value_to_pk_component(value: serde_json::Value) -> PyResult<PartitionKey
     }
 }
 
-/// Read the document `id` out of a JSON body. The caller guarantees it is
-/// present; we error if it is not rather than inventing one.
+/// A partial view of a document body that deserializes only the `id` field.
 ///
-/// This reads only the `id` field and skips the rest of the document, so a
-/// large body isn't parsed in full just to get one string. The `id` is kept as
-/// a `Value` so a present-but-non-string value still gives the "no string id"
-/// error.
+/// This skips the rest of the document, so a large body isn't parsed in full
+/// just to get one string. The `id` is kept as a `Value` so a
+/// present-but-non-string value still gives the "no string id" error rather
+/// than a deserialization failure.
 #[derive(Deserialize)]
 struct BodyId {
     id: Option<serde_json::Value>,
 }
 
+/// Read the document `id` out of a JSON body.
+///
+/// The caller guarantees it is present; we error if it is not rather than
+/// inventing one.
 pub(crate) fn extract_item_id(body: &[u8]) -> PyResult<String> {
     let parsed: BodyId = serde_json::from_slice(body)
         .map_err(|e| PyValueError::new_err(format!("body is not valid JSON: {e}")))?;
