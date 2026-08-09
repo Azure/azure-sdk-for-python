@@ -845,10 +845,15 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         await self._sender.send_prepared(prepared, state_committed=True)
 
     async def _notify_response_completed(self, terminal_kind: str) -> None:
-        completion = asyncio.create_task(
-            self._sender.response_completed(self._response_id, terminal_kind),
-            name="voice_response_completed",
-        )
+        completion_coroutine = self._sender.response_completed(self._response_id, terminal_kind)
+        try:
+            completion = asyncio.create_task(
+                completion_coroutine,
+                name="voice_response_completed",
+            )
+        except BaseException:  # pylint: disable=broad-exception-caught
+            completion_coroutine.close()
+            raise
         cancellation: asyncio.CancelledError | None = None
         while not completion.done():
             try:

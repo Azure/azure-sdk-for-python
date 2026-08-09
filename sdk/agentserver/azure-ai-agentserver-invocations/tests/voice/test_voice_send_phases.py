@@ -66,6 +66,7 @@ def test_local_terminal_frame_rejection_does_not_commit_session_state() -> None:
 
         await connection.end_call("normal", "drain")
         assert [message["type"] for message in websocket.sent] == ["end_call"]
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -85,6 +86,7 @@ def test_local_decline_frame_rejection_keeps_prefix_retryable() -> None:
 
         await response.decline(reason="normal")
         assert [message["type"] for message in websocket.sent] == ["response.none"]
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -108,6 +110,7 @@ def test_cancellation_after_open_commit_fails_connection_closed() -> None:
             assert connection._resource_limit_reached.done()  # pylint: disable=protected-access
         finally:
             connection._send_lock.release()  # pylint: disable=protected-access
+            connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -132,6 +135,7 @@ def test_cancellation_after_terminal_claim_fails_connection_closed() -> None:
             assert connection._resource_limit_reached.done()  # pylint: disable=protected-access
         finally:
             connection._send_lock.release()  # pylint: disable=protected-access
+            connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -159,6 +163,7 @@ def test_handoff_preflight_failure_keeps_response_retryable() -> None:
             "response.output_text.done",
             "response.done",
         ]
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -184,6 +189,7 @@ def test_handoff_frame_is_fully_prepared_before_terminal_claim() -> None:
         assert terminal_states_during_prepare == [False]
         assert response.is_terminal
         assert websocket.frames[-1] == prepared_frames[0]
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -216,6 +222,7 @@ def test_every_terminal_frame_is_prepared_before_local_claim(terminal_kind: str)
 
         assert terminal_states_during_prepare == [False]
         assert response.is_terminal
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -253,6 +260,7 @@ def test_cancellation_after_wire_terminal_waits_for_host_bookkeeping() -> None:
 
         assert connection._active_response is None  # pylint: disable=protected-access
         assert response.response_id in connection._terminal_response_ids  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -280,6 +288,7 @@ def test_host_bookkeeping_failure_takes_precedence_over_caller_cancellation() ->
 
         with pytest.raises(RuntimeError, match="bookkeeping failed"):
             await done_task
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -303,6 +312,7 @@ def test_semantic_terminal_revalidation_does_not_fail_connection() -> None:
 
         assert not connection.ending
         assert not connection._resource_limit_reached.done()  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -326,6 +336,7 @@ def test_telemetry_failure_does_not_reclassify_successful_wire_send() -> None:
         assert [message["type"] for message in websocket.sent] == ["response.output_text.done"]
         assert not connection.ending
         assert not connection._resource_limit_reached.done()  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -352,6 +363,7 @@ def test_output_item_pre_io_failure_does_not_create_ghost_ownership() -> None:
             response.response_id,
             item_id,
         )
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -388,5 +400,6 @@ def test_connection_shutdown_finishes_before_propagating_cancellation() -> None:
             await run_task
 
         assert voice_host._GLOBAL_IDENTITY_BYTES == baseline  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())

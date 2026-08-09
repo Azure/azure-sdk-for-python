@@ -57,6 +57,7 @@ else:
 logger = logging.getLogger("azure.ai.agentserver")
 
 _APPLICATION_CLOSE_CODE = "azure.ai.agentserver.invocations_ws.application_close_code"
+_APPLICATION_CLOSE_OWNER = "azure.ai.agentserver.invocations_ws.application_close_owner"
 _PEER_CLOSE_CODE = "azure.ai.agentserver.invocations_ws.peer_close_code"
 _TERMINAL_CLOSE = "azure.ai.agentserver.invocations_ws.terminal_close"
 
@@ -70,6 +71,58 @@ def _selected_close(websocket: WebSocket, default_code: int) -> tuple[int, str]:
     if isinstance(selected, tuple) and len(selected) == 2:
         return int(selected[0]), str(selected[1])
     return default_code, "unknown"
+
+
+def _select_application_close(websocket: WebSocket, code: int) -> None:
+    """Record the application's terminal selection before transport entry.
+
+    :param websocket: WebSocket carrying the cross-layer close state.
+    :type websocket: ~starlette.websockets.WebSocket
+    :param int code: Selected RFC 6455 close code.
+    """
+    scope = getattr(websocket, "scope", None)
+    if not isinstance(scope, MutableMapping):
+        return
+    scope.setdefault(_APPLICATION_CLOSE_CODE, int(code))
+    _record_terminal_close(websocket, code, "application_selected")
+
+
+def _claim_application_close(websocket: WebSocket, code: int, owner: object) -> None:
+    """Record an application-owned close before it reaches the ASGI transport.
+
+    :param websocket: WebSocket carrying the cross-layer close state.
+    :type websocket: ~starlette.websockets.WebSocket
+    :param int code: Selected RFC 6455 close code.
+    :param object owner: Task that exclusively owns the transport close.
+    """
+    _select_application_close(websocket, code)
+    scope = getattr(websocket, "scope", None)
+    if isinstance(scope, MutableMapping):
+        scope[_APPLICATION_CLOSE_OWNER] = owner
+
+
+def _application_close_is_owned(websocket: WebSocket) -> bool:
+    """Return whether an application close owner can still complete the operation.
+
+    :param websocket: WebSocket carrying the cross-layer close state.
+    :type websocket: ~starlette.websockets.WebSocket
+    :return: Whether the application owner is pending or completed successfully.
+    :rtype: bool
+    """
+    scope = getattr(websocket, "scope", None)
+    if not isinstance(scope, MutableMapping) or _APPLICATION_CLOSE_OWNER not in scope:
+        return False
+    owner = scope[_APPLICATION_CLOSE_OWNER]
+    done = getattr(owner, "done", None)
+    cancelled = getattr(owner, "cancelled", None)
+    exception = getattr(owner, "exception", None)
+    if not callable(done) or not callable(cancelled) or not callable(exception):
+        return True
+    if not done():
+        return True
+    if cancelled():
+        return False
+    return exception() is None
 
 
 class _WebSocketHeaderGetter(Getter[list[tuple[bytes, bytes]]]):
@@ -507,7 +560,12 @@ class _WSHandlerMixin(_MixinBase):
         # application hasn't already done so (e.g. the user handler
         # may have called ``websocket.close`` itself, or the client
         # may have disconnected).
-        if websocket is not None and websocket.application_state != WebSocketState.DISCONNECTED:
+        application_close_owned = websocket is not None and _application_close_is_owned(websocket)
+        if (
+            websocket is not None
+            and websocket.application_state != WebSocketState.DISCONNECTED
+            and not application_close_owned
+        ):
             _record_terminal_close(websocket, close_code, "sdk")
             close_code, close_code_source = _selected_close(websocket, close_code)
             reason = "Internal server error" if close_code == InvocationsWSConstants.CLOSE_INTERNAL_ERROR else ""

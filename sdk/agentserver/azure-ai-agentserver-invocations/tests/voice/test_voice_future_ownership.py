@@ -86,6 +86,7 @@ def test_shutdown_owns_proactive_future_while_accept_transition_waits() -> None:
         assert isinstance(future.exception(), VoiceBridgeConnectionClosedError)
         assert connection._active_response is None  # pylint: disable=protected-access
         assert response.response_id not in connection._response_start_ns  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -132,6 +133,7 @@ def test_shutdown_owns_proactive_future_while_drop_transition_waits() -> None:
 
         assert isinstance(future.exception(), VoiceBridgeConnectionClosedError)
         assert response.response_id not in connection._pending_proactive  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -178,6 +180,57 @@ def test_shutdown_owns_cancel_waiter_while_playback_transition_waits() -> None:
 
         assert isinstance(waiter.exception(), VoiceBridgeConnectionClosedError)
         assert response.response_id not in connection._cancel_waiters  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
+def test_ending_does_not_orphan_cancel_waiter_during_playback_transition() -> None:
+    async def scenario() -> None:
+        connection = _connection()
+        response = VoiceResponse._create(  # pylint: disable=protected-access
+            connection,
+            response_id="r_ending_cancel",
+            in_reply_to=None,
+            wire_opened=True,
+        )
+        connection._active_response = response  # pylint: disable=protected-access
+        connection._seen_response_ids.add(response.response_id)  # pylint: disable=protected-access
+        waiter: asyncio.Future = asyncio.get_running_loop().create_future()
+        connection._cancel_waiters[response.response_id] = waiter  # pylint: disable=protected-access
+
+        entered = asyncio.Event()
+        release = asyncio.Event()
+        original_mark_terminal = response._mark_terminal  # pylint: disable=protected-access
+
+        async def blocked_mark_terminal() -> None:
+            entered.set()
+            await release.wait()
+            await original_mark_terminal()
+
+        response._mark_terminal = blocked_mark_terminal  # type: ignore[method-assign]  # pylint: disable=protected-access
+        handler = asyncio.create_task(
+            connection._handle_playback_terminal(  # pylint: disable=protected-access
+                {
+                    "response_id": response.response_id,
+                    "heard_text": "partial",
+                },
+                kind="cancelled",
+            )
+        )
+        await entered.wait()
+        async with connection._state_lock:  # pylint: disable=protected-access
+            connection._ending = True  # pylint: disable=protected-access
+
+        release.set()
+        await handler
+
+        assert not waiter.done()
+        assert connection._cancel_waiters.get(response.response_id) is waiter  # pylint: disable=protected-access
+        connection._fail_helper_waiters("closed")  # pylint: disable=protected-access
+        assert isinstance(waiter.exception(), VoiceBridgeConnectionClosedError)
+        assert response.response_id not in connection._cancel_waiters  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -220,6 +273,7 @@ def test_shutdown_owns_cancel_waiter_while_timeout_transition_waits() -> None:
 
         assert isinstance(waiter.exception(), VoiceBridgeConnectionClosedError)
         assert response.response_id not in connection._cancel_waiters  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -252,5 +306,6 @@ def test_abandoned_cancel_waiter_observes_shutdown_exception() -> None:
         await asyncio.sleep(0)
 
         assert not [context for context in unhandled if "never retrieved" in context.get("message", "")]
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())

@@ -8,6 +8,7 @@ import faulthandler
 import gc
 import json
 import os
+from pathlib import Path
 import sys
 import threading
 import time
@@ -24,6 +25,7 @@ from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
 _CI_HANG_DIAGNOSTICS = os.environ.get("TF_BUILD", "").lower() == "true"
+_VOICE_TEST_ROOT = Path(__file__).parent / "voice"
 _CI_WINDOWS_VOICE_REPEATS = _CI_HANG_DIAGNOSTICS and os.environ.get("AGENT_OS") == "Windows_NT"
 _TEST_TIMEOUT_SECONDS = 60.0
 _SESSION_TIMEOUT_SECONDS = 300.0
@@ -216,6 +218,38 @@ def pytest_generate_tests(metafunc):
 def _voice_ci_repeat(request):
     """Provide the CI-only repeat parameter without changing test signatures."""
     return getattr(request, "param", None)
+
+
+def _assert_voice_global_accounting_released() -> None:
+    from azure.ai.agentserver.invocations.voice import _host as voice_host  # pylint: disable=import-outside-toplevel
+
+    with voice_host._GLOBAL_CUSTOMER_TASKS_LOCK:  # pylint: disable=protected-access
+        accounting = {
+            "customer_tasks": len(voice_host._GLOBAL_CUSTOMER_TASKS),
+            "runtime_tasks": len(voice_host._GLOBAL_RUNTIME_TASKS),
+            "termination_tasks": len(voice_host._GLOBAL_TERMINATION_TASKS),
+            "runtime_retention_leases": len(voice_host._GLOBAL_RUNTIME_SESSION_RETENTION_BY_TASK),
+            "customer_task_byte_charges": len(voice_host._GLOBAL_CUSTOMER_TASK_BYTES_BY_TASK),
+            "customer_retention_leases": len(voice_host._GLOBAL_SESSION_RETENTION_BY_TASK),
+            "customer_task_reservations": voice_host._GLOBAL_CUSTOMER_TASK_RESERVATIONS,
+            "runtime_task_reservations": voice_host._GLOBAL_RUNTIME_TASK_RESERVATIONS,
+            "termination_task_reservations": voice_host._GLOBAL_TERMINATION_TASK_RESERVATIONS,
+            "callback_queue_bytes": voice_host._GLOBAL_CALLBACK_QUEUE_BYTES,
+            "customer_task_bytes": voice_host._GLOBAL_CUSTOMER_TASK_BYTES,
+            "identity_bytes": voice_host._GLOBAL_IDENTITY_BYTES,
+        }
+    assert not any(accounting.values()), accounting
+
+
+@pytest.fixture(autouse=True)
+def _voice_global_accounting_boundary(request):
+    """Require Voice process-level accounting to be empty at every test boundary."""
+    if not request.node.path.is_relative_to(_VOICE_TEST_ROOT):
+        yield
+        return
+    _assert_voice_global_accounting_released()
+    yield
+    _assert_voice_global_accounting_released()
 
 
 @pytest.fixture

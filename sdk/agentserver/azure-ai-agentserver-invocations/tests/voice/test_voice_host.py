@@ -4,6 +4,7 @@
 """End-to-end tests for the typed Voice Live bridge host."""
 
 import asyncio
+import inspect
 import json
 import logging
 import threading
@@ -947,6 +948,7 @@ def test_batch_timeout_completes_every_cancel_waiter() -> None:
         assert isinstance(first_waiter.exception(), VoiceBridgeConnectionClosedError)
         assert isinstance(second_waiter.exception(), VoiceBridgeConnectionClosedError)
         assert not connection._cancel_waiters  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -1530,6 +1532,7 @@ def test_cancelled_ambiguous_proactive_send_terminates_connection() -> None:
         _, future = next(iter(connection._pending_proactive.values()))  # pylint: disable=protected-access
         assert future.cancelled()
         connection._fail_helper_waiters("closed")  # pylint: disable=protected-access
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -2007,6 +2010,7 @@ def test_terminal_tombstone_suppresses_auto_done_race() -> None:
         finally:
             release_task.cancel()
             await asyncio.gather(release_task, return_exceptions=True)
+            connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 
@@ -2046,6 +2050,32 @@ def test_auto_finalization_that_ignores_cancel_is_bounded(monkeypatch) -> None:
         assert len(finalizer_tasks) == 1
         unblock.set()
         await asyncio.gather(*finalizer_tasks, return_exceptions=True)
+
+    asyncio.run(scenario())
+
+
+def test_response_completion_task_creation_failure_closes_coroutine(monkeypatch) -> None:
+    async def scenario() -> None:
+        connection = _connection(None)
+        response = VoiceResponse._create(  # pylint: disable=protected-access
+            connection,
+            response_id="r_completion_factory_failure",
+            in_reply_to=None,
+        )
+        captured: list[object] = []
+
+        def fail_completion(coroutine, *, name=None, context=None):
+            del context
+            if name == "voice_response_completed":
+                captured.append(coroutine)
+                raise RuntimeError("completion task creation failed")
+            raise AssertionError(f"unexpected task: {name}")
+
+        monkeypatch.setattr(voice_runtime.asyncio, "create_task", fail_completion)
+        with pytest.raises(RuntimeError, match="completion task creation failed"):
+            await response._notify_response_completed("done")  # pylint: disable=protected-access
+        assert len(captured) == 1
+        assert inspect.getcoroutinestate(captured[0]) == inspect.CORO_CLOSED
 
     asyncio.run(scenario())
 
@@ -2599,6 +2629,7 @@ def test_registered_proactive_is_failed_by_session_terminal(terminal_kind: str) 
             await connection._handle_response_dropped(  # pylint: disable=protected-access
                 {"response_id": response_id, "reason": "session_ended"}
             )
+        connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 

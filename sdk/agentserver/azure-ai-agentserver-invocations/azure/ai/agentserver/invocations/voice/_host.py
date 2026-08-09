@@ -18,7 +18,7 @@ from collections.abc import Awaitable, Callable, Coroutine, Mapping, Sequence
 from dataclasses import dataclass
 from dataclasses import fields as dataclass_fields, is_dataclass, replace
 from types import MappingProxyType
-from typing import Any, Literal, Optional
+from typing import Any, Literal, Optional, TypeVar
 
 from opentelemetry import metrics
 from starlette.routing import WebSocketRoute
@@ -27,6 +27,7 @@ from azure.ai.agentserver.core import experimental
 
 from .._constants import InvocationsWSConstants
 from .._invocation import InvocationAgentServerHost
+from .._invocation_ws import _claim_application_close, _select_application_close
 from .._version import VERSION
 
 from ._models import (
@@ -125,6 +126,7 @@ HandoffFailedCallback = Callable[[VoiceSession, HandoffFailedEvent, VoiceRespons
 BargeInCallback = Callable[[VoiceSession, BargeInEvent], Awaitable[None]]
 ResponseTimeoutCallback = Callable[[VoiceSession, ResponseTimeoutEvent], Awaitable[None]]
 SessionEndCallback = Callable[[VoiceSession, SessionEndEvent], Awaitable[None]]
+_TaskResult = TypeVar("_TaskResult")
 
 _MAX_CALLBACK_QUEUE = 128
 _MAX_CALLBACK_QUEUE_BYTES = 8 * 1024 * 1024
@@ -140,6 +142,8 @@ _MAX_PENDING_PROACTIVE = 16
 # accumulate such tasks without limit.
 _MAX_RESISTANT_TASKS = 64
 _MAX_GLOBAL_CUSTOMER_TASKS = 1024
+_MAX_GLOBAL_RUNTIME_TASKS = 1024
+_MAX_GLOBAL_TERMINATION_TASKS = 1024
 _MAX_GLOBAL_CALLBACK_QUEUE_BYTES = 64 * 1024 * 1024
 _MAX_GLOBAL_CUSTOMER_TASK_BYTES = 64 * 1024 * 1024
 _MESSAGE_IDENTITY_BYTES = 192
@@ -149,11 +153,17 @@ _RESPONSE_ITEM_IDENTITY_BYTES = 128
 _MAX_CONNECTION_IDENTITY_BYTES = 4 * 1024 * 1024
 _MAX_GLOBAL_IDENTITY_BYTES = 64 * 1024 * 1024
 _CLEANUP_TIMEOUT_SECONDS = 5.0
+_UNAVAILABLE_CLOSE_EXCLUSION = object()
 _GLOBAL_CUSTOMER_TASKS: set[asyncio.Task[None]] = set()
+_GLOBAL_RUNTIME_TASKS: set[asyncio.Task[Any]] = set()
+_GLOBAL_TERMINATION_TASKS: set[asyncio.Task[Any]] = set()
+_GLOBAL_RUNTIME_SESSION_RETENTION_BY_TASK: dict[asyncio.Task[Any], _SessionRetentionLease] = {}
 _GLOBAL_CUSTOMER_TASK_BYTES_BY_TASK: dict[asyncio.Task[None], int] = {}
 _GLOBAL_SESSION_RETENTION_BY_TASK: dict[asyncio.Task[None], _SessionRetentionLease] = {}
 _GLOBAL_CUSTOMER_TASKS_LOCK = threading.Lock()
 _GLOBAL_CUSTOMER_TASK_RESERVATIONS = 0
+_GLOBAL_RUNTIME_TASK_RESERVATIONS = 0
+_GLOBAL_TERMINATION_TASK_RESERVATIONS = 0
 _GLOBAL_CALLBACK_QUEUE_BYTES = 0
 _GLOBAL_CUSTOMER_TASK_BYTES = 0
 _GLOBAL_IDENTITY_BYTES = 0
@@ -243,6 +253,69 @@ def _release_global_customer_task(completed: asyncio.Task[None]) -> None:
             _release_session_retention_locked(session_retention)
     if not completed.cancelled():
         completed.exception()
+
+
+def _release_global_runtime_task(completed: asyncio.Task[Any]) -> None:
+    """Release and observe a runtime task retained past connection shutdown.
+
+    :param completed: Completed internal runtime task.
+    :type completed: asyncio.Task[Any]
+    """
+    global _GLOBAL_RUNTIME_TASK_RESERVATIONS  # pylint: disable=global-statement
+    global _GLOBAL_TERMINATION_TASK_RESERVATIONS  # pylint: disable=global-statement
+    with _GLOBAL_CUSTOMER_TASKS_LOCK:
+        if completed not in _GLOBAL_RUNTIME_TASKS:
+            return
+        _GLOBAL_RUNTIME_TASKS.discard(completed)
+        _GLOBAL_RUNTIME_TASK_RESERVATIONS -= 1
+        if completed in _GLOBAL_TERMINATION_TASKS:
+            _GLOBAL_TERMINATION_TASKS.discard(completed)
+            _GLOBAL_TERMINATION_TASK_RESERVATIONS -= 1
+        session_retention = _GLOBAL_RUNTIME_SESSION_RETENTION_BY_TASK.pop(completed, None)
+        if session_retention is not None:
+            _release_session_retention_locked(session_retention)
+    if not completed.cancelled():
+        completed.exception()
+
+
+def _create_owned_task(
+    coroutine: Coroutine[Any, Any, _TaskResult],
+    *,
+    name: str,
+) -> asyncio.Task[_TaskResult]:
+    """Create an internal task or close its unsubmitted coroutine.
+
+    :param coroutine: Internal operation that needs task ownership.
+    :type coroutine: Coroutine
+    :keyword name: Diagnostic task name.
+    :paramtype name: str
+    :return: Submitted task.
+    :rtype: asyncio.Task
+    """
+    try:
+        return asyncio.create_task(coroutine, name=name)
+    except BaseException:  # pylint: disable=broad-exception-caught
+        coroutine.close()
+        raise
+
+
+def _task_role_error(
+    task: asyncio.Future[Any],
+    *,
+    role: str,
+    allow_successful_completion: bool,
+) -> BaseException | None:
+    cancelling = getattr(task, "cancelling", lambda: 0)
+    if task.cancelled() or cancelling():
+        return RuntimeError(f"{role} was cancelled before ownership was installed")
+    if not task.done():
+        return None
+    error = task.exception()
+    if error is not None:
+        return error
+    if allow_successful_completion:
+        return None
+    return RuntimeError(f"{role} completed before ownership was installed")
 
 
 def _reserve_global_callback_queue_bytes(size: int) -> bool:
@@ -1085,7 +1158,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         self._callback_worker: asyncio.Task[None] | None = None
         self._active_customer_task: asyncio.Task[None] | None = None
         self._active_release: asyncio.Event | None = None
-        self._cleanup_tasks: set[asyncio.Task[None]] = set()
+        self._cleanup_tasks: dict[asyncio.Task[None], asyncio.Task[None]] = {}
         # Underlying customer tasks that were cancelled but may outlive their
         # bounded cleanup wrapper (they swallowed CancelledError). Tracked here
         # until they actually finish so they are never left running untracked.
@@ -1102,6 +1175,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         self._session_retention: _SessionRetentionLease | None = None
         self._active_response: VoiceResponse | None = None
         self._pending_turns: OrderedDict[bytes, VoiceResponse] = OrderedDict()
+        self._shutdown_responses: OrderedDict[str, VoiceResponse] = OrderedDict()
+        self._shutdown_terminal_metrics: set[str] = set()
         self._resolved_input_prefixes = _DigestPrefixMap()
         self._recent_responses: OrderedDict[str, _RecentResponse] = OrderedDict()
         self._identity_budget = _IdentityBudget(
@@ -1139,6 +1214,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         self._closed = False
         self._ending = False
         self._prefetched_receive_task: asyncio.Task[dict[str, Any] | None] | None = None
+        self._pending_ready_send_task: asyncio.Task[None] | None = None
+        self._pending_close_task: asyncio.Task[None] | None = None
 
     @property
     def ending(self) -> bool:
@@ -1147,37 +1224,99 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
     async def run(self) -> None:
         """Activate the protocol and run the sole receive pump."""
         graceful_end = False
+        runtime_error: BaseException | None = None
         try:
-            if not await self._activate():
-                return
-            while not self._closed:
-                payload = await self._receive_with_worker_supervision()
-                if payload is None:
-                    break
-                if not await self._dispatch(payload):
-                    graceful_end = True
-                    break
-        except VoiceBridgeProtocolError as exc:
-            _metric_add(_PROTOCOL_VIOLATION_COUNTER, 1, {"close_code": exc.close_code})
-            logger.warning("Voice bridge protocol violation: %s", exc)
-            await self._close(code=exc.close_code, reason="Protocol error")
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            logger.error("Voice bridge runtime failed: %s", type(exc).__name__)
-            await self._close(code=1011, reason="Internal server error")
-        finally:
-            shutdown = asyncio.create_task(
-                self._shutdown_runtime(drain_callbacks=graceful_end),
+            try:
+                if await self._activate():
+                    while not self._closed:
+                        payload = await self._receive_with_worker_supervision()
+                        if payload is None:
+                            break
+                        if not await self._dispatch(payload):
+                            graceful_end = True
+                            break
+            except VoiceBridgeProtocolError as exc:
+                _metric_add(_PROTOCOL_VIOLATION_COUNTER, 1, {"close_code": exc.close_code})
+                logger.warning("Voice bridge protocol violation: %s", exc)
+                await self._close(code=exc.close_code, reason="Protocol error")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.error("Voice bridge runtime failed: %s", type(exc).__name__)
+                await self._close(code=1011, reason="Internal server error")
+        except BaseException as exc:  # pylint: disable=broad-exception-caught
+            runtime_error = exc
+
+        await self._complete_runtime_shutdown(
+            drain_callbacks=graceful_end,
+            runtime_error=runtime_error,
+        )
+
+    def _start_shutdown_task(self, *, drain_callbacks: bool) -> tuple[asyncio.Task[None] | None, BaseException | None]:
+        shutdown_creation_error: BaseException | None = None
+        try:
+            shutdown = _create_owned_task(
+                self._shutdown_runtime(drain_callbacks=drain_callbacks),
                 name="voice_connection_shutdown",
             )
-            deferred_cancellation: asyncio.CancelledError | None = None
+        except BaseException as exc:  # pylint: disable=broad-exception-caught
+            shutdown_creation_error = exc
+            emergency_shutdown_coroutine = self._shutdown_runtime(drain_callbacks=drain_callbacks)
+            try:
+                shutdown = asyncio.Task(
+                    emergency_shutdown_coroutine,
+                    loop=asyncio.get_running_loop(),
+                    name="voice_connection_emergency_shutdown",
+                )
+            except BaseException:  # pylint: disable=broad-exception-caught
+                emergency_shutdown_coroutine.close()
+                shutdown = None
+        return shutdown, shutdown_creation_error
+
+    async def _complete_runtime_shutdown(
+        self,
+        *,
+        drain_callbacks: bool,
+        runtime_error: BaseException | None,
+    ) -> None:
+        shutdown, shutdown_creation_error = self._start_shutdown_task(drain_callbacks=drain_callbacks)
+        deferred_cancellation = runtime_error if isinstance(runtime_error, asyncio.CancelledError) else None
+        shutdown_runtime_error: BaseException | None = None
+        if shutdown is not None:
             while not shutdown.done():
                 try:
-                    await asyncio.shield(shutdown)
+                    await asyncio.wait((shutdown,))
                 except asyncio.CancelledError as exc:
                     deferred_cancellation = exc
-            await shutdown
-            if deferred_cancellation is not None:
-                raise deferred_cancellation
+            if shutdown.cancelled():
+                shutdown = None
+            else:
+                shutdown_runtime_error = shutdown.exception()
+                if shutdown_runtime_error is not None:
+                    shutdown = None
+
+        if shutdown is None:
+            while True:
+                try:
+                    await self._shutdown_runtime(drain_callbacks=drain_callbacks)
+                    break
+                except asyncio.CancelledError as exc:
+                    deferred_cancellation = exc
+                except BaseException as exc:  # pylint: disable=broad-exception-caught
+                    shutdown_runtime_error = exc
+                    break
+
+        try:
+            await asyncio.sleep(0)
+        except asyncio.CancelledError as exc:
+            deferred_cancellation = exc
+
+        if deferred_cancellation is not None:
+            raise deferred_cancellation
+        if shutdown_runtime_error is not None:
+            raise shutdown_runtime_error
+        if shutdown_creation_error is not None:
+            raise shutdown_creation_error
+        if runtime_error is not None:
+            raise runtime_error
 
     async def _receive_with_worker_supervision(self) -> dict[str, Any] | None:
         worker = self._callback_worker
@@ -1185,37 +1324,54 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         receive_task = self._prefetched_receive_task
         self._prefetched_receive_task = None
         if receive_task is None:
-            receive_task = asyncio.create_task(
+            receive_task = self._create_runtime_task(
                 self._receive_payload(),
                 name="voice_receive",
             )
-        try:
-            done, _ = await asyncio.wait(
-                (receive_task, worker, self._resource_limit_reached),
-                return_when=asyncio.FIRST_COMPLETED,
-            )
-        except BaseException:
-            receive_task.cancel()
-            await asyncio.gather(receive_task, return_exceptions=True)
-            raise
-        if receive_task in done:
-            receive_error = receive_task.exception()
-            if receive_error is not None:
-                raise receive_error
-        if worker in done:
-            receive_task.cancel()
-            await asyncio.gather(receive_task, return_exceptions=True)
-            if worker.cancelled():
-                raise RuntimeError("Voice callback coordinator was cancelled unexpectedly")
-            error = worker.exception()
-            if error is not None:
-                raise error
-            raise RuntimeError("Voice callback coordinator stopped unexpectedly")
-        if self._resource_limit_reached in done:
-            receive_task.cancel()
-            await asyncio.gather(receive_task, return_exceptions=True)
-            raise self._resource_limit_reached.result().to_exception()
-        return receive_task.result()
+        while True:
+            pending_ready_send = self._pending_ready_send_task
+            supervised_tasks: set[asyncio.Future[Any]] = {
+                receive_task,
+                worker,
+                self._resource_limit_reached,
+            }
+            if pending_ready_send is not None:
+                supervised_tasks.add(pending_ready_send)
+            try:
+                done, _ = await asyncio.wait(supervised_tasks, return_when=asyncio.FIRST_COMPLETED)
+            except BaseException:
+                receive_task.cancel()
+                raise
+            if pending_ready_send is not None and pending_ready_send in done:
+                if self._pending_ready_send_task is pending_ready_send:
+                    self._pending_ready_send_task = None
+                if pending_ready_send.cancelled():
+                    receive_task.cancel()
+                    raise RuntimeError("Voice session.ready send was cancelled unexpectedly")
+                ready_error = pending_ready_send.exception()
+                if ready_error is not None:
+                    receive_task.cancel()
+                    raise ready_error
+                if done == {pending_ready_send}:
+                    continue
+            if receive_task in done:
+                if receive_task.cancelled():
+                    raise RuntimeError("Voice receive was cancelled unexpectedly")
+                receive_error = receive_task.exception()
+                if receive_error is not None:
+                    raise receive_error
+            if worker in done:
+                receive_task.cancel()
+                if worker.cancelled():
+                    raise RuntimeError("Voice callback coordinator was cancelled unexpectedly")
+                error = worker.exception()
+                if error is not None:
+                    raise error
+                raise RuntimeError("Voice callback coordinator stopped unexpectedly")
+            if self._resource_limit_reached in done:
+                receive_task.cancel()
+                raise self._resource_limit_reached.result().to_exception()
+            return receive_task.result()
 
     async def send(self, message_type: str, *, _allow_while_ending: bool = False, **fields: Any) -> None:
         """Serialize one SDK-owned application frame.
@@ -1776,9 +1932,39 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     startup_receive_task.cancel()
                 await asyncio.gather(startup_receive_task, return_exceptions=True)
         self._record_activation("ready")
-        self._ready = True
-        self._callback_worker = asyncio.create_task(self._callback_worker_loop(), name="voice_callback_coordinator")
         return True
+
+    def _create_ready_receive_wrapper(
+        self,
+        receive_operation: Coroutine[Any, Any, dict[str, Any] | None],
+        transferred_receive: asyncio.Task[dict[str, Any] | None] | None,
+    ) -> asyncio.Task[dict[str, Any] | None]:
+        """Adopt the readiness receive operation and validate its runtime wrapper.
+
+        :param receive_operation: Receive coroutine that adopts any transferred task.
+        :type receive_operation: Coroutine
+        :param transferred_receive: Existing startup receive task, if any.
+        :type transferred_receive: asyncio.Task or None
+        :return: Runtime-owned wrapper for the sole receive operation.
+        :rtype: asyncio.Task
+        """
+        self._prefetched_receive_task = transferred_receive
+        active_receive_task = self._create_runtime_task(receive_operation, name="voice_ready_receive")
+        receive_wrapper_error = _task_role_error(
+            active_receive_task,
+            role="Voice readiness receive wrapper",
+            allow_successful_completion=True,
+        )
+        if receive_wrapper_error is None:
+            self._prefetched_receive_task = active_receive_task
+            return active_receive_task
+        if not active_receive_task.done():
+            active_receive_task.cancel()
+        if transferred_receive is not None and not transferred_receive.done():
+            transferred_receive.cancel()
+        if transferred_receive is None and not active_receive_task.done():
+            self._prefetched_receive_task = active_receive_task
+        raise receive_wrapper_error
 
     async def _send_ready_with_receive_gate(  # pylint: disable=too-many-statements
         self,
@@ -1799,12 +1985,29 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         class _EarlyReadyReceive(Exception):
             """The receive gate won before the ready transport attempt."""
 
+        def _completed_receive_before_transport() -> asyncio.Task[dict[str, Any] | None] | None:
+            if active_receive_task.done():
+                return active_receive_task
+            if transferred_receive is not None and transferred_receive.done():
+                return transferred_receive
+            return None
+
         def _enter_ready_transport() -> None:
             # No await separates this check, marker, and the following transport
             # call. This is the local arbitration point between a completed receive
             # and the ready frame entering the WebSocket transport.
-            if active_receive_task.done() and not receive_after_transport_attempt:
+            if _completed_receive_before_transport() is not None and not receive_after_transport_attempt:
                 raise _EarlyReadyReceive()
+            if self._callback_worker is not worker:
+                raise RuntimeError("Voice callback coordinator ownership changed before readiness")
+            worker_error = _task_role_error(
+                worker,
+                role="Voice callback coordinator",
+                allow_successful_completion=False,
+            )
+            if worker_error is not None:
+                raise worker_error
+            self._ready = True
             ready_transport_attempted.set()
 
         async def _send_ready() -> None:
@@ -1825,11 +2028,28 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 # callbacks or the coordinator can reorder observations.
                 receive_after_transport_attempt = ready_transport_attempted.is_set()
 
-        active_receive_task = asyncio.create_task(_receive_during_ready(), name="voice_ready_receive")
+        # Adopt the transferred receive before creating its timing wrapper. If
+        # runtime-task admission fails, shutdown must still be able to cancel
+        # and bound the original receive rather than leaving only its global
+        # fallback owner with no connection-level cancellation path.
+        active_receive_task = self._create_ready_receive_wrapper(_receive_during_ready(), transferred_receive)
 
         async def _reject_early_receive() -> bool:
+            completed_receive = _completed_receive_before_transport()
+            if completed_receive is None:
+                raise RuntimeError("Voice early receive completed without an observable owner")
+            if completed_receive is not active_receive_task and not active_receive_task.done():
+                active_receive_task.cancel()
+                await asyncio.wait((active_receive_task,), timeout=0)
+            if self._prefetched_receive_task is active_receive_task:
+                self._prefetched_receive_task = None
             try:
-                early_payload = active_receive_task.result()
+                early_payload = completed_receive.result()
+            except asyncio.CancelledError:
+                logger.error("Voice readiness receive was cancelled internally")
+                self._record_activation("startup_failed")
+                await self._close(code=1011, reason="Internal server error")
+                return False
             except VoiceBridgeProtocolError:
                 raise
             except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -1849,17 +2069,41 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             await asyncio.sleep(0)
         except BaseException:
             active_receive_task.cancel()
-            await asyncio.gather(active_receive_task, return_exceptions=True)
+            await asyncio.wait((active_receive_task,), timeout=0)
+            if active_receive_task.done() and self._prefetched_receive_task is active_receive_task:
+                self._prefetched_receive_task = None
             raise
-        if active_receive_task.done() and not receive_after_transport_attempt:
+        if _completed_receive_before_transport() is not None and not receive_after_transport_attempt:
             return await _reject_early_receive()
-        ready_task = asyncio.create_task(_send_ready(), name="voice_session_ready")
+        if self._callback_worker is not None:
+            raise RuntimeError("Voice callback coordinator was already initialized")
+        worker = self._create_runtime_task(
+            self._callback_worker_loop(),
+            name="voice_callback_coordinator",
+        )
+        self._callback_worker = worker
+        await asyncio.sleep(0)
+        worker_error = _task_role_error(
+            worker,
+            role="Voice callback coordinator",
+            allow_successful_completion=False,
+        )
+        if worker_error is not None:
+            raise worker_error
+        if _completed_receive_before_transport() is not None and not receive_after_transport_attempt:
+            return await _reject_early_receive()
+        ready_task = self._create_runtime_task(_send_ready(), name="voice_session_ready")
+        self._pending_ready_send_task = ready_task
         try:
             done, _ = await asyncio.wait((ready_task, active_receive_task), return_when=asyncio.FIRST_COMPLETED)
         except BaseException:
             ready_task.cancel()
             active_receive_task.cancel()
-            await asyncio.gather(ready_task, active_receive_task, return_exceptions=True)
+            await asyncio.wait((ready_task, active_receive_task), timeout=0)
+            if ready_task.done() and self._pending_ready_send_task is ready_task:
+                self._pending_ready_send_task = None
+            if active_receive_task.done() and self._prefetched_receive_task is active_receive_task:
+                self._prefetched_receive_task = None
             raise
 
         # A frame is provably early only when the receive coroutine completed
@@ -1868,18 +2112,31 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         # continuation resumes.
         if active_receive_task in done and not receive_after_transport_attempt:
             ready_task.cancel()
-            await asyncio.gather(ready_task, return_exceptions=True)
+            ready_done, _ = await asyncio.wait((ready_task,), timeout=_CLEANUP_TIMEOUT_SECONDS)
+            if not ready_done:
+                self._signal_runtime_failure("Voice session.ready send did not stop after early input")
+                return False
+            self._pending_ready_send_task = None
+            self._prefetched_receive_task = None
             return await _reject_early_receive()
 
-        try:
-            await ready_task
-        except _EarlyReadyReceive:
-            return await _reject_early_receive()
-        except BaseException:
-            if not active_receive_task.done():
-                active_receive_task.cancel()
-            await asyncio.gather(active_receive_task, return_exceptions=True)
-            raise
+        if ready_task.done():
+            try:
+                if ready_task.cancelled():
+                    raise RuntimeError("Voice session.ready send was cancelled unexpectedly")
+                await ready_task
+            except _EarlyReadyReceive:
+                return await _reject_early_receive()
+            except BaseException:
+                if not active_receive_task.done():
+                    active_receive_task.cancel()
+                    await asyncio.wait((active_receive_task,), timeout=0)
+                if active_receive_task.done() and self._prefetched_receive_task is active_receive_task:
+                    self._prefetched_receive_task = None
+                raise
+            finally:
+                if self._pending_ready_send_task is ready_task:
+                    self._pending_ready_send_task = None
 
         # Preserve the sole receive operation. Cancelling it here could consume
         # and drop a frame that arrived immediately after ready was committed.
@@ -1896,7 +2153,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             if self._on_session_start is not None:
                 await self._on_session_start(session, event)
 
-        receive_task = asyncio.create_task(
+        receive_task = self._create_runtime_task(
             self._receive_payload(),
             name="voice_activation_receive",
         )
@@ -1920,6 +2177,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     await asyncio.gather(customer_task, return_exceptions=True)
                 try:
                     early_payload = receive_task.result()
+                except asyncio.CancelledError:
+                    logger.error("Voice activation receive was cancelled internally")
+                    self._record_activation("startup_failed")
+                    await self._close(code=1011, reason="Internal server error")
                 except VoiceBridgeProtocolError as exc:
                     await self._reject("protocol_mismatch", close_code=exc.close_code)
                 except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -1944,7 +2205,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             if not transfer_receive:
                 if not receive_task.done():
                     receive_task.cancel()
-                await asyncio.gather(receive_task, return_exceptions=True)
+                    await asyncio.wait((receive_task,), timeout=0)
 
     async def _reject(self, code: str, *, close_code: int) -> None:
         if self._closed:
@@ -2149,45 +2410,67 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             self._active_response = response
             self._active_release = release
 
-        if work.callback is None:
-            release_task = asyncio.create_task(release.wait(), name="voice_turn_release")
-            try:
-                await self._finalize_turn_response(response, release_task, failed=True)
-            finally:
-                release_task.cancel()
-                await asyncio.gather(release_task, return_exceptions=True)
-                async with self._state_lock:
-                    if self._active_response is response:
-                        self._active_response = None
-                    if self._active_release is release:
-                        self._active_release = None
-                    if work.item_id is not None:
-                        self._pending_turns.pop(_identity_digest(work.item_id), None)
-                    if response.is_wire_opened:
-                        self._remember_response_locked(response)
-            return
-
-        callback_started_ns = time.monotonic_ns()
-
-        async def _invoke_customer_callback() -> None:
-            assert work.callback is not None
-            await work.callback(self._session, work.event, response)
-
-        customer_task = self._create_customer_task(
-            _invoke_customer_callback(),
-            name=f"voice_{work.kind}",
-            retained_bytes=work.payload_bytes,
-        )
-        release_task = asyncio.create_task(release.wait(), name="voice_turn_release")
+        release_task: asyncio.Task[bool] | None = None
+        customer_task: asyncio.Task[None] | None = None
+        callback_started_ns: int | None = None
         callback_metric_recorded = False
-        async with self._state_lock:
-            self._active_customer_task = customer_task
         try:
+            release_task = _create_owned_task(release.wait(), name="voice_turn_release")
+            release_error = _task_role_error(
+                release_task,
+                role="Voice turn release",
+                allow_successful_completion=True,
+            )
+            if release_error is not None:
+                raise release_error
+            await asyncio.sleep(0)
+            release_error = _task_role_error(
+                release_task,
+                role="Voice turn release",
+                allow_successful_completion=True,
+            )
+            if release_error is not None:
+                raise release_error
+
+            if work.callback is None:
+                await self._finalize_turn_response(response, release_task, failed=True)
+                return
+            if release_task.done():
+                return
+
+            async def _invoke_customer_callback() -> None:
+                assert work.callback is not None
+                await work.callback(self._session, work.event, response)
+
+            async with self._state_lock:
+                if (
+                    response.is_terminal
+                    or self._ending
+                    or release.is_set()
+                    or response.response_id in self._terminal_response_ids
+                ):
+                    return
+                callback_started_ns = time.monotonic_ns()
+                customer_task = self._create_customer_task(
+                    _invoke_customer_callback(),
+                    name=f"voice_{work.kind}",
+                    retained_bytes=work.payload_bytes,
+                )
+                self._active_customer_task = customer_task
+
             done, _ = await asyncio.wait((customer_task, release_task), return_when=asyncio.FIRST_COMPLETED)
             if customer_task.done():
                 # Transfer the process-level slot to automatic finalization
                 # without waiting for the event loop to run done callbacks.
                 _release_global_customer_task(customer_task)
+            if release_task in done:
+                release_error = _task_role_error(
+                    release_task,
+                    role="Voice turn release",
+                    allow_successful_completion=True,
+                )
+                if release_error is not None:
+                    raise release_error
             if release_task in done and not customer_task.done():
                 # The response's output methods perform their wire writes off the
                 # per-response state lock, so this coordinator (not the receive
@@ -2226,23 +2509,33 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 # Customer callback completion does not end protocol ownership.
                 # Keep this response active until the Bridge commits the winning
                 # cancel/barge/timeout outcome or the connection starts ending.
-                await release_task
-        except asyncio.CancelledError:
-            if not customer_task.done():
+                await asyncio.wait((release_task,))
+                release_error = _task_role_error(
+                    release_task,
+                    role="Voice turn release",
+                    allow_successful_completion=True,
+                )
+                if release_error is not None:
+                    raise release_error
+        except BaseException:  # pylint: disable=broad-exception-caught
+            if customer_task is not None and not customer_task.done():
                 self._schedule_customer_cleanup(customer_task)
             raise
         finally:
-            if not callback_metric_recorded:
+            if callback_started_ns is not None and not callback_metric_recorded:
                 _metric_record(
                     _CALLBACK_DURATION,
                     (time.monotonic_ns() - callback_started_ns) / 1_000_000,
                     {"kind": work.kind},
                 )
-            release_task.cancel()
-            await asyncio.gather(release_task, return_exceptions=True)
+            if release_task is not None:
+                release_task.cancel()
+                await asyncio.gather(release_task, return_exceptions=True)
             async with self._state_lock:
-                if self._active_customer_task is customer_task:
+                if customer_task is not None and self._active_customer_task is customer_task:
                     self._active_customer_task = None
+                if (self._ending or self._closed) and not response.is_terminal:
+                    self._retain_shutdown_response_locked(response)
                 if self._active_response is response:
                     self._active_response = None
                 if self._active_release is release:
@@ -2285,16 +2578,16 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             retained_bytes=work.payload_bytes or _estimate_retained_bytes(work),
         )
         try:
-            await asyncio.shield(customer_task)
-        except asyncio.CancelledError as exc:
+            await asyncio.wait((customer_task,))
+        except asyncio.CancelledError:
             if not customer_task.done():
                 self._schedule_customer_cleanup(customer_task)
-                raise
-            current_task = asyncio.current_task()
-            cancelling = getattr(current_task, "cancelling", lambda: 0)
-            if customer_task.cancelled() and cancelling() == 0:
-                raise RuntimeError("Voice signal callback was cancelled") from exc
             raise
+        if customer_task.cancelled():
+            raise RuntimeError("Voice signal callback was cancelled")
+        error = customer_task.exception()
+        if error is not None:
+            raise error
 
     async def _drain_active_send(self, response: VoiceResponse) -> None:
         # Give any in-flight winning write on the response a bounded window to
@@ -2359,6 +2652,78 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             _release_global_customer_task(task)
         return task
 
+    def _create_runtime_task(
+        self,
+        coroutine: Coroutine[Any, Any, _TaskResult],
+        *,
+        name: str,
+        termination: bool = False,
+        direct: bool = False,
+    ) -> asyncio.Task[_TaskResult]:
+        """Create an internal task with bounded process ownership.
+
+        :param coroutine: Internal runtime operation.
+        :type coroutine: Coroutine
+        :keyword name: Diagnostic task name.
+        :paramtype name: str
+        :keyword termination: Use the reserved budget for mandatory transport termination.
+        :paramtype termination: bool
+        :keyword direct: Bypass the loop task factory for emergency control-plane work.
+        :paramtype direct: bool
+        :return: Globally tracked runtime task.
+        :rtype: asyncio.Task
+        """
+        global _GLOBAL_RUNTIME_TASK_RESERVATIONS  # pylint: disable=global-statement
+        global _GLOBAL_TERMINATION_TASK_RESERVATIONS  # pylint: disable=global-statement
+        session_retention = self._session_retention
+        with _GLOBAL_CUSTOMER_TASKS_LOCK:
+            ordinary_reservations = _GLOBAL_RUNTIME_TASK_RESERVATIONS - _GLOBAL_TERMINATION_TASK_RESERVATIONS
+            if termination and _GLOBAL_TERMINATION_TASK_RESERVATIONS >= _MAX_GLOBAL_TERMINATION_TASKS:
+                limit_error = "Voice global termination task limit reached"
+            elif not termination and ordinary_reservations >= _MAX_GLOBAL_RUNTIME_TASKS:
+                limit_error = "Voice global runtime task limit reached"
+            elif session_retention is not None and session_retention.released:
+                limit_error = "Voice session retention lease was already released"
+            else:
+                limit_error = None
+                _GLOBAL_RUNTIME_TASK_RESERVATIONS += 1
+                if termination:
+                    _GLOBAL_TERMINATION_TASK_RESERVATIONS += 1
+                if session_retention is not None:
+                    session_retention.references += 1
+
+        if limit_error is not None:
+            coroutine.close()
+            self._signal_runtime_failure(limit_error)
+            raise RuntimeError(limit_error)
+
+        try:
+            if direct:
+                task = asyncio.Task(coroutine, loop=asyncio.get_running_loop(), name=name)
+            else:
+                task = asyncio.create_task(coroutine, name=name)
+        except BaseException:
+            coroutine.close()
+            with _GLOBAL_CUSTOMER_TASKS_LOCK:
+                _GLOBAL_RUNTIME_TASK_RESERVATIONS -= 1
+                if termination:
+                    _GLOBAL_TERMINATION_TASK_RESERVATIONS -= 1
+                if session_retention is not None:
+                    _release_session_retention_locked(session_retention)
+            raise
+
+        with _GLOBAL_CUSTOMER_TASKS_LOCK:
+            _GLOBAL_RUNTIME_TASKS.add(task)
+            if termination:
+                _GLOBAL_TERMINATION_TASKS.add(task)
+            if session_retention is not None:
+                _GLOBAL_RUNTIME_SESSION_RETENTION_BY_TASK[task] = session_retention
+
+        task.add_done_callback(_release_global_runtime_task)
+        if task.done():
+            _release_global_runtime_task(task)
+        return task
+
     async def _finalize_turn_response(
         self,
         response: VoiceResponse,
@@ -2371,25 +2736,26 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             name="voice_response_callback_finalize",
         )
         done, _ = await asyncio.wait((finalize, release_task), return_when=asyncio.FIRST_COMPLETED)
+        release_error = None
+        if release_task in done:
+            release_error = _task_role_error(
+                release_task,
+                role="Voice turn release",
+                allow_successful_completion=True,
+            )
         if release_task in done and not finalize.done():
             # The bridge terminal already won. Unlike a customer-owned output
             # write, an automatic done/error is now a losing terminal and must
             # be cancelled rather than drained onto the wire.
             finalize.cancel()
-            try:
-                await asyncio.wait_for(asyncio.shield(finalize), timeout=_CLEANUP_TIMEOUT_SECONDS)
-            except asyncio.CancelledError:
-                current_task = asyncio.current_task()
-                cancelling = getattr(current_task, "cancelling", lambda: 0)
-                if cancelling() > 0:
-                    raise
-            except asyncio.TimeoutError:
+            finalizer_done, _ = await asyncio.wait((finalize,), timeout=_CLEANUP_TIMEOUT_SECONDS)
+            if not finalizer_done:
                 logger.error("Voice response finalization ignored cancellation")
                 self._signal_runtime_failure("Voice response finalization did not stop")
                 return
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
         result = (await asyncio.gather(finalize, return_exceptions=True))[0]
+        if release_error is not None:
+            raise release_error
         if isinstance(result, BaseException):
             async with self._state_lock:
                 terminal_won = (
@@ -2410,8 +2776,11 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             logger.error("%s", reason)
             self._resource_limit_reached.set_result(_RuntimeFailure(reason=reason, close_code=close_code))
 
-    def _schedule_customer_cleanup(self, task: asyncio.Task[None]) -> asyncio.Task[None]:
+    def _schedule_customer_cleanup(self, task: asyncio.Task[None]) -> asyncio.Future[None]:
         task.cancel()
+        existing_cleanup = self._cleanup_tasks.get(task)
+        if existing_cleanup is not None:
+            return existing_cleanup
 
         # Retain a reference to the underlying task until it actually completes,
         # even if it swallows CancelledError and runs past the cleanup deadline.
@@ -2433,18 +2802,39 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 self._signal_runtime_failure("Voice cancellation-resistant task limit reached")
 
         async def _bounded_cleanup() -> None:
-            try:
-                await asyncio.wait_for(asyncio.shield(task), timeout=_CLEANUP_TIMEOUT_SECONDS)
-            except asyncio.TimeoutError:
+            done, _ = await asyncio.wait((task,), timeout=_CLEANUP_TIMEOUT_SECONDS)
+            if done:
+                if not task.cancelled():
+                    task.exception()
+            else:
                 logger.warning("Voice callback ignored cancellation beyond cleanup deadline")
-            except asyncio.CancelledError:
-                pass
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
 
-        cleanup = asyncio.create_task(_bounded_cleanup(), name="voice_callback_cleanup")
-        self._cleanup_tasks.add(cleanup)
-        cleanup.add_done_callback(self._cleanup_tasks.discard)
+        try:
+            cleanup = _create_owned_task(_bounded_cleanup(), name="voice_callback_cleanup")
+        except BaseException:  # pylint: disable=broad-exception-caught
+            logger.error("Voice callback cleanup task could not be created")
+            self._signal_runtime_failure("Voice callback cleanup task could not be created")
+            unavailable_cleanup = asyncio.get_running_loop().create_future()
+            unavailable_cleanup.set_result(None)
+            return unavailable_cleanup
+        cleanup_error = _task_role_error(
+            cleanup,
+            role="Voice callback cleanup",
+            allow_successful_completion=True,
+        )
+        if cleanup_error is not None:
+            logger.error("Voice callback cleanup task was unusable: %s", type(cleanup_error).__name__)
+            self._signal_runtime_failure("Voice callback cleanup task was unusable")
+            unavailable_cleanup = asyncio.get_running_loop().create_future()
+            unavailable_cleanup.set_result(None)
+            return unavailable_cleanup
+        self._cleanup_tasks[task] = cleanup
+
+        def _discard_cleanup(completed: asyncio.Task[None]) -> None:
+            if self._cleanup_tasks.get(task) is completed:
+                self._cleanup_tasks.pop(task, None)
+
+        cleanup.add_done_callback(_discard_cleanup)
         return cleanup
 
     async def _handle_playback_terminal(self, payload: dict[str, Any], *, kind: str) -> None:
@@ -2491,10 +2881,11 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             await response._mark_terminal()
         owns_waiter = False
         async with self._state_lock:
-            if waiter is not None and self._cancel_waiters.get(response_id) is waiter:
+            transition_open = not self._ending and not self._closed
+            if transition_open and waiter is not None and self._cancel_waiters.get(response_id) is waiter:
                 self._cancel_waiters.pop(response_id, None)
                 owns_waiter = True
-            owns_transition = not self._ending and not self._closed and (waiter is None or owns_waiter)
+            owns_transition = transition_open and (waiter is None or owns_waiter)
             if owns_transition and abandoned:
                 self._response_identities.clear_abandoned(response_id)
         if not owns_transition:
@@ -2753,10 +3144,19 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             # session.end item would never run; the dedicated task is awaited on its
             # own bounded path in _shutdown_runtime.
             work = _CallbackWork(kind="session.end", event=event, callback=self._on_session_end)
-            self._session_end_task = asyncio.create_task(
-                self._run_session_end_callback(work),
+            session_end_coroutine = self._run_session_end_callback(work)
+            session_end_task = _create_owned_task(
+                session_end_coroutine,
                 name="voice_session_end",
             )
+            session_end_error = _task_role_error(
+                session_end_task,
+                role="Voice session.end callback",
+                allow_successful_completion=True,
+            )
+            self._session_end_task = session_end_task
+            if session_end_error is not None:
+                raise session_end_error
 
     async def _run_session_end_callback(self, work: _CallbackWork) -> None:
         callback_started_ns = time.monotonic_ns()
@@ -2775,6 +3175,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
     async def _receive_payload(self) -> dict[str, Any] | None:
         while True:
             message = await self._websocket.receive()
+            if self._ending or self._closed:
+                return None
             message_type = message.get("type")
             if message_type == "websocket.disconnect":
                 self._record_close(int(message.get("code") or 1006))
@@ -2821,23 +3223,31 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             return max(0.0, deadline - asyncio.get_running_loop().time())
 
         self._ending = True
+        pending_ready_send = self._pending_ready_send_task
+        if pending_ready_send is not None and not pending_ready_send.done():
+            pending_ready_send.cancel()
+        pending_close = self._pending_close_task
         prefetched_receive = self._prefetched_receive_task
         self._prefetched_receive_task = None
         if prefetched_receive is not None and not prefetched_receive.done():
             prefetched_receive.cancel()
-            await asyncio.gather(prefetched_receive, return_exceptions=True)
         async with self._state_lock:
-            responses = list(self._pending_turns.values())
+            for response in self._pending_turns.values():
+                self._retain_shutdown_response_locked(response)
             self._pending_turns.clear()
-            if self._active_response is not None and self._active_response not in responses:
-                responses.append(self._active_response)
+            if self._active_response is not None:
+                self._retain_shutdown_response_locked(self._active_response)
+            responses = tuple(self._shutdown_responses.values())
             release = self._active_release
             self._fail_pending_proactive_locked("Voice connection closed")
         for response in responses:
-            was_terminal = response.is_terminal
             await response._mark_terminal()
-            if not was_terminal:
+            if response.response_id in self._shutdown_terminal_metrics:
                 self._record_terminal(response.response_id, "connection_closed")
+                self._shutdown_terminal_metrics.discard(response.response_id)
+            async with self._state_lock:
+                if self._shutdown_responses.get(response.response_id) is response:
+                    self._shutdown_responses.pop(response.response_id, None)
         self._fail_helper_waiters("Voice connection closed")
         if release is not None:
             release.set()
@@ -2846,10 +3256,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         if worker is not None:
             if not drain_callbacks:
                 worker.cancel()
-                try:
-                    await asyncio.wait_for(worker, timeout=_remaining())
-                except (asyncio.TimeoutError, asyncio.CancelledError):
-                    pass
+                await asyncio.wait((worker,), timeout=_remaining())
             else:
                 try:
                     await asyncio.wait_for(self._callback_queue.join(), timeout=_remaining())
@@ -2860,13 +3267,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     self._callback_queue.put_nowait(None)
                 except asyncio.QueueFull:
                     worker.cancel()
-                try:
-                    await asyncio.wait_for(worker, timeout=_remaining())
-                except asyncio.TimeoutError:
+                done, _ = await asyncio.wait((worker,), timeout=_remaining())
+                if not done:
                     worker.cancel()
-                    await asyncio.gather(worker, return_exceptions=True)
-                except asyncio.CancelledError:
-                    pass
+                    await asyncio.wait((worker,), timeout=_remaining())
             if worker.done() and not worker.cancelled():
                 # Retrieve any failure even when session.end made the main receive
                 # loop stop before normal worker supervision could observe it.
@@ -2878,6 +3282,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         if session_end_task is not None:
             # Dedicated bounded path for session teardown, independent of the
             # ordinary callback queue drained above.
+            current_task = asyncio.current_task()
+            cancellation_requests = current_task.cancelling() if current_task is not None else 0
             try:
                 await asyncio.wait_for(asyncio.shield(session_end_task), timeout=_remaining())
             except asyncio.TimeoutError:
@@ -2885,7 +3291,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 if not session_end_task.done():
                     self._schedule_customer_cleanup(session_end_task)
             except asyncio.CancelledError:
-                pass
+                if current_task is not None and current_task.cancelling() > cancellation_requests:
+                    raise
             except Exception:  # pylint: disable=broad-exception-caught
                 pass
 
@@ -2894,12 +3301,21 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         if self._cleanup_tasks:
             try:
                 await asyncio.wait_for(
-                    asyncio.gather(*tuple(self._cleanup_tasks), return_exceptions=True),
+                    asyncio.gather(*tuple(self._cleanup_tasks.values()), return_exceptions=True),
                     timeout=_remaining(),
                 )
             except asyncio.TimeoutError:
-                for task in tuple(self._cleanup_tasks):
-                    task.cancel()
+                for cleanup in tuple(self._cleanup_tasks.values()):
+                    cleanup.cancel()
+        pending_runtime_tasks = {
+            task
+            for task in (pending_ready_send, pending_close, prefetched_receive)
+            if task is not None and not task.done()
+        }
+        if pending_runtime_tasks:
+            await asyncio.wait(pending_runtime_tasks, timeout=_remaining())
+        self._pending_ready_send_task = None
+        self._pending_close_task = None
         self._release_connection_state()
 
     def _release_connection_state(self) -> None:
@@ -2911,6 +3327,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         self._seen_input_ids.clear()
         if self._identity_budget.used_bytes:
             raise RuntimeError("Voice connection identity byte accounting leak")
+        self._shutdown_responses.clear()
+        self._shutdown_terminal_metrics.clear()
         self._response_start_ns.clear()
         self._first_output_recorded.clear()
         self._cleanup_tasks.clear()
@@ -2919,6 +3337,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         self._active_release = None
         self._callback_worker = None
         self._session_end_task = None
+        self._pending_ready_send_task = None
+        self._pending_close_task = None
         session_retention = self._session_retention
         self._session_retention = None
         self._session = None
@@ -2960,6 +3380,12 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
 
     def _find_recent_response_locked(self, response_id: str) -> _RecentResponse | None:
         return self._recent_responses.get(response_id)
+
+    def _retain_shutdown_response_locked(self, response: VoiceResponse) -> None:
+        if response.response_id not in self._shutdown_responses:
+            self._shutdown_responses[response.response_id] = response
+            if not response.is_terminal:
+                self._shutdown_terminal_metrics.add(response.response_id)
 
     def _remember_response_locked(self, response: VoiceResponse) -> None:
         # Late timeout/barge-in reconciliation needs only identity plus the set
@@ -3019,8 +3445,72 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         if self._closed:
             return
         self._record_close(code)
+        _select_application_close(self._websocket, code)
+        self._ending = True
         self._closed = True
-        await self._websocket.close(code=code, reason=reason)
+        pending_ready_send = self._pending_ready_send_task
+        if pending_ready_send is not None and not pending_ready_send.done():
+            pending_ready_send.cancel()
+
+        async def _send_close() -> None:
+            await self._send_lock.acquire()
+            try:
+                try:
+                    await self._websocket.close(code=code, reason=reason)
+                except asyncio.CancelledError:
+                    logger.error("Voice WebSocket close was cancelled")
+                    raise
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    logger.error("Voice WebSocket close failed: %s", type(exc).__name__)
+                    raise
+            finally:
+                self._send_lock.release()
+
+        close_task: asyncio.Task[None] | None = None
+        for direct, task_name in (
+            (True, "voice_connection_close"),
+            (False, "voice_connection_factory_close"),
+        ):
+            try:
+                close_task = self._create_runtime_task(
+                    _send_close(),
+                    name=task_name,
+                    termination=True,
+                    direct=direct,
+                )
+            except BaseException as exc:  # pylint: disable=broad-exception-caught
+                logger.error("Voice close task creation failed: %s", type(exc).__name__)
+                close_task = None
+                continue
+            if not close_task.done():
+                break
+            close_error = _task_role_error(
+                close_task,
+                role="Voice connection close",
+                allow_successful_completion=True,
+            )
+            if close_error is None:
+                return
+            logger.error("Voice close task was unusable: %s", type(close_error).__name__)
+            close_task = None
+
+        if close_task is None:
+            if self._send_lock.locked():
+                logger.error("Voice close owner was unavailable while a transport write remained active")
+                _claim_application_close(self._websocket, code, _UNAVAILABLE_CLOSE_EXCLUSION)
+            return
+
+        self._pending_close_task = close_task
+        _claim_application_close(self._websocket, code, close_task)
+        if pending_ready_send is not None and not pending_ready_send.done():
+            return
+        done, _ = await asyncio.wait((close_task,), timeout=_CLEANUP_TIMEOUT_SECONDS)
+        if not done:
+            return
+        if self._pending_close_task is close_task:
+            self._pending_close_task = None
+        if not close_task.cancelled():
+            close_task.exception()
 
 
 def _estimate_retained_bytes(event: Any) -> int:
