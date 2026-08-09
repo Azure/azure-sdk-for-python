@@ -56,6 +56,7 @@ class TestLogAnalyticsManagementWorkspacesOperationsAsync(AzureMgmtRecordedTestC
                         "features": {
                             "associations": ["str"],
                             "clusterResourceId": "str",
+                            "dataAuthorizationMode": bool,
                             "disableLocalAuth": bool,
                             "enableDataExport": bool,
                             "enableLogAccessUsingOnlyResourcePermissions": bool,
@@ -124,6 +125,7 @@ class TestLogAnalyticsManagementWorkspacesOperationsAsync(AzureMgmtRecordedTestC
                     "features": {
                         "associations": ["str"],
                         "clusterResourceId": "str",
+                        "dataAuthorizationMode": bool,
                         "disableLocalAuth": bool,
                         "enableDataExport": bool,
                         "enableLogAccessUsingOnlyResourcePermissions": bool,
