@@ -10,7 +10,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Optional, TYPE_CHECKING
 
 import aiohttp
-from azure.core.pipeline.transport import AioHttpTransport
 
 from ._client import VoiceAgentsClient as _GeneratedVoiceAgentsClient
 from ._realtime import (
@@ -38,14 +37,14 @@ class VoiceAgentsClient(_GeneratedVoiceAgentsClient):  # pylint: disable=client-
     def __init__(
         self, endpoint: str, credential: "AsyncTokenCredential", *, api_version: Optional[str] = None, **kwargs: Any
     ) -> None:
-        # Work around an azure-core/aiohttp limitation without eagerly creating
-        # an aiohttp session (which requires a running event loop). We constrain
-        # Accept-Encoding on the transport so the session advertises only
-        # encodings that azure-core can decompress.
-        if "transport" not in kwargs:
-            kwargs["transport"] = AioHttpTransport(
-                session=aiohttp.ClientSession(headers={"Accept-Encoding": "gzip, deflate"})
-            )
+        # Work around an azure-core/aiohttp limitation: azure-core disables
+        # aiohttp's native decompression but only re-implements gzip/deflate,
+        # while aiohttp advertises "br" by default. Supplying the session that
+        # the default AioHttpTransport will adopt keeps Accept-Encoding limited
+        # to encodings azure-core can actually decompress, without importing a
+        # concrete transport type.
+        if "transport" not in kwargs and "session" not in kwargs:
+            kwargs["session"] = aiohttp.ClientSession(headers={"Accept-Encoding": "gzip, deflate"})
         if api_version is None:
             super().__init__(endpoint, credential, **kwargs)
         else:
