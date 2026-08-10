@@ -120,6 +120,29 @@ class TestComponentOperation:
             "jobInputType": "uri_file",
         }
 
+    def test_create_preserves_pipeline_asset_input_default_after_get(
+        self, mock_component_operation: ComponentOperations
+    ) -> None:
+        component = PipelineComponent(
+            name="pipeline_component",
+            version="1",
+            inputs={"default_data": Input(type="uri_file", default="azureml:test_data:1")},
+            jobs={},
+        )
+        service_component = PipelineComponent(
+            name="pipeline_component",
+            version="1",
+            inputs={"default_data": Input(type="uri_file")},
+            jobs={},
+        )
+
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies"), patch.object(
+            ComponentOperations, "_create_or_update_component_version", return_value=None
+        ), patch.object(ComponentOperations, "get", return_value=service_component):
+            created_component = mock_component_operation.create_or_update(component)
+
+        assert created_component.inputs["default_data"].default == "azureml:test_data:1"
+
     def test_create_autoincrement(
         self, mock_component_operation: ComponentOperations, mock_component_from_rest
     ) -> None:

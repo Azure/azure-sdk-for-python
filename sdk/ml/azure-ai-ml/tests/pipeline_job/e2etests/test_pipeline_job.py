@@ -2084,6 +2084,7 @@ class TestPipelineJobLongRunning:
     """Long-running tests that require pipeline job completed."""
 
     def test_pipeline_component_uri_file_default(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        """A registered pipeline component can run with an omitted uri_file input default."""
         data = load_data(
             source="./tests/test_configs/dataset/data_file.yaml",
             params_override=[{"name": randstr("pipeline_component_default_data")}],

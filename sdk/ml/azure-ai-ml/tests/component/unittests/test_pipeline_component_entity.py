@@ -13,6 +13,7 @@ from .test_component_schema import _convert_keys_to_camel
 from azure.ai.ml.entities import Component, PipelineComponent, PipelineJob
 from azure.ai.ml.entities._inputs_outputs import GroupInput
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
+from azure.ai.ml.exceptions import UserErrorException
 from azure.ai.ml.operations import ComponentOperations
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -467,7 +468,7 @@ class TestPipelineComponentEntity:
         assert get_layer_node_name_set(layers[2]) == {"command_component", "component_a_job"}
 
     def test_pipeline_component_asset_type_defaults(self) -> None:
-        """load_component must succeed for pipeline-component YAMLs with default: on asset-type inputs."""
+        """Asset-type input defaults can be loaded from pipeline component YAML."""
         component_path = "./tests/test_configs/components/pipeline_component_with_asset_defaults.yml"
         component: PipelineComponent = load_component(source=component_path)
         inputs = component.inputs
@@ -539,15 +540,11 @@ class TestPipelineComponentEntity:
 
     def test_pipeline_component_asset_default_invalid_type_raises(self) -> None:
         """Passing a non-string, non-Input value as default for an asset type must still raise."""
-        from azure.ai.ml.exceptions import UserErrorException
-
         with pytest.raises(UserErrorException, match="default for type 'uri_file' must be"):
             Input(type="uri_file", default=42)  # type: ignore[arg-type]
 
     def test_pipeline_component_non_asset_default_still_raises(self) -> None:
         """Non-asset non-primitive types must still raise the original error."""
-        from azure.ai.ml.exceptions import UserErrorException
-
         # Provide a type that is not primitive and not in _ASSET_TYPES.
         # We simulate this by creating an Input with an unknown type via kwargs.
         inp = Input.__new__(Input)
