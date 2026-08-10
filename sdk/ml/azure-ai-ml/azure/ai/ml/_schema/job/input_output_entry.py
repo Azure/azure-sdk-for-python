@@ -94,6 +94,7 @@ class ModelInputSchema(InputSchema):
     )
     path = generate_path_property(azureml_type=AzureMLResourceType.MODEL)
     datastore = generate_datastore_property()
+    default = generate_path_property(azureml_type=AzureMLResourceType.MODEL)
 
 
 class DataInputSchema(InputSchema):
@@ -114,6 +115,7 @@ class DataInputSchema(InputSchema):
     path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
     path_on_compute = generate_path_on_compute_property(azureml_type=AzureMLResourceType.DATA)
     datastore = generate_datastore_property()
+    default = generate_path_property(azureml_type=AzureMLResourceType.DATA)
 
 
 class MLTableInputSchema(InputSchema):
@@ -131,6 +133,7 @@ class MLTableInputSchema(InputSchema):
     path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
     path_on_compute = generate_path_on_compute_property(azureml_type=AzureMLResourceType.DATA)
     datastore = generate_datastore_property()
+    default = generate_path_property(azureml_type=AzureMLResourceType.DATA)
 
 
 class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):

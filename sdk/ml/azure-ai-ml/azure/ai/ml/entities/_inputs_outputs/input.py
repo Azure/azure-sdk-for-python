@@ -7,10 +7,11 @@
 
 import math
 from inspect import Parameter
-from typing import Any, Dict, List, Optional, Union, overload
+from typing import Any, Dict, List, Optional, Set, Union, overload
 
 from typing_extensions import Literal
 
+from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.exceptions import (
@@ -23,6 +24,15 @@ from azure.ai.ml.exceptions import (
 
 from .base import _InputOutputBase
 from .utils import _get_param_with_standard_annotation, _remove_empty_values
+
+_ASSET_TYPES: Set[str] = {
+    AssetTypes.URI_FILE,
+    AssetTypes.URI_FOLDER,
+    AssetTypes.MLTABLE,
+    AssetTypes.MLFLOW_MODEL,
+    AssetTypes.CUSTOM_MODEL,
+    AssetTypes.TRITON_MODEL,
+}
 
 
 class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
@@ -373,6 +383,20 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         msg_prefix = f"Default value of Input {name}"
 
         if not self._is_primitive_type and default_value is not None:
+            # Asset-type inputs accept a string (e.g. "azureml:", "https://", local path)
+            # or another Input instance as their default value.
+            if not self._multiple_types and self.type in _ASSET_TYPES:
+                if isinstance(default_value, str):
+                    self.default = default_value
+                    return
+                if isinstance(default_value, Input):
+                    self.default = default_value
+                    return
+                msg = (
+                    f"{msg_prefix}cannot be set: default for type '{self.type}' must be a "
+                    f"string asset reference or an azure.ai.ml.Input, got '{type(default_value)}'."
+                )
+                raise UserErrorException(msg)
             msg = f"{msg_prefix}cannot be set: Non-primitive type Input has no default value."
             raise UserErrorException(msg)
         if isinstance(default_value, float) and not math.isfinite(default_value):
