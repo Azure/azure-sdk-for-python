@@ -36,7 +36,7 @@ from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 
 load_dotenv()
 
-agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 
 def get_horoscope(sign: str) -> str:

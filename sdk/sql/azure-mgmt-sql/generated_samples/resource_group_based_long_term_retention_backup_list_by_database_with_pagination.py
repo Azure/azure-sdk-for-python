@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
+from azure.mgmt.sql import SqlManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-containerservicefleet
+    pip install azure-mgmt-sql
 # USAGE
-    python cluster_mesh_profiles_get.py
+    python resource_group_based_long_term_retention_backup_list_by_database_with_pagination.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,19 +25,21 @@ from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
 
 
 def main():
-    client = ContainerServiceFleetMgmtClient(
+    client = SqlManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.cluster_mesh_profiles.get(
-        resource_group_name="rgfleets",
-        fleet_name="fleet1",
-        cluster_mesh_profile_name="clustermeshprofile1",
+    response = client.long_term_retention_backups.list_by_resource_group_database(
+        resource_group_name="testResourceGroup",
+        location_name="japaneast",
+        long_term_retention_server_name="testserver",
+        long_term_retention_database_name="testDatabase",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-03-02-preview/ClusterMeshProfiles_Get.json
+# x-ms-original-file: 2025-08-01-preview/ResourceGroupBasedLongTermRetentionBackupListByDatabaseWithPagination.json
 if __name__ == "__main__":
     main()

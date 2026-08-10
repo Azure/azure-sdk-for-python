@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-03-02-preview/FleetMembers_ListByFleet.json
+# x-ms-original-file: 2026-06-01/FleetMembers_ListByFleet.json
 if __name__ == "__main__":
     main()
