@@ -21,14 +21,12 @@ USAGE:
 
 import os
 import uuid
-import pytest
 from datetime import datetime, timezone
 from typing import Optional, cast, Dict
 from devtools_testutils import recorded_by_proxy, is_live
 from testpreparer import (
     ContentUnderstandingPreparer,
     ContentUnderstandingClientTestBase,
-    GA_API_VERSION,
     get_test_api_version,
 )
 from azure.ai.contentunderstanding import ContentUnderstandingClient
@@ -47,10 +45,6 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    @pytest.mark.skipif(
-        get_test_api_version() != GA_API_VERSION,
-        reason="grant_copy_authorization sample is validated against GA service API version 2025-11-01 only",
-    )
     def test_sample_grant_copy_auth(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
         """Test granting copy authorization for cross-resource analyzer copying.
 
@@ -68,12 +62,15 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
 
         # Get variables from test proxy (recorded values in playback, empty dict in recording)
         variables = kwargs.pop("variables", {})
+        api_version = get_test_api_version()
 
         try:
             # Always use placeholder values in variables to avoid storing real resource IDs/regions
             # Real values are read from environment for API calls (they'll be sanitized in request bodies)
             # But variables should only contain placeholders for security
-            target_endpoint = variables.setdefault("target_endpoint", contentunderstanding_endpoint)
+            target_endpoint = variables.setdefault(
+                "target_endpoint", "https://Sanitized.services.ai.azure.com"
+            )
             source_resource_id = variables.setdefault("source_resource_id", "placeholder-source-resource-id")
             source_region = variables.setdefault("source_region", "placeholder-source-region")
             target_resource_id = variables.setdefault("target_resource_id", "placeholder-target-resource-id")
@@ -121,7 +118,7 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
                     )
 
             # Create clients
-            source_client = self.create_client(endpoint=contentunderstanding_endpoint, api_version=GA_API_VERSION)
+            source_client = self.create_client(endpoint=contentunderstanding_endpoint, api_version=api_version)
 
             # Create target client (may use different endpoint and credential)
             from azure.core.credentials import AzureKeyCredential
@@ -145,12 +142,12 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
                         ContentUnderstandingClient,
                         credential=target_credential,
                         endpoint=target_endpoint,
-                        api_version=GA_API_VERSION,
+                        api_version=api_version,
                     ),
                 )
             else:
                 # Use same endpoint and credential as source
-                target_client = self.create_client(endpoint=target_endpoint, api_version=GA_API_VERSION)
+                target_client = self.create_client(endpoint=target_endpoint, api_version=api_version)
 
             # Generate unique analyzer IDs for this test
             # Use variables from recording if available (playback mode), otherwise generate new ones (record mode)
