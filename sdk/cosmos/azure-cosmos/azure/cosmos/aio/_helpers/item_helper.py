@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Awaitable, Callable, Dict, Optional
 
-from ..._backend.base import (
+from ..._backend.operations import (
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
     OP_PATCH_ITEM,
@@ -30,7 +30,7 @@ from ..._helpers._item_dispatch import (
     build_read_item_request_options,
     build_upsert_item_request_options,
 )
-from ..._helpers._request_prep import (
+from ..._helpers._request_item import (
     build_create_item_prepared,
     build_delete_item_prepared,
     build_patch_item_prepared,
@@ -40,12 +40,8 @@ from ..._helpers._request_prep import (
 )
 from ..._helpers._response_parse import parse_backend_response
 from ...partition_key import _Empty
-from .._backend.base import (
-    AsyncCosmosBackend,
-    BackendResponse,
-    LegacyOperation,
-    PreparedRequest,
-)
+from .._backend.base import AsyncCosmosBackend
+from ..._backend.contracts import BackendResponse, LegacyOperation, PreparedRequest
 from .._backend.legacy import coerce_async_backend
 from ._metadata_provider import AsyncContainerMetadataProvider
 

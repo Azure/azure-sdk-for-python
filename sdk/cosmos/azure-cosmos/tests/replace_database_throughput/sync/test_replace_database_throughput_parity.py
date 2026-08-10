@@ -55,6 +55,7 @@ def database_per_backend(request):
     def _make(offer_throughput):
         """Create one database per engine and register them for teardown."""
         for backend_name in ("core-python", "rust"):
+            database_id = "parity_repl_db_{}_{}".format(
                 backend_name.replace("-", ""), uuid.uuid4().hex[:6]
             )
             client.create_database(id=database_id, offer_throughput=offer_throughput)
@@ -101,6 +102,7 @@ def test_replace_throughput_autoscale(database_per_backend):
         """Replace autoscale settings then read them back on one engine."""
         database = _database_for(client, created)
         database.replace_throughput(
+            ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=20)
         )
         return _normalize_throughput(database.get_throughput())
 

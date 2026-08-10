@@ -42,7 +42,7 @@ from typing import Any, cast
 
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend.base import BackendResponse
+from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos._helpers._response_parse import parse_backend_response
 from azure.cosmos.exceptions import (

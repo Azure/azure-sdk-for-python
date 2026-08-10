@@ -17,6 +17,12 @@ as the tools used to. core-python rows legitimately have no rust driver, so the
 gate is scoped to rust rows only (``config_backend``/``runtime_backend`` contains
 'rust'; 'AsyncRustBackend' matches).
 
+"Missing" covers placeholders as well as blanks. ``perf_config`` stamps the
+literal string ``"unknown"`` when it cannot read a git SHA, so treating that as a
+real commit would let a completely unstamped run report "single rust driver build
+across all rows (OK)" -- the exact claim the gate exists to refuse. Any value in
+``UNSTAMPED_COMMIT_VALUES`` therefore counts as no commit at all.
+
 Reading a historical run that predates driver stamping is still possible: pass
 ``--allow-missing-provenance`` (or set ``PERF_ALLOW_MISSING_PROVENANCE=1``) to
 downgrade the gate back to a warning.
@@ -24,6 +30,11 @@ downgrade the gate back to a warning.
 import os
 
 HEADER = "### Rust driver provenance (azure-sdk-for-rust commit) ###"
+
+# Values that name no build. ``perf_config._get_git_sha`` returns "unknown" when
+# git is unavailable; the rest are the usual stand-ins for an absent field. All
+# are compared case-insensitively after stripping.
+UNSTAMPED_COMMIT_VALUES = frozenset({"", "unknown", "none", "null", "n/a", "na", "-"})
 
 
 def is_rust(row):
@@ -36,6 +47,15 @@ def _clean(v):
     return str(v).strip() if v is not None else ""
 
 
+def is_stamped_commit(value):
+    """True when ``value`` actually names a driver build.
+
+    A blank field and a placeholder such as ``"unknown"`` mean the same thing --
+    nobody recorded which driver produced the number -- so both are unstamped.
+    """
+    return _clean(value).lower() not in UNSTAMPED_COMMIT_VALUES
+
+
 def collect(rows):
     """Return (sorted_commits, missing_count, rust_row_count) over rust rows."""
     commits, missing, n = set(), 0, 0
@@ -44,7 +64,7 @@ def collect(rows):
             continue
         n += 1
         c = _clean(r.get("driver_commit"))
-        if c:
+        if is_stamped_commit(c):
             commits.add(c)
         else:
             missing += 1
@@ -66,7 +86,8 @@ def decide(commits, missing, rust_rows, strict=True):
     ok = True
     if missing:
         lines.append(
-            f"  {missing} rust row(s) carry NO driver_commit -- provenance unproven. "
+            f"  {missing} rust row(s) carry NO driver_commit (absent or a placeholder "
+            "such as 'unknown') -- provenance unproven. "
             "Stamp the build (PERF_DRIVER_COMMIT / rebuild) and re-run."
         )
         if strict:

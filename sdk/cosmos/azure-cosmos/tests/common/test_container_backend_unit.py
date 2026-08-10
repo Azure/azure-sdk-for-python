@@ -47,20 +47,19 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import _base as base
 from azure.cosmos import http_constants
-from azure.cosmos._backend.base import (
-    BackendResponse,
-    CosmosBackend,
-    QueryPage,
+from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.contracts import BackendResponse, QueryPage
+from azure.cosmos._backend.operations import (
     OP_CREATE_CONTAINER,
     OP_LIST_CONTAINERS,
-    OP_READ_CONTAINER,
     OP_QUERY_CONTAINERS,
+    OP_READ_CONTAINER,
     OP_TO_BINDING_METHOD,
     QUERY_TO_BINDING_METHOD,
 )
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_responses import CosmosDict
-from azure.cosmos._helpers._request_prep import (
+from azure.cosmos._helpers._request_container import (
     build_create_container_prepared,
     build_read_container_prepared,
     is_create_container_rust_eligible,

@@ -87,6 +87,10 @@ async def test_get_throughput_fixed_async(fixed_throughput_database):
     async def _do(client):
         """Read fixed throughput from one engine."""
         database = client.get_database_client(fixed_throughput_database)
+        return _normalize_throughput(await database.get_throughput())
+
+    comparison = await run_on_both_backends_async(
+        _do, description="async database get_throughput, fixed RU/s"
     )
     comparison.print_report()
     comparison.assert_functional_parity()
@@ -101,6 +105,10 @@ async def test_get_throughput_autoscale_async(autoscale_database):
     async def _do(client):
         """Read autoscale throughput from one engine."""
         database = client.get_database_client(autoscale_database)
+        return _normalize_throughput(await database.get_throughput())
+
+    comparison = await run_on_both_backends_async(
+        _do, description="async database get_throughput, autoscale"
     )
     comparison.print_report()
     comparison.assert_functional_parity()
@@ -115,6 +123,7 @@ async def test_get_throughput_without_provisioned_throughput_async(database_with
     async def _do(client):
         """Attempt to read throughput on a database that owns no offer."""
         database = client.get_database_client(database_without_throughput)
+        return _normalize_throughput(await database.get_throughput())
 
     comparison = await run_on_both_backends_async(
         _do, description="async database get_throughput, no throughput"

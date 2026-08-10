@@ -49,7 +49,7 @@ from types import SimpleNamespace
 import pytest
 
 from azure.cosmos import _base as base
-from azure.cosmos._backend.base import OP_REPLACE_OFFER, OP_TO_BINDING_METHOD
+from azure.cosmos._backend.operations import OP_REPLACE_OFFER, OP_TO_BINDING_METHOD
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._offer_rust_routing import (
     build_replace_offer_prepared_request,

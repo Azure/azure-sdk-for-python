@@ -15,12 +15,8 @@ from __future__ import annotations
 from typing import Any, Mapping, Optional, cast
 
 from . import _base as base
-from ._backend.base import (
-    OP_FEED_RANGE_FROM_PARTITION_KEY,
-    OP_IS_FEED_RANGE_SUBSET,
-    OP_READ_FEED_RANGES,
-    PreparedRequest,
-)
+from ._backend.operations import OP_FEED_RANGE_FROM_PARTITION_KEY, OP_IS_FEED_RANGE_SUBSET, OP_READ_FEED_RANGES
+from ._backend.contracts import PreparedRequest
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._helpers._body_wire import serialize_body_to_bytes
 from ._helpers._pk_wire import serialize_partition_key_to_wire

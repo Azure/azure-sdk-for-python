@@ -25,21 +25,15 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import http_constants
 from azure.cosmos import _base as base_helpers
-from azure.cosmos._backend.base import (
+from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.errors import (
     BackendProtocolError,
-    BackendResponse,
-    CosmosBackend,
-    LegacyOperation,
-    OP_LIST_DATABASES,
-    OP_QUERY_DATABASES,
-    OP_QUERY_ITEMS,
-    OP_READ_ALL_ITEMS,
-    PreparedQuery,
     PageNotSupportedByBackendError,
     QueryNotSupportedByBackendError,
-    QueryPage,
-    rust_compatibility_fallback_count,
 )
+from azure.cosmos._backend.contracts import BackendResponse, LegacyOperation, PreparedQuery, QueryPage
+from azure.cosmos._backend.operations import OP_LIST_DATABASES, OP_QUERY_DATABASES, OP_QUERY_ITEMS, OP_READ_ALL_ITEMS
+from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._backend.rust import _binding_request_from_page as _sync_binding_request_from_page
 from azure.cosmos.aio._backend.rust import (
     _binding_request_from_page as _async_binding_request_from_page,

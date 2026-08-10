@@ -408,7 +408,7 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
                          layer (extract_op_modifiers) with no translation arm; it would be \
                          silently dropped on the fast path, emitting wrong wire bytes. Add a \
                          wire-name arm here (and update \
-                         _request_prep.RUST_HANDLED_OPTION_KEYS), or, if it is a non-wire \
+                         _request_headers.RUST_HANDLED_OPTION_KEYS), or, if it is a non-wire \
                          prep-internal flag, add it to INTENTIONALLY_IGNORED_OPTION_KEYS."
                     )));
                 }

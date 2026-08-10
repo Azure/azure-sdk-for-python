@@ -84,62 +84,62 @@ def _run(container_id, parent, child, description, request_kwargs):
     comparison.assert_functional_parity()
 
 
-def test_L0_is_feed_range_subset_narrow_inside_wide(parity_container):
+def test_is_feed_range_subset_narrow_inside_wide(parity_container):
     """A narrow range inside the full key space is a subset on both backends."""
     _run(
         parity_container.id,
         _feed_range("", "FF"),
         _feed_range("3F", "7F"),
-        description="[L0] is_feed_range_subset narrow range inside full range",
+        description="is_feed_range_subset narrow range inside full range",
         request_kwargs={"parent": "[,FF)", "child": "[3F,7F)"},
     )
 
 
-def test_L1_is_feed_range_subset_wide_not_inside_narrow(parity_container):
+def test_is_feed_range_subset_wide_not_inside_narrow(parity_container):
     """The full key space is not a subset of a narrow range on either backend."""
     _run(
         parity_container.id,
         _feed_range("3F", "7F"),
         _feed_range("", "FF"),
-        description="[L1] is_feed_range_subset full range not inside narrow range",
+        description="is_feed_range_subset full range not inside narrow range",
         request_kwargs={"parent": "[3F,7F)", "child": "[,FF)"},
     )
 
 
-def test_L2_is_feed_range_subset_equal_ranges(parity_container):
+def test_is_feed_range_subset_equal_ranges(parity_container):
     """Two identical ranges are subsets of each other on both backends."""
     _run(
         parity_container.id,
         _feed_range("3F", "7F"),
         _feed_range("3F", "7F"),
-        description="[L2] is_feed_range_subset equal ranges",
+        description="is_feed_range_subset equal ranges",
         request_kwargs={"parent": "[3F,7F)", "child": "[3F,7F)"},
     )
 
 
-def test_L3_is_feed_range_subset_disjoint_ranges(parity_container):
+def test_is_feed_range_subset_disjoint_ranges(parity_container):
     """Two non-overlapping ranges are not subsets on either backend."""
     _run(
         parity_container.id,
         _feed_range("3F", "7F"),
         _feed_range("", "2F"),
-        description="[L3] is_feed_range_subset disjoint ranges",
+        description="is_feed_range_subset disjoint ranges",
         request_kwargs={"parent": "[3F,7F)", "child": "[,2F)"},
     )
 
 
-def test_L4_is_feed_range_subset_inclusive_exclusive_bounds(parity_container):
+def test_is_feed_range_subset_inclusive_exclusive_bounds(parity_container):
     """Inclusive/exclusive-bound pairs normalize the same way on both backends."""
     _run(
         parity_container.id,
         _feed_range("3F", "7F", False, True),
         _feed_range("3F", "7F", True, True),
-        description="[L4] is_feed_range_subset inclusive/exclusive bounds (normalization path)",
+        description="is_feed_range_subset inclusive/exclusive bounds (normalization path)",
         request_kwargs={"parent": "(3F,7F]", "child": "[3F,7F]"},
     )
 
 
-def test_L5_is_feed_range_subset_from_partition_key(parity_container):
+def test_is_feed_range_subset_from_partition_key(parity_container):
     """A key's feed range is a subset of the full key space on both backends.
 
     This is the real customer shape: find which container slice a key falls into
@@ -153,7 +153,7 @@ def test_L5_is_feed_range_subset_from_partition_key(parity_container):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L5] is_feed_range_subset key feed range inside full range",
+        description="is_feed_range_subset key feed range inside full range",
         request_kwargs={"parent": "[,FF)", "child": "feed_range_from_partition_key('1')"},
     )
     comparison.print_report()

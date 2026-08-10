@@ -7,13 +7,10 @@ from __future__ import annotations
 
 from typing import Any, Callable, Mapping, Optional
 
-from ..._backend.base import (
-    LegacyOperation,
-    OP_CREATE_CONTAINER,
-    OP_READ_CONTAINER,
-)
+from ..._backend.contracts import LegacyOperation
+from ..._backend.operations import OP_CREATE_CONTAINER, OP_READ_CONTAINER
 from ..._cosmos_responses import CosmosDict
-from ..._helpers._request_prep import (
+from ..._helpers._request_container import (
     build_create_container_prepared,
     build_read_container_prepared,
     is_create_container_rust_eligible,

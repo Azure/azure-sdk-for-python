@@ -11,7 +11,7 @@ import or call a ``try_*_with_rust_backend`` executor, or otherwise branch on
 Rust-vs-legacy for the throughput (``get_throughput`` / ``replace_throughput``)
 and feed-range (``read_feed_ranges`` / ``feed_range_from_partition_key`` /
 ``is_feed_range_subset``) operations. Those concerns now live behind the
-``azure.cosmos._helpers.throughput_helper`` / ``azure.cosmos._helpers.feed_range_helper``
+``azure.cosmos._helpers.container_throughput_helper`` / ``azure.cosmos._helpers.feed_range_helper``
 family coordinators, which ``container.py`` / ``aio/_container.py`` call
 without knowing which engine served the request.
 
@@ -103,7 +103,7 @@ class _NoRustRoutingInContainerBase:
             hits, [],
             "{} contains forbidden Rust-routing patterns: {}. Throughput and "
             "feed-range backend selection must live behind "
-            "azure.cosmos._helpers.throughput_helper / "
+            "azure.cosmos._helpers.container_throughput_helper / "
             "azure.cosmos._helpers.feed_range_helper, not in the public "
             "container methods.".format(self.module.__name__, hits),
         )

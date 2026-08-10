@@ -25,7 +25,7 @@ from __future__ import annotations
 import pytest
 
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
-from azure.cosmos._backend.base import OP_FEED_RANGE_FROM_PARTITION_KEY
+from azure.cosmos._backend.operations import OP_FEED_RANGE_FROM_PARTITION_KEY
 from azure.cosmos._feed_ranges_rust_routing import (
     build_feed_range_from_partition_key_prepared_request,
     can_use_rust_backend_for_feed_range_from_partition_key,

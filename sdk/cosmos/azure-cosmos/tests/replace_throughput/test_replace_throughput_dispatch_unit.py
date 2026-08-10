@@ -90,7 +90,7 @@ def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pyte
         gate_inputs["kwargs"] = dict(kwargs)
         return True
 
-    monkeypatch.setattr("azure.cosmos._helpers.throughput_helper.can_use_rust_backend_for_replace_throughput", _gate)
+    monkeypatch.setattr("azure.cosmos._helpers.container_throughput_helper.can_use_rust_backend_for_replace_throughput", _gate)
 
     result = container.replace_throughput(500, timeout=9)
 
@@ -221,7 +221,7 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
         gate_inputs["kwargs"] = dict(kwargs)
         return True
 
-    monkeypatch.setattr("azure.cosmos._helpers.throughput_helper.can_use_rust_backend_for_replace_throughput", _gate)
+    monkeypatch.setattr("azure.cosmos._helpers.container_throughput_helper.can_use_rust_backend_for_replace_throughput", _gate)
 
     result = await container.replace_throughput(500, timeout=11)
 

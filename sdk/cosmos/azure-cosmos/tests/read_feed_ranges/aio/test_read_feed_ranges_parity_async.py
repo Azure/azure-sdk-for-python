@@ -52,7 +52,7 @@ def _normalize_feed_ranges(feed_ranges):
 
 
 @pytest.mark.asyncio
-async def test_L0_read_feed_ranges_baseline_async(container_for):
+async def test_read_feed_ranges_baseline_async(container_for):
     """Async baseline read_feed_ranges returns the same normalized ranges."""
     # Without this, a basic divergence in the returned range boundaries would go unnoticed.
 
@@ -62,14 +62,14 @@ async def test_L0_read_feed_ranges_baseline_async(container_for):
 
     comparison = await run_on_both_backends_async(
         _do,
-        description="[L0] async read_feed_ranges baseline",
+        description="async read_feed_ranges baseline",
     )
     comparison.print_report()
     comparison.assert_functional_parity()
 
 
 @pytest.mark.asyncio
-async def test_L1_read_feed_ranges_force_refresh_async(container_for):
+async def test_read_feed_ranges_force_refresh_async(container_for):
     """Async force-refresh read_feed_ranges stays equivalent on both backends."""
     # force_refresh=True bypasses the cached routing map and re-fetches the ranges; without
     # this, the rust force-refresh path could return stale or different ranges unnoticed.
@@ -82,7 +82,7 @@ async def test_L1_read_feed_ranges_force_refresh_async(container_for):
 
     comparison = await run_on_both_backends_async(
         _do,
-        description="[L1] async read_feed_ranges force_refresh=True",
+        description="async read_feed_ranges force_refresh=True",
     )
     comparison.print_report()
     comparison.assert_functional_parity()

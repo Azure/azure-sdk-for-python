@@ -31,12 +31,10 @@ import re
 import unittest
 import uuid
 
-from azure.cosmos._backend.base import PreparedRequest
+from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos._helpers._request_prep import (
-    build_create_item_prepared,
-    flatten_options_to_headers,
-)
+from azure.cosmos._helpers._request_item import build_create_item_prepared
+from azure.cosmos._helpers._request_headers import flatten_options_to_headers
 from azure.cosmos.partition_key import _Empty, _Undefined
 
 _UUID4_PATTERN = re.compile(

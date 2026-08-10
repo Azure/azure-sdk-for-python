@@ -14,7 +14,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend.base import BackendResponse, OP_DELETE_ITEM
+from azure.cosmos._backend.contracts import BackendResponse
+from azure.cosmos._backend.operations import OP_DELETE_ITEM
 from azure.cosmos.aio._backend.base import AsyncCosmosBackend
 from azure.cosmos.aio._container import ContainerProxy
 

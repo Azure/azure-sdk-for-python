@@ -35,17 +35,11 @@ import pytest
 
 from azure.core import MatchConditions
 
-from azure.cosmos._backend.base import (
-    OP_REPLACE_ITEM,
-    OP_UPSERT_ITEM,
-    PreparedRequest,
-)
+from azure.cosmos._backend.operations import OP_REPLACE_ITEM, OP_UPSERT_ITEM
+from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._item_dispatch import build_upsert_item_request_options
-from azure.cosmos._helpers._request_prep import (
-    build_replace_item_prepared,
-    build_upsert_item_prepared,
-)
+from azure.cosmos._helpers._request_item import build_replace_item_prepared, build_upsert_item_prepared
 
 
 # ---------------------------------------------------------------------------

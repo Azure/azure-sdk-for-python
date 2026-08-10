@@ -6,7 +6,7 @@
 """End-to-end parity tests for ``Container.delete_item`` across backends.
 
 Mirrors the layout of ``tests/create_item/sync/test_create_item_parity.py``.
-The graduated structure (L0..L5) and the verdict grammar (FULL PARITY /
+The graduated structure and the verdict grammar (FULL PARITY /
 FUNCTIONAL PARITY, HEADER GAP / FUNCTIONAL DIVERGENCE / EXCEPTION
 DIVERGENCE) match that file so a contributor reading one in-process
 parity test recognises the shape of every other one.
@@ -20,24 +20,24 @@ produced separately by the legacy-folder workflow's reporter script.
 
 What this file pins for ``delete_item``:
 
-* **L0 baseline.** Create one item, then delete it by bare id with the
+* **Baseline.** Create one item, then delete it by bare id with the
   mandatory ``partition_key``. Both backends must succeed and return
   ``None`` (DELETE has no useful payload).
-* **L1 -- ``item`` is polymorphic.** Pass the read-back document dict
+* **``item`` is polymorphic.** Pass the read-back document dict
   (which carries ``_self``) instead of the bare id; the SDK resolves
   it via ``Container._get_document_link``.
-* **L2 -- header-bearing kwargs.** One per test: ``pre_trigger_include``,
+* **header-bearing kwargs.** One per test: ``pre_trigger_include``,
   ``post_trigger_include``, ``session_token``, ``initial_headers``,
-  ``priority``, ``throughput_bucket``. Each is the L0 shape + exactly
+  ``priority``, ``throughput_bucket``. Each is the baseline shape + exactly
   one kwarg so a failure attributes cleanly to that kwarg.
-* **L3 -- behavioural / Python-only kwargs.** ``timeout`` is honoured
+* **behavioural / Python-only kwargs.** ``timeout`` is honoured
   on both backends; ``retry_write``, ``availability_strategy``,
   ``excluded_locations``, ``read_timeout``, ``connection_timeout`` are
   Python-only or partially-mapped on the rust path and are skipped with
   plain-English reasons (same skip pattern as the create_item suite).
-* **L4 -- ``response_hook`` fires exactly once per backend.** Captures
+* **``response_hook`` fires exactly once per backend.** Captures
   the response without wrapping every call.
-* **L5 -- typed-exception parity.**
+* **typed-exception parity.**
   * Missing id => ``CosmosResourceNotFoundError`` (HTTP 404) on both
     backends.
   * Stale etag + ``MatchConditions.IfNotModified`` => HTTP 412 on both
@@ -135,12 +135,12 @@ def _delete_by_dict_call(container_id: str, item_factory, **kwargs):
     return _do
 
 
-def _run_delete(container, level: str, summary: str,
+def _run_delete(container, summary: str,
                 by_dict: bool = False, **kwargs) -> BackendComparison:
     """Drive the by-id-or-dict closure through ``run_on_both_backends``."""
     builder = _delete_by_dict_call if by_dict else _delete_by_id_call
-    description = "[{}] {} -- mode={}, kwargs={}".format(
-        level, summary,
+    description = "{} -- mode={}, kwargs={}".format(
+        summary,
         "by-dict" if by_dict else "by-id",
         sorted(kwargs.keys()) or "(none)",
     )
@@ -155,46 +155,44 @@ def _run_delete(container, level: str, summary: str,
 
 
 # ---------------------------------------------------------------------------
-# L0 -- baseline: delete by id with the mandatory ``partition_key``.
+# Baseline: delete by id with the mandatory ``partition_key``.
 # This test MUST pass for the rest of the suite to be meaningful.
 # ---------------------------------------------------------------------------
 
-def test_L0_baseline_delete_by_id(container_for):
+def test_baseline_delete_by_id(container_for):
     """Baseline: delete by bare id + ``partition_key``. No optional kwargs.
 
     Both backends must succeed and surface ``None`` (DELETE returns
     204 No Content). Response-header-surface differences are tolerated
     here per the shared ``assert_functional_parity`` policy.
     """
-    _run_delete(container_for, level="L0",
-                summary="baseline delete by id").assert_functional_parity()
+    _run_delete(container_for, summary="baseline delete by id").assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L1 -- polymorphic ``item`` shape: pass the read-back document dict.
+# Polymorphic ``item`` shape: pass the read-back document dict.
 # Exercises ``Container._get_document_link`` resolving ``item["_self"]``.
 # ---------------------------------------------------------------------------
 
-def test_L1_delete_by_document_dict(container_for):
-    """L1: delete by passing the document dict (uses ``_self`` lookup).
+def test_delete_by_document_dict(container_for):
+    """delete by passing the document dict (uses ``_self`` lookup).
 
     ``Container._get_document_link`` accepts either a bare id string
     or a dict the SDK previously returned (which carries ``_self``).
-    The bare-id path is exercised by L0; this test pins the dict-path
-    so a binding change that drops ``_self`` resolution surfaces here
+    The bare-id path is exercised by the baseline test; this test pins the
+    dict-path so a binding change that drops ``_self`` resolution surfaces here
     rather than as an obscure ``KeyError`` from inside the SDK.
     """
-    _run_delete(container_for, level="L1",
-                summary="delete by document dict",
+    _run_delete(container_for, summary="delete by document dict",
                 by_dict=True).assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L2 -- header-bearing kwargs, one at a time.
+# Header-bearing kwargs, one at a time.
 # ---------------------------------------------------------------------------
 
-def test_L2_pre_trigger_include(container_for):
-    """L2: L0 + ``pre_trigger_include='validateOrder'`` (header kwarg).
+def test_pre_trigger_include(container_for):
+    """Baseline call plus ``pre_trigger_include='validateOrder'`` (header kwarg).
 
     There is no registered trigger by that name on the parity
     container; the server returns the same well-defined "trigger not
@@ -204,93 +202,84 @@ def test_L2_pre_trigger_include(container_for):
     ``CosmosHttpResponseError`` so the harness can still compare
     bodies / headers on the deterministic create+failed-delete path.
     """
-    cmp = _run_delete(container_for, level="L2",
-                      summary="L0 + pre_trigger_include",
+    cmp = _run_delete(container_for, summary="baseline + pre_trigger_include",
                       pre_trigger_include="validateOrder")
     # Both backends should exhibit the same outcome (either both raise
     # the typed "trigger not found" error, or both succeed on accounts
     # where the trigger is present). The diff catches a divergence.
-    cmp.assert_parity()
+    cmp.assert_functional_exception_parity()
 
 
-def test_L2_post_trigger_include(container_for):
-    """L2: L0 + ``post_trigger_include='auditOrder'`` (header kwarg)."""
-    cmp = _run_delete(container_for, level="L2",
-                      summary="L0 + post_trigger_include",
+def test_post_trigger_include(container_for):
+    """Baseline call plus ``post_trigger_include='auditOrder'`` (header kwarg)."""
+    cmp = _run_delete(container_for, summary="baseline + post_trigger_include",
                       post_trigger_include="auditOrder")
-    cmp.assert_parity()
+    cmp.assert_functional_exception_parity()
 
 
-def test_L2_session_token(container_for):
-    """L2: L0 + ``session_token=<token>`` (Session-consistency header kwarg).
+def test_session_token(container_for):
+    """Baseline call plus ``session_token=<token>`` (Session-consistency header kwarg).
 
     The token shape ``"0:1#42"`` is intentionally permissive; the server
     accepts it and the parity contract is "both backends forward it
     through the same code path." A binding that drops or rewrites the
     header on the way out would surface here.
     """
-    _run_delete(container_for, level="L2",
-                summary="L0 + session_token",
+    _run_delete(container_for, summary="baseline + session_token",
                 session_token="0:1#42").assert_functional_parity()
 
 
-def test_L2_initial_headers(container_for):
-    """L2: L0 + ``initial_headers={'x-ms-test-parity': 'v1'}`` -- caller-injected.
+def test_initial_headers(container_for):
+    """Baseline call plus ``initial_headers={'x-ms-test-parity': 'v1'}`` -- caller-injected.
 
     The SDK forwards customer-supplied headers verbatim, no
     interpretation. Both backends must surface the same outcome.
     """
-    _run_delete(container_for, level="L2",
-                summary="L0 + initial_headers",
+    _run_delete(container_for, summary="baseline + initial_headers",
                 initial_headers={"x-ms-test-parity": "v1"}).assert_functional_parity()
 
 
-def test_L2_priority_high(container_for):
-    """L2: L0 + ``priority='High'`` (``x-ms-cosmos-priority-level`` header)."""
-    _run_delete(container_for, level="L2",
-                summary="L0 + priority=High",
+def test_priority_high(container_for):
+    """Baseline call plus ``priority='High'`` (``x-ms-cosmos-priority-level`` header)."""
+    _run_delete(container_for, summary="baseline + priority=High",
                 priority="High").assert_functional_parity()
 
 
-def test_L2_throughput_bucket(container_for):
-    """L2: L0 + ``throughput_bucket=1`` (``x-ms-cosmos-throughput-bucket`` hdr)."""
-    _run_delete(container_for, level="L2",
-                summary="L0 + throughput_bucket=1",
+def test_throughput_bucket(container_for):
+    """Baseline call plus ``throughput_bucket=1`` (``x-ms-cosmos-throughput-bucket`` hdr)."""
+    _run_delete(container_for, summary="baseline + throughput_bucket=1",
                 throughput_bucket=1).assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L3 -- behavioural / Python-only kwargs. Some are honoured everywhere
+# Behavioural / Python-only kwargs. Some are honoured everywhere
 # (``timeout``), others are Python-only knobs with no rust analogue today.
 # The skips quote the same reason the create_item parity suite uses.
 # ---------------------------------------------------------------------------
 
-def test_L3_timeout(container_for):
-    """L3: L0 + ``timeout=30`` (overall request timeout).
+def test_timeout(container_for):
+    """Baseline call plus ``timeout=30`` (overall request timeout).
 
     Both backends honour the keyword today: core-python through
     azure-core's per-call timeout, rust by handing the value to the
     driver's own timeout setting. 30 s is well above the driver's 1 s
     floor, so the test is deterministic.
     """
-    _run_delete(container_for, level="L3",
-                summary="L0 + timeout=30",
+    _run_delete(container_for, summary="baseline + timeout=30",
                 timeout=30).assert_functional_parity()
 
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only knob).")
-def test_L3_retry_write(container_for):
-    """L3: L0 + ``retry_write=1`` (Python-only retry knob; no rust analogue)."""
-    _run_delete(container_for, level="L3",
-                summary="L0 + retry_write=1",
+def test_retry_write(container_for):
+    """Baseline call plus ``retry_write=1`` (Python-only retry knob; no rust analogue)."""
+    _run_delete(container_for, summary="baseline + retry_write=1",
                 retry_write=1).assert_functional_parity()
 
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only hedging feature).")
-def test_L3_availability_strategy(container_for):
-    """L3: L0 + ``availability_strategy=True`` (Python-only hedging feature)."""
-    _run_delete(container_for, level="L3",
-                summary="L0 + availability_strategy=True",
+def test_availability_strategy(container_for):
+    """Baseline call plus ``availability_strategy=True`` (Python-only hedging feature)."""
+    _run_delete(container_for, summary="baseline + availability_strategy=True",
                 availability_strategy=True).assert_functional_parity()
 
 
@@ -298,16 +287,15 @@ def test_L3_availability_strategy(container_for):
                           "ExcludedRegions field, but the parity assertion is hard to make "
                           "end-to-end against a single-region test account. Same skip rationale "
                           "as create_item's L3_excluded_locations.")
-def test_L3_excluded_locations(container_for):
-    """L3: L0 + ``excluded_locations=['East US']``.
+def test_excluded_locations(container_for):
+    """Baseline call plus ``excluded_locations=['East US']``.
 
     The binding passes this keyword to the driver as an excluded-regions
     setting (the mapping lives in ``azure_cosmos_rust/src/lib.rs``). The
     test is skipped only because the parity check is hard to make
     end-to-end against a single-region test account.
     """
-    _run_delete(container_for, level="L3",
-                summary="L0 + excluded_locations",
+    _run_delete(container_for, summary="baseline + excluded_locations",
                 excluded_locations=["East US"]).assert_functional_parity()
 
 
@@ -315,10 +303,9 @@ def test_L3_excluded_locations(container_for):
                           "ConnectionPoolOptions::{min,max}_dataplane_request_timeout but the "
                           "binding doesn't construct the pool options from Python's `read_timeout` "
                           "kwarg yet. Same skip rationale as create_item's L3_read_timeout.")
-def test_L3_read_timeout(container_for):
-    """L3: L0 + ``read_timeout=30`` (azure-core HTTP read timeout)."""
-    _run_delete(container_for, level="L3",
-                summary="L0 + read_timeout=30",
+def test_read_timeout(container_for):
+    """Baseline call plus ``read_timeout=30`` (azure-core HTTP read timeout)."""
+    _run_delete(container_for, summary="baseline + read_timeout=30",
                 read_timeout=30).assert_functional_parity()
 
 
@@ -326,21 +313,20 @@ def test_L3_read_timeout(container_for):
                           "ConnectionPoolOptions::{min,max}_connect_timeout but the binding doesn't "
                           "yet wire Python's `connection_timeout` kwarg into the pool config. "
                           "Same skip rationale as create_item's L3_connection_timeout.")
-def test_L3_connection_timeout(container_for):
-    """L3: L0 + ``connection_timeout=10`` (azure-core HTTP connect timeout)."""
-    _run_delete(container_for, level="L3",
-                summary="L0 + connection_timeout=10",
+def test_connection_timeout(container_for):
+    """Baseline call plus ``connection_timeout=10`` (azure-core HTTP connect timeout)."""
+    _run_delete(container_for, summary="baseline + connection_timeout=10",
                 connection_timeout=10).assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L4 -- output / parsing parity
+# Output / parsing parity
 # ---------------------------------------------------------------------------
 
-def test_L4_response_hook_fires_once(container_for):
-    """L4: ``response_hook`` must fire exactly once per backend on success.
+def test_response_hook_fires_once(container_for):
+    """``response_hook`` must fire exactly once per backend on success.
 
-    Mirrors the create_item suite's L4 test. The harness deterministically
+    Mirrors the create_item suite's response-hook test. The harness deterministically
     runs core-python first, then rust, so an invocation-order counter
     attributes hook fires to the right backend without any synchronisation.
     """
@@ -366,11 +352,11 @@ def test_L4_response_hook_fires_once(container_for):
 
     cmp = run_on_both_backends(
         _do,
-        description="[L4] response_hook fires exactly once per backend",
+        description="response_hook fires exactly once per backend",
         request_kwargs={"response_hook": "<callable>"},
     )
     cmp.print_report()
-    print("[L4] response_hook fired: core-python={} rust={}".format(
+    print("response_hook fired: core-python={} rust={}".format(
         fired["core-python"], fired["rust"]))
     cmp.assert_functional_parity()
     assert fired["core-python"] == 1, "core-python should fire response_hook exactly once"
@@ -378,10 +364,10 @@ def test_L4_response_hook_fires_once(container_for):
 
 
 # ---------------------------------------------------------------------------
-# L5 -- exception parity
+# Exception parity
 # ---------------------------------------------------------------------------
 
-def test_L5_missing_id_raises_typed_not_found(container_for):
+def test_missing_id_raises_typed_not_found(container_for):
     """Deleting a never-created id must raise ``CosmosResourceNotFoundError``
     (HTTP 404) on **both** backends with the same status code."""
     fixed_id = "does-not-exist-" + uuid.uuid4().hex
@@ -392,17 +378,17 @@ def test_L5_missing_id_raises_typed_not_found(container_for):
 
     cmp = run_on_both_backends(
         _do,
-        description="[L5] missing-id 404: delete id={!r} that was never created".format(fixed_id),
+        description="missing-id 404: delete id={!r} that was never created".format(fixed_id),
         request_kwargs={"item": fixed_id, "partition_key": "a"},
     )
     cmp.print_report()
     assert not cmp.core_python.succeeded, "core-python must raise on missing id"
     assert not cmp.rust.succeeded, "rust must raise on missing id"
-    cmp.assert_parity()
+    cmp.assert_functional_exception_parity()
 
 
-def test_L5_stale_etag_if_not_modified_raises_412(container_for):
-    """L5: stale ``etag`` + ``MatchConditions.IfNotModified`` => HTTP 412.
+def test_stale_etag_if_not_modified_raises_412(container_for):
+    """stale ``etag`` + ``MatchConditions.IfNotModified`` => HTTP 412.
 
     This is the delete-vs-create difference: on ``delete_item`` the
     ``etag``+``match_condition`` pair is the optimistic-concurrency
@@ -434,7 +420,7 @@ def test_L5_stale_etag_if_not_modified_raises_412(container_for):
 
     cmp = run_on_both_backends(
         _do,
-        description="[L5] stale etag + IfNotModified must raise typed 412 on both backends",
+        description="stale etag + IfNotModified must raise typed 412 on both backends",
         request_kwargs={"etag": "<stale>", "match_condition": "IfNotModified"},
     )
     cmp.print_report()
@@ -459,11 +445,11 @@ def test_L5_stale_etag_if_not_modified_raises_412(container_for):
             type(cmp.rust.raised).__name__,
         )
     )
-    cmp.assert_parity()
+    cmp.assert_functional_exception_parity()
 
 
 # ---------------------------------------------------------------------------
-# L5 (sync-only) -- deprecated kwargs whose contract is
+# (sync-only) deprecated kwargs whose contract is
 # "ignored AND dropped before the wire, but emit a DeprecationWarning".
 # ``populate_query_metrics`` is sync-only-and-deprecated on
 # ``delete_item``; the async sibling does not expose it at all.
@@ -481,8 +467,8 @@ def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
     )
 
 
-def test_L5_populate_query_metrics_deprecated_and_not_on_wire(container_for):
-    """L5: ``populate_query_metrics=True`` is deprecated AND not forwarded.
+def test_populate_query_metrics_deprecated_and_not_on_wire(container_for):
+    """``populate_query_metrics=True`` is deprecated AND not forwarded.
 
     Two pinned guarantees:
 
@@ -545,15 +531,15 @@ def test_L5_populate_query_metrics_deprecated_and_not_on_wire(container_for):
         )
     )
     print(
-        "[L5] populate_query_metrics: DeprecationWarning fired AND "
+        "populate_query_metrics: DeprecationWarning fired AND "
         "{!r} absent from outgoing DELETE headers (captured {} headers)".format(
             pqm_header, len(captured_delete_headers)
         )
     )
 
 
-def test_L5_etag_meaningful_not_deprecated(container_for):
-    """L5: ``etag`` + ``match_condition`` are meaningful on delete_item.
+def test_etag_meaningful_not_deprecated(container_for):
+    """``etag`` + ``match_condition`` are meaningful on delete_item.
 
     Unlike ``create_item`` where these two kwargs are inert and warn,
     on ``delete_item`` they are the optimistic-concurrency primitive.
@@ -576,7 +562,7 @@ def test_L5_etag_meaningful_not_deprecated(container_for):
         warnings.simplefilter("always")
         cmp = run_on_both_backends(
             _do,
-            description="[L5] current etag + IfNotModified must succeed and not warn",
+            description="current etag + IfNotModified must succeed and not warn",
             request_kwargs={"etag": "<current>", "match_condition": "IfNotModified"},
         )
     cmp.print_report()

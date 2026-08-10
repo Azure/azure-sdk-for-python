@@ -161,9 +161,11 @@ def detect_steps(pts, step_mb=STEP_MB):
 def verdict(tail, n_steps):
     """Shape- and CI-aware verdict from the final-plateau fit and step count.
 
-    Uses the 95% CI, not just the point estimate: 'flat' requires the slope CI
-    upper bound below the leak threshold; 'growing' requires the CI lower bound
-    above the flat threshold; anything straddling is WATCH.
+    Uses the 95% confidence interval rather than the point estimate alone.
+    ``PLATEAUED``/``STAIRCASE`` require the interval's upper bound to sit below
+    ``FLAT_MAX``; ``GROWING`` requires its lower bound to sit above
+    ``LEAK_MIN``. An interval spanning the gap between those two thresholds is
+    not conclusive either way, so it reports ``WATCH``.
     """
     if tail is None or tail.get("slope") is None:
         return "INCONCLUSIVE"
@@ -176,7 +178,7 @@ def verdict(tail, n_steps):
         return "PLATEAUED" if n_steps <= 1 else "STAIRCASE"
     if lo >= LEAK_MIN:
         return "GROWING"            # CI entirely above the leak threshold.
-    return "WATCH"                  # CI straddles -- not yet conclusive.
+    return "WATCH"                  # CI spans both thresholds -- not conclusive.
 
 
 def _glyph_or_fallback(glyph: str, fallback: str) -> str:

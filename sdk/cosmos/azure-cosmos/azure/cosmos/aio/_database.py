@@ -41,7 +41,7 @@ from .._cosmos_responses import CosmosDict
 from .._helpers._item_dispatch import pick_backend
 from ._helpers.container_helper import AsyncContainerHelper
 from ._helpers.database_helper import AsyncDatabaseHelper
-from .._helpers.throughput_helper import (
+from .._helpers.database_throughput_helper import (
     get_database_throughput_async,
     replace_database_throughput_async,
 )

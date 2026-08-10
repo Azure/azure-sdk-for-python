@@ -33,7 +33,7 @@ def container_for(request):
 
 
 @pytest.mark.asyncio
-async def test_L0_async_upsert_insert_then_update(container_for):
+async def test_async_upsert_insert_then_update(container_for):
     """async upsert insert then update — parity on both backends."""
     item_id = uuid.uuid4().hex
 
@@ -42,13 +42,13 @@ async def test_L0_async_upsert_insert_then_update(container_for):
         await c.upsert_item({"id": item_id, "pk": "a", "n": 1})
         return await c.upsert_item({"id": item_id, "pk": "a", "n": 2})
 
-    cmp = await run_on_both_backends_async(_do, description="[L0] async upsert")
+    cmp = await run_on_both_backends_async(_do, description="async upsert")
     cmp.print_report()
     cmp.assert_functional_parity()
 
 
 @pytest.mark.asyncio
-async def test_L4_async_upsert_response_hook_fires_once(container_for):
+async def test_async_upsert_response_hook_fires_once(container_for):
     """async upsert fires response_hook exactly once per backend."""
     fired = {"core-python": 0, "rust": 0}
     order = ["core-python", "rust"]
@@ -63,6 +63,6 @@ async def test_L4_async_upsert_response_hook_fires_once(container_for):
             response_hook=lambda h, x: fired.__setitem__(backend, fired[backend] + 1),
         )
 
-    cmp = await run_on_both_backends_async(_do, description="[L4] async upsert response_hook")
+    cmp = await run_on_both_backends_async(_do, description="async upsert response_hook")
     cmp.assert_functional_parity()
     assert fired["core-python"] == 1 and fired["rust"] == 1

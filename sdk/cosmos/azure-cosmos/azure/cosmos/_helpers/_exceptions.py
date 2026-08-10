@@ -25,7 +25,7 @@ from __future__ import annotations
 import json
 from typing import Mapping, Optional
 
-from .._backend.base import BackendResponse
+from .._backend.contracts import BackendResponse
 from ..exceptions import (
     CosmosAccessConditionFailedError,
     CosmosHttpResponseError,

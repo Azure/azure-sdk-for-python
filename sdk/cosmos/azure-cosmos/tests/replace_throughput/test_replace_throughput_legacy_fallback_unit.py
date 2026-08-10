@@ -65,7 +65,7 @@ def test_sync_fallback_replace_offer_uses_mutated_offer_object(monkeypatch):
         del throughput
         new_throughput_properties["__mutated_marker__"] = True
 
-    monkeypatch.setattr("azure.cosmos._helpers.throughput_helper._replace_throughput", _mark_only_mutated_copy)
+    monkeypatch.setattr("azure.cosmos._helpers.container_throughput_helper._replace_throughput", _mark_only_mutated_copy)
 
     container.replace_throughput(500)
 
@@ -132,7 +132,7 @@ async def test_async_fallback_replace_offer_uses_mutated_offer_object(monkeypatc
         del throughput
         new_throughput_properties["__mutated_marker__"] = True
 
-    monkeypatch.setattr("azure.cosmos._helpers.throughput_helper._replace_throughput", _mark_only_mutated_copy)
+    monkeypatch.setattr("azure.cosmos._helpers.container_throughput_helper._replace_throughput", _mark_only_mutated_copy)
 
     await container.replace_throughput(500)
 

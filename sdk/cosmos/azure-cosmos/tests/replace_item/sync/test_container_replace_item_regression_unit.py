@@ -205,7 +205,8 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
         ``item`` must not retarget the write to the wrong document."""
         from azure.core.utils import CaseInsensitiveDict
 
-        from azure.cosmos._backend.base import BackendResponse, CosmosBackend
+        from azure.cosmos._backend.base import CosmosBackend
+        from azure.cosmos._backend.contracts import BackendResponse
 
         proxy, cc, _ = _make_proxy_with_mock_connection()
         captured = {}

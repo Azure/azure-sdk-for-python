@@ -49,17 +49,16 @@ from azure.cosmos.aio._global_partition_endpoint_manager_per_partition_automatic
     _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync)
 from .. import _base as base
 from .._availability_strategy_config import CrossRegionHedgingStrategy, validate_client_hedging_strategy
-from .._backend.base import (
-    OP_LIST_DATABASES,
-    OP_QUERY_DATABASES,
+from .._backend.operations import (
     OP_LIST_CONTAINERS,
+    OP_LIST_DATABASES,
     OP_QUERY_CONTAINERS,
+    OP_QUERY_DATABASES,
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
-    LegacyOperation,
-    PageNotSupportedByBackendError,
-    PreparedQuery,
 )
+from .._backend.contracts import LegacyOperation, PreparedQuery
+from .._backend.errors import PageNotSupportedByBackendError
 from .._base import _build_properties_cache
 from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable

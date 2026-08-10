@@ -23,7 +23,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 from azure.cosmos._helpers._metadata_provider import ContainerMetadataProvider
 from azure.cosmos._helpers._pk_extract import extract_partition_key_value
-from azure.cosmos._backend.base import build_backend_response
+from azure.cosmos._backend._binding_conversions import build_backend_response
 from azure.cosmos.aio._helpers._metadata_provider import AsyncContainerMetadataProvider
 from azure.cosmos.partition_key import _Empty, _Undefined
 

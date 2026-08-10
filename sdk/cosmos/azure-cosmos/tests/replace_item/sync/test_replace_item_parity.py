@@ -32,7 +32,7 @@ def container_for(request):
         pass
 
 
-def test_L0_create_then_replace(container_for):
+def test_create_then_replace(container_for):
     """create an item, replace its body — parity on both backends."""
     item_id = uuid.uuid4().hex
 
@@ -41,18 +41,18 @@ def test_L0_create_then_replace(container_for):
         c.upsert_item({"id": item_id, "pk": "a", "n": 1})
         return c.replace_item(item=item_id, body={"id": item_id, "pk": "a", "n": 2})
 
-    cmp = run_on_both_backends(_do, description="[L0] replace", request_body={"id": item_id, "pk": "a"})
+    cmp = run_on_both_backends(_do, description="replace", request_body={"id": item_id, "pk": "a"})
     cmp.print_report()
     cmp.assert_functional_parity()
 
 
-def test_L5_replace_missing_raises(container_for):
+def test_replace_missing_raises(container_for):
     """replacing a missing id raises CosmosResourceNotFoundError on both."""
     def _do(client):
         c = client.get_database_client("parity_db").get_container_client(container_for.id)
         return c.replace_item(item="missing-" + uuid.uuid4().hex, body={"id": "x", "pk": "a"})
 
-    cmp = run_on_both_backends(_do, description="[L5] replace missing -> 404")
+    cmp = run_on_both_backends(_do, description="replace missing -> 404")
     cmp.print_report()
     cmp.assert_exception_parity()
 

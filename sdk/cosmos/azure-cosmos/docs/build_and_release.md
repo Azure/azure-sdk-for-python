@@ -18,8 +18,8 @@ Maturin builds the `azure_cosmos_rust` binding against a sibling
 - [2. What's in the repos: two Rust crates](#2-whats-in-the-repos-two-rust-crates)
 - [3. Building the binding and its driver dependency](#3-building-the-binding-and-its-driver-dependency)
 - [4. The output Python can't import yet: `cdylib`](#4-the-output-python-cant-import-yet-cdylib)
-- [5. The functions Python still can't call: PyO3](#5-the-functions-python-still-cant-call-pyo3)
-- [6. Maturin connects `pip` to Cargo](#6-maturin-connects-pip-to-cargo)
+- [5. What Cargo produces for this project](#5-what-cargo-produces-for-this-project)
+- [6. How Maturin, Cargo, and the Python build command work together](#6-how-maturin-cargo-and-the-python-build-command-work-together)
 - [7. How Maturin knows what to do: `pyproject.toml` and the four names](#7-how-maturin-knows-what-to-do-pyprojecttoml-and-the-four-names)
 - [8. What actually ships: the wheel](#8-what-actually-ships-the-wheel)
 - [9. Why QueryPlanInterop must be shipped beside `_rust`](#9-why-queryplaninterop-must-be-shipped-beside-_rust)
@@ -337,100 +337,133 @@ raised exception. Something has to translate at the boundary.
 
 ---
 
-## 5. The functions Python still can't call: PyO3
+## 5. What Cargo produces for this project
 
-**The problem:** a compiled `_rust.pyd` loaded into Python still contains Rust
-functions Python cannot call — wrong argument types, wrong error model, and no marking of
-which functions are even meant to be public.
+The Rust source that belongs to the Python package is in:
 
-**The solution — PyO3.** PyO3 is a Rust crate (the one already in `Cargo.toml`) that does
-the translation at the boundary. Concretely, it does five jobs:
+```text
+azure_cosmos_rust/src/*.rs
+```
 
-1. **Marks what's Python-visible.** A Rust function tagged `#[pyfunction]` becomes a
-   callable in the Python module; a struct tagged `#[pyclass]` becomes a Python class.
-2. **Converts simple types automatically.** A Python `bytes` arrives as a Rust `&[u8]`,
-   `str` becomes `String`, `list` becomes `Vec`, and numbers/booleans pass through.
-3. **Provides GIL APIs** (for Python's interpreter lock). The sync binding uses
-   `py.allow_threads(...)` while it blocks on Rust network work, and the async entry points
-   return awaitables through `pyo3-async-runtimes`.
-4. **Re-raises errors.** A Rust `Err(...)` becomes a real Python exception of the class the
-   Rust code chose.
-5. **Lets Rust call back into Python** when needed (for example, to ask a Python credential
-   object for a token).
+Its `Cargo.toml` declares the sibling Cosmos driver as a dependency:
 
-A precise word for the boundary itself: **FFI** (Foreign Function Interface) is the
-*concept* of one language calling into another's compiled code. The `.pyd` is the *file*;
-the C-compatible function signatures inside it are the FFI surface; **PyO3 is what
-generates that surface** from ordinary Rust so nobody hand-writes raw C glue.
+```text
+azure-sdk-for-rust/sdk/cosmos/azure_data_cosmos_driver
+```
 
-**The new problem:** now there is a Rust dynamic library marked up with PyO3, but Python
-packaging still needs a build backend that knows how to run Cargo, give the extension its
-Python filename, and place it in the package.
+When Cargo builds `azure_cosmos_rust`, it follows that dependency, compiles both crates, and links
+them into one native library. On Windows, the raw Cargo output is conceptually:
+
+```text
+target/release/azure_cosmos_rust.dll
+```
+
+On Linux, it is a `.so` file. PyO3 supplies the small Python-facing boundary inside that library.
+
+
+At this point Cargo has completed its job: the Rust code is compiled. Cargo does **not**:
+
+- name the file `_rust.pyd` or `_rust.abi3.so`;
+- place it under `azure/cosmos/`;
+- include the Python files such as `cosmos_client.py`;
+- include `Cosmos.QueryPlanInterop.dll`; or
+- create an `azure_cosmos-...whl` file.
+
+Maturin performs those Python-package steps.
 
 ---
 
-## 6. Maturin connects `pip` to Cargo
+## 6. How Maturin, Cargo, and the Python build command work together
 
-**The problem:** getting from Rust source to an importable extension needs three steps, and
-Cargo alone does not perform all three:
+There are two entry points: one for local development and one for producing the wheel that ships.
 
-1. Run Cargo to compile the `cdylib`.
-2. Rename the output (`azure_cosmos_rust.dll` → `_rust.pyd`) and copy it into `azure/cosmos/`.
-3. Install the Python package into the active environment so `import azure.cosmos` finds it.
+### Local development: `maturin develop --release`
 
-`pip` delegates source builds to the backend declared in `pyproject.toml`. In this branch
-that backend is Maturin, so `pip install .` does **not** default to setuptools: it creates an
-isolated build environment, installs Maturin from `[build-system].requires`, and asks Maturin
-to build a wheel. The current build can still fail for package-specific reasons described
-later, especially the external driver path and incomplete distribution metadata.
-
-Maturin is a build tool that does all three. The command used
-most often during development is:
+Run this from `sdk/cosmos/azure-cosmos`:
 
 ```powershell
-maturin develop
+maturin develop --release
 ```
 
-Here is exactly what that one command does, the first time it runs:
+Maturin starts Cargo, which builds the Rust binding and driver as one native Python extension.
+Maturin then gives the compiled file its Python filename and places it in the active Python
+environment so `from azure.cosmos import _rust` can load it. It also connects imports of the
+`azure-cosmos` Python package to the source files in the developer's local folder.
 
-- Reads the workspace `Cargo.toml`, the binding crate's `Cargo.toml`, and `pyproject.toml`
-  to figure out what to build and where the result goes.
-- Runs `cargo build`. A cold build downloads and compiles PyO3, Tokio, the driver, and their
-  transitive dependencies. Later incremental builds can reuse compiled results under
-  `target/`, so cold and warm timing must be measured separately.
-- Finds Cargo's debug `cdylib`, gives it the import filename (`_rust.pyd` on Windows or
-  `_rust.abi3.so` on Linux/macOS), and places it with the mixed Python package.
-- Installs the package in **editable mode**. `site-packages/` is the directory in the Python
-  environment where installed packages live — it's what `import azure.cosmos` searches. A
-  normal install *copies* the project files there: the `azure/cosmos/*.py` sources, the
-  package data, **and the compiled extension**. Editable mode copies none of it — it drops a
-  small pointer file in `site-packages/` saying "`azure.cosmos` actually lives in this working
-  tree." So the `_rust.pyd`/`_rust.abi3.so` stays in `azure/cosmos/` in the working tree and is
-  imported from there; `.py` edits take effect with no reinstall, and each later
-  `maturin develop` rebuilds that extension in place.
+This is an **editable installation**: Python uses the source files in the developer's local
+`azure-sdk-for-python` folder instead of a separate copied set. Python edits therefore take effect
+without reinstalling the SDK. After changing Rust code, the developer reruns
+`maturin develop --release` to rebuild the native extension.
 
-For a release-style wheel, use the configured PEP 517 backend rather than calling
-`maturin build` directly:
+This command does not create the final release wheel or include QueryPlanInterop. Section 9
+explains QueryPlanInterop and local query planning.
+
+### Official release wheel: the CI pipeline runs `python -m build --wheel`
+
+The official wheels are built by controlled CI jobs, not on a developer's machine. Each CI job
+targets one supported operating system and CPU architecture and runs:
 
 ```powershell
 python -m build --wheel
 ```
 
-`maturin develop` is the command run repeatedly while developing. `python -m build --wheel`
-invokes the package's PEP 517 wrapper, which performs QueryPlanInterop staging when the build
-environment supplies it and then delegates the release-mode compile and wheel assembly to
-Maturin. Calling `maturin build` directly bypasses that package-specific staging. The current
-Cosmos release pipeline is not yet wired to run the native wheel path.
+Developers can run the same command locally to check packaging, but a local wheel is not a release
+artifact and is not published.
 
-Editable builds deliberately do not package release sidecars into the working tree. The wrapper
-temporarily ignores `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR` for an editable build; developers
-who need local query planning with `maturin develop` use the existing runtime override
-`AZURE_COSMOS_QUERYPLANINTEROP_DIR`.
+This command is the top-level Python packaging entry point. It does not compile Rust itself. It
+reads `pyproject.toml` and calls the configured backend:
 
+```toml
+build-backend = "azure_cosmos_build_backend"
+```
 
-Maturin does several things "automatically" — but *how* does it know
-which crate to compile, where the Python package is, and what to name the file it drops in?
-And there's a specific, common way to break the whole thing with a one-character mismatch.
+```mermaid
+flowchart TB
+    Pipeline["CI wheel job<br/>for example: Windows x64"]
+    Build["python -m build --wheel"]
+    Backend["azure_cosmos_build_backend.py"]
+    QueryPlan["Temporarily stage<br/>azure/cosmos/.libs/<br/>Cosmos.QueryPlanInterop.dll"]
+    Maturin["Delegate the wheel build to Maturin"]
+    Cargo["Maturin starts Cargo"]
+    Binding["Compile<br/>azure_cosmos_rust"]
+    Driver["Compile and link<br/>azure_data_cosmos_driver"]
+    PythonFiles["Python package files<br/>azure/cosmos/*.py"]
+    Wheel["Maturin assembles<br/>dist/azure_cosmos-&lt;version&gt;-cp39-abi3-win_amd64.whl<br/><br/>Contains Python files, _rust.pyd,<br/>and Cosmos.QueryPlanInterop.dll"]
+    Cleanup["Build backend removes<br/>the temporary staged file"]
+    Validate["CI validates the wheel<br/>on the target platform"]
+    Publish["Release pipeline publishes<br/>the approved wheel"]
+
+    Pipeline --> Build --> Backend
+    Backend --> QueryPlan
+    Backend --> Maturin --> Cargo
+    Cargo --> Binding
+    Cargo --> Driver
+    Binding --> Wheel
+    Driver --> Wheel
+    QueryPlan --> Wheel
+    PythonFiles --> Wheel
+    Wheel --> Cleanup --> Validate --> Publish
+```
+
+The diagram shows one Windows x64 job. Linux and macOS jobs follow the same flow but produce their
+own platform wheel. For example, Linux packages `_rust.abi3.so` and the Linux QueryPlanInterop
+library instead of the Windows files. The release pipeline gathers, validates, and publishes the
+approved wheels from all required jobs.
+
+The responsibilities are:
+
+| Tool | What it does in this project |
+|---|---|
+| Cargo | Compiles `azure_cosmos_rust` and its `azure_data_cosmos_driver` dependency. |
+| Maturin | Invokes Cargo, gives the result its Python extension name, and combines it with the Python package. |
+| `azure_cosmos_build_backend.py` | Stages and validates the platform's QueryPlanInterop files, delegates to Maturin, and cleans up the source tree. |
+| `python -m build --wheel` | Starts the standard isolated Python wheel build using the configured backend. |
+
+Do not use `maturin build` as the release command for this package. It calls Maturin and Cargo, but
+bypasses the Cosmos-specific backend that stages QueryPlanInterop.
+
+The next section shows the `pyproject.toml` settings that tell Maturin which Cargo manifest to use,
+where the Python package lives, and why the names must agree.
 
 ---
 

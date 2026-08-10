@@ -6,7 +6,7 @@
 """Async siblings of the helpers in ``azure/cosmos/_helpers``.
 
 The pure-data helpers (`_options`, `_pk_wire`, `_body_wire`,
-`_auto_id`, `_container_rid`, `_request_prep`) hold no I/O, so they
+`_auto_id`, `_container_rid`, `_request_headers`) hold no I/O, so they
 do not need async variants and the async code reaches into the sync
 package directly. Only ``ItemHelper`` lives twice â—” once here for the
 async path, once in the sync sibling â—” because its ``create_item``

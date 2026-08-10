@@ -26,20 +26,22 @@ import logging
 import threading
 from typing import Any, AsyncIterator, Optional
 
-from azure.cosmos._backend.base import (
-    OP_LIST_DATABASES,
+from azure.cosmos._backend.operations import (
     OP_LIST_CONTAINERS,
+    OP_LIST_DATABASES,
     OP_READ_ALL_ITEMS,
     OP_TO_BINDING_METHOD,
-    PageNotSupportedByBackendError,
     QUERY_TO_BINDING_METHOD,
+)
+from azure.cosmos._backend.errors import PageNotSupportedByBackendError, QueryNotSupportedByBackendError
+from azure.cosmos._backend.contracts import (
+    BackendResponse,
     PreparedClientConfig,
     PreparedQuery,
     PreparedRequest,
-    QueryNotSupportedByBackendError,
     QueryPage,
-    build_backend_response,
 )
+from azure.cosmos._backend._binding_conversions import build_backend_response
 from azure.cosmos._backend._shared import (
     RustBackendShared,
     close_credential_bridge_quietly,
@@ -51,7 +53,7 @@ from azure.cosmos._backend.constants import BACKEND_NAME_RUST
 
 from azure.core.exceptions import ServiceResponseError
 
-from .base import AsyncCosmosBackend, BackendResponse
+from .base import AsyncCosmosBackend
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -187,9 +189,6 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         # init) is held only to set or read the handle and the closing flag, never
         # during init_client, so close() never waits for a build to finish.
         self._build_lock = threading.Lock()
-        # Set by close(). A build checks it before storing its handle, so a handle
-        # built while the client is closing is closed instead of left open.
-        self._closing = False
         # When many operations start at once on a fresh client they all need the
         # handle. These hold the one running build so they share it instead of each
         # starting their own (see _ensure_handle). Read and set on the event-loop

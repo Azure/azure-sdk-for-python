@@ -23,7 +23,8 @@ import asyncio
 import unittest
 from dataclasses import FrozenInstanceError
 
-from azure.cosmos._backend.base import CosmosBackend, LegacyOperation
+from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.contracts import LegacyOperation
 from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
 from azure.cosmos._backend.legacy import LEGACY_BACKEND, LegacyBackend, coerce_backend
 from azure.cosmos.aio._backend.base import AsyncCosmosBackend

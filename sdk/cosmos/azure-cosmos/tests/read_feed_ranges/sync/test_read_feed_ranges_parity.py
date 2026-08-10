@@ -51,7 +51,7 @@ def _normalize_feed_ranges(feed_ranges):
     return sorted(normalized)
 
 
-def test_L0_read_feed_ranges_baseline(container_for):
+def test_read_feed_ranges_baseline(container_for):
     """Baseline read_feed_ranges returns the same normalized ranges."""
     # Without this, a basic divergence in the returned range boundaries would go unnoticed.
 
@@ -61,13 +61,13 @@ def test_L0_read_feed_ranges_baseline(container_for):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L0] read_feed_ranges baseline",
+        description="read_feed_ranges baseline",
     )
     comparison.print_report()
     comparison.assert_functional_parity()
 
 
-def test_L1_read_feed_ranges_force_refresh(container_for):
+def test_read_feed_ranges_force_refresh(container_for):
     """Force-refresh read_feed_ranges stays equivalent on both backends."""
     # force_refresh=True bypasses the cached routing map and re-fetches the ranges; without
     # this, the rust force-refresh path could return stale or different ranges unnoticed.
@@ -78,7 +78,7 @@ def test_L1_read_feed_ranges_force_refresh(container_for):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L1] read_feed_ranges force_refresh=True",
+        description="read_feed_ranges force_refresh=True",
     )
     comparison.print_report()
     comparison.assert_functional_parity()

@@ -35,21 +35,17 @@ from __future__ import annotations
 from typing import Any, Callable, Mapping, Optional
 
 from ... import exceptions
-from ..._backend.base import (
-    OP_CREATE_DATABASE,
-    OP_DELETE_DATABASE,
-    OP_READ_DATABASE,
-    LegacyOperation,
-)
+from ..._backend.operations import OP_CREATE_DATABASE, OP_DELETE_DATABASE, OP_READ_DATABASE
+from ..._backend.contracts import LegacyOperation
 from ..._constants import _Constants as Constants
 from ..._cosmos_responses import CosmosDict
-from ..._helpers._request_prep import (
+from ..._helpers._request_database import (
+    RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
     build_create_database_prepared,
     build_delete_database_prepared,
     build_read_database_prepared,
     is_delete_database_rust_eligible,
     is_read_database_rust_eligible,
-    RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
 )
 from ..._helpers._response_parse import parse_backend_response
 from .._backend.base import AsyncCosmosBackend

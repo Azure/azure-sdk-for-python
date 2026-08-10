@@ -71,7 +71,8 @@ import threading
 from pathlib import Path
 from typing import Any, Optional, Tuple, Type, Union
 
-from .base import PreparedClientConfig, init_client_args
+from ._binding_conversions import init_client_args
+from .contracts import PreparedClientConfig
 from ._driver_registry import (
     make_credential_key,
     register_client_config,
@@ -205,7 +206,8 @@ class RustBackendShared:
 
     ``_init_shared`` sets all the shared attributes: ``_endpoint``, ``_master_key``,
     ``_token_credential``, ``_client_config``, ``_strict_isolation``,
-    ``_credential_key``, ``_handle``, ``_handle_lock``, and ``_config_released``.
+    ``_credential_key``, ``_handle``, ``_handle_lock``, ``_closing``, and
+    ``_config_released``.
     """
 
     def _init_shared(
@@ -233,7 +235,7 @@ class RustBackendShared:
         self._endpoint = endpoint
         self._master_key = master_key
         # A token credential (e.g. from azure-identity), or None for master-key
-        # auth; factory._resolve_credential sets exactly one. The driver calls
+        # auth; credentials.resolve_credential sets exactly one. The driver calls
         # get_token on it when signing requests. An async credential arrives wrapped
         # as AsyncTokenCredentialBridge, which exposes a sync get_token.
         self._token_credential = token_credential
@@ -253,6 +255,10 @@ class RustBackendShared:
         # lock guards reading and setting the handle.
         self._handle = None
         self._handle_lock = threading.Lock()
+        # Set by close() under _handle_lock. Both backends check it before handing
+        # out a handle, so a closed client refuses further work instead of quietly
+        # building a second driver reference and carrying on as if it were open.
+        self._closing = False
         # Register against the endpoint last: in strict isolation mode this raises if
         # a live client already targets the endpoint with a different config or
         # credential. Start _config_released True so a construction that fails here

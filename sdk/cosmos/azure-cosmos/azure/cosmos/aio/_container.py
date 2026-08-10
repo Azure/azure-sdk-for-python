@@ -57,7 +57,7 @@ from .._helpers.feed_range_helper import (
     is_feed_range_subset_async as _is_feed_range_subset,
     read_feed_ranges_async as _read_feed_ranges,
 )
-from .._helpers.throughput_helper import (
+from .._helpers.container_throughput_helper import (
     get_container_throughput_async as _get_throughput,
     replace_container_throughput_async as _replace_container_throughput,
 )

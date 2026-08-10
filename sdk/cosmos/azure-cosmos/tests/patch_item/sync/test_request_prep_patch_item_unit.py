@@ -23,16 +23,14 @@ import pytest
 
 from azure.core import MatchConditions
 
-from azure.cosmos._backend.base import OP_PATCH_ITEM, PreparedRequest
+from azure.cosmos._backend.operations import OP_PATCH_ITEM
+from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._item_dispatch import (
     build_patch_item_request_options,
     merge_patch_item_explicit_kwargs,
 )
-from azure.cosmos._helpers._request_prep import (
-    build_patch_item_prepared,
-    build_patch_operations_payload,
-)
+from azure.cosmos._helpers._request_item import build_patch_item_prepared, build_patch_operations_payload
 
 
 _SET_OP = {"op": "set", "path": "/status", "value": "shipped"}

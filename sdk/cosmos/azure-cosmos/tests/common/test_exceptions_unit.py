@@ -38,7 +38,7 @@ import unittest
 
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend.base import BackendResponse
+from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._helpers._exceptions import (
     _ResponseAdapter,
     extract_message_from_body,

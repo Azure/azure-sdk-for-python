@@ -37,27 +37,29 @@ import pytest
 
 import azure.cosmos.aio._cosmos_client as async_cosmos_client_module
 import azure.cosmos.cosmos_client as sync_cosmos_client_module
-from azure.cosmos._backend.base import (
+from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.contracts import (
     BackendResponse,
-    CosmosBackend,
     LegacyOperation,
-    OP_TO_BINDING_METHOD,
+    PreparedClientConfig,
+    PreparedQuery,
+    PreparedRequest,
+)
+from azure.cosmos._backend.operations import (
     OP_FEED_RANGE_FROM_PARTITION_KEY,
-    OP_LIST_DATABASES,
-    OP_QUERY_DATABASES,
     OP_LIST_CONTAINERS,
+    OP_LIST_DATABASES,
     OP_QUERY_CONTAINERS,
+    OP_QUERY_DATABASES,
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
     OP_READ_FEED_RANGES,
     OP_READ_OFFER,
-    PreparedClientConfig,
-    PreparedQuery,
-    PreparedRequest,
+    OP_TO_BINDING_METHOD,
     QUERY_TO_BINDING_METHOD,
-    QueryNotSupportedByBackendError,
 )
-from azure.cosmos._backend.base import raise_account_read_unsupported
+from azure.cosmos._backend.errors import QueryNotSupportedByBackendError
+from azure.cosmos._backend.errors import raise_account_read_unsupported
 from azure.cosmos._backend import _driver_registry
 from azure.cosmos._backend._shared import (
     configure_packaged_query_plan_interop,
@@ -81,14 +83,16 @@ from azure.cosmos._backend.constants import (
     BACKEND_NAME_RUST,
     RUST_STRICT_ISOLATION_ENV_VAR,
 )
+from azure.cosmos._backend.client_config import build_client_config
+from azure.cosmos._backend.credentials import resolve_credential
 from azure.cosmos._backend.factory import (
-    _resolve_credential,
-    build_client_config,
     make_backend,
-    reject_unsupported_transport_settings,
-    resolve_client_transport_timeouts,
     resolve_backend_name,
     resolve_strict_isolation,
+)
+from azure.cosmos._backend.transport_settings import (
+    reject_unsupported_transport_settings,
+    resolve_client_transport_timeouts,
 )
 from azure.cosmos._backend._async_credential_bridge import (
     AsyncCredentialBridgeReentrantError,
@@ -1720,8 +1724,16 @@ def test_async_factory_carries_transport_timeouts_into_rust_backend(monkeypatch)
     )
 
 
-def test_sync_client_carries_effective_default_transport_timeouts(monkeypatch):
-    """Prove sync clients pass effective default timeouts to Rust."""
+def test_untuned_sync_client_carries_no_transport_timeouts(monkeypatch):
+    """An untuned client must pin nothing process-wide.
+
+    The Rust connection and read timeouts configure the process-global driver
+    runtime, so anything carried here is frozen for every later client. A customer
+    who named no timeout has expressed no opinion, and the legacy defaults are not
+    their opinion -- carrying them would make the very next client that asks for a
+    real timeout fail to construct. With nothing carried, and nothing else tuned,
+    the whole config collapses to None.
+    """
     monkeypatch.setattr(
         sync_cosmos_client_module, "CosmosClientConnection", MagicMock()
     )
@@ -1730,10 +1742,7 @@ def test_sync_client_carries_effective_default_transport_timeouts(monkeypatch):
         "key",
         _backend=BACKEND_NAME_RUST,
     )
-    assert client._backend._client_config == PreparedClientConfig(
-        connection_timeout_seconds=5.0,
-        read_timeout_seconds=65.0,
-    )
+    assert client._backend._client_config is None
     client._backend.close()
 
 
@@ -1986,9 +1995,24 @@ def test_build_client_config_combines_all_settings():
     )
 
 
-def test_resolve_client_transport_timeouts_uses_legacy_defaults():
-    """Untuned Rust clients preserve the legacy 5 s connect and 65 s read values."""
-    assert resolve_client_transport_timeouts({}) == (5, 65)
+def test_resolve_client_transport_timeouts_reports_only_explicit_values():
+    """A customer who named no timeout gets None, not the legacy defaults.
+
+    These two values configure the process-wide Rust driver runtime, so reporting
+    a default here would pin the whole process to it on behalf of a customer who
+    never asked for it.
+    """
+    assert resolve_client_transport_timeouts({}) == (None, None)
+    assert resolve_client_transport_timeouts({"connection_timeout": 2}) == (2, None)
+    assert resolve_client_transport_timeouts({"read_timeout": 30}) == (None, 30)
+
+
+def test_resolve_client_transport_timeouts_ignores_a_stock_connection_policy():
+    """The public clients build a default ConnectionPolicy for every client, so a
+    policy that still holds the stock values is not a customer choice."""
+    assert resolve_client_transport_timeouts(
+        {"connection_policy": ConnectionPolicy()}
+    ) == (None, None)
 
 
 def test_resolve_client_transport_timeouts_honors_alias_and_custom_policy():
@@ -2267,7 +2291,7 @@ def test_account_read_guard_raises_for_rust_backend():
 
 
 # ---------------------------------------------------------------------------
-# Credential classification for the Rust backend (_resolve_credential)
+# Credential classification for the Rust backend (resolve_credential)
 # ---------------------------------------------------------------------------
 #
 # The Rust backend accepts a master key (string or {"masterKey": ...}) or a
@@ -2320,18 +2344,18 @@ class _AsyncContextManagerCredential:
 
 def test_resolve_credential_master_key_string():
     """A plain string credential is read as a master key, with no token credential."""
-    assert _resolve_credential("the-key") == ("the-key", None)
+    assert resolve_credential("the-key") == ("the-key", None)
 
 
 def test_resolve_credential_master_key_dict():
     """A ``{"masterKey": ...}`` dict is read as a master key, with no token credential."""
-    assert _resolve_credential({"masterKey": "the-key"}) == ("the-key", None)
+    assert resolve_credential({"masterKey": "the-key"}) == ("the-key", None)
 
 
 def test_resolve_credential_sync_token_credential():
     """A sync token credential passes through as the token credential (no master key)."""
     cred = _SyncTokenCredential()
-    master_key, token_credential = _resolve_credential(cred)
+    master_key, token_credential = resolve_credential(cred)
     assert master_key is None
     assert token_credential is cred
 
@@ -2340,7 +2364,7 @@ def test_resolve_credential_async_token_credential_wrapped():
     """An async credential is accepted: it is wrapped in a bridge that
     drives its coroutine and exposes a synchronous get_token."""
     cred = _AsyncTokenCredential()
-    master_key, token_credential = _resolve_credential(cred)
+    master_key, token_credential = resolve_credential(cred)
     assert master_key is None
     assert isinstance(token_credential, AsyncTokenCredentialBridge)
     try:
@@ -2358,7 +2382,7 @@ def test_resolve_credential_async_get_token_info_only_wrapped():
     """An async credential exposing only get_token_info (no get_token) is wrapped
     too; the bridge drives get_token_info."""
     cred = _AsyncTokenInfoCredential()
-    master_key, token_credential = _resolve_credential(cred)
+    master_key, token_credential = resolve_credential(cred)
     assert master_key is None
     assert isinstance(token_credential, AsyncTokenCredentialBridge)
     try:
@@ -2374,7 +2398,7 @@ def test_resolve_credential_async_context_manager_credential_wrapped():
     """The azure.identity.aio shape (async context manager + async get_token) is
     wrapped via the async detector."""
     cred = _AsyncContextManagerCredential()
-    master_key, token_credential = _resolve_credential(cred)
+    master_key, token_credential = resolve_credential(cred)
     assert master_key is None
     assert isinstance(token_credential, AsyncTokenCredentialBridge)
     token_credential._close_cosmos_async_bridge()
@@ -2490,8 +2514,8 @@ def test_async_credential_bridge_dedups_same_credential_with_refcount():
     """The same async credential reused across clients yields one shared bridge,
     refcounted so only the last close tears the loop down."""
     cred = _AsyncTokenCredential()
-    _, b1 = _resolve_credential(cred)
-    _, b2 = _resolve_credential(cred)
+    _, b1 = resolve_credential(cred)
+    _, b2 = resolve_credential(cred)
     assert b1 is b2, "same credential should map to the same bridge"
     assert b1._refcount == 2
     try:
@@ -2505,7 +2529,7 @@ def test_async_credential_bridge_dedups_same_credential_with_refcount():
         b2._close_cosmos_async_bridge()
         assert b2._loop is None
         # A fresh acquire after teardown builds a new bridge, not the closed one.
-        _, b3 = _resolve_credential(cred)
+        _, b3 = resolve_credential(cred)
         assert b3 is not b1
         b3._close_cosmos_async_bridge()
     finally:
@@ -2517,8 +2541,8 @@ def test_async_credential_bridge_distinct_credentials_get_distinct_bridges():
     """Different credential objects must not share a bridge (or a driver)."""
     c1 = _AsyncTokenCredential()
     c2 = _AsyncTokenCredential()
-    _, b1 = _resolve_credential(c1)
-    _, b2 = _resolve_credential(c2)
+    _, b1 = resolve_credential(c1)
+    _, b2 = resolve_credential(c2)
     try:
         assert b1 is not b2
     finally:
@@ -2581,7 +2605,7 @@ def test_resolve_credential_sync_credential_not_false_positived():
     """A plain synchronous credential must NOT be misread as async by the broader
     detector -- it is accepted as a token credential."""
     cred = _SyncTokenCredential()
-    master_key, token_credential = _resolve_credential(cred)
+    master_key, token_credential = resolve_credential(cred)
     assert master_key is None
     assert token_credential is cred
 
@@ -2590,21 +2614,21 @@ def test_resolve_credential_resource_token_map_rejected_with_specific_message():
     """A {resource-link: token} map (per-user scoped tokens) is rejected with the
     resource-token message, not the generic one."""
     with pytest.raises(ValueError, match="resource-token"):
-        _resolve_credential({"dbs/x/colls/y": "resource-token"})
+        resolve_credential({"dbs/x/colls/y": "resource-token"})
 
 
 def test_resolve_credential_permission_feed_rejected_with_specific_message():
     """A permission feed (iterable of permission mappings) is rejected as a
     resource-token credential."""
     with pytest.raises(ValueError, match="resource-token"):
-        _resolve_credential([{"id": "perm", "_token": "t", "resource": "dbs/x"}])
+        resolve_credential([{"id": "perm", "_token": "t", "resource": "dbs/x"}])
 
 
 def test_resolve_credential_none_rejected():
     """No credential is rejected: the rust backend requires a master key or a token
     credential."""
     with pytest.raises(ValueError, match="master-key credential"):
-        _resolve_credential(None)
+        resolve_credential(None)
 
 
 def test_make_backend_carries_sync_token_credential(monkeypatch):
@@ -3904,14 +3928,14 @@ def test_resolve_credential_rejects_non_string_master_key_in_dict(bad_master_key
     a clear message, instead of being accepted and failing later in a murkier
     place."""
     with pytest.raises(ValueError, match="'masterKey' entry to be a non-empty string"):
-        _resolve_credential({"masterKey": bad_master_key})
+        resolve_credential({"masterKey": bad_master_key})
 
 
 def test_resolve_credential_rejects_empty_master_key_string():
     """An empty master-key string is rejected up front rather than accepted and
     failing later."""
     with pytest.raises(ValueError, match="non-empty master-key string"):
-        _resolve_credential("")
+        resolve_credential("")
 
 
 def test_resolve_credential_iterable_non_sequence_gets_generic_message():
@@ -3922,7 +3946,7 @@ def test_resolve_credential_iterable_non_sequence_gets_generic_message():
         yield {"id": "perm"}
 
     with pytest.raises(ValueError, match="requires a master-key credential"):
-        _resolve_credential(_gen())
+        resolve_credential(_gen())
 
 
 def test_resolve_backend_name_normalizes_case_and_whitespace(monkeypatch):
@@ -4156,3 +4180,132 @@ def test_async_list_databases_transport_error_does_not_replay_legacy(monkeypatch
 
     asyncio.run(run())
     assert legacy_calls == []
+
+
+# --- Regressions for the Rust client lifecycle and process-wide runtime policy ---
+
+
+def test_untuned_client_does_not_pin_process_wide_transport_timeouts():
+    """An untuned client must not block a later client that names a timeout.
+
+    The Rust connection and read timeouts configure the process-global driver
+    runtime, so the first client to express one fixes it for the process. Before
+    this was fixed the public clients handed the legacy defaults to every client as
+    though the customer had chosen them, so the ordinary pairing of one untuned
+    client with one deliberately tuned client failed to construct.
+    """
+    register_transport_timeout_policy(build_client_config(None))
+    register_transport_timeout_policy(
+        build_client_config(None, connection_timeout_seconds=2.0)
+    )
+    # The reverse order must work too: a tuned client first, then an untuned one.
+    _reset_driver_registry()
+    register_transport_timeout_policy(
+        build_client_config(None, connection_timeout_seconds=2.0)
+    )
+    register_transport_timeout_policy(build_client_config(None))
+
+
+def test_untuned_and_tuned_rust_clients_can_both_be_constructed(monkeypatch):
+    """The same coexistence, proven through the public sync client."""
+    monkeypatch.setattr(
+        sync_cosmos_client_module, "CosmosClientConnection", MagicMock()
+    )
+    untuned = sync_cosmos_client_module.CosmosClient(
+        "https://coexist.documents.azure.com", "key", _backend=BACKEND_NAME_RUST
+    )
+    tuned = sync_cosmos_client_module.CosmosClient(
+        "https://coexist.documents.azure.com",
+        "key",
+        _backend=BACKEND_NAME_RUST,
+        connection_timeout=2.0,
+    )
+    assert untuned._backend._client_config is None
+    assert tuned._backend._client_config.connection_timeout_seconds == 2.0
+    untuned._backend.close()
+    tuned._backend.close()
+
+
+def _make_closed_rust_backend(monkeypatch, endpoint):
+    """Build a Rust backend over a stub binding, open its handle, then close it."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+    backend = RustBackend(
+        endpoint=endpoint,
+        master_key="key",
+        token_credential=None,
+        client_config=None,
+    )
+    assert backend._ensure_handle() == "handle-1"
+    backend.close()
+    return backend, fake_module
+
+
+def test_sync_backend_refuses_to_reopen_after_close(monkeypatch):
+    """A closed sync client must refuse work, not silently reopen.
+
+    close() clears the handle, so without a closed flag the next operation saw a
+    client that looked brand new and quietly took a second reference on the shared
+    rust driver -- an operation on a closed client appeared to succeed. The async
+    backend already refused; this is the sync half of that rule.
+    """
+    backend, fake_module = _make_closed_rust_backend(
+        monkeypatch, "https://reopen.documents.azure.com"
+    )
+    with pytest.raises(RuntimeError, match="closed"):
+        backend._ensure_handle()
+    assert fake_module.init_client.call_count == 1
+
+
+def test_sync_backend_close_is_idempotent(monkeypatch):
+    """Closing twice must release the shared driver exactly once.
+
+    close_client drops one reference per call, so a second close would decrement a
+    driver another client may still be using.
+    """
+    backend, fake_module = _make_closed_rust_backend(
+        monkeypatch, "https://double-close.documents.azure.com"
+    )
+    backend.close()
+    backend.close()
+    assert fake_module.close_client.call_count == 1
+
+
+class _FakeAsyncCredential:
+    """An async token credential, the shape that gets wrapped in a bridge."""
+
+    async def get_token(self, *scopes, **kwargs):
+        """Never actually called; its being a coroutine is what matters here."""
+        raise AssertionError("the driver should not reach this credential")
+
+
+@pytest.mark.parametrize(
+    "bad_kwargs",
+    [
+        {"consistency_level": "BoundedStaleness"},
+        {"connection_timeout_seconds": 99.0},
+        {"preferred_locations": "West US"},
+    ],
+)
+def test_failed_construction_releases_the_async_credential_bridge(bad_kwargs):
+    """A construction that fails after the credential is sorted must not leak.
+
+    Wrapping an async credential starts a background event-loop thread and takes a
+    hold on the shared bridge, and only a successfully built backend ever releases
+    it. Every argument checked after that point -- the consistency level, the
+    timeout bounds, the locations shape -- could therefore turn a plain ValueError
+    at CosmosClient(...) into a thread that runs for the life of the process and
+    pins the customer's credential object alive with it.
+    """
+    from azure.cosmos._backend import _async_credential_bridge as bridge_module
+
+    credential = _FakeAsyncCredential()
+    with pytest.raises(ValueError):
+        make_backend(
+            BACKEND_NAME_RUST,
+            url="https://bridge-leak.documents.azure.com",
+            credential=credential,
+            **bad_kwargs,
+        )
+    assert id(credential) not in bridge_module._REGISTRY

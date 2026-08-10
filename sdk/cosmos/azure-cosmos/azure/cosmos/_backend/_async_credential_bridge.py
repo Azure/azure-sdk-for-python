@@ -23,9 +23,9 @@ coroutine instead of a token object with ``.token`` / ``.expires_on``, so signin
 request fails (and Python warns about a coroutine that was never run). Login would fail,
 and so would every request that needs it.
 
-How the bridge does it. When the client factory (``factory._resolve_credential``) sees
-the credential passed in is async, it wraps it in this bridge and hands the bridge to
-the driver in the credential's place. The driver calls the bridge's synchronous
+How the bridge does it. When the client factory (``credentials.resolve_credential``)
+sees the credential passed in is async, it wraps it in this bridge and hands the bridge
+to the driver in the credential's place. The driver calls the bridge's synchronous
 ``get_token`` from a worker thread; the bridge sends the credential's coroutine to its
 own background thread to run, blocks the worker thread until the token comes back, and
 returns the credential's own token object unchanged. The two threads involved here --

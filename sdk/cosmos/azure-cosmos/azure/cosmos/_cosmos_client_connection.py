@@ -62,18 +62,17 @@ from . import documents
 from . import http_constants, exceptions
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._availability_strategy_config import validate_client_hedging_strategy, CrossRegionHedgingStrategy
-from ._backend.base import (
-    OP_LIST_DATABASES,
-    OP_QUERY_DATABASES,
+from ._backend.base import CosmosBackend
+from ._backend.operations import (
     OP_LIST_CONTAINERS,
+    OP_LIST_DATABASES,
     OP_QUERY_CONTAINERS,
+    OP_QUERY_DATABASES,
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
-    CosmosBackend,
-    LegacyOperation,
-    PageNotSupportedByBackendError,
-    PreparedQuery,
 )
+from ._backend.contracts import LegacyOperation, PreparedQuery
+from ._backend.errors import PageNotSupportedByBackendError
 from ._backend.legacy import coerce_backend
 from ._base import _build_properties_cache
 from ._change_feed.change_feed_iterable import ChangeFeedIterable

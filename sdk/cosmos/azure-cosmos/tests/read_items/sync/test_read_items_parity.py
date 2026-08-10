@@ -77,42 +77,42 @@ def _run(container_id, items, description, request_kwargs):
     comparison.assert_functional_parity()
 
 
-def test_L0_read_items_single_item(seeded):
+def test_read_items_single_item(seeded):
     """One item -> read as a point read; same document on both backends."""
     items = [seeded["seeded"][-1]]  # the lone pk-c item
     _run(seeded["container_id"], items,
-         description="[L0] read_items single item (point-read leaf)",
+         description="read_items single item (point-read leaf)",
          request_kwargs={"count": 1})
 
 
-def test_L1_read_items_same_partition(seeded):
+def test_read_items_same_partition(seeded):
     """Several items in one partition -> read as one query; same set on both backends."""
     items = [pair for pair in seeded["seeded"] if pair[1] == "pk-a"]
     _run(seeded["container_id"], items,
-         description="[L1] read_items multiple items in one partition (query leaf)",
+         description="read_items multiple items in one partition (query leaf)",
          request_kwargs={"count": len(items)})
 
 
-def test_L2_read_items_across_partitions(seeded):
+def test_read_items_across_partitions(seeded):
     """Items spread across partitions -> fan-out; same merged set on both backends."""
     items = list(seeded["seeded"])
     _run(seeded["container_id"], items,
-         description="[L2] read_items across partitions (fan-out)",
+         description="read_items across partitions (fan-out)",
          request_kwargs={"count": len(items)})
 
 
-def test_L3_read_items_missing_omitted(seeded):
+def test_read_items_missing_omitted(seeded):
     """A mix of real and non-existent ids -> only the real ones come back, on both."""
     items = list(seeded["seeded"]) + seeded["missing"]
     _run(seeded["container_id"], items,
-         description="[L3] read_items with missing ids omitted",
+         description="read_items with missing ids omitted",
          request_kwargs={"requested": len(items), "existing": len(seeded["seeded"])})
 
 
-def test_L4_read_items_all_missing(seeded):
+def test_read_items_all_missing(seeded):
     """Only non-existent ids -> an empty result on both backends."""
     _run(seeded["container_id"], list(seeded["missing"]),
-         description="[L4] read_items all-missing returns empty",
+         description="read_items all-missing returns empty",
          request_kwargs={"requested": len(seeded["missing"]), "existing": 0})
 
 
@@ -130,12 +130,12 @@ def _run_with_options(container_id, items, description, read_items_kwargs):
     comparison.assert_functional_parity()
 
 
-def test_L5_read_items_availability_strategy_disabled(seeded):
+def test_read_items_availability_strategy_disabled(seeded):
     """availability_strategy=False (hedging off) is honored on the rust point
     leg and returns the same documents as legacy."""
     items = [seeded["seeded"][-1]]  # single item -> point read
     _run_with_options(seeded["container_id"], items,
-                      description="[L5] read_items availability_strategy=False",
+                      description="read_items availability_strategy=False",
                       read_items_kwargs={"availability_strategy": False})
 
 

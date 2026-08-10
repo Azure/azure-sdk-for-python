@@ -37,7 +37,7 @@ from typing import Any, Callable, Mapping, Optional
 
 from azure.core.utils import CaseInsensitiveDict
 
-from .._backend.base import BackendResponse
+from .._backend.contracts import BackendResponse
 from .._cosmos_responses import CosmosDict
 from ._exceptions import (
     extract_message_from_body,

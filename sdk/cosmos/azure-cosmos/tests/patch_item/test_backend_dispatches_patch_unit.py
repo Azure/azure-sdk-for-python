@@ -20,7 +20,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from azure.cosmos._backend.base import OP_PATCH_ITEM, PreparedRequest
+from azure.cosmos._backend.operations import OP_PATCH_ITEM
+from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._backend.rust import RustBackend
 from azure.cosmos.aio._backend.rust import AsyncRustBackend
 

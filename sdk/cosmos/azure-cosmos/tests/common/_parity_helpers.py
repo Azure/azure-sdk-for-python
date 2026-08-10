@@ -153,10 +153,18 @@ class BackendComparison:
         self.print_report()
 
     def assert_exception_parity(self):
-        """Both backends raised the same typed exception with the same
-        status_code and sub_status. The message text is not compared: the rust
-        path appends the raw server error body, which is informational, not part
-        of the typed-exception contract a caller catches on.
+        """Strictest exception check: same typed exception, same status_code
+        and sub_status, same *normalized* message, and no response diffs at all.
+
+        The message IS compared, but only after
+        :func:`_normalize_exception_message` has removed the parts that vary
+        per request rather than per backend (the service's diagnostics tail,
+        the response-body echo, the service host's build string).
+
+        Note this also requires the response-header surfaces to match, which
+        the rust backend does not yet achieve -- it reports fewer headers. Use
+        :meth:`assert_functional_exception_parity` for error-path tests unless
+        the test is specifically about header-surface parity.
         """
         self._assert_exception_contract()
         exception_diffs = diff_outcomes(self.core_python, self.rust)
@@ -679,6 +687,63 @@ def _filtered_body(b: Any, ignored: frozenset) -> Any:
 # whole string is normalised as before.
 _DIAGNOSTICS_BLOB_START = re.compile(r',\s*\{"Summary":')
 
+# Boundary marker for the *service-emitted* diagnostics tail.
+#
+# On a typed gateway error the service appends its own diagnostics to the
+# error text, starting at ``, RequestStartTime:``. Everything from there on
+# is telemetry about how that one request happened to go:
+#
+#   ..., Number of regions attempted:1 {"systemHistory":[{"cpu":0.713,
+#   "memory":856364468.000,...}]} RequestStart: ...; StoreResult:
+#   StorePhysicalAddress: rntbd://...:15657/...; BELatencyMs: 0.264;
+#   TransportRequestTimeline: {...,"requestSizeInBytes":715}
+#   ; ResourceType: Document, OperationType: Read
+#
+# None of that describes which client engine sent the request. It is the
+# service's CPU and free memory at that instant, which replica port answered,
+# back-end latency in fractional milliseconds, socket counts, and per-event
+# transit timings. Two calls issued a second apart never agree on any of it,
+# so diffing this tail across backends produces guaranteed false failures.
+#
+# Two fields buried in that tail ARE meaningful, though: ``ResourceType`` and
+# ``OperationType`` say which operation the service believed it was serving,
+# so a backend that issued the wrong kind of request must still be caught.
+# Rather than truncate the tail (losing those) or scrub it field by field
+# (an unwinnable game as the service adds telemetry), the normaliser keeps
+# the canonical error text before the marker and re-appends just these two
+# fields. Deduplicated and sorted, so a retry that produces the tail twice
+# reads the same as a single attempt.
+_SERVICE_DIAGNOSTICS_TAIL_START = re.compile(r",\s*RequestStartTime:")
+_SERVICE_DIAGNOSTICS_SEMANTIC_FIELDS = re.compile(
+    r"\b(ResourceType|OperationType):\s*([A-Za-z]+)")
+
+# The same service error arrives in two shapes depending on whether the error
+# body was echoed back into the exception text. Both were captured live, from
+# the same test, on the same account:
+#
+#   short: (NotFound) Entity with the specified id does not exist in the
+#          system. More info: <url>
+#   long:  (NotFound) Entity ... <url>, Windows/10.0.20348
+#          cosmos-netstandard-sdk/3.18.0 Code: NotFound Message: Entity ...
+#          <url>, Windows/10.0.20348 cosmos-netstandard-sdk/3.18.0
+#
+# The long shape says nothing new: it repeats the canonical sentence verbatim
+# after a ``Code: <reason> Message:`` marker, and tags each copy with the
+# operating system and SDK build of the *service host* that answered.
+#
+# The decisive observation is that which backend got which shape FLIPPED
+# between runs -- core-python produced the long form in one run and the short
+# form in the next, with rust doing the opposite. A property that swaps sides
+# run to run cannot be a property of the backend, so comparing it would only
+# manufacture false failures.
+#
+# ``Code:``/``Message:`` is also already covered elsewhere: the reason phrase
+# is in the ``(NotFound)`` prefix, and the numeric status and sub-status are
+# asserted separately from the typed exception. Nothing is lost by cutting the
+# echo, and the service-host build string is scrubbed wherever it appears.
+_SERVICE_ERROR_BODY_ECHO = re.compile(r"\s+Code:\s+\w+\s+Message:\s")
+_SERVICE_HOST_AGENT = re.compile(r",\s*\S+/\S+\s+cosmos-netstandard-sdk/\S+")
+
 # Patterns used to scrub per-request noise out of exception messages
 # before comparing them across backends. Each entry is (regex, replacement).
 # Order matters only inasmuch as later substitutions see the output of
@@ -706,6 +771,42 @@ _EXCEPTION_MESSAGE_NOISE = [
 ]
 
 
+def _strip_service_error_decorations(text: str) -> str:
+    """Reduce an error to one copy of its canonical text.
+
+    Cuts the ``Code: <reason> Message: ...`` echo (which repeats the sentence
+    already present) and removes the service host's build string wherever it
+    appears. Messages without either are returned unchanged.
+    """
+    echo = _SERVICE_ERROR_BODY_ECHO.search(text)
+    if echo:
+        text = text[:echo.start()]
+    return _SERVICE_HOST_AGENT.sub("", text)
+
+
+def _summarize_service_diagnostics_tail(text: str) -> str:
+    """Reduce the service's diagnostics tail to the fields that carry meaning.
+
+    Returns ``text`` unchanged when the tail is absent -- binding-side errors,
+    transport failures, and plain ``ValueError``\\ s never carry one.
+
+    When the tail is present, keeps the canonical error text before it and
+    re-appends only ``ResourceType`` / ``OperationType`` (deduplicated and
+    sorted), discarding the surrounding per-request telemetry.
+    """
+    match = _SERVICE_DIAGNOSTICS_TAIL_START.search(text)
+    if not match:
+        return text
+    head, tail = text[:match.start()], text[match.start():]
+    fields = sorted({
+        "{}: {}".format(name, value)
+        for name, value in _SERVICE_DIAGNOSTICS_SEMANTIC_FIELDS.findall(tail)
+    })
+    if not fields:
+        return head
+    return "{} [{}]".format(head, ", ".join(fields))
+
+
 def _normalize_exception_message(exc: BaseException) -> str:
     """Strip per-request noise out of an exception's text for diffing.
 
@@ -721,7 +822,18 @@ def _normalize_exception_message(exc: BaseException) -> str:
        cache pre-flights. Comparing it across backends is comparing
        internal routing, not error behaviour.
 
-    2. Run the remaining text through the per-request-noise scrubbers
+    2. Reduce any service-emitted diagnostics tail to its meaningful
+       fields. That tail is the *service's* account of one request --
+       its CPU and free memory at that instant, which replica answered,
+       back-end latency, byte counts -- so two calls never agree on it.
+       See :func:`_summarize_service_diagnostics_tail`.
+
+    3. Drop the response-body echo (``Code: ... Message: ...``, which repeats
+       the canonical sentence) and the service host's build string. Whether
+       these appear depends on the shape of the error body, not on the
+       backend -- see :func:`_strip_service_error_decorations`.
+
+    4. Run the remaining text through the per-request-noise scrubbers
        (UUIDs, RIDs, timestamps, numeric counters, whitespace).
 
     The complete normalized message is compared. Rendering code may truncate
@@ -739,6 +851,12 @@ def _normalize_exception_message(exc: BaseException) -> str:
     blob_match = _DIAGNOSTICS_BLOB_START.search(text)
     if blob_match:
         text = text[:blob_match.start()]
+    # Then reduce the service's own diagnostics tail to the couple of fields
+    # that describe the operation rather than the machine that served it.
+    text = _summarize_service_diagnostics_tail(text)
+    # Finally drop the response-body echo and the service host's build string,
+    # which appear or not depending on the shape of the error body.
+    text = _strip_service_error_decorations(text)
     for pattern, replacement in _EXCEPTION_MESSAGE_NOISE:
         text = pattern.sub(replacement, text)
     text = text.strip()
@@ -907,7 +1025,7 @@ def _binding_operation_count() -> int:
 
 def _rust_fallback_count() -> int:
     """Return the number of Rust calls that continued through Python."""
-    from azure.cosmos._backend.base import rust_compatibility_fallback_count
+    from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
     return rust_compatibility_fallback_count()
 
 

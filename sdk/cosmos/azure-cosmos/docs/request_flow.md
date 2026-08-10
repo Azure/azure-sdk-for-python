@@ -117,7 +117,7 @@ sequenceDiagram
 |---|---|---|
 | **1. Public method** | `Container` / `ContainerProxy` | Customers need the same Python method and arguments they already use. |
 | **2. Family coordinator** | `ItemHelper` / `AsyncItemHelper` | One place must gather inputs and keep sync and async item behavior aligned. |
-| **3. Request-building functions** | `_helpers/_item_dispatch.py` and `_helpers/_request_prep.py` | Request construction should be testable without a network call. |
+| **3. Request-building functions** | `_helpers/_item_dispatch.py` and the `_helpers/_request_*.py` modules | Request construction should be testable without a network call. |
 | **4. Backend boundary** | `RustBackend` / `LegacyBackend` | The coordinator needs one way to request work without Rust-versus-Python branches throughout its code. |
 | **5. Binding and driver** | `azure_cosmos_rust` plus `azure_data_cosmos_driver` | The binding converts Python values to Rust values; the driver signs, routes, retries, and sends. |
 | **6. Response handling** | backend response parsers | Customers must receive the same result types and exceptions from either implementation. |
@@ -362,7 +362,7 @@ simply searching every body for a field named `pk`.
 
 ### 5.3 Build the `PreparedRequest`
 
-A function in `_helpers/_request_prep.py` combines the body, partition key,
+A function in `_helpers/_request_item.py` combines the body, partition key,
 container identity, and normalized options:
 
 ```python

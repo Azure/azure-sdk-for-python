@@ -46,21 +46,19 @@ from azure.core.utils import CaseInsensitiveDict
 from . import _base as base
 from . import _utils
 from . import http_constants
-from ._backend.base import (
-    OP_LIST_DATABASES,
+from ._backend.operations import (
     OP_LIST_CONTAINERS,
+    OP_LIST_DATABASES,
     OP_QUERY_CONTAINERS,
     OP_QUERY_DATABASES,
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
-    BackendResponse,
-    PreparedQuery,
-    QueryPage,
 )
+from ._backend.contracts import BackendResponse, PreparedQuery, QueryPage
 from ._constants import _Constants as Constants
 from ._cosmos_responses import CosmosDict
 from ._helpers._pk_wire import serialize_partition_key_to_wire
-from ._helpers._request_prep import overrides_driver_owned_header
+from ._helpers._request_headers import DRIVER_OWNED_REQUEST_HEADERS, overrides_driver_owned_header
 from ._helpers._response_parse import parse_backend_response
 from ._query_advisor import get_query_advice_info
 from .partition_key import _build_partition_key_from_properties
@@ -72,20 +70,8 @@ from .partition_key import _build_partition_key_from_properties
 _MASTER_FEED_ALLOWED_INTERNAL_KWARGS = frozenset({
     Constants.OperationStartTime,
 })
-_RUST_DRIVER_OWNED_REQUEST_HEADERS = frozenset({
-    "accept",
-    "authorization",
-    "cache-control",
-    # A query page carries ``Content-Type: application/query+json``. The driver
-    # writes that itself for every query operation, so ours is redundant; the
-    # Rust wire layer drops it and, under COSMOS_WIRE_STRICT, rejects it as an
-    # untranslated option key. Dropping it here keeps the wire bytes identical
-    # and lets strict mode run.
-    "content-type",
-    "user-agent",
-    "x-ms-date",
-    "x-ms-version",
-})
+
+
 def can_use_rust_backend_for_query_page(
     *,
     query_payload: Optional[Union[str, dict[str, Any]]],
@@ -383,7 +369,7 @@ def _build_prepared_headers_for_rust_feed_dispatch(
         typed_paging_headers.add(http_constants.HttpHeaders.PageSize)
     if options.get("continuation") is not None:
         typed_paging_headers.add(http_constants.HttpHeaders.Continuation)
-    excluded_headers = _RUST_DRIVER_OWNED_REQUEST_HEADERS.union(typed_paging_headers)
+    excluded_headers = DRIVER_OWNED_REQUEST_HEADERS.union(typed_paging_headers)
     prepared_headers = {
         name: value
         for name, value in req_headers.items()

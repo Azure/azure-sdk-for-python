@@ -33,7 +33,7 @@ from typing import Any, AsyncIterable, Awaitable, Callable, Dict, Iterable, Mapp
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 
-from .._backend.base import LegacyOperation
+from .._backend.contracts import LegacyOperation
 from .._backend.legacy import coerce_backend
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosItemPaged

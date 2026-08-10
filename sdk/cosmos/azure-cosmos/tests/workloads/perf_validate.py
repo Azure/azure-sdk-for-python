@@ -222,15 +222,34 @@ def check_continuity(container, prefix: str, run_id: str, report_interval_s: flo
     return all_ok, lines
 
 
-def check_warnings(log_dir: str):
-    """Return (ok, lines) for the reporter-warning scan over the per-cell logs."""
+def check_warnings(log_dir: str, strict: bool = True):
+    """Return (ok, lines) for the reporter-warning scan over the per-cell logs.
+
+    The scan proves a negative -- that no cell dropped a results write -- so it is
+    only worth anything if the logs were actually read. Absent evidence is not the
+    same as clean evidence: with no ``--log-dir``, a directory that isn't there, no
+    ``.log`` files in it, or a file that won't open, the gate has checked nothing
+    and must say so rather than report the run clean.
+
+    In strict mode (the default) each of those is a failure. Pass ``strict=False``
+    (``--allow-missing-logs``) to score a run whose logs were genuinely not kept,
+    which downgrades them to warnings.
+    """
+    def _missing(reason: str):
+        """Report absent evidence: a failure in strict mode, a note otherwise."""
+        label = "BAD" if strict else "OK "
+        suffix = "" if strict else " (allowed: --allow-missing-logs)"
+        return not strict, [f"  [{label}] no log evidence: {reason}{suffix}"]
+
     if not log_dir:
-        return True, ["  (skipped: no --log-dir given)"]
+        return _missing("no --log-dir given")
     if not os.path.isdir(log_dir):
-        return True, [f"  (skipped: log dir not found: {log_dir})"]
+        return _missing(f"log dir not found: {log_dir}")
     pat = re.compile(r"PerfReporter (?:upsert failed|error upsert failed)")
     lines = []
     total = 0
+    unreadable = 0
+    scanned = 0
     for path in sorted(glob.glob(os.path.join(log_dir, "*.log"))):
         n = 0
         try:
@@ -239,15 +258,25 @@ def check_warnings(log_dir: str):
                     if pat.search(ln):
                         n += 1
         except OSError as e:
-            lines.append(f"  (could not read {path}: {e})")
+            unreadable += 1
+            lines.append(f"  [BAD] could not read {path}: {e}")
             continue
+        scanned += 1
         if n:
             total += n
             lines.append(f"  [BAD] {os.path.basename(path)}: {n} dropped-write warning(s)")
-    if total == 0:
-        lines.insert(0, "  [OK ] no PerfReporter dropped-write warnings in any cell log")
+    if scanned == 0 and unreadable == 0:
+        return _missing(f"no *.log files in {log_dir}")
+    if total == 0 and unreadable == 0:
+        lines.insert(
+            0,
+            f"  [OK ] no PerfReporter dropped-write warnings in {scanned} cell log(s)",
+        )
         return True, lines
-    lines.insert(0, f"  [BAD] {total} dropped-write warning(s) across cell logs")
+    summary = f"  [BAD] {total} dropped-write warning(s) across {scanned} cell log(s)"
+    if unreadable:
+        summary += f"; {unreadable} log(s) unreadable"
+    lines.insert(0, summary)
     return False, lines
 
 
@@ -360,6 +389,13 @@ def main():
     ap.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
     ap.add_argument("--log-dir", default=None, help="per-cell log dir to scan for reporter warnings")
     ap.add_argument(
+        "--allow-missing-logs",
+        action="store_true",
+        default=os.environ.get("PERF_ALLOW_MISSING_LOGS", "") not in ("", "0", "false"),
+        help="downgrade absent log evidence from a failure to a warning, for "
+        "scoring a run whose per-cell logs were not kept",
+    )
+    ap.add_argument(
         "--prefix",
         default="lat-",
         help="workload_id prefix identifying the run. Used to find the latest "
@@ -383,7 +419,7 @@ def main():
     cont_ok, cont_lines = check_continuity(container, args.prefix, run_id, report_interval_s)
     print("\n".join(cont_lines))
     print("-- 2. reporter dropped-write warnings --")
-    warn_ok, warn_lines = check_warnings(args.log_dir)
+    warn_ok, warn_lines = check_warnings(args.log_dir, strict=not args.allow_missing_logs)
     print("\n".join(warn_lines))
     print("-- 3. backend check: each row ran on the engine it claims --")
     prov_ok, prov_lines = check_backend_execution(container, args.prefix, run_id)

@@ -20,7 +20,8 @@ import logging
 import unittest
 from unittest.mock import MagicMock
 
-from azure.cosmos._backend.base import BackendResponse, CosmosBackend
+from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers.item_helper import ItemHelper
 

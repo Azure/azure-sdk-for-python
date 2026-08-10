@@ -62,8 +62,9 @@ from azure.core import MatchConditions
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import _base as base
-from azure.cosmos._backend.base import BackendResponse, CosmosBackend
-from azure.cosmos._backend.base import (
+from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.contracts import BackendResponse
+from azure.cosmos._backend.operations import (
     OP_CREATE_DATABASE,
     OP_DELETE_DATABASE,
     OP_READ_DATABASE,
@@ -74,7 +75,7 @@ from azure.cosmos._cosmos_client_connection import (
     CosmosClientConnection as SyncClientConnection,
 )
 from azure.cosmos._cosmos_responses import CosmosDict
-from azure.cosmos._helpers._request_prep import (
+from azure.cosmos._helpers._request_database import (
     build_create_database_prepared,
     build_delete_database_prepared,
     build_read_database_prepared,

@@ -79,62 +79,62 @@ async def _run(container_id, parent, child, description, request_kwargs):
     comparison.assert_functional_parity()
 
 
-async def test_L0_is_feed_range_subset_narrow_inside_wide(parity_container_id):
+async def test_is_feed_range_subset_narrow_inside_wide(parity_container_id):
     """A narrow range inside the full key space is a subset on both backends."""
     await _run(
         parity_container_id,
         _feed_range("", "FF"),
         _feed_range("3F", "7F"),
-        description="[L0] async is_feed_range_subset narrow range inside full range",
+        description="async is_feed_range_subset narrow range inside full range",
         request_kwargs={"parent": "[,FF)", "child": "[3F,7F)"},
     )
 
 
-async def test_L1_is_feed_range_subset_wide_not_inside_narrow(parity_container_id):
+async def test_is_feed_range_subset_wide_not_inside_narrow(parity_container_id):
     """The full key space is not a subset of a narrow range on either backend."""
     await _run(
         parity_container_id,
         _feed_range("3F", "7F"),
         _feed_range("", "FF"),
-        description="[L1] async is_feed_range_subset full range not inside narrow range",
+        description="async is_feed_range_subset full range not inside narrow range",
         request_kwargs={"parent": "[3F,7F)", "child": "[,FF)"},
     )
 
 
-async def test_L2_is_feed_range_subset_equal_ranges(parity_container_id):
+async def test_is_feed_range_subset_equal_ranges(parity_container_id):
     """Two identical ranges are subsets of each other on both backends."""
     await _run(
         parity_container_id,
         _feed_range("3F", "7F"),
         _feed_range("3F", "7F"),
-        description="[L2] async is_feed_range_subset equal ranges",
+        description="async is_feed_range_subset equal ranges",
         request_kwargs={"parent": "[3F,7F)", "child": "[3F,7F)"},
     )
 
 
-async def test_L3_is_feed_range_subset_disjoint_ranges(parity_container_id):
+async def test_is_feed_range_subset_disjoint_ranges(parity_container_id):
     """Two non-overlapping ranges are not subsets on either backend."""
     await _run(
         parity_container_id,
         _feed_range("3F", "7F"),
         _feed_range("", "2F"),
-        description="[L3] async is_feed_range_subset disjoint ranges",
+        description="async is_feed_range_subset disjoint ranges",
         request_kwargs={"parent": "[3F,7F)", "child": "[,2F)"},
     )
 
 
-async def test_L4_is_feed_range_subset_inclusive_exclusive_bounds(parity_container_id):
+async def test_is_feed_range_subset_inclusive_exclusive_bounds(parity_container_id):
     """Inclusive/exclusive-bound pairs normalize the same way on both backends."""
     await _run(
         parity_container_id,
         _feed_range("3F", "7F", False, True),
         _feed_range("3F", "7F", True, True),
-        description="[L4] async is_feed_range_subset inclusive/exclusive bounds (normalization path)",
+        description="async is_feed_range_subset inclusive/exclusive bounds (normalization path)",
         request_kwargs={"parent": "(3F,7F]", "child": "[3F,7F]"},
     )
 
 
-async def test_L5_is_feed_range_subset_from_partition_key(parity_container_id):
+async def test_is_feed_range_subset_from_partition_key(parity_container_id):
     """A key's feed range is a subset of the full key space on both backends."""
     async def _do(client):
         container = client.get_database_client("parity_db").get_container_client(parity_container_id)
@@ -144,7 +144,7 @@ async def test_L5_is_feed_range_subset_from_partition_key(parity_container_id):
 
     comparison = await run_on_both_backends_async(
         _do,
-        description="[L5] async is_feed_range_subset key feed range inside full range",
+        description="async is_feed_range_subset key feed range inside full range",
         request_kwargs={"parent": "[,FF)", "child": "feed_range_from_partition_key('1')"},
     )
     comparison.print_report()

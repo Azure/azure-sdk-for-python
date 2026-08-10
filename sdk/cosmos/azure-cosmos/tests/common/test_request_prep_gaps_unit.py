@@ -22,13 +22,12 @@ These pin the binding-layer fixes for two behaviours:
 from __future__ import annotations
 
 from azure.cosmos.http_constants import HttpHeaders
-from azure.cosmos._helpers._request_prep import (
-    apply_no_response_on_write_default,
+from azure.cosmos._helpers._request_headers import apply_no_response_on_write_default, flatten_options_to_headers
+from azure.cosmos._helpers._request_item import (
     build_create_item_prepared,
     build_patch_item_prepared,
     build_replace_item_prepared,
     build_upsert_item_prepared,
-    flatten_options_to_headers,
 )
 
 # The internal option-key the binding lifts into ContentResponseOnWrite.

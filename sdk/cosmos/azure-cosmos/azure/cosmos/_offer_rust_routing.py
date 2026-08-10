@@ -35,9 +35,11 @@ from . import _base as base
 from . import _runtime_constants as runtime_constants
 from . import documents
 from . import http_constants
-from ._backend.base import OP_READ_OFFER, OP_REPLACE_OFFER, PreparedRequest
+from ._backend.operations import OP_READ_OFFER, OP_REPLACE_OFFER
+from ._backend.contracts import PreparedRequest
 from ._constants import _Constants as Constants
 from ._helpers._body_wire import serialize_body_to_bytes
+from ._helpers._request_headers import DRIVER_OWNED_REQUEST_HEADERS
 from ._helpers._response_parse import parse_backend_response
 from ._request_object import RequestObject
 
@@ -124,8 +126,31 @@ def _build_prepared_headers_for_rust_offer_dispatch(
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Add Rust request options that are not present in the prepared headers."""
-    prepared_headers = dict(req_headers)
+    """Build the offer ``PreparedRequest.headers`` from the legacy header map.
+
+    ``req_headers`` is a complete set of legacy wire headers (``_base.GetHeaders``
+    built it), so it carries the standard headers the rust driver writes for
+    itself -- the authorization signature, the timestamp, the content type.
+    Those are stripped here; see ``DRIVER_OWNED_REQUEST_HEADERS`` for why sending
+    them is redundant at best. The query/feed path strips the same set before its
+    own dispatch, so the two rust entry points hand the binding the same shape.
+
+    What remains is the ``x-ms-*`` headers the driver genuinely acts on, plus the
+    two request options that live outside the header map: the excluded-location
+    list and the overall-timeout sentinel.
+
+    :param options: Normalized request options for this call.
+    :type options: Mapping[str, Any]
+    :param req_headers: Legacy-prepared request headers for this call.
+    :type req_headers: Mapping[str, Any]
+    :returns: The headers map to place on the ``PreparedRequest``.
+    :rtype: dict[str, Any]
+    """
+    prepared_headers = {
+        name: value
+        for name, value in req_headers.items()
+        if not (isinstance(name, str) and name.lower() in DRIVER_OWNED_REQUEST_HEADERS)
+    }
     excluded_locations = options.get(Constants.Kwargs.EXCLUDED_LOCATIONS)
     if excluded_locations is not None:
         prepared_headers[Constants.Kwargs.EXCLUDED_LOCATIONS] = excluded_locations

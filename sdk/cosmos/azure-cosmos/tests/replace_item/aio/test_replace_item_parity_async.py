@@ -33,7 +33,7 @@ def container_for(request):
 
 
 @pytest.mark.asyncio
-async def test_L0_async_create_then_replace(container_for):
+async def test_async_create_then_replace(container_for):
     """async create then replace — parity on both backends."""
     item_id = uuid.uuid4().hex
 
@@ -42,18 +42,18 @@ async def test_L0_async_create_then_replace(container_for):
         await c.upsert_item({"id": item_id, "pk": "a", "n": 1})
         return await c.replace_item(item=item_id, body={"id": item_id, "pk": "a", "n": 2})
 
-    cmp = await run_on_both_backends_async(_do, description="[L0] async replace")
+    cmp = await run_on_both_backends_async(_do, description="async replace")
     cmp.print_report()
     cmp.assert_functional_parity()
 
 
 @pytest.mark.asyncio
-async def test_L5_async_replace_missing_raises(container_for):
+async def test_async_replace_missing_raises(container_for):
     """async replace of a missing id raises CosmosResourceNotFoundError on both."""
     async def _do(client):
         c = client.get_database_client("parity_db").get_container_client(container_for.id)
         return await c.replace_item(item="missing-" + uuid.uuid4().hex, body={"id": "x", "pk": "a"})
 
-    cmp = await run_on_both_backends_async(_do, description="[L5] async replace missing -> 404")
+    cmp = await run_on_both_backends_async(_do, description="async replace missing -> 404")
     cmp.print_report()
     cmp.assert_exception_parity()

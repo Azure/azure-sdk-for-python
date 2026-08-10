@@ -77,7 +77,7 @@ def _normalize_feed_range(feed_range):
 
 
 @pytest.mark.asyncio
-async def test_L0_feed_range_from_partition_key_baseline_async(container_for):
+async def test_feed_range_from_partition_key_baseline_async(container_for):
     """Async string partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -90,7 +90,7 @@ async def test_L0_feed_range_from_partition_key_baseline_async(container_for):
 
     comparison = await run_on_both_backends_async(
         _do,
-        description="[L0] async feed_range_from_partition_key baseline",
+        description="async feed_range_from_partition_key baseline",
         request_kwargs={"partition_key": "string"},
     )
     comparison.print_report()
@@ -98,7 +98,7 @@ async def test_L0_feed_range_from_partition_key_baseline_async(container_for):
 
 
 @pytest.mark.asyncio
-async def test_L2_feed_range_from_partition_key_numeric_partition_key_async(container_for):
+async def test_feed_range_from_partition_key_numeric_partition_key_async(container_for):
     """Async numeric partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -111,7 +111,7 @@ async def test_L2_feed_range_from_partition_key_numeric_partition_key_async(cont
 
     comparison = await run_on_both_backends_async(
         _do,
-        description="[L2] async feed_range_from_partition_key numeric partition key",
+        description="async feed_range_from_partition_key numeric partition key",
         request_kwargs={"partition_key": 4242},
     )
     comparison.print_report()
@@ -119,7 +119,7 @@ async def test_L2_feed_range_from_partition_key_numeric_partition_key_async(cont
 
 
 @pytest.mark.asyncio
-async def test_L3_feed_range_from_partition_key_bool_partition_key_async(container_for):
+async def test_feed_range_from_partition_key_bool_partition_key_async(container_for):
     """Async boolean partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -132,7 +132,7 @@ async def test_L3_feed_range_from_partition_key_bool_partition_key_async(contain
 
     comparison = await run_on_both_backends_async(
         _do,
-        description="[L3] async feed_range_from_partition_key bool partition key",
+        description="async feed_range_from_partition_key bool partition key",
         request_kwargs={"partition_key": True},
     )
     comparison.print_report()
@@ -140,7 +140,7 @@ async def test_L3_feed_range_from_partition_key_bool_partition_key_async(contain
 
 
 @pytest.mark.asyncio
-async def test_L4_feed_range_from_partition_key_none_partition_key_value_branch_async(container_for):
+async def test_feed_range_from_partition_key_none_partition_key_value_branch_async(container_for):
     """Async NonePartitionKeyValue branch (`_Undefined` on non-system containers) is parity-safe."""
 
     async def _do(client):
@@ -150,7 +150,7 @@ async def test_L4_feed_range_from_partition_key_none_partition_key_value_branch_
 
     comparison = await run_on_both_backends_async(
         _do,
-        description="[L4] async feed_range_from_partition_key NonePartitionKeyValue branch",
+        description="async feed_range_from_partition_key NonePartitionKeyValue branch",
         request_kwargs={"partition_key": "NonePartitionKeyValue"},
     )
     comparison.print_report()
@@ -158,7 +158,7 @@ async def test_L4_feed_range_from_partition_key_none_partition_key_value_branch_
 
 
 @pytest.mark.asyncio
-async def test_L5_feed_range_from_partition_key_hpk_full_key_async(container_for_multihash):
+async def test_feed_range_from_partition_key_hpk_full_key_async(container_for_multihash):
     """Async hierarchical full key (all PK components) is parity-safe."""
     run_suffix = uuid.uuid4().hex
 
@@ -172,7 +172,7 @@ async def test_L5_feed_range_from_partition_key_hpk_full_key_async(container_for
 
     comparison = await run_on_both_backends_async(
         _do,
-        description="[L5] async feed_range_from_partition_key hierarchical full key",
+        description="async feed_range_from_partition_key hierarchical full key",
         request_kwargs={"partition_key": ["tenant", "region"]},
     )
     comparison.print_report()
@@ -201,7 +201,7 @@ async def test_L6_feed_range_from_partition_key_hpk_prefix_key_async(container_f
 
 
 @pytest.mark.asyncio
-async def test_L1_feed_range_from_partition_key_null_partition_key_async(container_for):
+async def test_feed_range_from_partition_key_null_partition_key_async(container_for):
     """Async JSON-null partition key maps to the same feed range on both backends."""
 
     async def _do(client):
@@ -211,7 +211,7 @@ async def test_L1_feed_range_from_partition_key_null_partition_key_async(contain
 
     comparison = await run_on_both_backends_async(
         _do,
-        description="[L1] async feed_range_from_partition_key null partition key",
+        description="async feed_range_from_partition_key null partition key",
         request_kwargs={"partition_key": None},
     )
     comparison.print_report()

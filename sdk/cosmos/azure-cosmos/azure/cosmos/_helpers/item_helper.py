@@ -17,17 +17,15 @@ from __future__ import annotations
 import logging
 from typing import Any, Callable, Dict, Optional
 
-from .._backend.base import (
-    BackendResponse,
-    CosmosBackend,
-    LegacyOperation,
+from .._backend.base import CosmosBackend
+from .._backend.contracts import BackendResponse, LegacyOperation, PreparedRequest
+from .._backend.operations import (
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
     OP_PATCH_ITEM,
     OP_READ_ITEM,
     OP_REPLACE_ITEM,
     OP_UPSERT_ITEM,
-    PreparedRequest,
 )
 from .._backend.legacy import coerce_backend
 from .._constants import _Constants as Constants
@@ -40,7 +38,7 @@ from ._item_dispatch import (
     build_upsert_item_request_options,
 )
 from ._metadata_provider import ContainerMetadataProvider
-from ._request_prep import (
+from ._request_item import (
     build_create_item_prepared,
     build_delete_item_prepared,
     build_patch_item_prepared,

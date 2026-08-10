@@ -3,28 +3,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Abstract async backend type plus re-exports of the data classes.
+"""The abstract async backend that every concrete async backend implements.
 
-Same as the sync ``CosmosBackend``, except ``execute`` is a coroutine so the
-async container can ``await`` it without bridging threads. ``execute_pages``
-is implemented for ``query_items`` / ``read_all_items`` (see
-:class:`~azure.cosmos.aio._backend.rust.AsyncRustBackend`) as an async iterator;
-``execute_batch`` is reserved here too and raises ``NotImplementedError`` until
-the batch operation is added.
+Same as the sync :class:`~azure.cosmos._backend.base.CosmosBackend`, except
+``execute`` is a coroutine so the async container can ``await`` it without
+bridging threads. ``execute_pages`` is implemented for ``query_items`` /
+``read_all_items`` (see :class:`~azure.cosmos.aio._backend.rust.AsyncRustBackend`)
+as an async iterator; ``execute_batch`` is reserved here too and raises
+``NotImplementedError`` until the batch operation is added.
 
-``PreparedRequest`` / ``BackendResponse`` and ``PreparedQuery`` / ``QueryPage`` /
-the reserved ``PreparedBatch`` / ``BatchResponse`` and :class:`LegacyOperation`
-are defined on the sync side (they carry pure data with no I/O) and re-exported
-here.
+The request and reply objects this class takes and returns are not redefined
+here. They carry pure data with no I/O, so both engines share the single
+definition in :mod:`azure.cosmos._backend.contracts`, which async callers import
+directly from that module.
 """
 from __future__ import annotations
 
 import abc
 from typing import Any, AsyncIterator, Awaitable, Callable, Optional
 
-from azure.cosmos._backend.base import (
-    BackendProtocolError,
-    BackendReply,
+from azure.cosmos._backend.errors import BackendProtocolError
+from azure.cosmos._backend.contracts import (
     BackendResponse,
     BatchResponse,
     LegacyOperation,
@@ -32,21 +31,10 @@ from azure.cosmos._backend.base import (
     PreparedQuery,
     PreparedRequest,
     QueryPage,
-    _record_rust_compatibility_fallback,
 )
+from azure.cosmos._backend._fallback_metrics import record_rust_compatibility_fallback
 
-__all__ = [
-    "AsyncCosmosBackend",
-    "BackendProtocolError",
-    "BackendReply",
-    "BackendResponse",
-    "BatchResponse",
-    "LegacyOperation",
-    "PreparedBatch",
-    "PreparedQuery",
-    "PreparedRequest",
-    "QueryPage",
-]
+__all__ = ["AsyncCosmosBackend"]
 
 
 class AsyncCosmosBackend(abc.ABC):
@@ -166,7 +154,7 @@ class AsyncCosmosBackend(abc.ABC):
         except fallback_exceptions:
             if not allow_legacy_fallback:
                 raise
-            _record_rust_compatibility_fallback()
+            record_rust_compatibility_fallback()
             return await legacy_operation.invoke()
 
     async def run_page_operation(  # pylint: disable=too-many-arguments
@@ -212,7 +200,7 @@ class AsyncCosmosBackend(abc.ABC):
                 if aclose is not None:
                     await aclose()
         except fallback_exceptions:
-            _record_rust_compatibility_fallback()
+            record_rust_compatibility_fallback()
             return await legacy_operation.invoke()
         if page is None:
             raise BackendProtocolError(

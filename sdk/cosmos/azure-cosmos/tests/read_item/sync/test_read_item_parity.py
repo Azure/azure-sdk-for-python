@@ -6,7 +6,7 @@
 """End-to-end parity tests for ``Container.read_item`` across backends.
 
 Mirrors the layout of ``tests/delete_item/sync/test_delete_item_parity.py``.
-The graduated structure (L0..L5) and the verdict grammar match that
+The graduated structure and the verdict grammar match that
 file so a contributor reading one in-process parity test recognises
 the shape of every other one.
 
@@ -19,35 +19,35 @@ produced separately by the legacy-folder workflow's reporter script.
 
 What this file pins for ``read_item``:
 
-* **L0 baseline.** Create one item, then read it by bare id with the
+* **Baseline.** Create one item, then read it by bare id with the
   mandatory ``partition_key``. Both backends must succeed and return
   a ``CosmosDict`` whose body carries the same ``id`` and ``pk``.
-* **L1 -- ``item`` is polymorphic.** Pass the read-back document dict
+* **``item`` is polymorphic.** Pass the read-back document dict
   (which carries ``_self``) instead of the bare id.
-* **L1 -- 404 paths.** Missing id and wrong-partition-key both surface
+* **404 paths.** Missing id and wrong-partition-key both surface
   the same ``CosmosResourceNotFoundError``. The wire cannot distinguish
   the two failure modes (the server returns 404 either way), so parity
   here is "same typed exception with the same status code", not "same
   reason text".
-* **L2 -- header-bearing kwargs.** ``post_trigger_include``,
+* **header-bearing kwargs.** ``post_trigger_include``,
   ``session_token``, ``initial_headers``, ``priority``,
   ``throughput_bucket``. One kwarg per test so a failure attributes
   cleanly.
-* **L3 -- ``max_integrated_cache_staleness_in_ms``.** Three cases:
+* **``max_integrated_cache_staleness_in_ms``.** Three cases:
   a positive value emits ``x-ms-dedicatedgateway-max-age``, ``0`` is
   a silent no-op (no header on the wire), a negative value raises
   ``ValueError`` up front (no network round trip).
-* **L3 -- ``timeout``.** Honoured on both backends.
-* **L4 -- ``response_hook`` fires exactly once per backend.** Same
+* **``timeout``.** Honoured on both backends.
+* **``response_hook`` fires exactly once per backend.** Same
   pattern as the create / delete parity suites.
-* **L4 -- conditional read.** Three cases:
+* **conditional read.** Three cases:
   * ``etag`` + ``IfModified``, server etag unchanged -> ``304`` is
     surfaced as an empty ``CosmosDict`` with the etag readable on
     ``get_response_headers()``.
   * ``etag`` + ``IfNotModified``, etag matches -> ``200`` + body.
   * ``etag`` + ``IfNotModified``, etag stale -> ``412``
     ``CosmosAccessConditionFailedError``.
-* **L5 -- typed exceptions and sync-only deprecations.**
+* **typed exceptions and sync-only deprecations.**
   * ``etag=`` without ``match_condition=`` raises ``ValueError``
     *before* any network call (parity with delete; the SDK refuses to
     guess).
@@ -137,12 +137,12 @@ def _read_by_dict_call(container_id: str, item_factory, **kwargs):
     return _do
 
 
-def _run_read(container, level: str, summary: str,
+def _run_read(container, summary: str,
               by_dict: bool = False, **kwargs) -> BackendComparison:
     """Compare the public read result from Python and Rust."""
     builder = _read_by_dict_call if by_dict else _read_by_id_call
-    description = "[{}] {} -- mode={}, kwargs={}".format(
-        level, summary,
+    description = "{} -- mode={}, kwargs={}".format(
+        summary,
         "by-dict" if by_dict else "by-id",
         sorted(kwargs.keys()) or "(none)",
     )
@@ -157,37 +157,35 @@ def _run_read(container, level: str, summary: str,
 
 
 # ---------------------------------------------------------------------------
-# L0 -- baseline
+# Baseline
 # ---------------------------------------------------------------------------
 
-def test_L0_baseline_read_by_id(container_for):
+def test_baseline_read_by_id(container_for):
     """Baseline: read by bare id + ``partition_key``. No optional kwargs.
 
     Both backends must succeed; the body's id/pk fields must match what
     was just written. Response-header-surface differences are tolerated
     here per the shared ``assert_functional_parity`` policy.
     """
-    _run_read(container_for, level="L0",
-              summary="baseline read by id").assert_functional_parity()
+    _run_read(container_for, summary="baseline read by id").assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L1 -- polymorphic ``item`` shape + 404 cases
+# Polymorphic ``item`` shape + 404 cases
 # ---------------------------------------------------------------------------
 
-def test_L1_read_by_document_dict(container_for):
-    """L1: read by passing the document dict (uses ``_self`` lookup).
+def test_read_by_document_dict(container_for):
+    """read by passing the document dict (uses ``_self`` lookup).
 
-    Same precedent as ``delete_item``'s L1: ``Container._get_document_link``
-    accepts either a bare id string or a full document dict (which carries
-    ``_self``).
+    Same precedent as ``delete_item``'s document-dict test:
+    ``Container._get_document_link`` accepts either a bare id string or a full
+    document dict (which carries ``_self``).
     """
-    _run_read(container_for, level="L1",
-              summary="read by document dict",
+    _run_read(container_for, summary="read by document dict",
               by_dict=True).assert_functional_parity()
 
 
-def test_L1_missing_id_raises_typed_not_found(container_for):
+def test_missing_id_raises_typed_not_found(container_for):
     """Reading a never-created id must raise ``CosmosResourceNotFoundError``
     (HTTP 404) on **both** backends."""
     fixed_id = "does-not-exist-" + uuid.uuid4().hex
@@ -198,7 +196,7 @@ def test_L1_missing_id_raises_typed_not_found(container_for):
 
     cmp = run_on_both_backends(
         _do,
-        description="[L1] missing-id 404: read id={!r} that was never created".format(fixed_id),
+        description="missing-id 404: read id={!r} that was never created".format(fixed_id),
         request_kwargs={"item": fixed_id, "partition_key": "a"},
     )
     cmp.print_report()
@@ -206,10 +204,10 @@ def test_L1_missing_id_raises_typed_not_found(container_for):
     assert not cmp.rust.succeeded, "rust must raise on missing id"
     assert getattr(cmp.core_python.raised, "status_code", None) == 404
     assert getattr(cmp.rust.raised, "status_code", None) == 404
-    cmp.assert_parity()
+    cmp.assert_functional_exception_parity()
 
 
-def test_L1_wrong_partition_key_raises_typed_not_found(container_for):
+def test_wrong_partition_key_raises_typed_not_found(container_for):
     """Reading with the wrong partition key returns 404 on both backends.
 
     The wire cannot distinguish wrong-id from wrong-pk; the server
@@ -227,7 +225,7 @@ def test_L1_wrong_partition_key_raises_typed_not_found(container_for):
 
     cmp = run_on_both_backends(
         _do,
-        description="[L1] wrong-pk 404: row exists under pk='a', read with pk='b'",
+        description="wrong-pk 404: row exists under pk='a', read with pk='b'",
         request_kwargs={"partition_key": "b"},
     )
     cmp.print_report()
@@ -235,89 +233,82 @@ def test_L1_wrong_partition_key_raises_typed_not_found(container_for):
     assert not cmp.rust.succeeded
     assert getattr(cmp.core_python.raised, "status_code", None) == 404
     assert getattr(cmp.rust.raised, "status_code", None) == 404
-    cmp.assert_parity()
+    cmp.assert_functional_exception_parity()
 
 
 # ---------------------------------------------------------------------------
-# L2 -- header-bearing kwargs, one at a time
+# Header-bearing kwargs, one at a time
 # ---------------------------------------------------------------------------
 
-def test_L2_post_trigger_include(container_for):
-    """L2: L0 + ``post_trigger_include='auditRead'`` (header kwarg).
+def test_post_trigger_include(container_for):
+    """Baseline call plus ``post_trigger_include='auditRead'`` (header kwarg).
 
     There is no registered trigger by that name; the server returns
     the same "trigger not found" error to both backends. The parity
     contract is that the typed exception matches.
     """
-    cmp = _run_read(container_for, level="L2",
-                    summary="L0 + post_trigger_include",
+    cmp = _run_read(container_for, summary="baseline + post_trigger_include",
                     post_trigger_include="auditRead")
-    cmp.assert_parity()
+    cmp.assert_functional_exception_parity()
 
 
-def test_L2_session_token(container_for):
-    """L2: L0 + ``session_token=<token>``.
+def test_session_token(container_for):
+    """Baseline call plus ``session_token=<token>``.
 
     Reads pass the session-token check; the known rust-side limitation
     with session tokens is on writes, not reads. Both backends forward
     the token as-is, and the outcome on the wire must match.
     """
-    _run_read(container_for, level="L2",
-              summary="L0 + session_token",
+    _run_read(container_for, summary="baseline + session_token",
               session_token="0:1#42").assert_functional_parity()
 
 
-def test_L2_initial_headers(container_for):
-    """L2: L0 + customer-injected ``initial_headers``."""
-    _run_read(container_for, level="L2",
-              summary="L0 + initial_headers",
+def test_initial_headers(container_for):
+    """Baseline call plus customer-injected ``initial_headers``."""
+    _run_read(container_for, summary="baseline + initial_headers",
               initial_headers={"x-ms-test-parity": "v1"}).assert_functional_parity()
 
 
-def test_L2_priority_high(container_for):
-    """L2: L0 + ``priority='High'`` (``x-ms-cosmos-priority-level``)."""
-    _run_read(container_for, level="L2",
-              summary="L0 + priority=High",
+def test_priority_high(container_for):
+    """Baseline call plus ``priority='High'`` (``x-ms-cosmos-priority-level``)."""
+    _run_read(container_for, summary="baseline + priority=High",
               priority="High").assert_functional_parity()
 
 
-def test_L2_throughput_bucket(container_for):
-    """L2: L0 + ``throughput_bucket=1`` (``x-ms-cosmos-throughput-bucket``)."""
-    _run_read(container_for, level="L2",
-              summary="L0 + throughput_bucket=1",
+def test_throughput_bucket(container_for):
+    """Baseline call plus ``throughput_bucket=1`` (``x-ms-cosmos-throughput-bucket``)."""
+    _run_read(container_for, summary="baseline + throughput_bucket=1",
               throughput_bucket=1).assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L3 -- behavioural / Python-only kwargs.
+# Behavioural / Python-only kwargs.
 # ---------------------------------------------------------------------------
 
-def test_L3_max_cache_staleness_positive(container_for):
-    """L3: L0 + ``max_integrated_cache_staleness_in_ms=5000``.
+def test_max_cache_staleness_positive(container_for):
+    """Baseline call plus ``max_integrated_cache_staleness_in_ms=5000``.
 
     The value reaches the wire as
     ``x-ms-dedicatedgateway-max-age: 5000``. Both backends must
     forward identically.
     """
-    _run_read(container_for, level="L3",
-              summary="L0 + max_integrated_cache_staleness_in_ms=5000",
+    _run_read(container_for, summary="baseline + max_integrated_cache_staleness_in_ms=5000",
               max_integrated_cache_staleness_in_ms=5000).assert_functional_parity()
 
 
-def test_L3_max_cache_staleness_zero_is_silent_no_op(container_for):
-    """L3: ``max_integrated_cache_staleness_in_ms=0`` is a silent no-op.
+def test_max_cache_staleness_zero_is_silent_no_op(container_for):
+    """``max_integrated_cache_staleness_in_ms=0`` is a silent no-op.
 
     The header must not be emitted on either backend (a falsy value is
     dropped on both paths). The call must succeed as if the keyword had
     not been passed.
     """
-    _run_read(container_for, level="L3",
-              summary="L0 + max_integrated_cache_staleness_in_ms=0",
+    _run_read(container_for, summary="baseline + max_integrated_cache_staleness_in_ms=0",
               max_integrated_cache_staleness_in_ms=0).assert_functional_parity()
 
 
-def test_L3_max_cache_staleness_negative_raises_value_error_up_front(container_for):
-    """L3: negative cache-staleness raises ``ValueError`` BEFORE any network call.
+def test_max_cache_staleness_negative_raises_value_error_up_front(container_for):
+    """negative cache-staleness raises ``ValueError`` BEFORE any network call.
 
     The validation lives at the call site so the customer's traceback
     points at their own code. Same wording across both backends
@@ -333,7 +324,7 @@ def test_L3_max_cache_staleness_negative_raises_value_error_up_front(container_f
 
     cmp = run_on_both_backends(
         _do,
-        description="[L3] negative max_integrated_cache_staleness raises ValueError",
+        description="negative max_integrated_cache_staleness raises ValueError",
         request_kwargs={"max_integrated_cache_staleness_in_ms": -1},
     )
     cmp.print_report()
@@ -345,22 +336,20 @@ def test_L3_max_cache_staleness_negative_raises_value_error_up_front(container_f
     )
 
 
-def test_L3_timeout(container_for):
-    """L3: L0 + ``timeout=30`` (overall request timeout)."""
-    _run_read(container_for, level="L3",
-              summary="L0 + timeout=30",
+def test_timeout(container_for):
+    """Baseline call plus ``timeout=30`` (overall request timeout)."""
+    _run_read(container_for, summary="baseline + timeout=30",
               timeout=30).assert_functional_parity()
 
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only hedging feature).")
-def test_L3_availability_strategy(container_for):
-    """L3: L0 + ``availability_strategy=True`` (Python-only hedging feature).
+def test_availability_strategy(container_for):
+    """Baseline call plus ``availability_strategy=True`` (Python-only hedging feature).
 
     No ``availability_strategy`` / hedging knob on the rust driver
     surface yet. Skipped on the parity run.
     """
-    _run_read(container_for, level="L3",
-              summary="L0 + availability_strategy=True",
+    _run_read(container_for, summary="baseline + availability_strategy=True",
               availability_strategy=True).assert_functional_parity()
 
 
@@ -368,8 +357,8 @@ def test_L3_availability_strategy(container_for):
                           "ExcludedRegions field, but the parity assertion is hard to make "
                           "end-to-end against a single-region test account. Same skip rationale "
                           "as create_item's L3_excluded_locations.")
-def test_L3_excluded_locations(container_for):
-    """L3: L0 + ``excluded_locations=['East US']``.
+def test_excluded_locations(container_for):
+    """Baseline call plus ``excluded_locations=['East US']``.
 
     The binding passes this keyword to the driver as an excluded-regions
     setting (the mapping lives in ``azure_cosmos_rust/src/lib.rs``). The
@@ -380,19 +369,18 @@ def test_L3_excluded_locations(container_for):
     multi-region fixture (or a fault-injection transport that can observe
     which region a request actually chose).
     """
-    _run_read(container_for, level="L3",
-              summary="L0 + excluded_locations",
+    _run_read(container_for, summary="baseline + excluded_locations",
               excluded_locations=["East US"]).assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L4 -- output / parsing parity, conditional reads
+# Output / parsing parity, conditional reads
 # ---------------------------------------------------------------------------
 
-def test_L4_response_hook_fires_once(container_for):
-    """L4: ``response_hook`` must fire exactly once per backend on success.
+def test_response_hook_fires_once(container_for):
+    """``response_hook`` must fire exactly once per backend on success.
 
-    Mirrors the create_item / delete_item suites' L4 test. The harness
+    Mirrors the create_item / delete_item suites' response-hook test. The harness
     deterministically runs core-python first, then rust, so an
     invocation-order counter attributes hook fires to the right backend
     without any synchronisation.
@@ -419,19 +407,19 @@ def test_L4_response_hook_fires_once(container_for):
 
     cmp = run_on_both_backends(
         _do,
-        description="[L4] response_hook fires exactly once per backend",
+        description="response_hook fires exactly once per backend",
         request_kwargs={"response_hook": "<callable>"},
     )
     cmp.print_report()
-    print("[L4] response_hook fired: core-python={} rust={}".format(
+    print("response_hook fired: core-python={} rust={}".format(
         fired["core-python"], fired["rust"]))
     cmp.assert_functional_parity()
     assert fired["core-python"] == 1, "core-python should fire response_hook exactly once"
     assert fired["rust"] == 1, "rust should fire response_hook exactly once"
 
 
-def test_L4_conditional_etag_if_modified_unchanged_returns_304_empty_dict(container_for):
-    """L4: ``etag`` + ``IfModified``, server etag unchanged -> 304 empty CosmosDict.
+def test_conditional_etag_if_modified_unchanged_returns_304_empty_dict(container_for):
+    """``etag`` + ``IfModified``, server etag unchanged -> 304 empty CosmosDict.
 
     This is the cache-validation idiom. The customer's cached etag
     still matches the server version, so the server returns
@@ -460,7 +448,7 @@ def test_L4_conditional_etag_if_modified_unchanged_returns_304_empty_dict(contai
 
     cmp = run_on_both_backends(
         _do,
-        description="[L4] etag + IfModified, unchanged -> 304 empty CosmosDict",
+        description="etag + IfModified, unchanged -> 304 empty CosmosDict",
         request_kwargs={"etag": "<current>", "match_condition": "IfModified"},
     )
     cmp.print_report()
@@ -486,8 +474,8 @@ def test_L4_conditional_etag_if_modified_unchanged_returns_304_empty_dict(contai
         )
 
 
-def test_L4_conditional_etag_if_not_modified_match_returns_200_body(container_for):
-    """L4: ``etag`` + ``IfNotModified``, server etag matches -> 200 + body.
+def test_conditional_etag_if_not_modified_match_returns_200_body(container_for):
+    """``etag`` + ``IfNotModified``, server etag matches -> 200 + body.
 
     Same set-up as the 304 test above, but with ``IfNotModified``
     (translates to ``If-Match``). When the etag matches, the server
@@ -506,7 +494,7 @@ def test_L4_conditional_etag_if_not_modified_match_returns_200_body(container_fo
 
     cmp = run_on_both_backends(
         _do,
-        description="[L4] etag + IfNotModified, matches -> 200 + body",
+        description="etag + IfNotModified, matches -> 200 + body",
         request_kwargs={"etag": "<current>", "match_condition": "IfNotModified"},
     )
     cmp.print_report()
@@ -518,8 +506,8 @@ def test_L4_conditional_etag_if_not_modified_match_returns_200_body(container_fo
         )
 
 
-def test_L4_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(container_for):
-    """L4: stale ``etag`` + ``IfNotModified`` on a read — pin what actually
+def test_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(container_for):
+    """stale ``etag`` + ``IfNotModified`` on a read — pin what actually
     happens on the wire, not the intuitive expectation.
 
     The intuitive expectation is that ``IfNotModified`` on a read sends
@@ -552,7 +540,7 @@ def test_L4_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(c
 
     cmp = run_on_both_backends(
         _do,
-        description="[L4] stale etag + IfNotModified on read — observe behavior",
+        description="stale etag + IfNotModified on read — observe behavior",
         request_kwargs={"etag": "<stale>", "match_condition": "IfNotModified"},
     )
     cmp.print_report()
@@ -575,11 +563,11 @@ def test_L4_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(c
 
 
 # ---------------------------------------------------------------------------
-# L5 -- exception parity for misuse
+# Exception parity for misuse
 # ---------------------------------------------------------------------------
 
-def test_L5_etag_without_match_condition_raises_value_error_up_front(container_for):
-    """L5: ``etag=`` without ``match_condition=`` raises ``ValueError`` before
+def test_etag_without_match_condition_raises_value_error_up_front(container_for):
+    """``etag=`` without ``match_condition=`` raises ``ValueError`` before
     any network call.
 
     This is the same gate every operation applies: the SDK refuses to
@@ -596,7 +584,7 @@ def test_L5_etag_without_match_condition_raises_value_error_up_front(container_f
 
     cmp = run_on_both_backends(
         _do,
-        description="[L5] etag without match_condition raises ValueError",
+        description="etag without match_condition raises ValueError",
         request_kwargs={"etag": "x"},
     )
     cmp.print_report()
@@ -607,7 +595,7 @@ def test_L5_etag_without_match_condition_raises_value_error_up_front(container_f
 
 
 # ---------------------------------------------------------------------------
-# L5 (sync-only) -- deprecated kwargs that are dropped before the wire
+# (sync-only) deprecated kwargs that are dropped before the wire
 # ---------------------------------------------------------------------------
 
 def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
@@ -622,10 +610,10 @@ def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
     )
 
 
-def test_L5_populate_query_metrics_deprecated_and_not_on_wire(container_for):
-    """L5: ``populate_query_metrics=True`` is deprecated AND not forwarded.
+def test_populate_query_metrics_deprecated_and_not_on_wire(container_for):
+    """``populate_query_metrics=True`` is deprecated AND not forwarded.
 
-    Two pinned guarantees, same shape as the delete_item L5 test:
+    Two pinned guarantees, same shape as the delete_item deprecated-kwarg test:
 
     1. The public sync ``read_item`` emits a ``DeprecationWarning``
        mentioning ``populate_query_metrics``.
@@ -688,7 +676,7 @@ def test_L5_populate_query_metrics_deprecated_and_not_on_wire(container_for):
         )
     )
     print(
-        "[L5] populate_query_metrics: DeprecationWarning fired AND "
+        "populate_query_metrics: DeprecationWarning fired AND "
         "{!r} absent from outgoing GET headers (captured {} headers)".format(
             pqm_header, len(captured_get_headers)
         )

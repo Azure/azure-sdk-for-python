@@ -18,7 +18,7 @@ import json
 
 import pytest
 
-from azure.cosmos._backend.base import OP_IS_FEED_RANGE_SUBSET
+from azure.cosmos._backend.operations import OP_IS_FEED_RANGE_SUBSET
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._feed_ranges_rust_routing import (

@@ -6,7 +6,7 @@
 """Cross-language parity guard for the header/option mapping -- no network.
 
 The options -> wire-header mapping is split across two languages: the Python
-prep (``_request_prep.flatten_options_to_headers``) owns truthy-gating and a few
+prep (``_request_headers.flatten_options_to_headers``) owns truthy-gating and a few
 translations, while the Rust fast path (``extract_op_modifiers`` in
 ``azure_cosmos_rust/src/wire/request.rs``) owns the camelCase -> ``x-ms-*`` table plus
 typed-field lifting. Adding a knob is therefore a DUAL edit.
@@ -18,7 +18,7 @@ fast path.
 
 These tests make that drift impossible to MISS instead of impossible to HAPPEN:
 they parse the recognised keys straight out of ``wire/request.rs`` and assert they stay
-in lockstep with ``_request_prep.RUST_HANDLED_OPTION_KEYS``. They need no built
+in lockstep with ``_request_headers.RUST_HANDLED_OPTION_KEYS``. They need no built
 extension and no network -- just the two source files. If you add (or rename) an
 option-key on either side without the other, exactly one of these fails with a
 message naming the offending key and both files to edit.
@@ -30,7 +30,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.cosmos._helpers._request_prep import RUST_HANDLED_OPTION_KEYS
+from azure.cosmos._helpers._request_headers import RUST_HANDLED_OPTION_KEYS
 
 # wire/request.rs lives at <pkg-root>/azure_cosmos_rust/src/wire/request.rs; this test file is at
 # <pkg-root>/tests/common/, so two parents up from the test dir is the pkg root.
@@ -102,7 +102,7 @@ def test_every_python_option_key_is_handled_by_rust():
     )
     assert not missing, (
         "These option-keys are emitted by the Python prep "
-        "(_request_prep.RUST_HANDLED_OPTION_KEYS) but have NO matching arm in "
+        "(_request_headers.RUST_HANDLED_OPTION_KEYS) but have NO matching arm in "
         "extract_op_modifiers (azure_cosmos_rust/src/wire/request.rs). On the Rust fast "
         "path they would hit `_ => continue` and be SILENTLY DROPPED -- wrong "
         f"wire bytes with green tests: {missing}. Add the wire-name arm in "
@@ -123,7 +123,7 @@ def test_no_rust_only_option_key():
     assert not extra, (
         "These camelCase keys are translated by extract_op_modifiers "
         "(azure_cosmos_rust/src/wire/request.rs) but are missing from "
-        "_request_prep.RUST_HANDLED_OPTION_KEYS: "
+        "_request_headers.RUST_HANDLED_OPTION_KEYS: "
         f"{extra}. Add them to the Python contract so the split mapping stays "
         "documented and the forward parity test covers them."
     )

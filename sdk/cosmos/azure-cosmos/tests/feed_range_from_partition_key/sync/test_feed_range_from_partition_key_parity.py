@@ -80,7 +80,7 @@ def _normalize_feed_range(feed_range):
     )
 
 
-def test_L0_feed_range_from_partition_key_baseline(container_for):
+def test_feed_range_from_partition_key_baseline(container_for):
     """String partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -92,14 +92,14 @@ def test_L0_feed_range_from_partition_key_baseline(container_for):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L0] feed_range_from_partition_key baseline",
+        description="feed_range_from_partition_key baseline",
         request_kwargs={"partition_key": "string"},
     )
     comparison.print_report()
     comparison.assert_functional_parity()
 
 
-def test_L2_feed_range_from_partition_key_numeric_partition_key(container_for):
+def test_feed_range_from_partition_key_numeric_partition_key(container_for):
     """Numeric partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -111,14 +111,14 @@ def test_L2_feed_range_from_partition_key_numeric_partition_key(container_for):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L2] feed_range_from_partition_key numeric partition key",
+        description="feed_range_from_partition_key numeric partition key",
         request_kwargs={"partition_key": 4242},
     )
     comparison.print_report()
     comparison.assert_functional_parity()
 
 
-def test_L3_feed_range_from_partition_key_bool_partition_key(container_for):
+def test_feed_range_from_partition_key_bool_partition_key(container_for):
     """Boolean partition key produces the same feed range on both backends."""
     run_suffix = uuid.uuid4().hex
 
@@ -130,14 +130,14 @@ def test_L3_feed_range_from_partition_key_bool_partition_key(container_for):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L3] feed_range_from_partition_key bool partition key",
+        description="feed_range_from_partition_key bool partition key",
         request_kwargs={"partition_key": True},
     )
     comparison.print_report()
     comparison.assert_functional_parity()
 
 
-def test_L4_feed_range_from_partition_key_none_partition_key_value_branch(container_for):
+def test_feed_range_from_partition_key_none_partition_key_value_branch(container_for):
     """NonePartitionKeyValue branch (`_Undefined` on non-system containers) is parity-safe."""
 
     def _do(client):
@@ -146,14 +146,14 @@ def test_L4_feed_range_from_partition_key_none_partition_key_value_branch(contai
 
     comparison = run_on_both_backends(
         _do,
-        description="[L4] feed_range_from_partition_key NonePartitionKeyValue branch",
+        description="feed_range_from_partition_key NonePartitionKeyValue branch",
         request_kwargs={"partition_key": "NonePartitionKeyValue"},
     )
     comparison.print_report()
     comparison.assert_functional_parity()
 
 
-def test_L5_feed_range_from_partition_key_hpk_full_key(container_for_multihash):
+def test_feed_range_from_partition_key_hpk_full_key(container_for_multihash):
     """Hierarchical full key (all PK components) is parity-safe."""
     run_suffix = uuid.uuid4().hex
 
@@ -166,7 +166,7 @@ def test_L5_feed_range_from_partition_key_hpk_full_key(container_for_multihash):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L5] feed_range_from_partition_key hierarchical full key",
+        description="feed_range_from_partition_key hierarchical full key",
         request_kwargs={"partition_key": ["tenant", "region"]},
     )
     comparison.print_report()
@@ -192,7 +192,7 @@ def test_L6_feed_range_from_partition_key_hpk_prefix_key(container_for_multihash
     comparison.assert_functional_parity()
 
 
-def test_L1_feed_range_from_partition_key_null_partition_key(container_for):
+def test_feed_range_from_partition_key_null_partition_key(container_for):
     """JSON-null partition key maps to the same feed range on both backends."""
 
     def _do(client):
@@ -201,7 +201,7 @@ def test_L1_feed_range_from_partition_key_null_partition_key(container_for):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L1] feed_range_from_partition_key null partition key",
+        description="feed_range_from_partition_key null partition key",
         request_kwargs={"partition_key": None},
     )
     comparison.print_report()

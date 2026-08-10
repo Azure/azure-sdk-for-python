@@ -32,7 +32,7 @@ def container_for(request):
         pass
 
 
-def test_L0_upsert_insert_then_update(container_for):
+def test_upsert_insert_then_update(container_for):
     """upsert inserts, then upserts the same id with a new field — parity on both."""
     item_id = uuid.uuid4().hex
 
@@ -41,12 +41,12 @@ def test_L0_upsert_insert_then_update(container_for):
         c.upsert_item({"id": item_id, "pk": "a", "n": 1})
         return c.upsert_item({"id": item_id, "pk": "a", "n": 2})
 
-    cmp = run_on_both_backends(_do, description="[L0] upsert insert+update", request_body={"id": item_id, "pk": "a"})
+    cmp = run_on_both_backends(_do, description="upsert insert+update", request_body={"id": item_id, "pk": "a"})
     cmp.print_report()
     cmp.assert_functional_parity()
 
 
-def test_L4_response_hook_fires_once(container_for):
+def test_response_hook_fires_once(container_for):
     """upsert fires response_hook exactly once per backend."""
     fired = {"core-python": 0, "rust": 0}
     order = ["core-python", "rust"]; idx = [0]
@@ -56,7 +56,7 @@ def test_L4_response_hook_fires_once(container_for):
         c = client.get_database_client("parity_db").get_container_client(container_for.id)
         return c.upsert_item({"id": uuid.uuid4().hex, "pk": "a"}, response_hook=lambda h, x: fired.__setitem__(b, fired[b] + 1))
 
-    cmp = run_on_both_backends(_do, description="[L4] upsert response_hook")
+    cmp = run_on_both_backends(_do, description="upsert response_hook")
     cmp.assert_functional_parity()
     assert fired["core-python"] == 1 and fired["rust"] == 1
 

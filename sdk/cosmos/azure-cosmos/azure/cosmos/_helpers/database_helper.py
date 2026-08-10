@@ -39,7 +39,7 @@ breaks without it:
    core-python call to ``run_operation``, which runs exactly one of them.
    Without this step the choice would be made twice, in slightly different
    ways, in two different public methods.
-3. ``build_read_database_prepared`` (``_request_prep``) turns the caller's
+3. ``build_read_database_prepared`` (``_request_database``) turns the caller's
    options into the request the binding reads. Without it there was no rust
    request to send, so a database read had no rust path at all.
 4. ``base.resolve_initial_headers`` layers a caller's ``initial_headers`` over
@@ -59,23 +59,19 @@ from __future__ import annotations
 from typing import Any, Callable, Mapping, Optional
 
 from .. import exceptions
-from .._backend.base import (
-    CosmosBackend,
-    LegacyOperation,
-    OP_CREATE_DATABASE,
-    OP_DELETE_DATABASE,
-    OP_READ_DATABASE,
-)
+from .._backend.base import CosmosBackend
+from .._backend.contracts import LegacyOperation
+from .._backend.operations import OP_CREATE_DATABASE, OP_DELETE_DATABASE, OP_READ_DATABASE
 from .._backend.legacy import coerce_backend
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
-from .._helpers._request_prep import (
+from .._helpers._request_database import (
+    RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
     build_create_database_prepared,
     build_delete_database_prepared,
     build_read_database_prepared,
     is_delete_database_rust_eligible,
     is_read_database_rust_eligible,
-    RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
 )
 from .._helpers._response_parse import parse_backend_response
 

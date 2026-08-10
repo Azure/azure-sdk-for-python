@@ -35,11 +35,42 @@ call.
 
 The backend a client stores is ``Optional``: the factory returns a ``RustBackend``
 for rust and ``None`` for core-python. Each family coordinator (``DatabaseHelper``,
-``ItemHelper``, ``ThroughputHelper``, ``FeedRangeHelper``) turns that selection
+``ItemHelper``, the throughput functions, the feed-range functions) turns that selection
 into a concrete backend at its own boundary -- ``None`` becomes ``LegacyBackend``
 -- and then holds that one backend by interface, so no coordinator branches on
 ``None`` (see ``azure.cosmos._backend.legacy.coerce_backend``).
 
-The async versions of all of this live in ``azure.cosmos.aio._backend``.
-"""
+The modules here are arranged so that a caller depends only on what it actually
+uses. In dependency order, lowest first:
 
+* ``operations`` -- the ``OP_*`` operation names and the binding lookups keyed by
+  them. Pure data, no imports, so a request builder or routing predicate can name
+  an operation without pulling in any backend machinery.
+* ``errors`` -- the errors this layer raises, and the guards that raise them.
+* ``contracts`` -- the frozen request and reply objects backends exchange with
+  the layer above. Shared by the sync and async backends, which is why they live
+  here rather than beside either one.
+* ``_binding_conversions`` -- conversions between the Rust binding's plain tuples
+  and dicts and those typed objects.
+* ``_fallback_metrics`` -- the process-wide count of Rust attempts that retried
+  on the legacy path.
+* ``base`` -- the ``CosmosBackend`` ABC itself.
+* ``credentials``, ``transport_settings``, ``client_config`` -- the three
+  argument-checking steps a client goes through before a Rust backend is built:
+  sorting the credential, rejecting network settings the driver cannot honor,
+  and gathering the tuning options into one config object. They are separate
+  from ``factory`` because the async factory reuses all three. ``credentials``
+  also exposes ``resolved_credential``, the context manager both factories build
+  inside so a construction that fails later cannot strand the background thread
+  that wrapping an async credential starts.
+* ``factory``, ``rust``, ``legacy``, ``_shared``, ``_driver_registry`` -- backend
+  selection and the two concrete implementations. ``_shared`` holds the state and
+  the open/close steps the sync and async Rust backends have in common, so a
+  lifecycle rule cannot end up enforced on only one of them.
+
+The async versions of all of this live in ``azure.cosmos.aio._backend``, which
+defines only what genuinely differs (the ``AsyncCosmosBackend`` ABC and the two
+async implementations) and imports ``operations``, ``errors``, ``contracts``,
+``_binding_conversions`` and ``_fallback_metrics`` from here, so the two engines
+cannot drift apart on the shared vocabulary.
+"""

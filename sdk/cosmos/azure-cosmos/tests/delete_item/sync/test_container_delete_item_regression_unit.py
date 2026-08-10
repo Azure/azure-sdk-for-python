@@ -20,7 +20,9 @@ from unittest.mock import MagicMock, patch
 from azure.core import MatchConditions
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend.base import BackendResponse, CosmosBackend, OP_DELETE_ITEM
+from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.contracts import BackendResponse
+from azure.cosmos._backend.operations import OP_DELETE_ITEM
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
 

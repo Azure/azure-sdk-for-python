@@ -28,11 +28,9 @@ from azure.core import MatchConditions
 
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import PartitionKey
-from azure.cosmos._helpers._request_prep import (
-    flatten_options_to_headers,
-    is_create_container_rust_eligible,
-    is_delete_database_rust_eligible,
-)
+from azure.cosmos._helpers._request_headers import flatten_options_to_headers
+from azure.cosmos._helpers._request_container import is_create_container_rust_eligible
+from azure.cosmos._helpers._request_database import is_delete_database_rust_eligible
 
 
 @pytest.mark.cosmosEmulator

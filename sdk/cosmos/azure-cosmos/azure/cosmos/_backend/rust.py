@@ -26,22 +26,17 @@ from typing import Any, Iterator, Optional
 
 from azure.core.exceptions import ServiceResponseError
 
-from .base import (
-    OP_LIST_DATABASES,
+from .base import CosmosBackend
+from .operations import (
     OP_LIST_CONTAINERS,
+    OP_LIST_DATABASES,
     OP_READ_ALL_ITEMS,
     OP_TO_BINDING_METHOD,
-    PageNotSupportedByBackendError,
     QUERY_TO_BINDING_METHOD,
-    BackendResponse,
-    CosmosBackend,
-    PreparedClientConfig,
-    PreparedQuery,
-    PreparedRequest,
-    QueryNotSupportedByBackendError,
-    QueryPage,
-    build_backend_response,
 )
+from .errors import PageNotSupportedByBackendError, QueryNotSupportedByBackendError
+from .contracts import BackendResponse, PreparedClientConfig, PreparedQuery, PreparedRequest, QueryPage
+from ._binding_conversions import build_backend_response
 from ._shared import (
     RustBackendShared,
     configure_packaged_query_plan_interop,
@@ -172,7 +167,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         the first call would each build one. A fast no-lock check for the
         already-built case, plus a lock with a second check inside, makes the
         build/ask happen exactly once. Raises ``NotImplementedError`` when the
-        compiled binding is absent.
+        compiled binding is absent, and ``RuntimeError`` once the client is closed.
         """
         # If the handle is already built, return it without locking.
         handle = self._handle
@@ -187,6 +182,12 @@ class RustBackend(RustBackendShared, CosmosBackend):
         # Build it once. The lock, with a second check inside, keeps
         # concurrent first callers from each building one.
         with self._handle_lock:
+            # close() clears the handle, so without this check a closed client would
+            # look exactly like a brand-new one and silently open a second driver
+            # reference -- an operation on a closed client would appear to succeed.
+            # The async backend refuses the same way.
+            if self._closing:
+                raise RuntimeError("RustBackend: the client is closed.")
             if self._handle is None:
                 self._handle = _rust_module.init_client(*self._init_client_args())
             return self._handle
@@ -194,16 +195,21 @@ class RustBackend(RustBackendShared, CosmosBackend):
     def close(self) -> None:
         """Drop this client's reference to the shared rust driver.
 
-        Releases the guard registration once, stops the credential bridge, clears
-        the handle, and tells the binding to ``close_client(handle)`` -- which drops
-        this client's reference; the rust driver is only torn down when the last
-        client sharing it closes. Without this the guard count leaks, the bridge
-        thread keeps running, and the rust driver's connection pool is never
-        released.
+        Releases the guard registration once, stops the credential bridge, marks the
+        client closed and clears the handle, then tells the binding to
+        ``close_client(handle)`` -- which drops this client's reference; the rust
+        driver is only torn down when the last client sharing it closes. Without this
+        the guard count leaks, the bridge thread keeps running, and the rust driver's
+        connection pool is never released.
+
+        Closing twice is harmless: the handle is taken under the lock, so only the
+        first call reaches ``close_client`` and no other client's shared driver can
+        be released early.
         """
         self._release_config_once()
         self._close_token_credential_bridge()
         with self._handle_lock:
+            self._closing = True
             handle = self._handle
             self._handle = None
         if handle is None or _rust_module is None:

@@ -31,8 +31,10 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
 
-from ._backend.base import CosmosBackend, raise_account_read_unsupported
-from ._backend.factory import make_backend, resolve_client_transport_timeouts
+from ._backend.base import CosmosBackend
+from ._backend.errors import raise_account_read_unsupported
+from ._backend.factory import make_backend
+from ._backend.transport_settings import resolve_client_transport_timeouts
 from ._base import build_options, _set_throughput_options
 from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict

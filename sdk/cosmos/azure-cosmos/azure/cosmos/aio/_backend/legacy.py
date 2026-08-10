@@ -23,16 +23,22 @@ from __future__ import annotations
 
 from typing import Any, Awaitable, Callable, Optional
 
-from azure.cosmos._backend.base import LegacyOperation, PreparedQuery, QueryPage
+from azure.cosmos._backend.contracts import (
+    BackendResponse,
+    LegacyOperation,
+    PreparedQuery,
+    PreparedRequest,
+    QueryPage,
+)
 from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
 
-from .base import AsyncCosmosBackend, BackendResponse, PreparedRequest
+from .base import AsyncCosmosBackend
 
 
 class AsyncLegacyBackend(AsyncCosmosBackend):
     """Core-python async backend: awaits the legacy ``client_connection`` call.
 
-    Stateless -- it only forwards to the :class:`~azure.cosmos._backend.base.LegacyOperation`
+    Stateless -- it only forwards to the :class:`~azure.cosmos._backend.contracts.LegacyOperation`
     the async coordinator supplies -- so :data:`ASYNC_LEGACY_BACKEND` is shared by
     every core-python async client.
     """

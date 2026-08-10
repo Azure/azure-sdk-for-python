@@ -30,7 +30,7 @@ from unittest.mock import AsyncMock, MagicMock
 from azure.core import MatchConditions
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend.base import BackendResponse
+from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.aio._backend.base import AsyncCosmosBackend
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper

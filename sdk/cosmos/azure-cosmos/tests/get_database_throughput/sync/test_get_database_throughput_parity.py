@@ -95,7 +95,10 @@ def test_get_throughput_fixed(fixed_throughput_database):
 
     def _do(client):
         """Read fixed throughput from one engine."""
-        database = client.get_database_client(fixed_throughput_database))
+        database = client.get_database_client(fixed_throughput_database)
+        return _normalize_throughput(database.get_throughput())
+
+    comparison = run_on_both_backends(_do, description="database get_throughput, fixed RU/s")
     comparison.print_report()
     comparison.assert_functional_parity()
     assert comparison.core_python.return_value["offer_throughput"] == 1000
@@ -108,7 +111,10 @@ def test_get_throughput_autoscale(autoscale_database):
 
     def _do(client):
         """Read autoscale throughput from one engine."""
-        database = client.get_database_client(autoscale_database))
+        database = client.get_database_client(autoscale_database)
+        return _normalize_throughput(database.get_throughput())
+
+    comparison = run_on_both_backends(_do, description="database get_throughput, autoscale")
     comparison.print_report()
     comparison.assert_functional_parity()
     assert comparison.core_python.return_value["auto_scale_max_throughput"] == 5000
@@ -123,6 +129,7 @@ def test_read_offer_matches_get_throughput(fixed_throughput_database):
     def _do(client):
         """Read via the deprecated name from one engine."""
         database = client.get_database_client(fixed_throughput_database)
+        with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
             return _normalize_throughput(database.read_offer())
 

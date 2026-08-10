@@ -100,7 +100,7 @@ import threading
 from typing import Any, Dict, Optional, Tuple
 from urllib.parse import urlsplit, urlunsplit
 
-from .base import PreparedClientConfig
+from .contracts import PreparedClientConfig
 
 
 class StrictEngineIsolationError(ValueError):

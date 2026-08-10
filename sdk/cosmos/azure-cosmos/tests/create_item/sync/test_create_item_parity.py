@@ -7,23 +7,23 @@
 
 The suite is organised as a **graduated sequence**:
 
-  * **L0 — baseline.** Body + the mandatory partition-key field, no
+  * **baseline.** Body + the mandatory partition-key field, no
     optional kwargs. This test must pass for every other test in the
-    file to be meaningful: if L0 fails, ``create_item`` is genuinely
+    file to be meaningful: if the baseline fails, ``create_item`` is genuinely
     broken on one of the backends and there is no point reading the
     rest of the report.
-  * **L1 — body / partition-key shape variants.** Same call shape as L0
+  * **body / partition-key shape variants.** Same call shape as the baseline
     but flexes the PK side (undefined PK, explicit ``None``).
-  * **L2 — header-bearing kwargs, one at a time.** Each test starts
-    from L0 and adds **exactly one** optional kwarg that maps to a
+  * **header-bearing kwargs, one at a time.** Each test starts
+    from the baseline and adds **exactly one** optional kwarg that maps to a
     request header. If the test fails the diff cleanly attributes the
     gap to that one kwarg.
-  * **L3 — behavioural kwargs.** Knobs that change behaviour rather
+  * **behavioural kwargs.** Knobs that change behaviour rather
     than just header shape (auto id, no-response, retry-write,
     availability-strategy).
-  * **L4 — output / parsing parity.** ``response_hook`` invocation
+  * **output / parsing parity.** ``response_hook`` invocation
     count, etc.
-  * **L5 — exception parity.** Typed exception class for the
+  * **exception parity.** Typed exception class for the
     duplicate-id 409 case.
 
 Every test prints a structured report (request body, request kwargs,
@@ -61,7 +61,8 @@ from azure.core import MatchConditions
 from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos import _cosmos_client_connection as _ccc_module
 from azure.cosmos._backend import rust as _rust_backend_module
-from azure.cosmos._backend.base import OP_CREATE_ITEM, PreparedRequest
+from azure.cosmos._backend.operations import OP_CREATE_ITEM
+from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._backend.rust import RustBackend
 from azure.cosmos._constants import _Constants
 
@@ -122,10 +123,10 @@ def _call(container_id: str, body_or_factory, **kwargs):
     return _do
 
 
-def _run(container, body, level: str, summary: str, **kwargs):
+def _run(container, body, summary: str, **kwargs):
     """Run the call on both backends and print the side-by-side report."""
-    description = "[{}] {} -- body keys={}, kwargs={}".format(
-        level, summary,
+    description = "{} -- body keys={}, kwargs={}".format(
+        summary,
         list(body.keys()) if isinstance(body, dict) else "(factory)",
         sorted(kwargs.keys()) or "(none)",
     )
@@ -140,11 +141,11 @@ def _run(container, body, level: str, summary: str, **kwargs):
 
 
 # ---------------------------------------------------------------------------
-# L0 — baseline: body + mandatory partition-key field, no optional kwargs.
+# Baseline: body + mandatory partition-key field, no optional kwargs.
 # This test MUST pass for the rest of the suite to be meaningful.
 # ---------------------------------------------------------------------------
 
-def test_L0_baseline_body_and_pk_only(container_for):
+def test_baseline_body_and_pk_only(container_for):
     """Baseline: minimal valid body, no optional kwargs.
 
     Sends ``{"id": <uuid>, "pk": "customerA", "n": 1}`` and nothing else.
@@ -154,25 +155,23 @@ def test_L0_baseline_body_and_pk_only(container_for):
     "create_item itself works on both backends" signal.
     """
     body = {"id": uuid.uuid4().hex, "pk": "customerA", "n": 1}
-    _run(container_for, body, level="L0",
-         summary="baseline create").assert_functional_parity()
+    _run(container_for, body, summary="baseline create").assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L1 — body / partition-key shape variants
+# Body / partition-key shape variants
 # ---------------------------------------------------------------------------
 
 # The binding accepts ``[{}]`` and treats it as the undefined
 # partition-key value end to end; this test pins that round-trip.
-def test_L1_pk_undefined(container_for):
-    """L1: body missing the declared PK path -- wire bytes must be ``[{}]``."""
+def test_pk_undefined(container_for):
+    """body missing the declared PK path -- wire bytes must be ``[{}]``."""
     body = {"id": uuid.uuid4().hex, "n": 1}
-    _run(container_for, body, level="L1",
-         summary="undefined PK").assert_functional_parity()
+    _run(container_for, body, summary="undefined PK").assert_functional_parity()
 
 
-def test_L1_pk_explicit_none(container_for):
-    """L1: explicit ``pk: None`` -- the bytes on the wire must be ``[null]``.
+def test_pk_explicit_none(container_for):
+    """explicit ``pk: None`` -- the bytes on the wire must be ``[null]``.
 
     Python serialises ``None`` as ``[null]`` and the rust binding accepts
     JSON ``null`` as a valid partition-key value, so this case works on
@@ -181,36 +180,33 @@ def test_L1_pk_explicit_none(container_for):
     test at the bottom of the file.)
     """
     body = {"id": uuid.uuid4().hex, "pk": None}
-    _run(container_for, body, level="L1",
-         summary="explicit None PK").assert_functional_parity()
+    _run(container_for, body, summary="explicit None PK").assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L2 -- header-bearing kwargs, one at a time.
-# Each test = L0 baseline + EXACTLY ONE kwarg that maps to a request header.
+# Header-bearing kwargs, one at a time.
+# Each test = baseline + EXACTLY ONE kwarg that maps to a request header.
 # ---------------------------------------------------------------------------
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_L2_pre_trigger_include(container_for):
-    """L2: L0 + ``pre_trigger_include='validateOrder'`` (header kwarg)."""
+def test_pre_trigger_include(container_for):
+    """Baseline call plus ``pre_trigger_include='validateOrder'`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L2",
-         summary="L0 + pre_trigger_include",
+    _run(container_for, body, summary="baseline + pre_trigger_include",
          pre_trigger_include="validateOrder").assert_functional_parity()
 
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_L2_indexing_directive(container_for):
-    """L2: L0 + ``indexing_directive=Exclude`` (header kwarg)."""
+def test_indexing_directive(container_for):
+    """Baseline call plus ``indexing_directive=Exclude`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L2",
-         summary="L0 + indexing_directive=Exclude",
+    _run(container_for, body, summary="baseline + indexing_directive=Exclude",
          indexing_directive=1).assert_functional_parity()
 
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_L2_intended_collection_rid_present_on_wire(container_for):
-    """L2: check that ``x-ms-cosmos-intended-collection-rid`` is sent on the request.
+def test_intended_collection_rid_present_on_wire(container_for):
+    """check that ``x-ms-cosmos-intended-collection-rid`` is sent on the request.
 
     That header is a request-side safety net for detecting a container
     that was dropped and recreated. The service doesn't echo it back, so
@@ -298,7 +294,7 @@ def test_L2_intended_collection_rid_present_on_wire(container_for):
         cmp = run_on_both_backends(
             _do,
             client_factory=_factory,
-            description="[L2] L0 + assert intended-rid on REQUEST (both backends)",
+            description="baseline + assert intended-rid on REQUEST (both backends)",
             request_body=body,
         )
         cmp.print_report()
@@ -337,115 +333,106 @@ def test_L2_intended_collection_rid_present_on_wire(container_for):
         "rust PreparedRequest value {!r}".format(core_val, rust_val)
     )
     print(
-        "[L2] intended-rid parity OK: core-wire={!r} rust-prepared={!r}".format(
+        "intended-rid parity OK: core-wire={!r} rust-prepared={!r}".format(
             core_val, rust_val
         )
     )
 
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_L2_priority_high(container_for):
-    """L2: L0 + ``priority='High'`` (header kwarg)."""
+def test_priority_high(container_for):
+    """Baseline call plus ``priority='High'`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L2",
-         summary="L0 + priority=High",
+    _run(container_for, body, summary="baseline + priority=High",
          priority="High").assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L2 (additional) -- header-bearing kwargs from the public surface that
-# weren't covered above. Each is the L0 baseline + EXACTLY ONE kwarg.
+# (additional) header-bearing kwargs from the public surface that
+# weren't covered above. Each is the baseline + EXACTLY ONE kwarg.
 # (Historical note: these all used to be skipped while the binding still dropped per-request headers; the binding now forwards them.)
 # ---------------------------------------------------------------------------
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_L2_post_trigger_include(container_for):
-    """L2: L0 + ``post_trigger_include='auditOrder'`` (header kwarg)."""
+def test_post_trigger_include(container_for):
+    """Baseline call plus ``post_trigger_include='auditOrder'`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L2",
-         summary="L0 + post_trigger_include",
+    _run(container_for, body, summary="baseline + post_trigger_include",
          post_trigger_include="auditOrder").assert_functional_parity()
 
 
 # Binding routes the session token to the driver's typed setter.
-def test_L2_session_token(container_for):
-    """L2: L0 + ``session_token=<token>`` (Session-consistency header kwarg)."""
+def test_session_token(container_for):
+    """Baseline call plus ``session_token=<token>`` (Session-consistency header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L2",
-         summary="L0 + session_token",
+    _run(container_for, body, summary="baseline + session_token",
          session_token="0:1#42").assert_functional_parity()
 
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-# Python side: ``_request_prep.py`` now flattens the ``initialHeaders`` dict
+# Python side: ``_request_headers.py`` now flattens the ``initialHeaders`` dict
 # into individual entries on ``PreparedRequest.headers`` so the binding's
 # existing ``x-ms-…``/``prefer`` pass-through picks each one up.
-def test_L2_initial_headers(container_for):
-    """L2: L0 + ``initial_headers={'x-ms-test': 'v'}`` (caller-injected headers)."""
+def test_initial_headers(container_for):
+    """Baseline call plus ``initial_headers={'x-ms-test': 'v'}`` (caller-injected headers)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L2",
-         summary="L0 + initial_headers",
+    _run(container_for, body, summary="baseline + initial_headers",
          initial_headers={"x-ms-test-parity": "v1"}).assert_functional_parity()
 
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
-def test_L2_throughput_bucket(container_for):
-    """L2: L0 + ``throughput_bucket=1`` (``x-ms-cosmos-throughput-bucket`` hdr)."""
+def test_throughput_bucket(container_for):
+    """Baseline call plus ``throughput_bucket=1`` (``x-ms-cosmos-throughput-bucket`` hdr)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L2",
-         summary="L0 + throughput_bucket=1",
+    _run(container_for, body, summary="baseline + throughput_bucket=1",
          throughput_bucket=1).assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L3 — behavioural kwargs (change behaviour, not just header shape)
+# Behavioural kwargs (change behaviour, not just header shape)
 # ---------------------------------------------------------------------------
 
-def test_L3_enable_automatic_id_generation(container_for):
+def test_enable_automatic_id_generation(container_for):
     """Body without `id` — the Python helper mints a UUID4 client-side and
     writes it back into the body before either backend sees it. Both
     backends therefore see an identical body shape."""
     body = {"pk": "a"}  # no id — helper will mint one
-    _run(container_for, body, level="L3",
-         summary="auto-id (no `id` in body)",
+    _run(container_for, body, summary="auto-id (no `id` in body)",
          enable_automatic_id_generation=True).assert_functional_parity()
 
 
-# L3: no_response — binding now maps responsePayloadOnWriteDisabled
+# No_response — binding now maps responsePayloadOnWriteDisabled
 # onto the driver's typed content_response_on_write option.
-def test_L3_no_response(container_for):
-    """L3: L0 + ``no_response=True`` (suppresses response body via Prefer hdr)."""
+def test_no_response(container_for):
+    """Baseline call plus ``no_response=True`` (suppresses response body via Prefer hdr)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L3",
-         summary="L0 + no_response",
+    _run(container_for, body, summary="baseline + no_response",
          no_response=True).assert_functional_parity()
 
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only knob).")
-def test_L3_retry_write(container_for):
-    """L3: L0 + ``retry_write=1`` (Python-only retry knob; no rust analogue)."""
+def test_retry_write(container_for):
+    """Baseline call plus ``retry_write=1`` (Python-only retry knob; no rust analogue)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L3",
-         summary="L0 + retry_write=1",
+    _run(container_for, body, summary="baseline + retry_write=1",
          retry_write=1).assert_functional_parity()
 
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only knob).")
-def test_L3_availability_strategy(container_for):
-    """L3: L0 + ``availability_strategy=True`` (Python-only hedging feature)."""
+def test_availability_strategy(container_for):
+    """Baseline call plus ``availability_strategy=True`` (Python-only hedging feature)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L3",
-         summary="L0 + availability_strategy=True",
+    _run(container_for, body, summary="baseline + availability_strategy=True",
          availability_strategy=True).assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L3 (additional) -- behavioural / Python-only kwargs from the public surface.
+# (additional) behavioural / Python-only kwargs from the public surface.
 # ---------------------------------------------------------------------------
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only routing knob).")
-def test_L3_excluded_locations(container_for):
-    """L3: L0 + ``excluded_locations=['East US']`` (a Python-only routing override).
+def test_excluded_locations(container_for):
+    """Baseline call plus ``excluded_locations=['East US']`` (a Python-only routing override).
 
     The binding passes this keyword to the driver as an excluded-regions
     setting (the mapping lives in ``azure_cosmos_rust/src/lib.rs``). The
@@ -457,13 +444,12 @@ def test_L3_excluded_locations(container_for):
     which region a request actually chose).
     """
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L3",
-         summary="L0 + excluded_locations",
+    _run(container_for, body, summary="baseline + excluded_locations",
          excluded_locations=["East US"]).assert_functional_parity()
 
 
-def test_L3_timeout(container_for):
-    """L3: L0 + ``timeout=30`` (overall request timeout).
+def test_timeout(container_for):
+    """Baseline call plus ``timeout=30`` (overall request timeout).
 
     Both backends honour this keyword now: core-python through
     azure-core's per-call timeout, rust by handing the value to the
@@ -472,8 +458,7 @@ def test_L3_timeout(container_for):
     the parity harness uses 30 s, well above it.
     """
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L3",
-         summary="L0 + timeout=30",
+    _run(container_for, body, summary="baseline + timeout=30",
          timeout=30).assert_functional_parity()
 
 
@@ -483,11 +468,10 @@ def test_L3_timeout(container_for):
                           "override, but `OperationOptions` doesn't yet expose a per-call hook and the "
                           "binding doesn't construct the pool options from Python's `read_timeout` "
                           "kwarg. Driver-level support exists; per-call parity is a binding follow-up.")
-def test_L3_read_timeout(container_for):
-    """L3: L0 + ``read_timeout=30`` (azure-core HTTP read timeout)."""
+def test_read_timeout(container_for):
+    """Baseline call plus ``read_timeout=30`` (azure-core HTTP read timeout)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L3",
-         summary="L0 + read_timeout=30",
+    _run(container_for, body, summary="baseline + read_timeout=30",
          read_timeout=30).assert_functional_parity()
 
 
@@ -497,20 +481,19 @@ def test_L3_read_timeout(container_for):
                           "AZURE_COSMOS_CONNECTION_POOL_MAX_CONNECT_TIMEOUT_MS, but the binding "
                           "doesn't yet wire Python's `connection_timeout` kwarg into the pool config. "
                           "No per-call hook today; client-level parity is a binding follow-up.")
-def test_L3_connection_timeout(container_for):
-    """L3: L0 + ``connection_timeout=10`` (azure-core HTTP connect timeout)."""
+def test_connection_timeout(container_for):
+    """Baseline call plus ``connection_timeout=10`` (azure-core HTTP connect timeout)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, level="L3",
-         summary="L0 + connection_timeout=10",
+    _run(container_for, body, summary="baseline + connection_timeout=10",
          connection_timeout=10).assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L4 — output / parsing parity
+# Output / parsing parity
 # ---------------------------------------------------------------------------
 
-def test_L4_response_hook_fires_once(container_for):
-    """L4: ``response_hook`` must fire exactly once per backend on success.
+def test_response_hook_fires_once(container_for):
+    """``response_hook`` must fire exactly once per backend on success.
 
     Goes through the same ``run_on_both_backends`` harness as every
     other test in this file, so the printed PARITY CALL block, the
@@ -538,11 +521,11 @@ def test_L4_response_hook_fires_once(container_for):
 
     cmp = run_on_both_backends(
         _do,
-        description="[L4] response_hook fires exactly once per backend",
+        description="response_hook fires exactly once per backend",
         request_kwargs={"response_hook": "<callable>"},
     )
     cmp.print_report()
-    print("[L4] response_hook fired: core-python={} rust={}".format(
+    print("response_hook fired: core-python={} rust={}".format(
         fired["core-python"], fired["rust"]))
     cmp.assert_functional_parity()
     assert fired["core-python"] == 1, "core-python should fire response_hook exactly once"
@@ -550,10 +533,10 @@ def test_L4_response_hook_fires_once(container_for):
 
 
 # ---------------------------------------------------------------------------
-# L5 — exception parity
+# Exception parity
 # ---------------------------------------------------------------------------
 
-def test_L5_duplicate_id_raises_typed_exception(container_for):
+def test_duplicate_id_raises_typed_exception(container_for):
     """Inserting the same id twice must raise ``CosmosResourceExistsError``
     (HTTP 409, sub_status 0) on **both** backends."""
     fixed_id = uuid.uuid4().hex
@@ -565,7 +548,7 @@ def test_L5_duplicate_id_raises_typed_exception(container_for):
 
     cmp = run_on_both_backends(
         _do,
-        description="[L5] duplicate-id 409: insert id={!r} twice".format(fixed_id),
+        description="duplicate-id 409: insert id={!r} twice".format(fixed_id),
         request_body={"id": fixed_id, "pk": "a", "_note": "sent twice"},
     )
     cmp.print_report()
@@ -575,7 +558,7 @@ def test_L5_duplicate_id_raises_typed_exception(container_for):
 
 
 # ---------------------------------------------------------------------------
-# L5 (additional) -- deprecated kwargs. The contract is "ignored, but emit
+# (additional) deprecated kwargs. The contract is "ignored, but emit
 # a DeprecationWarning". These tests verify that contract on core-python
 # (the only backend that runs the Python create_item entry point that owns
 # the warning) and run the call through the harness so any future divergence
@@ -594,25 +577,24 @@ def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
     )
 
 
-def test_L5_populate_query_metrics_deprecated(container_for):
-    """L5: ``populate_query_metrics=True`` is deprecated on create_item.
+def test_populate_query_metrics_deprecated(container_for):
+    """``populate_query_metrics=True`` is deprecated on create_item.
 
     The Python entry point must emit a ``DeprecationWarning`` and otherwise
-    behave like the L0 baseline. The flag does not reach the wire, so both
+    behave like the baseline. The flag does not reach the wire, so both
     backends should produce equivalent results.
     """
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     with warnings.catch_warnings(record=True) as recorded:
         warnings.simplefilter("always")
-        cmp = _run(container_for, body, level="L5",
-                   summary="L0 + populate_query_metrics=True (deprecated)",
+        cmp = _run(container_for, body, summary="baseline + populate_query_metrics=True (deprecated)",
                    populate_query_metrics=True)
     _assert_deprecation_warning_fired(recorded, "populate_query_metrics")
     cmp.assert_functional_parity()
 
 
-def test_L5_etag_deprecated_and_ignored(container_for):
-    """L5: ``etag='"foo"'`` is deprecated and ignored on create_item.
+def test_etag_deprecated_and_ignored(container_for):
+    """``etag='"foo"'`` is deprecated and ignored on create_item.
 
     The Python entry point must emit a ``DeprecationWarning`` and the
     request must succeed regardless (the value is dropped, not honoured).
@@ -620,27 +602,25 @@ def test_L5_etag_deprecated_and_ignored(container_for):
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     with warnings.catch_warnings(record=True) as recorded:
         warnings.simplefilter("always")
-        cmp = _run(container_for, body, level="L5",
-                   summary="L0 + etag='\"foo\"' (deprecated/ignored)",
+        cmp = _run(container_for, body, summary="baseline + etag='\"foo\"' (deprecated/ignored)",
                    etag='"foo"')
     _assert_deprecation_warning_fired(recorded, "etag")
     cmp.assert_functional_parity()
 
 
-def test_L5_match_condition_deprecated_and_ignored(container_for):
-    """L5: ``match_condition=MatchConditions.IfNotModified`` is deprecated/ignored."""
+def test_match_condition_deprecated_and_ignored(container_for):
+    """``match_condition=MatchConditions.IfNotModified`` is deprecated/ignored."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     with warnings.catch_warnings(record=True) as recorded:
         warnings.simplefilter("always")
-        cmp = _run(container_for, body, level="L5",
-                   summary="L0 + match_condition (deprecated/ignored)",
+        cmp = _run(container_for, body, summary="baseline + match_condition (deprecated/ignored)",
                    match_condition=MatchConditions.IfNotModified)
     _assert_deprecation_warning_fired(recorded, "match_condition")
     cmp.assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------
-# L1 (gap) -- a partitionless container, where the partition key goes on
+# (gap) a partitionless container, where the partition key goes on
 # the wire as ``"[]"``.
 #
 # Python serialises the partitionless / "none" partition key as the JSON
@@ -662,8 +642,8 @@ def test_L5_match_condition_deprecated_and_ignored(container_for):
 #   (b) delete it along with the binding's rejection branch.
 # ---------------------------------------------------------------------------
 
-def test_L1_partitionless_container_rejected_by_rust_binding():
-    """L1 gap: the binding rejects ``partition_key_header == "[]"``.
+def test_partitionless_container_rejected_by_rust_binding():
+    """Known gap: the binding rejects ``partition_key_header == "[]"``.
 
     Build a ``PreparedRequest`` whose ``partition_key_header`` is the
     partitionless wire shape and hand it straight to
@@ -711,7 +691,7 @@ def test_L1_partitionless_container_rejected_by_rust_binding():
         "naming the partitionless-container limitation; got: {!r}".format(message)
     )
     print(
-        "[L1] partitionless container rejection pinned: {}".format(message)
+        "partitionless container rejection pinned: {}".format(message)
     )
 
 

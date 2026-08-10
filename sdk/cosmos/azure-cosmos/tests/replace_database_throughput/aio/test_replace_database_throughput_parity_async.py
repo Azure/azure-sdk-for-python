@@ -53,6 +53,7 @@ def database_per_backend():
     def _make(offer_throughput):
         """Create one database per engine and register them for teardown."""
         for backend_name in ("core-python", "rust"):
+            database_id = "parity_repl_db_a_{}_{}".format(
                 backend_name.replace("-", ""), uuid.uuid4().hex[:6]
             )
             if offer_throughput is None:
@@ -84,8 +85,10 @@ async def test_replace_throughput_fixed_async(database_per_backend):
     created = database_per_backend(1000)
 
     async def _do(client):
-            """Replace fixed throughput then read it back on one engine."""
-            database = _database_for(client, created)
+        """Replace fixed throughput then read it back on one engine."""
+        database = _database_for(client, created)
+        await database.replace_throughput(2000)
+        return _normalize_throughput(await database.get_throughput())
 
     comparison = await run_on_both_backends_async(
         _do, description="async database replace_throughput, fixed RU/s"
@@ -106,6 +109,7 @@ async def test_replace_throughput_autoscale_async(database_per_backend):
         """Replace autoscale settings then read them back on one engine."""
         database = _database_for(client, created)
         await database.replace_throughput(
+            ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=20)
         )
         return _normalize_throughput(await database.get_throughput())
 

@@ -32,21 +32,21 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.cosmos._backend.base import raise_account_read_unsupported
 from azure.cosmos.offer import ThroughputProperties
 
-from ._backend.base import AsyncCosmosBackend
-from ._backend.factory import make_async_backend
-from .._backend.factory import resolve_client_transport_timeouts
-from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
-from ._database import DatabaseProxy, _get_database_link
-from ._retry_utility_async import _ConnectionRetryPolicy
+from .._backend.errors import raise_account_read_unsupported
+from .._backend.transport_settings import resolve_client_transport_timeouts
 from .._base import build_options as _build_options, _set_throughput_options
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
 from ..cosmos_client import _parse_connection_str
 from ..documents import ConnectionPolicy, DatabaseAccount
+from ._backend.base import AsyncCosmosBackend
+from ._backend.factory import make_async_backend
+from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
+from ._database import DatabaseProxy, _get_database_link
 from ._helpers.database_helper import AsyncDatabaseHelper
+from ._retry_utility_async import _ConnectionRetryPolicy
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 

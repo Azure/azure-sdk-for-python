@@ -27,14 +27,14 @@ from __future__ import annotations
 
 from typing import Any, Optional, Sequence
 
+from azure.cosmos._backend.client_config import build_client_config
 from azure.cosmos._backend.constants import BACKEND_NAME_RUST
+from azure.cosmos._backend.credentials import resolved_credential
 from azure.cosmos._backend.factory import (
-    _resolve_credential,
-    build_client_config,
-    reject_unsupported_transport_settings,
     resolve_backend_name,
     resolve_strict_isolation,
 )
+from azure.cosmos._backend.transport_settings import reject_unsupported_transport_settings
 
 from .base import AsyncCosmosBackend
 from .rust import AsyncRustBackend
@@ -94,23 +94,28 @@ def make_async_backend(
             ssl_config=ssl_config,
             transport=transport,
         )
-        master_key, token_credential = _resolve_credential(credential)
-        return AsyncRustBackend(
-            endpoint=url,
-            master_key=master_key,
-            token_credential=token_credential,
-            client_config=build_client_config(
-                preferred_locations,
-                excluded_locations=excluded_locations,
-                throttling_max_retry_count=throttling_max_retry_count,
-                throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
-                availability_strategy=availability_strategy,
-                user_agent_suffix=user_agent_suffix,
-                consistency_level=consistency_level,
-                proxy_allowed=proxy_allowed,
-                connection_timeout_seconds=connection_timeout_seconds,
-                read_timeout_seconds=read_timeout_seconds,
-            ),
-            strict_isolation=resolve_strict_isolation(strict_isolation),
-        )
+        # Sort the credential inside the guard, exactly as the sync factory does:
+        # an async credential becomes a bridge holding a background thread, and
+        # everything below can still raise (config validation, process-wide policy
+        # conflicts, strict isolation), which would otherwise strand that thread
+        # with no owner left to close it.
+        with resolved_credential(credential) as (master_key, token_credential):
+            return AsyncRustBackend(
+                endpoint=url,
+                master_key=master_key,
+                token_credential=token_credential,
+                client_config=build_client_config(
+                    preferred_locations,
+                    excluded_locations=excluded_locations,
+                    throttling_max_retry_count=throttling_max_retry_count,
+                    throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
+                    availability_strategy=availability_strategy,
+                    user_agent_suffix=user_agent_suffix,
+                    consistency_level=consistency_level,
+                    proxy_allowed=proxy_allowed,
+                    connection_timeout_seconds=connection_timeout_seconds,
+                    read_timeout_seconds=read_timeout_seconds,
+                ),
+                strict_isolation=resolve_strict_isolation(strict_isolation),
+            )
     return None

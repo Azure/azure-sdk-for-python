@@ -41,7 +41,7 @@ def container_for(request):
         pass
 
 
-def test_L0_partition_query_baseline(container_for):
+def test_partition_query_baseline(container_for):
     """Baseline: partition-scoped query returns the same item ids."""
     # Without this, a basic partition query returning different items or a different order
     # on rust would go unnoticed.
@@ -65,13 +65,13 @@ def test_L0_partition_query_baseline(container_for):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L0] partition query baseline",
+        description="partition query baseline",
     )
     comparison.print_report()
     comparison.assert_functional_parity()
 
 
-def test_L1_partition_query_continuation_replay(container_for):
+def test_partition_query_continuation_replay(container_for):
     """Partition query continuation token resumes on the same page."""
     # Without this, broken paging on rust (a wrong or non-resumable continuation token)
     # would slip through and break customers who page through large results.
@@ -107,13 +107,13 @@ def test_L1_partition_query_continuation_replay(container_for):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L1] partition query continuation replay",
+        description="partition query continuation replay",
     )
     comparison.print_report()
     comparison.assert_functional_parity()
 
 
-def test_L2_cross_partition_query_fallback(container_for):
+def test_cross_partition_query_fallback(container_for):
     """Cross-partition query (no partition key) stays behaviorally equivalent."""
     # Without this, the rust cross-partition path could drop or duplicate items unnoticed.
 
@@ -136,13 +136,13 @@ def test_L2_cross_partition_query_fallback(container_for):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L2] cross-partition query fallback",
+        description="cross-partition query fallback",
     )
     comparison.print_report()
     comparison.assert_functional_parity()
 
 
-def test_L3_invalid_query_raises_same_type(container_for):
+def test_invalid_query_raises_same_type(container_for):
     """Invalid SQL text raises the same typed exception on both backends."""
     # Without this, rust raising a different exception type on bad SQL would break
     # customers' error handling.
@@ -162,13 +162,13 @@ def test_L3_invalid_query_raises_same_type(container_for):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L3] invalid query syntax",
+        description="invalid query syntax",
     )
     comparison.print_report()
     comparison.assert_exception_parity()
 
 
-def test_L4_populate_index_metrics_parity(container_for):
+def test_populate_index_metrics_parity(container_for):
     """A supported metrics option uses Rust and returns the same public value."""
 
     def _do(client):
@@ -200,7 +200,7 @@ def test_L4_populate_index_metrics_parity(container_for):
 
     comparison = run_on_both_backends(
         _do,
-        description="[L4] populate index metrics",
+        description="populate index metrics",
     )
     comparison.print_report()
     comparison.assert_functional_parity()

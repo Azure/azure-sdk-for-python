@@ -56,7 +56,7 @@ import pytest
 
 from azure.cosmos import http_constants
 from azure.cosmos import _runtime_constants as runtime_constants
-from azure.cosmos._backend.base import OP_READ_OFFER, OP_TO_BINDING_METHOD
+from azure.cosmos._backend.operations import OP_READ_OFFER, OP_TO_BINDING_METHOD
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._offer_rust_routing import (
     build_read_offer_prepared_request,
@@ -284,3 +284,131 @@ async def test_prepare_read_offer_request_async_carries_the_legacy_headers(monke
     )
 
     _assert_offer_read_prepared(prepared, captured)
+
+
+# ---------------------------------------------------------------------------
+# Driver-owned headers must not ride along to the binding.
+# ---------------------------------------------------------------------------
+#
+# The offer path is the one rust entry point that builds its request from a
+# *complete legacy header map* (``_base.GetHeaders``) rather than from camelCase
+# option-keys. That map necessarily contains the standard headers the rust driver
+# writes for itself -- the authorization signature, the timestamp, the content
+# type -- and forwarding them to the binding is wrong in a way nothing else
+# catches: ``extract_op_modifiers`` has no translation arm for them, so it drops
+# them silently, and under ``COSMOS_WIRE_STRICT`` it rejects the whole request.
+#
+# This was found by running the real throughput calls against a live account with
+# COSMOS_WIRE_STRICT=1: ``get_throughput`` and ``replace_throughput`` failed on
+# ``Cache-Control``, with ``Accept``, ``Content-Type`` and ``authorization``
+# behind it. The query/feed path already stripped this exact set; the offer path
+# never did.
+
+
+def _prepared_offer_read_headers(monkeypatch, default_headers):
+    """Build an offer-read PreparedRequest whose legacy headers are ``default_headers``."""
+
+    def _fake_get_headers(_client, _headers, *_args):
+        """Return a full legacy header map, the way ``_base.GetHeaders`` would."""
+        return dict(default_headers)
+
+    def _fake_set_session(_client, _req_headers, _path, _request_params, _options):
+        """No-op stand-in for the session-token step."""
+
+    monkeypatch.setattr("azure.cosmos._offer_rust_routing.base.GetHeaders", _fake_get_headers)
+    monkeypatch.setattr(
+        "azure.cosmos._offer_rust_routing.base.set_session_token_header", _fake_set_session
+    )
+    prepared = prepare_read_offer_request(
+        client_connection=_offer_read_connection(),
+        container_link="dbs/db/colls/coll",
+        offer_query=_OFFER_QUERY,
+        options={},
+    )
+    return prepared.headers
+
+
+# The standard headers the rust driver builds itself, paired with a value the
+# legacy path would really have produced for an offer query.
+_DRIVER_OWNED_HEADER_SAMPLES = [
+    ("Cache-Control", "no-cache"),
+    ("Accept", "application/json"),
+    ("Content-Type", "application/query+json"),
+    ("authorization", "type%3dmaster%26ver%3d1.0%26sig%3dabc"),
+    ("User-Agent", "azsdk-python-cosmos/4.0.0"),
+    ("x-ms-date", "Sat, 09 Aug 2026 12:00:00 GMT"),
+    ("x-ms-version", "2020-07-15"),
+]
+
+
+@pytest.mark.parametrize("header_name,header_value", _DRIVER_OWNED_HEADER_SAMPLES)
+def test_offer_read_strips_driver_owned_header(monkeypatch, header_name, header_value):
+    """Each header the driver writes itself is dropped before the binding sees it.
+
+    Sending one is at best redundant and at worst a hard error under
+    ``COSMOS_WIRE_STRICT``, which is the gate meant to catch genuine option
+    divergence -- so a single stray header here disables that safety net.
+    """
+    headers = _prepared_offer_read_headers(
+        monkeypatch,
+        {header_name: header_value, "x-ms-activity-id": "act-1"},
+    )
+    assert header_name not in headers
+    assert header_name.lower() not in {name.lower() for name in headers}
+    # The header that is genuinely ours to send still survives the filter.
+    assert headers["x-ms-activity-id"] == "act-1"
+
+
+def test_offer_read_keeps_headers_the_driver_acts_on(monkeypatch):
+    """Filtering removes only driver-owned names, never the request's real content.
+
+    Guards against an over-broad filter: the ``x-ms-*`` headers below carry the
+    session token, the consistency level and the intended-collection rid, and
+    dropping any of them would change the request the service sees.
+    """
+    meaningful = {
+        "x-ms-activity-id": "act-1",
+        "x-ms-session-token": "0:-1#5",
+        "x-ms-consistency-level": "Session",
+        "x-ms-cosmos-intended-collection-rid": "rid-1",
+        "x-ms-documentdb-query-iscontinuationexpected": "false",
+    }
+    headers = _prepared_offer_read_headers(
+        monkeypatch, {**meaningful, "Cache-Control": "no-cache"},
+    )
+    for name, value in meaningful.items():
+        assert headers[name] == value
+    assert "Cache-Control" not in headers
+
+
+def test_offer_read_sends_nothing_the_binding_cannot_translate(monkeypatch):
+    """No key reaches the binding that ``extract_op_modifiers`` would reject.
+
+    The end-to-end statement of the bug: with a realistic full legacy header map,
+    every surviving key must either be one the binding translates or an ``x-ms-*``
+    name it forwards. Anything else would be silently dropped in production and
+    would fail the request outright under ``COSMOS_WIRE_STRICT``.
+    """
+    full_legacy_header_map = {
+        "Cache-Control": "no-cache",
+        "Accept": "application/json",
+        "Content-Type": "application/query+json",
+        "authorization": "type%3dmaster%26sig%3dabc",
+        "User-Agent": "azsdk-python-cosmos/4.0.0",
+        "x-ms-date": "Sat, 09 Aug 2026 12:00:00 GMT",
+        "x-ms-version": "2020-07-15",
+        "x-ms-activity-id": "act-1",
+        "x-ms-session-token": "0:-1#5",
+        "x-ms-consistency-level": "Session",
+    }
+    headers = _prepared_offer_read_headers(monkeypatch, full_legacy_header_map)
+    untranslatable = [
+        name for name in headers
+        if not str(name).lower().startswith("x-ms-")
+        and str(name) not in (Constants.Kwargs.EXCLUDED_LOCATIONS,
+                              Constants.OVERALL_TIMEOUT_SECONDS)
+    ]
+    assert not untranslatable, (
+        "These keys would reach the rust wire layer with no translation arm and be "
+        f"silently dropped (or rejected under COSMOS_WIRE_STRICT): {untranslatable}"
+    )

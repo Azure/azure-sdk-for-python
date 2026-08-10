@@ -35,14 +35,8 @@ from __future__ import annotations
 
 from typing import Any, Callable, Optional
 
-from .base import (
-    BackendResponse,
-    CosmosBackend,
-    LegacyOperation,
-    PreparedQuery,
-    PreparedRequest,
-    QueryPage,
-)
+from .base import CosmosBackend
+from .contracts import BackendResponse, LegacyOperation, PreparedQuery, PreparedRequest, QueryPage
 from .constants import BACKEND_NAME_CORE_PYTHON
 
 

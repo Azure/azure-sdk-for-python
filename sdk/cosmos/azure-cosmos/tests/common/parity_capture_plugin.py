@@ -878,7 +878,7 @@ def _rust_operation_count() -> Optional[int]:
 
 def _rust_fallback_count() -> int:
     """Return the number of Rust calls that continued through Python."""
-    from azure.cosmos._backend.base import rust_compatibility_fallback_count
+    from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
     return rust_compatibility_fallback_count()
 
 

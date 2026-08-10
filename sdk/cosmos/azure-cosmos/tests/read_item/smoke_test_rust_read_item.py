@@ -35,11 +35,8 @@ import sys
 import uuid
 
 from azure.cosmos import CosmosClient, PartitionKey
-from azure.cosmos._backend.base import (
-    OP_CREATE_ITEM,
-    OP_READ_ITEM,
-    PreparedRequest,
-)
+from azure.cosmos._backend.operations import OP_CREATE_ITEM, OP_READ_ITEM
+from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._backend.rust import RustBackend
 
 ENDPOINT = os.environ.get("ACCOUNT_HOST")

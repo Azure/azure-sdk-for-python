@@ -61,7 +61,8 @@ def main() -> int:
         print("Run `maturin develop` from the repo root.", file=sys.stderr)
         return 2
 
-    from azure.cosmos._backend.base import OP_CREATE_ITEM, PreparedRequest
+    from azure.cosmos._backend.operations import OP_CREATE_ITEM
+    from azure.cosmos._backend.contracts import PreparedRequest
     from azure.cosmos._backend.rust import RustBackend
 
     # 2. Make sure the target db + container exist (created via the legacy

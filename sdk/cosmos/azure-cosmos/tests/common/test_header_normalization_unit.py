@@ -27,7 +27,7 @@ from __future__ import annotations
 
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend.base import normalize_response_headers
+from azure.cosmos._backend._binding_conversions import normalize_response_headers
 
 
 # --- Empty / None inputs -------------------------------------------------
