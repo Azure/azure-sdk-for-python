@@ -220,13 +220,6 @@ parameters:
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
-    # conda cannot restore from CFS. `conda env create` resolves against
-    # conda.anaconda.org / repo.anaconda.com, conda has no PIP_INDEX_URL equivalent,
-    # and Azure Artifacts has no conda feed type, so CFSClean severs the connection
-    # before the build environment can even be created. Everything pip-based in this
-    # pipeline does restore from the CFS feed. Revisit if a mirrored conda channel or
-    # a pre-baked pool image becomes available.
-    NetworkIsolationPolicy: Permissive
     stages:
       - stage: Build_Universal_Dependencies
         displayName: Build Universal Conda Packages
