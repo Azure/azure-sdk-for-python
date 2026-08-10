@@ -2103,6 +2103,7 @@ def test_callback_queue_byte_budget_covers_signal_events(monkeypatch) -> None:
 
 def test_shutdown_releases_queued_callback_payloads() -> None:
     async def scenario() -> None:
+        baseline = voice_host._GLOBAL_CALLBACK_QUEUE_BYTES  # pylint: disable=protected-access
         connection = _connection(None)
         work = voice_host._CallbackWork(  # pylint: disable=protected-access
             kind="handoff.failed",
@@ -2114,13 +2115,20 @@ def test_shutdown_releases_queued_callback_payloads() -> None:
             ),
             callback=None,
         )
-        connection._put_work(work)  # pylint: disable=protected-access
-        assert connection._callback_queue_bytes > 0  # pylint: disable=protected-access
+        try:
+            connection._put_work(work)  # pylint: disable=protected-access
+            assert connection._callback_queue_bytes > 0  # pylint: disable=protected-access
+            assert voice_host._GLOBAL_CALLBACK_QUEUE_BYTES > baseline  # pylint: disable=protected-access
 
-        await connection._shutdown_runtime(drain_callbacks=False)  # pylint: disable=protected-access
+            await connection._shutdown_runtime(drain_callbacks=False)  # pylint: disable=protected-access
 
-        assert connection._callback_queue.empty()  # pylint: disable=protected-access
-        assert connection._callback_queue_bytes == 0  # pylint: disable=protected-access
+            assert connection._callback_queue.empty()  # pylint: disable=protected-access
+            assert connection._callback_queue_bytes == 0  # pylint: disable=protected-access
+            assert voice_host._GLOBAL_CALLBACK_QUEUE_BYTES == baseline  # pylint: disable=protected-access
+        finally:
+            connection._discard_callback_queue()  # pylint: disable=protected-access
+            if not connection._closed:  # pylint: disable=protected-access
+                connection._release_connection_state()  # pylint: disable=protected-access
 
     asyncio.run(scenario())
 

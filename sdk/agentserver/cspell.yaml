@@ -53,6 +53,7 @@ words:
   - etype
   - fdao
   - finalizer
+  - finalizers
   - foundrysdk
   - frontmatter
   - fspath
@@ -125,6 +126,7 @@ words:
   - unimportable
   - unparseable
   - unstarted
+  - unsubmitted
   - unwritable
   - valeriepham
   - Vnext

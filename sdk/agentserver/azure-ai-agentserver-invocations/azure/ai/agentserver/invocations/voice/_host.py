@@ -2732,9 +2732,11 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             raise RuntimeError("Voice global callback queue byte limit reached")
         try:
             self._callback_queue.put_nowait(work)
-        except asyncio.QueueFull as exc:
+        except BaseException as exc:  # pylint: disable=broad-exception-caught
             _release_global_callback_queue_bytes(work.payload_bytes)
-            raise VoiceBridgeProtocolError("Voice callback queue limit exceeded", close_code=1008) from exc
+            if isinstance(exc, asyncio.QueueFull):
+                raise VoiceBridgeProtocolError("Voice callback queue limit exceeded", close_code=1008) from exc
+            raise
         self._callback_queue_bytes += work.payload_bytes
 
     def _ensure_dispatch_open(self) -> None:
@@ -2959,7 +2961,12 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 {"kind": work.kind},
             )
 
-    async def _await_signal_callback(self, work: _CallbackWork) -> None:
+    async def _await_signal_callback(
+        self,
+        work: _CallbackWork,
+        *,
+        retained_by_parent: bool = False,
+    ) -> None:
         assert self._session is not None
         assert work.callback is not None
 
@@ -2968,17 +2975,37 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             assert work.callback is not None
             await work.callback(self._session, work.event)
 
-        customer_task = self._create_customer_task(
-            _invoke_customer_callback(),
-            name=f"voice_{work.kind}",
-            retained_bytes=work.payload_bytes or _estimate_retained_bytes(work),
-        )
+        if retained_by_parent:
+            customer_task = _create_owned_task(
+                _invoke_customer_callback(),
+                name=f"voice_{work.kind}",
+            )
+        else:
+            customer_task = self._create_customer_task(
+                _invoke_customer_callback(),
+                name=f"voice_{work.kind}",
+                retained_bytes=work.payload_bytes or _estimate_retained_bytes(work),
+            )
         try:
             await asyncio.wait((customer_task,))
-        except asyncio.CancelledError:
+        except asyncio.CancelledError as owner_cancellation:
             if not customer_task.done():
                 self._schedule_customer_cleanup(customer_task)
-            raise
+                if retained_by_parent:
+                    # The parent owns this work graph's byte reservation. Keep
+                    # that owner alive until a cancellation-resistant child
+                    # actually finishes, while shutdown only waits on it for a
+                    # bounded interval through _schedule_customer_cleanup.
+                    while not customer_task.done():
+                        try:
+                            await asyncio.shield(customer_task)
+                        except asyncio.CancelledError:
+                            continue
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            break
+            if retained_by_parent and customer_task.done() and not customer_task.cancelled():
+                customer_task.exception()
+            raise owner_cancellation
         if customer_task.cancelled():
             raise RuntimeError("Voice signal callback was cancelled")
         error = customer_task.exception()
@@ -3541,9 +3568,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             # own bounded path in _shutdown_runtime.
             work = _CallbackWork(kind="session.end", event=event, callback=self._on_session_end)
             session_end_coroutine = self._run_session_end_callback(work)
-            session_end_task = _create_owned_task(
+            session_end_task = self._create_customer_task(
                 session_end_coroutine,
                 name="voice_session_end",
+                retained_bytes=_estimate_retained_bytes(work),
             )
             session_end_error = _task_role_error(
                 session_end_task,
@@ -3557,7 +3585,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
     async def _run_session_end_callback(self, work: _CallbackWork) -> None:
         callback_started_ns = time.monotonic_ns()
         try:
-            await self._await_signal_callback(work)
+            await self._await_signal_callback(work, retained_by_parent=True)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error("Voice session.end callback failed: %s", type(exc).__name__)
             _metric_add(_CALLBACK_ERROR_COUNTER, 1, {"kind": work.kind})
@@ -3678,19 +3706,13 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         if session_end_task is not None:
             # Dedicated bounded path for session teardown, independent of the
             # ordinary callback queue drained above.
-            current_task = asyncio.current_task()
-            cancellation_requests = current_task.cancelling() if current_task is not None else 0
-            try:
-                await asyncio.wait_for(asyncio.shield(session_end_task), timeout=_remaining())
-            except asyncio.TimeoutError:
+            done, _ = await asyncio.wait((session_end_task,), timeout=_remaining())
+            if not done:
                 logger.warning("Voice session.end callback exceeded shutdown deadline")
                 if not session_end_task.done():
                     self._schedule_customer_cleanup(session_end_task)
-            except asyncio.CancelledError:
-                if current_task is not None and current_task.cancelling() > cancellation_requests:
-                    raise
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
+            elif not session_end_task.cancelled():
+                session_end_task.exception()
 
         self._closed = True
         self._record_close(1000)
@@ -3930,7 +3952,14 @@ def _estimate_retained_bytes(event: Any) -> int:
             continue
         seen.add(value_id)
         total += sys.getsizeof(value)
-        if is_dataclass(value) and not isinstance(value, type):
+        if isinstance(value, VoiceResponse):
+            response_attributes = value.__dict__
+            total += sys.getsizeof(response_attributes)
+            pending.extend(field_value for name, field_value in response_attributes.items() if name != "_sender")
+        elif is_dataclass(value) and not isinstance(value, type):
+            dataclass_attributes = getattr(value, "__dict__", None)
+            if dataclass_attributes is not None:
+                total += sys.getsizeof(dataclass_attributes)
             pending.extend(getattr(value, field.name) for field in dataclass_fields(value))
         elif isinstance(value, Mapping):
             if isinstance(value, MappingProxyType):
@@ -3942,6 +3971,11 @@ def _estimate_retained_bytes(event: Any) -> int:
             pending.extend(value.values())
         elif isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
             pending.extend(value)
+        elif value.__class__.__module__ == "asyncio.locks" or value.__class__.__module__.endswith("._runtime"):
+            runtime_attributes = getattr(value, "__dict__", None)
+            if runtime_attributes is not None:
+                total += sys.getsizeof(runtime_attributes)
+                pending.extend(runtime_attributes.values())
     return total
 
 
