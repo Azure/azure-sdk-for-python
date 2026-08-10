@@ -1,10 +1,15 @@
 # Release History
 
+## 1.43.0b1 (Unreleased)
+
+### Features Added
+
+- Added streaming support via the `azure.core.streaming` module for JSONL and Server-Sent Events (SSE), including the `Stream`/`AsyncStream` iterators and the `JSONLDecoder`/`AsyncJSONLDecoder` and `SSEDecoder`/`AsyncSSEDecoder` decoders. #38806
+
 ## 1.42.0 (Unreleased)
 
 ### Features Added
 
-- Added JSONL streaming support via the `azure.core.streaming` module, including the `Stream`/`AsyncStream` iterators and `JSONLDecoder`/`AsyncJSONLDecoder`. #38806
 - Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.
 
 ## 1.41.0 (2026-05-07)
