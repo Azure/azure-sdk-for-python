@@ -4,9 +4,9 @@ namespace azure.ai.contentunderstanding
     def azure.ai.contentunderstanding.to_llm_input(
             result: AnalysisResult, 
             *, 
+            custom_metadata: Optional[Dict[str, Any]] = ..., 
             include_fields: bool = True, 
-            include_markdown: bool = True, 
-            metadata: Optional[Dict[str, Any]] = ...
+            include_markdown: bool = True
         ) -> str: ...
 
 
@@ -22,11 +22,61 @@ namespace azure.ai.contentunderstanding
                 **kwargs: Any
             ) -> None: ...
 
+        @distributed_trace
+        def analyze_binary_inline(
+                self, 
+                analyzer_id: str, 
+                binary_input: bytes, 
+                *, 
+                allow_input_truncation: Optional[bool] = ..., 
+                content_range: Optional[str] = ..., 
+                content_type: str = "application/octet-stream", 
+                processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
+                **kwargs: Any
+            ) -> ContentAnalyzerInlineResponse: ...
+
+        @overload
+        def analyze_inline(
+                self, 
+                analyzer_id: str, 
+                *, 
+                allow_input_truncation: Optional[bool] = ..., 
+                inputs: list[AnalysisInput], 
+                model_deployments: Optional[dict[str, str]] = ..., 
+                processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
+                **kwargs: Any
+            ) -> ContentAnalyzerInlineResponse: ...
+
+        @overload
+        def analyze_inline(
+                self, 
+                analyzer_id: str, 
+                body: JSON, 
+                *, 
+                allow_input_truncation: Optional[bool] = ..., 
+                content_type: str = "application/json", 
+                processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
+                **kwargs: Any
+            ) -> ContentAnalyzerInlineResponse: ...
+
+        @overload
+        def analyze_inline(
+                self, 
+                analyzer_id: str, 
+                body: IO[bytes], 
+                *, 
+                allow_input_truncation: Optional[bool] = ..., 
+                content_type: str = "application/json", 
+                processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
+                **kwargs: Any
+            ) -> ContentAnalyzerInlineResponse: ...
+
         @overload
         def begin_analyze(
                 self, 
                 analyzer_id: str, 
                 *, 
+                allow_input_truncation: Optional[bool] = ..., 
                 inputs: list[AnalysisInput], 
                 model_deployments: Optional[dict[str, str]] = ..., 
                 processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
@@ -39,6 +89,7 @@ namespace azure.ai.contentunderstanding
                 analyzer_id: str, 
                 body: JSON, 
                 *, 
+                allow_input_truncation: Optional[bool] = ..., 
                 content_type: str = "application/json", 
                 processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
                 **kwargs: Any
@@ -50,6 +101,7 @@ namespace azure.ai.contentunderstanding
                 analyzer_id: str, 
                 body: IO[bytes], 
                 *, 
+                allow_input_truncation: Optional[bool] = ..., 
                 content_type: str = "application/json", 
                 processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
                 **kwargs: Any
@@ -61,6 +113,7 @@ namespace azure.ai.contentunderstanding
                 analyzer_id: str, 
                 binary_input: bytes, 
                 *, 
+                allow_input_truncation: Optional[bool] = ..., 
                 content_range: Optional[str] = ..., 
                 content_type: str = "application/octet-stream", 
                 processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
@@ -84,7 +137,7 @@ namespace azure.ai.contentunderstanding
         def begin_copy_analyzer(
                 self, 
                 analyzer_id: str, 
-                body: JSON, 
+                body: CopyAnalyzerRequest, 
                 *, 
                 allow_replace: Optional[bool] = ..., 
                 content_type: str = "application/json", 
@@ -117,7 +170,7 @@ namespace azure.ai.contentunderstanding
         def begin_create_analyzer(
                 self, 
                 analyzer_id: str, 
-                resource: JSON, 
+                resource: ContentAnalyzer, 
                 *, 
                 allow_replace: Optional[bool] = ..., 
                 content_type: str = "application/json", 
@@ -184,7 +237,7 @@ namespace azure.ai.contentunderstanding
         def grant_copy_authorization(
                 self, 
                 analyzer_id: str, 
-                body: JSON, 
+                body: GrantCopyAuthorizationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -225,7 +278,7 @@ namespace azure.ai.contentunderstanding
         def update_analyzer(
                 self, 
                 analyzer_id: str, 
-                resource: JSON, 
+                resource: ContentAnalyzer, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -253,7 +306,7 @@ namespace azure.ai.contentunderstanding
         @overload
         def update_defaults(
                 self, 
-                body: JSON, 
+                body: UpdateDefaultsRequest, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -283,11 +336,61 @@ namespace azure.ai.contentunderstanding.aio
                 **kwargs: Any
             ) -> None: ...
 
+        @distributed_trace_async
+        async def analyze_binary_inline(
+                self, 
+                analyzer_id: str, 
+                binary_input: bytes, 
+                *, 
+                allow_input_truncation: Optional[bool] = ..., 
+                content_range: Optional[str] = ..., 
+                content_type: str = "application/octet-stream", 
+                processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
+                **kwargs: Any
+            ) -> ContentAnalyzerInlineResponse: ...
+
+        @overload
+        async def analyze_inline(
+                self, 
+                analyzer_id: str, 
+                *, 
+                allow_input_truncation: Optional[bool] = ..., 
+                inputs: list[AnalysisInput], 
+                model_deployments: Optional[dict[str, str]] = ..., 
+                processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
+                **kwargs: Any
+            ) -> ContentAnalyzerInlineResponse: ...
+
+        @overload
+        async def analyze_inline(
+                self, 
+                analyzer_id: str, 
+                body: JSON, 
+                *, 
+                allow_input_truncation: Optional[bool] = ..., 
+                content_type: str = "application/json", 
+                processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
+                **kwargs: Any
+            ) -> ContentAnalyzerInlineResponse: ...
+
+        @overload
+        async def analyze_inline(
+                self, 
+                analyzer_id: str, 
+                body: IO[bytes], 
+                *, 
+                allow_input_truncation: Optional[bool] = ..., 
+                content_type: str = "application/json", 
+                processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
+                **kwargs: Any
+            ) -> ContentAnalyzerInlineResponse: ...
+
         @overload
         async def begin_analyze(
                 self, 
                 analyzer_id: str, 
                 *, 
+                allow_input_truncation: Optional[bool] = ..., 
                 inputs: list[AnalysisInput], 
                 model_deployments: Optional[dict[str, str]] = ..., 
                 processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
@@ -300,6 +403,7 @@ namespace azure.ai.contentunderstanding.aio
                 analyzer_id: str, 
                 body: JSON, 
                 *, 
+                allow_input_truncation: Optional[bool] = ..., 
                 content_type: str = "application/json", 
                 processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
                 **kwargs: Any
@@ -311,6 +415,7 @@ namespace azure.ai.contentunderstanding.aio
                 analyzer_id: str, 
                 body: IO[bytes], 
                 *, 
+                allow_input_truncation: Optional[bool] = ..., 
                 content_type: str = "application/json", 
                 processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
                 **kwargs: Any
@@ -322,6 +427,7 @@ namespace azure.ai.contentunderstanding.aio
                 analyzer_id: str, 
                 binary_input: bytes, 
                 *, 
+                allow_input_truncation: Optional[bool] = ..., 
                 content_range: Optional[str] = ..., 
                 content_type: str = "application/octet-stream", 
                 processing_location: Optional[Union[str, ProcessingLocation]] = ..., 
@@ -345,7 +451,7 @@ namespace azure.ai.contentunderstanding.aio
         async def begin_copy_analyzer(
                 self, 
                 analyzer_id: str, 
-                body: JSON, 
+                body: CopyAnalyzerRequest, 
                 *, 
                 allow_replace: Optional[bool] = ..., 
                 content_type: str = "application/json", 
@@ -378,7 +484,7 @@ namespace azure.ai.contentunderstanding.aio
         async def begin_create_analyzer(
                 self, 
                 analyzer_id: str, 
-                resource: JSON, 
+                resource: ContentAnalyzer, 
                 *, 
                 allow_replace: Optional[bool] = ..., 
                 content_type: str = "application/json", 
@@ -445,7 +551,7 @@ namespace azure.ai.contentunderstanding.aio
         async def grant_copy_authorization(
                 self, 
                 analyzer_id: str, 
-                body: JSON, 
+                body: GrantCopyAuthorizationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -486,7 +592,7 @@ namespace azure.ai.contentunderstanding.aio
         async def update_analyzer(
                 self, 
                 analyzer_id: str, 
-                resource: JSON, 
+                resource: ContentAnalyzer, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -514,7 +620,7 @@ namespace azure.ai.contentunderstanding.aio
         @overload
         async def update_defaults(
                 self, 
-                body: JSON, 
+                body: UpdateDefaultsRequest, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -556,6 +662,7 @@ namespace azure.ai.contentunderstanding.models
         fields: Optional[dict[str, ContentField]]
         kind: str
         markdown: Optional[str]
+        metadata: Optional[dict[str, str]]
         mime_type: str
         path: Optional[str]
 
@@ -568,6 +675,7 @@ namespace azure.ai.contentunderstanding.models
                 fields: Optional[dict[str, ContentField]] = ..., 
                 kind: str, 
                 markdown: Optional[str] = ..., 
+                metadata: Optional[dict[str, str]] = ..., 
                 mime_type: str, 
                 path: Optional[str] = ...
             ) -> None: ...
@@ -608,6 +716,7 @@ namespace azure.ai.contentunderstanding.models
         api_version: Optional[str]
         contents: list[AnalysisContent]
         created_at: Optional[datetime]
+        infos: Optional[list[ODataV4Format]]
         string_encoding: Optional[str]
         warnings: Optional[list[ODataV4Format]]
 
@@ -619,6 +728,7 @@ namespace azure.ai.contentunderstanding.models
                 api_version: Optional[str] = ..., 
                 contents: list[AnalysisContent], 
                 created_at: Optional[datetime] = ..., 
+                infos: Optional[list[ODataV4Format]] = ..., 
                 string_encoding: Optional[str] = ..., 
                 warnings: Optional[list[ODataV4Format]] = ...
             ) -> None: ...
@@ -683,6 +793,7 @@ namespace azure.ai.contentunderstanding.models
         key_frame_times_ms: Optional[list[int]]
         kind: Literal[AnalysisContentKind.AUDIO_VISUAL]
         markdown: str
+        metadata: dict[str, str]
         mime_type: str
         path: str
         segments: Optional[list[AudioVisualContentSegment]]
@@ -749,6 +860,24 @@ namespace azure.ai.contentunderstanding.models
         MARKDOWN = "markdown"
 
 
+    class azure.ai.contentunderstanding.models.ChunkingStrategy(_Model):
+        kind: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                kind: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.contentunderstanding.models.ChunkingStrategyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SEMANTIC = "semantic"
+
+
     class azure.ai.contentunderstanding.models.ContentAnalyzer(_Model):
         analyzer_id: str
         base_analyzer_id: Optional[str]
@@ -808,8 +937,11 @@ namespace azure.ai.contentunderstanding.models
 
 
     class azure.ai.contentunderstanding.models.ContentAnalyzerConfig(_Model):
+        allow_in_page_segments: Optional[bool]
+        allow_input_truncation: Optional[bool]
         annotation_format: Optional[Union[str, AnnotationFormat]]
         chart_format: Optional[Union[str, ChartFormat]]
+        chunking_strategy: Optional[ChunkingStrategy]
         content_categories: Optional[dict[str, ContentCategoryDefinition]]
         disable_face_blurring: Optional[bool]
         enable_figure_analysis: Optional[bool]
@@ -824,13 +956,17 @@ namespace azure.ai.contentunderstanding.models
         return_details: Optional[bool]
         segment_per_page: Optional[bool]
         table_format: Optional[Union[str, TableFormat]]
+        workflow: Optional[Union[str, ContentAnalyzerWorkflow]]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                allow_in_page_segments: Optional[bool] = ..., 
+                allow_input_truncation: Optional[bool] = ..., 
                 annotation_format: Optional[Union[str, AnnotationFormat]] = ..., 
                 chart_format: Optional[Union[str, ChartFormat]] = ..., 
+                chunking_strategy: Optional[ChunkingStrategy] = ..., 
                 content_categories: Optional[dict[str, ContentCategoryDefinition]] = ..., 
                 disable_face_blurring: Optional[bool] = ..., 
                 enable_figure_analysis: Optional[bool] = ..., 
@@ -844,7 +980,26 @@ namespace azure.ai.contentunderstanding.models
                 omit_content: Optional[bool] = ..., 
                 return_details: Optional[bool] = ..., 
                 segment_per_page: Optional[bool] = ..., 
-                table_format: Optional[Union[str, TableFormat]] = ...
+                table_format: Optional[Union[str, TableFormat]] = ..., 
+                workflow: Optional[Union[str, ContentAnalyzerWorkflow]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.contentunderstanding.models.ContentAnalyzerInlineResponse(_Model):
+        result: AnalysisResult
+        status: Union[str, OperationState]
+        usage: Optional[UsageDetails]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                result: AnalysisResult, 
+                status: Union[str, OperationState], 
+                usage: Optional[UsageDetails] = ...
             ) -> None: ...
 
         @overload
@@ -878,6 +1033,11 @@ namespace azure.ai.contentunderstanding.models
         DELETING = "deleting"
         FAILED = "failed"
         READY = "ready"
+
+
+    class azure.ai.contentunderstanding.models.ContentAnalyzerWorkflow(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENTIC = "agentic"
+        DEFAULT = "default"
 
 
     class azure.ai.contentunderstanding.models.ContentCategoryDefinition(_Model):
@@ -1212,22 +1372,41 @@ namespace azure.ai.contentunderstanding.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.contentunderstanding.models.DocumentChunk(_Model):
+        source: Optional[str]
+        spans: list[ContentSpan]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                source: Optional[str] = ..., 
+                spans: list[ContentSpan]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.contentunderstanding.models.DocumentContent(AnalysisContent, discriminator='document'):
         analyzer_id: str
         annotations: Optional[list[DocumentAnnotation]]
         category: str
+        chunks: Optional[list[DocumentChunk]]
         end_page_number: int
         fields: dict[str, ContentField]
         figures: Optional[list[DocumentFigure]]
         hyperlinks: Optional[list[DocumentHyperlink]]
         kind: Literal[AnalysisContentKind.DOCUMENT]
         markdown: str
+        metadata: dict[str, str]
         mime_type: str
         pages: Optional[list[DocumentPage]]
         paragraphs: Optional[list[DocumentParagraph]]
         path: str
         sections: Optional[list[DocumentSection]]
         segments: Optional[list[DocumentContentSegment]]
+        signatures: Optional[list[DocumentSignature]]
         start_page_number: int
         tables: Optional[list[DocumentTable]]
         unit: Optional[Union[str, LengthUnit]]
@@ -1239,17 +1418,20 @@ namespace azure.ai.contentunderstanding.models
                 analyzer_id: Optional[str] = ..., 
                 annotations: Optional[list[DocumentAnnotation]] = ..., 
                 category: Optional[str] = ..., 
+                chunks: Optional[list[DocumentChunk]] = ..., 
                 end_page_number: int, 
                 fields: Optional[dict[str, ContentField]] = ..., 
                 figures: Optional[list[DocumentFigure]] = ..., 
                 hyperlinks: Optional[list[DocumentHyperlink]] = ..., 
                 markdown: Optional[str] = ..., 
+                metadata: Optional[dict[str, str]] = ..., 
                 mime_type: str, 
                 pages: Optional[list[DocumentPage]] = ..., 
                 paragraphs: Optional[list[DocumentParagraph]] = ..., 
                 path: Optional[str] = ..., 
                 sections: Optional[list[DocumentSection]] = ..., 
                 segments: Optional[list[DocumentContentSegment]] = ..., 
+                signatures: Optional[list[DocumentSignature]] = ..., 
                 start_page_number: int, 
                 tables: Optional[list[DocumentTable]] = ..., 
                 unit: Optional[Union[str, LengthUnit]] = ...
@@ -1261,8 +1443,10 @@ namespace azure.ai.contentunderstanding.models
 
     class azure.ai.contentunderstanding.models.DocumentContentSegment(_Model):
         category: str
+        confidence: Optional[float]
         end_page_number: int
         segment_id: str
+        source: Optional[str]
         span: ContentSpan
         start_page_number: int
 
@@ -1271,8 +1455,10 @@ namespace azure.ai.contentunderstanding.models
                 self, 
                 *, 
                 category: str, 
+                confidence: Optional[float] = ..., 
                 end_page_number: int, 
                 segment_id: str, 
+                source: Optional[str] = ..., 
                 span: ContentSpan, 
                 start_page_number: int
             ) -> None: ...
@@ -1492,6 +1678,28 @@ namespace azure.ai.contentunderstanding.models
                 self, 
                 *, 
                 elements: Optional[list[str]] = ..., 
+                span: Optional[ContentSpan] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.contentunderstanding.models.DocumentSignature(_Model):
+        elements: Optional[list[str]]
+        id: str
+        role: Optional[Union[str, SemanticRole]]
+        source: Optional[str]
+        span: Optional[ContentSpan]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                elements: Optional[list[str]] = ..., 
+                id: str, 
+                role: Optional[Union[str, SemanticRole]] = ..., 
+                source: Optional[str] = ..., 
                 span: Optional[ContentSpan] = ...
             ) -> None: ...
 
@@ -1747,6 +1955,21 @@ namespace azure.ai.contentunderstanding.models
         GLOBAL = "global"
 
 
+    class azure.ai.contentunderstanding.models.SemanticChunkingStrategy(ChunkingStrategy, discriminator='semantic'):
+        kind: Literal[ChunkingStrategyKind.SEMANTIC]
+        max_tokens: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_tokens: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.contentunderstanding.models.SemanticRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FOOTNOTE = "footnote"
         FORMULA_BLOCK = "formulaBlock"
@@ -1877,11 +2100,15 @@ namespace azure.ai.contentunderstanding.models
 
 
     class azure.ai.contentunderstanding.models.UsageDetails(_Model):
+        advanced_contextualization_tokens: Optional[int]
         audio_hours: Optional[float]
         contextualization_tokens: Optional[int]
         document_pages_basic: Optional[int]
+        document_pages_basic_inline: Optional[int]
         document_pages_minimal: Optional[int]
+        document_pages_minimal_inline: Optional[int]
         document_pages_standard: Optional[int]
+        document_pages_standard_inline: Optional[int]
         tokens: Optional[dict[str, int]]
         video_hours: Optional[float]
 
@@ -1889,17 +2116,233 @@ namespace azure.ai.contentunderstanding.models
         def __init__(
                 self, 
                 *, 
+                advanced_contextualization_tokens: Optional[int] = ..., 
                 audio_hours: Optional[float] = ..., 
                 contextualization_tokens: Optional[int] = ..., 
                 document_pages_basic: Optional[int] = ..., 
+                document_pages_basic_inline: Optional[int] = ..., 
                 document_pages_minimal: Optional[int] = ..., 
+                document_pages_minimal_inline: Optional[int] = ..., 
                 document_pages_standard: Optional[int] = ..., 
+                document_pages_standard_inline: Optional[int] = ..., 
                 tokens: Optional[dict[str, int]] = ..., 
                 video_hours: Optional[float] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+namespace azure.ai.contentunderstanding.types
+
+    class azure.ai.contentunderstanding.types.AnalysisInput(TypedDict, total=False):
+        key "data": str
+        key "mimeType": str
+        key "name": str
+        key "range": str
+        key "url": str
+        content_range: str
+        data: str
+        mime_type: str
+        name: str
+        url: str
+
+
+    class azure.ai.contentunderstanding.types.AnalyzeInlineRequest(TypedDict, total=False):
+        key "inputs": Required[list[AnalysisInput]]
+        inputs: list[AnalysisInput]
+        modelDeployments: dict[str, str]
+        model_deployments: dict[str, str]
+
+
+    class azure.ai.contentunderstanding.types.AnalyzeRequest(TypedDict, total=False):
+        key "inputs": Required[list[AnalysisInput]]
+        inputs: list[AnalysisInput]
+        modelDeployments: dict[str, str]
+        model_deployments: dict[str, str]
+
+
+    class azure.ai.contentunderstanding.types.ChunkingStrategy(TypedDict, total=False):
+        key "kind": Required[Literal[ChunkingStrategyKind.SEMANTIC]]
+        key "maxTokens": int
+        kind: Literal[ChunkingStrategyKind.SEMANTIC]
+        max_tokens: int
+
+
+    class azure.ai.contentunderstanding.types.ChunkingStrategyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SEMANTIC = "semantic"
+
+
+    class azure.ai.contentunderstanding.types.ContentAnalyzer(TypedDict, total=False):
+        key "analyzerId": Required[str]
+        key "baseAnalyzerId": str
+        key "config": ForwardRef('ContentAnalyzerConfig', module='types')
+        key "createdAt": Required[str]
+        key "description": str
+        key "dynamicFieldSchema": bool
+        key "fieldSchema": ForwardRef('ContentFieldSchema', module='types')
+        key "lastModifiedAt": Required[str]
+        key "processingLocation": Union[str, ProcessingLocation]
+        key "status": Required[Union[str, ContentAnalyzerStatus]]
+        key "supportedModels": ForwardRef('SupportedModels', module='types')
+        analyzer_id: str
+        base_analyzer_id: str
+        config: ContentAnalyzerConfig
+        created_at: str
+        description: str
+        dynamic_field_schema: bool
+        field_schema: ContentFieldSchema
+        knowledgeSources: list[KnowledgeSource]
+        knowledge_sources: list[KnowledgeSource]
+        last_modified_at: str
+        models: dict[str, str]
+        processing_location: Union[str, ProcessingLocation]
+        status: Union[str, ContentAnalyzerStatus]
+        supported_models: SupportedModels
+        tags: dict[str, str]
+        warnings: list[ODataV4Format]
+
+
+    class azure.ai.contentunderstanding.types.ContentAnalyzerConfig(TypedDict, total=False):
+        key "allowInPageSegments": bool
+        key "allowInputTruncation": bool
+        key "annotationFormat": Union[str, AnnotationFormat]
+        key "chartFormat": Union[str, ChartFormat]
+        key "chunkingStrategy": ForwardRef('ChunkingStrategy', module='types')
+        key "disableFaceBlurring": bool
+        key "enableFigureAnalysis": bool
+        key "enableFigureDescription": bool
+        key "enableFormula": bool
+        key "enableLayout": bool
+        key "enableOcr": bool
+        key "enableSegment": bool
+        key "estimateFieldSourceAndConfidence": bool
+        key "omitContent": bool
+        key "returnDetails": bool
+        key "segmentPerPage": bool
+        key "tableFormat": Union[str, TableFormat]
+        key "workflow": Union[str, ContentAnalyzerWorkflow]
+        allow_in_page_segments: bool
+        allow_input_truncation: bool
+        annotation_format: Union[str, AnnotationFormat]
+        chart_format: Union[str, ChartFormat]
+        chunking_strategy: ChunkingStrategy
+        contentCategories: dict[str, ContentCategoryDefinition]
+        content_categories: dict[str, ContentCategoryDefinition]
+        disable_face_blurring: bool
+        enable_figure_analysis: bool
+        enable_figure_description: bool
+        enable_formula: bool
+        enable_layout: bool
+        enable_ocr: bool
+        enable_segment: bool
+        estimate_field_source_and_confidence: bool
+        locales: list[str]
+        omit_content: bool
+        return_details: bool
+        segment_per_page: bool
+        table_format: Union[str, TableFormat]
+        workflow: Union[str, ContentAnalyzerWorkflow]
+
+
+    class azure.ai.contentunderstanding.types.ContentCategoryDefinition(TypedDict, total=False):
+        key "analyzer": ForwardRef('ContentAnalyzer', module='types')
+        key "analyzerId": str
+        key "description": str
+        analyzer: ContentAnalyzer
+        analyzer_id: str
+        description: str
+
+
+    class azure.ai.contentunderstanding.types.ContentFieldDefinition(TypedDict):
+        key "description": str
+        key "estimateSourceAndConfidence": bool
+        key "items": ForwardRef('ContentFieldDefinition', module='types')
+        key "method": Union[str, GenerationMethod]
+        key "type": Union[str, ContentFieldType]
+        description: str
+        enum: list[str]
+        enumDescriptions: dict[str, str]
+        enum_descriptions: dict[str, str]
+        estimate_source_and_confidence: bool
+        examples: list[str]
+        item_definition: ContentFieldDefinition
+        method: Union[str, GenerationMethod]
+        properties: dict[str, ContentFieldDefinition]
+        ref: str
+        type: Union[str, ContentFieldType]
+
+
+    class azure.ai.contentunderstanding.types.ContentFieldSchema(TypedDict, total=False):
+        key "description": str
+        key "fields": Required[dict[str, ContentFieldDefinition]]
+        key "name": str
+        definitions: dict[str, ContentFieldDefinition]
+        description: str
+        fields: dict[str, ContentFieldDefinition]
+        name: str
+
+
+    class azure.ai.contentunderstanding.types.CopyAnalyzerRequest(TypedDict, total=False):
+        key "sourceAnalyzerId": Required[str]
+        key "sourceAzureResourceId": str
+        key "sourceRegion": str
+        source_analyzer_id: str
+        source_azure_resource_id: str
+        source_region: str
+
+
+    class azure.ai.contentunderstanding.types.GrantCopyAuthorizationRequest(TypedDict, total=False):
+        key "targetAzureResourceId": Required[str]
+        key "targetRegion": str
+        target_azure_resource_id: str
+        target_region: str
+
+
+    class azure.ai.contentunderstanding.types.KnowledgeSource(TypedDict, total=False):
+        key "containerUrl": Required[str]
+        key "fileListPath": Required[str]
+        key "kind": Required[Literal[KnowledgeSourceKind.LABELED_DATA]]
+        key "prefix": str
+        container_url: str
+        file_list_path: str
+        kind: Literal[KnowledgeSourceKind.LABELED_DATA]
+        prefix: str
+
+
+    class azure.ai.contentunderstanding.types.KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LABELED_DATA = "labeledData"
+
+
+    class azure.ai.contentunderstanding.types.LabeledDataKnowledgeSource(TypedDict, total=False):
+        key "containerUrl": Required[str]
+        key "fileListPath": Required[str]
+        key "kind": Required[Literal[KnowledgeSourceKind.LABELED_DATA]]
+        key "prefix": str
+        container_url: str
+        file_list_path: str
+        kind: Literal[KnowledgeSourceKind.LABELED_DATA]
+        prefix: str
+
+
+    class azure.ai.contentunderstanding.types.RecordMergePatchUpdate(TypedDict, total=False):
+
+
+    class azure.ai.contentunderstanding.types.SemanticChunkingStrategy(TypedDict, total=False):
+        key "kind": Required[Literal[ChunkingStrategyKind.SEMANTIC]]
+        key "maxTokens": int
+        kind: Literal[ChunkingStrategyKind.SEMANTIC]
+        max_tokens: int
+
+
+    class azure.ai.contentunderstanding.types.SupportedModels(TypedDict, total=False):
+        completion: list[str]
+        embedding: list[str]
+
+
+    class azure.ai.contentunderstanding.types.UpdateDefaultsRequest(TypedDict, total=False):
+        key "modelDeployments": ForwardRef('RecordMergePatchUpdate', module='types')
+        model_deployments: RecordMergePatchUpdate
 
 
 ```

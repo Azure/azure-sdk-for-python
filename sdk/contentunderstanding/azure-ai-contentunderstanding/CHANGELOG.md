@@ -2,20 +2,32 @@
 
 ## 1.2.0b3 (Unreleased)
 
+### Features Added
+
+- Added support for selecting `2025-11-01` or `2026-06-01-preview` through the `api_version` keyword argument on `ContentUnderstandingClient`; this beta package defaults to `2026-06-01-preview`. See the [README service API version examples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md#service-api-versions).
+
+- Added support for `2026-06-01-preview` service. Features included:
+  - Analyze smaller inputs without long-running operation polling with `analyze_inline` and `analyze_binary_inline`. See [sample_analyze_inline.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_inline.py) and [sample_analyze_binary_inline.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_binary_inline.py).
+  - Extract fields whose answers must be built from evidence across a document, such as multistep reasoning or calculations, with agentic analyzer workflows by setting `ContentAnalyzerConfig.workflow` to `ContentAnalyzerWorkflow.AGENTIC`. See [sample_create_analyzer_workflow.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_create_analyzer_workflow.py).
+  - Classify mixed document packets with boundaries within a page by enabling `ContentAnalyzerConfig.allow_in_page_segments`. See [sample_classify_in_page_segments.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_classify_in_page_segments.py).
+  - Prepare documents for retrieval and LLM workflows with semantic chunks by configuring `ContentAnalyzerConfig.chunking_strategy` with `SemanticChunkingStrategy` and reading `DocumentContent.chunks`. See [sample_analyze_chunking.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_chunking.py).
+  - Identify signatures and their locations in documents with `DocumentSignature` and `DocumentContent.signatures`. See [sample_detect_signatures.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_detect_signatures.py) and [sample_analyze_configs.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_configs.py).
+  - Preserve source document context in retrieval and LLM output with `AnalysisContent.metadata` and `to_llm_input`. See [sample_extract_document_metadata.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_extract_document_metadata.py) and [sample_to_llm_input.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_to_llm_input.py).
+  - Troubleshoot analyses with diagnostic information from `AnalysisResult.infos`. See [sample_analysis_diagnostics.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analysis_diagnostics.py).
+  - Track inline page usage and agentic workflow token consumption with expanded `UsageDetails`, available from `AnalyzeLROPoller.usage`, `AnalyzeAsyncLROPoller.usage`, and `ContentAnalyzerInlineResponse.usage`. See [sample_analyze_invoice.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_invoice.py), [sample_analyze_inline.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_inline.py), and [sample_analyze_binary_inline.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_binary_inline.py).
+
+### Breaking Changes
+
+### Bugs Fixed
+
 ### Other Changes
 
-- Added GitHub Copilot skills under `.github/skills/` to help users
-  iteratively author custom analyzers in VS Code with Copilot:
-  - **`cu-sdk-author-analyzer`** — author and refine a custom analyzer
-    for a single document type (layout extraction → schema drafting →
-    validation → batch test → agent review → refine cycle). Document
-    modality only in this release; audio, video, and image are planned
-    for a later release.
-  - **`cu-sdk-author-analyzer-classify-route`** — author and refine a
-    classify-and-route pipeline for mixed-document packets (e.g. invoice
-    + bank statement + loan application in one PDF), with per-category
-    review of both the outer classifier descriptions and each inner
-    schema's field descriptions.
+- Renamed the optional `to_llm_input` caller dictionary from `metadata` to `custom_metadata`; it is emitted under a nested `customMetadata:` front-matter block.
+- Added advanced samples for [field grounding sources](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_content_source.py) and [long-running operation (LRO) continuation-token rehydration](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_rehydrate_operation.py), with async counterparts.
+- Updated README, samples, env templates, and Copilot skills to recommend `gpt-5.2` and `text-embedding-3-large`, including prebuilt analyzer deployment aliases and a model retirement schedule note.
+- Added experimental GitHub Copilot skills under `.github/skills/` for user feedback on iterative custom-analyzer authoring in VS Code:
+  - **`cu-sdk-author-analyzer`** — author and refine a custom document analyzer for a single document type (layout extraction → schema drafting → validation → batch test → agent review → refine cycle).
+  - **`cu-sdk-author-analyzer-classify-route`** — author and refine a classify-and-route pipeline for mixed-document packets (e.g. invoice + bank statement + loan application in one PDF), with per-category review of both the outer classifier descriptions and each inner schema's field descriptions.
 
 ## 1.2.0b2 (2026-06-10)
 
@@ -32,7 +44,7 @@
 - Added `to_llm_input` helper function that converts `AnalysisResult` objects into LLM-friendly text with YAML front matter and markdown content. Supports documents, audio/video, and classification hierarchies.
 
 ### Other Changes
-- Aligned `sample_create_analyzer_with_labels` (sync + async) with the .NET and Java equivalents: added an analyze step (calls `begin_analyze` on the newly created analyzer to extract `MerchantName` / `TotalPrice` from a sample invoice when training data is configured), a `DEMO MODE` banner when no training data is configured, a field-schema verification banner, and `try` / `finally` cleanup so the analyzer is deleted even if creation fails.
+- Enhanced `sample_create_analyzer_with_labels` (sync + async): added an analyze step (calls `begin_analyze` on the newly created analyzer to extract `MerchantName` / `TotalPrice` from a sample invoice when training data is configured), a `DEMO MODE` banner when no training data is configured, a field-schema verification banner, and `try` / `finally` cleanup so the analyzer is deleted even if creation fails.
 
 ## 1.1.0 (2026-04-20)
 

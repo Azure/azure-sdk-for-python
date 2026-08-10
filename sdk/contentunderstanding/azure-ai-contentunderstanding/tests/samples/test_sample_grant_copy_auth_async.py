@@ -26,7 +26,12 @@ from datetime import datetime, timezone
 from typing import Optional, cast, Dict
 from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from testpreparer_async import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBaseAsync,
+    GA_API_VERSION,
+    get_test_api_version,
+)
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
@@ -43,6 +48,10 @@ class TestSampleGrantCopyAuthAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
+    @pytest.mark.skipif(
+        get_test_api_version() != GA_API_VERSION,
+        reason="grant_copy_authorization sample is validated against GA service API version 2025-11-01 only",
+    )
     async def test_sample_grant_copy_auth_async(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
         """Test granting copy authorization for cross-resource analyzer copying (async version).
 
@@ -113,7 +122,7 @@ class TestSampleGrantCopyAuthAsync(ContentUnderstandingClientTestBaseAsync):
                     )
 
             # Create clients
-            source_client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+            source_client = self.create_async_client(endpoint=contentunderstanding_endpoint, api_version=GA_API_VERSION)
 
             # Create target client (may use different endpoint and credential)
             from azure.core.credentials import AzureKeyCredential
@@ -131,11 +140,12 @@ class TestSampleGrantCopyAuthAsync(ContentUnderstandingClientTestBaseAsync):
                         ContentUnderstandingClient,
                         credential=target_credential,
                         endpoint=target_endpoint,
+                        api_version=GA_API_VERSION,
                     ),
                 )
             else:
                 # Use same endpoint and credential as source
-                target_client = self.create_async_client(endpoint=target_endpoint)
+                target_client = self.create_async_client(endpoint=target_endpoint, api_version=GA_API_VERSION)
 
             # Generate unique analyzer IDs for this test
             # Use variables from recording if available (playback mode), otherwise generate new ones (record mode)
@@ -207,7 +217,9 @@ class TestSampleGrantCopyAuthAsync(ContentUnderstandingClientTestBaseAsync):
                 description="Schema for extracting company information",
                 fields={
                     "company_name": ContentFieldDefinition(
-                        type=ContentFieldType.STRING, method=GenerationMethod.EXTRACT, description="Name of the company"
+                        type=ContentFieldType.STRING,
+                        method=GenerationMethod.EXTRACT,
+                        description="Name of the company",
                     ),
                     "total_amount": ContentFieldDefinition(
                         type=ContentFieldType.NUMBER,
@@ -235,7 +247,7 @@ class TestSampleGrantCopyAuthAsync(ContentUnderstandingClientTestBaseAsync):
                 description="Source analyzer for cross-resource copying",
                 config=source_config,
                 field_schema=source_field_schema,
-                models={"completion": "gpt-4.1"},
+                models={"completion": "gpt-5.2"},
             )
 
             # Verify source analyzer object
@@ -246,12 +258,14 @@ class TestSampleGrantCopyAuthAsync(ContentUnderstandingClientTestBaseAsync):
             ), "Description should match"
             assert source_analyzer.models is not None, "Models should not be null"
             assert "completion" in source_analyzer.models, "Should have completion model"
-            assert source_analyzer.models["completion"] == "gpt-4.1", "Completion model should be gpt-4.1"
+            assert source_analyzer.models["completion"] == "gpt-5.2", "Completion model should be gpt-5.2"
             print("[PASS] Source analyzer object verified")
 
             # Create the source analyzer
             create_poller = await source_client.begin_create_analyzer(
-                analyzer_id=source_analyzer_id, resource=source_analyzer, allow_replace=True
+                analyzer_id=source_analyzer_id,
+                resource=source_analyzer,
+                allow_replace=True,
             )
             await create_poller.result()  # Wait for creation to complete
             print(f"[PASS] Source analyzer '{source_analyzer_id}' created successfully")
