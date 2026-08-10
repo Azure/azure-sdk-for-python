@@ -16,12 +16,12 @@ class WorkspaceAssetReference(Asset):
     """Workspace Model Reference.
 
     This is for SDK internal use only, might be deprecated in the future.
-    :param name: Model name
-    :type name: str
-    :param version: Model version
-    :type version: str
-    :param asset_id: Model asset id
-    :type version: str
+    :keyword name: Model name
+    :paramtype name: str
+    :keyword version: Model version
+    :paramtype version: str
+    :keyword asset_id: Model asset id
+    :paramtype asset_id: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """

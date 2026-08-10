@@ -28,7 +28,7 @@ class SparkComponent(
 
     :keyword code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location. Defaults to ".", indicating the current directory.
-    :type code: Union[str, os.PathLike]
+    :paramtype code: Union[str, os.PathLike]
     :keyword entry: The file or class entry point.
     :paramtype entry: Optional[Union[dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]]
     :keyword py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps. Defaults to None.

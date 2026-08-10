@@ -64,52 +64,52 @@ class BatchDeployment(Deployment):
     Please use one of the child implementations, :class:`~azure.ai.ml.entities.ModelBatchDeployment` or
     :class:`azure.ai.ml.entities.PipelineComponentBatchDeployment`.
 
-    :param name: the name of the batch deployment
-    :type name: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, Model]
-    :param code_configuration: defaults to None
-    :type code_configuration: CodeConfiguration
-    :param environment: Environment entity for the endpoint deployment., defaults to None
-    :type environment: Union[str, Environment]
-    :param compute: Compute target for batch inference operation.
-    :type compute: str
-    :param output_action: Indicates how the output will be organized. Possible values include:
+    :keyword name: the name of the batch deployment
+    :paramtype name: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword model: Model entity for the endpoint deployment, defaults to None
+    :paramtype model: Union[str, Model]
+    :keyword code_configuration: defaults to None
+    :paramtype code_configuration: CodeConfiguration
+    :keyword environment: Environment entity for the endpoint deployment., defaults to None
+    :paramtype environment: Union[str, Environment]
+    :keyword compute: Compute target for batch inference operation.
+    :paramtype compute: str
+    :keyword output_action: Indicates how the output will be organized. Possible values include:
      "summary_only", "append_row". Defaults to "append_row"
-    :type output_action: str or ~azure.ai.ml.constants._deployment.BatchDeploymentOutputAction
-    :param output_file_name: Customized output file name for append_row output action, defaults to "predictions.csv"
-    :type output_file_name: str
-    :param max_concurrency_per_instance: Indicates maximum number of parallelism per instance, defaults to 1
-    :type max_concurrency_per_instance: int
-    :param error_threshold: Error threshold, if the error count for the entire input goes above
+    :paramtype output_action: str or ~azure.ai.ml.constants._deployment.BatchDeploymentOutputAction
+    :keyword output_file_name: Customized output file name for append_row output action, defaults to "predictions.csv"
+    :paramtype output_file_name: str
+    :keyword max_concurrency_per_instance: Indicates maximum number of parallelism per instance, defaults to 1
+    :paramtype max_concurrency_per_instance: int
+    :keyword error_threshold: Error threshold, if the error count for the entire input goes above
         this value,
         the batch inference will be aborted. Range is [-1, int.MaxValue]
         -1 value indicates, ignore all failures during batch inference
         For FileDataset count of file failures
         For TabularDataset, this is the count of record failures, defaults to -1
-    :type error_threshold: int
-    :param retry_settings: Retry settings for a batch inference operation, defaults to None
-    :type retry_settings: BatchRetrySettings
-    :param resources: Indicates compute configuration for the job.
-    :type resources: ~azure.mgmt.machinelearningservices.models.ResourceConfiguration
-    :param logging_level: Logging level for batch inference operation, defaults to "info"
-    :type logging_level: str
-    :param mini_batch_size: Size of the mini-batch passed to each batch invocation, defaults to 10
-    :type mini_batch_size: int
-    :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict
-    :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
-    :type code_path: Union[str, PathLike]
-    :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: Union[str, PathLike]
-    :param instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
-    :type instance_count: int
+    :paramtype error_threshold: int
+    :keyword retry_settings: Retry settings for a batch inference operation, defaults to None
+    :paramtype retry_settings: BatchRetrySettings
+    :keyword resources: Indicates compute configuration for the job.
+    :paramtype resources: ~azure.mgmt.machinelearningservices.models.ResourceConfiguration
+    :keyword logging_level: Logging level for batch inference operation, defaults to "info"
+    :paramtype logging_level: str
+    :keyword mini_batch_size: Size of the mini-batch passed to each batch invocation, defaults to 10
+    :paramtype mini_batch_size: int
+    :keyword environment_variables: Environment variables that will be set in deployment.
+    :paramtype environment_variables: dict
+    :keyword code_path: Folder path to local code assets. Equivalent to code_configuration.code.
+    :paramtype code_path: Union[str, PathLike]
+    :keyword scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
+    :paramtype scoring_script: Union[str, PathLike]
+    :keyword instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
+    :paramtype instance_count: int
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be successfully validated.
         Details will be provided in the error message.
     """
