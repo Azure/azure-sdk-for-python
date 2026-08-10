@@ -17,6 +17,7 @@ from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
 from azure.ai.ml.exceptions import JobException
+from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.core.exceptions import HttpResponseError
 from azure.core.serialization import as_attribute_dict
 
@@ -2081,6 +2082,34 @@ jobs:
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 class TestPipelineJobLongRunning:
     """Long-running tests that require pipeline job completed."""
+
+    def test_pipeline_component_uri_file_default(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        data = load_data(
+            source="./tests/test_configs/dataset/data_file.yaml",
+            params_override=[{"name": randstr("pipeline_component_default_data")}],
+        )
+        data_asset = client.data.create_or_update(data)
+        data_asset_reference = f"azureml:{data_asset.name}:{data_asset.version}"
+
+        component = load_component(
+            source="./tests/test_configs/components/pipeline_component_with_uri_file_default.yml",
+            params_override=[
+                {"name": randstr("pipeline_component_with_uri_file_default")},
+                {"inputs.default_data.default": data_asset_reference},
+            ],
+        )
+        registered_component = client.components.create_or_update(component)
+
+        pipeline_job = registered_component()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        job = client.jobs.create_or_update(pipeline_job)
+        status = wait_until_done(client, job, timeout=_PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND)
+
+        print("Data asset:", data_asset.id)
+        print("Pipeline component:", registered_component.id)
+        print("Pipeline job:", job.studio_url)
+        print("Final status:", status)
+        assert status == JobStatus.COMPLETED
 
     def test_pipeline_job_get_child_run(self, client: MLClient, randstr: Callable[[str], str]):
         pipeline_job = load_job(

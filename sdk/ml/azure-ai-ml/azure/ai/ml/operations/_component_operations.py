@@ -675,7 +675,18 @@ class ComponentOperations(_ScopeDependentOperations):
         if not result:
             component = self.get(name=name, version=version)
         else:
-            component = Component._from_rest_object(result)
+            created_component = Component._from_rest_object(result)
+            if isinstance(component, PipelineComponent) and isinstance(created_component, PipelineComponent):
+                for input_name, source_input in component.inputs.items():
+                    created_input = created_component.inputs.get(input_name)
+                    if (
+                        created_input
+                        and not source_input._is_primitive_type
+                        and source_input.default is not None
+                        and created_input.default is None
+                    ):
+                        created_input.default = source_input.default
+            component = created_component
 
         self._resolve_azureml_id(
             component=component,
