@@ -28,16 +28,9 @@ if TYPE_CHECKING:
     from azure.core.exceptions import ODataV4Format
 
 
-_RESERVED_METADATA_KEYS = frozenset(
-    {
-        "contentType",
-        "timeRange",
-        "category",
-        "pages",
-        "fields",
-        "rai_warnings",
-    }
-)
+# YAML front-matter key for the optional caller-supplied dictionary.
+# Kept distinct from service AnalysisContent.metadata ("metadata").
+_CUSTOM_METADATA_FRONT_MATTER_KEY = "customMetadata"
 
 # Marker emitted by ``to_llm_input`` at each page boundary. Future Content
 # Understanding service versions emit this same marker directly in the
@@ -51,7 +44,7 @@ _INPUT_PAGE_MARKER_PREFIX = "<!-- InputPageNumber:"
 # emit into the ``warnings`` collection that are *not* real Responsible-AI
 # warnings (they are internal telemetry counters). The helper drops any
 # warning whose message starts with one of these prefixes before rendering
-# the ``rai_warnings:`` block, so the noise never reaches the LLM. Tracked
+# the ``warnings:`` block, so the noise never reaches the LLM. Tracked
 # alongside a separate service bug to stop emitting them in the first place.
 _TELEMETRY_MESSAGE_PREFIXES: Tuple[str, ...] = ("LLMStats:",)
 
@@ -81,7 +74,7 @@ def to_llm_input(
     *,
     include_fields: bool = True,
     include_markdown: bool = True,
-    metadata: Optional[Dict[str, Any]] = None,
+    custom_metadata: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Convert a Content Understanding analysis result into LLM-friendly text.
 
@@ -107,7 +100,19 @@ def to_llm_input(
     page-citation prompts) can rely on the marker value to cite the
     correct source page even when only a subset of pages was analyzed.
     Internal telemetry messages such as ``LLMStats: ...`` are filtered
-    from the rendered ``rai_warnings`` front matter.
+    from the rendered ``warnings`` front matter.
+
+    The YAML front matter (delimited by ``---``) may include:
+    ``mimeType`` (for example, application/pdf, image/jpeg, audio/mpeg, video/mp4),
+    ``customMetadata`` (caller-supplied key-value pairs from
+    *custom_metadata*),
+    ``metadata`` (analysis-result metadata from
+    ``AnalysisContent.metadata``),
+    ``pages`` (page range),
+    ``timeRange`` (media time span),
+    ``category`` (classification label),
+    ``fields`` (extracted structured fields as YAML),
+    and ``warnings`` (content safety flags).
 
     :param result: The ``AnalysisResult`` from a Content Understanding analyze operation.
     :type result: ~azure.ai.contentunderstanding.models.AnalysisResult
@@ -119,19 +124,18 @@ def to_llm_input(
         output. Defaults to True. Set to False for fields-only
         output.
     :paramtype include_markdown: bool
-    :keyword metadata: Optional dict of user-supplied key-value pairs to
-        include in the YAML front matter. Common keys include
-        ``"source"`` (filename), ``"department"``,
-        ``"batch_id"``, etc. Metadata keys are placed after
-        ``contentType`` and before auto-detected keys
-        (``timeRange``, ``category``, ``pages``). Metadata keys must not
-        conflict with helper-generated front matter keys.
-    :paramtype metadata: dict[str, Any] or None
+    :keyword custom_metadata: Optional caller-supplied key-value pairs emitted
+        under a nested ``customMetadata`` YAML front-matter block (kept
+        separate from service ``AnalysisContent.metadata`` / ``metadata``).
+        Common keys include ``"source"``, ``"documentId"``, or
+        ``"department"``. String values are emitted as opaque YAML scalars;
+        nested structure must be supplied as real objects (dicts / lists),
+        not JSON text.
+    :paramtype custom_metadata: dict[str, Any] or None
     :returns: A formatted text string with YAML front matter followed
         by markdown content.
     :rtype: str
     :raises TypeError: If *result* is not an ``AnalysisResult``.
-    :raises ValueError: If *metadata* contains a reserved front matter key.
 
     Example::
 
@@ -154,8 +158,6 @@ def to_llm_input(
     if not isinstance(result, _AnalysisResult):
         raise TypeError(f"Expected AnalysisResult, got {type(result).__name__}")
 
-    _validate_metadata(metadata)
-
     if not result.contents:
         return ""
 
@@ -174,32 +176,13 @@ def to_llm_input(
             result,
             include_fields=include_fields,
             include_markdown=include_markdown,
-            metadata=metadata,
+            custom_metadata=custom_metadata,
             is_multi_segment=(av_count > 1),
         )
         if block:
             blocks.append(block)
 
     return "\n\n*****\n\n".join(blocks)
-
-
-def _validate_metadata(metadata: Optional[Dict[str, Any]]) -> None:
-    """Validate user-supplied front matter metadata.
-
-    :param metadata: Optional user-supplied metadata.
-    :type metadata: dict[str, Any] or None
-    :raises ValueError: If metadata contains helper-generated front matter keys.
-    """
-    if not metadata:
-        return
-
-    reserved = sorted(set(metadata).intersection(_RESERVED_METADATA_KEYS))
-    if reserved:
-        keys = ", ".join(reserved)
-        raise ValueError(
-            f"metadata contains reserved front matter key(s): {keys}. "
-            "Use custom keys such as 'source', 'documentId', or 'department' instead."
-        )
 
 
 # ---------------------------------------------------------------------------
@@ -348,7 +331,7 @@ def _render_content_block(
     *,
     include_fields: bool,
     include_markdown: bool,
-    metadata: Optional[Dict[str, Any]],
+    custom_metadata: Optional[Dict[str, Any]],
     is_multi_segment: bool = False,
 ) -> str:
     """Render a single content item as front matter + body.
@@ -359,8 +342,8 @@ def _render_content_block(
     :type result: ~azure.ai.contentunderstanding.models.AnalysisResult
     :keyword bool include_fields: Whether to include extracted fields.
     :keyword bool include_markdown: Whether to include markdown body.
-    :keyword metadata: Optional user-provided metadata dict.
-    :paramtype metadata: dict[str, Any] or None
+    :keyword custom_metadata: Optional caller-provided metadata dict.
+    :paramtype custom_metadata: dict[str, Any] or None
     :keyword bool is_multi_segment: Whether this is part of a multi-segment result.
     :returns: The rendered string with YAML front matter and optional body.
     :rtype: str
@@ -370,41 +353,42 @@ def _render_content_block(
     # -- Build ordered front matter data --
     fm: Dict[str, Any] = {}
 
-    # 1. contentType
-    fm["contentType"] = content.kind or "unknown"
+    # 1. mimeType
+    fm["mimeType"] = content.mime_type or "unknown"
 
-    # 2. User metadata
-    if metadata:
-        for key, value in metadata.items():
-            fm[key] = value
+    # 2. Caller-supplied customMetadata (nested block — no top-level key collisions)
+    if custom_metadata is not None:
+        fm[_CUSTOM_METADATA_FRONT_MATTER_KEY] = custom_metadata
 
-    # 3. timeRange (audioVisual — only for multi-segment)
+    # 3. Analysis metadata (service AnalysisContent.metadata)
+    if content.metadata is not None:
+        fm["metadata"] = content.metadata
+
+    # 4. timeRange (audioVisual — only for multi-segment)
     if isinstance(content, AudioVisualContent) and is_multi_segment:
         if content.start_time_ms is not None and content.end_time_ms is not None:
-            fm["timeRange"] = _format_time_range(
-                content.start_time_ms, content.end_time_ms
-            )
+            fm["timeRange"] = _format_time_range(content.start_time_ms, content.end_time_ms)
 
-    # 4. category (classified documents)
+    # 5. category (classified documents)
     if content.category:
         fm["category"] = content.category
 
-    # 5. pages (documents)
+    # 6. pages (documents)
     pages_str = _format_pages(content)
     if pages_str is not None:
         fm["pages"] = pages_str
 
-    # 6. fields
+    # 7. fields
     if include_fields and content.fields:
         resolved = _resolve_fields(content.fields)
         if resolved:
             fm["fields"] = resolved
 
-    # 7. rai_warnings
+    # 8. warnings
     if result.warnings:
         warnings_list = _format_warnings(result.warnings)
         if warnings_list:
-            fm["rai_warnings"] = warnings_list
+            fm["warnings"] = warnings_list
 
     # -- Build output string --
     front_matter = _build_front_matter(fm)
@@ -614,7 +598,7 @@ def _format_warnings(
         # Skip internal service telemetry strings (e.g. ``LLMStats: ...``)
         # that occasionally leak into the warnings collection. These are
         # not Responsible-AI warnings and would otherwise be rendered into
-        # the LLM-facing ``rai_warnings:`` block.
+        # the LLM-facing ``warnings:`` block.
         if message and message.lstrip().startswith(_TELEMETRY_MESSAGE_PREFIXES):
             continue
         entry: Dict[str, str] = {}
@@ -640,11 +624,12 @@ _YAML_NUMBER = re.compile(r"^[+\-]?(\d+\.?\d*|\.\d+)([eE][+\-]?\d+)?$")
 _YAML_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}")
 
 
-def _yaml_scalar(value: Any) -> str:
+def _yaml_scalar(value: Any, continuation_indent: int = 0) -> str:
     """Serialize a scalar to its YAML text form.
 
     :param value: The value to serialize.
     :type value: Any
+    :param int continuation_indent: The indentation level for multiline continuations.
     :returns: The YAML-formatted string.
     :rtype: str
     """
@@ -668,7 +653,11 @@ def _yaml_scalar(value: Any) -> str:
         or _YAML_SPECIAL_START.search(s)
         or _YAML_SPECIAL_INSIDE.search(s)
     )
-    return ("'" + s.replace("'", "''") + "'") if needs_quote else s
+    serialized = ("'" + s.replace("'", "''") + "'") if needs_quote else s
+    # Keep continuation lines nested so an embedded "---" cannot terminate the front matter.
+    if continuation_indent and "\n" in serialized:
+        serialized = serialized.replace("\n", "\n" + "  " * continuation_indent)
+    return serialized
 
 
 def _build_front_matter(data: Dict[str, Any]) -> str:
@@ -696,21 +685,23 @@ def _emit_mapping(lines: List[str], mapping: Dict[str, Any], indent: int) -> Non
     """
     prefix = "  " * indent
     for key, value in mapping.items():
-        if value is None:
-            continue
         safe_key = _yaml_scalar(key)
         if isinstance(value, dict):
             if not value:
+                # An explicitly-empty dict is distinct from an absent key; keep it.
+                lines.append(f"{prefix}{safe_key}: {{}}")
                 continue
             lines.append(f"{prefix}{safe_key}:")
             _emit_mapping(lines, value, indent + 1)
         elif isinstance(value, list):
             if not value:
+                # An explicitly-empty list is distinct from an absent key; keep it.
+                lines.append(f"{prefix}{safe_key}: []")
                 continue
             lines.append(f"{prefix}{safe_key}:")
             _emit_sequence(lines, value, indent)
         else:
-            lines.append(f"{prefix}{safe_key}: {_yaml_scalar(value)}")
+            lines.append(f"{prefix}{safe_key}: {_yaml_scalar(value, continuation_indent=indent + 1)}")
 
 
 def _emit_sequence(lines: List[str], sequence: List[Any], indent: int) -> None:
@@ -727,8 +718,6 @@ def _emit_sequence(lines: List[str], sequence: List[Any], indent: int) -> None:
         if isinstance(item, dict):
             first = True
             for k, v in item.items():
-                if v is None:
-                    continue
                 tag = f"{prefix}- " if first else f"{prefix}  "
                 safe_k = _yaml_scalar(k)
                 if isinstance(v, dict) and v:
@@ -738,7 +727,7 @@ def _emit_sequence(lines: List[str], sequence: List[Any], indent: int) -> None:
                     lines.append(f"{tag}{safe_k}:")
                     _emit_sequence(lines, v, indent + 2)
                 else:
-                    lines.append(f"{tag}{safe_k}: {_yaml_scalar(v)}")
+                    lines.append(f"{tag}{safe_k}: {_yaml_scalar(v, continuation_indent=indent + 1)}")
                 first = False
         else:
-            lines.append(f"{prefix}- {_yaml_scalar(item)}")
+            lines.append(f"{prefix}- {_yaml_scalar(item, continuation_indent=indent + 1)}")
