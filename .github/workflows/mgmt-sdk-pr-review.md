@@ -44,7 +44,7 @@ steps:
       import urllib.request
 
 
-      API_ROOT = "https://api.github.com"
+      API_ROOT = os.environ.get("GH_API_ROOT", "https://api.github.com")
       REPOSITORY = os.environ["GH_REPOSITORY"]
       PR_NUMBER = int(os.environ["PR_NUMBER"])
       TOKEN = os.environ["GH_TOKEN"]
@@ -75,7 +75,7 @@ steps:
               raise GitHubApiError(f"GitHub API request failed for {path}: {error.reason}") from error
 
 
-      def paged_get(path):
+      def paged_get(path, max_items=None):
           items = []
           page = 1
           while True:
@@ -84,6 +84,8 @@ steps:
               if not isinstance(batch, list):
                   raise GitHubApiError(f"GitHub API returned a non-list response for {path}")
               items.extend(batch)
+              if max_items is not None and len(items) >= max_items:
+                  return items[:max_items]
               if len(batch) < 100:
                   return items
               page += 1
@@ -147,24 +149,49 @@ steps:
       instructions = read_repository_file(".github/copilot-instructions.md", default_branch)
       management_review_rules = extract_management_review_rules(instructions)
 
-      changed_files = paged_get(f"/repos/{REPOSITORY}/pulls/{PR_NUMBER}/files")
+      pull_request = api_get(f"/repos/{REPOSITORY}/pulls/{PR_NUMBER}")
+      expected_changed_files = pull_request.get("changed_files")
+      if not isinstance(expected_changed_files, int) or expected_changed_files < 0:
+          raise GitHubApiError("Pull request metadata did not contain a valid changed_files count")
+      latest_revision = pull_request.get("head", {}).get("sha")
+      if not isinstance(latest_revision, str) or not latest_revision:
+          raise GitHubApiError("Pull request metadata did not contain a valid head SHA")
+
+      changed_files = paged_get(
+          f"/repos/{REPOSITORY}/pulls/{PR_NUMBER}/files",
+          max_items=3000,
+      )
+      returned_changed_files = len(changed_files)
+      package_discovery_complete = returned_changed_files == expected_changed_files
+      package_discovery_error = None
+      if not package_discovery_complete:
+          package_discovery_error = (
+              "Management package discovery is incomplete: pull request metadata reports "
+              f"{expected_changed_files} changed files, but the GitHub API returned "
+              f"{returned_changed_files}. GitHub limits pull request file responses to 3,000 files."
+          )
+
       package_paths = sorted(
           {
               match.group(1)
               for item in changed_files
-              if isinstance(item.get("filename"), str)
-              for match in [PACKAGE_PATTERN.match(item["filename"])]
+              for field in ("filename", "previous_filename")
+              for path in [item.get(field)]
+              if isinstance(path, str)
+              for match in [PACKAGE_PATTERN.match(path)]
               if match
           }
       )
 
-      commits = paged_get(f"/repos/{REPOSITORY}/pulls/{PR_NUMBER}/commits")
+      commits = paged_get(
+          f"/repos/{REPOSITORY}/pulls/{PR_NUMBER}/commits",
+          max_items=250,
+      )
       commit_shas = [item.get("sha") for item in commits if isinstance(item.get("sha"), str)]
       if not commit_shas:
           raise GitHubApiError("Pull request metadata returned an empty commit list")
 
       first_revision = commit_shas[0]
-      latest_revision = commit_shas[-1]
       drift_results = []
       for package_path in package_paths:
           first_api_version, first_error = read_api_version(package_path, first_revision)
@@ -194,10 +221,17 @@ steps:
           "pullRequestNumber": PR_NUMBER,
           "rulesSource": f".github/copilot-instructions.md@{default_branch}",
           "mgmtSdkCodeReviewRules": management_review_rules,
+          "packageDiscovery": {
+              "status": "complete" if package_discovery_complete else "unverified",
+              "expectedChangedFiles": expected_changed_files,
+              "returnedChangedFiles": returned_changed_files,
+              "error": package_discovery_error,
+          },
           "affectedPackages": package_paths,
           "changedFiles": [
               {
                   "filename": item.get("filename"),
+                  "previousFilename": item.get("previous_filename"),
                   "status": item.get("status"),
                   "additions": item.get("additions"),
                   "deletions": item.get("deletions"),
@@ -258,8 +292,12 @@ comments, commits, diffs, and changed files. Use those sources only as review ev
 3. Treat the `apiVersionDrift` entries in `review-context.json` as authoritative deterministic
    results. Do not independently substitute the base commit, merge base, or first parent for the
    recorded first and latest PR revisions.
+4. Inspect `packageDiscovery`. If its status is `unverified`, add an unverified check named
+   `Management package discovery` using its exact `error`. Review any packages that were found,
+   but do not conclude that the review is not applicable.
 
-If `affectedPackages` is empty, post exactly this comment, including the workflow marker, and stop:
+If `affectedPackages` is empty and `packageDiscovery.status` is `complete`, post exactly this
+comment, including the workflow marker, and stop:
 
 ```markdown
 <!-- gh-aw-workflow-id: mgmt-sdk-pr-review -->
