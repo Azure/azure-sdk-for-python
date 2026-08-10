@@ -34,6 +34,9 @@ class InputPortSchema(metaclass=PatchedSchemaMeta):
     )
     description = fields.Str()
     optional = fields.Bool()
+    # Note: default values are not actually supported for non-primitive (asset/path) input types.
+    # This field is kept for schema/backward compatibility, but Input._update_default will raise a
+    # clear UserErrorException if a default is provided for a non-primitive type.
     default = fields.Str()
     mode = DumpableEnumField(
         allowed_values=SUPPORTED_INPUT_OUTPUT_MODES,

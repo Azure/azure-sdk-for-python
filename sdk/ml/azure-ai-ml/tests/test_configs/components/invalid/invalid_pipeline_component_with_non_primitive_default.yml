@@ -1,0 +1,33 @@
+$schema: https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json
+type: pipeline
+
+name: dsp_pcp_test_use_case_pcp1
+display_name: "Test Use Case: pipeline component"
+description: Test use case for DSP
+
+inputs:
+  year:
+    type: integer
+  spaceship_data:
+    type: uri_file
+    mode: ro_mount
+    default: azureml:dsp_da_test_use_case_spaceships_uri_file:50322a7173b6976c
+  pilot_data:
+    type: uri_file
+    mode: ro_mount
+
+outputs:
+  pilot_rosta:
+    type: uri_file
+    mode: rw_mount
+  ship_data:
+    type: uri_file
+    mode: rw_mount
+
+jobs:
+  component_a_job:
+    type: command
+    component: ../helloworld_component.yml
+    inputs:
+      component_in_number: ${{parent.inputs.year}}
+      component_in_path: ${{parent.inputs.pilot_data}}

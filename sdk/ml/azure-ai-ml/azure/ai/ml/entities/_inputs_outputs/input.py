@@ -373,7 +373,14 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         msg_prefix = f"Default value of Input {name}"
 
         if not self._is_primitive_type and default_value is not None:
-            msg = f"{msg_prefix}cannot be set: Non-primitive type Input has no default value."
+            primitive_types = list(IOConstants.PRIMITIVE_TYPE_2_STR.values())
+            msg = (
+                f"{msg_prefix}cannot be set: default values are only supported for inputs of primitive "
+                f"types ({primitive_types}), but got type {self.type!r} with default value "
+                f"{default_value!r}. As a workaround, set the default value in the component's code, or "
+                "add a separate 'string' input carrying the default and resolve it to the asset inside "
+                "the component."
+            )
             raise UserErrorException(msg)
         if isinstance(default_value, float) and not math.isfinite(default_value):
             # Since nan/inf cannot be stored in the backend, just ignore them.

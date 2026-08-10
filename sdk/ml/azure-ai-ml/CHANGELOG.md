@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
+- Improved the error message raised by `load_component` when a `default` value is set on a non-primitive (e.g. `uri_file`, `uri_folder`, `mltable`) component input. Defaults are only supported for primitive input types (`integer`, `number`, `boolean`, `string`); the error now states this explicitly, names the offending input's type and value, and suggests a workaround (resolving the default in the component's code, or adding a separate `string` input to carry the default).
 - Fixed internal pipeline `Command` node dropping node-level interactive `services` (SSH, JupyterLab, TensorBoard, VS Code, etc.) during serialization, which prevented interactive endpoints from being created for Singularity jobs. The `services` are now serialized into the pipeline REST request and round-tripped on deserialization, matching the public `Command` node behavior.
 - Fixed `MLClient.jobs.create_or_update`, `archive`, and `restore` failing for previously-fetched jobs across all job types by routing metadata-only edits through the RunHistory PATCH endpoint.
 - Fixed `DeploymentTemplate.creation_context` always being `None` when retrieved via `get()` or `list()`. The created/modified timestamps and identity returned by the service (as `createdTime` / `modifiedTime` / `createdBy`) are now populated on `creation_context`, making `DeploymentTemplate` consistent with `Model` and `Environment`.

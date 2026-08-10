@@ -400,6 +400,17 @@ class TestPipelineComponentEntity:
             in str(e.value)
         )
 
+    def test_pipeline_component_with_non_primitive_input_default_raises_clear_error(self) -> None:
+        component_path = (
+            "./tests/test_configs/components/invalid/invalid_pipeline_component_with_non_primitive_default.yml"
+        )
+        with pytest.raises(Exception) as e:
+            load_component(component_path)
+        message = str(e.value)
+        assert "default values are only supported for inputs of primitive types" in message
+        assert "'uri_file'" in message
+        assert "azureml:dsp_da_test_use_case_spaceships_uri_file:50322a7173b6976c" in message
+
     def test_simple_jobs_from_rest(self) -> None:
         test_path = "./tests/test_configs/components/pipeline_component_jobs_rest_data.json"
         with open(test_path, "r") as f:
