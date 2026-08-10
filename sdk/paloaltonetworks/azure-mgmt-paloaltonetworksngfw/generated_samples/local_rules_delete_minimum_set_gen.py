@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-05-11-preview/LocalRules_Delete_MinimumSet_Gen.json
+# x-ms-original-file: 2026-07-29-preview/LocalRules_Delete_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
