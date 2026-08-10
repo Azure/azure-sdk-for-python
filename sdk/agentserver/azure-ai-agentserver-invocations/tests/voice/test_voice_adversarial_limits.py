@@ -1506,7 +1506,8 @@ def test_shutdown_retry_retains_response_removed_from_pending_turns(monkeypatch,
         assert not connection._pending_turns  # pylint: disable=protected-access
         assert not connection._shutdown_responses  # pylint: disable=protected-access
         assert not connection._shutdown_terminal_metrics  # pylint: disable=protected-access
-        assert terminals.add.call_args_list == [mock.call(1, {"kind": "connection_closed"})]
+        assert voice_host._flush_metric_dispatch(timeout=1.0)  # pylint: disable=protected-access
+        assert terminals.add.call_args_list == [mock.call(1, {"kind": "connection_closed"}, context=mock.ANY)]
         assert connection._closed  # pylint: disable=protected-access
 
     asyncio.run(scenario())

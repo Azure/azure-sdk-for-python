@@ -6,9 +6,11 @@
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import contextvars
 import hashlib
 import inspect
 import logging
+import queue
 import sys
 import threading
 import time
@@ -20,7 +22,7 @@ from dataclasses import fields as dataclass_fields, is_dataclass, replace
 from types import MappingProxyType
 from typing import Any, Literal, Optional, TypeVar
 
-from opentelemetry import metrics
+from opentelemetry import context as otel_context, metrics
 from starlette.routing import WebSocketRoute
 
 from azure.ai.agentserver.core import experimental
@@ -80,6 +82,357 @@ _TERMINAL_COUNTER = _METER.create_counter("azure.ai.agentserver.invocations.voic
 _PROTOCOL_VIOLATION_COUNTER = _METER.create_counter("azure.ai.agentserver.invocations.voice.protocol.violations")
 _ACTIVE_CONNECTIONS = _METER.create_up_down_counter("azure.ai.agentserver.invocations.voice.active_connections")
 _CLOSE_CODE_COUNTER = _METER.create_counter("azure.ai.agentserver.invocations.voice.close_codes")
+_MAX_PENDING_METRICS = 1024
+_MAX_METRIC_ATTRIBUTES = 8
+_MAX_METRIC_ATTRIBUTE_TEXT_LENGTH = 128
+_MAX_METRIC_ATTRIBUTE_INTEGER_BITS = 64
+_EMPTY_METRIC_CONTEXT = otel_context.Context()
+
+
+@dataclass(frozen=True, slots=True)
+class _MetricMeasurement:
+    instrument: Any
+    operation: Literal["add", "record"]
+    value: int | float
+    attributes: tuple[tuple[str, str | bool | int | float], ...]
+    context: otel_context.Context
+
+
+@dataclass(slots=True)
+class _MetricBarrier:
+    completed: threading.Event
+    active_target: _MetricActiveTarget | None = None
+    succeeded: bool = False
+
+
+@dataclass(frozen=True, slots=True)
+class _MetricStop:
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class _MetricActiveTarget:
+    instrument: Any
+    value: int
+
+
+@dataclass(frozen=True, slots=True)
+class _MetricActiveWake:
+    pass
+
+
+@dataclass(slots=True)
+class _MetricActiveState:
+    instrument: Any | None = None
+    count: int = 0
+    exported: int = 0
+    pending: _MetricActiveTarget | None = None
+    pending_wake: _MetricActiveWake | None = None
+    detached: int = 0
+
+
+_MetricCommand = _MetricMeasurement | _MetricBarrier | _MetricStop | _MetricActiveWake
+
+
+def _snapshot_metric_attributes(
+    attributes: Mapping[str, Any] | None,
+) -> tuple[tuple[str, str | bool | int | float], ...]:
+    if not attributes:
+        return ()
+    snapshot: list[tuple[str, str | bool | int | float]] = []
+    for key, value in attributes.items():
+        if len(snapshot) >= _MAX_METRIC_ATTRIBUTES:
+            break
+        if (
+            type(key) is not str  # pylint: disable=unidiomatic-typecheck
+            or len(key) > _MAX_METRIC_ATTRIBUTE_TEXT_LENGTH
+        ):
+            continue
+        value_type = type(value)
+        if value_type not in (str, bool, int, float):
+            continue
+        if value_type is str and len(value) > _MAX_METRIC_ATTRIBUTE_TEXT_LENGTH:
+            continue
+        if value_type is int and value.bit_length() > _MAX_METRIC_ATTRIBUTE_INTEGER_BITS:
+            continue
+        snapshot.append((key, value))
+    return tuple(snapshot)
+
+
+class _MetricDispatcher:
+    """Run synchronous metric providers outside protocol and teardown threads."""
+
+    def __init__(self, *, max_pending: int) -> None:
+        self._commands: queue.Queue[_MetricCommand] = queue.Queue(maxsize=max_pending)
+        self._worker_lock = threading.Lock()
+        self._worker: threading.Thread | None = None
+        self._accepting = True
+        self._stopped = threading.Event()
+        self._stopped.set()
+        self._active = _MetricActiveState()
+
+    def submit(self, measurement: _MetricMeasurement) -> bool:
+        return self._submit_command(measurement)
+
+    def submit_active_delta(self, instrument: Any, value: int) -> bool:
+        with self._worker_lock:
+            if (
+                not self._accepting
+                or type(value) is not int  # pylint: disable=unidiomatic-typecheck
+                or value not in (-1, 1)
+            ):
+                return False
+            active = self._active
+            if active.instrument is not None and active.instrument is not instrument:
+                return False
+            next_count = active.count + value
+            if next_count < 0 or next_count.bit_length() > _MAX_METRIC_ATTRIBUTE_INTEGER_BITS:
+                return False
+            if active.instrument is None:
+                active.instrument = instrument
+            active.count = next_count
+            active.pending = _MetricActiveTarget(
+                instrument=instrument,
+                value=next_count,
+            )
+            if active.detached == 0 and active.count == active.exported:
+                active.pending = None
+                active.pending_wake = None
+                self._release_active_instrument_locked()
+                return True
+            if self._ensure_worker_locked():
+                self._enqueue_pending_active_locked()
+        return True
+
+    def flush(self, timeout: float) -> bool:
+        with self._worker_lock:
+            if not self._accepting or not self._ensure_worker_locked():
+                return False
+            active = self._active
+            target = active.pending
+            barrier = _MetricBarrier(threading.Event(), active_target=target)
+            try:
+                self._commands.put_nowait(barrier)
+            except queue.Full:
+                return False
+            if active.pending is target:
+                active.pending = None
+                active.pending_wake = None
+                if target is not None:
+                    active.detached += 1
+        return barrier.completed.wait(timeout) and barrier.succeeded
+
+    def close(self, timeout: float) -> bool:
+        deadline = time.monotonic() + max(0.0, timeout)
+        with self._worker_lock:
+            if self._accepting:
+                self._accepting = False
+                self._discard_pending_locked()
+                worker = self._worker
+                if worker is None or not worker.is_alive():
+                    self._stopped.set()
+                else:
+                    self._commands.put_nowait(_MetricStop())
+            worker = self._worker
+        if not self._stopped.wait(max(0.0, deadline - time.monotonic())):
+            return False
+        if worker is not None:
+            worker.join(max(0.0, deadline - time.monotonic()))
+        stopped = worker is None or not worker.is_alive()
+        if stopped:
+            with self._worker_lock:
+                self._discard_pending_locked()
+        return stopped
+
+    def _submit_command(self, command: _MetricCommand) -> bool:
+        with self._worker_lock:
+            if not self._accepting or not self._ensure_worker_locked():
+                return False
+            self._enqueue_pending_active_locked()
+            try:
+                self._commands.put_nowait(command)
+            except queue.Full:
+                return False
+        return True
+
+    def _enqueue_pending_active_locked(self) -> None:
+        active = self._active
+        if active.pending is None or active.pending_wake is not None:
+            return
+        wake = _MetricActiveWake()
+        try:
+            self._commands.put_nowait(wake)
+        except queue.Full:
+            return
+        active.pending_wake = wake
+
+    def _ensure_worker_locked(self) -> bool:
+        worker = self._worker
+        if worker is not None and worker.is_alive():
+            return True
+        self._stopped.clear()
+        try:
+            worker = threading.Thread(
+                target=self._run,
+                name="azure-ai-agentserver-voice-metrics",
+                daemon=True,
+            )
+            self._worker = worker
+            contextvars.Context().run(worker.start)
+        except BaseException:  # pylint: disable=broad-exception-caught
+            self._worker = None
+            self._stopped.set()
+            return False
+        return True
+
+    def _discard_pending_locked(self) -> None:
+        self._active = _MetricActiveState()
+        self._drain_commands_locked()
+
+    def _discard_orphaned_commands_locked(self) -> None:
+        active = self._active
+        self._drain_commands_locked()
+        active.pending_wake = None
+        active.detached = 0
+        if active.instrument is not None and active.count != active.exported:
+            active.pending = _MetricActiveTarget(
+                instrument=active.instrument,
+                value=active.count,
+            )
+        else:
+            active.pending = None
+
+    def _drain_commands_locked(self) -> None:
+        while True:
+            try:
+                command = self._commands.get_nowait()
+            except queue.Empty:
+                return
+            try:
+                if isinstance(command, _MetricBarrier):
+                    command.completed.set()
+            finally:
+                self._commands.task_done()
+
+    def _run(self) -> None:
+        current_worker = threading.current_thread()
+        try:
+            while True:
+                command = self._commands.get()
+                try:
+                    try:
+                        keep_running = self._execute_command(command)
+                    except BaseException:  # pylint: disable=broad-exception-caught
+                        if isinstance(command, _MetricBarrier):
+                            command.completed.set()
+                        raise
+                finally:
+                    self._commands.task_done()
+                if not keep_running:
+                    return
+                del command
+                with self._worker_lock:
+                    if self._accepting:
+                        self._enqueue_pending_active_locked()
+        except BaseException:  # pylint: disable=broad-exception-caught
+            pass
+        finally:
+            with self._worker_lock:
+                if self._worker is current_worker:
+                    if self._accepting:
+                        self._discard_orphaned_commands_locked()
+                    else:
+                        self._discard_pending_locked()
+                    self._worker = None
+                    self._stopped.set()
+
+    def _execute_command(self, command: _MetricCommand) -> bool:
+        if isinstance(command, _MetricBarrier):
+            command.succeeded = command.active_target is None or self._execute_active_target(command.active_target)
+            command.completed.set()
+        elif isinstance(command, _MetricStop):
+            return False
+        elif isinstance(command, _MetricActiveWake):
+            target = self._take_pending_active_target(command)
+            if target is not None:
+                self._execute_active_target(target)
+        else:
+            self._execute_measurement(command)
+        return True
+
+    def _take_pending_active_target(self, wake: _MetricActiveWake) -> _MetricActiveTarget | None:
+        with self._worker_lock:
+            active = self._active
+            if active.pending_wake is not wake:
+                return None
+            target = active.pending
+            active.pending = None
+            active.pending_wake = None
+            if target is not None:
+                active.detached += 1
+            return target
+
+    def _execute_active_target(self, target: _MetricActiveTarget) -> bool:
+        with self._worker_lock:
+            active = self._active
+            if not self._accepting or active.instrument is not target.instrument:
+                return False
+            delta = target.value - active.exported
+        succeeded = False
+        try:
+            succeeded = not delta or self._execute_measurement(self._active_measurement(target, delta))
+        finally:
+            with self._worker_lock:
+                if self._active is active:
+                    if self._accepting and succeeded:
+                        active.exported = target.value
+                    active.detached -= 1
+                    self._release_active_instrument_locked()
+        return True
+
+    def _release_active_instrument_locked(self) -> None:
+        active = self._active
+        if (
+            active.count == 0
+            and active.exported == 0
+            and active.pending is None
+            and active.pending_wake is None
+            and active.detached == 0
+        ):
+            active.instrument = None
+
+    @staticmethod
+    def _active_measurement(target: _MetricActiveTarget, value: int) -> _MetricMeasurement:
+        return _MetricMeasurement(
+            instrument=target.instrument,
+            operation="add",
+            value=value,
+            attributes=(),
+            context=_EMPTY_METRIC_CONTEXT,
+        )
+
+    @staticmethod
+    def _execute_measurement(command: _MetricMeasurement) -> bool:
+        return contextvars.Context().run(_MetricDispatcher._invoke_measurement, command)
+
+    @staticmethod
+    def _invoke_measurement(command: _MetricMeasurement) -> bool:
+        attributes = dict(command.attributes) if command.attributes else None
+        try:
+            if command.operation == "add":
+                command.instrument.add(command.value, attributes, context=command.context)
+            else:
+                command.instrument.record(command.value, attributes, context=command.context)
+        except BaseException:  # pylint: disable=broad-exception-caught
+            try:
+                logger.warning("Voice metric telemetry failed", exc_info=True)
+            except BaseException:  # pylint: disable=broad-exception-caught
+                pass
+            return False
+        return True
+
+
+_METRIC_DISPATCHER = _MetricDispatcher(max_pending=_MAX_PENDING_METRICS)
 
 
 def _metric_add(instrument: Any, value: int, attributes: Mapping[str, Any] | None = None) -> None:
@@ -92,10 +445,20 @@ def _metric_add(instrument: Any, value: int, attributes: Mapping[str, Any] | Non
     :param attributes: Optional low-cardinality metric attributes.
     :type attributes: Mapping[str, Any] or None
     """
-    try:
-        instrument.add(value, attributes)
-    except Exception:  # pylint: disable=broad-exception-caught
-        logger.warning("Voice counter telemetry failed", exc_info=True)
+    if (
+        type(value) is not int  # pylint: disable=unidiomatic-typecheck
+        or value.bit_length() > _MAX_METRIC_ATTRIBUTE_INTEGER_BITS
+    ):
+        return
+    _METRIC_DISPATCHER.submit(
+        _MetricMeasurement(
+            instrument=instrument,
+            operation="add",
+            value=value,
+            attributes=_snapshot_metric_attributes(attributes),
+            context=_EMPTY_METRIC_CONTEXT,
+        )
+    )
 
 
 def _metric_record(instrument: Any, value: float, attributes: Mapping[str, Any] | None = None) -> None:
@@ -108,10 +471,41 @@ def _metric_record(instrument: Any, value: float, attributes: Mapping[str, Any] 
     :param attributes: Optional low-cardinality metric attributes.
     :type attributes: Mapping[str, Any] or None
     """
-    try:
-        instrument.record(value, attributes)
-    except Exception:  # pylint: disable=broad-exception-caught
-        logger.warning("Voice histogram telemetry failed", exc_info=True)
+    if type(value) is not float:  # pylint: disable=unidiomatic-typecheck
+        return
+    _METRIC_DISPATCHER.submit(
+        _MetricMeasurement(
+            instrument=instrument,
+            operation="record",
+            value=value,
+            attributes=_snapshot_metric_attributes(attributes),
+            context=_EMPTY_METRIC_CONTEXT,
+        )
+    )
+
+
+def _metric_active_connection_delta(instrument: Any, value: int) -> bool:
+    """Record a coalesced active-connection delta outside protocol threads.
+
+    :param instrument: Up-down counter captured when this connection was admitted.
+    :type instrument: Any
+    :param value: Change in the number of active connections.
+    :type value: int
+    :return: Whether this connection's metric lifecycle was admitted.
+    :rtype: bool
+    """
+    return _METRIC_DISPATCHER.submit_active_delta(instrument, value)
+
+
+def _flush_metric_dispatch(timeout: float) -> bool:
+    """Wait for already-submitted metrics in tests without joining from protocol code.
+
+    :param timeout: Maximum time to wait, in seconds.
+    :type timeout: float
+    :return: Whether all metrics submitted before the barrier were processed.
+    :rtype: bool
+    """
+    return _METRIC_DISPATCHER.flush(timeout)
 
 
 # VoiceResponse and _VoiceConnection are the public/internal halves of one
@@ -1119,11 +1513,13 @@ class VoiceAgentServerHost(InvocationAgentServerHost):  # pylint: disable=too-ma
             on_response_timeout=self._on_response_timeout,
             on_session_end=self._on_session_end,
         )
-        _metric_add(_ACTIVE_CONNECTIONS, 1)
+        active_metric_instrument = _ACTIVE_CONNECTIONS
+        active_metric_admitted = _metric_active_connection_delta(active_metric_instrument, 1)
         try:
             await connection.run()
         finally:
-            _metric_add(_ACTIVE_CONNECTIONS, -1)
+            if active_metric_admitted:
+                _metric_active_connection_delta(active_metric_instrument, -1)
 
 
 class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many-public-methods

@@ -2413,7 +2413,8 @@ def test_cancel_pending_retains_active_owner_until_bridge_outcome(monkeypatch, t
     callback_metric_recorded = threading.Event()
 
     class CallbackDuration:
-        def record(self, _value, attributes=None) -> None:
+        def record(self, _value, attributes=None, context=None) -> None:
+            del context
             if attributes == {"kind": "user.message"}:
                 callback_metric_recorded.set()
 
@@ -2539,10 +2540,12 @@ def test_voice_protocol_metrics_are_emitted(monkeypatch) -> None:
         def __init__(self) -> None:
             self.calls: list[tuple[float, dict]] = []
 
-        def add(self, value, attributes=None) -> None:
+        def add(self, value, attributes=None, context=None) -> None:
+            del context
             self.calls.append((value, attributes or {}))
 
-        def record(self, value, attributes=None) -> None:
+        def record(self, value, attributes=None, context=None) -> None:
+            del context
             self.calls.append((value, attributes or {}))
 
     activations = FakeInstrument()
@@ -2564,16 +2567,18 @@ def test_voice_protocol_metrics_are_emitted(monkeypatch) -> None:
 
     with TestClient(app).websocket_connect("/invocations_ws") as websocket:
         _activate(websocket)
+        assert voice_host._flush_metric_dispatch(timeout=1.0)  # pylint: disable=protected-access
+        assert active_connections.calls == [(1, {})]
         websocket.send_json(_user_message())
         websocket.receive_json()
         websocket.receive_json()
         websocket.receive_json()
 
+    assert voice_host._flush_metric_dispatch(timeout=1.0)  # pylint: disable=protected-access
     assert (1, {"result": "ready"}) in activations.calls
     assert len(first_output.calls) == 1
     assert (1, {"kind": "done"}) in terminals.calls
-    assert active_connections.calls[0][0] == 1
-    assert active_connections.calls[-1][0] == -1
+    assert active_connections.calls == [(1, {}), (-1, {})]
     assert close_codes.calls
 
 
