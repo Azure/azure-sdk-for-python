@@ -1,5 +1,15 @@
 # Release History
 
+## 12.27.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.27.0b1 (2026-08-10)
 
 ### Features Added
