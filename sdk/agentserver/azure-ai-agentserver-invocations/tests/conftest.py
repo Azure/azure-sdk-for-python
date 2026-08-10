@@ -4,6 +4,7 @@
 """Shared fixtures and factory functions for invocations tests."""
 import json
 import os
+from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
@@ -15,6 +16,9 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
+_VOICE_TEST_ROOT = Path(__file__).parent / "voice"
+
+
 def pytest_configure(config):
     config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
     config.addinivalue_line("markers", "slow: tests that send large payloads or otherwise take noticeable time in CI")
@@ -23,7 +27,45 @@ def pytest_configure(config):
     )
 
 
-@pytest.fixture(autouse=True, scope="session")
+def _assert_voice_global_accounting_released() -> None:
+    from azure.ai.agentserver.invocations.voice import _host as voice_host  # pylint: disable=import-outside-toplevel
+
+    with voice_host._GLOBAL_CUSTOMER_TASKS_LOCK:  # pylint: disable=protected-access
+        accounting = {
+            "customer_tasks": len(voice_host._GLOBAL_CUSTOMER_TASKS),
+            "runtime_tasks": len(voice_host._GLOBAL_RUNTIME_TASKS),
+            "termination_tasks": len(voice_host._GLOBAL_TERMINATION_TASKS),
+            "runtime_retention_leases": len(voice_host._GLOBAL_RUNTIME_SESSION_RETENTION_BY_TASK),
+            "customer_task_byte_charges": len(voice_host._GLOBAL_CUSTOMER_TASK_BYTES_BY_TASK),
+            "customer_retention_leases": len(voice_host._GLOBAL_SESSION_RETENTION_BY_TASK),
+            "customer_task_reservations": voice_host._GLOBAL_CUSTOMER_TASK_RESERVATIONS,
+            "runtime_task_reservations": voice_host._GLOBAL_RUNTIME_TASK_RESERVATIONS,
+            "termination_task_reservations": voice_host._GLOBAL_TERMINATION_TASK_RESERVATIONS,
+            "callback_queue_bytes": voice_host._GLOBAL_CALLBACK_QUEUE_BYTES,
+            "customer_task_bytes": voice_host._GLOBAL_CUSTOMER_TASK_BYTES,
+            "identity_bytes": voice_host._GLOBAL_IDENTITY_BYTES,
+        }
+    assert not any(accounting.values()), accounting
+
+
+@pytest.fixture(autouse=True)
+def _voice_global_accounting_boundary(request):
+    """Require Voice process-level accounting to be empty at every test boundary."""
+    if not request.node.path.is_relative_to(_VOICE_TEST_ROOT):
+        yield
+        return
+    _assert_voice_global_accounting_released()
+    yield
+    _assert_voice_global_accounting_released()
+
+
+@pytest.fixture
+def voice_ci_checkpoint():
+    """Preserve compatibility with tests that previously emitted CI checkpoints."""
+    return lambda _value: None
+
+
+@pytest.fixture(autouse=True)
 def _prevent_distro_setup(request):
     """Prevent microsoft-opentelemetry distro from contaminating global OTel
     state during tests.  Without this, CI environments that have the distro
@@ -32,10 +74,11 @@ def _prevent_distro_setup(request):
     installing a global TracerProvider that breaks later traceparent-
     propagation tests.
 
-    When running E2E tracing tests (``-m tracing_e2e``), the real distro
-    export is needed so spans actually reach Application Insights."""
-    markexpr = request.config.getoption("-m", default="")
-    if "tracing_e2e" in markexpr:
+    A function-scoped fixture must inspect the current test marker. The global
+    ``-m`` expression can select tracing and ordinary tests in one run; a
+    session-scoped decision would then either disable the live exporter or
+    contaminate unrelated tests with global provider state."""
+    if request.node.get_closest_marker("tracing_e2e") is not None:
         yield
     else:
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
@@ -45,6 +88,7 @@ def _prevent_distro_setup(request):
 # ---------------------------------------------------------------------------
 # E2E tracing fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture()
 def appinsights_connection_string():
@@ -263,8 +307,10 @@ def _make_failing_ws_app(**kwargs: Any) -> InvocationAgentServerHost:
 def _records_with_ws_extras(records):
     """Filter log records that carry the close-event ``ws.*`` extras."""
     return [
-        r for r in records
-        if hasattr(r, "azure.ai.agentserver.invocations_ws.session_id") and hasattr(r, "azure.ai.agentserver.invocations_ws.close_code")
+        r
+        for r in records
+        if hasattr(r, "azure.ai.agentserver.invocations_ws.session_id")
+        and hasattr(r, "azure.ai.agentserver.invocations_ws.close_code")
     ]
 
 

@@ -93,6 +93,7 @@ opentelemetry-exporter-otlp-proto-http
 agent-framework-azure-ai
 langgraph
 azure-ai-agentserver-core
+azure-ai-agentserver-invocations
 azure-ai-agentserver-responses
 microsoft-agents-hosting-core
 microsoft-agents-authentication-msal

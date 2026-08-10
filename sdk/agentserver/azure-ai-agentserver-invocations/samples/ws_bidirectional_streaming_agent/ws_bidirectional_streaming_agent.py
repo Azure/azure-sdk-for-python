@@ -58,11 +58,13 @@ for each prompt while you type the next one::
     > {"type": "cancel", "id": "p1"}
     > {"type": "bye"}
 """
+
 import asyncio
 import contextlib
 import json
 import logging
 from collections.abc import AsyncGenerator
+from functools import partial
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
@@ -82,9 +84,31 @@ app = InvocationAgentServerHost()
 #   https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples
 #   https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples
 _SIMULATED_TOKENS = [
-    "Once", " upon", " a", " time", ",", " in", " a", " land",
-    " of", " full", "-", "duplex", " sockets", ",", " a", " server",
-    " and", " a", " client", " spoke", " at", " the", " same", " time", ".",
+    "Once",
+    " upon",
+    " a",
+    " time",
+    ",",
+    " in",
+    " a",
+    " land",
+    " of",
+    " full",
+    "-",
+    "duplex",
+    " sockets",
+    ",",
+    " a",
+    " server",
+    " and",
+    " a",
+    " client",
+    " spoke",
+    " at",
+    " the",
+    " same",
+    " time",
+    ".",
 ]
 
 _TOKEN_DELAY_S = 0.2
@@ -93,6 +117,7 @@ _TOKEN_DELAY_S = 0.2
 # ---------------------------------------------------------------------------
 # HTTP — same host, kept for parity with the rest of the samples.
 # ---------------------------------------------------------------------------
+
 
 @app.invoke_handler  # POST /invocations
 async def handle_invoke(request: Request) -> Response:
@@ -104,6 +129,7 @@ async def handle_invoke(request: Request) -> Response:
 # ---------------------------------------------------------------------------
 # WebSocket — true bidirectional streaming.
 # ---------------------------------------------------------------------------
+
 
 async def _generate_tokens(_text: str) -> AsyncGenerator[str, None]:
     """Yield simulated tokens with a small per-token delay.
@@ -123,7 +149,9 @@ async def _generate_tokens(_text: str) -> AsyncGenerator[str, None]:
 
 
 async def _stream_tokens(
-    websocket: WebSocket, prompt_id: str, text: str,
+    websocket: WebSocket,
+    prompt_id: str,
+    text: str,
 ) -> None:
     """Stream tokens for one prompt; cancellable via ``asyncio.CancelledError``.
 
@@ -160,6 +188,12 @@ async def _stream_tokens(
         logger.exception("_stream_tokens failed for prompt %s", prompt_id)
 
 
+def _remove_completed_task(in_flight: dict[str, asyncio.Task[None]], prompt_id: str, task: asyncio.Task[None]) -> None:
+    """Remove a completed generation task from the connection-local registry."""
+    if in_flight.get(prompt_id) is task:
+        in_flight.pop(prompt_id, None)
+
+
 async def _reader(
     websocket: WebSocket,
     in_flight: "dict[str, asyncio.Task[None]]",
@@ -176,6 +210,7 @@ async def _reader(
         honour ``cancel`` messages.
     :type in_flight: dict[str, asyncio.Task[None]]
     """
+    seen_prompt_ids: set[str] = set()
     try:
         async for raw in websocket.iter_text():
             try:
@@ -196,33 +231,38 @@ async def _reader(
                         {"type": "error", "message": "prompt requires 'id'"},
                     )
                     continue
+                if prompt_id in seen_prompt_ids:
+                    await websocket.send_json(
+                        {"type": "error", "id": prompt_id, "message": "prompt id has already been used"},
+                    )
+                    continue
+                seen_prompt_ids.add(prompt_id)
                 # Schedule the generation as an independent task so it
                 # runs in parallel with the reader (and any other
                 # in-flight generations).
-                task = asyncio.create_task(
+                stream_task = asyncio.create_task(
                     _stream_tokens(websocket, prompt_id, text),
                     name=f"stream-{prompt_id}",
                 )
-                in_flight[prompt_id] = task
-                # ``k=prompt_id`` captures the current value via a default
-                # argument so the callback removes the right entry even if
-                # ``prompt_id`` is rebound by a later iteration of the loop.
-                task.add_done_callback(
-                    lambda _t, k=prompt_id: in_flight.pop(k, None),
+                in_flight[prompt_id] = stream_task
+                stream_task.add_done_callback(
+                    partial(_remove_completed_task, in_flight, prompt_id),
                 )
 
             elif msg_type == "cancel":
                 prompt_id = str(msg.get("id", ""))
-                task = in_flight.get(prompt_id)
-                if task is not None and not task.done():
-                    task.cancel()
+                pending_task = in_flight.get(prompt_id)
+                if pending_task is not None and not pending_task.done():
+                    pending_task.cancel()
                     # Give the task a brief window to finish its courtesy
                     # ``cancelled`` frame before we move on — prevents the
                     # next prompt from racing against an in-flight close.
                     with contextlib.suppress(
-                        asyncio.TimeoutError, asyncio.CancelledError, Exception,
+                        asyncio.TimeoutError,
+                        asyncio.CancelledError,
+                        Exception,
                     ):
-                        await asyncio.wait_for(task, timeout=1.0)
+                        await asyncio.wait_for(pending_task, timeout=1.0)
 
             elif msg_type == "bye":
                 return
