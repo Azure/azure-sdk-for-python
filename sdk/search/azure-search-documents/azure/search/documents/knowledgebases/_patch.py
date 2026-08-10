@@ -7,11 +7,13 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Union
+from typing import Any, IO, Optional, Union
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 from ._client import KnowledgeBaseRetrievalClient as _KnowledgeBaseRetrievalClient
+from . import models
+from ._stream import KnowledgeBaseRetrievalEvent, KnowledgeBaseRetrievalEventData, KnowledgeBaseRetrievalStream
 
 
 class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
@@ -41,9 +43,61 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
             kwargs.setdefault("credential_scopes", [audience.rstrip("/") + "/.default"])
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
+    def retrieve_stream(
+        self,
+        retrieval_request: Union[models.KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]],
+        *,
+        query_source_authorization: Optional[str] = None,
+        query_work_iq_source_authorization: Optional[str] = None,
+        **kwargs: Any,
+    ) -> KnowledgeBaseRetrievalStream:
+        """Retrieve relevant data and stream typed server-sent events.
+
+        :param retrieval_request: The retrieval request to process. Required.
+        :type retrieval_request: ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest
+         or dict or IO[bytes]
+        :keyword query_source_authorization: Token identifying the user for which the query is
+         executed. Default value is None.
+        :paramtype query_source_authorization: str
+        :keyword query_work_iq_source_authorization: User assertion token for a customer-owned Entra
+         app registration configured on a Work IQ knowledge source. Default value is None.
+        :paramtype query_work_iq_source_authorization: str
+        :return: A stream of typed knowledge base retrieval events.
+        :rtype: ~azure.search.documents.knowledgebases.KnowledgeBaseRetrievalStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        custom_cls = kwargs.pop("cls", None)
+        callback_context: dict[str, Any] = {}
+
+        def _wrap_stream(pipeline_response, raw_stream, response_headers):
+            stream = KnowledgeBaseRetrievalStream(
+                response=pipeline_response.http_response,
+                raw_stream=raw_stream,
+            )
+            callback_context.update(pipeline_response=pipeline_response, response_headers=response_headers)
+            return stream
+
+        stream = super().retrieve_stream(
+            retrieval_request,
+            query_source_authorization=query_source_authorization,
+            query_work_iq_source_authorization=query_work_iq_source_authorization,
+            cls=_wrap_stream,
+            **kwargs,
+        )  # type: ignore[return-value]
+        if not custom_cls:
+            return stream
+        try:
+            return custom_cls(callback_context["pipeline_response"], stream, callback_context["response_headers"])
+        except Exception:
+            stream.close()
+            raise
+
 
 __all__: list[str] = [
     "KnowledgeBaseRetrievalClient",
+    "KnowledgeBaseRetrievalEvent",
+    "KnowledgeBaseRetrievalEventData",
+    "KnowledgeBaseRetrievalStream",
 ]
 
 

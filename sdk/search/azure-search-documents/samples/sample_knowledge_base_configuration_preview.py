@@ -51,25 +51,47 @@ def main():
             CorsOptions,
             KnowledgeBase,
             KnowledgeBaseAzureOpenAIModel,
+            KnowledgeBaseRetrieveDefaults,
             KnowledgeSourceReference,
             SearchIndexKnowledgeSource,
+            SearchIndexKnowledgeSourceFieldValueBoost,
+            SearchIndexKnowledgeSourceFilterHint,
             SearchIndexKnowledgeSourceParameters,
+            SearchIndexKnowledgeSourceQueryHints,
         )
         from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient
         from azure.search.documents.knowledgebases.models import (
             KnowledgeBaseMessage,
             KnowledgeBaseMessageTextContent,
             KnowledgeBaseRetrievalRequest,
-            KnowledgeRetrievalLowReasoningEffort,
+            KnowledgeRetrievalAutoReasoningEffort,
         )
 
         index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
         knowledge_source = SearchIndexKnowledgeSource(
             name=knowledge_source_name,
             description="Hotel knowledge source with default parking filter",
+            results_processing="rerank",
             search_index_parameters=SearchIndexKnowledgeSourceParameters(
                 search_index_name=index_name,
                 base_filter="ParkingIncluded eq true and IsDeleted eq false",
+                query_hints=SearchIndexKnowledgeSourceQueryHints(
+                    filters=[
+                        SearchIndexKnowledgeSourceFilterHint(
+                            field="Category",
+                            field_values=["Luxury", "Boutique"],
+                            filter_instructions="Use this field when the user asks for a hotel category.",
+                        )
+                    ],
+                    boosts=[
+                        SearchIndexKnowledgeSourceFieldValueBoost(
+                            field="Rating",
+                            field_values=["4", "5"],
+                            boost=2.0,
+                            boost_instructions="Prefer highly rated hotels.",
+                        )
+                    ],
+                ),
             ),
         )
         index_client.create_or_update_knowledge_source(knowledge_source)
@@ -79,6 +101,7 @@ def main():
         knowledge_base = KnowledgeBase(
             name=knowledge_base_name,
             description="Hotel knowledge base with preview configuration",
+            tags={"scenario": "hotel-search", "environment": "sample"},
             knowledge_sources=[KnowledgeSourceReference(name=knowledge_source_name)],
             cors_options=CorsOptions(allowed_origins=["https://app.contoso.com"], max_age_in_seconds=300),
             models=[
@@ -91,8 +114,13 @@ def main():
                     )
                 )
             ],
-            retrieval_reasoning_effort=KnowledgeRetrievalLowReasoningEffort(),
+            retrieval_reasoning_effort=KnowledgeRetrievalAutoReasoningEffort(),
             output_mode="answerSynthesis",
+            retrieve_defaults=KnowledgeBaseRetrieveDefaults(
+                max_runtime_in_seconds=60,
+                max_output_documents=20,
+                max_output_size_in_tokens=4000,
+            ),
         )
         created_knowledge_base = index_client.create_or_update_knowledge_base(knowledge_base)
         print(f"Created: knowledge base '{created_knowledge_base.name}'")

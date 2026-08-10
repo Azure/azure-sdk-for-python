@@ -61,20 +61,20 @@ class TestListIndexes:
         "azure.search.documents.indexes._operations._operations._SearchIndexClientOperationsMixin._list_indexes",
         side_effect=_empty_pager,
     )
-    def test_list_indexes_forwards_top_skip_count(self, mock_list):
+    def test_list_indexes_forwards_search_paging(self, mock_list):
         require_capability(
-            "azure.search.documents.indexes.SearchIndexClient.list_indexes.top",
-            "azure.search.documents.indexes.SearchIndexClient.list_indexes.skip",
-            "azure.search.documents.indexes.SearchIndexClient.list_indexes.count",
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.search",
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.page_size",
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.search_type",
         )
 
-        list(_client().list_indexes(top=10, skip=5, count=True))
+        list(_client().list_indexes(search="hot", page_size=10, search_type="prefix"))
 
         mock_list.assert_called_once()
         kwargs = mock_list.call_args.kwargs
-        assert kwargs["top"] == 10
-        assert kwargs["skip"] == 5
-        assert kwargs["count"] is True
+        assert kwargs["search"] == "hot"
+        assert kwargs["page_size"] == 10
+        assert kwargs["search_type"] == "prefix"
 
     @mock.patch(
         "azure.search.documents.indexes._operations._operations."
@@ -83,22 +83,22 @@ class TestListIndexes:
     )
     def test_list_indexes_with_select_forwards_paging_kwargs(self, mock_list_select):
         require_capability(
-            "azure.search.documents.indexes.SearchIndexClient.list_indexes.top",
-            "azure.search.documents.indexes.SearchIndexClient.list_indexes.skip",
-            "azure.search.documents.indexes.SearchIndexClient.list_indexes.count",
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.search",
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.page_size",
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.search_type",
             "azure.search.documents.indexes.models.SearchIndex.cors_options",
             "azure.search.documents.indexes.models.SearchIndex.permission_filter_option",
             "azure.search.documents.indexes.models.SearchIndex.purview_enabled",
         )
 
-        list(_client().list_indexes(select=["name"], top=3, skip=1, count=False))
+        list(_client().list_indexes(select=["name"], search="hot", page_size=3, search_type="prefix"))
 
         mock_list_select.assert_called_once()
         kwargs = mock_list_select.call_args.kwargs
         assert kwargs["select"] == ["name"]
-        assert kwargs["top"] == 3
-        assert kwargs["skip"] == 1
-        assert kwargs["count"] is False
+        assert kwargs["search"] == "hot"
+        assert kwargs["page_size"] == 3
+        assert kwargs["search_type"] == "prefix"
         converted = kwargs["cls"]([_index_response_stub()])
         assert isinstance(converted[0], SearchIndex)
         assert converted[0].name == "hotels"
@@ -109,20 +109,20 @@ class TestListIndexNames:
         "azure.search.documents.indexes._operations._operations._SearchIndexClientOperationsMixin._list_indexes",
         side_effect=_empty_pager,
     )
-    def test_list_index_names_forwards_top_skip_count(self, mock_list):
+    def test_list_index_names_forwards_search_paging(self, mock_list):
         require_capability(
-            "azure.search.documents.indexes.SearchIndexClient.list_index_names.top",
-            "azure.search.documents.indexes.SearchIndexClient.list_index_names.skip",
-            "azure.search.documents.indexes.SearchIndexClient.list_index_names.count",
+            "azure.search.documents.indexes.SearchIndexClient.list_index_names.search",
+            "azure.search.documents.indexes.SearchIndexClient.list_index_names.page_size",
+            "azure.search.documents.indexes.SearchIndexClient.list_index_names.search_type",
         )
 
-        list(_client().list_index_names(top=20, skip=0, count=True))
+        list(_client().list_index_names(search="hot", page_size=20, search_type="prefix"))
 
         mock_list.assert_called_once()
         kwargs = mock_list.call_args.kwargs
-        assert kwargs["top"] == 20
-        assert kwargs["skip"] == 0
-        assert kwargs["count"] is True
+        assert kwargs["search"] == "hot"
+        assert kwargs["page_size"] == 20
+        assert kwargs["search_type"] == "prefix"
         # The names projection passes a `cls` callback that maps to .name strings.
         assert callable(kwargs["cls"])
 

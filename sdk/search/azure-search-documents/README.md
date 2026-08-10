@@ -48,7 +48,7 @@ pip install azure-search-documents
 
 ### Prerequisites
 
-* Python 3.8 or later is required to use this package.
+* Python 3.10 or later is required to use this package.
 * You need an [Azure subscription][azure_sub] and an
 [Azure AI Search service][search_resource] to use this package.
 
@@ -63,7 +63,7 @@ See [choosing a pricing tier](https://learn.microsoft.com/azure/search/search-sk
 
 ### Authenticate the client
 
-To interact with the search service, you'll need to create an instance of the appropriate client class: `SearchClient` for searching indexed documents, `SearchIndexClient` for managing indexes, or `SearchIndexerClient` for crawling data sources and loading search documents into an index. To instantiate a client object, you'll need an **endpoint** and **Azure roles** or an **API key**. You can refer to the documentation for more information on [supported authenticating approaches](https://learn.microsoft.com/azure/search/search-security-overview#authentication) with the search service.
+To interact with the search service, create an instance of the appropriate client class: `SearchClient` for searching indexed documents, `SearchIndexClient` for managing indexes and knowledge resources, `SearchIndexerClient` for crawling data sources and loading search documents into an index, or `KnowledgeBaseRetrievalClient` for retrieving from a knowledge base. To instantiate a client object, you'll need an **endpoint** and **Azure roles** or an **API key**. You can refer to the documentation for more information on [supported authenticating approaches](https://learn.microsoft.com/azure/search/search-security-overview#authentication) with the search service.
 
 #### Get an API Key
 
@@ -153,11 +153,16 @@ exposes operations on these resources through three main client types.
 * `SearchIndexClient` allows you to:
   * [Create, delete, update, or configure a search index](https://learn.microsoft.com/rest/api/searchservice/index-operations)
   * [Declare custom synonym maps to expand or rewrite queries](https://learn.microsoft.com/rest/api/searchservice/synonym-map-operations)
+  * Create and manage knowledge bases and knowledge sources
 <!--   * Most of the `SearchServiceClient` functionality is not yet available in our current preview -->
 
 * `SearchIndexerClient` allows you to:
   * [Start indexers to automatically crawl data sources](https://learn.microsoft.com/rest/api/searchservice/indexer-operations)
   * [Define AI powered Skillsets to transform and enrich your data](https://learn.microsoft.com/rest/api/searchservice/skillset-operations)
+
+* `KnowledgeBaseRetrievalClient` allows you to:
+  * Retrieve relevant content and synthesized answers from a knowledge base
+  * Stream typed retrieval progress and results as server-sent events
 
 Azure AI Search provides two powerful features: **semantic ranking** and **vector search**.
 

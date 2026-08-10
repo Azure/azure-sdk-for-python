@@ -58,7 +58,9 @@ async def main():
     from azure.search.documents.knowledgebases.models import (
         KnowledgeBaseMessage,
         KnowledgeBaseMessageTextContent,
+        KnowledgeBaseResponseCompletedEvent,
         KnowledgeBaseRetrievalRequest,
+        KnowledgeBaseStreamErrorEvent,
         KnowledgeRetrievalLowReasoningEffort,
         KnowledgeRetrievalSemanticIntent,
         SearchIndexKnowledgeSourceParams,
@@ -118,6 +120,17 @@ async def main():
                 )
                 semantic_result = await retrieval_client.retrieve(semantic_request)
                 print_retrieval_summary(semantic_result)
+
+                stream = await retrieval_client.retrieve_stream(semantic_request)
+                async with stream:
+                    async for event in stream:
+                        if event.event_type == "response.completed" and isinstance(
+                            event.data, KnowledgeBaseResponseCompletedEvent
+                        ):
+                            print_retrieval_summary(event.data.response)
+                        elif event.event_type == "error" and isinstance(event.data, KnowledgeBaseStreamErrorEvent):
+                            error_message = event.data.error.message if event.data.error else "Retrieval failed"
+                            print(f"Streaming retrieval error: {error_message}")
 
                 message_request = KnowledgeBaseRetrievalRequest(
                     include_activity=True,

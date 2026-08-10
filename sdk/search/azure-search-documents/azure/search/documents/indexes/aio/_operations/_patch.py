@@ -417,9 +417,9 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         self,
         *,
         select: Optional[List[str]] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        count: Optional[bool] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
         **kwargs: Any,
     ) -> AsyncItemPaged[_models.SearchIndex]:
         """Lists all indexes available for a search service.
@@ -428,14 +428,13 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             list of JSON property names, or '*' for all properties. The default is all properties.
             Default value is None.
         :paramtype select: list[str]
-        :keyword top: The number of items to retrieve. Default is 50, maximum is 1000. Default value is
-            None.
-        :paramtype top: int
-        :keyword skip: The number of items to skip. Default value is None.
-        :paramtype skip: int
-        :keyword count: A value that specifies whether to fetch the total count of items. Default is
-            false. Default value is None.
-        :paramtype count: bool
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: An async iterator like instance of SearchIndex
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndex]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -445,39 +444,47 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
                 AsyncItemPaged[_models.SearchIndex],
                 self._list_indexes_with_selected_properties(
                     select=select,
-                    top=top,
-                    skip=skip,
-                    count=count,
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
                     cls=lambda objs: [_convert_index_response(x) for x in objs],
                     **kwargs,
                 ),
             )
-        return cast(AsyncItemPaged[_models.SearchIndex], self._list_indexes(top=top, skip=skip, count=count, **kwargs))
+        return cast(
+            AsyncItemPaged[_models.SearchIndex],
+            self._list_indexes(search=search, page_size=page_size, search_type=search_type, **kwargs),
+        )
 
     @distributed_trace
     def list_index_names(
         self,
         *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        count: Optional[bool] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
         **kwargs: Any,
     ) -> AsyncItemPaged[str]:
         """Lists the names of all indexes available for a search service.
 
-        :keyword top: The number of items to retrieve. Default is 50, maximum is 1000. Default value is
-            None.
-        :paramtype top: int
-        :keyword skip: The number of items to skip. Default value is None.
-        :paramtype skip: int
-        :keyword count: A value that specifies whether to fetch the total count of items. Default is
-            false. Default value is None.
-        :paramtype count: bool
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: An async iterator like instance of index names
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        names = self._list_indexes(top=top, skip=skip, count=count, cls=lambda objs: [x.name for x in objs], **kwargs)
+        names = self._list_indexes(
+            search=search,
+            page_size=page_size,
+            search_type=search_type,
+            cls=lambda objs: [x.name for x in objs],
+            **kwargs,
+        )
         return cast(AsyncItemPaged[str], names)
 
     @distributed_trace_async
