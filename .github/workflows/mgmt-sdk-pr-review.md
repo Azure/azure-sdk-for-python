@@ -233,11 +233,6 @@ safe-outputs:
   report-incomplete:
     create-issue: false
   report-failure-as-issue: false
-  messages:
-    footer: "> Analyzed by [{workflow_name}]({run_url})"
-    run-started: "[{workflow_name}]({run_url}) is reviewing this management SDK PR..."
-    run-success: "[{workflow_name}]({run_url}) completed the management SDK PR review."
-    run-failure: "[{workflow_name}]({run_url}) {status}."
 
 timeout-minutes: 30
 concurrency: mgmt-sdk-pr-review-${{ github.event.pull_request.number }}
