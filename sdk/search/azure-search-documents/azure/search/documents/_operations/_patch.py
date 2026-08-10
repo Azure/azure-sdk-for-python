@@ -248,7 +248,7 @@ class SearchPageIterator(PageIterator):
         self._initial_request = initial_request
         self._kwargs = kwargs
         self._facets: Optional[Dict[str, List[Dict[str, Any]]]] = None
-        self._api_version = kwargs.get("api_version", "2026-05-01-preview")
+        self._api_version = kwargs.get("api_version", "2026-08-01-preview")
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:

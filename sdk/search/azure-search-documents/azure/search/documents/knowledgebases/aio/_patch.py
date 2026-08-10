@@ -28,7 +28,7 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
     :type knowledge_base_name: str
     :keyword api_version: The API version to use for this operation. Known values are
      listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
-     ``ApiVersion.V2026_05_01_PREVIEW``. Note that overriding this default value may
+        ``ApiVersion.V2026_08_01_PREVIEW``. Note that overriding this default value may
      result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The

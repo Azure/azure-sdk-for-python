@@ -12,11 +12,13 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from ..._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from ..._utils.utils import FileType
 from ._enums import (
     KnowledgeBaseModelKind,
     KnowledgeSourceKind,
     McpServerAuthenticationKind,
     McpServerOutputParsingKind,
+    SearchIndexKnowledgeSourceBoostKind,
     VectorSearchAlgorithmKind,
     VectorSearchCompressionKind,
     VectorSearchVectorizerKind,
@@ -625,6 +627,11 @@ class KnowledgeSource(_Model):
      "azureBlob", "indexedSharePoint", "indexedOneLake", "indexedSql", "web", "remoteSharePoint",
      "workIQ", "file", "mcpServer", "fabricDataAgent", and "fabricOntology".
     :vartype kind: str or ~azure.search.documents.indexes.models.KnowledgeSourceKind
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -647,6 +654,12 @@ class KnowledgeSource(_Model):
     """The type of the knowledge source. Required. Known values are: \"searchIndex\", \"azureBlob\",
      \"indexedSharePoint\", \"indexedOneLake\", \"indexedSql\", \"web\", \"remoteSharePoint\",
      \"workIQ\", \"file\", \"mcpServer\", \"fabricDataAgent\", and \"fabricOntology\"."""
+    results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = rest_field(
+        name="resultsProcessing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls whether results from this knowledge source are reranked before they are included in
+     the final result set. Defaults to 'rerank' when not specified. Known values are: \"rerank\" and
+     \"none\"."""
     e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the knowledge source."""
     encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
@@ -668,6 +681,7 @@ class KnowledgeSource(_Model):
         name: str,
         kind: str,
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -690,6 +704,11 @@ class AzureBlobKnowledgeSource(KnowledgeSource, discriminator="azureBlob"):
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -724,6 +743,7 @@ class AzureBlobKnowledgeSource(KnowledgeSource, discriminator="azureBlob"):
         name: str,
         azure_blob_parameters: "_models.AzureBlobKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -756,6 +776,11 @@ class AzureBlobKnowledgeSourceParameters(_Model):
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this index-backed knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -778,6 +803,11 @@ class AzureBlobKnowledgeSourceParameters(_Model):
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this index-backed
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -790,6 +820,7 @@ class AzureBlobKnowledgeSourceParameters(_Model):
         folder_path: Optional[str] = None,
         is_adls_gen2: Optional[bool] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -1136,8 +1167,8 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
     :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
      "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
-     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini", and
-     "gpt-5.4-nano".
+     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
+     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
     :ivar dimensions: The number of dimensions the resulting output embeddings should have. Only
      supported in text-embedding-3 and later models.
@@ -1167,8 +1198,8 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
     """The name of the embedding model that is deployed at the provided deploymentId path. Known
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
      \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
-     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\", and
-     \"gpt-5.4-nano\"."""
+     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\",
+     \"gpt-5.4-nano\", \"gpt-5.5\", \"gpt-5.6-sol\", \"gpt-5.6-terra\", and \"gpt-5.6-luna\"."""
     dimensions: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of dimensions the resulting output embeddings should have. Only supported in
      text-embedding-3 and later models."""
@@ -1305,8 +1336,8 @@ class AzureOpenAIVectorizerParameters(_Model):
     :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
      "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
-     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini", and
-     "gpt-5.4-nano".
+     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
+     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
     """
 
@@ -1330,8 +1361,8 @@ class AzureOpenAIVectorizerParameters(_Model):
     """The name of the embedding model that is deployed at the provided deploymentId path. Known
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
      \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
-     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\", and
-     \"gpt-5.4-nano\"."""
+     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\",
+     \"gpt-5.4-nano\", \"gpt-5.5\", \"gpt-5.6-sol\", \"gpt-5.6-terra\", and \"gpt-5.6-luna\"."""
 
     @overload
     def __init__(
@@ -3989,6 +4020,53 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
         self.odata_type = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"  # type: ignore
 
 
+class EntraAppAuthentication(_Model):
+    """Configuration for a customer-owned Microsoft Entra app registration used for federated
+    credential-based on-behalf-of authentication.
+
+    :ivar application_id: The application (client) ID of the customer-owned Entra app registration.
+     Required.
+    :vartype application_id: str
+    :ivar federated_credential_id: The federated credential ID configured on the app registration,
+     enabling the search service to authenticate as the app without a stored client secret.
+     Required.
+    :vartype federated_credential_id: str
+    :ivar tenant_id: The tenant ID of the app registration. Required when the app registration is
+     in a different tenant than the search service. If omitted, the search service's tenant is used.
+    :vartype tenant_id: str
+    """
+
+    application_id: str = rest_field(name="applicationId", visibility=["read", "create", "update", "delete", "query"])
+    """The application (client) ID of the customer-owned Entra app registration. Required."""
+    federated_credential_id: str = rest_field(
+        name="federatedCredentialId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The federated credential ID configured on the app registration, enabling the search service to
+     authenticate as the app without a stored client secret. Required."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the app registration. Required when the app registration is in a different
+     tenant than the search service. If omitted, the search service's tenant is used."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        application_id: str,
+        federated_credential_id: str,
+        tenant_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VectorSearchAlgorithmConfiguration(_Model):
     """Contains configuration options specific to the algorithm used during indexing or querying.
 
@@ -4108,6 +4186,11 @@ class FabricDataAgentKnowledgeSource(KnowledgeSource, discriminator="fabricDataA
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4143,6 +4226,7 @@ class FabricDataAgentKnowledgeSource(KnowledgeSource, discriminator="fabricDataA
         name: str,
         fabric_data_agent_parameters: "_models.FabricDataAgentKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -4199,6 +4283,11 @@ class FabricOntologyKnowledgeSource(KnowledgeSource, discriminator="fabricOntolo
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4234,6 +4323,7 @@ class FabricOntologyKnowledgeSource(KnowledgeSource, discriminator="fabricOntolo
         name: str,
         fabric_ontology_parameters: "_models.FabricOntologyKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -4370,6 +4460,11 @@ class FileKnowledgeSource(KnowledgeSource, discriminator="file"):
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4386,6 +4481,9 @@ class FileKnowledgeSource(KnowledgeSource, discriminator="file"):
     :vartype kind: str or ~azure.search.documents.indexes.models.FILE
     :ivar file_parameters: The parameters for the File knowledge source. Required.
     :vartype file_parameters: ~azure.search.documents.indexes.models.FileKnowledgeSourceParameters
+    :ivar cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the File
+     knowledge source's file endpoints (upload, list, update, delete).
+    :vartype cors_options: ~azure.search.documents.indexes.models.CorsOptions
     """
 
     kind: Literal[KnowledgeSourceKind.FILE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4395,6 +4493,11 @@ class FileKnowledgeSource(KnowledgeSource, discriminator="file"):
         name="fileParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """The parameters for the File knowledge source. Required."""
+    cors_options: Optional["_models.CorsOptions"] = rest_field(
+        name="corsOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Options to control Cross-Origin Resource Sharing (CORS) for the File knowledge source's file
+     endpoints (upload, list, update, delete)."""
 
     @overload
     def __init__(
@@ -4403,8 +4506,10 @@ class FileKnowledgeSource(KnowledgeSource, discriminator="file"):
         name: str,
         file_parameters: "_models.FileKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
+        cors_options: Optional["_models.CorsOptions"] = None,
     ) -> None: ...
 
     @overload
@@ -4422,10 +4527,15 @@ class FileKnowledgeSource(KnowledgeSource, discriminator="file"):
 class FileKnowledgeSourceParameters(_Model):
     """Parameters for File knowledge source.
 
-    :ivar ingestion_parameters: Consolidates all general ingestion settings. Only 'minimal' content
-     extraction mode and embeddingModel are supported for file knowledge sources.
+    :ivar ingestion_parameters: Consolidates all general ingestion settings for the File knowledge
+     source, including the content extraction mode and an optional embeddingModel.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this index-backed knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the file knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -4433,8 +4543,13 @@ class FileKnowledgeSourceParameters(_Model):
     ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = rest_field(
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Consolidates all general ingestion settings. Only 'minimal' content extraction mode and
-     embeddingModel are supported for file knowledge sources."""
+    """Consolidates all general ingestion settings for the File knowledge source, including the
+     content extraction mode and an optional embeddingModel."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this index-backed
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the file knowledge source."""
 
@@ -4443,6 +4558,43 @@ class FileKnowledgeSourceParameters(_Model):
         self,
         *,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FileUploadMetadata(_Model):
+    """The JSON 'metadata' part of a multipart/form-data file upload: the full file name/path and
+    custom key/value metadata. The parsing mode and extraction mode are both chosen by the service
+    and are not supplied by the caller.
+
+    :ivar file_name: The full relative file name/path to store the file under (prefixes are derived
+     from it).
+    :vartype file_name: str
+    :ivar metadata: Custom key/value metadata to store with the file.
+    :vartype metadata: dict[str, str]
+    """
+
+    file_name: Optional[str] = rest_field(name="fileName", visibility=["read", "create", "update", "delete", "query"])
+    """The full relative file name/path to store the file under (prefixes are derived from it)."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Custom key/value metadata to store with the file."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_name: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -4796,6 +4948,11 @@ class IndexedOneLakeKnowledgeSource(KnowledgeSource, discriminator="indexedOneLa
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4828,6 +4985,7 @@ class IndexedOneLakeKnowledgeSource(KnowledgeSource, discriminator="indexedOneLa
         name: str,
         indexed_one_lake_parameters: "_models.IndexedOneLakeKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -4856,6 +5014,11 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this index-backed knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -4874,6 +5037,11 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this index-backed
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -4885,6 +5053,7 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):
         lakehouse_id: str,
         target_path: Optional[str] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -4905,6 +5074,11 @@ class IndexedSharePointKnowledgeSource(KnowledgeSource, discriminator="indexedSh
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4937,6 +5111,7 @@ class IndexedSharePointKnowledgeSource(KnowledgeSource, discriminator="indexedSh
         name: str,
         indexed_share_point_parameters: "_models.IndexedSharePointKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -4970,6 +5145,11 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this index-backed knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -4991,6 +5171,11 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this index-backed
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -5002,6 +5187,7 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
         container_name: Union[str, "_models.IndexedSharePointContainerName"],
         query: Optional[str] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -5022,6 +5208,11 @@ class IndexedSqlKnowledgeSource(KnowledgeSource, discriminator="indexedSql"):
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -5056,6 +5247,7 @@ class IndexedSqlKnowledgeSource(KnowledgeSource, discriminator="indexedSql"):
         name: str,
         indexed_sql_parameters: "_models.IndexedSqlKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -5094,6 +5286,11 @@ class IndexedSqlKnowledgeSourceParameters(_Model):
      model, schedule, and identity.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this index-backed knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -5122,6 +5319,11 @@ class IndexedSqlKnowledgeSourceParameters(_Model):
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings including embedding model, schedule, and identity."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this index-backed
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -5135,6 +5337,7 @@ class IndexedSqlKnowledgeSourceParameters(_Model):
         content_columns: Optional[list["_models.ContentColumnMapping"]] = None,
         embedding_columns: Optional[list["_models.EmbeddingColumnMapping"]] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -6052,6 +6255,9 @@ class KnowledgeBase(_Model):
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     :ivar description: The description of the knowledge base.
     :vartype description: str
+    :ivar tags: User-defined key-value pairs for categorizing the knowledge base and attributing
+     its usage and costs.
+    :vartype tags: dict[str, str]
     :ivar retrieval_instructions: Instructions considered by the knowledge base when developing
      query plan.
     :vartype retrieval_instructions: str
@@ -6061,6 +6267,11 @@ class KnowledgeBase(_Model):
     :ivar cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the knowledge
      base.
     :vartype cors_options: ~azure.search.documents.indexes.models.CorsOptions
+    :ivar retrieve_defaults: Persisted request-wide retrieve defaults for this knowledge base.
+     These values apply to retrieve requests that omit the corresponding fields; request-time values
+     take precedence when present.
+    :vartype retrieve_defaults:
+     ~azure.search.documents.indexes.models.KnowledgeBaseRetrieveDefaults
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6090,6 +6301,9 @@ class KnowledgeBase(_Model):
     """A description of an encryption key that you create in Azure Key Vault."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the knowledge base."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User-defined key-value pairs for categorizing the knowledge base and attributing its usage and
+     costs."""
     retrieval_instructions: Optional[str] = rest_field(
         name="retrievalInstructions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6102,6 +6316,12 @@ class KnowledgeBase(_Model):
         name="corsOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Options to control Cross-Origin Resource Sharing (CORS) for the knowledge base."""
+    retrieve_defaults: Optional["_models.KnowledgeBaseRetrieveDefaults"] = rest_field(
+        name="retrieveDefaults", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Persisted request-wide retrieve defaults for this knowledge base. These values apply to
+     retrieve requests that omit the corresponding fields; request-time values take precedence when
+     present."""
 
     @overload
     def __init__(
@@ -6115,9 +6335,11 @@ class KnowledgeBase(_Model):
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         description: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         retrieval_instructions: Optional[str] = None,
         answer_instructions: Optional[str] = None,
         cors_options: Optional["_models.CorsOptions"] = None,
+        retrieve_defaults: Optional["_models.KnowledgeBaseRetrieveDefaults"] = None,
     ) -> None: ...
 
     @overload
@@ -6199,6 +6421,53 @@ class KnowledgeBaseAzureOpenAIModel(KnowledgeBaseModel, discriminator="azureOpen
         self.kind = KnowledgeBaseModelKind.AZURE_OPEN_AI  # type: ignore
 
 
+class KnowledgeBaseRetrieveDefaults(_Model):
+    """Persisted request-wide defaults for knowledge base retrieve requests. Each value provides the
+    default for the matching retrieve-request field; service defaults apply when unset, and
+    request-time values take precedence when present.
+
+    :ivar max_runtime_in_seconds: The default maximum runtime in seconds for a retrieve request.
+    :vartype max_runtime_in_seconds: int
+    :ivar max_output_documents: The default maximum number of documents in the retrieve output.
+    :vartype max_output_documents: int
+    :ivar max_output_size_in_tokens: The default maximum size, in tokens, of the content in the
+     retrieve output.
+    :vartype max_output_size_in_tokens: int
+    """
+
+    max_runtime_in_seconds: Optional[int] = rest_field(
+        name="maxRuntimeInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default maximum runtime in seconds for a retrieve request."""
+    max_output_documents: Optional[int] = rest_field(
+        name="maxOutputDocuments", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default maximum number of documents in the retrieve output."""
+    max_output_size_in_tokens: Optional[int] = rest_field(
+        name="maxOutputSizeInTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default maximum size, in tokens, of the content in the retrieve output."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_runtime_in_seconds: Optional[int] = None,
+        max_output_documents: Optional[int] = None,
+        max_output_size_in_tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class KnowledgeSourceFile(_Model):
     """Metadata for a file uploaded to a File knowledge source.
 
@@ -6214,6 +6483,19 @@ class KnowledgeSourceFile(_Model):
     :vartype last_updated_at: ~datetime.datetime
     :ivar error_message: The error message if file processing failed, null otherwise.
     :vartype error_message: str
+    :ivar prefix: The prefix (directory-like path) derived from the full file name.
+    :vartype prefix: str
+    :ivar metadata: Custom key/value metadata stored with the file. Returned but not searchable or
+     filterable.
+    :vartype metadata: dict[str, str]
+    :ivar parsing_mode: The parsing mode applied to the file (auto-detected from the file). Known
+     values are: "default", "text", "delimitedText", "json", "jsonArray", "jsonLines", and
+     "markdown".
+    :vartype parsing_mode: str or ~azure.search.documents.indexes.models.BlobIndexerParsingMode
+    :ivar extraction_mode: The extraction mode applied to the file. Known values are: "minimal" and
+     "standard".
+    :vartype extraction_mode: str or
+     ~azure.search.documents.indexes.models.FileKnowledgeSourceExtractionMode
     """
 
     file_id: Optional[str] = rest_field(name="fileId", visibility=["read"])
@@ -6230,6 +6512,20 @@ class KnowledgeSourceFile(_Model):
     """The timestamp when the file was last updated."""
     error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
     """The error message if file processing failed, null otherwise."""
+    prefix: Optional[str] = rest_field(visibility=["read"])
+    """The prefix (directory-like path) derived from the full file name."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read"])
+    """Custom key/value metadata stored with the file. Returned but not searchable or filterable."""
+    parsing_mode: Optional[Union[str, "_models.BlobIndexerParsingMode"]] = rest_field(
+        name="parsingMode", visibility=["read"]
+    )
+    """The parsing mode applied to the file (auto-detected from the file). Known values are:
+     \"default\", \"text\", \"delimitedText\", \"json\", \"jsonArray\", \"jsonLines\", and
+     \"markdown\"."""
+    extraction_mode: Optional[Union[str, "_models.FileKnowledgeSourceExtractionMode"]] = rest_field(
+        name="extractionMode", visibility=["read"]
+    )
+    """The extraction mode applied to the file. Known values are: \"minimal\" and \"standard\"."""
 
 
 class KnowledgeSourceReference(_Model):
@@ -6461,10 +6757,14 @@ class ListDataSourcesResult(_Model):
     :ivar data_sources: The datasources in the Search service. Required.
     :vartype data_sources:
      list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
+    :ivar odata_next_link: The URL that can be used to fetch the next set of results.
+    :vartype odata_next_link: str
     """
 
     data_sources: list["_models.SearchIndexerDataSourceConnection"] = rest_field(name="value", visibility=["read"])
     """The datasources in the Search service. Required."""
+    odata_next_link: Optional[str] = rest_field(name="@odata.nextLink", visibility=["read"])
+    """The URL that can be used to fetch the next set of results."""
 
 
 class ListIndexersResult(_Model):
@@ -6473,10 +6773,14 @@ class ListIndexersResult(_Model):
 
     :ivar indexers: The indexers in the Search service. Required.
     :vartype indexers: list[~azure.search.documents.indexes.models.SearchIndexer]
+    :ivar odata_next_link: The URL that can be used to fetch the next set of results.
+    :vartype odata_next_link: str
     """
 
     indexers: list["_models.SearchIndexer"] = rest_field(name="value", visibility=["read"])
     """The indexers in the Search service. Required."""
+    odata_next_link: Optional[str] = rest_field(name="@odata.nextLink", visibility=["read"])
+    """The URL that can be used to fetch the next set of results."""
 
 
 class ListSkillsetsResult(_Model):
@@ -6485,10 +6789,14 @@ class ListSkillsetsResult(_Model):
 
     :ivar skillsets: The skillsets defined in the Search service. Required.
     :vartype skillsets: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
+    :ivar odata_next_link: The URL that can be used to fetch the next set of results.
+    :vartype odata_next_link: str
     """
 
     skillsets: list["_models.SearchIndexerSkillset"] = rest_field(name="value", visibility=["read"])
     """The skillsets defined in the Search service. Required."""
+    odata_next_link: Optional[str] = rest_field(name="@odata.nextLink", visibility=["read"])
+    """The URL that can be used to fetch the next set of results."""
 
 
 class ListSynonymMapsResult(_Model):
@@ -6497,10 +6805,14 @@ class ListSynonymMapsResult(_Model):
 
     :ivar synonym_maps: The synonym maps in the Search service. Required.
     :vartype synonym_maps: list[~azure.search.documents.indexes.models.SynonymMap]
+    :ivar odata_next_link: The URL that can be used to fetch the next set of results.
+    :vartype odata_next_link: str
     """
 
     synonym_maps: list["_models.SynonymMap"] = rest_field(name="value", visibility=["read"])
     """The synonym maps in the Search service. Required."""
+    odata_next_link: Optional[str] = rest_field(name="@odata.nextLink", visibility=["read"])
+    """The URL that can be used to fetch the next set of results."""
 
 
 class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StandardAnalyzer"):
@@ -6999,6 +7311,11 @@ class McpServerKnowledgeSource(KnowledgeSource, discriminator="mcpServer"):
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -7033,6 +7350,7 @@ class McpServerKnowledgeSource(KnowledgeSource, discriminator="mcpServer"):
         name: str,
         mcp_server_parameters: "_models.McpServerKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -7329,11 +7647,10 @@ class McpServerTool(_Model):
     :vartype name: str
     :ivar output_parsing: Optional configuration for parsing the tool's output.
     :vartype output_parsing: ~azure.search.documents.indexes.models.McpServerOutputParsing
-    :ivar inclusion_mode: Controls how the parsed results from this tool are integrated into the
-     final result set. Defaults to 'reranked' when not specified. Known values are: "reranked" and
-     "always".
-    :vartype inclusion_mode: str or
-     ~azure.search.documents.indexes.models.McpServerToolInclusionMode
+    :ivar results_processing: Controls whether the parsed results from this tool are reranked.
+     Defaults to 'rerank' when not specified. Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_tokens: Optional post-parsing token cap for this tool's output. Must be
      greater than 0 when specified.
     :vartype max_output_tokens: int
@@ -7345,11 +7662,11 @@ class McpServerTool(_Model):
         name="outputParsing", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional configuration for parsing the tool's output."""
-    inclusion_mode: Optional[Union[str, "_models.McpServerToolInclusionMode"]] = rest_field(
-        name="inclusionMode", visibility=["read", "create", "update", "delete", "query"]
+    results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = rest_field(
+        name="resultsProcessing", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Controls how the parsed results from this tool are integrated into the final result set.
-     Defaults to 'reranked' when not specified. Known values are: \"reranked\" and \"always\"."""
+    """Controls whether the parsed results from this tool are reranked. Defaults to 'rerank' when not
+     specified. Known values are: \"rerank\" and \"none\"."""
     max_output_tokens: Optional[int] = rest_field(
         name="maxOutputTokens", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7361,7 +7678,7 @@ class McpServerTool(_Model):
         *,
         name: Optional[str] = None,
         output_parsing: Optional["_models.McpServerOutputParsing"] = None,
-        inclusion_mode: Optional[Union[str, "_models.McpServerToolInclusionMode"]] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         max_output_tokens: Optional[int] = None,
     ) -> None: ...
 
@@ -8439,6 +8756,11 @@ class RemoteSharePointKnowledgeSource(KnowledgeSource, discriminator="remoteShar
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -8470,6 +8792,7 @@ class RemoteSharePointKnowledgeSource(KnowledgeSource, discriminator="remoteShar
         *,
         name: str,
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         remote_share_point_parameters: Optional["_models.RemoteSharePointKnowledgeSourceParameters"] = None,
@@ -10683,6 +11006,11 @@ class SearchIndexKnowledgeSource(KnowledgeSource, discriminator="searchIndex"):
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -10715,6 +11043,7 @@ class SearchIndexKnowledgeSource(KnowledgeSource, discriminator="searchIndex"):
         name: str,
         search_index_parameters: "_models.SearchIndexKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -10729,6 +11058,190 @@ class SearchIndexKnowledgeSource(KnowledgeSource, discriminator="searchIndex"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = KnowledgeSourceKind.SEARCH_INDEX  # type: ignore
+
+
+class SearchIndexKnowledgeSourceBoost(_Model):
+    """A hint that identifies a condition the query planner can use to influence document ranking.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SearchIndexKnowledgeSourceFieldValueBoost, SearchIndexKnowledgeSourceMultiWordExpressionBoost
+
+    :ivar kind: The kind of boost hint. Required. Known values are: "fieldValue" and
+     "multiWordExpression".
+    :vartype kind: str or
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceBoostKind
+    :ivar boost_instructions: Natural-language instructions that explain when and how to apply the
+     boost.
+    :vartype boost_instructions: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of boost hint. Required. Known values are: \"fieldValue\" and \"multiWordExpression\"."""
+    boost_instructions: Optional[str] = rest_field(
+        name="boostInstructions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Natural-language instructions that explain when and how to apply the boost."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+        boost_instructions: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SearchIndexKnowledgeSourceFieldValueBoost(
+    SearchIndexKnowledgeSourceBoost, discriminator="fieldValue"
+):  # pylint: disable=name-too-long
+    """A hint that boosts documents based on a field value.
+
+    :ivar boost_instructions: Natural-language instructions that explain when and how to apply the
+     boost.
+    :vartype boost_instructions: str
+    :ivar kind: The discriminator value. Required. Boost documents based on a field value.
+    :vartype kind: str or ~azure.search.documents.indexes.models.FIELD_VALUE
+    :ivar field: The name of the search index field. Required.
+    :vartype field: str
+    :ivar field_values: Representative values for the field.
+    :vartype field_values: list[str]
+    :ivar boost: A multiplier for the document score. Must be a positive number not equal to 1.0.
+     Required.
+    :vartype boost: float
+    """
+
+    kind: Literal[SearchIndexKnowledgeSourceBoostKind.FIELD_VALUE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Boost documents based on a field value."""
+    field: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the search index field. Required."""
+    field_values: Optional[list[str]] = rest_field(
+        name="fieldValues", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Representative values for the field."""
+    boost: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A multiplier for the document score. Must be a positive number not equal to 1.0. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        field: str,
+        boost: float,
+        boost_instructions: Optional[str] = None,
+        field_values: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = SearchIndexKnowledgeSourceBoostKind.FIELD_VALUE  # type: ignore
+
+
+class SearchIndexKnowledgeSourceFilterHint(_Model):
+    """A hint that identifies a field and representative values the query planner can use when
+    constructing a filter.
+
+    :ivar field: The name of the filterable search index field. Required.
+    :vartype field: str
+    :ivar field_values: Representative values for the field. Required.
+    :vartype field_values: list[str]
+    :ivar filter_instructions: Natural-language instructions that explain when and how to filter on
+     the field.
+    :vartype filter_instructions: str
+    """
+
+    field: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the filterable search index field. Required."""
+    field_values: list[str] = rest_field(name="fieldValues", visibility=["read", "create", "update", "delete", "query"])
+    """Representative values for the field. Required."""
+    filter_instructions: Optional[str] = rest_field(
+        name="filterInstructions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Natural-language instructions that explain when and how to filter on the field."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        field: str,
+        field_values: list[str],
+        filter_instructions: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SearchIndexKnowledgeSourceMultiWordExpressionBoost(
+    SearchIndexKnowledgeSourceBoost, discriminator="multiWordExpression"
+):  # pylint: disable=name-too-long
+    """A hint that boosts documents based on a multi-word expression.
+
+    :ivar boost_instructions: Natural-language instructions that explain when and how to apply the
+     boost.
+    :vartype boost_instructions: str
+    :ivar kind: The discriminator value. Required. Boost documents based on a multi-word
+     expression.
+    :vartype kind: str or ~azure.search.documents.indexes.models.MULTI_WORD_EXPRESSION
+    :ivar field_values: Representative values for the boost.
+    :vartype field_values: list[str]
+    :ivar boost: A multiplier for the document score. Must be a positive number not equal to 1.0.
+     Required.
+    :vartype boost: float
+    """
+
+    kind: Literal[SearchIndexKnowledgeSourceBoostKind.MULTI_WORD_EXPRESSION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Boost documents based on a multi-word expression."""
+    field_values: Optional[list[str]] = rest_field(
+        name="fieldValues", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Representative values for the boost."""
+    boost: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A multiplier for the document score. Must be a positive number not equal to 1.0. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        boost: float,
+        boost_instructions: Optional[str] = None,
+        field_values: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = SearchIndexKnowledgeSourceBoostKind.MULTI_WORD_EXPRESSION  # type: ignore
 
 
 class SearchIndexKnowledgeSourceParameters(_Model):
@@ -10747,6 +11260,11 @@ class SearchIndexKnowledgeSourceParameters(_Model):
     :ivar base_filter: A default filter condition applied to the index at retrieval time (e.g.,
      'State eq VA'). Can be overridden at query time via knowledge source runtime parameters.
     :vartype base_filter: str
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this search index knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     """
 
     search_index_name: str = rest_field(
@@ -10771,6 +11289,11 @@ class SearchIndexKnowledgeSourceParameters(_Model):
     )
     """A default filter condition applied to the index at retrieval time (e.g., 'State eq VA'). Can be
      overridden at query time via knowledge source runtime parameters."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this search index
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
 
     @overload
     def __init__(
@@ -10781,6 +11304,49 @@ class SearchIndexKnowledgeSourceParameters(_Model):
         search_fields: Optional[list["_models.SearchIndexFieldReference"]] = None,
         semantic_configuration_name: Optional[str] = None,
         base_filter: Optional[str] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SearchIndexKnowledgeSourceQueryHints(_Model):
+    """Hints that guide query planning toward useful filters and boosts for a search index knowledge
+    source.
+
+    :ivar filters: Filter hints that identify fields and representative values the query planner
+     can use when constructing filters.
+    :vartype filters:
+     list[~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFilterHint]
+    :ivar boosts: Boost hints that identify conditions the query planner can use to influence
+     document ranking.
+    :vartype boosts: list[~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceBoost]
+    """
+
+    filters: Optional[list["_models.SearchIndexKnowledgeSourceFilterHint"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Filter hints that identify fields and representative values the query planner can use when
+     constructing filters."""
+    boosts: Optional[list["_models.SearchIndexKnowledgeSourceBoost"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Boost hints that identify conditions the query planner can use to influence document ranking."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        filters: Optional[list["_models.SearchIndexKnowledgeSourceFilterHint"]] = None,
+        boosts: Optional[list["_models.SearchIndexKnowledgeSourceBoost"]] = None,
     ) -> None: ...
 
     @overload
@@ -11189,6 +11755,9 @@ class SearchServiceLimits(_Model):
     :ivar max_cumulative_indexer_runtime_seconds: The maximum cumulative indexer runtime in seconds
      allowed for the service.
     :vartype max_cumulative_indexer_runtime_seconds: int
+    :ivar max_vector_index_size_per_index_in_bytes: The maximum vector index size (vector memory
+     quota) allowed per index in bytes.
+    :vartype max_vector_index_size_per_index_in_bytes: int
     """
 
     max_fields_per_index: Optional[int] = rest_field(
@@ -11216,6 +11785,10 @@ class SearchServiceLimits(_Model):
         name="maxCumulativeIndexerRuntimeSeconds", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum cumulative indexer runtime in seconds allowed for the service."""
+    max_vector_index_size_per_index_in_bytes: Optional[int] = rest_field(
+        name="maxVectorIndexSizePerIndexInBytes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum vector index size (vector memory quota) allowed per index in bytes."""
 
     @overload
     def __init__(
@@ -11227,6 +11800,7 @@ class SearchServiceLimits(_Model):
         max_complex_objects_in_collections_per_document: Optional[int] = None,
         max_storage_per_index_in_bytes: Optional[int] = None,
         max_cumulative_indexer_runtime_seconds: Optional[int] = None,
+        max_vector_index_size_per_index_in_bytes: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -12851,6 +13425,76 @@ class UniqueTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Uniq
         self.odata_type = "#Microsoft.Azure.Search.UniqueTokenFilter"  # type: ignore
 
 
+class UpdateKnowledgeSourceFileRequest(_Model):
+    """Multipart request for updating a file in a File knowledge source.
+
+    :ivar metadata: The JSON metadata describing the file. Required.
+    :vartype metadata: ~azure.search.documents.indexes.models.FileUploadMetadata
+    :ivar content: The raw file content. Required.
+    :vartype content: ~azure.search.documents._utils.utils.FileType
+    """
+
+    metadata: "_models.FileUploadMetadata" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The JSON metadata describing the file. Required."""
+    content: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
+    """The raw file content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: "_models.FileUploadMetadata",
+        content: FileType,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UploadKnowledgeSourceFileMultipartRequest(_Model):  # pylint: disable=name-too-long
+    """Multipart request for uploading a file to a File knowledge source.
+
+    :ivar metadata: The JSON metadata describing the file. Required.
+    :vartype metadata: ~azure.search.documents.indexes.models.FileUploadMetadata
+    :ivar content: The raw file content. Required.
+    :vartype content: ~azure.search.documents._utils.utils.FileType
+    """
+
+    metadata: "_models.FileUploadMetadata" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The JSON metadata describing the file. Required."""
+    content: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
+    """The raw file content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: "_models.FileUploadMetadata",
+        content: FileType,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VectorSearch(_Model):
     """Contains configuration options related to vector search.
 
@@ -13269,6 +13913,11 @@ class WebKnowledgeSource(KnowledgeSource, discriminator="web"):
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -13299,6 +13948,7 @@ class WebKnowledgeSource(KnowledgeSource, discriminator="web"):
         *,
         name: str,
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         web_parameters: Optional["_models.WebKnowledgeSourceParameters"] = None,
@@ -13576,6 +14226,11 @@ class WorkIQKnowledgeSource(KnowledgeSource, discriminator="workIQ"):
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -13589,17 +14244,28 @@ class WorkIQKnowledgeSource(KnowledgeSource, discriminator="workIQ"):
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from work IQ.
     :vartype kind: str or ~azure.search.documents.indexes.models.WORK_IQ
+    :ivar work_iq_parameters: The parameters for the WorkIQ knowledge source, including the
+     customer-owned Entra app configuration used for on-behalf-of authentication. Required.
+    :vartype work_iq_parameters:
+     ~azure.search.documents.indexes.models.WorkIQKnowledgeSourceParameters
     """
 
     kind: Literal[KnowledgeSourceKind.WORK_IQ] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. A knowledge source that reads data from work IQ."""
+    work_iq_parameters: "_models.WorkIQKnowledgeSourceParameters" = rest_field(
+        name="workIQParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The parameters for the WorkIQ knowledge source, including the customer-owned Entra app
+     configuration used for on-behalf-of authentication. Required."""
 
     @overload
     def __init__(
         self,
         *,
         name: str,
+        work_iq_parameters: "_models.WorkIQKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -13614,3 +14280,41 @@ class WorkIQKnowledgeSource(KnowledgeSource, discriminator="workIQ"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = KnowledgeSourceKind.WORK_IQ  # type: ignore
+
+
+class WorkIQKnowledgeSourceParameters(_Model):
+    """Parameters for a WorkIQ knowledge source.
+
+    :ivar entra_app_authentication: The customer-owned Microsoft Entra app registration
+     configuration used for on-behalf-of authentication to the Work IQ API. The customer registers a
+     tenant-owned Entra app, grants it the WorkIQAgent.Ask delegated permission, and configures a
+     federated credential so Azure AI Search can authenticate as that app without a stored client
+     secret. Required.
+    :vartype entra_app_authentication:
+     ~azure.search.documents.indexes.models.EntraAppAuthentication
+    """
+
+    entra_app_authentication: "_models.EntraAppAuthentication" = rest_field(
+        name="entraAppAuthentication", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The customer-owned Microsoft Entra app registration configuration used for on-behalf-of
+     authentication to the Work IQ API. The customer registers a tenant-owned Entra app, grants it
+     the WorkIQAgent.Ask delegated permission, and configures a federated credential so Azure AI
+     Search can authenticate as that app without a stored client secret. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        entra_app_authentication: "_models.EntraAppAuthentication",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)

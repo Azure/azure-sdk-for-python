@@ -31,10 +31,10 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models2
+from ... import models as _models2, types as _types_models2
 from .... import models as _models3
-from ...._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from ...._utils.utils import ClientMixinABC
+from ...._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ...._utils.utils import ClientMixinABC, prepare_multipart_form_data
 from ...._validation import api_version_validation
 from ....knowledgebases import models as _knowledgebases_models4
 from ..._operations._operations import (
@@ -71,6 +71,8 @@ from ..._operations._operations import (
     build_search_index_list_knowledge_bases_request,
     build_search_index_list_knowledge_source_files_request,
     build_search_index_list_knowledge_sources_request,
+    build_search_index_update_knowledge_source_file_request,
+    build_search_index_upload_knowledge_source_file_multipart_request,
     build_search_index_upload_knowledge_source_file_request,
     build_search_indexer_create_data_source_connection_request,
     build_search_indexer_create_indexer_request,
@@ -96,7 +98,6 @@ from ..._operations._operations import (
 )
 from .._configuration import SearchIndexClientConfiguration, SearchIndexerClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -120,7 +121,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_synonym_map(
         self,
         name: str,
-        synonym_map: JSON,
+        synonym_map: _types_models2.SynonymMap,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -143,7 +144,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_synonym_map(
         self,
         name: str,
-        synonym_map: Union[_models2.SynonymMap, JSON, IO[bytes]],
+        synonym_map: Union[_models2.SynonymMap, _types_models2.SynonymMap, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -153,9 +154,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         :param name: The name of the synonym map. Required.
         :type name: str
-        :param synonym_map: The definition of the synonym map to create or update. Is one of the
-         following types: SynonymMap, JSON, IO[bytes] Required.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or JSON or IO[bytes]
+        :param synonym_map: The definition of the synonym map to create or update. Is either a
+         SynonymMap type or a IO[bytes] type. Required.
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or
+         ~azure.search.documents.indexes.types.SynonymMap or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -373,8 +375,18 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+    )
     async def _get_synonym_maps(
-        self, *, select: Optional[list[str]] = None, **kwargs: Any
+        self,
+        *,
+        select: Optional[list[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models2.ListingSearchType]] = None,
+        **kwargs: Any
     ) -> _models2._models.ListSynonymMapsResult:
         """Lists all synonym maps available for a search service.
 
@@ -382,6 +394,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing so that fewer results need to be
+         paged through. If omitted or an empty string is passed, no narrowing is applied. Default value
+         is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. The server enforces
+         a maximum; if omitted, the server determines a suitable default. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+         'prefix' is supported. "prefix" Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: ListSynonymMapsResult. The ListSynonymMapsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListSynonymMapsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -401,6 +423,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         _request = build_search_index_get_synonym_maps_request(
             select=select,
+            search=search,
+            page_size=page_size,
+            search_type=search_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -461,12 +486,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def create_synonym_map(
-        self, synonym_map: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, synonym_map: _types_models2.SynonymMap, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.SynonymMap:
         """Creates a new synonym map.
 
         :param synonym_map: The definition of the synonym map to create. Required.
-        :type synonym_map: JSON
+        :type synonym_map: ~azure.search.documents.indexes.types.SynonymMap
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -493,13 +518,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace_async
     async def create_synonym_map(
-        self, synonym_map: Union[_models2.SynonymMap, JSON, IO[bytes]], **kwargs: Any
+        self, synonym_map: Union[_models2.SynonymMap, _types_models2.SynonymMap, IO[bytes]], **kwargs: Any
     ) -> _models2.SynonymMap:
         """Creates a new synonym map.
 
-        :param synonym_map: The definition of the synonym map to create. Is one of the following types:
-         SynonymMap, JSON, IO[bytes] Required.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or JSON or IO[bytes]
+        :param synonym_map: The definition of the synonym map to create. Is either a SynonymMap type or
+         a IO[bytes] type. Required.
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or
+         ~azure.search.documents.indexes.types.SynonymMap or IO[bytes]
         :return: SynonymMap. The SynonymMap is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -584,7 +610,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_index(
         self,
         name: str,
-        index: JSON,
+        index: _types_models2.SearchIndex,
         *,
         allow_index_downtime: Optional[bool] = None,
         content_type: str = "application/json",
@@ -609,7 +635,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_index(
         self,
         name: str,
-        index: Union[_models2.SearchIndex, JSON, IO[bytes]],
+        index: Union[_models2.SearchIndex, _types_models2.SearchIndex, IO[bytes]],
         *,
         allow_index_downtime: Optional[bool] = None,
         etag: Optional[str] = None,
@@ -620,9 +646,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         :param name: The name of the index. Required.
         :type name: str
-        :param index: The definition of the index to create or update. Is one of the following types:
-         SearchIndex, JSON, IO[bytes] Required.
-        :type index: ~azure.search.documents.indexes.models.SearchIndex or JSON or IO[bytes]
+        :param index: The definition of the index to create or update. Is either a SearchIndex type or
+         a IO[bytes] type. Required.
+        :type index: ~azure.search.documents.indexes.models.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndex or IO[bytes]
         :keyword allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
@@ -850,22 +877,32 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace
     @api_version_validation(
-        params_added_on={"2026-05-01-preview": ["top", "skip", "count"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview"],
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": ["api_version", "accept", "search", "page_size", "search_type", "client_request_id"]
+        },
+        api_versions_list=["2026-08-01-preview"],
     )
     def _list_indexes(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, count: Optional[bool] = None, **kwargs: Any
+        self,
+        *,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models2.ListingSearchType]] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models2.SearchIndex"]:
         """Lists all indexes available for a search service.
 
-        :keyword top: The number of items to retrieve. Default is 50, maximum is 1000. Default value is
-         None.
-        :paramtype top: int
-        :keyword skip: The number of items to skip. Default value is None.
-        :paramtype skip: int
-        :keyword count: A value that specifies whether to fetch the total count of items. Default is
-         false. Default value is None.
-        :paramtype count: bool
+        :keyword search: A string used to narrow down the listing so that fewer results need to be
+         paged through. If omitted or an empty string is passed, no narrowing is applied. Default value
+         is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. The server enforces
+         a maximum; if omitted, the server determines a suitable default. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+         'prefix' is supported. "prefix" Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: An iterator like instance of SearchIndex
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndex]
@@ -888,9 +925,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             if not next_link:
 
                 _request = build_search_index_list_indexes_request(
-                    top=top,
-                    skip=skip,
-                    count=count,
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -913,7 +950,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -957,16 +997,27 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace
     @api_version_validation(
-        params_added_on={"2026-05-01-preview": ["top", "skip", "count"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview"],
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "accept",
+                "select",
+                "search",
+                "page_size",
+                "search_type",
+                "client_request_id",
+            ]
+        },
+        api_versions_list=["2026-08-01-preview"],
     )
     def _list_indexes_with_selected_properties(
         self,
         *,
         select: Optional[list[str]] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        count: Optional[bool] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models2.ListingSearchType]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models2._models.SearchIndexResponse"]:
         """Lists all indexes available for a search service.
@@ -975,14 +1026,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: list[str]
-        :keyword top: The number of items to retrieve. Default is 50, maximum is 1000. Default value is
-         None.
-        :paramtype top: int
-        :keyword skip: The number of items to skip. Default value is None.
-        :paramtype skip: int
-        :keyword count: A value that specifies whether to fetch the total count of items. Default is
-         false. Default value is None.
-        :paramtype count: bool
+        :keyword search: A string used to narrow down the listing so that fewer results need to be
+         paged through. If omitted or an empty string is passed, no narrowing is applied. Default value
+         is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. The server enforces
+         a maximum; if omitted, the server determines a suitable default. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+         'prefix' is supported. "prefix" Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: An iterator like instance of SearchIndexResponse
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models._models.SearchIndexResponse]
@@ -1006,9 +1059,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
                 _request = build_search_index_list_indexes_with_selected_properties_request(
                     select=select,
-                    top=top,
-                    skip=skip,
-                    count=count,
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1031,7 +1084,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1045,7 +1101,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                list[_models2._models.SearchIndexResponse],  # pylint: disable=protected-access
+                list[_models2._models.SearchIndexResponse],
                 deserialized.get("value", []),
             )
             if cls:
@@ -1091,12 +1147,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def create_index(
-        self, index: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, index: _types_models2.SearchIndex, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.SearchIndex:
         """Creates a new search index.
 
         :param index: The definition of the index to create. Required.
-        :type index: JSON
+        :type index: ~azure.search.documents.indexes.types.SearchIndex
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1123,13 +1179,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace_async
     async def create_index(
-        self, index: Union[_models2.SearchIndex, JSON, IO[bytes]], **kwargs: Any
+        self, index: Union[_models2.SearchIndex, _types_models2.SearchIndex, IO[bytes]], **kwargs: Any
     ) -> _models2.SearchIndex:
         """Creates a new search index.
 
-        :param index: The definition of the index to create. Is one of the following types:
-         SearchIndex, JSON, IO[bytes] Required.
-        :type index: ~azure.search.documents.indexes.models.SearchIndex or JSON or IO[bytes]
+        :param index: The definition of the index to create. Is either a SearchIndex type or a
+         IO[bytes] type. Required.
+        :type index: ~azure.search.documents.indexes.models.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndex or IO[bytes]
         :return: SearchIndex. The SearchIndex is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1270,7 +1327,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     ) -> _models2.AnalyzeResult: ...
     @overload
     async def _analyze_text(
-        self, name: str, request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        request: _types_models2.AnalyzeTextOptions,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models2.AnalyzeResult: ...
     @overload
     async def _analyze_text(
@@ -1279,15 +1341,19 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace_async
     async def _analyze_text(
-        self, name: str, request: Union[_models2.AnalyzeTextOptions, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        request: Union[_models2.AnalyzeTextOptions, _types_models2.AnalyzeTextOptions, IO[bytes]],
+        **kwargs: Any
     ) -> _models2.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
 
         :param name: The name of the index. Required.
         :type name: str
-        :param request: The text and analyzer or analysis components to test. Is one of the following
-         types: AnalyzeTextOptions, JSON, IO[bytes] Required.
-        :type request: ~azure.search.documents.indexes.models.AnalyzeTextOptions or JSON or IO[bytes]
+        :param request: The text and analyzer or analysis components to test. Is either a
+         AnalyzeTextOptions type or a IO[bytes] type. Required.
+        :type request: ~azure.search.documents.indexes.models.AnalyzeTextOptions or
+         ~azure.search.documents.indexes.types.AnalyzeTextOptions or IO[bytes]
         :return: AnalyzeResult. The AnalyzeResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1372,7 +1438,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_alias(
         self,
         name: str,
-        alias: JSON,
+        alias: _types_models2.SearchAlias,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1395,7 +1461,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_alias(
         self,
         name: str,
-        alias: Union[_models2.SearchAlias, JSON, IO[bytes]],
+        alias: Union[_models2.SearchAlias, _types_models2.SearchAlias, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1405,9 +1471,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         :param name: The name of the alias. Required.
         :type name: str
-        :param alias: The definition of the alias to create or update. Is one of the following types:
-         SearchAlias, JSON, IO[bytes] Required.
-        :type alias: ~azure.search.documents.indexes.models.SearchAlias or JSON or IO[bytes]
+        :param alias: The definition of the alias to create or update. Is either a SearchAlias type or
+         a IO[bytes] type. Required.
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias or
+         ~azure.search.documents.indexes.types.SearchAlias or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1626,9 +1693,30 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_aliases(self, **kwargs: Any) -> AsyncItemPaged["_models2.SearchAlias"]:
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+    )
+    def list_aliases(
+        self,
+        *,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models2.ListingSearchType]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models2.SearchAlias"]:
         """Lists all aliases available for a search service.
 
+        :keyword search: A string used to narrow down the listing so that fewer results need to be
+         paged through. If omitted or an empty string is passed, no narrowing is applied. Default value
+         is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. The server enforces
+         a maximum; if omitted, the server determines a suitable default. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+         'prefix' is supported. "prefix" Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: An iterator like instance of SearchAlias
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
@@ -1651,6 +1739,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             if not next_link:
 
                 _request = build_search_index_list_aliases_request(
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1673,7 +1764,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1692,7 +1786,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+            return deserialized.get("@odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -1733,12 +1827,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def create_alias(
-        self, alias: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, alias: _types_models2.SearchAlias, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.SearchAlias:
         """Creates a new search alias.
 
         :param alias: The definition of the alias to create. Required.
-        :type alias: JSON
+        :type alias: ~azure.search.documents.indexes.types.SearchAlias
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1765,13 +1859,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace_async
     async def create_alias(
-        self, alias: Union[_models2.SearchAlias, JSON, IO[bytes]], **kwargs: Any
+        self, alias: Union[_models2.SearchAlias, _types_models2.SearchAlias, IO[bytes]], **kwargs: Any
     ) -> _models2.SearchAlias:
         """Creates a new search alias.
 
-        :param alias: The definition of the alias to create. Is one of the following types:
-         SearchAlias, JSON, IO[bytes] Required.
-        :type alias: ~azure.search.documents.indexes.models.SearchAlias or JSON or IO[bytes]
+        :param alias: The definition of the alias to create. Is either a SearchAlias type or a
+         IO[bytes] type. Required.
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias or
+         ~azure.search.documents.indexes.types.SearchAlias or IO[bytes]
         :return: SearchAlias. The SearchAlias is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1855,7 +1950,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_knowledge_base(
         self,
         name: str,
-        knowledge_base: JSON,
+        knowledge_base: _types_models2.KnowledgeBase,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1878,7 +1973,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_knowledge_base(
         self,
         name: str,
-        knowledge_base: Union[_models2.KnowledgeBase, JSON, IO[bytes]],
+        knowledge_base: Union[_models2.KnowledgeBase, _types_models2.KnowledgeBase, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1888,9 +1983,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         :param name: The name of the knowledge base. Required.
         :type name: str
-        :param knowledge_base: The definition of the knowledge base to create or update. Is one of the
-         following types: KnowledgeBase, JSON, IO[bytes] Required.
-        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or JSON or IO[bytes]
+        :param knowledge_base: The definition of the knowledge base to create or update. Is either a
+         KnowledgeBase type or a IO[bytes] type. Required.
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBase or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2108,9 +2204,30 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_knowledge_bases(self, **kwargs: Any) -> AsyncItemPaged["_models2.KnowledgeBase"]:
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+    )
+    def list_knowledge_bases(
+        self,
+        *,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models2.ListingSearchType]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models2.KnowledgeBase"]:
         """Lists all knowledge bases available for a search service.
 
+        :keyword search: A string used to narrow down the listing so that fewer results need to be
+         paged through. If omitted or an empty string is passed, no narrowing is applied. Default value
+         is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. The server enforces
+         a maximum; if omitted, the server determines a suitable default. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+         'prefix' is supported. "prefix" Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: An iterator like instance of KnowledgeBase
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeBase]
@@ -2133,6 +2250,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             if not next_link:
 
                 _request = build_search_index_list_knowledge_bases_request(
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2155,7 +2275,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2174,7 +2297,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+            return deserialized.get("@odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -2215,12 +2338,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def create_knowledge_base(
-        self, knowledge_base: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, knowledge_base: _types_models2.KnowledgeBase, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.KnowledgeBase:
         """Creates a new knowledge base.
 
         :param knowledge_base: The definition of the knowledge base to create. Required.
-        :type knowledge_base: JSON
+        :type knowledge_base: ~azure.search.documents.indexes.types.KnowledgeBase
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2247,13 +2370,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace_async
     async def create_knowledge_base(
-        self, knowledge_base: Union[_models2.KnowledgeBase, JSON, IO[bytes]], **kwargs: Any
+        self, knowledge_base: Union[_models2.KnowledgeBase, _types_models2.KnowledgeBase, IO[bytes]], **kwargs: Any
     ) -> _models2.KnowledgeBase:
         """Creates a new knowledge base.
 
-        :param knowledge_base: The definition of the knowledge base to create. Is one of the following
-         types: KnowledgeBase, JSON, IO[bytes] Required.
-        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or JSON or IO[bytes]
+        :param knowledge_base: The definition of the knowledge base to create. Is either a
+         KnowledgeBase type or a IO[bytes] type. Required.
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBase or IO[bytes]
         :return: KnowledgeBase. The KnowledgeBase is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2337,7 +2461,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_knowledge_source(
         self,
         name: str,
-        knowledge_source: JSON,
+        knowledge_source: _types_models2.KnowledgeSource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -2360,7 +2484,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_knowledge_source(
         self,
         name: str,
-        knowledge_source: Union[_models2.KnowledgeSource, JSON, IO[bytes]],
+        knowledge_source: Union[_models2.KnowledgeSource, _types_models2.KnowledgeSource, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2370,10 +2494,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         :param name: The name of the knowledge source. Required.
         :type name: str
-        :param knowledge_source: The definition of the knowledge source to create or update. Is one of
-         the following types: KnowledgeSource, JSON, IO[bytes] Required.
-        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or JSON or
-         IO[bytes]
+        :param knowledge_source: The definition of the knowledge source to create or update. Is either
+         a KnowledgeSource type or a IO[bytes] type. Required.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or
+         ~azure.search.documents.indexes.types.KnowledgeSource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2591,9 +2715,30 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_knowledge_sources(self, **kwargs: Any) -> AsyncItemPaged["_models2.KnowledgeSource"]:
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+    )
+    def list_knowledge_sources(
+        self,
+        *,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models2.ListingSearchType]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models2.KnowledgeSource"]:
         """Lists all knowledge sources available for a search service.
 
+        :keyword search: A string used to narrow down the listing so that fewer results need to be
+         paged through. If omitted or an empty string is passed, no narrowing is applied. Default value
+         is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. The server enforces
+         a maximum; if omitted, the server determines a suitable default. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+         'prefix' is supported. "prefix" Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: An iterator like instance of KnowledgeSource
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeSource]
@@ -2616,6 +2761,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             if not next_link:
 
                 _request = build_search_index_list_knowledge_sources_request(
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2638,7 +2786,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2657,7 +2808,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+            return deserialized.get("@odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -2698,12 +2849,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def create_knowledge_source(
-        self, knowledge_source: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, knowledge_source: _types_models2.KnowledgeSource, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.KnowledgeSource:
         """Creates a new knowledge source.
 
         :param knowledge_source: The definition of the knowledge source to create. Required.
-        :type knowledge_source: JSON
+        :type knowledge_source: ~azure.search.documents.indexes.types.KnowledgeSource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2730,14 +2881,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace_async
     async def create_knowledge_source(
-        self, knowledge_source: Union[_models2.KnowledgeSource, JSON, IO[bytes]], **kwargs: Any
+        self,
+        knowledge_source: Union[_models2.KnowledgeSource, _types_models2.KnowledgeSource, IO[bytes]],
+        **kwargs: Any
     ) -> _models2.KnowledgeSource:
         """Creates a new knowledge source.
 
-        :param knowledge_source: The definition of the knowledge source to create. Is one of the
-         following types: KnowledgeSource, JSON, IO[bytes] Required.
-        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or JSON or
-         IO[bytes]
+        :param knowledge_source: The definition of the knowledge source to create. Is either a
+         KnowledgeSource type or a IO[bytes] type. Required.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or
+         ~azure.search.documents.indexes.types.KnowledgeSource or IO[bytes]
         :return: KnowledgeSource. The KnowledgeSource is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2886,7 +3039,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
     )
     async def _upload_knowledge_source_file(
         self, name: str, file: bytes, *, content_disposition: str, **kwargs: Any
@@ -2967,17 +3120,165 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         return deserialized  # type: ignore
 
+    @overload
+    async def upload_knowledge_source_file_multipart(
+        self, name: str, body: _models2.UploadKnowledgeSourceFileMultipartRequest, **kwargs: Any
+    ) -> _models2.KnowledgeSourceFile:
+        """Uploads a file to a File knowledge source using multipart/form-data: a JSON 'metadata' part
+        (file name, custom metadata, and optional parsing/extraction overrides) and a 'content' part
+        with the raw file bytes.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Required.
+        :type body: ~azure.search.documents.indexes.models.UploadKnowledgeSourceFileMultipartRequest
+        :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def upload_knowledge_source_file_multipart(
+        self, name: str, body: _types_models2.UploadKnowledgeSourceFileMultipartRequest, **kwargs: Any
+    ) -> _models2.KnowledgeSourceFile:
+        """Uploads a file to a File knowledge source using multipart/form-data: a JSON 'metadata' part
+        (file name, custom metadata, and optional parsing/extraction overrides) and a 'content' part
+        with the raw file bytes.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Required.
+        :type body: ~azure.search.documents.indexes.types.UploadKnowledgeSourceFileMultipartRequest
+        :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={"2026-08-01-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
+        api_versions_list=["2026-08-01-preview"],
+    )
+    async def upload_knowledge_source_file_multipart(
+        self,
+        name: str,
+        body: Union[
+            _models2.UploadKnowledgeSourceFileMultipartRequest, _types_models2.UploadKnowledgeSourceFileMultipartRequest
+        ],
+        **kwargs: Any
+    ) -> _models2.KnowledgeSourceFile:
+        """Uploads a file to a File knowledge source using multipart/form-data: a JSON 'metadata' part
+        (file name, custom metadata, and optional parsing/extraction overrides) and a 'content' part
+        with the raw file bytes.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Is one of
+         the following types: UploadKnowledgeSourceFileMultipartRequest Required.
+        :type body: ~azure.search.documents.indexes.models.UploadKnowledgeSourceFileMultipartRequest or
+         ~azure.search.documents.indexes.types.UploadKnowledgeSourceFileMultipartRequest
+        :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models2.KnowledgeSourceFile] = kwargs.pop("cls", None)
+
+        _body = body.as_dict() if isinstance(body, _Model) else body
+        _file_fields: list[str] = ["content"]
+        _data_fields: list[str] = ["metadata"]
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+
+        _request = build_search_index_upload_knowledge_source_file_multipart_request(
+            name=name,
+            api_version=self._config.api_version,
+            files=_files,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models3.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models2.KnowledgeSourceFile, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     @distributed_trace
     @api_version_validation(
         method_added_on="2026-05-01-preview",
-        params_added_on={"2026-05-01-preview": ["api_version", "accept", "client_request_id", "name"]},
-        api_versions_list=["2026-05-01-preview"],
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "accept", "client_request_id", "name"],
+            "2026-08-01-preview": ["prefix", "search", "page_size", "search_type"],
+        },
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
     )
-    def list_knowledge_source_files(self, name: str, **kwargs: Any) -> AsyncItemPaged["_models2.KnowledgeSourceFile"]:
+    def list_knowledge_source_files(
+        self,
+        name: str,
+        *,
+        prefix: Optional[str] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models2.ListingSearchType]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models2.KnowledgeSourceFile"]:
         """Lists all files in a File knowledge source.
 
         :param name: The name of the knowledge source. Required.
         :type name: str
+        :keyword prefix: Optional prefix to filter files by their directory-like path. Default value is
+         None.
+        :paramtype prefix: str
+        :keyword search: A string used to narrow down the listing so that fewer results need to be
+         paged through. If omitted or an empty string is passed, no narrowing is applied. Default value
+         is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. The server enforces
+         a maximum; if omitted, the server determines a suitable default. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+         'prefix' is supported. "prefix" Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: An iterator like instance of KnowledgeSourceFile
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeSourceFile]
@@ -3001,6 +3302,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
                 _request = build_search_index_list_knowledge_source_files_request(
                     name=name,
+                    prefix=prefix,
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3023,7 +3328,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3042,7 +3350,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+            return deserialized.get("@odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -3069,7 +3377,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @api_version_validation(
         method_added_on="2026-05-01-preview",
         params_added_on={"2026-05-01-preview": ["api_version", "file_id", "accept", "client_request_id", "name"]},
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
     )
     async def _delete_knowledge_source_file(self, file_id: str, name: str, **kwargs: Any) -> None:
         """Deletes a file from a File knowledge source and removes all indexed content derived from it.
@@ -3124,6 +3432,137 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    async def update_knowledge_source_file(
+        self, file_id: str, name: str, body: _models2.UpdateKnowledgeSourceFileRequest, **kwargs: Any
+    ) -> _models2.KnowledgeSourceFile:
+        """Updates an existing file in a File knowledge source in place, replacing its indexed content.
+        Uses multipart/form-data: a JSON 'metadata' part (file name, custom metadata, and optional
+        extraction override) and a 'content' part with the raw file bytes.
+
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Required.
+        :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest
+        :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_knowledge_source_file(
+        self, file_id: str, name: str, body: _types_models2.UpdateKnowledgeSourceFileRequest, **kwargs: Any
+    ) -> _models2.KnowledgeSourceFile:
+        """Updates an existing file in a File knowledge source in place, replacing its indexed content.
+        Uses multipart/form-data: a JSON 'metadata' part (file name, custom metadata, and optional
+        extraction override) and a 'content' part with the raw file bytes.
+
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Required.
+        :type body: ~azure.search.documents.indexes.types.UpdateKnowledgeSourceFileRequest
+        :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": ["api_version", "file_id", "client_request_id", "name", "content_type", "accept"]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    async def update_knowledge_source_file(
+        self,
+        file_id: str,
+        name: str,
+        body: Union[_models2.UpdateKnowledgeSourceFileRequest, _types_models2.UpdateKnowledgeSourceFileRequest],
+        **kwargs: Any
+    ) -> _models2.KnowledgeSourceFile:
+        """Updates an existing file in a File knowledge source in place, replacing its indexed content.
+        Uses multipart/form-data: a JSON 'metadata' part (file name, custom metadata, and optional
+        extraction override) and a 'content' part with the raw file bytes.
+
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Is one of
+         the following types: UpdateKnowledgeSourceFileRequest Required.
+        :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest or
+         ~azure.search.documents.indexes.types.UpdateKnowledgeSourceFileRequest
+        :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models2.KnowledgeSourceFile] = kwargs.pop("cls", None)
+
+        _body = body.as_dict() if isinstance(body, _Model) else body
+        _file_fields: list[str] = ["content"]
+        _data_fields: list[str] = ["metadata"]
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+
+        _request = build_search_index_update_knowledge_source_file_request(
+            file_id=file_id,
+            name=name,
+            api_version=self._config.api_version,
+            files=_files,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models3.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models2.KnowledgeSourceFile, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs: Any) -> _models2.SearchServiceStatistics:
@@ -3189,23 +3628,32 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-05-01-preview",
-        params_added_on={"2026-05-01-preview": ["api_version", "accept", "top", "skip", "count", "client_request_id"]},
-        api_versions_list=["2026-05-01-preview"],
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": ["api_version", "accept", "search", "page_size", "search_type", "client_request_id"]
+        },
+        api_versions_list=["2026-08-01-preview"],
     )
     def list_index_stats_summary(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, count: Optional[bool] = None, **kwargs: Any
+        self,
+        *,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models2.ListingSearchType]] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models2.IndexStatisticsSummary"]:
         """Retrieves a summary of statistics for all indexes in the search service.
 
-        :keyword top: The number of items to retrieve. Default is 50, maximum is 1000. Default value is
-         None.
-        :paramtype top: int
-        :keyword skip: The number of items to skip. Default value is None.
-        :paramtype skip: int
-        :keyword count: A value that specifies whether to fetch the total count of items. Default is
-         false. Default value is None.
-        :paramtype count: bool
+        :keyword search: A string used to narrow down the listing so that fewer results need to be
+         paged through. If omitted or an empty string is passed, no narrowing is applied. Default value
+         is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. The server enforces
+         a maximum; if omitted, the server determines a suitable default. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+         'prefix' is supported. "prefix" Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: An iterator like instance of IndexStatisticsSummary
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.IndexStatisticsSummary]
@@ -3228,9 +3676,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             if not next_link:
 
                 _request = build_search_index_list_index_stats_summary_request(
-                    top=top,
-                    skip=skip,
-                    count=count,
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3253,7 +3701,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3316,7 +3767,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     async def _create_or_update_data_source_connection(
         self,
         name: str,
-        data_source: JSON,
+        data_source: _types_models2.SearchIndexerDataSourceConnection,
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         content_type: str = "application/json",
@@ -3340,12 +3791,14 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-05-01-preview": ["skip_indexer_reset_requirement_for_cache"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
     )
     async def _create_or_update_data_source_connection(
         self,
         name: str,
-        data_source: Union[_models2.SearchIndexerDataSourceConnection, JSON, IO[bytes]],
+        data_source: Union[
+            _models2.SearchIndexerDataSourceConnection, _types_models2.SearchIndexerDataSourceConnection, IO[bytes]
+        ],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         etag: Optional[str] = None,
@@ -3356,10 +3809,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         :param name: The name of the datasource. Required.
         :type name: str
-        :param data_source: The definition of the datasource to create or update. Is one of the
-         following types: SearchIndexerDataSourceConnection, JSON, IO[bytes] Required.
+        :param data_source: The definition of the datasource to create or update. Is either a
+         SearchIndexerDataSourceConnection type or a IO[bytes] type. Required.
         :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or
-         JSON or IO[bytes]
+         ~azure.search.documents.indexes.types.SearchIndexerDataSourceConnection or IO[bytes]
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
          value is None.
         :paramtype skip_indexer_reset_requirement_for_cache: bool
@@ -3583,8 +4036,18 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+    )
     async def _get_data_source_connections(
-        self, *, select: Optional[list[str]] = None, **kwargs: Any
+        self,
+        *,
+        select: Optional[list[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models2.ListingSearchType]] = None,
+        **kwargs: Any
     ) -> _models2._models.ListDataSourcesResult:
         """Lists all datasources available for a search service.
 
@@ -3592,6 +4055,16 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing so that fewer results need to be
+         paged through. If omitted or an empty string is passed, no narrowing is applied. Default value
+         is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. The server enforces
+         a maximum; if omitted, the server determines a suitable default. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+         'prefix' is supported. "prefix" Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: ListDataSourcesResult. The ListDataSourcesResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListDataSourcesResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3611,6 +4084,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         _request = build_search_indexer_get_data_source_connections_request(
             select=select,
+            search=search,
+            page_size=page_size,
+            search_type=search_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3677,12 +4153,17 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @overload
     async def create_data_source_connection(
-        self, data_source_connection: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        data_source_connection: _types_models2.SearchIndexerDataSourceConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models2.SearchIndexerDataSourceConnection:
         """Creates a new datasource.
 
         :param data_source_connection: The definition of the datasource to create. Required.
-        :type data_source_connection: JSON
+        :type data_source_connection:
+         ~azure.search.documents.indexes.types.SearchIndexerDataSourceConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3711,14 +4192,19 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace_async
     async def create_data_source_connection(
-        self, data_source_connection: Union[_models2.SearchIndexerDataSourceConnection, JSON, IO[bytes]], **kwargs: Any
+        self,
+        data_source_connection: Union[
+            _models2.SearchIndexerDataSourceConnection, _types_models2.SearchIndexerDataSourceConnection, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models2.SearchIndexerDataSourceConnection:
         """Creates a new datasource.
 
-        :param data_source_connection: The definition of the datasource to create. Is one of the
-         following types: SearchIndexerDataSourceConnection, JSON, IO[bytes] Required.
+        :param data_source_connection: The definition of the datasource to create. Is either a
+         SearchIndexerDataSourceConnection type or a IO[bytes] type. Required.
         :type data_source_connection:
-         ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or JSON or IO[bytes]
+         ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or
+         ~azure.search.documents.indexes.types.SearchIndexerDataSourceConnection or IO[bytes]
         :return: SearchIndexerDataSourceConnection. The SearchIndexerDataSourceConnection is compatible
          with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
@@ -3851,7 +4337,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> None: ...
     @overload
     async def _resync(
-        self, name: str, indexer_resync: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        indexer_resync: _types_models2.IndexerResyncBody,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None: ...
     @overload
     async def _resync(
@@ -3862,19 +4353,22 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @api_version_validation(
         method_added_on="2026-05-01-preview",
         params_added_on={"2026-05-01-preview": ["api_version", "accept", "client_request_id", "name", "content_type"]},
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
     )
     async def _resync(
-        self, name: str, indexer_resync: Union[_models2.IndexerResyncBody, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        indexer_resync: Union[_models2.IndexerResyncBody, _types_models2.IndexerResyncBody, IO[bytes]],
+        **kwargs: Any
     ) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.".
 
         :param name: The name of the indexer. Required.
         :type name: str
-        :param indexer_resync: The definition of the indexer resync options. Is one of the following
-         types: IndexerResyncBody, JSON, IO[bytes] Required.
-        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody or JSON or
-         IO[bytes]
+        :param indexer_resync: The definition of the indexer resync options. Is either a
+         IndexerResyncBody type or a IO[bytes] type. Required.
+        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody or
+         ~azure.search.documents.indexes.types.IndexerResyncBody or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3945,7 +4439,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     async def _reset_documents(
         self,
         name: str,
-        keys_or_ids: Optional[JSON] = None,
+        keys_or_ids: Optional[_types_models2.DocumentKeysOrIds] = None,
         *,
         overwrite: Optional[bool] = None,
         content_type: str = "application/json",
@@ -3968,12 +4462,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         params_added_on={
             "2026-05-01-preview": ["api_version", "accept", "overwrite", "client_request_id", "name", "content_type"]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
     )
     async def _reset_documents(
         self,
         name: str,
-        keys_or_ids: Optional[Union[_models2.DocumentKeysOrIds, JSON, IO[bytes]]] = None,
+        keys_or_ids: Optional[Union[_models2.DocumentKeysOrIds, _types_models2.DocumentKeysOrIds, IO[bytes]]] = None,
         *,
         overwrite: Optional[bool] = None,
         **kwargs: Any
@@ -3984,10 +4478,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         :type name: str
         :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
          the document key field must be specified in the indexer configuration. If ids are provided, the
-         document key field is ignored. Is one of the following types: DocumentKeysOrIds, JSON,
-         IO[bytes] Default value is None.
-        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds or JSON or
-         IO[bytes]
+         document key field is ignored. Is either a DocumentKeysOrIds type or a IO[bytes] type. Default
+         value is None.
+        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds or
+         ~azure.search.documents.indexes.types.DocumentKeysOrIds or IO[bytes]
         :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
          keys or ids in this payload will be queued to be re-ingested. Default value is None.
         :paramtype overwrite: bool
@@ -4121,7 +4615,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     async def _create_or_update_indexer(
         self,
         name: str,
-        indexer: JSON,
+        indexer: _types_models2.SearchIndexer,
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         disable_cache_reprocessing_change_detection: Optional[bool] = None,
@@ -4152,12 +4646,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 "disable_cache_reprocessing_change_detection",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
     )
     async def _create_or_update_indexer(
         self,
         name: str,
-        indexer: Union[_models2.SearchIndexer, JSON, IO[bytes]],
+        indexer: Union[_models2.SearchIndexer, _types_models2.SearchIndexer, IO[bytes]],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         disable_cache_reprocessing_change_detection: Optional[bool] = None,
@@ -4169,9 +4663,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         :param name: The name of the indexer. Required.
         :type name: str
-        :param indexer: The definition of the indexer to create or update. Is one of the following
-         types: SearchIndexer, JSON, IO[bytes] Required.
-        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or JSON or IO[bytes]
+        :param indexer: The definition of the indexer to create or update. Is either a SearchIndexer
+         type or a IO[bytes] type. Required.
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or
+         ~azure.search.documents.indexes.types.SearchIndexer or IO[bytes]
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
          value is None.
         :paramtype skip_indexer_reset_requirement_for_cache: bool
@@ -4397,8 +4892,18 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+    )
     async def _get_indexers(
-        self, *, select: Optional[list[str]] = None, **kwargs: Any
+        self,
+        *,
+        select: Optional[list[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models2.ListingSearchType]] = None,
+        **kwargs: Any
     ) -> _models2._models.ListIndexersResult:
         """Lists all indexers available for a search service.
 
@@ -4406,6 +4911,16 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing so that fewer results need to be
+         paged through. If omitted or an empty string is passed, no narrowing is applied. Default value
+         is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. The server enforces
+         a maximum; if omitted, the server determines a suitable default. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+         'prefix' is supported. "prefix" Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: ListIndexersResult. The ListIndexersResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListIndexersResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4425,6 +4940,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         _request = build_search_indexer_get_indexers_request(
             select=select,
+            search=search,
+            page_size=page_size,
+            search_type=search_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4485,12 +5003,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @overload
     async def create_indexer(
-        self, indexer: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, indexer: _types_models2.SearchIndexer, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.SearchIndexer:
         """Creates a new indexer.
 
         :param indexer: The definition of the indexer to create. Required.
-        :type indexer: JSON
+        :type indexer: ~azure.search.documents.indexes.types.SearchIndexer
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4517,13 +5035,14 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace_async
     async def create_indexer(
-        self, indexer: Union[_models2.SearchIndexer, JSON, IO[bytes]], **kwargs: Any
+        self, indexer: Union[_models2.SearchIndexer, _types_models2.SearchIndexer, IO[bytes]], **kwargs: Any
     ) -> _models2.SearchIndexer:
         """Creates a new indexer.
 
-        :param indexer: The definition of the indexer to create. Is one of the following types:
-         SearchIndexer, JSON, IO[bytes] Required.
-        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or JSON or IO[bytes]
+        :param indexer: The definition of the indexer to create. Is either a SearchIndexer type or a
+         IO[bytes] type. Required.
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or
+         ~azure.search.documents.indexes.types.SearchIndexer or IO[bytes]
         :return: SearchIndexer. The SearchIndexer is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4674,7 +5193,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     async def _create_or_update_skillset(
         self,
         name: str,
-        skillset: JSON,
+        skillset: _types_models2.SearchIndexerSkillset,
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         disable_cache_reprocessing_change_detection: Optional[bool] = None,
@@ -4705,12 +5224,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 "disable_cache_reprocessing_change_detection",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
     )
     async def _create_or_update_skillset(
         self,
         name: str,
-        skillset: Union[_models2.SearchIndexerSkillset, JSON, IO[bytes]],
+        skillset: Union[_models2.SearchIndexerSkillset, _types_models2.SearchIndexerSkillset, IO[bytes]],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         disable_cache_reprocessing_change_detection: Optional[bool] = None,
@@ -4723,9 +5242,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         :param name: The name of the skillset. Required.
         :type name: str
         :param skillset: The skillset containing one or more skills to create or update in a search
-         service. Is one of the following types: SearchIndexerSkillset, JSON, IO[bytes] Required.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or JSON or
-         IO[bytes]
+         service. Is either a SearchIndexerSkillset type or a IO[bytes] type. Required.
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or
+         ~azure.search.documents.indexes.types.SearchIndexerSkillset or IO[bytes]
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
          value is None.
         :paramtype skip_indexer_reset_requirement_for_cache: bool
@@ -4951,8 +5470,18 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+    )
     async def _get_skillsets(
-        self, *, select: Optional[list[str]] = None, **kwargs: Any
+        self,
+        *,
+        select: Optional[list[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models2.ListingSearchType]] = None,
+        **kwargs: Any
     ) -> _models2._models.ListSkillsetsResult:
         """List all skillsets in a search service.
 
@@ -4960,6 +5489,16 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing so that fewer results need to be
+         paged through. If omitted or an empty string is passed, no narrowing is applied. Default value
+         is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. The server enforces
+         a maximum; if omitted, the server determines a suitable default. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+         'prefix' is supported. "prefix" Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: ListSkillsetsResult. The ListSkillsetsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListSkillsetsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4979,6 +5518,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         _request = build_search_indexer_get_skillsets_request(
             select=select,
+            search=search,
+            page_size=page_size,
+            search_type=search_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5040,13 +5582,13 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @overload
     async def create_skillset(
-        self, skillset: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, skillset: _types_models2.SearchIndexerSkillset, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.SearchIndexerSkillset:
         """Creates a new skillset in a search service.
 
         :param skillset: The skillset containing one or more skills to create in a search service.
          Required.
-        :type skillset: JSON
+        :type skillset: ~azure.search.documents.indexes.types.SearchIndexerSkillset
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5074,14 +5616,16 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace_async
     async def create_skillset(
-        self, skillset: Union[_models2.SearchIndexerSkillset, JSON, IO[bytes]], **kwargs: Any
+        self,
+        skillset: Union[_models2.SearchIndexerSkillset, _types_models2.SearchIndexerSkillset, IO[bytes]],
+        **kwargs: Any
     ) -> _models2.SearchIndexerSkillset:
         """Creates a new skillset in a search service.
 
         :param skillset: The skillset containing one or more skills to create in a search service. Is
-         one of the following types: SearchIndexerSkillset, JSON, IO[bytes] Required.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or JSON or
-         IO[bytes]
+         either a SearchIndexerSkillset type or a IO[bytes] type. Required.
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or
+         ~azure.search.documents.indexes.types.SearchIndexerSkillset or IO[bytes]
         :return: SearchIndexerSkillset. The SearchIndexerSkillset is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5156,7 +5700,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> None: ...
     @overload
     async def _reset_skills(
-        self, name: str, skill_names: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        skill_names: _types_models2.SkillNames,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None: ...
     @overload
     async def _reset_skills(
@@ -5167,18 +5716,19 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @api_version_validation(
         method_added_on="2026-05-01-preview",
         params_added_on={"2026-05-01-preview": ["api_version", "accept", "client_request_id", "name", "content_type"]},
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
     )
     async def _reset_skills(
-        self, name: str, skill_names: Union[_models2.SkillNames, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, skill_names: Union[_models2.SkillNames, _types_models2.SkillNames, IO[bytes]], **kwargs: Any
     ) -> None:
         """Reset an existing skillset in a search service.
 
         :param name: The name of the skillset. Required.
         :type name: str
         :param skill_names: The names of the skills to reset. If not specified, all skills in the
-         skillset will be reset. Is one of the following types: SkillNames, JSON, IO[bytes] Required.
-        :type skill_names: ~azure.search.documents.indexes.models.SkillNames or JSON or IO[bytes]
+         skillset will be reset. Is either a SkillNames type or a IO[bytes] type. Required.
+        :type skill_names: ~azure.search.documents.indexes.models.SkillNames or
+         ~azure.search.documents.indexes.types.SkillNames or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
