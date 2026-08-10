@@ -2100,8 +2100,9 @@ class TestPipelineJobLongRunning:
             ],
         )
         registered_component = client.components.create_or_update(component)
+        fetched_component = client.components.get(name=registered_component.name, version=registered_component.version)
 
-        pipeline_job = registered_component()
+        pipeline_job = fetched_component()
         pipeline_job.settings.default_compute = "cpu-cluster"
         job = client.jobs.create_or_update(pipeline_job)
         status = wait_until_done(client, job, timeout=_PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND)

@@ -7,11 +7,10 @@
 
 import math
 from inspect import Parameter
-from typing import Any, Dict, List, Optional, Set, Union, overload
+from typing import Any, Dict, List, Optional, Union, overload
 
 from typing_extensions import Literal
 
-from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.exceptions import (
@@ -24,14 +23,6 @@ from azure.ai.ml.exceptions import (
 
 from .base import _InputOutputBase
 from .utils import _get_param_with_standard_annotation, _remove_empty_values
-
-_ASSET_TYPES: Set[str] = {
-    AssetTypes.URI_FILE,
-    AssetTypes.URI_FOLDER,
-    AssetTypes.MLTABLE,
-    AssetTypes.MLFLOW_MODEL,
-    AssetTypes.CUSTOM_MODEL,
-}
 
 
 class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
@@ -384,7 +375,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         if not self._is_primitive_type and default_value is not None:
             # Asset-type inputs accept a string default value (e.g. "azureml:", "https://",
             # local path) matching the public CLI v2 YAML schema.
-            if not self._multiple_types and self.type in _ASSET_TYPES:
+            if not self._multiple_types and self.type in IOConstants.ASSET_INPUT_TYPES:
                 if isinstance(default_value, str):
                     self.default: Any = default_value
                     return

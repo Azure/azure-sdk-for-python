@@ -120,6 +120,11 @@ class TestComponentOperation:
             "jobInputType": "uri_file",
         }
 
+        second_node = created_component()
+        assert node._build_inputs()["default_data"] is not second_node._build_inputs()["default_data"]
+        node._build_inputs()["default_data"].path = "azureml:mutated:1"
+        assert second_node._build_inputs()["default_data"].path == "azureml:test_data:1"
+
     def test_create_preserves_pipeline_asset_input_default_after_get(
         self, mock_component_operation: ComponentOperations
     ) -> None:
@@ -142,6 +147,22 @@ class TestComponentOperation:
             created_component = mock_component_operation.create_or_update(component)
 
         assert created_component.inputs["default_data"].default == "azureml:test_data:1"
+
+    def test_get_restores_pipeline_asset_input_default(self, mock_component_operation: ComponentOperations) -> None:
+        component = PipelineComponent(
+            name="pipeline_component",
+            version="1",
+            inputs={"default_data": Input(type="uri_file", default="azureml:test_data:1")},
+            jobs={},
+        )
+        rest_component = component._to_rest_object()
+        rest_component.properties.component_spec["inputs"]["default_data"].pop("default")
+        mock_component_operation._version_operation.get.return_value = rest_component
+
+        fetched_component = mock_component_operation.get(name="pipeline_component", version="1")
+
+        assert fetched_component.inputs["default_data"].default == "azureml:test_data:1"
+        assert fetched_component()._build_inputs()["default_data"].path == "azureml:test_data:1"
 
     def test_create_autoincrement(
         self, mock_component_operation: ComponentOperations, mock_component_from_rest

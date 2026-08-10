@@ -510,11 +510,13 @@ class TestPipelineComponentEntity:
         assert "default" not in component_dict["inputs"]["pilot_data"]
 
     def test_pipeline_component_asset_default_rest_round_trip(self) -> None:
-        """Asset-type defaults must survive a REST serialization / deserialization round-trip."""
+        """Asset defaults survive when the service omits them from the component spec."""
         component_path = "./tests/test_configs/components/pipeline_component_with_asset_defaults.yml"
         component: PipelineComponent = load_component(source=component_path)
 
         rest_obj = component._to_rest_object()
+        for input_spec in rest_obj.properties.component_spec["inputs"].values():
+            input_spec.pop("default", None)
         restored = PipelineComponent._from_rest_object(rest_obj)
 
         assert restored.inputs["spaceship_data"].default == "azureml:test_dataset:1"
