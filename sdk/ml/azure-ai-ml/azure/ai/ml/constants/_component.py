@@ -108,7 +108,7 @@ class ComponentParameterTypes:
 
 
 class IOConstants:
-    ASSET_INPUT_TYPES = {"uri_file", "uri_folder", "mltable", "mlflow_model", "custom_model"}
+    ASSET_INPUT_TYPES = ("uri_file", "uri_folder", "mltable", "mlflow_model", "custom_model")
     PRIMITIVE_STR_2_TYPE = {
         ComponentParameterTypes.INTEGER: int,
         ComponentParameterTypes.STRING: str,
