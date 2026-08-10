@@ -266,6 +266,7 @@
         "azure.ai.projects.models.PendingUploadRequest": "Azure.AI.Projects.PendingUploadRequest",
         "azure.ai.projects.models.PendingUploadResponse": "Azure.AI.Projects.PendingUploadResponse",
         "azure.ai.projects.models.ProceduralMemoryItem": "Azure.AI.Projects.ProceduralMemoryItem",
+        "azure.ai.projects.models.ProgrammaticToolCallingParam": "OpenAI.ProgrammaticToolCallingParam",
         "azure.ai.projects.models.PromotionInfo": "Azure.AI.Projects.PromotionInfo",
         "azure.ai.projects.models.PromptAgentDefinition": "Azure.AI.Projects.PromptAgentDefinition",
         "azure.ai.projects.models.PromptAgentDefinitionTextOptions": "Azure.AI.Projects.PromptAgentDefinitionTextOptions",
@@ -304,6 +305,7 @@
         "azure.ai.projects.models.ToolChoiceParam": "OpenAI.ToolChoiceParam",
         "azure.ai.projects.models.SpecificApplyPatchParam": "OpenAI.SpecificApplyPatchParam",
         "azure.ai.projects.models.SpecificFunctionShellParam": "OpenAI.SpecificFunctionShellParam",
+        "azure.ai.projects.models.SpecificProgrammaticToolCallingParam": "OpenAI.SpecificProgrammaticToolCallingParam",
         "azure.ai.projects.models.StructuredInputDefinition": "Azure.AI.Projects.StructuredInputDefinition",
         "azure.ai.projects.models.StructuredOutputDefinition": "Azure.AI.Projects.StructuredOutputDefinition",
         "azure.ai.projects.models.TaskGenerationDataGenerationJobOptions": "Azure.AI.Projects.TaskGenerationDataGenerationJobOptions",
@@ -360,6 +362,7 @@
         "azure.ai.projects.models.WorkIQPreviewToolboxTool": "Azure.AI.Projects.WorkIQPreviewToolboxTool",
         "azure.ai.projects.models.EvaluationTaxonomyInputType": "Azure.AI.Projects.EvaluationTaxonomyInputType",
         "azure.ai.projects.models.ToolType": "OpenAI.ToolType",
+        "azure.ai.projects.models.CallableToolAllowedCaller": "OpenAI.CallableToolAllowedCaller",
         "azure.ai.projects.models.AzureAISearchQueryType": "Azure.AI.Projects.AzureAISearchQueryType",
         "azure.ai.projects.models.ContainerMemoryLimit": "OpenAI.ContainerMemoryLimit",
         "azure.ai.projects.models.ContainerNetworkPolicyParamType": "OpenAI.ContainerNetworkPolicyParamType",
@@ -423,6 +426,7 @@
         "azure.ai.projects.models.OptimizationDatasetInputType": "Azure.AI.Projects.OptimizationDatasetInputType",
         "azure.ai.projects.models.AgentObjectType": "Azure.AI.Projects.AgentObjectType",
         "azure.ai.projects.models.AgentState": "Azure.AI.Projects.AgentState",
+        "azure.ai.projects.models.AgentStateSource": "Azure.AI.Projects.AgentStateSource",
         "azure.ai.projects.models.AgentKind": "Azure.AI.Projects.AgentKind",
         "azure.ai.projects.models.AgentEndpointProtocol": "Azure.AI.Projects.AgentEndpointProtocol",
         "azure.ai.projects.models.CodeDependencyResolution": "Azure.AI.Projects.CodeDependencyResolution",
@@ -430,6 +434,9 @@
         "azure.ai.projects.models.TelemetryDataKind": "Azure.AI.Projects.TelemetryDataKind",
         "azure.ai.projects.models.TelemetryEndpointAuthType": "Azure.AI.Projects.TelemetryEndpointAuthType",
         "azure.ai.projects.models.TelemetryTransportProtocol": "Azure.AI.Projects.TelemetryTransportProtocol",
+        "azure.ai.projects.models.AgentHarness": "Azure.AI.Projects.AgentHarness",
+        "azure.ai.projects.models.ReasoningModeEnum": "OpenAI.ReasoningModeEnum",
+        "azure.ai.projects.models.ReasoningEffort": "OpenAI.ReasoningEffort",
         "azure.ai.projects.models.ToolChoiceParamType": "OpenAI.ToolChoiceParamType",
         "azure.ai.projects.models.TextResponseFormatConfigurationType": "OpenAI.TextResponseFormatConfigurationType",
         "azure.ai.projects.models.AgentVersionStatus": "Azure.AI.Projects.AgentVersionStatus",
@@ -548,5 +555,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "856df4c68403"
+    "CrossLanguageVersion": "ebc408491b1e"
 }
