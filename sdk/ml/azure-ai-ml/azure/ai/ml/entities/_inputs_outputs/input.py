@@ -373,6 +373,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         msg_prefix = f"Default value of Input {name}"
 
         if not self._is_primitive_type and default_value is not None:
+            # Asset type inputs (e.g. uri_file, uri_folder, mltable) support a default value that
+            # references a registered data asset, e.g. "azureml:my_data:1". This is only meaningful
+            # for pipeline component inputs, where the default is used to populate the input if the
+            # caller does not provide a value.
+            if self.type in IOConstants.ASSET_TYPES_WITH_DEFAULT_SUPPORT and isinstance(default_value, str):
+                self.default = default_value
+                return
             msg = f"{msg_prefix}cannot be set: Non-primitive type Input has no default value."
             raise UserErrorException(msg)
         if isinstance(default_value, float) and not math.isfinite(default_value):

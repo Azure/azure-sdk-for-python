@@ -1,0 +1,27 @@
+$schema: https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json
+type: pipeline
+
+name: helloworld_pipeline_component_with_uri_file_default
+display_name: Hello World Pipeline Component With Uri File Default
+description: This is a pipeline component with a uri_file input default value
+version: 1
+
+inputs:
+  component_in_number:
+    description: A number
+    type: number
+  component_in_file:
+    description: A uri_file input with a default value
+    type: uri_file
+    mode: ro_mount
+    default: azureml:my_data:1
+
+jobs:
+  component_a_job:
+    command: echo "hello" && echo "world" > ${{outputs.world_output}}/world.txt
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    inputs:
+      component_in_number: ${{parent.inputs.component_in_number}}
+      component_in_file: ${{parent.inputs.component_in_file}}
+    outputs:
+      world_output:

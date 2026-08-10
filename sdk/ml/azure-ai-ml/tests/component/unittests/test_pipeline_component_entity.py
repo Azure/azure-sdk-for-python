@@ -66,6 +66,13 @@ class TestPipelineComponentEntity:
 
         assert component_dict == exptected_dict
 
+    def test_pipeline_component_uri_file_input_with_default(self) -> None:
+        component_path = "./tests/test_configs/components/helloworld_pipeline_component_with_uri_file_default.yml"
+        component: PipelineComponent = load_component(source=component_path)
+        assert component.inputs["component_in_file"].type == "uri_file"
+        assert component.inputs["component_in_file"].default == "azureml:my_data:1"
+        assert component.inputs["component_in_file"].mode == "ro_mount"
+
     def test_helloworld_pipeline_component(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_pipeline_component.yml"
         component: PipelineComponent = load_component(source=component_path)

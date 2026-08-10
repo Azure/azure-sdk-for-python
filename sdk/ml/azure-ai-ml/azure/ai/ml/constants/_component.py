@@ -131,13 +131,22 @@ class IOConstants:
         ComponentParameterTypes.BOOLEAN: lambda v: str(v).lower() == "true",
         ComponentParameterTypes.NUMBER: float,
     }
+    # Asset types that support a default value referencing a registered data asset,
+    # e.g. "azureml:my_data:1". This is only applicable for pipeline component inputs.
+    ASSET_TYPES_WITH_DEFAULT_SUPPORT = {
+        "uri_folder",
+        "uri_file",
+        "mltable",
+        "mlflow_model",
+        "custom_model",
+    }
     # For validation, indicates specific parameters combination for each type
     INPUT_TYPE_COMBINATION = {
-        "uri_folder": ["path", "mode"],
-        "uri_file": ["path", "mode"],
-        "mltable": ["path", "mode"],
-        "mlflow_model": ["path", "mode"],
-        "custom_model": ["path", "mode"],
+        "uri_folder": ["path", "mode", "default"],
+        "uri_file": ["path", "mode", "default"],
+        "mltable": ["path", "mode", "default"],
+        "mlflow_model": ["path", "mode", "default"],
+        "custom_model": ["path", "mode", "default"],
         "integer": ["default", "min", "max"],
         "number": ["default", "min", "max"],
         "string": ["default"],
