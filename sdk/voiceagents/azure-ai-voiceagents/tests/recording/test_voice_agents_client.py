@@ -32,7 +32,6 @@ class TestVoiceAgentsClient(AzureRecordedTestCase):
             agent = client.voice_agents.get_voice_agent(
                 azure_voice_agents_agent_name,
                 foundry_features=PREVIEW,
-                headers={"Accept-Encoding": "identity"},
             )
 
         # NOTE: don't assert agent["name"]/["id"] against azure_voice_agents_agent_name --

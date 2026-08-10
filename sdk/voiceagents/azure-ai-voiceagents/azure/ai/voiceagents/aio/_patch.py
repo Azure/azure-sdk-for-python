@@ -9,8 +9,18 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any, Optional, TYPE_CHECKING
 
+import aiohttp
+from azure.core.pipeline.transport import AioHttpTransport
+
 from ._client import VoiceAgentsClient as _GeneratedVoiceAgentsClient
-from ._realtime import AsyncRealtime, AsyncRealtimeConnection, AsyncRealtimeConnectionManager, ClientEvent, ConversationItem, ServerEvent
+from ._realtime import (
+    AsyncRealtime,
+    AsyncRealtimeConnection,
+    AsyncRealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -30,11 +40,12 @@ class VoiceAgentsClient(_GeneratedVoiceAgentsClient):  # pylint: disable=client-
     ) -> None:
         # Work around an azure-core/aiohttp limitation without eagerly creating
         # an aiohttp session (which requires a running event loop). We constrain
-        # Accept-Encoding through default request headers so session creation
-        # remains lazy and loop-independent.
-        headers = dict(kwargs.get("headers") or {})
-        headers.setdefault("Accept-Encoding", "gzip, deflate")
-        kwargs["headers"] = headers
+        # Accept-Encoding on the transport so the session advertises only
+        # encodings that azure-core can decompress.
+        if "transport" not in kwargs:
+            kwargs["transport"] = AioHttpTransport(
+                session=aiohttp.ClientSession(headers={"Accept-Encoding": "gzip, deflate"})
+            )
         if api_version is None:
             super().__init__(endpoint, credential, **kwargs)
         else:
