@@ -34,7 +34,7 @@ The Azure SDK Python team creates libraries that are compatible with Python 3.10
 Python virtual environment for Python 3.10, but having a virtual environment for each minor version can make it
 easier to debug PRs locally.
 
-- Python 3.10+: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the Windows store ([3.10](https://www.microsoft.com/p/python-310/9pjpw5ldxlz5), [3.11](https://apps.microsoft.com/detail/9nrwmjp3717k?hl=en-us&gl=US), [3.12](https://apps.microsoft.com/detail/9ncvdn91xzqp?hl=en-us&gl=US)) (Windows only).
+- Python 3.10+: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the Windows store ([3.10](https://apps.microsoft.com/detail/9pjpw5ldxlz5), [3.11](https://apps.microsoft.com/detail/9nrwmjp3717k?hl=en-us&gl=US), [3.12](https://apps.microsoft.com/detail/9ncvdn91xzqp?hl=en-us&gl=US)) (Windows only).
 
 
 ```cmd
@@ -55,7 +55,7 @@ C:\Users> <path/to/Python/Python314/python.exe> -m venv py314_venv
 
 In the root directory of our SDK, a number of mandatory files have been added. When creating your own SDK, these files can be copied from the [`sdk/template`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/template) project, and modified to your needs.
 
-- README.md. This is the description and guidance for customers or your SDK. Please see the guide on writing a README to make sure you have the complete [content requirements and formatting](https://review.learn.microsoft.com/help/platform/reference-document-sdk-client-libraries#readme).
+- README.md. This is the description and guidance for customers or your SDK. Please see the guide on writing a README to make sure you have the complete [content requirements and formatting](https://learn.microsoft.com/help/platform/reference-document-sdk-client-libraries#readme).
 - CHANGELOG.md. This is where you will add the summary of changes for each new release. Please see [the guidance](https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance) for correct formatting.
 - pyproject.toml. This is the package configuration file for your Python SDK. Please see [the guide on Python packaging][packaging] for details on customizing this for a specific package.
 - setup.py / setup.cfg. **Legacy:** older packages use these instead of `pyproject.toml` to build the Python package. New packages should use `pyproject.toml`. Please see [the guide on Python packaging][packaging] for details.
@@ -576,7 +576,7 @@ For information about more advanced testing scenarios, refer to the [advanced te
 <!-- Links -->
 
 [advanced_tests_notes]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md
-[azure_cli_service_principal]: https://docs.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az-ad-sp-create-for-rbac
+[azure_cli_service_principal]: https://learn.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az-ad-sp-create-for-rbac
 [azure_portal]: https://portal.azure.com/
 [azure_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py
 [central_conftest]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/conftest.py
@@ -585,9 +585,9 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [env_var_options]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils#hide-secret-environment-variables-in-test-logs
 [get_credential]: https://github.com/Azure/azure-sdk-for-python/blob/4df650d2ce4c292942009ed648cae21eb9c2121d/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L78
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
-[kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json
-[kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L255
-[kv_test_resources_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L116
+[kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.bicep
+[kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.bicep
+[kv_test_resources_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.bicep
 [manage_recordings]: https://github.com/Azure/azure-sdk-for-python/blob/main/scripts/manage_recordings.py
 [packaging]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
 [proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
