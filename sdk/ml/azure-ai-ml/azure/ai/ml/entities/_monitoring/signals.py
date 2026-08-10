@@ -11,36 +11,20 @@ from typing_extensions import Literal
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.arm_ml_service.models import AllFeatures as RestAllFeatures
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    CustomMonitoringSignal as RestCustomMonitoringSignal,
-)
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    DataDriftMonitoringSignal as RestMonitoringDataDriftSignal,
-)
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    DataQualityMonitoringSignal as RestMonitoringDataQualitySignal,
-)
+from azure.ai.ml._restclient.arm_ml_service.models import CustomMonitoringSignal as RestCustomMonitoringSignal
+from azure.ai.ml._restclient.arm_ml_service.models import DataDriftMonitoringSignal as RestMonitoringDataDriftSignal
+from azure.ai.ml._restclient.arm_ml_service.models import DataQualityMonitoringSignal as RestMonitoringDataQualitySignal
 from azure.ai.ml._restclient.arm_ml_service.models import (
     FeatureAttributionDriftMonitoringSignal as RestFeatureAttributionDriftMonitoringSignal,
 )
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    FeatureSubset as RestFeatureSubset,
-)
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    MonitoringFeatureFilterBase as RestMonitoringFeatureFilterBase,
-)
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    MonitoringInputDataBase as RestMonitoringInputData,
-)
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    MonitoringSignalBase as RestMonitoringSignalBase,
-)
+from azure.ai.ml._restclient.arm_ml_service.models import FeatureSubset as RestFeatureSubset
+from azure.ai.ml._restclient.arm_ml_service.models import MonitoringFeatureFilterBase as RestMonitoringFeatureFilterBase
+from azure.ai.ml._restclient.arm_ml_service.models import MonitoringInputDataBase as RestMonitoringInputData
+from azure.ai.ml._restclient.arm_ml_service.models import MonitoringSignalBase as RestMonitoringSignalBase
 from azure.ai.ml._restclient.arm_ml_service.models import (
     PredictionDriftMonitoringSignal as RestPredictionDriftMonitoringSignal,
 )
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    TopNFeaturesByAttribution as RestTopNFeaturesByAttribution,
-)
+from azure.ai.ml._restclient.arm_ml_service.models import TopNFeaturesByAttribution as RestTopNFeaturesByAttribution
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._monitoring import (
     ALL_FEATURES,
@@ -54,11 +38,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     to_rest_dataset_literal_inputs,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._monitoring.input_data import (
-    FixedInputData,
-    StaticInputData,
-    TrailingInputData,
-)
+from azure.ai.ml.entities._monitoring.input_data import FixedInputData, StaticInputData, TrailingInputData
 from azure.ai.ml.entities._monitoring.thresholds import (
     CustomMonitoringMetricThreshold,
     DataDriftMetricThreshold,
@@ -70,12 +50,7 @@ from azure.ai.ml.entities._monitoring.thresholds import (
     ModelPerformanceMetricThreshold,
     PredictionDriftMetricThreshold,
 )
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 class DataSegment(RestTranslatableMixin):
@@ -176,7 +151,7 @@ class ProductionData(RestTranslatableMixin):
     :keyword pre_processing_component: ARM resource ID of the component resource used to
         preprocess the data.
     :paramtype pre_processing_component: string
-    :keyword data_window: The number of days or a time frame that a singal monitor looks back over the target.
+    :keyword data_window: The number of days or a time frame that a signal monitor looks back over the target.
     :paramtype data_window: BaselineDataRange
     :keyword data_column_names: The names of the columns in the dataset. Defaults to None.
     :paramtype data_column_names: Optional[Dict[str, str]]
@@ -803,7 +778,7 @@ class FADProductionData(RestTranslatableMixin):
     :keyword pre_processing_component: The ARM (Azure Resource Manager) resource ID of the component resource used to
         preprocess the data.
     :paramtype pre_processing_component: string
-    :keyword data_window: The number of days or a time frame that a singal monitor looks back over the target.
+    :keyword data_window: The number of days or a time frame that a signal monitor looks back over the target.
     :paramtype data_window: BaselineDataRange
     """
 
@@ -1139,7 +1114,7 @@ class LlmData(RestTranslatableMixin):
     :paramtype input_data: ~azure.ai.ml.entities.Input
     :keyword data_column_names: The names of columns in the input data.
     :paramtype data_column_names: Dict[str, str]
-    :keyword data_window: The number of days or a time frame that a singal monitor looks back over the target.
+    :keyword data_window: The number of days or a time frame that a signal monitor looks back over the target.
     :paramtype data_window: BaselineDataRange
     """
 

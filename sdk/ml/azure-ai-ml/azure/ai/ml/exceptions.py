@@ -559,7 +559,7 @@ class UnsupportedParameterKindError(UserErrorException):
 
 
 class KeywordError(UserErrorException):
-    """Super class of all type keyword error.
+    """Base class for all keyword-related errors.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
