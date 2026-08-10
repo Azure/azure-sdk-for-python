@@ -17,9 +17,9 @@ class CitationRegex(DictMixin):
     """
     :keyword match_pattern: Regex to match citation in the citation_url + input file path.
         e.g. '(.*)/articles/(.*)(\\.[^.]+)$'.
-    :type match_pattern: str
+    :paramtype match_pattern: str
     :keyword replacement_pattern: Replacement string for citation. e.g. '\\1/\\2'.
-    :type replacement_pattern: str
+    :paramtype replacement_pattern: str
     """
 
     def __init__(
@@ -49,19 +49,19 @@ class CitationRegex(DictMixin):
 class IndexSource(DictMixin):
     """Congifuration for the destination index to write processed data to.
     :keyword input_data: Input Data to index files from. MLTable type inputs will use `mode: eval_mount`.
-    :type input_data: Data
+    :paramtype input_data: Data
     :keyword input_glob: Connection reference to use for embedding model information,
         only needed for hosted embeddings models (such as Azure OpenAI).
-    :type input_glob: str, optional
+    :paramtype input_glob: str, optional
     :keyword chunk_size: Maximum number of tokens to put in each chunk.
-    :type chunk_size: int, optional
+    :paramtype chunk_size: int, optional
     :keyword chunk_overlap: Number of tokens to overlap between chunks.
-    :type chunk_overlap: int, optional
+    :paramtype chunk_overlap: int, optional
     :keyword citation_url: Base URL to join with file paths to create full source file URL for chunk metadata.
-    :type citation_url: str, optional
+    :paramtype citation_url: str, optional
     :keyword citation_url_replacement_regex: Regex match and replacement patterns for citation url. Useful if the paths
         in `input_data` don't match the desired citation format.
-    :type citation_url_replacement_regex: CitationRegex, optional
+    :paramtype citation_url_replacement_regex: CitationRegex, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the IndexSource object cannot be validated.
         Details will be provided in the error message.
     """
@@ -106,14 +106,14 @@ class Embedding(DictMixin):
     """Congifuration for the destination index to write processed data to.
     :keyword model: The model to use to embed data. E.g. 'hugging_face://model/sentence-transformers/all-mpnet-base-v2'
         or 'azure_open_ai://deployment/{deployment_name}/model/{model_name}'
-    :type model: str
+    :paramtype model: str
     :keyword connection: Connection reference to use for embedding model information,
         only needed for hosted embeddings models (such as Azure OpenAI).
-    :type connection: str, optional
+    :paramtype connection: str, optional
     :keyword cache_path: Folder containing previously generated embeddings.
         Should be parent folder of the 'embeddings' output path used for for this component.
         Will compare input data to existing embeddings and only embed changed/new data, reusing existing chunks.
-    :type cache_path: str, optional
+    :paramtype cache_path: str, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the Embedding object cannot be validated.
         Details will be provided in the error message.
     """
@@ -148,17 +148,17 @@ class Embedding(DictMixin):
 class IndexStore(DictMixin):
     """Congifuration for the destination index to write processed data to.
     :keyword type: The type of index to write to. Currently supported types are 'acs', 'pinecone', and 'faiss'.
-    :type type: str
+    :paramtype type: str
     :keyword name: Name of index to update/create, only needed for hosted indexes
         (such as Azure Cognitive Search and Pinecone).
-    :type name: str, optional
+    :paramtype name: str, optional
     :keyword connection: Connection reference to use for index information,
         only needed for hosted indexes (such as Azure Cognitive Search and Pinecone).
-    :type connection: str, optional
+    :paramtype connection: str, optional
     :keyword config: Configuration for the index. Configuration for the index.
         Primary use is to configure AI Search and Pinecone specific settings.
         Such as custom `field_mapping` for known field types.
-    :type config: dict, optional
+    :paramtype config: dict, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the IndexStore object cannot be validated.
         Details will be provided in the error message.
     """
@@ -190,24 +190,24 @@ class IndexStore(DictMixin):
 @experimental
 class DataIndex(Data):
     """Data asset with a creating data index job.
-    :param name: Name of the asset.
-    :type name: str
-    :param path: The path to the asset being created by data index job.
-    :type path: str
-    :param source: The source data to be indexed.
-    :type source: IndexSource
-    :param embedding: The embedding model to use when processing source data chunks.
-    :type embedding: Embedding
-    :param index: The destination index to write processed data to.
-    :type index: IndexStore
-    :param version: Version of the asset created by running this DataIndex Job.
-    :type version: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
+    :keyword name: Name of the asset.
+    :paramtype name: str
+    :keyword path: The path to the asset being created by data index job.
+    :paramtype path: str
+    :keyword source: The source data to be indexed.
+    :paramtype source: IndexSource
+    :keyword embedding: The embedding model to use when processing source data chunks.
+    :paramtype embedding: Embedding
+    :keyword index: The destination index to write processed data to.
+    :paramtype index: IndexStore
+    :keyword version: Version of the asset created by running this DataIndex Job.
+    :paramtype version: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """

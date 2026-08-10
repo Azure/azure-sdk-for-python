@@ -444,7 +444,7 @@ can choose to wind down early so the next turn gets the lane.
 ### 4.10 Timeout
 
 Each task can specify a `timeout` on its decorator. It defaults to
-**1 day** when unset, and **1 day is a hard ceiling** — a larger or
+**1 day** when unset, and **7 days is a hard ceiling** — a larger or
 negative value is rejected at decoration (`ValueError`, fail-fast). The
 watchdog is **per-turn**, **wall-clock**, and **resilient**:
 
@@ -510,7 +510,7 @@ def task(
     *,
     name: str,                          # required — used for registration / recovery
     title: str | None = None,           # static label for telemetry
-    timeout: timedelta | None = None,   # per-turn watchdog; defaults to 1 day, hard cap 1 day
+    timeout: timedelta | None = None,   # per-turn watchdog; defaults to 1 day, hard cap 7 days
     retry: RetryPolicy | None = None,   # None = no retry
 ) -> Callable[[Handler], Task[Input, Output]]: ...
 
@@ -518,7 +518,7 @@ def multi_turn_task(
     *,
     name: str,
     title: str | None = None,
-    timeout: timedelta | None = None,   # per-turn watchdog; defaults to 1 day, hard cap 1 day
+    timeout: timedelta | None = None,   # per-turn watchdog; defaults to 1 day, hard cap 7 days
     retry: RetryPolicy | None = None,
     steerable: bool = False,
 ) -> Callable[[Handler], MultiTurnTask[Input, Output]]: ...
@@ -953,3 +953,4 @@ A. Consult the task manager's provider directly:
 The decorator's public surface intentionally doesn't expose a
 `.get()` method — read paths go through the provider so the public
 decorator surface stays small and write-shaped.
+

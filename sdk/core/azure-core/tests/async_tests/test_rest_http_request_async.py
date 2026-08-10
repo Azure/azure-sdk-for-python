@@ -54,7 +54,7 @@ async def test_aiterable_content(assert_aiterator_body):  # cspell:disable-line
             yield b"test 123"
 
     request = HttpRequest("POST", "http://example.org", content=Content())
-    assert request.headers == {}
+    assert not request.headers
     await assert_aiterator_body(request, b"test 123")
 
 
@@ -68,7 +68,7 @@ async def test_aiterator_content(assert_aiterator_body):
     assert not isinstance(request._data, collections.abc.Iterable)
     assert isinstance(request._data, collections.abc.AsyncIterable)
 
-    assert request.headers == {}
+    assert not request.headers
     await assert_aiterator_body(request, b"Hello, world!")
 
     # Support 'data' for compat with requests.
@@ -76,7 +76,7 @@ async def test_aiterator_content(assert_aiterator_body):
     assert not isinstance(request._data, collections.abc.Iterable)
     assert isinstance(request._data, collections.abc.AsyncIterable)
 
-    assert request.headers == {}
+    assert not request.headers
     await assert_aiterator_body(request, b"Hello, world!")
 
     # transfer encoding should not be set for GET requests
@@ -84,7 +84,7 @@ async def test_aiterator_content(assert_aiterator_body):
     assert not isinstance(request._data, collections.abc.Iterable)
     assert isinstance(request._data, collections.abc.AsyncIterable)
 
-    assert request.headers == {}
+    assert not request.headers
     await assert_aiterator_body(request, b"Hello, world!")
 
 

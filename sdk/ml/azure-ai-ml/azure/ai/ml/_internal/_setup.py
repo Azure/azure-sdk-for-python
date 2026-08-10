@@ -64,7 +64,7 @@ def enable_internal_components_in_pipeline(*, force=False) -> NoReturn:
     """Enable internal components in pipeline.
 
     :keyword force: Whether to force re-enable internal components. Defaults to False.
-    :type force: bool
+    :paramtype force: bool
     :return: No return value.
     :rtype: None
     """
