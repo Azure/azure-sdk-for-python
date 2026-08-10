@@ -680,8 +680,6 @@ def _emit_mapping(lines: List[str], mapping: Dict[str, Any], indent: int) -> Non
     """
     prefix = "  " * indent
     for key, value in mapping.items():
-        if value is None:
-            continue
         safe_key = _yaml_scalar(key)
         if isinstance(value, dict):
             if not value:
@@ -715,8 +713,6 @@ def _emit_sequence(lines: List[str], sequence: List[Any], indent: int) -> None:
         if isinstance(item, dict):
             first = True
             for k, v in item.items():
-                if v is None:
-                    continue
                 tag = f"{prefix}- " if first else f"{prefix}  "
                 safe_k = _yaml_scalar(k)
                 if isinstance(v, dict) and v:

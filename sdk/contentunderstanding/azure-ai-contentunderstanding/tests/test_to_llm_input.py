@@ -806,6 +806,36 @@ class TestParameterCombinations:
         assert "extra: {}" in output
         assert "source: invoice.pdf" in output
 
+    def test_custom_metadata_preserves_null_properties(self):
+        doc = _make_invoice_doc()
+        output = to_llm_input(
+            _make_result([doc]),
+            custom_metadata={"missing": None, "source": "invoice.pdf"},
+        )
+
+        assert "missing: null" in output
+        assert "source: invoice.pdf" in output
+
+    def test_custom_metadata_all_null_dict_preserves_null_property(self):
+        doc = _make_invoice_doc()
+        output = to_llm_input(
+            _make_result([doc]),
+            custom_metadata={"missing": None},
+        )
+
+        assert "customMetadata:" in output
+        assert "missing: null" in output
+
+    def test_custom_metadata_preserves_empty_string_values_and_keys(self):
+        doc = _make_invoice_doc()
+        output = to_llm_input(
+            _make_result([doc]),
+            custom_metadata={"emptyValue": "", "": "empty-key"},
+        )
+
+        assert "emptyValue: ''" in output
+        assert "  '': empty-key" in output
+
 
 # ===========================================================================
 # 9. YAML front matter structure
@@ -898,7 +928,13 @@ class TestFrontMatter:
         lines = output.split("\n")
         positions = {}
         for i, line in enumerate(lines):
-            for key in ["mimeType:", "customMetadata:", "category:", "pages:", "fields:"]:
+            for key in [
+                "mimeType:",
+                "customMetadata:",
+                "category:",
+                "pages:",
+                "fields:",
+            ]:
                 if line.startswith(key) or line.strip().startswith(key):
                     positions[key] = i
                     break
@@ -1038,7 +1074,10 @@ class TestEdgeCases:
 
         doc = _make_invoice_doc()
         telemetry_warning = ODataV4Format(
-            {"code": "Telemetry", "message": "LLMStats: completion calls: 2; embedding calls: 1"}
+            {
+                "code": "Telemetry",
+                "message": "LLMStats: completion calls: 2; embedding calls: 1",
+            }
         )
         real_warning = ODataV4Format({"code": "ContentWarning", "message": "Potentially sensitive content."})
         result = AnalysisResult(contents=[doc], warnings=[telemetry_warning, real_warning])
