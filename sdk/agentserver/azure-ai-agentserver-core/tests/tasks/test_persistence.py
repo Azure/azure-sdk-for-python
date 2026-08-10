@@ -394,6 +394,7 @@ class TestLastInputIdRetention:
                     title="last-input-id-recovery",
                     payload={
                         "input": {"value": "active-in-flight"},
+                        "metadata": {},
                         "last_input_id": "not-the-input",
                         "schema_version": "1",
                     },

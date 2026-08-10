@@ -6,16 +6,10 @@ from __future__ import annotations
 
 import base64
 import json
-from pathlib import Path
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from azure.ai.agentserver.core import (
-    FoundryAgentRequestContext,
-    reset_request_context,
-    set_request_context,
-)
 from azure.ai.agentserver.core.storage import (
     DeletedStateStore,
     DeletedStateStoreItem,
@@ -23,7 +17,6 @@ from azure.ai.agentserver.core.storage import (
     FoundryStorageConflictError,
     FoundryStorageEndpoint,
     FoundryStorageNotFoundError,
-    FoundryStoragePreconditionError,
     StateStoreItemKeyPage,
     StateStore,
     StateStoreItem,
@@ -40,9 +33,7 @@ def _encode_segment(value: str) -> str:
     return encoded.rstrip("=")
 
 
-def _make_response(
-    status_code: int, body: Any, *, headers: dict[str, str] | None = None
-) -> MagicMock:
+def _make_response(status_code: int, body: Any, *, headers: dict[str, str] | None = None) -> MagicMock:
     resp = MagicMock()
     resp.status_code = status_code
     resp.headers = headers or {}
@@ -62,7 +53,6 @@ def _make_store(
 ) -> FoundryStateStore:
     store = FoundryStateStore.__new__(FoundryStateStore)
     store._endpoint = _ENDPOINT
-    store._local_backend = None
     store._owns_credential = False
     store._name = name
     store._user_isolation = user_isolation
@@ -167,19 +157,14 @@ def _key(**overrides: Any) -> StateStoreItemKey:
 
 
 @pytest.mark.asyncio
-async def test_get_or_create_returns_existing_store_when_present(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "1")
+async def test_get_or_create_returns_existing_store_when_present(monkeypatch: pytest.MonkeyPatch) -> None:
     info = _state_store()
     fetch = AsyncMock(return_value=info)
     create = AsyncMock()
     monkeypatch.setattr(FoundryStateStore, "_fetch_properties", fetch)
     monkeypatch.setattr(FoundryStateStore, "_create_properties", create)
 
-    store = await FoundryStateStore.get_or_create(
-        "checkpoints", credential=MagicMock(), endpoint=_ENDPOINT
-    )
+    store = await FoundryStateStore.get_or_create("checkpoints", credential=MagicMock(), endpoint=_ENDPOINT)
     try:
         fetch.assert_awaited_once()
         create.assert_not_awaited()
@@ -189,19 +174,14 @@ async def test_get_or_create_returns_existing_store_when_present(
 
 
 @pytest.mark.asyncio
-async def test_get_or_create_creates_store_when_absent(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "1")
+async def test_get_or_create_creates_store_when_absent(monkeypatch: pytest.MonkeyPatch) -> None:
     info = _state_store()
     fetch = AsyncMock(side_effect=FoundryStorageNotFoundError("not found"))
     create = AsyncMock(return_value=info)
     monkeypatch.setattr(FoundryStateStore, "_fetch_properties", fetch)
     monkeypatch.setattr(FoundryStateStore, "_create_properties", create)
 
-    store = await FoundryStateStore.get_or_create(
-        "checkpoints", credential=MagicMock(), endpoint=_ENDPOINT
-    )
+    store = await FoundryStateStore.get_or_create("checkpoints", credential=MagicMock(), endpoint=_ENDPOINT)
     try:
         fetch.assert_awaited_once()
         create.assert_awaited_once()
@@ -211,21 +191,14 @@ async def test_get_or_create_creates_store_when_absent(
 
 
 @pytest.mark.asyncio
-async def test_get_or_create_refetches_when_create_races_with_another_caller(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "1")
+async def test_get_or_create_refetches_when_create_races_with_another_caller(monkeypatch: pytest.MonkeyPatch) -> None:
     created_elsewhere = _state_store()
-    fetch = AsyncMock(
-        side_effect=[FoundryStorageNotFoundError("not found"), created_elsewhere]
-    )
+    fetch = AsyncMock(side_effect=[FoundryStorageNotFoundError("not found"), created_elsewhere])
     create = AsyncMock(side_effect=FoundryStorageConflictError("duplicate store"))
     monkeypatch.setattr(FoundryStateStore, "_fetch_properties", fetch)
     monkeypatch.setattr(FoundryStateStore, "_create_properties", create)
 
-    store = await FoundryStateStore.get_or_create(
-        "checkpoints", credential=MagicMock(), endpoint=_ENDPOINT
-    )
+    store = await FoundryStateStore.get_or_create("checkpoints", credential=MagicMock(), endpoint=_ENDPOINT)
     try:
         assert fetch.await_count == 2
         create.assert_awaited_once()
@@ -235,48 +208,30 @@ async def test_get_or_create_refetches_when_create_races_with_another_caller(
 
 
 @pytest.mark.asyncio
-async def test_get_or_create_closes_store_when_fetch_fails(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "1")
-    monkeypatch.setattr(
-        FoundryStateStore,
-        "_fetch_properties",
-        AsyncMock(side_effect=RuntimeError("boom")),
-    )
+async def test_get_or_create_closes_store_when_fetch_fails(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(FoundryStateStore, "_fetch_properties", AsyncMock(side_effect=RuntimeError("boom")))
     closed = AsyncMock()
     monkeypatch.setattr(FoundryStateStore, "aclose", closed)
 
     with pytest.raises(RuntimeError, match="boom"):
-        await FoundryStateStore.get_or_create(
-            "checkpoints", credential=MagicMock(), endpoint=_ENDPOINT
-        )
+        await FoundryStateStore.get_or_create("checkpoints", credential=MagicMock(), endpoint=_ENDPOINT)
 
     closed.assert_awaited_once()
 
 
 @pytest.mark.asyncio
-async def test_get_or_create_closes_store_when_create_fails(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "1")
+async def test_get_or_create_closes_store_when_create_fails(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
-        FoundryStateStore,
-        "_fetch_properties",
-        AsyncMock(side_effect=FoundryStorageNotFoundError("not found")),
+        FoundryStateStore, "_fetch_properties", AsyncMock(side_effect=FoundryStorageNotFoundError("not found"))
     )
     monkeypatch.setattr(
-        FoundryStateStore,
-        "_create_properties",
-        AsyncMock(side_effect=RuntimeError("create-fail")),
+        FoundryStateStore, "_create_properties", AsyncMock(side_effect=RuntimeError("create-fail"))
     )
     closed = AsyncMock()
     monkeypatch.setattr(FoundryStateStore, "aclose", closed)
 
     with pytest.raises(RuntimeError, match="create-fail"):
-        await FoundryStateStore.get_or_create(
-            "checkpoints", credential=MagicMock(), endpoint=_ENDPOINT
-        )
+        await FoundryStateStore.get_or_create("checkpoints", credential=MagicMock(), endpoint=_ENDPOINT)
 
     closed.assert_awaited_once()
 
@@ -349,13 +304,8 @@ async def test_get_with_no_key_returns_the_store_descriptor() -> None:
 
     request = _sent_request(store)
     assert request.method == "GET"
-    assert (
-        request.url
-        == f"{_BASE_URL}state_stores/{_encode_segment(store_name)}?api-version=v1"
-    )
-    assert (
-        "x-ms-user-id" not in request.headers
-    )  # store-level ops never send the delegated user header
+    assert request.url == f"{_BASE_URL}state_stores/{_encode_segment(store_name)}?api-version=v1"
+    assert "x-ms-user-id" not in request.headers  # store-level ops never send the delegated user header
     assert result is not None
     assert result.name == store_name
     assert result.id == "ss_1"
@@ -363,9 +313,7 @@ async def test_get_with_no_key_returns_the_store_descriptor() -> None:
 
 @pytest.mark.asyncio
 async def test_get_with_no_key_raises_when_store_is_absent() -> None:
-    store = _make_store(
-        _make_response(404, {"error": {"message": "not found"}}), name="checkpoints"
-    )
+    store = _make_store(_make_response(404, {"error": {"message": "not found"}}), name="checkpoints")
 
     with pytest.raises(FoundryStorageNotFoundError):
         await store.get()
@@ -391,11 +339,10 @@ async def test_get_with_key_returns_state_item_with_value_and_metadata() -> None
         user_id="user-42",
     )
 
-    result = await store.get_item("step/1", call_id="call-123")
+    result = await store.get_item("step/1")
 
     request = _sent_request(store)
     assert request.method == "GET"
-    assert request.headers["x-agent-foundry-call-id"] == "call-123"
     assert request.headers["x-ms-user-id"] == "user-42"
     assert request.url == (
         f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items/{_encode_segment('step/1')}?api-version=v1"
@@ -408,9 +355,7 @@ async def test_get_with_key_returns_state_item_with_value_and_metadata() -> None
 
 @pytest.mark.asyncio
 async def test_get_with_key_returns_none_when_item_is_absent() -> None:
-    store = _make_store(
-        _make_response(404, {"error": {"message": "not found"}}), name="checkpoints"
-    )
+    store = _make_store(_make_response(404, {"error": {"message": "not found"}}), name="checkpoints")
     assert await store.get_item("missing") is None
 
 
@@ -443,14 +388,8 @@ async def test_update_sends_only_present_fields() -> None:
 
     request = _sent_request(store)
     assert request.method == "PATCH"
-    assert (
-        request.url
-        == f"{_BASE_URL}state_stores/{_encode_segment('prefs')}?api-version=v1"
-    )
-    assert json.loads(request.content.decode("utf-8")) == {
-        "description": "updated",
-        "tags": {"env": "prod"},
-    }
+    assert request.url == f"{_BASE_URL}state_stores/{_encode_segment('prefs')}?api-version=v1"
+    assert json.loads(request.content.decode("utf-8")) == {"description": "updated", "tags": {"env": "prod"}}
     assert result.updated_at == 3
 
 
@@ -501,10 +440,7 @@ async def test_update_with_no_arguments_sends_empty_body() -> None:
 @pytest.mark.asyncio
 async def test_delete_with_no_key_deletes_the_store() -> None:
     store = _make_store(
-        _make_response(
-            200,
-            {"id": "ss_1", "object": "state_store", "name": "prefs", "deleted": True},
-        ),
+        _make_response(200, {"id": "ss_1", "object": "state_store", "name": "prefs", "deleted": True}),
         name="prefs",
     )
 
@@ -512,38 +448,24 @@ async def test_delete_with_no_key_deletes_the_store() -> None:
 
     request = _sent_request(store)
     assert request.method == "DELETE"
-    assert (
-        request.url
-        == f"{_BASE_URL}state_stores/{_encode_segment('prefs')}?api-version=v1"
-    )
+    assert request.url == f"{_BASE_URL}state_stores/{_encode_segment('prefs')}?api-version=v1"
     assert "x-ms-user-id" not in request.headers
-    assert result == DeletedStateStore(
-        {"id": "ss_1", "object": "state_store", "name": "prefs", "deleted": True}
-    )
+    assert result == DeletedStateStore({"id": "ss_1", "object": "state_store", "name": "prefs", "deleted": True})
 
 
 @pytest.mark.asyncio
 async def test_delete_with_key_returns_deleted_item_marker() -> None:
     store = _make_store(
-        _make_response(
-            200,
-            {
-                "id": "it_1",
-                "object": "state_store.item",
-                "key": "step/1",
-                "deleted": True,
-            },
-        ),
+        _make_response(200, {"id": "it_1", "object": "state_store.item", "key": "step/1", "deleted": True}),
         name="checkpoints",
         user_id="user-42",
     )
 
-    result = await store.delete_item("step/1", if_match='"0x8DD"', call_id="call-123")
+    result = await store.delete_item("step/1", if_match='"0x8DD"')
 
     request = _sent_request(store)
     assert request.method == "DELETE"
     assert request.headers["If-Match"] == '"0x8DD"'
-    assert request.headers["x-agent-foundry-call-id"] == "call-123"
     assert request.headers["x-ms-user-id"] == "user-42"
     assert result == DeletedStateStoreItem(
         {"id": "it_1", "object": "state_store.item", "key": "step/1", "deleted": True}
@@ -572,26 +494,17 @@ async def test_create_item_posts_key_value_and_tags() -> None:
         name="checkpoints",
     )
 
-    result = await store.create_item(
-        "step/1",
-        {"done": False},
-        tags={"kind": "checkpoint"},
-        call_id="call-123",
-    )
+    result = await store.create_item("step/1", {"done": False}, tags={"kind": "checkpoint"})
 
     request = _sent_request(store)
     assert request.method == "POST"
-    assert (
-        request.url
-        == f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items?api-version=v1"
-    )
+    assert request.url == f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items?api-version=v1"
     assert json.loads(request.content.decode("utf-8")) == {
         "key": "step/1",
         "value": {"done": False},
         "tags": {"kind": "checkpoint"},
     }
     assert "If-Match" not in request.headers
-    assert request.headers["x-agent-foundry-call-id"] == "call-123"
     assert result == _item_metadata(etag='"0x8DC"', created_at=10, updated_at=10)
 
 
@@ -613,13 +526,7 @@ async def test_set_puts_value_and_if_match_header() -> None:
         name="checkpoints",
     )
 
-    result = await store.set_item(
-        "step/1",
-        {"done": True},
-        tags={"kind": "checkpoint"},
-        if_match='"0x8DC"',
-        call_id="call-123",
-    )
+    result = await store.set_item("step/1", {"done": True}, tags={"kind": "checkpoint"}, if_match='"0x8DC"')
 
     request = _sent_request(store)
     assert request.method == "PUT"
@@ -627,11 +534,7 @@ async def test_set_puts_value_and_if_match_header() -> None:
         f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items/{_encode_segment('step/1')}?api-version=v1"
     )
     assert request.headers["If-Match"] == '"0x8DC"'
-    assert request.headers["x-agent-foundry-call-id"] == "call-123"
-    assert json.loads(request.content.decode("utf-8")) == {
-        "value": {"done": True},
-        "tags": {"kind": "checkpoint"},
-    }
+    assert json.loads(request.content.decode("utf-8")) == {"value": {"done": True}, "tags": {"kind": "checkpoint"}}
     assert result.etag == '"0x8DD"'
 
 
@@ -685,18 +588,11 @@ async def test_list_keys_uses_query_parameters_and_returns_page() -> None:
         user_id="user-42",
     )
 
-    page = await store.list_keys(
-        tags={"kind": "checkpoint", "phase": "run"},
-        limit=10,
-        after="it_0",
-        order="asc",
-        call_id="call-123",
-    )
+    page = await store.list_keys(tags={"kind": "checkpoint", "phase": "run"}, limit=10, after="it_0", order="asc")
 
     request = _sent_request(store)
     assert request.method == "GET"
     assert request.headers["x-ms-user-id"] == "user-42"
-    assert request.headers["x-agent-foundry-call-id"] == "call-123"
     assert request.url == (
         f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items:keys"
         "?api-version=v1&tags.kind=checkpoint&tags.phase=run&limit=10&after=it_0&order=asc"
@@ -711,17 +607,13 @@ async def test_list_keys_uses_query_parameters_and_returns_page() -> None:
 
 @pytest.mark.asyncio
 async def test_list_keys_defaults_to_desc_order() -> None:
-    store = _make_store(
-        _make_response(200, {"object": "list", "data": [], "has_more": False}),
-        name="checkpoints",
-    )
+    store = _make_store(_make_response(200, {"object": "list", "data": [], "has_more": False}), name="checkpoints")
 
     await store.list_keys()
 
     request = _sent_request(store)
     assert (
-        request.url
-        == f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items:keys?api-version=v1&order=desc"
+        request.url == f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items:keys?api-version=v1&order=desc"
     )
 
 
@@ -730,172 +622,3 @@ def test_empty_key_is_rejected() -> None:
 
     with pytest.raises(ValueError):
         store._item_path("")
-
-
-def test_explicit_call_id_overrides_ambient_request_context() -> None:
-    store = _make_store(_make_response(200, {}))
-    token = set_request_context(FoundryAgentRequestContext(call_id="ambient-call"))
-    try:
-        request = store._request("GET", "state_stores/example", call_id="explicit-call")
-    finally:
-        reset_request_context(token)
-
-    assert request.headers["x-agent-foundry-call-id"] == "explicit-call"
-
-
-@pytest.mark.asyncio
-async def test_default_call_id_uses_ambient_request_context() -> None:
-    store = _make_store(
-        _make_response(
-            200,
-            {
-                "id": "it_1",
-                "object": "state_store.item",
-                "key": "step/1",
-                "value": {"done": True},
-                "etag": '"0x8DD"',
-                "created_at": 1,
-                "updated_at": 2,
-            },
-        )
-    )
-    token = set_request_context(FoundryAgentRequestContext(call_id="ambient-call"))
-    try:
-        await store.get_item("step/1")
-    finally:
-        reset_request_context(token)
-
-    request = store._client.send_request.await_args.args[0]
-    assert request.headers["x-agent-foundry-call-id"] == "ambient-call"
-
-
-# ---------------------------------------------------------------------------
-# Local filesystem fallback
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.asyncio
-async def test_get_or_create_uses_file_backend_outside_hosting_even_with_endpoint(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
-    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
-
-    store = await FoundryStateStore.get_or_create(
-        "local/checkpoints",
-        MagicMock(),
-        "https://foundry.example.com/api/projects/test",
-        user_isolation=True,
-        item_ttl_seconds=-1,
-    )
-    async with store:
-        created = await store.set_item(
-            "step/1",
-            {"done": False},
-            tags={"kind": "checkpoint"},
-            call_id="ignored-locally",
-        )
-
-    reopened = await FoundryStateStore.get_or_create("local/checkpoints")
-    async with reopened:
-        item = await reopened.get_item("step/1")
-
-    assert created.key == "step/1"
-    assert item is not None
-    assert item.value == {"done": False}
-    assert item.tags == {"kind": "checkpoint"}
-    assert list((tmp_path / "state_stores").glob("*.json"))
-
-
-@pytest.mark.asyncio
-async def test_local_backend_enforces_etag_and_create_conflicts(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
-    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
-    store = await FoundryStateStore.get_or_create("local-etags")
-
-    async with store:
-        created = await store.create_item("counter", {"value": 1})
-        with pytest.raises(FoundryStorageConflictError):
-            await store.create_item("counter", {"value": 2})
-        with pytest.raises(FoundryStoragePreconditionError) as exc_info:
-            await store.set_item("counter", {"value": 2}, if_match='"stale"')
-        updated = await store.set_item("counter", {"value": 2}, if_match=created.etag)
-
-    assert exc_info.value.status_code == 412
-    assert updated.etag != created.etag
-
-
-@pytest.mark.asyncio
-async def test_local_backend_lists_and_deletes_items(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
-    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
-    store = await FoundryStateStore.get_or_create("local-list")
-
-    async with store:
-        await store.set_item("one", {"value": 1}, tags={"kind": "included"})
-        await store.set_item("two", {"value": 2}, tags={"kind": "excluded"})
-        page = await store.list_keys(tags={"kind": "included"}, order="asc")
-        deleted = await store.delete_item("one")
-        missing = await store.get_item("one")
-
-    assert [item.key for item in page.keys] == ["one"]
-    assert deleted.id is not None
-    assert missing is None
-
-
-@pytest.mark.asyncio
-async def test_local_backend_expires_items_after_ttl(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    from azure.ai.agentserver.core.storage import (
-        _local_state,
-    )  # pylint: disable=import-outside-toplevel
-
-    now = [100]
-    monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
-    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
-    monkeypatch.setattr(_local_state, "_now", lambda: now[0])
-    store = await FoundryStateStore.get_or_create("local-ttl", item_ttl_seconds=10)
-
-    async with store:
-        await store.set_item("temporary", {"value": 1})
-        now[0] = 111
-        item = await store.get_item("temporary")
-
-    assert item is None
-
-
-@pytest.mark.asyncio
-async def test_local_backend_reuses_persisted_store_ttl(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    from azure.ai.agentserver.core.storage import (
-        _local_state,
-    )  # pylint: disable=import-outside-toplevel
-
-    now = [100]
-    monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
-    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
-    monkeypatch.setattr(_local_state, "_now", lambda: now[0])
-    original = await FoundryStateStore.get_or_create(
-        "local-persisted-ttl",
-        item_ttl_seconds=-1,
-    )
-    await original.aclose()
-
-    reopened = await FoundryStateStore.get_or_create("local-persisted-ttl")
-    async with reopened:
-        await reopened.set_item("permanent", {"value": 1})
-        now[0] = 1_000_000
-        item = await reopened.get_item("permanent")
-
-    assert item is not None

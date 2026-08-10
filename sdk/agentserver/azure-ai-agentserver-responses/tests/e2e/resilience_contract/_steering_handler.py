@@ -24,7 +24,7 @@ Output tags (parsed by the test):
 - first delta:  ``turn{n}_L{lifetime}_start``
 - final text:   ``turn{n}_L{lifetime}_done|input={input_text}``
 
-where ``n`` is a process-local turn counter used only to label test output and
+where ``n`` is the cross-turn ``turn_count`` watermark (survives crash) and
 ``lifetime`` is ``1`` for any recovered/resumed entry, ``0`` for a fresh one.
 
 Env vars consumed:
@@ -78,7 +78,6 @@ options = ResponsesServerOptions(
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
 app = ResponsesAgentServerHost(options=options)
-_turn_counts: dict[str, int] = {}
 
 
 @app.response_handler
@@ -110,8 +109,10 @@ async def handler(
         # Client-visible reset point for the recovered attempt.
         yield stream.emit_in_progress()
 
-    turn_count = _turn_counts.get(context.conversation_chain_id, 0) + 1
-    _turn_counts[context.conversation_chain_id] = turn_count
+    # Cross-turn watermark — survives crash + turn boundaries.
+    turn_count = int(context.conversation_chain_metadata.get("turn_count", 0)) + 1
+    context.conversation_chain_metadata["turn_count"] = turn_count
+    await context.conversation_chain_metadata.flush()
 
     input_text = await context.get_input_text()
 

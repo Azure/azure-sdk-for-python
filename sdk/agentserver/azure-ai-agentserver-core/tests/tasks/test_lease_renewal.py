@@ -49,7 +49,7 @@ def captured_local(tmp_path: Path, capturing_provider_factory):
 
 
 @pytest.mark.asyncio
-async def test_every_patch_carries_lease_extension_trio(captured_local, monkeypatch) -> None:
+async def test_every_patch_carries_lease_extension_trio(captured_local) -> None:
     """— every PATCH the framework issues MUST carry the
     lease-extension trio (lease_owner, lease_instance_id,
     lease_duration_seconds) so every write doubles as a heartbeat.
@@ -57,13 +57,9 @@ async def test_every_patch_carries_lease_extension_trio(captured_local, monkeypa
 
     @multi_turn_task(name="lease_trio_task")
     async def my_task(ctx: TaskContext[str]) -> str:
-        await asyncio.sleep(1.2)
+        ctx.metadata["k"] = 1
+        await ctx.metadata.flush()
         return "ok"
-
-    import azure.ai.agentserver.core.tasks._validation as val_mod
-
-    monkeypatch.setattr(val_mod, "LEASE_DURATION_MIN", 1)
-    monkeypatch.setattr(mgr_mod, "_DEFAULT_LEASE_SECONDS", 2)
 
     manager = TaskManager(config=_config_stub(), provider=captured_local)
     mgr_mod._manager = manager
@@ -87,21 +83,32 @@ async def test_every_patch_carries_lease_extension_trio(captured_local, monkeypa
 
 
 @pytest.mark.asyncio
-async def test_application_state_writes_do_not_shadow_heartbeats(captured_local, monkeypatch) -> None:
-    """Application-owned state activity does not renew the task lease.
+async def test_dynamic_cadence_shadows_heartbeats(captured_local, monkeypatch) -> None:
+    """/ SC-3 — under high metadata-flush traffic, the lease
+    renewal loop's separate heartbeat PATCH count drops to 0 in the
+    full-shadow regime: every flush PATCH carries the lease-extension
+    trio, so the loop sees the lease was just refreshed and skips its
+    own scheduled tick.
 
-    State Store writes are independent from the task record, so the lease
-    renewal loop must continue emitting heartbeat-only task PATCHes while
-    application state changes.
+    Test setup: a handler that issues a metadata flush every 100ms
+    for ~4 seconds. The lease is shrunk (via the ``_DEFAULT_LEASE_SECONDS``
+    constant the manager reads when starting the renewal loop, plus the
+    validation floor) so the renewal interval is ``max(1, lease // 2) = 1s``
+    — well inside the test window, so the loop DOES tick several times and
+    would emit heartbeats if the shadow logic were broken. We do NOT expect
+    ANY PATCH that lacks a payload / tags / attachments / status / error
+    change — i.e., a pure heartbeat-only PATCH (lease fields only, nothing
+    else).
     """
 
     @multi_turn_task(name="dynamic_cadence")
     async def my_task(ctx: TaskContext[str]) -> str:
-        application_state: dict[str, int] = {}
+        # Issue many flushes spaced well under the renewal interval so
+        # every scheduled heartbeat tick is shadowed by a recent flush.
         for i in range(40):
-            application_state[f"write_{i}"] = i
+            ctx.metadata[f"flush_{i}"] = i
+            await ctx.metadata.flush()
             await asyncio.sleep(0.1)
-        assert len(application_state) == 40
         return "ok"
 
     # Shrink the lease so the renewal interval (max(1, lease // 2) = 1s) is
@@ -126,7 +133,9 @@ async def test_application_state_writes_do_not_shadow_heartbeats(captured_local,
 
     # Identify pure-heartbeat PATCHes: ones that carry ONLY the
     # lease-extension trio (no payload / tags / attachments / status /
-    # error / suspension_reason).
+    # error / suspension_reason). Per  the dynamic cadence
+    # should drive this count to 0 in the shadow window because each
+    # flush already piggybacked the trio.
     heartbeat_count = 0
     for _task_id, patch, _if_match in captured_local.update_calls:
         if (
@@ -140,4 +149,10 @@ async def test_application_state_writes_do_not_shadow_heartbeats(captured_local,
         ):
             heartbeat_count += 1
 
-    assert heartbeat_count >= 1, "application state activity must not suppress task lease heartbeats"
+    assert heartbeat_count == 0, (
+        f"expected 0 pure-heartbeat PATCHes in the dynamic-cadence "
+        f"shadow window, got {heartbeat_count}. The lease renewal loop "
+        f"should compute its next tick from the per-task last-refresh "
+        f"time so that a recent flush shadows the next heartbeat "
+        f"."
+    )

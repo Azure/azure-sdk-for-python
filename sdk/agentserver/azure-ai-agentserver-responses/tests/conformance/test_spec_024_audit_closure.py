@@ -20,7 +20,13 @@ Gaps closed by this file:
    endpoint and asserts the handler records the cause-boolean
    transition.
 
-3. ``test_handler_signature_rejects_var_positional`` — spec 024
+3. ``test_conversation_chain_metadata_protocol_matches_mutable_mapping_shape`` —
+   spec 024 audit Concern 2: the ``ConversationChainMetadataNamespace`` Protocol
+   MUST expose ``MutableMapping``-style methods (clear, pop, keys,
+   etc.) so sample 22's ``context.conversation_chain_metadata.clear()`` and
+   similar idioms typecheck cleanly.
+
+4. ``test_handler_signature_rejects_var_positional`` — spec 024
    audit Blocker 5: ``response_handler`` MUST reject ``*args``
    handlers (the contract requires exactly three positional parameters
    so the dispatch shape is statically reasonable).
@@ -33,6 +39,7 @@ from typing import Any
 import pytest
 
 from azure.ai.agentserver.responses import (
+    ConversationChainMetadataNamespace,
     FileResponseStore,
     ResponseContext,
     ResponsesAgentServerHost,
@@ -167,6 +174,82 @@ def test_client_cancelled_observed_by_handler_after_cancel_endpoint(tmp_path, mo
 
 
 # ──────────────────────────────────────────────────────────────────────
+# Gap 3 — ConversationChainMetadataNamespace Protocol matches MutableMapping
+# ──────────────────────────────────────────────────────────────────────
+
+
+def test_conversation_chain_metadata_protocol_includes_mutable_mapping_methods() -> None:
+    """``ConversationChainMetadataNamespace`` MUST expose ``MutableMapping``-style
+    methods so handler code that calls ``clear()`` / ``pop()`` /
+    ``update()`` typechecks against the Protocol annotation."""
+    required = {
+        "__getitem__",
+        "__setitem__",
+        "__delitem__",
+        "__contains__",
+        "__iter__",
+        "__len__",
+        "get",
+        "keys",
+        "values",
+        "items",
+        "clear",
+        "pop",
+        "setdefault",
+        "update",
+        "__call__",
+        "flush",
+    }
+    actual = {
+        name
+        for name in dir(ConversationChainMetadataNamespace)
+        if not name.startswith("_")
+        or name
+        in {
+            "__getitem__",
+            "__setitem__",
+            "__delitem__",
+            "__contains__",
+            "__iter__",
+            "__len__",
+            "__call__",
+        }
+    }
+    missing = required - actual
+    assert not missing, (
+        f"ConversationChainMetadataNamespace Protocol is missing MutableMapping "
+        f"methods that handlers + samples use: {sorted(missing)}"
+    )
+
+
+def test_concrete_metadata_facade_satisfies_protocol_at_runtime() -> None:
+    """The internal ``_DeveloperMetadataFacade`` MUST satisfy every
+    Protocol method at runtime (so handlers can call them on the live
+    facade returned by ``context.conversation_chain_metadata``)."""
+    from azure.ai.agentserver.responses._resilience_context import (
+        _DeveloperMetadataFacade,
+    )
+
+    facade = _DeveloperMetadataFacade({})
+    # MutableMapping basics:
+    facade["a"] = 1
+    assert facade["a"] == 1
+    assert facade.get("a") == 1
+    assert "a" in facade
+    assert len(facade) == 1
+    facade["b"] = 2
+    assert set(facade.keys()) == {"a", "b"}
+    facade.setdefault("c", 3)
+    assert facade["c"] == 3
+    popped = facade.pop("c")
+    assert popped == 3
+    facade.update({"d": 4})
+    assert facade["d"] == 4
+    facade.clear()
+    assert len(facade) == 0
+
+
+# ──────────────────────────────────────────────────────────────────────
 # Gap 4 — handler signature rejects *args
 # ──────────────────────────────────────────────────────────────────────
 
@@ -291,6 +374,20 @@ def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
     )
     from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
+    class _FakeTaskMetadata(dict):
+        def __init__(self) -> None:
+            super().__init__()
+            self._ns: dict[str, "_FakeTaskMetadata"] = {}
+
+        def __call__(self, name=None):
+            if name is None:
+                return self
+            sub = self._ns.setdefault(name, _FakeTaskMetadata())
+            return sub
+
+        async def flush(self) -> None:
+            return None
+
     orch = ResilientResponseOrchestrator(
         create_fn=AsyncMock(),
         provider=MagicMock(),
@@ -308,6 +405,7 @@ def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
     ctx.entry_mode = "resumed"  # next-turn entry (not crash recovery)
     ctx.is_steered_turn = True  # framework signals the drain re-entry
     ctx.pending_input_count = 0
+    ctx.metadata = _FakeTaskMetadata()
     ctx._cancellation_signal = asyncio.Event()
     ctx.shutdown = asyncio.Event()
     ctx.task_id = "task-drain"

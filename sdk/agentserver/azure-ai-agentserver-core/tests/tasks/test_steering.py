@@ -548,7 +548,7 @@ class TestContextFieldsContract:
 
         The field, the storage population, and the steering-payload mirror
         are all retired. Developers needing the prior input snapshot must
-        persist it in an application-owned State Store themselves.
+        capture it in ``ctx.metadata`` themselves.
         """
         from azure.ai.agentserver.core.tasks._context import TaskContext
 

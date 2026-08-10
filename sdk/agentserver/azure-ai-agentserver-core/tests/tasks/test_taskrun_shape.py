@@ -8,11 +8,11 @@ from __future__ import annotations
 import inspect
 from typing import get_type_hints
 
-from azure.ai.agentserver.core.tasks import TaskRun
+from azure.ai.agentserver.core.tasks import TaskMetadata, TaskRun
 
 
 class TestTaskRunPublicShape:
-    """TaskRun exposes task identity, result, cancellation, and queue state."""
+    """— TaskRun exposes exactly: task_id, input_id, metadata, result, cancel, __await__."""
 
     def test_taskrun_attributes(self) -> None:
         slots = set(getattr(TaskRun, "__slots__", ()))
@@ -20,6 +20,12 @@ class TestTaskRunPublicShape:
         assert "input_id" in slots
         assert not isinstance(inspect.getattr_static(TaskRun, "task_id"), property)
         assert not isinstance(inspect.getattr_static(TaskRun, "input_id"), property)
+
+    def test_taskrun_metadata_property(self) -> None:
+        metadata_descriptor = inspect.getattr_static(TaskRun, "metadata")
+        assert isinstance(metadata_descriptor, property)
+        assert metadata_descriptor.fget is not None
+        assert get_type_hints(metadata_descriptor.fget).get("return") is TaskMetadata
 
     def test_taskrun_result_is_async_method(self) -> None:
         assert inspect.iscoroutinefunction(TaskRun.result)
@@ -52,9 +58,6 @@ class TestTaskRunRemovedMembers:
 
     def test_taskrun_no_lease_expiry_count(self) -> None:
         assert not hasattr(TaskRun, "lease_expiry_count")
-
-    def test_taskrun_no_metadata(self) -> None:
-        assert not hasattr(TaskRun, "metadata")
 
 
 class TestTaskRunInternalSlotsAbsent:

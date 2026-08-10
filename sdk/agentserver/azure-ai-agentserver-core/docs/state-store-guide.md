@@ -1,9 +1,7 @@
 # Durable State Store Guide
 
-`FoundryStateStore` is a durable store for agent state. In Foundry-hosted
-environments it uses the platform State Store API. During local development it
-automatically uses JSON files under
-`${AGENTSERVER_STATE_ROOT:-~/.agentserver}/state_stores/`.
+`FoundryStateStore` is a durable, server-backed store for agent state. Each
+store holds JSON items that you read, write, and list by key.
 
 ## Overview
 
@@ -67,13 +65,10 @@ async with store:
     print(item.etag)
 ```
 
-In a hosted environment, the client resolves:
+By default, the client resolves:
 
 - `FOUNDRY_PROJECT_ENDPOINT` for the project endpoint
 - `DefaultAzureCredential` for authentication (requires `azure-identity`)
-
-Outside a hosted environment, the client always uses the local file backend;
-`endpoint` and `credential` are ignored.
 
 ## Store Name = Scope
 
@@ -172,21 +167,6 @@ store = await FoundryStateStore.get_or_create("otp/user-42", item_ttl_seconds=30
 - Reads do **not** renew the TTL window
 
 ## Single-Item Operations
-
-Every item operation accepts an optional explicit `call_id`. Use it when work
-runs outside the originating request context, such as a recovered durable task:
-
-```python
-await store.set_item(
-    "step-1",
-    {"done": True},
-    call_id=ctx.input["call_id"],
-)
-```
-
-`call_id` defaults to `None`. With that default, hosted requests use the call ID
-from the current AgentServer request context. The local file backend accepts but
-ignores it.
 
 ### Create a new item
 

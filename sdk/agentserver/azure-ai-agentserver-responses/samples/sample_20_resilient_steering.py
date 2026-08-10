@@ -59,8 +59,6 @@ Usage::
 import asyncio
 import os
 
-from azure.ai.agentserver.core.storage import FoundryStateStore
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -68,6 +66,7 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
 )
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
 options = ResponsesServerOptions(
     resilient_background=True,
@@ -129,26 +128,10 @@ async def handler(
 
     yield stream.emit_in_progress()
 
-    # Cross-turn state lives in an explicit application-owned State Store.
-    store = await FoundryStateStore.get_or_create(
-        context.conversation_chain_id,
-        description="State for the resilient steering response sample",
-    )
-    async with store:
-        item = await store.get_item("state")
-        state = (
-            dict(item.value)
-            if item is not None and isinstance(item.value, dict)
-            else {}
-        )
-        if state.get("last_response_id") == context.response_id:
-            turn_count = int(state.get("turn_count", 1))
-        else:
-            turn_count = int(state.get("turn_count", 0)) + 1
-            await store.set_item(
-                "state",
-                {"turn_count": turn_count, "last_response_id": context.response_id},
-            )
+    # Cross-turn state: bump the turn counter. This survives crashes
+    # and turn boundaries since it lives in `context.conversation_chain_metadata`.
+    turn_count = int(context.conversation_chain_metadata.get("turn_count", 0)) + 1
+    context.conversation_chain_metadata["turn_count"] = turn_count
 
     # Optional local shutdown simulation.
     shutdown_timer: asyncio.Task | None = None

@@ -61,18 +61,18 @@ from collections.abc import AsyncGenerator
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core.storage import FoundryStateStore
 from azure.ai.agentserver.core.streaming import (
     EventStream,
     EventStreamNotFoundError,
     streams,
 )
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import invocation_state_store_name, langgraph_session
+    from .agent import invocation_store, langgraph_session
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import invocation_state_store_name, langgraph_session
+    from agent import invocation_store, langgraph_session
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +82,12 @@ logger = logging.getLogger(__name__)
 streams.use_in_memory_replay(ttl_seconds=600)
 
 app = InvocationAgentServerHost()
+
+# Opt into resilient-task startup recovery. This sample declares a durable
+# task, so the framework would enable recovery automatically; we set the switch
+# explicitly to make the intent clear and to keep recovery working even if the
+# task is ever registered lazily (after startup).
+set_resilient_tasks_enabled(True)
 
 
 async def _sse_from_stream(
@@ -100,8 +106,7 @@ async def _sse_from_stream(
         yield f"event: done\ndata: {json.dumps(done_data)}\n\n".encode()
     except EventStreamNotFoundError:
         yield (
-            f"event: superseded\n"
-            f"data: {json.dumps({'type': 'superseded', 'invocation_id': invocation_id})}\n\n"
+            f"event: superseded\n" f"data: {json.dumps({'type': 'superseded', 'invocation_id': invocation_id})}\n\n"
         ).encode()
     except Exception as exc:  # pylint: disable=broad-except
         error_data = {
@@ -131,15 +136,7 @@ async def handle_invoke(request: Request) -> Response:
         "invocation_id": invocation_id,
     }
 
-    store = await FoundryStateStore.get_or_create(
-        invocation_state_store_name(session_id),
-        description="LangGraph invocation status and results",
-    )
-    async with store:
-        await store.set_item(
-            f"invocation/{invocation_id}",
-            {"status": "queued"},
-        )
+    invocation_store.save(invocation_id, {"status": "queued"})
 
     # Subscribe-before-start (streaming.md §5.1): attach SSE subscriber
     # BEFORE starting the task. Handler reads invocation_id from
@@ -157,16 +154,8 @@ async def handle_invoke(request: Request) -> Response:
         )
 
     # Standard async mode — return 202 with status from store
-    poll_store = await FoundryStateStore.get_or_create(
-        invocation_state_store_name(session_id)
-    )
-    async with poll_store:
-        stored = await poll_store.get_item(f"invocation/{invocation_id}")
-    status = (
-        stored.value.get("status", "queued")
-        if stored is not None and isinstance(stored.value, dict)
-        else "queued"
-    )
+    stored = invocation_store.load(invocation_id)
+    status = stored["status"] if stored else "queued"
 
     return JSONResponse(
         {"invocation_id": invocation_id, "status": status},
@@ -183,17 +172,12 @@ async def poll_invocation(request: Request) -> Response:
     Use this as the recovery path after an SSE disconnect.
     """
     invocation_id: str = request.state.invocation_id
-    session_id: str = request.state.session_id
 
-    store = await FoundryStateStore.get_or_create(
-        invocation_state_store_name(session_id)
-    )
-    async with store:
-        item = await store.get_item(f"invocation/{invocation_id}")
-    if item is None or not isinstance(item.value, dict):
+    result = invocation_store.load(invocation_id)
+    if result is None:
         return JSONResponse({"error": "Invocation not found"}, status_code=404)
 
-    return JSONResponse({"invocation_id": invocation_id, **item.value})
+    return JSONResponse({"invocation_id": invocation_id, **result})
 
 
 if __name__ == "__main__":

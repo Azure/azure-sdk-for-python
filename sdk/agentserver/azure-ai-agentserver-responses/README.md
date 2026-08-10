@@ -108,14 +108,11 @@ The `ResponseContext` provides request-scoped state:
 | `is_recovery` | `bool` set on a crash-recovered re-entry |
 | `is_steered_turn` | `bool` set on the drain re-entry that follows a steering input |
 | `pending_input_count` | `int` count of queued steering inputs |
+| `conversation_chain_metadata` | `ConversationChainMetadataNamespace` for handler-managed checkpoint state |
 | `exit_for_recovery()` | `await` to opt into the graceful-shutdown recovery path |
 | `get_input_items()` | Load resolved input items as `Item` subtypes |
 | `get_input_text()` | Extract all text content from input items as a single string |
 | `get_history()` | Load conversation history items |
-
-Persist cross-turn application state explicitly with
-`azure.ai.agentserver.core.storage.FoundryStateStore`, using
-`conversation_chain_id` as part of the store name.
 
 The per-request cancellation signal is delivered as the **3rd
 positional handler argument** (`cancellation_signal: asyncio.Event`),

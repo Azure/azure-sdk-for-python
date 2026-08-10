@@ -36,7 +36,7 @@ from ._dispatch import DISPOSITION_MARK_FAILED
 from ._task_id import derive_task_id
 
 if TYPE_CHECKING:
-    from .._response_context import ResponseContext
+    from .._response_context import ConversationChainMetadataNamespace, ResponseContext
     from ..models._generated import CreateResponse, ResponseObject
     from ..models.runtime import ResponseExecution
     from ..store._base import ResponseProviderProtocol
@@ -663,6 +663,18 @@ class ResilientResponseOrchestrator:
         context.is_recovery = is_recovery
         context.is_steered_turn = ctx.is_steered_turn
         context.pending_input_count = ctx.pending_input_count
+        # Swap in the handler-facing metadata facade backed by the task
+        # primitive's metadata wrapper (rejects ``_``-prefixed keys so handlers
+        # cannot invent framework-reserved namespaces — kept as a defensive
+        # guard even though the framework no longer creates a ``_responses``
+        # namespace itself, per Spec 039 R1).
+        from .._resilience_context import (  # pylint: disable=import-outside-toplevel
+            _DeveloperMetadataFacade,
+        )
+
+        context.conversation_chain_metadata = cast(
+            "ConversationChainMetadataNamespace", _DeveloperMetadataFacade(ctx.metadata)
+        )
         # (Spec 024 Phase 5 — Proposal #11) Expose the task context so
         # ``context.exit_for_recovery()`` can delegate to the recovery sentinel.
         context._task_context = ctx  # pylint: disable=protected-access
