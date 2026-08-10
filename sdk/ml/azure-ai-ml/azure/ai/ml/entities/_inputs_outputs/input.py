@@ -386,7 +386,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             # local path) matching the public CLI v2 YAML schema.
             if not self._multiple_types and self.type in _ASSET_TYPES:
                 if isinstance(default_value, str):
-                    self.default = default_value
+                    self.default: Any = default_value
                     return
                 msg = (
                     f"{msg_prefix}cannot be set: default for type '{self.type}' must be a "
