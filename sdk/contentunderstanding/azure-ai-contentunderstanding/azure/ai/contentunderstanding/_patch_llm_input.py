@@ -624,11 +624,12 @@ _YAML_NUMBER = re.compile(r"^[+\-]?(\d+\.?\d*|\.\d+)([eE][+\-]?\d+)?$")
 _YAML_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}")
 
 
-def _yaml_scalar(value: Any) -> str:
+def _yaml_scalar(value: Any, continuation_indent: int = 0) -> str:
     """Serialize a scalar to its YAML text form.
 
     :param value: The value to serialize.
     :type value: Any
+    :param int continuation_indent: The indentation level for multiline continuations.
     :returns: The YAML-formatted string.
     :rtype: str
     """
@@ -652,7 +653,11 @@ def _yaml_scalar(value: Any) -> str:
         or _YAML_SPECIAL_START.search(s)
         or _YAML_SPECIAL_INSIDE.search(s)
     )
-    return ("'" + s.replace("'", "''") + "'") if needs_quote else s
+    serialized = ("'" + s.replace("'", "''") + "'") if needs_quote else s
+    # Keep continuation lines nested so an embedded "---" cannot terminate the front matter.
+    if continuation_indent and "\n" in serialized:
+        serialized = serialized.replace("\n", "\n" + "  " * continuation_indent)
+    return serialized
 
 
 def _build_front_matter(data: Dict[str, Any]) -> str:
@@ -696,7 +701,7 @@ def _emit_mapping(lines: List[str], mapping: Dict[str, Any], indent: int) -> Non
             lines.append(f"{prefix}{safe_key}:")
             _emit_sequence(lines, value, indent)
         else:
-            lines.append(f"{prefix}{safe_key}: {_yaml_scalar(value)}")
+            lines.append(f"{prefix}{safe_key}: {_yaml_scalar(value, continuation_indent=indent + 1)}")
 
 
 def _emit_sequence(lines: List[str], sequence: List[Any], indent: int) -> None:
@@ -722,7 +727,7 @@ def _emit_sequence(lines: List[str], sequence: List[Any], indent: int) -> None:
                     lines.append(f"{tag}{safe_k}:")
                     _emit_sequence(lines, v, indent + 2)
                 else:
-                    lines.append(f"{tag}{safe_k}: {_yaml_scalar(v)}")
+                    lines.append(f"{tag}{safe_k}: {_yaml_scalar(v, continuation_indent=indent + 1)}")
                 first = False
         else:
-            lines.append(f"{prefix}- {_yaml_scalar(item)}")
+            lines.append(f"{prefix}- {_yaml_scalar(item, continuation_indent=indent + 1)}")
