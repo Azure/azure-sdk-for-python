@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from ...indexes import models as _indexes_models3
 
 
-class AIServices(_Model):
+class AIServices(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for AI Services.
 
     :ivar uri: The URI of the AI Services endpoint. Required.
@@ -60,7 +60,7 @@ class AIServices(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetStore(_Model):
+class AssetStore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for an asset store used to store extracted assets such as images.
 
     :ivar connection_string: The connection string for the asset store. Required.
@@ -97,7 +97,7 @@ class AssetStore(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeSourceParams(_Model):
+class KnowledgeSourceParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for knowledge source runtime parameters.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -229,7 +229,9 @@ class KnowledgeSourceParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobKnowledgeSourceParams(KnowledgeSourceParams, discriminator="azureBlob"):
+class AzureBlobKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="azureBlob"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a azure blob knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -314,7 +316,7 @@ class AzureBlobKnowledgeSourceParams(KnowledgeSourceParams, discriminator="azure
         self.kind = KnowledgeSourceKind.AZURE_BLOB  # type: ignore
 
 
-class CompletedSynchronizationState(_Model):
+class CompletedSynchronizationState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the completed state of the last synchronization.
 
     :ivar start_time: The start time of the last completed synchronization. Required.
@@ -372,7 +374,9 @@ class CompletedSynchronizationState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricDataAgentKnowledgeSourceParams(KnowledgeSourceParams, discriminator="fabricDataAgent"):
+class FabricDataAgentKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="fabricDataAgent"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a Fabric Data Agent knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -446,7 +450,9 @@ class FabricDataAgentKnowledgeSourceParams(KnowledgeSourceParams, discriminator=
         self.kind = KnowledgeSourceKind.FABRIC_DATA_AGENT  # type: ignore
 
 
-class FabricOntologyKnowledgeSourceParams(KnowledgeSourceParams, discriminator="fabricOntology"):
+class FabricOntologyKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="fabricOntology"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a Fabric Ontology knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -520,7 +526,9 @@ class FabricOntologyKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
         self.kind = KnowledgeSourceKind.FABRIC_ONTOLOGY  # type: ignore
 
 
-class FileKnowledgeSourceParams(KnowledgeSourceParams, discriminator="file"):
+class FileKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="file"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a File knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -605,7 +613,7 @@ class FileKnowledgeSourceParams(KnowledgeSourceParams, discriminator="file"):
         self.kind = KnowledgeSourceKind.FILE  # type: ignore
 
 
-class FreshnessPolicy(_Model):
+class FreshnessPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for freshness-aware retrieval. When set, newer documents receive a ranking boost
     during retrieval.
 
@@ -638,7 +646,7 @@ class FreshnessPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageServingStatistics(_Model):
+class ImageServingStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Statistics about image serving during a retrieval activity.
 
     :ivar images_retrieved: The number of images retrieved from the asset store.
@@ -699,7 +707,9 @@ class ImageServingStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexedOneLakeKnowledgeSourceParams(KnowledgeSourceParams, discriminator="indexedOneLake"):
+class IndexedOneLakeKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="indexedOneLake"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a indexed OneLake knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -783,7 +793,9 @@ class IndexedOneLakeKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
         self.kind = KnowledgeSourceKind.INDEXED_ONELAKE  # type: ignore
 
 
-class IndexedSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator="indexedSharePoint"):
+class IndexedSharePointKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="indexedSharePoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a indexed SharePoint knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -867,7 +879,9 @@ class IndexedSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminato
         self.kind = KnowledgeSourceKind.INDEXED_SHARE_POINT  # type: ignore
 
 
-class IndexedSqlKnowledgeSourceParams(KnowledgeSourceParams, discriminator="indexedSql"):
+class IndexedSqlKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="indexedSql"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for an indexed SQL knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -952,7 +966,7 @@ class IndexedSqlKnowledgeSourceParams(KnowledgeSourceParams, discriminator="inde
         self.kind = KnowledgeSourceKind.INDEXED_SQL  # type: ignore
 
 
-class KnowledgeBaseActivityRecord(_Model):
+class KnowledgeBaseActivityRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for activity records. Tracks execution details, timing, and errors for knowledge base
     operations.
 
@@ -1042,7 +1056,7 @@ class KnowledgeBaseActivityRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseActivityRecordModel(_Model):
+class KnowledgeBaseActivityRecordModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the model used for a knowledge base LLM activity, including its model name and
     deployment identifier.
 
@@ -1078,7 +1092,7 @@ class KnowledgeBaseActivityRecordModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseActivityStartedEvent(_Model):
+class KnowledgeBaseActivityStartedEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Emitted immediately before an individual retrieval activity begins executing.
 
     :ivar id: The ID of the activity record, matching the ``id`` on the corresponding
@@ -1140,7 +1154,7 @@ class KnowledgeBaseActivityStartedEvent(_Model):
 
 class KnowledgeBaseAgenticReasoningActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="agenticReasoning"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents an agentic reasoning activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -1215,7 +1229,7 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.AGENTIC_REASONING  # type: ignore
 
 
-class KnowledgeBaseAnswerCompletedEvent(_Model):
+class KnowledgeBaseAnswerCompletedEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Emitted when a fully validated and post-processed synthesized answer is available.
 
     :ivar message_index: The zero-based index of the completed message in the final response array.
@@ -1249,7 +1263,7 @@ class KnowledgeBaseAnswerCompletedEvent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseAzureBlobActivityArguments(_Model):
+class KnowledgeBaseAzureBlobActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the azure blob retrieval activity was run with.
 
     :ivar search: The search string used to query blob contents.
@@ -1277,7 +1291,9 @@ class KnowledgeBaseAzureBlobActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseAzureBlobActivityRecord(KnowledgeBaseActivityRecord, discriminator="azureBlob"):
+class KnowledgeBaseAzureBlobActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="azureBlob"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a azure blob retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -1371,7 +1387,7 @@ class KnowledgeBaseAzureBlobActivityRecord(KnowledgeBaseActivityRecord, discrimi
         self.type = KnowledgeBaseActivityRecordType.AZURE_BLOB  # type: ignore
 
 
-class KnowledgeBaseReference(_Model):
+class KnowledgeBaseReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for references.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1436,7 +1452,9 @@ class KnowledgeBaseReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseAzureBlobReference(KnowledgeBaseReference, discriminator="azureBlob"):
+class KnowledgeBaseAzureBlobReference(
+    KnowledgeBaseReference, discriminator="azureBlob"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an Azure Blob Storage document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -1543,7 +1561,9 @@ class KnowledgeBaseErrorDetail(_Model):
     """The error additional info."""
 
 
-class KnowledgeBaseFabricDataAgentActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseFabricDataAgentActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the Fabric Data Agent retrieval activity was run with.
 
     :ivar search: The search string used to query the Fabric Data Agent knowledge source.
@@ -1573,7 +1593,7 @@ class KnowledgeBaseFabricDataAgentActivityArguments(_Model):  # pylint: disable=
 
 class KnowledgeBaseFabricDataAgentActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="fabricDataAgent"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents a Fabric Data Agent retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -1658,7 +1678,9 @@ class KnowledgeBaseFabricDataAgentActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.FABRIC_DATA_AGENT  # type: ignore
 
 
-class KnowledgeBaseFabricDataAgentReference(KnowledgeBaseReference, discriminator="fabricDataAgent"):
+class KnowledgeBaseFabricDataAgentReference(
+    KnowledgeBaseReference, discriminator="fabricDataAgent"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Fabric Data Agent document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -1712,7 +1734,9 @@ class KnowledgeBaseFabricDataAgentReference(KnowledgeBaseReference, discriminato
         self.type = KnowledgeBaseReferenceType.FABRIC_DATA_AGENT  # type: ignore
 
 
-class KnowledgeBaseFabricOntologyActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseFabricOntologyActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the Fabric Ontology retrieval activity was run with.
 
     :ivar search: The search string used to query the Fabric Ontology knowledge source.
@@ -1742,7 +1766,7 @@ class KnowledgeBaseFabricOntologyActivityArguments(_Model):  # pylint: disable=n
 
 class KnowledgeBaseFabricOntologyActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="fabricOntology"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents a Fabric Ontology retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -1827,7 +1851,9 @@ class KnowledgeBaseFabricOntologyActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.FABRIC_ONTOLOGY  # type: ignore
 
 
-class KnowledgeBaseFabricOntologyReference(KnowledgeBaseReference, discriminator="fabricOntology"):
+class KnowledgeBaseFabricOntologyReference(
+    KnowledgeBaseReference, discriminator="fabricOntology"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Fabric Ontology document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -1881,7 +1907,7 @@ class KnowledgeBaseFabricOntologyReference(KnowledgeBaseReference, discriminator
         self.type = KnowledgeBaseReferenceType.FABRIC_ONTOLOGY  # type: ignore
 
 
-class KnowledgeBaseFileActivityArguments(_Model):
+class KnowledgeBaseFileActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the File retrieval activity was run with.
 
     :ivar search: The search string used to query file contents.
@@ -1909,7 +1935,9 @@ class KnowledgeBaseFileActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseFileActivityRecord(KnowledgeBaseActivityRecord, discriminator="file"):
+class KnowledgeBaseFileActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="file"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a File retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -2003,7 +2031,9 @@ class KnowledgeBaseFileActivityRecord(KnowledgeBaseActivityRecord, discriminator
         self.type = KnowledgeBaseActivityRecordType.FILE  # type: ignore
 
 
-class KnowledgeBaseFileReference(KnowledgeBaseReference, discriminator="file"):
+class KnowledgeBaseFileReference(
+    KnowledgeBaseReference, discriminator="file"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a file document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -2057,7 +2087,7 @@ class KnowledgeBaseFileReference(KnowledgeBaseReference, discriminator="file"):
         self.type = KnowledgeBaseReferenceType.FILE  # type: ignore
 
 
-class KnowledgeBaseImageContent(_Model):
+class KnowledgeBaseImageContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Image content.
 
     :ivar url: The url of the image. Required.
@@ -2085,7 +2115,9 @@ class KnowledgeBaseImageContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseIndexedOneLakeActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseIndexedOneLakeActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the indexed OneLake retrieval activity was run with.
 
     :ivar search: The search string used to query indexed OneLake contents.
@@ -2115,7 +2147,7 @@ class KnowledgeBaseIndexedOneLakeActivityArguments(_Model):  # pylint: disable=n
 
 class KnowledgeBaseIndexedOneLakeActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="indexedOneLake"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents a indexed OneLake retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -2209,7 +2241,9 @@ class KnowledgeBaseIndexedOneLakeActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.INDEXED_ONELAKE  # type: ignore
 
 
-class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator="indexedOneLake"):
+class KnowledgeBaseIndexedOneLakeReference(
+    KnowledgeBaseReference, discriminator="indexedOneLake"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an indexed OneLake document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -2271,7 +2305,9 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
         self.type = KnowledgeBaseReferenceType.INDEXED_ONELAKE  # type: ignore
 
 
-class KnowledgeBaseIndexedSharePointActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseIndexedSharePointActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the indexed SharePoint retrieval activity was run with.
 
     :ivar search: The search string used to query indexed SharePoint contents.
@@ -2301,7 +2337,7 @@ class KnowledgeBaseIndexedSharePointActivityArguments(_Model):  # pylint: disabl
 
 class KnowledgeBaseIndexedSharePointActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="indexedSharePoint"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents a indexed SharePoint retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -2396,7 +2432,9 @@ class KnowledgeBaseIndexedSharePointActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.INDEXED_SHARE_POINT  # type: ignore
 
 
-class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discriminator="indexedSharePoint"):
+class KnowledgeBaseIndexedSharePointReference(
+    KnowledgeBaseReference, discriminator="indexedSharePoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an indexed SharePoint document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -2458,7 +2496,7 @@ class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discrimina
         self.type = KnowledgeBaseReferenceType.INDEXED_SHARE_POINT  # type: ignore
 
 
-class KnowledgeBaseIndexedSqlActivityArguments(_Model):
+class KnowledgeBaseIndexedSqlActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the indexed SQL retrieval activity was run with.
 
     :ivar search: The search string used to query indexed SQL contents.
@@ -2486,7 +2524,9 @@ class KnowledgeBaseIndexedSqlActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseIndexedSqlActivityRecord(KnowledgeBaseActivityRecord, discriminator="indexedSql"):
+class KnowledgeBaseIndexedSqlActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="indexedSql"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an indexed SQL retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -2580,7 +2620,9 @@ class KnowledgeBaseIndexedSqlActivityRecord(KnowledgeBaseActivityRecord, discrim
         self.type = KnowledgeBaseActivityRecordType.INDEXED_SQL  # type: ignore
 
 
-class KnowledgeBaseIndexedSqlReference(KnowledgeBaseReference, discriminator="indexedSql"):
+class KnowledgeBaseIndexedSqlReference(
+    KnowledgeBaseReference, discriminator="indexedSql"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an Azure SQL document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -2634,7 +2676,7 @@ class KnowledgeBaseIndexedSqlReference(KnowledgeBaseReference, discriminator="in
         self.type = KnowledgeBaseReferenceType.INDEXED_SQL  # type: ignore
 
 
-class KnowledgeBaseMcpServerActivityArguments(_Model):
+class KnowledgeBaseMcpServerActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the MCP server retrieval activity was run with.
 
     :ivar tool_name: The name of the MCP server tool used for the retrieval activity.
@@ -2669,7 +2711,9 @@ class KnowledgeBaseMcpServerActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseMcpServerActivityRecord(KnowledgeBaseActivityRecord, discriminator="mcpServer"):
+class KnowledgeBaseMcpServerActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="mcpServer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an MCP server retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -2754,7 +2798,9 @@ class KnowledgeBaseMcpServerActivityRecord(KnowledgeBaseActivityRecord, discrimi
         self.type = KnowledgeBaseActivityRecordType.MCP_SERVER  # type: ignore
 
 
-class KnowledgeBaseMcpServerReference(KnowledgeBaseReference, discriminator="mcpServer"):
+class KnowledgeBaseMcpServerReference(
+    KnowledgeBaseReference, discriminator="mcpServer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an MCP server document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -2804,7 +2850,7 @@ class KnowledgeBaseMcpServerReference(KnowledgeBaseReference, discriminator="mcp
         self.type = KnowledgeBaseReferenceType.MCP_SERVER  # type: ignore
 
 
-class KnowledgeBaseMessage(_Model):
+class KnowledgeBaseMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The natural language message style object.
 
     :ivar role: The role of the tool response.
@@ -2840,7 +2886,7 @@ class KnowledgeBaseMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseMessageContent(_Model):
+class KnowledgeBaseMessageContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the type of the message content.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2873,7 +2919,9 @@ class KnowledgeBaseMessageContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseMessageImageContent(KnowledgeBaseMessageContent, discriminator="image"):
+class KnowledgeBaseMessageImageContent(
+    KnowledgeBaseMessageContent, discriminator="image"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Image message type.
 
     :ivar type: The discriminator value. Required. Image message content kind.
@@ -2906,7 +2954,9 @@ class KnowledgeBaseMessageImageContent(KnowledgeBaseMessageContent, discriminato
         self.type = KnowledgeBaseMessageContentType.IMAGE  # type: ignore
 
 
-class KnowledgeBaseMessageTextContent(KnowledgeBaseMessageContent, discriminator="text"):
+class KnowledgeBaseMessageTextContent(
+    KnowledgeBaseMessageContent, discriminator="text"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Text message type.
 
     :ivar type: The discriminator value. Required. Text message content kind.
@@ -2941,7 +2991,7 @@ class KnowledgeBaseMessageTextContent(KnowledgeBaseMessageContent, discriminator
 
 class KnowledgeBaseModelAnswerSynthesisActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="modelAnswerSynthesis"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents an LLM answer synthesis activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -3013,7 +3063,7 @@ class KnowledgeBaseModelAnswerSynthesisActivityRecord(
 
 class KnowledgeBaseModelQueryPlanningActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="modelQueryPlanning"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents an LLM query planning activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -3085,7 +3135,7 @@ class KnowledgeBaseModelQueryPlanningActivityRecord(
 
 class KnowledgeBaseModelWebSummarizationActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="modelWebSummarization"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents an LLM web summarization activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -3155,7 +3205,7 @@ class KnowledgeBaseModelWebSummarizationActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.MODEL_WEB_SUMMARIZATION  # type: ignore
 
 
-class KnowledgeBaseQueryHintProcessing(_Model):
+class KnowledgeBaseQueryHintProcessing(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about the expressions generated from query hints for a retrieval activity.
 
     :ivar generated_boost: The search clause generated from boost hints for this activity.
@@ -3192,7 +3242,9 @@ class KnowledgeBaseQueryHintProcessing(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseRemoteSharePointActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseRemoteSharePointActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the remote SharePoint retrieval activity was run with.
 
     :ivar search: The search string used to query the remote SharePoint knowledge source.
@@ -3229,7 +3281,7 @@ class KnowledgeBaseRemoteSharePointActivityArguments(_Model):  # pylint: disable
 
 class KnowledgeBaseRemoteSharePointActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="remoteSharePoint"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents a remote SharePoint retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -3314,7 +3366,9 @@ class KnowledgeBaseRemoteSharePointActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.REMOTE_SHARE_POINT  # type: ignore
 
 
-class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminator="remoteSharePoint"):
+class KnowledgeBaseRemoteSharePointReference(
+    KnowledgeBaseReference, discriminator="remoteSharePoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a remote SharePoint document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -3367,7 +3421,7 @@ class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminat
         self.type = KnowledgeBaseReferenceType.REMOTE_SHARE_POINT  # type: ignore
 
 
-class KnowledgeBaseResponseCompletedEvent(_Model):
+class KnowledgeBaseResponseCompletedEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Emitted after retrieval completes successfully.
 
     :ivar status_code: The semantic HTTP status of the completed retrieval. Required. Known values
@@ -3406,7 +3460,7 @@ class KnowledgeBaseResponseCompletedEvent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseRetrievalRequest(_Model):
+class KnowledgeBaseRetrievalRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input contract for the retrieval request.
 
     :ivar messages: A list of chat message style input.
@@ -3504,7 +3558,7 @@ class KnowledgeBaseRetrievalRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseRetrievalResponse(_Model):
+class KnowledgeBaseRetrievalResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The output contract for the retrieval response.
 
     :ivar response: The response messages.
@@ -3558,7 +3612,7 @@ class KnowledgeBaseRetrievalResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseRetrievalStartedEvent(_Model):
+class KnowledgeBaseRetrievalStartedEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Emitted once retrieval preflight validation completes, before any activity begins.
 
     :ivar request_id: A service-generated identifier that correlates all events in this retrieval
@@ -3612,7 +3666,9 @@ class KnowledgeBaseRetrievalStartedEvent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseSearchIndexActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseSearchIndexActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the search index retrieval activity was run with.
 
     :ivar search: The search string used to query the search index.
@@ -3676,7 +3732,9 @@ class KnowledgeBaseSearchIndexActivityArguments(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseSearchIndexActivityRecord(KnowledgeBaseActivityRecord, discriminator="searchIndex"):
+class KnowledgeBaseSearchIndexActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="searchIndex"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a search index retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -3770,7 +3828,9 @@ class KnowledgeBaseSearchIndexActivityRecord(KnowledgeBaseActivityRecord, discri
         self.type = KnowledgeBaseActivityRecordType.SEARCH_INDEX  # type: ignore
 
 
-class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="searchIndex"):
+class KnowledgeBaseSearchIndexReference(
+    KnowledgeBaseReference, discriminator="searchIndex"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an Azure Search document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -3832,7 +3892,7 @@ class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="s
         self.type = KnowledgeBaseReferenceType.SEARCH_INDEX  # type: ignore
 
 
-class KnowledgeBaseStreamErrorEvent(_Model):
+class KnowledgeBaseStreamErrorEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Emitted in place of ``response.completed`` if retrieval fails after the stream starts.
 
     :ivar error: The error detail explaining why the retrieval stream failed.
@@ -3870,7 +3930,7 @@ class KnowledgeBaseStreamErrorEvent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseWebActivityArguments(_Model):
+class KnowledgeBaseWebActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the web retrieval activity was run with.
 
     :ivar search: The search string used to query the web.
@@ -3918,7 +3978,9 @@ class KnowledgeBaseWebActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseWebActivityRecord(KnowledgeBaseActivityRecord, discriminator="web"):
+class KnowledgeBaseWebActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="web"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a web retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -4003,7 +4065,9 @@ class KnowledgeBaseWebActivityRecord(KnowledgeBaseActivityRecord, discriminator=
         self.type = KnowledgeBaseActivityRecordType.WEB  # type: ignore
 
 
-class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
+class KnowledgeBaseWebReference(
+    KnowledgeBaseReference, discriminator="web"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a web document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -4053,7 +4117,7 @@ class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
         self.type = KnowledgeBaseReferenceType.WEB  # type: ignore
 
 
-class KnowledgeBaseWorkIQActivityArguments(_Model):
+class KnowledgeBaseWorkIQActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the WorkIQ retrieval activity was run with.
 
     :ivar search: The search string used to query the WorkIQ knowledge source.
@@ -4081,7 +4145,9 @@ class KnowledgeBaseWorkIQActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseWorkIQActivityRecord(KnowledgeBaseActivityRecord, discriminator="workIQ"):
+class KnowledgeBaseWorkIQActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="workIQ"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a WorkIQ retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
@@ -4166,7 +4232,9 @@ class KnowledgeBaseWorkIQActivityRecord(KnowledgeBaseActivityRecord, discriminat
         self.type = KnowledgeBaseActivityRecordType.WORK_IQ  # type: ignore
 
 
-class KnowledgeBaseWorkIQReference(KnowledgeBaseReference, discriminator="workIQ"):
+class KnowledgeBaseWorkIQReference(
+    KnowledgeBaseReference, discriminator="workIQ"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a WorkIQ document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -4214,7 +4282,7 @@ class KnowledgeBaseWorkIQReference(KnowledgeBaseReference, discriminator="workIQ
         self.type = KnowledgeBaseReferenceType.WORK_IQ  # type: ignore
 
 
-class KnowledgeRetrievalReasoningEffort(_Model):
+class KnowledgeRetrievalReasoningEffort(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for reasoning effort.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4281,7 +4349,7 @@ class KnowledgeRetrievalAutoReasoningEffort(KnowledgeRetrievalReasoningEffort, d
         self.kind = KnowledgeRetrievalReasoningEffortKind.AUTO  # type: ignore
 
 
-class KnowledgeRetrievalIntent(_Model):
+class KnowledgeRetrievalIntent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An intended query to execute without model query planning.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4398,7 +4466,9 @@ class KnowledgeRetrievalMinimalReasoningEffort(KnowledgeRetrievalReasoningEffort
         self.kind = KnowledgeRetrievalReasoningEffortKind.MINIMAL  # type: ignore
 
 
-class KnowledgeRetrievalSemanticIntent(KnowledgeRetrievalIntent, discriminator="semantic"):
+class KnowledgeRetrievalSemanticIntent(
+    KnowledgeRetrievalIntent, discriminator="semantic"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A semantic query intent.
 
     :ivar type: The discriminator value. Required. A natural language semantic query intent.
@@ -4431,7 +4501,7 @@ class KnowledgeRetrievalSemanticIntent(KnowledgeRetrievalIntent, discriminator="
         self.type = KnowledgeRetrievalIntentType.SEMANTIC  # type: ignore
 
 
-class KnowledgeSourceVectorizer(_Model):
+class KnowledgeSourceVectorizer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the vectorization method to be used for knowledge source embedding model.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4467,7 +4537,9 @@ class KnowledgeSourceVectorizer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeSourceAzureOpenAIVectorizer(KnowledgeSourceVectorizer, discriminator="azureOpenAI"):
+class KnowledgeSourceAzureOpenAIVectorizer(
+    KnowledgeSourceVectorizer, discriminator="azureOpenAI"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Azure OpenAI resource used to vectorize a query string.
 
     :ivar kind: The discriminator value. Required. Generate embeddings using an Azure OpenAI
@@ -4506,7 +4578,7 @@ class KnowledgeSourceAzureOpenAIVectorizer(KnowledgeSourceVectorizer, discrimina
         self.kind = VectorSearchVectorizerKind.AZURE_OPEN_AI  # type: ignore
 
 
-class KnowledgeSourceIngestionParameters(_Model):
+class KnowledgeSourceIngestionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Consolidates all general ingestion settings for knowledge sources.
 
     :ivar identity: An explicit identity to use for this knowledge source.
@@ -4625,7 +4697,7 @@ class KnowledgeSourceIngestionParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeSourceStatistics(_Model):
+class KnowledgeSourceStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Statistical information about knowledge source synchronization history.
 
     :ivar total_synchronization: Total number of synchronizations. Required.
@@ -4671,7 +4743,7 @@ class KnowledgeSourceStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeSourceStatus(_Model):
+class KnowledgeSourceStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the status and synchronization history of a knowledge source.
 
     :ivar kind: Identifies the Knowledge Source kind directly from the Status response. Known
@@ -4751,7 +4823,7 @@ class KnowledgeSourceStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeSourceSynchronizationError(_Model):
+class KnowledgeSourceSynchronizationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a document-level indexing error encountered during a knowledge source
     synchronization run.
 
@@ -4810,7 +4882,9 @@ class KnowledgeSourceSynchronizationError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class McpServerKnowledgeSourceParams(KnowledgeSourceParams, discriminator="mcpServer"):
+class McpServerKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="mcpServer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for an MCP server knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -4884,7 +4958,7 @@ class McpServerKnowledgeSourceParams(KnowledgeSourceParams, discriminator="mcpSe
         self.kind = KnowledgeSourceKind.MCP_SERVER  # type: ignore
 
 
-class PurviewSensitivityLabelInfo(_Model):
+class PurviewSensitivityLabelInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the sensitivity label applied to a document.
 
     :ivar display_name: The display name for the sensitivity label.
@@ -4943,7 +5017,9 @@ class PurviewSensitivityLabelInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemoteSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator="remoteSharePoint"):
+class RemoteSharePointKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="remoteSharePoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a remote SharePoint knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -5027,7 +5103,9 @@ class RemoteSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator
         self.kind = KnowledgeSourceKind.REMOTE_SHARE_POINT  # type: ignore
 
 
-class SearchIndexKnowledgeSourceParams(KnowledgeSourceParams, discriminator="searchIndex"):
+class SearchIndexKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="searchIndex"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a search index knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -5118,7 +5196,7 @@ class SearchIndexKnowledgeSourceParams(KnowledgeSourceParams, discriminator="sea
         self.kind = KnowledgeSourceKind.SEARCH_INDEX  # type: ignore
 
 
-class ServedImage(_Model):
+class ServedImage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a single image that the model selected to be served during a retrieval activity.
 
     :ivar image_id: The image label extracted from the source document by Content Understanding
@@ -5158,7 +5236,7 @@ class ServedImage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SynchronizationState(_Model):
+class SynchronizationState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the current state of an ongoing synchronization that spans multiple indexer runs.
 
     :ivar start_time: The start time of the current synchronization. Required.
@@ -5219,7 +5297,9 @@ class SynchronizationState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebKnowledgeSourceParams(KnowledgeSourceParams, discriminator="web"):
+class WebKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="web"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a web knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -5311,7 +5391,9 @@ class WebKnowledgeSourceParams(KnowledgeSourceParams, discriminator="web"):
         self.kind = KnowledgeSourceKind.WEB  # type: ignore
 
 
-class WorkIQKnowledgeSourceParams(KnowledgeSourceParams, discriminator="workIQ"):
+class WorkIQKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="workIQ"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a WorkIQ knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.

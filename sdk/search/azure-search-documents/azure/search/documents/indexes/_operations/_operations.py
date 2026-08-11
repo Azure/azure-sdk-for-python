@@ -940,7 +940,7 @@ def build_search_index_upload_knowledge_source_file_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -956,7 +956,8 @@ def build_search_index_upload_knowledge_source_file_request(  # pylint: disable=
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Content-Disposition"] = _SERIALIZER.header("content_disposition", content_disposition, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -4725,6 +4726,27 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         return deserialized  # type: ignore
 
+    @overload
+    def _upload_knowledge_source_file(
+        self,
+        name: str,
+        file: bytes,
+        *,
+        content_disposition: str,
+        content_type: str = "application/octet-stream",
+        **kwargs: Any,
+    ) -> _models1.KnowledgeSourceFile: ...
+    @overload
+    def _upload_knowledge_source_file(
+        self,
+        name: str,
+        file: IO[bytes],
+        *,
+        content_disposition: str,
+        content_type: str = "application/octet-stream",
+        **kwargs: Any,
+    ) -> _models1.KnowledgeSourceFile: ...
+
     @distributed_trace
     @api_version_validation(
         method_added_on="2026-05-01-preview",
@@ -4741,14 +4763,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
     )
     def _upload_knowledge_source_file(
-        self, name: str, file: bytes, *, content_disposition: str, **kwargs: Any
+        self, name: str, file: Union[bytes, IO[bytes]], *, content_disposition: str, **kwargs: Any
     ) -> _models1.KnowledgeSourceFile:
         """Uploads a file to a File knowledge source for processing and indexing.
 
         :param name: The name of the knowledge source. Required.
         :type name: str
-        :param file: The file content to upload. Required.
-        :type file: bytes
+        :param file: The file content to upload. Is either a bytes type or a IO[bytes] type. Required.
+        :type file: bytes or IO[bytes]
         :keyword content_disposition: The Content-Disposition header specifying the filename of the
          uploaded file.
          Must follow the format: ``attachment; filename="<filename>"``.
@@ -4769,9 +4791,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
         cls: ClsType[_models1.KnowledgeSourceFile] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = file
 
         _request = build_search_index_upload_knowledge_source_file_request(

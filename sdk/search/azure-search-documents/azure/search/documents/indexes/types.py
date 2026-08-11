@@ -114,12 +114,12 @@ AIServicesAccountIdentity.__doc__ = """The multi-region account of an Azure AI s
  identity is unspecified, the value remains unchanged. If set to "none", the value of this
  property is cleared.
 :vartype identity: "SearchIndexerDataIdentity"
-:ivar subdomain_url: The subdomain/Azure AI Services endpoint url for the corresponding AI
+:ivar subdomainUrl: The subdomain/Azure AI Services endpoint url for the corresponding AI
  Service. Required.
-:vartype subdomain_url: str
-:ivar odata_type: A URI fragment specifying the type of Azure AI service resource attached to a
- skillset. Required. Default value is "#Microsoft.Azure.Search.AIServicesByIdentity".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.AIServicesByIdentity"]
+:vartype subdomainUrl: str
+:ivar @odata.type: A URI fragment specifying the type of Azure AI service resource attached to
+ a skillset. Required. Default value is "#Microsoft.Azure.Search.AIServicesByIdentity".
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.AIServicesByIdentity"]
 """
 
 
@@ -141,30 +141,30 @@ the resource's subdomain.
 :ivar key: The key used to provision the Azure AI service resource attached to a skillset.
  Required.
 :vartype key: str
-:ivar subdomain_url: The subdomain/Azure AI Services endpoint url for the corresponding AI
+:ivar subdomainUrl: The subdomain/Azure AI Services endpoint url for the corresponding AI
  Service. Required.
-:vartype subdomain_url: str
-:ivar odata_type: A URI fragment specifying the type of Azure AI service resource attached to a
- skillset. Required. Default value is "#Microsoft.Azure.Search.AIServicesByKey".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.AIServicesByKey"]
+:vartype subdomainUrl: str
+:ivar @odata.type: A URI fragment specifying the type of Azure AI service resource attached to
+ a skillset. Required. Default value is "#Microsoft.Azure.Search.AIServicesByKey".
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.AIServicesByKey"]
 """
 
 
 class AIServicesVisionParameters(TypedDict, total=False):
     """Specifies the AI Services Vision parameters for vectorizing a query image or text.
 
-    :ivar model_version: The version of the model to use when calling the AI Services Vision
+    :ivar modelVersion: The version of the model to use when calling the AI Services Vision
      service. It will default to the latest available when not specified. Required.
-    :vartype model_version: str
-    :ivar resource_uri: The resource URI of the AI Services resource. Required.
-    :vartype resource_uri: str
-    :ivar api_key: API key of the designated AI Services resource.
-    :vartype api_key: str
-    :ivar auth_identity: The user-assigned managed identity used for outbound connections. If an
+    :vartype modelVersion: str
+    :ivar resourceUri: The resource URI of the AI Services resource. Required.
+    :vartype resourceUri: str
+    :ivar apiKey: API key of the designated AI Services resource.
+    :vartype apiKey: str
+    :ivar authIdentity: The user-assigned managed identity used for outbound connections. If an
      authResourceId is provided and it's not specified, the system-assigned managed identity is
      used. On updates to the index, if the identity is unspecified, the value remains unchanged. If
      set to "none", the value of this property is cleared.
-    :vartype auth_identity: "SearchIndexerDataIdentity"
+    :vartype authIdentity: "SearchIndexerDataIdentity"
     """
 
     modelVersion: Required[Optional[str]]
@@ -184,12 +184,11 @@ class AIServicesVisionParameters(TypedDict, total=False):
 class AIServicesVisionVectorizer(TypedDict, total=False):
     """Clears the identity property of a datasource.
 
-    :ivar vectorizer_name: The name to associate with this particular vectorization method.
-     Required.
-    :vartype vectorizer_name: str
-    :ivar ai_services_vision_parameters: Contains the parameters specific to AI Services Vision
+    :ivar name: The name to associate with this particular vectorization method. Required.
+    :vartype name: str
+    :ivar aiServicesVisionParameters: Contains the parameters specific to AI Services Vision
      embedding vectorization.
-    :vartype ai_services_vision_parameters: "AIServicesVisionParameters"
+    :vartype aiServicesVisionParameters: "AIServicesVisionParameters"
     :ivar kind: The name of the kind of vectorization method being configured for use with vector
      search. Required. Generate embeddings for an image or text input at query time using the Azure
      AI Services Vision Vectorize API.
@@ -211,10 +210,10 @@ class AnalyzedTokenInfo(TypedDict, total=False):
 
     :ivar token: The token returned by the analyzer. Required.
     :vartype token: str
-    :ivar start_offset: The index of the first character of the token in the input text. Required.
-    :vartype start_offset: int
-    :ivar end_offset: The index of the last character of the token in the input text. Required.
-    :vartype end_offset: int
+    :ivar startOffset: The index of the first character of the token in the input text. Required.
+    :vartype startOffset: int
+    :ivar endOffset: The index of the last character of the token in the input text. Required.
+    :vartype endOffset: int
     :ivar position: The position of the token in the input text relative to other tokens. The first
      token in the input text has position 0, the next has position 1, and so on. Depending on the
      analyzer used, some tokens might have the same position, for example if they are synonyms of
@@ -251,41 +250,41 @@ class AnalyzeTextOptions(TypedDict, total=False):
 
     :ivar text: The text to break into tokens. Required.
     :vartype text: str
-    :ivar analyzer_name: The name of the analyzer to use to break the given text. If this parameter
-     is not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters
-     are mutually exclusive. Known values are: "ar.microsoft", "ar.lucene", "hy.lucene",
-     "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene",
-     "zh-Hans.microsoft", "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft",
-     "cs.microsoft", "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene",
-     "en.microsoft", "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft",
-     "fr.lucene", "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene",
-     "gu.microsoft", "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene",
-     "is.microsoft", "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene",
-     "ja.microsoft", "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft",
-     "lv.lucene", "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft",
-     "no.lucene", "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene",
-     "pt-PT.microsoft", "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft",
-     "ru.lucene", "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft",
-     "es.microsoft", "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft",
-     "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
-     "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
-     "simple", "stop", and "whitespace".
-    :vartype analyzer_name: Union[str, "LexicalAnalyzerName"]
-    :ivar tokenizer_name: The name of the tokenizer to use to break the given text. If this
-     parameter is not specified, you must specify an analyzer instead. The tokenizer and analyzer
-     parameters are mutually exclusive. Known values are: "classic", "edgeNGram", "keyword_v2",
-     "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
-     "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", and "whitespace".
-    :vartype tokenizer_name: Union[str, "LexicalTokenizerName"]
-    :ivar normalizer_name: The name of the normalizer to use to normalize the given text. Known
-     values are: "asciifolding", "elision", "lowercase", "standard", and "uppercase".
-    :vartype normalizer_name: Union[str, "LexicalNormalizerName"]
-    :ivar token_filters: An optional list of token filters to use when breaking the given text.
+    :ivar analyzer: The name of the analyzer to use to break the given text. If this parameter is
+     not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters are
+     mutually exclusive. Known values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft",
+     "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft",
+     "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft",
+     "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft",
+     "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene",
+     "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft",
+     "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft",
+     "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft",
+     "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene",
+     "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene",
+     "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
+     "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene",
+     "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
+     "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
+     "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
+     "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
+     "whitespace".
+    :vartype analyzer: Union[str, "LexicalAnalyzerName"]
+    :ivar tokenizer: The name of the tokenizer to use to break the given text. If this parameter is
+     not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters are
+     mutually exclusive. Known values are: "classic", "edgeNGram", "keyword_v2", "letter",
+     "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer", "nGram",
+     "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", and "whitespace".
+    :vartype tokenizer: Union[str, "LexicalTokenizerName"]
+    :ivar normalizer: The name of the normalizer to use to normalize the given text. Known values
+     are: "asciifolding", "elision", "lowercase", "standard", and "uppercase".
+    :vartype normalizer: Union[str, "LexicalNormalizerName"]
+    :ivar tokenFilters: An optional list of token filters to use when breaking the given text. This
+     parameter can only be set when using the tokenizer parameter.
+    :vartype tokenFilters: list[Union[str, "TokenFilterName"]]
+    :ivar charFilters: An optional list of character filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
-    :vartype token_filters: list[Union[str, "TokenFilterName"]]
-    :ivar char_filters: An optional list of character filters to use when breaking the given text.
-     This parameter can only be set when using the tokenizer parameter.
-    :vartype char_filters: list[Union[str, "CharFilterName"]]
+    :vartype charFilters: list[Union[str, "CharFilterName"]]
     """
 
     text: Required[str]
@@ -348,12 +347,12 @@ equivalents exist. This token filter is implemented using Apache Lucene.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar preserve_original: A value indicating whether the original token will be kept. Default is
+:ivar preserveOriginal: A value indicating whether the original token will be kept. Default is
  false.
-:vartype preserve_original: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:vartype preserveOriginal: bool
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.AsciiFoldingTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.AsciiFoldingTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.AsciiFoldingTokenFilter"]
 """
 
 
@@ -361,12 +360,12 @@ class AzureActiveDirectoryApplicationCredentials(TypedDict, total=False):  # pyl
     """Credentials of a registered application created for your search service, used for authenticated
     access to the encryption keys stored in Azure Key Vault.
 
-    :ivar application_id: An AAD Application ID that was granted the required access permissions to
+    :ivar applicationId: An AAD Application ID that was granted the required access permissions to
      the Azure Key Vault that is to be used when encrypting your data at rest. The Application ID
      should not be confused with the Object ID for your AAD Application. Required.
-    :vartype application_id: str
-    :ivar application_secret: The authentication key of the specified AAD application.
-    :vartype application_secret: str
+    :vartype applicationId: str
+    :ivar applicationSecret: The authentication key of the specified AAD application.
+    :vartype applicationSecret: str
     """
 
     applicationId: Required[str]
@@ -396,13 +395,13 @@ AzureBlobKnowledgeSource.__doc__ = """Configuration for Azure Blob Storage knowl
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -410,36 +409,35 @@ AzureBlobKnowledgeSource.__doc__ = """Configuration for Azure Blob Storage knowl
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: Required. A knowledge source that read and ingest data from Azure Blob Storage to a
  Search Index.
 :vartype kind: Literal[KnowledgeSourceKind.AZURE_BLOB]
-:ivar azure_blob_parameters: The type of the knowledge source. Required.
-:vartype azure_blob_parameters: "AzureBlobKnowledgeSourceParameters"
+:ivar azureBlobParameters: The type of the knowledge source. Required.
+:vartype azureBlobParameters: "AzureBlobKnowledgeSourceParameters"
 """
 
 
 class AzureBlobKnowledgeSourceParameters(TypedDict, total=False):
     """Parameters for Azure Blob Storage knowledge source.
 
-    :ivar connection_string: Key-based connection string or the ResourceId format if using a
-     managed identity. Required.
-    :vartype connection_string: str
-    :ivar container_name: The name of the blob storage container. Required.
-    :vartype container_name: str
-    :ivar folder_path: Optional folder path within the container.
-    :vartype folder_path: str
-    :ivar is_adls_gen2: Set to true if connecting to an ADLS Gen2 storage account. Default is
-     false.
-    :vartype is_adls_gen2: bool
-    :ivar ingestion_parameters: Consolidates all general ingestion settings.
-    :vartype ingestion_parameters: "KnowledgeSourceIngestionParameters"
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+    :ivar connectionString: Key-based connection string or the ResourceId format if using a managed
+     identity. Required.
+    :vartype connectionString: str
+    :ivar containerName: The name of the blob storage container. Required.
+    :vartype containerName: str
+    :ivar folderPath: Optional folder path within the container.
+    :vartype folderPath: str
+    :ivar isADLSGen2: Set to true if connecting to an ADLS Gen2 storage account. Default is false.
+    :vartype isADLSGen2: bool
+    :ivar ingestionParameters: Consolidates all general ingestion settings.
+    :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
+    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
      this index-backed knowledge source. Request-time query hints replace these defaults as a
      complete object.
-    :vartype query_hints: "SearchIndexKnowledgeSourceQueryHints"
-    :ivar created_resources: Resources created by the knowledge source.
-    :vartype created_resources: "CreatedResources"
+    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
+    :ivar createdResources: Resources created by the knowledge source.
+    :vartype createdResources: "CreatedResources"
     """
 
     connectionString: Required[str]
@@ -462,28 +460,27 @@ class AzureBlobKnowledgeSourceParameters(TypedDict, total=False):
 class AzureMachineLearningParameters(TypedDict, total=False):
     """Specifies the properties for connecting to an AML vectorizer.
 
-    :ivar scoring_uri: (Required for no authentication or key authentication) The scoring URI of
-     the AML service to which the JSON payload will be sent. Only the https URI scheme is allowed.
-     Required.
-    :vartype scoring_uri: str
-    :ivar authentication_key: (Required for key authentication) The key for the AML service.
-    :vartype authentication_key: str
-    :ivar resource_id: (Required for token authentication). The Azure Resource Manager resource ID
+    :ivar uri: (Required for no authentication or key authentication) The scoring URI of the AML
+     service to which the JSON payload will be sent. Only the https URI scheme is allowed. Required.
+    :vartype uri: str
+    :ivar key: (Required for key authentication) The key for the AML service.
+    :vartype key: str
+    :ivar resourceId: (Required for token authentication). The Azure Resource Manager resource ID
      of the AML service. It should be in the format
      subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.
-    :vartype resource_id: str
+    :vartype resourceId: str
     :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
      API call.
     :vartype timeout: str
     :ivar region: (Optional for token authentication). The region the AML service is deployed in.
     :vartype region: str
-    :ivar model_name: The name of the embedding model from the Azure AI Foundry Catalog that is
+    :ivar modelName: The name of the embedding model from the Azure AI Foundry Catalog that is
      deployed at the provided endpoint. Known values are:
      "OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32",
      "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336",
      "Facebook-DinoV2-Image-Embeddings-ViT-Base", "Facebook-DinoV2-Image-Embeddings-ViT-Giant",
      "Cohere-embed-v3-english", "Cohere-embed-v3-multilingual", and "Cohere-embed-v4".
-    :vartype model_name: Union[str, "AIFoundryModelCatalogName"]
+    :vartype modelName: Union[str, "AIFoundryModelCatalogName"]
     """
 
     uri: Required[Optional[str]]
@@ -545,30 +542,30 @@ enrichment.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar scoring_uri: (Required for no authentication or key authentication) The scoring URI of
- the AML service to which the JSON payload will be sent. Only the https URI scheme is allowed.
-:vartype scoring_uri: str
-:ivar authentication_key: (Required for key authentication) The key for the AML service.
-:vartype authentication_key: str
-:ivar resource_id: (Required for token authentication). The Azure Resource Manager resource ID
+:ivar uri: (Required for no authentication or key authentication) The scoring URI of the AML
+ service to which the JSON payload will be sent. Only the https URI scheme is allowed.
+:vartype uri: str
+:ivar key: (Required for key authentication) The key for the AML service.
+:vartype key: str
+:ivar resourceId: (Required for token authentication). The Azure Resource Manager resource ID
  of the AML service. It should be in the format
  subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.
-:vartype resource_id: str
+:vartype resourceId: str
 :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
  API call.
 :vartype timeout: str
 :ivar region: (Optional for token authentication). The region the AML service is deployed in.
 :vartype region: str
-:ivar degree_of_parallelism: (Optional) When specified, indicates the number of calls the
- indexer will make in parallel to the endpoint you have provided. You can decrease this value if
- your endpoint is failing under too high of a request load, or raise it if your endpoint is able
- to accept more requests and you would like an increase in the performance of the indexer. If
- not set, a default value of 5 is used. The degreeOfParallelism can be set to a maximum of 10
- and a minimum of 1.
-:vartype degree_of_parallelism: int
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar degreeOfParallelism: (Optional) When specified, indicates the number of calls the indexer
+ will make in parallel to the endpoint you have provided. You can decrease this value if your
+ endpoint is failing under too high of a request load, or raise it if your endpoint is able to
+ accept more requests and you would like an increase in the performance of the indexer. If not
+ set, a default value of 5 is used. The degreeOfParallelism can be set to a maximum of 10 and a
+ minimum of 1.
+:vartype degreeOfParallelism: int
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Custom.AmlSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Custom.AmlSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Custom.AmlSkill"]
 """
 
 
@@ -576,11 +573,10 @@ class AzureMachineLearningVectorizer(TypedDict, total=False):
     """Specifies an Azure Machine Learning endpoint deployed via the Azure AI Foundry Model Catalog
     for generating the vector embedding of a query string.
 
-    :ivar vectorizer_name: The name to associate with this particular vectorization method.
-     Required.
-    :vartype vectorizer_name: str
-    :ivar aml_parameters: Specifies the properties of the AML vectorizer.
-    :vartype aml_parameters: "AzureMachineLearningParameters"
+    :ivar name: The name to associate with this particular vectorization method. Required.
+    :vartype name: str
+    :ivar amlParameters: Specifies the properties of the AML vectorizer.
+    :vartype amlParameters: "AzureMachineLearningParameters"
     :ivar kind: The name of the kind of vectorization method being configured for use with vector
      search. Required. Generate embeddings using an Azure Machine Learning endpoint deployed via the
      Azure AI Foundry Model Catalog at query time.
@@ -634,40 +630,40 @@ resource.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar resource_url: The resource URI of the Azure OpenAI resource.
-:vartype resource_url: str
-:ivar deployment_name: ID of the Azure OpenAI model deployment on the designated resource.
-:vartype deployment_name: str
-:ivar api_key: API key of the designated Azure OpenAI resource.
-:vartype api_key: str
-:ivar auth_identity: The user-assigned managed identity used for outbound connections.
-:vartype auth_identity: "SearchIndexerDataIdentity"
-:ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
+:ivar resourceUri: The resource URI of the Azure OpenAI resource.
+:vartype resourceUri: str
+:ivar deploymentId: ID of the Azure OpenAI model deployment on the designated resource.
+:vartype deploymentId: str
+:ivar apiKey: API key of the designated Azure OpenAI resource.
+:vartype apiKey: str
+:ivar authIdentity: The user-assigned managed identity used for outbound connections.
+:vartype authIdentity: "SearchIndexerDataIdentity"
+:ivar modelName: The name of the embedding model that is deployed at the provided deploymentId
  path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
  "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
  "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
  "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
-:vartype model_name: Union[str, "AzureOpenAIModelName"]
+:vartype modelName: Union[str, "AzureOpenAIModelName"]
 :ivar dimensions: The number of dimensions the resulting output embeddings should have. Only
  supported in text-embedding-3 and later models.
 :vartype dimensions: int
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"]
 """
 
 
 class AzureOpenAITokenizerParameters(TypedDict, total=False):
     """Azure OpenAI Tokenizer parameters.
 
-    :ivar encoder_model_name: Only applies if the unit is set to azureOpenAITokens. Options include
+    :ivar encoderModelName: Only applies if the unit is set to azureOpenAITokens. Options include
      'R50k_base', 'P50k_base', 'P50k_edit' and 'CL100k_base'. The default value is 'CL100k_base'.
      Known values are: "r50k_base", "p50k_base", "p50k_edit", and "cl100k_base".
-    :vartype encoder_model_name: Union[str, "SplitSkillEncoderModelName"]
-    :ivar allowed_special_tokens: (Optional) Only applies if the unit is set to azureOpenAITokens.
+    :vartype encoderModelName: Union[str, "SplitSkillEncoderModelName"]
+    :ivar allowedSpecialTokens: (Optional) Only applies if the unit is set to azureOpenAITokens.
      This parameter defines a collection of special tokens that are permitted within the
      tokenization process.
-    :vartype allowed_special_tokens: list[str]
+    :vartype allowedSpecialTokens: list[str]
     """
 
     encoderModelName: Optional[Union[str, "SplitSkillEncoderModelName"]]
@@ -682,11 +678,11 @@ class AzureOpenAITokenizerParameters(TypedDict, total=False):
 class AzureOpenAIVectorizer(TypedDict, total=False):
     """Specifies the Azure OpenAI resource used to vectorize a query string.
 
-    :ivar vectorizer_name: The name to associate with this particular vectorization method.
-     Required.
-    :vartype vectorizer_name: str
-    :ivar parameters: Contains the parameters specific to Azure OpenAI embedding vectorization.
-    :vartype parameters: "AzureOpenAIVectorizerParameters"
+    :ivar name: The name to associate with this particular vectorization method. Required.
+    :vartype name: str
+    :ivar azureOpenAIParameters: Contains the parameters specific to Azure OpenAI embedding
+     vectorization.
+    :vartype azureOpenAIParameters: "AzureOpenAIVectorizerParameters"
     :ivar kind: The name of the kind of vectorization method being configured for use with vector
      search. Required. Generate embeddings using an Azure OpenAI resource at query time.
     :vartype kind: Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]
@@ -704,20 +700,20 @@ class AzureOpenAIVectorizer(TypedDict, total=False):
 class AzureOpenAIVectorizerParameters(TypedDict, total=False):
     """Specifies the parameters for connecting to the Azure OpenAI resource.
 
-    :ivar resource_url: The resource URI of the Azure OpenAI resource.
-    :vartype resource_url: str
-    :ivar deployment_name: ID of the Azure OpenAI model deployment on the designated resource.
-    :vartype deployment_name: str
-    :ivar api_key: API key of the designated Azure OpenAI resource.
-    :vartype api_key: str
-    :ivar auth_identity: The user-assigned managed identity used for outbound connections.
-    :vartype auth_identity: "SearchIndexerDataIdentity"
-    :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
+    :ivar resourceUri: The resource URI of the Azure OpenAI resource.
+    :vartype resourceUri: str
+    :ivar deploymentId: ID of the Azure OpenAI model deployment on the designated resource.
+    :vartype deploymentId: str
+    :ivar apiKey: API key of the designated Azure OpenAI resource.
+    :vartype apiKey: str
+    :ivar authIdentity: The user-assigned managed identity used for outbound connections.
+    :vartype authIdentity: "SearchIndexerDataIdentity"
+    :ivar modelName: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
      "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
      "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
      "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
-    :vartype model_name: Union[str, "AzureOpenAIModelName"]
+    :vartype modelName: Union[str, "AzureOpenAIModelName"]
     """
 
     resourceUri: str
@@ -740,17 +736,17 @@ class BinaryQuantizationCompression(TypedDict, total=False):
     """Contains configuration options specific to the binary quantization compression method used
     during indexing and querying.
 
-    :ivar compression_name: The name to associate with this particular configuration. Required.
-    :vartype compression_name: str
-    :ivar rescoring_options: Contains the options for rescoring.
-    :vartype rescoring_options: "RescoringOptions"
-    :ivar truncation_dimension: The number of dimensions to truncate the vectors to. Truncating the
+    :ivar name: The name to associate with this particular configuration. Required.
+    :vartype name: str
+    :ivar rescoringOptions: Contains the options for rescoring.
+    :vartype rescoringOptions: "RescoringOptions"
+    :ivar truncationDimension: The number of dimensions to truncate the vectors to. Truncating the
      vectors reduces the size of the vectors and the amount of data that needs to be transferred
      during search. This can save storage cost and improve search performance at the expense of
      recall. It should be only used for embeddings trained with Matryoshka Representation Learning
      (MRL) such as OpenAI text-embedding-3-large (small). The default value is null, which means no
      truncation.
-    :vartype truncation_dimension: int
+    :vartype truncationDimension: int
     :ivar kind: The name of the kind of compression method being configured for use with vector
      search. Required. Binary Quantization, a type of compression method. In binary quantization,
      the original vectors values are compressed to the narrower binary type by discretizing and
@@ -798,26 +794,26 @@ saturation (controlled by the 'k1' parameter).
  default, a value of 0.75 is used. A value of 0.0 means no length normalization is applied,
  while a value of 1.0 means the score is fully normalized by the length of the document.
 :vartype b: float
-:ivar odata_type: The discriminator for derived types. Required. Default value is
+:ivar @odata.type: The discriminator for derived types. Required. Default value is
  "#Microsoft.Azure.Search.BM25Similarity".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.BM25Similarity"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.BM25Similarity"]
 """
 
 
 class ChatCompletionCommonModelParameters(TypedDict, total=False):
     """Common language model parameters for Chat Completions. If omitted, default values are used.
 
-    :ivar model_name: The name of the model to use (e.g., 'gpt-4o', etc.). Default is null if not
+    :ivar model: The name of the model to use (e.g., 'gpt-4o', etc.). Default is null if not
      specified.
-    :vartype model_name: str
-    :ivar frequency_penalty: A float in the range [-2,2] that reduces or increases likelihood of
+    :vartype model: str
+    :ivar frequencyPenalty: A float in the range [-2,2] that reduces or increases likelihood of
      repeated tokens. Default is 0.
-    :vartype frequency_penalty: float
-    :ivar presence_penalty: A float in the range [-2,2] that penalizes new tokens based on their
+    :vartype frequencyPenalty: float
+    :ivar presencePenalty: A float in the range [-2,2] that penalizes new tokens based on their
      existing presence. Default is 0.
-    :vartype presence_penalty: float
-    :ivar max_tokens: Maximum number of tokens to generate.
-    :vartype max_tokens: int
+    :vartype presencePenalty: float
+    :ivar maxTokens: Maximum number of tokens to generate.
+    :vartype maxTokens: int
     :ivar temperature: Sampling temperature. Default is 0.7.
     :vartype temperature: float
     :ivar seed: Random seed for controlling deterministic outputs. If omitted, randomization is
@@ -851,9 +847,9 @@ class ChatCompletionResponseFormat(TypedDict, total=False):
     :ivar type: Specifies how the LLM should format the response. Known values are: "text",
      "jsonObject", and "jsonSchema".
     :vartype type: Union[str, "ChatCompletionResponseFormatType"]
-    :ivar json_schema_properties: An open dictionary for extended properties. Required if 'type' ==
+    :ivar jsonSchemaProperties: An open dictionary for extended properties. Required if 'type' ==
      'json_schema'.
-    :vartype json_schema_properties: "ChatCompletionSchemaProperties"
+    :vartype jsonSchemaProperties: "ChatCompletionSchemaProperties"
     """
 
     type: Union[str, "ChatCompletionResponseFormatType"]
@@ -874,9 +870,9 @@ class ChatCompletionSchema(TypedDict, total=False):
     :ivar required: An array of the property names that are required to be part of the model's
      response. All properties must be included for structured outputs.
     :vartype required: list[str]
-    :ivar additional_properties: Controls whether it is allowable for an object to contain
+    :ivar additionalProperties: Controls whether it is allowable for an object to contain
      additional keys / values that were not defined in the JSON Schema. Default is false.
-    :vartype additional_properties: bool
+    :vartype additionalProperties: bool
     """
 
     type: str
@@ -955,29 +951,29 @@ ChatCompletionSkill.__doc__ = """A skill that calls a language model via Azure A
 :vartype outputs: list["OutputFieldMappingEntry"]
 :ivar uri: The url for the Web API. Required.
 :vartype uri: str
-:ivar auth_identity: The user-assigned managed identity used for outbound connections. If an
+:ivar authIdentity: The user-assigned managed identity used for outbound connections. If an
  authResourceId is provided and it's not specified, the system-assigned managed identity is
  used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
  If set to "none", the value of this property is cleared.
-:vartype auth_identity: "SearchIndexerDataIdentity"
-:ivar api_key: API key for authenticating to the model. Both apiKey and authIdentity cannot be
+:vartype authIdentity: "SearchIndexerDataIdentity"
+:ivar apiKey: API key for authenticating to the model. Both apiKey and authIdentity cannot be
  specified at the same time.
-:vartype api_key: str
-:ivar common_model_parameters: Common language model parameters that customers can tweak. If
+:vartype apiKey: str
+:ivar commonModelParameters: Common language model parameters that customers can tweak. If
  omitted, reasonable defaults will be applied.
-:vartype common_model_parameters: "ChatCompletionCommonModelParameters"
-:ivar extra_parameters: Open-type dictionary for model-specific parameters that should be
+:vartype commonModelParameters: "ChatCompletionCommonModelParameters"
+:ivar extraParameters: Open-type dictionary for model-specific parameters that should be
  appended to the chat completions call. Follows Azure AI Foundry's extensibility pattern.
-:vartype extra_parameters: dict[str, Any]
-:ivar extra_parameters_behavior: How extra parameters are handled by Azure AI Foundry. Default
- is 'error'. Known values are: "passThrough", "drop", and "error".
-:vartype extra_parameters_behavior: Union[str, "ChatCompletionExtraParametersBehavior"]
-:ivar response_format: Determines how the LLM should format its response. Defaults to 'text'
+:vartype extraParameters: dict[str, Any]
+:ivar extraParametersBehavior: How extra parameters are handled by Azure AI Foundry. Default is
+ 'error'. Known values are: "passThrough", "drop", and "error".
+:vartype extraParametersBehavior: Union[str, "ChatCompletionExtraParametersBehavior"]
+:ivar responseFormat: Determines how the LLM should format its response. Defaults to 'text'
  response type.
-:vartype response_format: "ChatCompletionResponseFormat"
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype responseFormat: "ChatCompletionResponseFormat"
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Custom.ChatCompletionSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Custom.ChatCompletionSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Custom.ChatCompletionSkill"]
 """
 
 
@@ -998,14 +994,14 @@ implemented using Apache Lucene.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar ignore_scripts: The scripts to ignore.
-:vartype ignore_scripts: list[Union[str, "CjkBigramTokenFilterScripts"]]
-:ivar output_unigrams: A value indicating whether to output both unigrams and bigrams (if
- true), or just bigrams (if false). Default is false.
-:vartype output_unigrams: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar ignoreScripts: The scripts to ignore.
+:vartype ignoreScripts: list[Union[str, "CjkBigramTokenFilterScripts"]]
+:ivar outputUnigrams: A value indicating whether to output both unigrams and bigrams (if true),
+ or just bigrams (if false). Default is false.
+:vartype outputUnigrams: bool
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.CjkBigramTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.CjkBigramTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.CjkBigramTokenFilter"]
 """
 
 
@@ -1020,9 +1016,9 @@ ClassicSimilarityAlgorithm.__doc__ = """Legacy similarity algorithm which uses t
 This variation of TF-IDF introduces static document length normalization as well as
 coordinating factors that penalize documents that only partially match the searched queries.
 
-:ivar odata_type: The discriminator for derived types. Required. Default value is
+:ivar @odata.type: The discriminator for derived types. Required. Default value is
  "#Microsoft.Azure.Search.ClassicSimilarity".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.ClassicSimilarity"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.ClassicSimilarity"]
 """
 
 
@@ -1042,12 +1038,12 @@ tokenizer is implemented using Apache Lucene.
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar max_token_length: The maximum token length. Default is 255. Tokens longer than the
- maximum length are split. The maximum token length that can be used is 300 characters.
-:vartype max_token_length: int
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:ivar maxTokenLength: The maximum token length. Default is 255. Tokens longer than the maximum
+ length are split. The maximum token length that can be used is 300 characters.
+:vartype maxTokenLength: int
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.ClassicTokenizer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.ClassicTokenizer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.ClassicTokenizer"]
 """
 
 
@@ -1067,9 +1063,9 @@ CognitiveServicesAccountKey.__doc__ = """The multi-region account key of an Azur
 :ivar key: The key used to provision the Azure AI service resource attached to a skillset.
  Required.
 :vartype key: str
-:ivar odata_type: A URI fragment specifying the type of Azure AI service resource attached to a
- skillset. Required. Default value is "#Microsoft.Azure.Search.CognitiveServicesByKey".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.CognitiveServicesByKey"]
+:ivar @odata.type: A URI fragment specifying the type of Azure AI service resource attached to
+ a skillset. Required. Default value is "#Microsoft.Azure.Search.CognitiveServicesByKey".
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.CognitiveServicesByKey"]
 """
 
 
@@ -1091,18 +1087,18 @@ too, with bigrams overlaid. This token filter is implemented using Apache Lucene
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar common_words: The set of common words. Required.
-:vartype common_words: list[str]
-:ivar ignore_case: A value indicating whether common words matching will be case insensitive.
+:ivar commonWords: The set of common words. Required.
+:vartype commonWords: list[str]
+:ivar ignoreCase: A value indicating whether common words matching will be case insensitive.
  Default is false.
-:vartype ignore_case: bool
-:ivar use_query_mode: A value that indicates whether the token filter is in query mode. When in
+:vartype ignoreCase: bool
+:ivar queryMode: A value that indicates whether the token filter is in query mode. When in
  query mode, the token filter generates bigrams and then removes common words and single terms
  followed by a common word. Default is false.
-:vartype use_query_mode: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:vartype queryMode: bool
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.CommonGramTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.CommonGramTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.CommonGramTokenFilter"]
 """
 
 
@@ -1137,9 +1133,9 @@ to an output.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.ConditionalSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Util.ConditionalSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Util.ConditionalSkill"]
 """
 
 
@@ -1148,10 +1144,10 @@ class ContentColumnMapping(TypedDict, total=False):
 
     :ivar name: Target index field name. Required.
     :vartype name: str
-    :ivar source_field: SQL column name. Required.
-    :vartype source_field: str
-    :ivar search_field_type: Azure AI Search field type (e.g., Edm.String, Edm.Int32). Required.
-    :vartype search_field_type: str
+    :ivar sourceField: SQL column name. Required.
+    :vartype sourceField: str
+    :ivar searchFieldType: Azure AI Search field type (e.g., Edm.String, Edm.Int32). Required.
+    :vartype searchFieldType: str
     """
 
     name: Required[str]
@@ -1196,14 +1192,14 @@ and retrieval.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar extraction_options: Controls the cardinality of the content extracted from the document
- by the skill.
-:vartype extraction_options: list[Union[str, "ContentUnderstandingSkillExtractionOptions"]]
-:ivar chunking_properties: Controls the cardinality for chunking the content.
-:vartype chunking_properties: "ContentUnderstandingSkillChunkingProperties"
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar extractionOptions: Controls the cardinality of the content extracted from the document by
+ the skill.
+:vartype extractionOptions: list[Union[str, "ContentUnderstandingSkillExtractionOptions"]]
+:ivar chunkingProperties: Controls the cardinality for chunking the content.
+:vartype chunkingProperties: "ContentUnderstandingSkillChunkingProperties"
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.ContentUnderstandingSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Util.ContentUnderstandingSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Util.ContentUnderstandingSkill"]
 """
 
 
@@ -1215,10 +1211,10 @@ class ContentUnderstandingSkillChunkingProperties(TypedDict, total=False):  # py
     :vartype method: Union[str, "ContentUnderstandingSkillChunkingMethod"]
     :ivar unit: The unit of the chunk. Known values are: "characters" and "tokens".
     :vartype unit: Union[str, "ContentUnderstandingSkillChunkingUnit"]
-    :ivar maximum_length: The maximum chunk length in characters. Default is 500.
-    :vartype maximum_length: int
-    :ivar overlap_length: The length of overlap provided between two text chunks. Default is 0.
-    :vartype overlap_length: int
+    :ivar maximumLength: The maximum chunk length in characters. Default is 500.
+    :vartype maximumLength: int
+    :ivar overlapLength: The length of overlap provided between two text chunks. Default is 0.
+    :vartype overlapLength: int
     """
 
     method: Union[str, "ContentUnderstandingSkillChunkingMethod"]
@@ -1235,14 +1231,14 @@ class ContentUnderstandingSkillChunkingProperties(TypedDict, total=False):  # py
 class CorsOptions(TypedDict, total=False):
     """Defines options to control Cross-Origin Resource Sharing (CORS) for an index.
 
-    :ivar allowed_origins: The list of origins from which JavaScript code will be granted access to
+    :ivar allowedOrigins: The list of origins from which JavaScript code will be granted access to
      your index. Can contain a list of hosts of the form
      {protocol}://{fully-qualified-domain-name}[:{port#}], or a single '*' to allow all origins (not
      recommended). Required.
-    :vartype allowed_origins: list[str]
-    :ivar max_age_in_seconds: The duration for which browsers should cache CORS preflight
-     responses. Defaults to 5 minutes.
-    :vartype max_age_in_seconds: int
+    :vartype allowedOrigins: list[str]
+    :ivar maxAgeInSeconds: The duration for which browsers should cache CORS preflight responses.
+     Defaults to 5 minutes.
+    :vartype maxAgeInSeconds: int
     """
 
     allowedOrigins: Required[list[str]]
@@ -1280,23 +1276,23 @@ for modifying tokens emitted by the tokenizer.
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar tokenizer_name: The name of the tokenizer to use to divide continuous text into a
- sequence of tokens, such as breaking a sentence into words. Required. Known values are:
- "classic", "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
+:ivar tokenizer: The name of the tokenizer to use to divide continuous text into a sequence of
+ tokens, such as breaking a sentence into words. Required. Known values are: "classic",
+ "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
  "microsoft_language_stemming_tokenizer", "nGram", "path_hierarchy_v2", "pattern",
  "standard_v2", "uax_url_email", and "whitespace".
-:vartype tokenizer_name: Union[str, "LexicalTokenizerName"]
-:ivar token_filters: A list of token filters used to filter out or modify the tokens generated
+:vartype tokenizer: Union[str, "LexicalTokenizerName"]
+:ivar tokenFilters: A list of token filters used to filter out or modify the tokens generated
  by a tokenizer. For example, you can specify a lowercase filter that converts all characters to
  lowercase. The filters are run in the order in which they are listed.
-:vartype token_filters: list[Union[str, "TokenFilterName"]]
-:ivar char_filters: A list of character filters used to prepare input text before it is
+:vartype tokenFilters: list[Union[str, "TokenFilterName"]]
+:ivar charFilters: A list of character filters used to prepare input text before it is
  processed by the tokenizer. For instance, they can replace certain characters or symbols. The
  filters are run in the order in which they are listed.
-:vartype char_filters: list[Union[str, "CharFilterName"]]
-:ivar odata_type: A URI fragment specifying the type of analyzer. Required. Default value is
+:vartype charFilters: list[Union[str, "CharFilterName"]]
+:ivar @odata.type: A URI fragment specifying the type of analyzer. Required. Default value is
  "#Microsoft.Azure.Search.CustomAnalyzer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.CustomAnalyzer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.CustomAnalyzer"]
 """
 
 
@@ -1322,29 +1318,29 @@ class CustomEntity(TypedDict, total=False):
      text(s). The value of this field will appear with every match of its entity in the skill
      output.
     :vartype id: str
-    :ivar case_sensitive: Defaults to false. Boolean value denoting whether comparisons with the
+    :ivar caseSensitive: Defaults to false. Boolean value denoting whether comparisons with the
      entity name should be sensitive to character casing. Sample case insensitive matches of
      "Microsoft" could be: microsoft, microSoft, MICROSOFT.
-    :vartype case_sensitive: bool
-    :ivar accent_sensitive: Defaults to false. Boolean value denoting whether comparisons with the
+    :vartype caseSensitive: bool
+    :ivar accentSensitive: Defaults to false. Boolean value denoting whether comparisons with the
      entity name should be sensitive to accent.
-    :vartype accent_sensitive: bool
-    :ivar fuzzy_edit_distance: Defaults to 0. Maximum value of 5. Denotes the acceptable number of
+    :vartype accentSensitive: bool
+    :ivar fuzzyEditDistance: Defaults to 0. Maximum value of 5. Denotes the acceptable number of
      divergent characters that would still constitute a match with the entity name. The smallest
      possible fuzziness for any given match is returned. For instance, if the edit distance is set
      to 3, "Windows10" would still match "Windows", "Windows10" and "Windows 7". When case
      sensitivity is set to false, case differences do NOT count towards fuzziness tolerance, but
      otherwise do.
-    :vartype fuzzy_edit_distance: int
-    :ivar default_case_sensitive: Changes the default case sensitivity value for this entity. It be
+    :vartype fuzzyEditDistance: int
+    :ivar defaultCaseSensitive: Changes the default case sensitivity value for this entity. It be
      used to change the default value of all aliases caseSensitive values.
-    :vartype default_case_sensitive: bool
-    :ivar default_accent_sensitive: Changes the default accent sensitivity value for this entity.
-     It be used to change the default value of all aliases accentSensitive values.
-    :vartype default_accent_sensitive: bool
-    :ivar default_fuzzy_edit_distance: Changes the default fuzzy edit distance value for this
-     entity. It can be used to change the default value of all aliases fuzzyEditDistance values.
-    :vartype default_fuzzy_edit_distance: int
+    :vartype defaultCaseSensitive: bool
+    :ivar defaultAccentSensitive: Changes the default accent sensitivity value for this entity. It
+     be used to change the default value of all aliases accentSensitive values.
+    :vartype defaultAccentSensitive: bool
+    :ivar defaultFuzzyEditDistance: Changes the default fuzzy edit distance value for this entity.
+     It can be used to change the default value of all aliases fuzzyEditDistance values.
+    :vartype defaultFuzzyEditDistance: int
     :ivar aliases: An array of complex objects that can be used to specify alternative spellings or
      synonyms to the root entity name.
     :vartype aliases: list["CustomEntityAlias"]
@@ -1398,12 +1394,12 @@ class CustomEntityAlias(TypedDict, total=False):
 
     :ivar text: The text of the alias. Required.
     :vartype text: str
-    :ivar case_sensitive: Determine if the alias is case sensitive.
-    :vartype case_sensitive: bool
-    :ivar accent_sensitive: Determine if the alias is accent sensitive.
-    :vartype accent_sensitive: bool
-    :ivar fuzzy_edit_distance: Determine the fuzzy edit distance of the alias.
-    :vartype fuzzy_edit_distance: int
+    :ivar caseSensitive: Determine if the alias is case sensitive.
+    :vartype caseSensitive: bool
+    :ivar accentSensitive: Determine if the alias is accent sensitive.
+    :vartype accentSensitive: bool
+    :ivar fuzzyEditDistance: Determine the fuzzy edit distance of the alias.
+    :vartype fuzzyEditDistance: int
     """
 
     text: Required[str]
@@ -1452,28 +1448,28 @@ CustomEntityLookupSkill.__doc__ = """A skill looks for text from a custom, user-
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+:ivar defaultLanguageCode: A value indicating which language code to use. Default is ``en``.
  Known values are: "da", "de", "en", "es", "fi", "fr", "it", "ko", and "pt".
-:vartype default_language_code: Union[str, "CustomEntityLookupSkillLanguage"]
-:ivar entities_definition_uri: Path to a JSON or CSV file containing all the target text to
- match against. This entity definition is read at the beginning of an indexer run. Any updates
- to this file during an indexer run will not take effect until subsequent runs. This config must
- be accessible over HTTPS.
-:vartype entities_definition_uri: str
-:ivar inline_entities_definition: The inline CustomEntity definition.
-:vartype inline_entities_definition: list["CustomEntity"]
-:ivar global_default_case_sensitive: A global flag for CaseSensitive. If CaseSensitive is not
- set in CustomEntity, this value will be the default value.
-:vartype global_default_case_sensitive: bool
-:ivar global_default_accent_sensitive: A global flag for AccentSensitive. If AccentSensitive is
+:vartype defaultLanguageCode: Union[str, "CustomEntityLookupSkillLanguage"]
+:ivar entitiesDefinitionUri: Path to a JSON or CSV file containing all the target text to match
+ against. This entity definition is read at the beginning of an indexer run. Any updates to this
+ file during an indexer run will not take effect until subsequent runs. This config must be
+ accessible over HTTPS.
+:vartype entitiesDefinitionUri: str
+:ivar inlineEntitiesDefinition: The inline CustomEntity definition.
+:vartype inlineEntitiesDefinition: list["CustomEntity"]
+:ivar globalDefaultCaseSensitive: A global flag for CaseSensitive. If CaseSensitive is not set
+ in CustomEntity, this value will be the default value.
+:vartype globalDefaultCaseSensitive: bool
+:ivar globalDefaultAccentSensitive: A global flag for AccentSensitive. If AccentSensitive is
  not set in CustomEntity, this value will be the default value.
-:vartype global_default_accent_sensitive: bool
-:ivar global_default_fuzzy_edit_distance: A global flag for FuzzyEditDistance. If
- FuzzyEditDistance is not set in CustomEntity, this value will be the default value.
-:vartype global_default_fuzzy_edit_distance: int
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype globalDefaultAccentSensitive: bool
+:ivar globalDefaultFuzzyEditDistance: A global flag for FuzzyEditDistance. If FuzzyEditDistance
+ is not set in CustomEntity, this value will be the default value.
+:vartype globalDefaultFuzzyEditDistance: int
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.CustomEntityLookupSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Text.CustomEntityLookupSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Text.CustomEntityLookupSkill"]
 """
 
 
@@ -1495,27 +1491,27 @@ least one or more filters, which modify the token that is stored.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar token_filters: A list of token filters used to filter out or modify the input token. For
+:ivar tokenFilters: A list of token filters used to filter out or modify the input token. For
  example, you can specify a lowercase filter that converts all characters to lowercase. The
  filters are run in the order in which they are listed.
-:vartype token_filters: list[Union[str, "TokenFilterName"]]
-:ivar char_filters: A list of character filters used to prepare input text before it is
+:vartype tokenFilters: list[Union[str, "TokenFilterName"]]
+:ivar charFilters: A list of character filters used to prepare input text before it is
  processed. For instance, they can replace certain characters or symbols. The filters are run in
  the order in which they are listed.
-:vartype char_filters: list[Union[str, "CharFilterName"]]
-:ivar odata_type: A URI fragment specifying the type of normalizer. Required. Default value is
+:vartype charFilters: list[Union[str, "CharFilterName"]]
+:ivar @odata.type: A URI fragment specifying the type of normalizer. Required. Default value is
  "#Microsoft.Azure.Search.CustomNormalizer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.CustomNormalizer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.CustomNormalizer"]
 """
 
 
 class DataSourceCredentials(TypedDict, total=False):
     """Represents credentials that can be used to connect to a datasource.
 
-    :ivar connection_string: The connection string for the datasource. Set to ``<unchanged>`` (with
+    :ivar connectionString: The connection string for the datasource. Set to ``<unchanged>`` (with
      brackets) if you don't want the connection string updated. Set to ``<redacted>`` if you want to
      remove the connection string value from the datasource.
-    :vartype connection_string: str
+    :vartype connectionString: str
     """
 
     connectionString: str
@@ -1536,9 +1532,9 @@ DefaultCognitiveServicesAccount.__doc__ = """An empty object that represents the
 
 :ivar description: Description of the Azure AI service resource attached to a skillset.
 :vartype description: str
-:ivar odata_type: A URI fragment specifying the type of Azure AI service resource attached to a
- skillset. Required. Default value is "#Microsoft.Azure.Search.DefaultCognitiveServices".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.DefaultCognitiveServices"]
+:ivar @odata.type: A URI fragment specifying the type of Azure AI service resource attached to
+ a skillset. Required. Default value is "#Microsoft.Azure.Search.DefaultCognitiveServices".
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.DefaultCognitiveServices"]
 """
 
 
@@ -1562,31 +1558,31 @@ using Apache Lucene.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar word_list: The list of words to match against. Required.
-:vartype word_list: list[str]
-:ivar min_word_size: The minimum word size. Only words longer than this get processed. Default
- is 5. Maximum is 300.
-:vartype min_word_size: int
-:ivar min_subword_size: The minimum subword size. Only subwords longer than this are outputted.
+:ivar wordList: The list of words to match against. Required.
+:vartype wordList: list[str]
+:ivar minWordSize: The minimum word size. Only words longer than this get processed. Default is
+ 5. Maximum is 300.
+:vartype minWordSize: int
+:ivar minSubwordSize: The minimum subword size. Only subwords longer than this are outputted.
  Default is 2. Maximum is 300.
-:vartype min_subword_size: int
-:ivar max_subword_size: The maximum subword size. Only subwords shorter than this are
- outputted. Default is 15. Maximum is 300.
-:vartype max_subword_size: int
-:ivar only_longest_match: A value indicating whether to add only the longest matching subword
- to the output. Default is false.
-:vartype only_longest_match: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:vartype minSubwordSize: int
+:ivar maxSubwordSize: The maximum subword size. Only subwords shorter than this are outputted.
+ Default is 15. Maximum is 300.
+:vartype maxSubwordSize: int
+:ivar onlyLongestMatch: A value indicating whether to add only the longest matching subword to
+ the output. Default is false.
+:vartype onlyLongestMatch: bool
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"]
 """
 
 
 class DistanceScoringFunction(TypedDict, total=False):
     """Defines a function that boosts scores based on distance from a geographic location.
 
-    :ivar field_name: The name of the field used as input to the scoring function. Required.
-    :vartype field_name: str
+    :ivar fieldName: The name of the field used as input to the scoring function. Required.
+    :vartype fieldName: str
     :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
      Required.
     :vartype boost: float
@@ -1594,8 +1590,8 @@ class DistanceScoringFunction(TypedDict, total=False):
      scores; defaults to "Linear". Known values are: "linear", "constant", "quadratic", and
      "logarithmic".
     :vartype interpolation: Union[str, "ScoringFunctionInterpolation"]
-    :ivar parameters: Parameter values for the distance scoring function. Required.
-    :vartype parameters: "DistanceScoringParameters"
+    :ivar distance: Parameter values for the distance scoring function. Required.
+    :vartype distance: "DistanceScoringParameters"
     :ivar type: Indicates the type of function to use. Valid values include magnitude, freshness,
      distance, and tag. The function type must be lower case. Required. Default value is "distance".
     :vartype type: Literal["distance"]
@@ -1618,12 +1614,12 @@ class DistanceScoringFunction(TypedDict, total=False):
 class DistanceScoringParameters(TypedDict, total=False):
     """Provides parameter values to a distance scoring function.
 
-    :ivar reference_point_parameter: The name of the parameter passed in search queries to specify
+    :ivar referencePointParameter: The name of the parameter passed in search queries to specify
      the reference location. Required.
-    :vartype reference_point_parameter: str
-    :ivar boosting_distance: The distance in kilometers from the reference location where the
+    :vartype referencePointParameter: str
+    :ivar boostingDistance: The distance in kilometers from the reference location where the
      boosting range ends. Required.
-    :vartype boosting_distance: float
+    :vartype boostingDistance: float
     """
 
     referencePointParameter: Required[str]
@@ -1665,16 +1661,16 @@ DocumentExtractionSkill.__doc__ = """A skill that extracts content from a file w
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar parsing_mode: The parsingMode for the skill. Will be set to 'default' if not defined.
-:vartype parsing_mode: str
-:ivar data_to_extract: The type of data to be extracted for the skill. Will be set to
+:ivar parsingMode: The parsingMode for the skill. Will be set to 'default' if not defined.
+:vartype parsingMode: str
+:ivar dataToExtract: The type of data to be extracted for the skill. Will be set to
  'contentAndMetadata' if not defined.
-:vartype data_to_extract: str
+:vartype dataToExtract: str
 :ivar configuration: A dictionary of configurations for the skill.
 :vartype configuration: dict[str, Any]
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.DocumentExtractionSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Util.DocumentExtractionSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Util.DocumentExtractionSkill"]
 """
 
 
@@ -1714,25 +1710,24 @@ the enrichment pipeline.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar output_format: Controls the output format. Default is 'markdown'. Known values are:
- "text" and "markdown".
-:vartype output_format: Union[str, "DocumentIntelligenceLayoutSkillOutputFormat"]
-:ivar output_mode: Controls the cardinality of the output produced by the skill. Default is
+:ivar outputFormat: Controls the output format. Default is 'markdown'. Known values are: "text"
+ and "markdown".
+:vartype outputFormat: Union[str, "DocumentIntelligenceLayoutSkillOutputFormat"]
+:ivar outputMode: Controls the cardinality of the output produced by the skill. Default is
  'oneToMany'. "oneToMany"
-:vartype output_mode: Union[str, "DocumentIntelligenceLayoutSkillOutputMode"]
-:ivar markdown_header_depth: The depth of headers in the markdown output. Default is h6. Known
+:vartype outputMode: Union[str, "DocumentIntelligenceLayoutSkillOutputMode"]
+:ivar markdownHeaderDepth: The depth of headers in the markdown output. Default is h6. Known
  values are: "h1", "h2", "h3", "h4", "h5", and "h6".
-:vartype markdown_header_depth: Union[str,
- "DocumentIntelligenceLayoutSkillMarkdownHeaderDepth"]
-:ivar extraction_options: Controls the cardinality of the content extracted from the document
- by the skill.
-:vartype extraction_options: list[Union[str,
+:vartype markdownHeaderDepth: Union[str, "DocumentIntelligenceLayoutSkillMarkdownHeaderDepth"]
+:ivar extractionOptions: Controls the cardinality of the content extracted from the document by
+ the skill.
+:vartype extractionOptions: list[Union[str,
  "DocumentIntelligenceLayoutSkillExtractionOptions"]]
-:ivar chunking_properties: Controls the cardinality for chunking the content.
-:vartype chunking_properties: "DocumentIntelligenceLayoutSkillChunkingProperties"
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar chunkingProperties: Controls the cardinality for chunking the content.
+:vartype chunkingProperties: "DocumentIntelligenceLayoutSkillChunkingProperties"
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill"]
 """
 
 
@@ -1741,10 +1736,10 @@ class DocumentIntelligenceLayoutSkillChunkingProperties(TypedDict, total=False):
 
     :ivar unit: The unit of the chunk. "characters"
     :vartype unit: Union[str, "DocumentIntelligenceLayoutSkillChunkingUnit"]
-    :ivar maximum_length: The maximum chunk length in characters. Default is 500.
-    :vartype maximum_length: int
-    :ivar overlap_length: The length of overlap provided between two text chunks. Default is 0.
-    :vartype overlap_length: int
+    :ivar maximumLength: The maximum chunk length in characters. Default is 500.
+    :vartype maximumLength: int
+    :ivar overlapLength: The length of overlap provided between two text chunks. Default is 0.
+    :vartype overlapLength: int
     """
 
     unit: Optional[Union[str, "DocumentIntelligenceLayoutSkillChunkingUnit"]]
@@ -1758,10 +1753,10 @@ class DocumentIntelligenceLayoutSkillChunkingProperties(TypedDict, total=False):
 class DocumentKeysOrIds(TypedDict, total=False):
     """The type of the keysOrIds.
 
-    :ivar document_keys: document keys to be reset.
-    :vartype document_keys: list[str]
-    :ivar datasource_document_ids: datasource document identifiers to be reset.
-    :vartype datasource_document_ids: list[str]
+    :ivar documentKeys: document keys to be reset.
+    :vartype documentKeys: list[str]
+    :ivar datasourceDocumentIds: datasource document identifiers to be reset.
+    :vartype datasourceDocumentIds: list[str]
     """
 
     documentKeys: list[str]
@@ -1788,17 +1783,16 @@ This token filter is implemented using Apache Lucene.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar min_gram: The minimum n-gram length. Default is 1. Must be less than the value of
- maxGram.
-:vartype min_gram: int
-:ivar max_gram: The maximum n-gram length. Default is 2.
-:vartype max_gram: int
+:ivar minGram: The minimum n-gram length. Default is 1. Must be less than the value of maxGram.
+:vartype minGram: int
+:ivar maxGram: The maximum n-gram length. Default is 2.
+:vartype maxGram: int
 :ivar side: Specifies which side of the input the n-gram should be generated from. Default is
  "front". Known values are: "front" and "back".
 :vartype side: Union[str, "EdgeNGramTokenFilterSide"]
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.EdgeNGramTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilter"]
 """
 
 
@@ -1820,17 +1814,17 @@ This token filter is implemented using Apache Lucene.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
+:ivar minGram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
  value of maxGram.
-:vartype min_gram: int
-:ivar max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
-:vartype max_gram: int
+:vartype minGram: int
+:ivar maxGram: The maximum n-gram length. Default is 2. Maximum is 300.
+:vartype maxGram: int
 :ivar side: Specifies which side of the input the n-gram should be generated from. Default is
  "front". Known values are: "front" and "back".
 :vartype side: Union[str, "EdgeNGramTokenFilterSide"]
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.EdgeNGramTokenFilterV2".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"]
 """
 
 
@@ -1852,16 +1846,16 @@ implemented using Apache Lucene.
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
+:ivar minGram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
  value of maxGram.
-:vartype min_gram: int
-:ivar max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
-:vartype max_gram: int
-:ivar token_chars: Character classes to keep in the tokens.
-:vartype token_chars: list[Union[str, "TokenCharacterKind"]]
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:vartype minGram: int
+:ivar maxGram: The maximum n-gram length. Default is 2. Maximum is 300.
+:vartype maxGram: int
+:ivar tokenChars: Character classes to keep in the tokens.
+:vartype tokenChars: list[Union[str, "TokenCharacterKind"]]
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.EdgeNGramTokenizer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenizer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenizer"]
 """
 
 
@@ -1883,9 +1877,9 @@ token filter is implemented using Apache Lucene.
 :vartype name: str
 :ivar articles: The set of articles to remove.
 :vartype articles: list[str]
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.ElisionTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.ElisionTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.ElisionTokenFilter"]
 """
 
 
@@ -1894,8 +1888,8 @@ class EmbeddingColumnMapping(TypedDict, total=False):
 
     :ivar name: Target vector field name in the search index. Required.
     :vartype name: str
-    :ivar source_field: SQL column used as input for embedding generation. Required.
-    :vartype source_field: str
+    :ivar sourceField: SQL column used as input for embedding generation. Required.
+    :vartype sourceField: str
     """
 
     name: Required[str]
@@ -1937,19 +1931,19 @@ EntityLinkingSkill.__doc__ = """Using the Text Analytics API, extracts linked en
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar default_language_code: A value indicating which language code to use. Default is ``en``.
-:vartype default_language_code: str
-:ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
+:ivar defaultLanguageCode: A value indicating which language code to use. Default is ``en``.
+:vartype defaultLanguageCode: str
+:ivar minimumPrecision: A value between 0 and 1 that be used to only include entities whose
  confidence score is greater than the value specified. If not set (default), or if explicitly
  set to null, all entities will be included.
-:vartype minimum_precision: float
-:ivar model_version: The version of the model to use when calling the Text Analytics service.
- It will default to the latest available when not specified. We recommend you do not specify
- this value unless absolutely necessary.
-:vartype model_version: str
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype minimumPrecision: float
+:ivar modelVersion: The version of the model to use when calling the Text Analytics service. It
+ will default to the latest available when not specified. We recommend you do not specify this
+ value unless absolutely necessary.
+:vartype modelVersion: str
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.V3.EntityLinkingSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Text.V3.EntityLinkingSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Text.V3.EntityLinkingSkill"]
 """
 
 
@@ -1989,21 +1983,21 @@ EntityRecognitionSkillV3.__doc__ = """Using the Text Analytics API, extracts ent
 :vartype outputs: list["OutputFieldMappingEntry"]
 :ivar categories: A list of entity categories that should be extracted.
 :vartype categories: list[Union[str, "EntityCategory"]]
-:ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+:ivar defaultLanguageCode: A value indicating which language code to use. Default is ``en``.
  Known values are: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de", "el",
  "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", and "tr".
-:vartype default_language_code: Union[str, "EntityRecognitionSkillLanguage"]
-:ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
+:vartype defaultLanguageCode: Union[str, "EntityRecognitionSkillLanguage"]
+:ivar minimumPrecision: A value between 0 and 1 that be used to only include entities whose
  confidence score is greater than the value specified. If not set (default), or if explicitly
  set to null, all entities will be included.
-:vartype minimum_precision: float
-:ivar model_version: The version of the model to use when calling the Text Analytics API. It
+:vartype minimumPrecision: float
+:ivar modelVersion: The version of the model to use when calling the Text Analytics API. It
  will default to the latest available when not specified. We recommend you do not specify this
  value unless absolutely necessary.
-:vartype model_version: str
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype modelVersion: str
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.V3.EntityRecognitionSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Text.V3.EntityRecognitionSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Text.V3.EntityRecognitionSkill"]
 """
 
 
@@ -2011,16 +2005,16 @@ class EntraAppAuthentication(TypedDict, total=False):
     """Configuration for a customer-owned Microsoft Entra app registration used for federated
     credential-based on-behalf-of authentication.
 
-    :ivar application_id: The application (client) ID of the customer-owned Entra app registration.
+    :ivar applicationId: The application (client) ID of the customer-owned Entra app registration.
      Required.
-    :vartype application_id: str
-    :ivar federated_credential_id: The federated credential ID configured on the app registration,
+    :vartype applicationId: str
+    :ivar federatedCredentialId: The federated credential ID configured on the app registration,
      enabling the search service to authenticate as the app without a stored client secret.
      Required.
-    :vartype federated_credential_id: str
-    :ivar tenant_id: The tenant ID of the app registration. Required when the app registration is
-     in a different tenant than the search service. If omitted, the search service's tenant is used.
-    :vartype tenant_id: str
+    :vartype federatedCredentialId: str
+    :ivar tenantId: The tenant ID of the app registration. Required when the app registration is in
+     a different tenant than the search service. If omitted, the search service's tenant is used.
+    :vartype tenantId: str
     """
 
     applicationId: Required[str]
@@ -2039,8 +2033,8 @@ class ExhaustiveKnnAlgorithmConfiguration(TypedDict, total=False):
 
     :ivar name: The name to associate with this particular configuration. Required.
     :vartype name: str
-    :ivar parameters: Contains the parameters specific to exhaustive KNN algorithm.
-    :vartype parameters: "ExhaustiveKnnParameters"
+    :ivar exhaustiveKnnParameters: Contains the parameters specific to exhaustive KNN algorithm.
+    :vartype exhaustiveKnnParameters: "ExhaustiveKnnParameters"
     :ivar kind: The name of the kind of algorithm being configured for use with vector search.
      Required. Exhaustive KNN algorithm which will perform brute-force search.
     :vartype kind: Literal[VectorSearchAlgorithmKind.EXHAUSTIVE_KNN]
@@ -2087,13 +2081,13 @@ FabricDataAgentKnowledgeSource.__doc__ = """Configuration for Fabric Data Agent 
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -2101,23 +2095,23 @@ FabricDataAgentKnowledgeSource.__doc__ = """Configuration for Fabric Data Agent 
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: The discriminator value. Required. A knowledge source that retrieves data from a
  Fabric Data Agent.
 :vartype kind: Literal[KnowledgeSourceKind.FABRIC_DATA_AGENT]
-:ivar fabric_data_agent_parameters: The parameters for the Fabric Data Agent knowledge source.
+:ivar fabricDataAgentParameters: The parameters for the Fabric Data Agent knowledge source.
  Required.
-:vartype fabric_data_agent_parameters: "FabricDataAgentKnowledgeSourceParameters"
+:vartype fabricDataAgentParameters: "FabricDataAgentKnowledgeSourceParameters"
 """
 
 
 class FabricDataAgentKnowledgeSourceParameters(TypedDict, total=False):
     """Parameters for Fabric Data Agent knowledge source.
 
-    :ivar workspace_id: Fabric workspace ID. Required.
-    :vartype workspace_id: str
-    :ivar data_agent_id: Specifies which Fabric Data Agent to access. Required.
-    :vartype data_agent_id: str
+    :ivar workspaceId: Fabric workspace ID. Required.
+    :vartype workspaceId: str
+    :ivar dataAgentId: Specifies which Fabric Data Agent to access. Required.
+    :vartype dataAgentId: str
     """
 
     workspaceId: Required[str]
@@ -2145,13 +2139,13 @@ FabricOntologyKnowledgeSource.__doc__ = """Configuration for Fabric Ontology kno
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -2159,23 +2153,23 @@ FabricOntologyKnowledgeSource.__doc__ = """Configuration for Fabric Ontology kno
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: The discriminator value. Required. A knowledge source that retrieves data from
  Microsoft Fabric Ontology ontologies.
 :vartype kind: Literal[KnowledgeSourceKind.FABRIC_ONTOLOGY]
-:ivar fabric_ontology_parameters: The parameters for the Fabric Ontology knowledge source.
+:ivar fabricOntologyParameters: The parameters for the Fabric Ontology knowledge source.
  Required.
-:vartype fabric_ontology_parameters: "FabricOntologyKnowledgeSourceParameters"
+:vartype fabricOntologyParameters: "FabricOntologyKnowledgeSourceParameters"
 """
 
 
 class FabricOntologyKnowledgeSourceParameters(TypedDict, total=False):
     """Parameters for Fabric Ontology knowledge source.
 
-    :ivar workspace_id: The Fabric workspace ID containing the ontology. Required.
-    :vartype workspace_id: str
-    :ivar ontology_id: The ID of the ontology to use from the Fabric workspace. Required.
-    :vartype ontology_id: str
+    :ivar workspaceId: The Fabric workspace ID containing the ontology. Required.
+    :vartype workspaceId: str
+    :ivar ontologyId: The ID of the ontology to use from the Fabric workspace. Required.
+    :vartype ontologyId: str
     """
 
     workspaceId: Required[str]
@@ -2187,13 +2181,13 @@ class FabricOntologyKnowledgeSourceParameters(TypedDict, total=False):
 class FieldMapping(TypedDict, total=False):
     """Defines a mapping between a field in a data source and a target field in an index.
 
-    :ivar source_field_name: The name of the field in the data source. Required.
-    :vartype source_field_name: str
-    :ivar target_field_name: The name of the target field in the index. Same as the source field
-     name by default.
-    :vartype target_field_name: str
-    :ivar mapping_function: A function to apply to each source field value before indexing.
-    :vartype mapping_function: "FieldMappingFunction"
+    :ivar sourceFieldName: The name of the field in the data source. Required.
+    :vartype sourceFieldName: str
+    :ivar targetFieldName: The name of the target field in the index. Same as the source field name
+     by default.
+    :vartype targetFieldName: str
+    :ivar mappingFunction: A function to apply to each source field value before indexing.
+    :vartype mappingFunction: "FieldMappingFunction"
     """
 
     sourceFieldName: Required[str]
@@ -2241,13 +2235,13 @@ FileKnowledgeSource.__doc__ = """Configuration for File knowledge source that su
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -2255,30 +2249,30 @@ FileKnowledgeSource.__doc__ = """Configuration for File knowledge source that su
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: The discriminator value. Required. A knowledge source that supports direct file
  upload and indexing.
 :vartype kind: Literal[KnowledgeSourceKind.FILE]
-:ivar file_parameters: The parameters for the File knowledge source. Required.
-:vartype file_parameters: "FileKnowledgeSourceParameters"
-:ivar cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the File
+:ivar fileParameters: The parameters for the File knowledge source. Required.
+:vartype fileParameters: "FileKnowledgeSourceParameters"
+:ivar corsOptions: Options to control Cross-Origin Resource Sharing (CORS) for the File
  knowledge source's file endpoints (upload, list, update, delete).
-:vartype cors_options: "CorsOptions"
+:vartype corsOptions: "CorsOptions"
 """
 
 
 class FileKnowledgeSourceParameters(TypedDict, total=False):
     """Parameters for File knowledge source.
 
-    :ivar ingestion_parameters: Consolidates all general ingestion settings for the File knowledge
+    :ivar ingestionParameters: Consolidates all general ingestion settings for the File knowledge
      source, including the content extraction mode and an optional embeddingModel.
-    :vartype ingestion_parameters: "KnowledgeSourceIngestionParameters"
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+    :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
+    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
      this index-backed knowledge source. Request-time query hints replace these defaults as a
      complete object.
-    :vartype query_hints: "SearchIndexKnowledgeSourceQueryHints"
-    :ivar created_resources: Resources created by the file knowledge source.
-    :vartype created_resources: "CreatedResources"
+    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
+    :ivar createdResources: Resources created by the file knowledge source.
+    :vartype createdResources: "CreatedResources"
     """
 
     ingestionParameters: "KnowledgeSourceIngestionParameters"
@@ -2296,9 +2290,9 @@ class FileUploadMetadata(TypedDict, total=False):
     custom key/value metadata. The parsing mode and extraction mode are both chosen by the service
     and are not supplied by the caller.
 
-    :ivar file_name: The full relative file name/path to store the file under (prefixes are derived
+    :ivar fileName: The full relative file name/path to store the file under (prefixes are derived
      from it).
-    :vartype file_name: str
+    :vartype fileName: str
     :ivar metadata: Custom key/value metadata to store with the file.
     :vartype metadata: dict[str, str]
     """
@@ -2312,8 +2306,8 @@ class FileUploadMetadata(TypedDict, total=False):
 class FreshnessScoringFunction(TypedDict, total=False):
     """Defines a function that boosts scores based on the value of a date-time field.
 
-    :ivar field_name: The name of the field used as input to the scoring function. Required.
-    :vartype field_name: str
+    :ivar fieldName: The name of the field used as input to the scoring function. Required.
+    :vartype fieldName: str
     :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
      Required.
     :vartype boost: float
@@ -2321,8 +2315,8 @@ class FreshnessScoringFunction(TypedDict, total=False):
      scores; defaults to "Linear". Known values are: "linear", "constant", "quadratic", and
      "logarithmic".
     :vartype interpolation: Union[str, "ScoringFunctionInterpolation"]
-    :ivar parameters: Parameter values for the freshness scoring function. Required.
-    :vartype parameters: "FreshnessScoringParameters"
+    :ivar freshness: Parameter values for the freshness scoring function. Required.
+    :vartype freshness: "FreshnessScoringParameters"
     :ivar type: Indicates the type of function to use. Valid values include magnitude, freshness,
      distance, and tag. The function type must be lower case. Required. Default value is
      "freshness".
@@ -2346,9 +2340,9 @@ class FreshnessScoringFunction(TypedDict, total=False):
 class FreshnessScoringParameters(TypedDict, total=False):
     """Provides parameter values to a freshness scoring function.
 
-    :ivar boosting_duration: The expiration period after which boosting will stop for a particular
+    :ivar boostingDuration: The expiration period after which boosting will stop for a particular
      document. Required.
-    :vartype boosting_duration: str
+    :vartype boostingDuration: str
     """
 
     boostingDuration: Required[str]
@@ -2359,13 +2353,13 @@ class GetIndexStatisticsResult(TypedDict, total=False):
     """Statistics for a given index. Statistics are collected periodically and are not guaranteed to
     always be up-to-date.
 
-    :ivar document_count: The number of documents in the index. Required.
-    :vartype document_count: int
-    :ivar storage_size: The amount of storage in bytes consumed by the index. Required.
-    :vartype storage_size: int
-    :ivar vector_index_size: The amount of memory in bytes consumed by vectors in the index.
+    :ivar documentCount: The number of documents in the index. Required.
+    :vartype documentCount: int
+    :ivar storageSize: The amount of storage in bytes consumed by the index. Required.
+    :vartype storageSize: int
+    :ivar vectorIndexSize: The amount of memory in bytes consumed by vectors in the index.
      Required.
-    :vartype vector_index_size: int
+    :vartype vectorIndexSize: int
     """
 
     documentCount: Required[int]
@@ -2387,11 +2381,11 @@ HighWaterMarkChangeDetectionPolicy = TypedDict(
 HighWaterMarkChangeDetectionPolicy.__doc__ = """Defines a data change detection policy that captures changes based on the value of a high water
 mark column.
 
-:ivar high_water_mark_column_name: The name of the high water mark column. Required.
-:vartype high_water_mark_column_name: str
-:ivar odata_type: A URI fragment specifying the type of data change detection policy. Required.
- Default value is "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"]
+:ivar highWaterMarkColumnName: The name of the high water mark column. Required.
+:vartype highWaterMarkColumnName: str
+:ivar @odata.type: A URI fragment specifying the type of data change detection policy.
+ Required. Default value is "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy".
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"]
 """
 
 
@@ -2402,8 +2396,8 @@ class HnswAlgorithmConfiguration(TypedDict, total=False):
 
     :ivar name: The name to associate with this particular configuration. Required.
     :vartype name: str
-    :ivar parameters: Contains the parameters specific to HNSW algorithm.
-    :vartype parameters: "HnswParameters"
+    :ivar hnswParameters: Contains the parameters specific to HNSW algorithm.
+    :vartype hnswParameters: "HnswParameters"
     :ivar kind: The name of the kind of algorithm being configured for use with vector search.
      Required. HNSW (Hierarchical Navigable Small World), a type of approximate nearest neighbors
      algorithm.
@@ -2427,15 +2421,15 @@ class HnswParameters(TypedDict, total=False):
      high intrinsic dimensionality at the expense of increased memory consumption and longer
      indexing time.
     :vartype m: int
-    :ivar ef_construction: The size of the dynamic list containing the nearest neighbors, which is
+    :ivar efConstruction: The size of the dynamic list containing the nearest neighbors, which is
      used during index time. Increasing this parameter may improve index quality, at the expense of
      increased indexing time. At a certain point, increasing this parameter leads to diminishing
      returns.
-    :vartype ef_construction: int
-    :ivar ef_search: The size of the dynamic list containing the nearest neighbors, which is used
+    :vartype efConstruction: int
+    :ivar efSearch: The size of the dynamic list containing the nearest neighbors, which is used
      during search time. Increasing this parameter may improve search results, at the expense of
      slower search. At a certain point, increasing this parameter leads to diminishing returns.
-    :vartype ef_search: int
+    :vartype efSearch: int
     :ivar metric: The similarity metric to use for vector comparisons. Known values are: "cosine",
      "euclidean", "dotProduct", and "hamming".
     :vartype metric: Union[str, "VectorSearchAlgorithmMetric"]
@@ -2493,19 +2487,19 @@ content.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+:ivar defaultLanguageCode: A value indicating which language code to use. Default is ``en``.
  Known values are: "ar", "az", "bg", "bs", "ca", "cs", "cy", "da", "de", "el", "en", "es", "et",
  "eu", "fi", "fr", "ga", "gl", "he", "hi", "hr", "hu", "id", "it", "ja", "kk", "ko", "lt", "lv",
  "mk", "ms", "nb", "nl", "pl", "prs", "pt-BR", "pt", "pt-PT", "ro", "ru", "sk", "sl", "sr-Cyrl",
  "sr-Latn", "sv", "th", "tr", "uk", "vi", "zh", "zh-Hans", and "zh-Hant".
-:vartype default_language_code: Union[str, "ImageAnalysisSkillLanguage"]
-:ivar visual_features: A list of visual features.
-:vartype visual_features: list[Union[str, "VisualFeature"]]
+:vartype defaultLanguageCode: Union[str, "ImageAnalysisSkillLanguage"]
+:ivar visualFeatures: A list of visual features.
+:vartype visualFeatures: list[Union[str, "VisualFeature"]]
 :ivar details: A string indicating which domain-specific details to return.
 :vartype details: list[Union[str, "ImageDetail"]]
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Vision.ImageAnalysisSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Vision.ImageAnalysisSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Vision.ImageAnalysisSkill"]
 """
 
 
@@ -2528,13 +2522,13 @@ IndexedOneLakeKnowledgeSource.__doc__ = """Configuration for OneLake knowledge s
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -2542,31 +2536,31 @@ IndexedOneLakeKnowledgeSource.__doc__ = """Configuration for OneLake knowledge s
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: Required. A knowledge source that reads data from indexed OneLake.
 :vartype kind: Literal[KnowledgeSourceKind.INDEXED_ONELAKE]
-:ivar indexed_one_lake_parameters: The parameters for the knowledge source. Required.
-:vartype indexed_one_lake_parameters: "IndexedOneLakeKnowledgeSourceParameters"
+:ivar indexedOneLakeParameters: The parameters for the knowledge source. Required.
+:vartype indexedOneLakeParameters: "IndexedOneLakeKnowledgeSourceParameters"
 """
 
 
 class IndexedOneLakeKnowledgeSourceParameters(TypedDict, total=False):
     """Parameters for OneLake knowledge source.
 
-    :ivar fabric_workspace_id: OneLake workspace ID. Required.
-    :vartype fabric_workspace_id: str
-    :ivar lakehouse_id: Specifies which OneLake lakehouse to access. Required.
-    :vartype lakehouse_id: str
-    :ivar target_path: Optional OneLakehouse folder or shortcut to filter OneLake content.
-    :vartype target_path: str
-    :ivar ingestion_parameters: Consolidates all general ingestion settings.
-    :vartype ingestion_parameters: "KnowledgeSourceIngestionParameters"
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+    :ivar fabricWorkspaceId: OneLake workspace ID. Required.
+    :vartype fabricWorkspaceId: str
+    :ivar lakehouseId: Specifies which OneLake lakehouse to access. Required.
+    :vartype lakehouseId: str
+    :ivar targetPath: Optional OneLakehouse folder or shortcut to filter OneLake content.
+    :vartype targetPath: str
+    :ivar ingestionParameters: Consolidates all general ingestion settings.
+    :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
+    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
      this index-backed knowledge source. Request-time query hints replace these defaults as a
      complete object.
-    :vartype query_hints: "SearchIndexKnowledgeSourceQueryHints"
-    :ivar created_resources: Resources created by the knowledge source.
-    :vartype created_resources: "CreatedResources"
+    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
+    :ivar createdResources: Resources created by the knowledge source.
+    :vartype createdResources: "CreatedResources"
     """
 
     fabricWorkspaceId: Required[str]
@@ -2603,13 +2597,13 @@ IndexedSharePointKnowledgeSource.__doc__ = """Configuration for SharePoint knowl
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -2617,35 +2611,35 @@ IndexedSharePointKnowledgeSource.__doc__ = """Configuration for SharePoint knowl
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: Required. A knowledge source that reads data from indexed SharePoint.
 :vartype kind: Literal[KnowledgeSourceKind.INDEXED_SHARE_POINT]
-:ivar indexed_share_point_parameters: The parameters for the knowledge source. Required.
-:vartype indexed_share_point_parameters: "IndexedSharePointKnowledgeSourceParameters"
+:ivar indexedSharePointParameters: The parameters for the knowledge source. Required.
+:vartype indexedSharePointParameters: "IndexedSharePointKnowledgeSourceParameters"
 """
 
 
 class IndexedSharePointKnowledgeSourceParameters(TypedDict, total=False):  # pylint: disable=name-too-long
     """Parameters for SharePoint knowledge source.
 
-    :ivar connection_string: SharePoint connection string with format:
+    :ivar connectionString: SharePoint connection string with format:
      SharePointOnlineEndpoint=[SharePoint site url];ApplicationId=[Azure AD App
      ID];ApplicationSecret=[Azure AD App client secret];TenantId=[SharePoint site tenant id].
      Required.
-    :vartype connection_string: str
-    :ivar container_name: Specifies which SharePoint libraries to access. Required. Known values
+    :vartype connectionString: str
+    :ivar containerName: Specifies which SharePoint libraries to access. Required. Known values
      are: "defaultSiteLibrary", "allSiteLibraries", and "useQuery".
-    :vartype container_name: Union[str, "IndexedSharePointContainerName"]
+    :vartype containerName: Union[str, "IndexedSharePointContainerName"]
     :ivar query: Optional query to filter SharePoint content.
     :vartype query: str
-    :ivar ingestion_parameters: Consolidates all general ingestion settings.
-    :vartype ingestion_parameters: "KnowledgeSourceIngestionParameters"
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+    :ivar ingestionParameters: Consolidates all general ingestion settings.
+    :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
+    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
      this index-backed knowledge source. Request-time query hints replace these defaults as a
      complete object.
-    :vartype query_hints: "SearchIndexKnowledgeSourceQueryHints"
-    :ivar created_resources: Resources created by the knowledge source.
-    :vartype created_resources: "CreatedResources"
+    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
+    :ivar createdResources: Resources created by the knowledge source.
+    :vartype createdResources: "CreatedResources"
     """
 
     connectionString: Required[str]
@@ -2685,13 +2679,13 @@ IndexedSqlKnowledgeSource.__doc__ = """Configuration for indexed SQL knowledge s
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -2699,42 +2693,42 @@ IndexedSqlKnowledgeSource.__doc__ = """Configuration for indexed SQL knowledge s
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: The discriminator value. Required. A knowledge source that retrieves and ingests
  data from Azure SQL Database or SQL Managed Instance to a Search Index.
 :vartype kind: Literal[KnowledgeSourceKind.INDEXED_SQL]
-:ivar indexed_sql_parameters: The parameters for the SQL knowledge source. Required.
-:vartype indexed_sql_parameters: "IndexedSqlKnowledgeSourceParameters"
+:ivar indexedSqlParameters: The parameters for the SQL knowledge source. Required.
+:vartype indexedSqlParameters: "IndexedSqlKnowledgeSourceParameters"
 """
 
 
 class IndexedSqlKnowledgeSourceParameters(TypedDict, total=False):
     """Parameters for indexed SQL knowledge source.
 
-    :ivar connection_string: The connection string for the Azure SQL Database or SQL Managed
+    :ivar connectionString: The connection string for the Azure SQL Database or SQL Managed
      Instance. Required.
-    :vartype connection_string: str
-    :ivar table_or_view: The name of the table or view to index. Can be schema-qualified (e.g.,
+    :vartype connectionString: str
+    :ivar tableOrView: The name of the table or view to index. Can be schema-qualified (e.g.,
      'dbo.MyTable'). Required.
-    :vartype table_or_view: str
-    :ivar high_water_mark_column_name: Optional column name for high water mark change detection.
-     If provided, uses HighWaterMarkChangeDetectionPolicy.
-    :vartype high_water_mark_column_name: str
-    :ivar content_columns: Optional column mappings for content fields. If omitted, all columns are
+    :vartype tableOrView: str
+    :ivar highWaterMarkColumnName: Optional column name for high water mark change detection. If
+     provided, uses HighWaterMarkChangeDetectionPolicy.
+    :vartype highWaterMarkColumnName: str
+    :ivar contentColumns: Optional column mappings for content fields. If omitted, all columns are
      auto-discovered.
-    :vartype content_columns: list["ContentColumnMapping"]
-    :ivar embedding_columns: Optional column mappings for embedding vector fields. If omitted, no
+    :vartype contentColumns: list["ContentColumnMapping"]
+    :ivar embeddingColumns: Optional column mappings for embedding vector fields. If omitted, no
      vector fields are created.
-    :vartype embedding_columns: list["EmbeddingColumnMapping"]
-    :ivar ingestion_parameters: Consolidates all general ingestion settings including embedding
+    :vartype embeddingColumns: list["EmbeddingColumnMapping"]
+    :ivar ingestionParameters: Consolidates all general ingestion settings including embedding
      model, schedule, and identity.
-    :vartype ingestion_parameters: "KnowledgeSourceIngestionParameters"
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+    :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
+    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
      this index-backed knowledge source. Request-time query hints replace these defaults as a
      complete object.
-    :vartype query_hints: "SearchIndexKnowledgeSourceQueryHints"
-    :ivar created_resources: Resources created by the knowledge source.
-    :vartype created_resources: "CreatedResources"
+    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
+    :ivar createdResources: Resources created by the knowledge source.
+    :vartype createdResources: "CreatedResources"
     """
 
     connectionString: Required[str]
@@ -2772,15 +2766,15 @@ class IndexerResyncBody(TypedDict, total=False):
 class IndexingParameters(TypedDict, total=False):
     """Represents parameters for indexer execution.
 
-    :ivar batch_size: The number of items that are read from the data source and indexed as a
-     single batch in order to improve performance. The default depends on the data source type.
-    :vartype batch_size: int
-    :ivar max_failed_items: The maximum number of items that can fail indexing for indexer
-     execution to still be considered successful. -1 means no limit. Default is 0.
-    :vartype max_failed_items: int
-    :ivar max_failed_items_per_batch: The maximum number of items in a single batch that can fail
+    :ivar batchSize: The number of items that are read from the data source and indexed as a single
+     batch in order to improve performance. The default depends on the data source type.
+    :vartype batchSize: int
+    :ivar maxFailedItems: The maximum number of items that can fail indexing for indexer execution
+     to still be considered successful. -1 means no limit. Default is 0.
+    :vartype maxFailedItems: int
+    :ivar maxFailedItemsPerBatch: The maximum number of items in a single batch that can fail
      indexing for the batch to still be considered successful. -1 means no limit. Default is 0.
-    :vartype max_failed_items_per_batch: int
+    :vartype maxFailedItemsPerBatch: int
     :ivar configuration: A dictionary of indexer-specific configuration properties. Each name is
      the name of a specific property. Each value must be of a primitive type.
     :vartype configuration: "IndexingParametersConfiguration"
@@ -2804,76 +2798,76 @@ class IndexingParametersConfiguration(TypedDict, total=False):
     """A dictionary of indexer-specific configuration properties. Each name is the name of a specific
     property. Each value must be of a primitive type.
 
-    :ivar parsing_mode: Represents the parsing mode for indexing from an Azure blob data source.
+    :ivar parsingMode: Represents the parsing mode for indexing from an Azure blob data source.
      Known values are: "default", "text", "delimitedText", "json", "jsonArray", "jsonLines", and
      "markdown".
-    :vartype parsing_mode: Union[str, "BlobIndexerParsingMode"]
-    :ivar excluded_file_name_extensions: Comma-delimited list of filename extensions to ignore when
+    :vartype parsingMode: Union[str, "BlobIndexerParsingMode"]
+    :ivar excludedFileNameExtensions: Comma-delimited list of filename extensions to ignore when
      processing from Azure blob storage.  For example, you could exclude ".png, .mp4" to skip over
      those files during indexing.
-    :vartype excluded_file_name_extensions: str
-    :ivar indexed_file_name_extensions: Comma-delimited list of filename extensions to select when
+    :vartype excludedFileNameExtensions: str
+    :ivar indexedFileNameExtensions: Comma-delimited list of filename extensions to select when
      processing from Azure blob storage.  For example, you could focus indexing on specific
      application files ".docx, .pptx, .msg" to specifically include those file types.
-    :vartype indexed_file_name_extensions: str
-    :ivar fail_on_unsupported_content_type: For Azure blobs, set to false if you want to continue
+    :vartype indexedFileNameExtensions: str
+    :ivar failOnUnsupportedContentType: For Azure blobs, set to false if you want to continue
      indexing when an unsupported content type is encountered, and you don't know all the content
      types (file extensions) in advance.
-    :vartype fail_on_unsupported_content_type: bool
-    :ivar fail_on_unprocessable_document: For Azure blobs, set to false if you want to continue
+    :vartype failOnUnsupportedContentType: bool
+    :ivar failOnUnprocessableDocument: For Azure blobs, set to false if you want to continue
      indexing if a document fails indexing.
-    :vartype fail_on_unprocessable_document: bool
-    :ivar index_storage_metadata_only_for_oversized_documents: For Azure blobs, set this property
-     to true to still index storage metadata for blob content that is too large to process.
-     Oversized blobs are treated as errors by default. For limits on blob size, see
+    :vartype failOnUnprocessableDocument: bool
+    :ivar indexStorageMetadataOnlyForOversizedDocuments: For Azure blobs, set this property to true
+     to still index storage metadata for blob content that is too large to process. Oversized blobs
+     are treated as errors by default. For limits on blob size, see
      `https://learn.microsoft.com/azure/search/search-limits-quotas-capacity
      <https://learn.microsoft.com/azure/search/search-limits-quotas-capacity>`_.
-    :vartype index_storage_metadata_only_for_oversized_documents: bool
-    :ivar delimited_text_headers: For CSV blobs, specifies a comma-delimited list of column
-     headers, useful for mapping source fields to destination fields in an index.
-    :vartype delimited_text_headers: str
-    :ivar delimited_text_delimiter: For CSV blobs, specifies the end-of-line single-character
+    :vartype indexStorageMetadataOnlyForOversizedDocuments: bool
+    :ivar delimitedTextHeaders: For CSV blobs, specifies a comma-delimited list of column headers,
+     useful for mapping source fields to destination fields in an index.
+    :vartype delimitedTextHeaders: str
+    :ivar delimitedTextDelimiter: For CSV blobs, specifies the end-of-line single-character
      delimiter for CSV files where each line starts a new document (for example, "|").
-    :vartype delimited_text_delimiter: str
-    :ivar first_line_contains_headers: For CSV blobs, indicates that the first (non-blank) line of
+    :vartype delimitedTextDelimiter: str
+    :ivar firstLineContainsHeaders: For CSV blobs, indicates that the first (non-blank) line of
      each blob contains headers.
-    :vartype first_line_contains_headers: bool
-    :ivar markdown_parsing_submode: Specifies the submode that will determine whether a markdown
-     file will be parsed into exactly one search document or multiple search documents. Default is
+    :vartype firstLineContainsHeaders: bool
+    :ivar markdownParsingSubmode: Specifies the submode that will determine whether a markdown file
+     will be parsed into exactly one search document or multiple search documents. Default is
      ``oneToMany``. Known values are: "oneToMany" and "oneToOne".
-    :vartype markdown_parsing_submode: Union[str, "MarkdownParsingSubmode"]
-    :ivar markdown_header_depth: Specifies the max header depth that will be considered while
+    :vartype markdownParsingSubmode: Union[str, "MarkdownParsingSubmode"]
+    :ivar markdownHeaderDepth: Specifies the max header depth that will be considered while
      grouping markdown content. Default is ``h6``. Known values are: "h1", "h2", "h3", "h4", "h5",
      and "h6".
-    :vartype markdown_header_depth: Union[str, "MarkdownHeaderDepth"]
-    :ivar document_root: For JSON arrays, given a structured or semi-structured document, you can
+    :vartype markdownHeaderDepth: Union[str, "MarkdownHeaderDepth"]
+    :ivar documentRoot: For JSON arrays, given a structured or semi-structured document, you can
      specify a path to the array using this property.
-    :vartype document_root: str
-    :ivar data_to_extract: Specifies the data to extract from Azure blob storage and tells the
+    :vartype documentRoot: str
+    :ivar dataToExtract: Specifies the data to extract from Azure blob storage and tells the
      indexer which data to extract from image content when "imageAction" is set to a value other
      than "none".  This applies to embedded image content in a .PDF or other application, or image
      files such as .jpg and .png, in Azure blobs. Known values are: "storageMetadata",
      "allMetadata", and "contentAndMetadata".
-    :vartype data_to_extract: Union[str, "BlobIndexerDataToExtract"]
-    :ivar image_action: Determines how to process embedded images and image files in Azure blob
+    :vartype dataToExtract: Union[str, "BlobIndexerDataToExtract"]
+    :ivar imageAction: Determines how to process embedded images and image files in Azure blob
      storage.  Setting the "imageAction" configuration to any value other than "none" requires that
      a skillset also be attached to that indexer. Known values are: "none",
      "generateNormalizedImages", and "generateNormalizedImagePerPage".
-    :vartype image_action: Union[str, "BlobIndexerImageAction"]
-    :ivar allow_skillset_to_read_file_data: If true, will create a path //document//file_data that
-     is an object representing the original file data downloaded from your blob data source. This
-     allows you to pass the original file data to a custom skill for processing within the
-     enrichment pipeline, or to the Document Extraction skill.
-    :vartype allow_skillset_to_read_file_data: bool
-    :ivar pdf_text_rotation_algorithm: Determines algorithm for text extraction from PDF files in
+    :vartype imageAction: Union[str, "BlobIndexerImageAction"]
+    :ivar allowSkillsetToReadFileData: If true, will create a path //document//file_data that is an
+     object representing the original file data downloaded from your blob data source. This allows
+     you to pass the original file data to a custom skill for processing within the enrichment
+     pipeline, or to the Document Extraction skill.
+    :vartype allowSkillsetToReadFileData: bool
+    :ivar pdfTextRotationAlgorithm: Determines algorithm for text extraction from PDF files in
      Azure blob storage. Known values are: "none" and "detectAngles".
-    :vartype pdf_text_rotation_algorithm: Union[str, "BlobIndexerPDFTextRotationAlgorithm"]
-    :ivar execution_environment: Specifies the environment in which the indexer should execute.
+    :vartype pdfTextRotationAlgorithm: Union[str, "BlobIndexerPDFTextRotationAlgorithm"]
+    :ivar executionEnvironment: Specifies the environment in which the indexer should execute.
      Known values are: "standard" and "private".
-    :vartype execution_environment: Union[str, "IndexerExecutionEnvironment"]
-    :ivar query_timeout: Increases the timeout beyond the 5-minute default for Azure SQL database
+    :vartype executionEnvironment: Union[str, "IndexerExecutionEnvironment"]
+    :ivar queryTimeout: Increases the timeout beyond the 5-minute default for Azure SQL database
      data sources, specified in the format "hh:mm:ss".
-    :vartype query_timeout: str
+    :vartype queryTimeout: str
     """
 
     parsingMode: Union[str, "BlobIndexerParsingMode"]
@@ -2947,8 +2941,8 @@ class IndexingSchedule(TypedDict, total=False):
 
     :ivar interval: The interval of time between indexer executions. Required.
     :vartype interval: str
-    :ivar start_time: The time when an indexer should start running.
-    :vartype start_time: str
+    :ivar startTime: The time when an indexer should start running.
+    :vartype startTime: str
     """
 
     interval: Required[str]
@@ -2964,8 +2958,8 @@ class InputFieldMappingEntry(TypedDict, total=False):
     :vartype name: str
     :ivar source: The source of the input.
     :vartype source: str
-    :ivar source_context: The source context used for selecting recursive inputs.
-    :vartype source_context: str
+    :ivar sourceContext: The source context used for selecting recursive inputs.
+    :vartype sourceContext: str
     :ivar inputs: The recursive inputs used when creating a complex type.
     :vartype inputs: list["InputFieldMappingEntry"]
     """
@@ -2997,14 +2991,14 @@ token filter is implemented using Apache Lucene.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar keep_words: The list of words to keep. Required.
-:vartype keep_words: list[str]
-:ivar lower_case_keep_words: A value indicating whether to lower case all words first. Default
- is false.
-:vartype lower_case_keep_words: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar keepWords: The list of words to keep. Required.
+:vartype keepWords: list[str]
+:ivar keepWordsCase: A value indicating whether to lower case all words first. Default is
+ false.
+:vartype keepWordsCase: bool
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.KeepTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.KeepTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.KeepTokenFilter"]
 """
 
 
@@ -3041,20 +3035,20 @@ KeyPhraseExtractionSkill.__doc__ = """A skill that uses text analytics for key p
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+:ivar defaultLanguageCode: A value indicating which language code to use. Default is ``en``.
  Known values are: "da", "nl", "en", "fi", "fr", "de", "it", "ja", "ko", "no", "pl", "pt-PT",
  "pt-BR", "ru", "es", and "sv".
-:vartype default_language_code: Union[str, "KeyPhraseExtractionSkillLanguage"]
-:ivar max_key_phrase_count: A number indicating how many key phrases to return. If absent, all
+:vartype defaultLanguageCode: Union[str, "KeyPhraseExtractionSkillLanguage"]
+:ivar maxKeyPhraseCount: A number indicating how many key phrases to return. If absent, all
  identified key phrases will be returned.
-:vartype max_key_phrase_count: int
-:ivar model_version: The version of the model to use when calling the Text Analytics service.
- It will default to the latest available when not specified. We recommend you do not specify
- this value unless absolutely necessary.
-:vartype model_version: str
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype maxKeyPhraseCount: int
+:ivar modelVersion: The version of the model to use when calling the Text Analytics service. It
+ will default to the latest available when not specified. We recommend you do not specify this
+ value unless absolutely necessary.
+:vartype modelVersion: str
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.KeyPhraseExtractionSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Text.KeyPhraseExtractionSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Text.KeyPhraseExtractionSkill"]
 """
 
 
@@ -3076,12 +3070,12 @@ KeywordMarkerTokenFilter.__doc__ = """Marks terms as keywords. This token filter
 :vartype name: str
 :ivar keywords: A list of words to mark as keywords. Required.
 :vartype keywords: list[str]
-:ivar ignore_case: A value indicating whether to ignore case. If true, all words are converted
+:ivar ignoreCase: A value indicating whether to ignore case. If true, all words are converted
  to lower case first. Default is false.
-:vartype ignore_case: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:vartype ignoreCase: bool
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.KeywordMarkerTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.KeywordMarkerTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.KeywordMarkerTokenFilter"]
 """
 
 
@@ -3100,11 +3094,11 @@ KeywordTokenizer.__doc__ = """Emits the entire input as a single token. This tok
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar buffer_size: The read buffer size in bytes. Default is 256.
-:vartype buffer_size: int
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:ivar bufferSize: The read buffer size in bytes. Default is 256.
+:vartype bufferSize: int
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.KeywordTokenizer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.KeywordTokenizer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.KeywordTokenizer"]
 """
 
 
@@ -3123,12 +3117,12 @@ KeywordTokenizerV2.__doc__ = """Emits the entire input as a single token. This t
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar max_token_length: The maximum token length. Default is 256. Tokens longer than the
- maximum length are split. The maximum token length that can be used is 300 characters.
-:vartype max_token_length: int
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:ivar maxTokenLength: The maximum token length. Default is 256. Tokens longer than the maximum
+ length are split. The maximum token length that can be used is 300 characters.
+:vartype maxTokenLength: int
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.KeywordTokenizerV2".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.KeywordTokenizerV2"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.KeywordTokenizerV2"]
 """
 
 
@@ -3155,37 +3149,37 @@ KnowledgeBase.__doc__ = """Represents a knowledge base definition.
 
 :ivar name: The name of the knowledge base. Required.
 :vartype name: str
-:ivar knowledge_sources: Knowledge sources referenced by this knowledge base. Required.
-:vartype knowledge_sources: list["KnowledgeSourceReference"]
+:ivar knowledgeSources: Knowledge sources referenced by this knowledge base. Required.
+:vartype knowledgeSources: list["KnowledgeSourceReference"]
 :ivar models: Contains configuration options on how to connect to AI models.
 :vartype models: list["KnowledgeBaseModel"]
-:ivar retrieval_reasoning_effort: The retrieval reasoning effort configuration.
-:vartype retrieval_reasoning_effort: "KnowledgeRetrievalReasoningEffort"
-:ivar output_mode: The output mode for the knowledge base. Known values are: "extractiveData"
+:ivar retrievalReasoningEffort: The retrieval reasoning effort configuration.
+:vartype retrievalReasoningEffort: "KnowledgeRetrievalReasoningEffort"
+:ivar outputMode: The output mode for the knowledge base. Known values are: "extractiveData"
  and "answerSynthesis".
-:vartype output_mode: Union[str, "KnowledgeRetrievalOutputMode"]
-:ivar e_tag: The ETag of the knowledge base.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype outputMode: Union[str, "KnowledgeRetrievalOutputMode"]
+:ivar @odata.etag: The ETag of the knowledge base.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar description: The description of the knowledge base.
 :vartype description: str
 :ivar tags: User-defined key-value pairs for categorizing the knowledge base and attributing
  its usage and costs.
 :vartype tags: dict[str, str]
-:ivar retrieval_instructions: Instructions considered by the knowledge base when developing
+:ivar retrievalInstructions: Instructions considered by the knowledge base when developing
  query plan.
-:vartype retrieval_instructions: str
-:ivar answer_instructions: Instructions considered by the knowledge base when generating
+:vartype retrievalInstructions: str
+:ivar answerInstructions: Instructions considered by the knowledge base when generating
  answers.
-:vartype answer_instructions: str
-:ivar cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the knowledge
+:vartype answerInstructions: str
+:ivar corsOptions: Options to control Cross-Origin Resource Sharing (CORS) for the knowledge
  base.
-:vartype cors_options: "CorsOptions"
-:ivar retrieve_defaults: Persisted request-wide retrieve defaults for this knowledge base.
- These values apply to retrieve requests that omit the corresponding fields; request-time values
- take precedence when present.
-:vartype retrieve_defaults: "KnowledgeBaseRetrieveDefaults"
+:vartype corsOptions: "CorsOptions"
+:ivar retrieveDefaults: Persisted request-wide retrieve defaults for this knowledge base. These
+ values apply to retrieve requests that omit the corresponding fields; request-time values take
+ precedence when present.
+:vartype retrieveDefaults: "KnowledgeBaseRetrieveDefaults"
 """
 
 
@@ -3194,8 +3188,8 @@ class KnowledgeBaseAzureOpenAIModel(TypedDict, total=False):
 
     :ivar kind: Required. Use Azure Open AI models for query planning.
     :vartype kind: Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI]
-    :ivar azure_open_ai_parameters: Azure OpenAI parameters. Required.
-    :vartype azure_open_ai_parameters: "AzureOpenAIVectorizerParameters"
+    :ivar azureOpenAIParameters: Azure OpenAI parameters. Required.
+    :vartype azureOpenAIParameters: "AzureOpenAIVectorizerParameters"
     """
 
     kind: Required[Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI]]
@@ -3209,13 +3203,13 @@ class KnowledgeBaseRetrieveDefaults(TypedDict, total=False):
     default for the matching retrieve-request field; service defaults apply when unset, and
     request-time values take precedence when present.
 
-    :ivar max_runtime_in_seconds: The default maximum runtime in seconds for a retrieve request.
-    :vartype max_runtime_in_seconds: int
-    :ivar max_output_documents: The default maximum number of documents in the retrieve output.
-    :vartype max_output_documents: int
-    :ivar max_output_size_in_tokens: The default maximum size, in tokens, of the content in the
+    :ivar maxRuntimeInSeconds: The default maximum runtime in seconds for a retrieve request.
+    :vartype maxRuntimeInSeconds: int
+    :ivar maxOutputDocuments: The default maximum number of documents in the retrieve output.
+    :vartype maxOutputDocuments: int
+    :ivar maxOutputSizeInTokens: The default maximum size, in tokens, of the content in the
      retrieve output.
-    :vartype max_output_size_in_tokens: int
+    :vartype maxOutputSizeInTokens: int
     """
 
     maxRuntimeInSeconds: int
@@ -3231,14 +3225,14 @@ class KnowledgeSourceReference(TypedDict, total=False):
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source. When true, images extracted during ingestion are delivered to downstream
-     models at query time.
-    :vartype enable_image_serving: bool
-    :ivar enable_freshness: Indicates whether freshness-aware retrieval should be enabled for this
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source. When true, images extracted during ingestion are delivered to downstream models at
+     query time.
+    :vartype enableImageServing: bool
+    :ivar enableFreshness: Indicates whether freshness-aware retrieval should be enabled for this
      knowledge source. When true, a freshness scoring profile is applied during retrieval to bias
      results toward newer documents.
-    :vartype enable_freshness: bool
+    :vartype enableFreshness: bool
     """
 
     name: Required[str]
@@ -3286,16 +3280,16 @@ confidence of the analysis.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar default_country_hint: A country code to use as a hint to the language detection model if
- it cannot disambiguate the language.
-:vartype default_country_hint: str
-:ivar model_version: The version of the model to use when calling the Text Analytics service.
- It will default to the latest available when not specified. We recommend you do not specify
- this value unless absolutely necessary.
-:vartype model_version: str
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar defaultCountryHint: A country code to use as a hint to the language detection model if it
+ cannot disambiguate the language.
+:vartype defaultCountryHint: str
+:ivar modelVersion: The version of the model to use when calling the Text Analytics service. It
+ will default to the latest available when not specified. We recommend you do not specify this
+ value unless absolutely necessary.
+:vartype modelVersion: str
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.LanguageDetectionSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Text.LanguageDetectionSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Text.LanguageDetectionSkill"]
 """
 
 
@@ -3316,14 +3310,14 @@ Lucene.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar min_length: The minimum length in characters. Default is 0. Maximum is 300. Must be less
- than the value of max.
-:vartype min_length: int
-:ivar max_length: The maximum length in characters. Default and maximum is 300.
-:vartype max_length: int
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar min: The minimum length in characters. Default is 0. Maximum is 300. Must be less than
+ the value of max.
+:vartype min: int
+:ivar max: The maximum length in characters. Default and maximum is 300.
+:vartype max: int
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.LengthTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.LengthTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.LengthTokenFilter"]
 """
 
 
@@ -3344,14 +3338,14 @@ Lucene.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar max_token_count: The maximum number of tokens to produce. Default is 1.
-:vartype max_token_count: int
-:ivar consume_all_tokens: A value indicating whether all tokens from the input must be consumed
+:ivar maxTokenCount: The maximum number of tokens to produce. Default is 1.
+:vartype maxTokenCount: int
+:ivar consumeAllTokens: A value indicating whether all tokens from the input must be consumed
  even if maxTokenCount is reached. Default is false.
-:vartype consume_all_tokens: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:vartype consumeAllTokens: bool
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.LimitTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.LimitTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.LimitTokenFilter"]
 """
 
 
@@ -3372,14 +3366,14 @@ filter.
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar max_token_length: The maximum token length. Default is 255. Tokens longer than the
- maximum length are split. The maximum token length that can be used is 300 characters.
-:vartype max_token_length: int
+:ivar maxTokenLength: The maximum token length. Default is 255. Tokens longer than the maximum
+ length are split. The maximum token length that can be used is 300 characters.
+:vartype maxTokenLength: int
 :ivar stopwords: A list of stopwords.
 :vartype stopwords: list[str]
-:ivar odata_type: A URI fragment specifying the type of analyzer. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of analyzer. Required. Default value is
  "#Microsoft.Azure.Search.StandardAnalyzer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.StandardAnalyzer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.StandardAnalyzer"]
 """
 
 
@@ -3399,12 +3393,12 @@ Apache Lucene.
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar max_token_length: The maximum token length. Default is 255. Tokens longer than the
- maximum length are split.
-:vartype max_token_length: int
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:ivar maxTokenLength: The maximum token length. Default is 255. Tokens longer than the maximum
+ length are split.
+:vartype maxTokenLength: int
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.StandardTokenizer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.StandardTokenizer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.StandardTokenizer"]
 """
 
 
@@ -3424,20 +3418,20 @@ Apache Lucene.
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar max_token_length: The maximum token length. Default is 255. Tokens longer than the
- maximum length are split. The maximum token length that can be used is 300 characters.
-:vartype max_token_length: int
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:ivar maxTokenLength: The maximum token length. Default is 255. Tokens longer than the maximum
+ length are split. The maximum token length that can be used is 300 characters.
+:vartype maxTokenLength: int
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.StandardTokenizerV2".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.StandardTokenizerV2"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.StandardTokenizerV2"]
 """
 
 
 class MagnitudeScoringFunction(TypedDict, total=False):
     """Defines a function that boosts scores based on the magnitude of a numeric field.
 
-    :ivar field_name: The name of the field used as input to the scoring function. Required.
-    :vartype field_name: str
+    :ivar fieldName: The name of the field used as input to the scoring function. Required.
+    :vartype fieldName: str
     :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
      Required.
     :vartype boost: float
@@ -3445,8 +3439,8 @@ class MagnitudeScoringFunction(TypedDict, total=False):
      scores; defaults to "Linear". Known values are: "linear", "constant", "quadratic", and
      "logarithmic".
     :vartype interpolation: Union[str, "ScoringFunctionInterpolation"]
-    :ivar parameters: Parameter values for the magnitude scoring function. Required.
-    :vartype parameters: "MagnitudeScoringParameters"
+    :ivar magnitude: Parameter values for the magnitude scoring function. Required.
+    :vartype magnitude: "MagnitudeScoringParameters"
     :ivar type: Indicates the type of function to use. Valid values include magnitude, freshness,
      distance, and tag. The function type must be lower case. Required. Default value is
      "magnitude".
@@ -3470,13 +3464,13 @@ class MagnitudeScoringFunction(TypedDict, total=False):
 class MagnitudeScoringParameters(TypedDict, total=False):
     """Provides parameter values to a magnitude scoring function.
 
-    :ivar boosting_range_start: The field value at which boosting starts. Required.
-    :vartype boosting_range_start: float
-    :ivar boosting_range_end: The field value at which boosting ends. Required.
-    :vartype boosting_range_end: float
-    :ivar should_boost_beyond_range_by_constant: A value indicating whether to apply a constant
-     boost for field values beyond the range end value; default is false.
-    :vartype should_boost_beyond_range_by_constant: bool
+    :ivar boostingRangeStart: The field value at which boosting starts. Required.
+    :vartype boostingRangeStart: float
+    :ivar boostingRangeEnd: The field value at which boosting ends. Required.
+    :vartype boostingRangeEnd: float
+    :ivar constantBoostBeyondRange: A value indicating whether to apply a constant boost for field
+     values beyond the range end value; default is false.
+    :vartype constantBoostBeyondRange: bool
     """
 
     boostingRangeStart: Required[float]
@@ -3508,9 +3502,9 @@ string. This character filter is implemented using Apache Lucene.
 :ivar mappings: A list of mappings of the following format: "a=>b" (all occurrences of the
  character "a" will be replaced with character "b"). Required.
 :vartype mappings: list[str]
-:ivar odata_type: A URI fragment specifying the type of char filter. Required. Default value is
- "#Microsoft.Azure.Search.MappingCharFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.MappingCharFilter"]
+:ivar @odata.type: A URI fragment specifying the type of char filter. Required. Default value
+ is "#Microsoft.Azure.Search.MappingCharFilter".
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.MappingCharFilter"]
 """
 
 
@@ -3533,9 +3527,8 @@ class McpServerFoundryConnectionAuthentication(TypedDict, total=False):
     :ivar kind: The discriminator value. Required. Authenticate using an Azure AI Foundry
      connection.
     :vartype kind: Literal[McpServerAuthenticationKind.FOUNDRY_CONNECTION]
-    :ivar foundry_connection_parameters: Parameters for Foundry connection authentication.
-     Required.
-    :vartype foundry_connection_parameters: "McpServerFoundryConnectionParameters"
+    :ivar foundryConnectionParameters: Parameters for Foundry connection authentication. Required.
+    :vartype foundryConnectionParameters: "McpServerFoundryConnectionParameters"
     """
 
     kind: Required[Literal[McpServerAuthenticationKind.FOUNDRY_CONNECTION]]
@@ -3547,8 +3540,8 @@ class McpServerFoundryConnectionAuthentication(TypedDict, total=False):
 class McpServerFoundryConnectionParameters(TypedDict, total=False):
     """Parameters for Foundry connection authentication.
 
-    :ivar connection_id: The Azure AI Foundry connection identifier.
-    :vartype connection_id: str
+    :ivar connectionId: The Azure AI Foundry connection identifier.
+    :vartype connectionId: str
     """
 
     connectionId: str
@@ -3565,9 +3558,9 @@ class McpServerJsonOutputParsing(TypedDict, total=False):
     :ivar kind: The discriminator value. Required. Parse the output as a JSON document using the
      configured JSON parameters.
     :vartype kind: Literal[McpServerOutputParsingKind.JSON]
-    :ivar json_parameters: Parameters for JSON output parsing. Required when kind is 'json'.
+    :ivar jsonParameters: Parameters for JSON output parsing. Required when kind is 'json'.
      Required.
-    :vartype json_parameters: "McpServerOutputParsingJsonParameters"
+    :vartype jsonParameters: "McpServerOutputParsingJsonParameters"
     """
 
     kind: Required[Literal[McpServerOutputParsingKind.JSON]]
@@ -3596,13 +3589,13 @@ McpServerKnowledgeSource.__doc__ = """Configuration for a knowledge source backe
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -3610,20 +3603,20 @@ McpServerKnowledgeSource.__doc__ = """Configuration for a knowledge source backe
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: The discriminator value. Required. A knowledge source backed by an MCP (Model
  Context Protocol) server.
 :vartype kind: Literal[KnowledgeSourceKind.MCP_SERVER]
-:ivar mcp_server_parameters: The parameters for the MCP server knowledge source. Required.
-:vartype mcp_server_parameters: "McpServerKnowledgeSourceParameters"
+:ivar mcpServerParameters: The parameters for the MCP server knowledge source. Required.
+:vartype mcpServerParameters: "McpServerKnowledgeSourceParameters"
 """
 
 
 class McpServerKnowledgeSourceParameters(TypedDict, total=False):
     """Parameters for an MCP server knowledge source.
 
-    :ivar server_url: The URL of the MCP server endpoint. Required.
-    :vartype server_url: str
+    :ivar serverURL: The URL of the MCP server endpoint. Required.
+    :vartype serverURL: str
     :ivar authentication: The authentication configuration for the MCP server.
     :vartype authentication: "McpServerAuthentication"
     :ivar tools: The list of tools to invoke on the MCP server. Required.
@@ -3653,11 +3646,11 @@ class McpServerNoneOutputParsing(TypedDict, total=False):
 class McpServerOutputParsingJsonParameters(TypedDict, total=False):
     """Parameters for JSON output parsing.
 
-    :ivar documents_path: The JSON path to the array of documents in the tool output. Required.
-    :vartype documents_path: str
-    :ivar include_context: Whether to include surrounding context from the JSON output alongside
+    :ivar documentsPath: The JSON path to the array of documents in the tool output. Required.
+    :vartype documentsPath: str
+    :ivar includeContext: Whether to include surrounding context from the JSON output alongside
      extracted documents.
-    :vartype include_context: bool
+    :vartype includeContext: bool
     """
 
     documentsPath: Required[str]
@@ -3669,19 +3662,19 @@ class McpServerOutputParsingJsonParameters(TypedDict, total=False):
 class McpServerOutputParsingSplitParameters(TypedDict, total=False):
     """Parameters for split output parsing.
 
-    :ivar text_split_mode: The text split mode to use. Known values are: "pages" and "sentences".
-    :vartype text_split_mode: Union[str, "TextSplitMode"]
-    :ivar maximum_page_length: The maximum number of characters per page.
-    :vartype maximum_page_length: int
-    :ivar page_overlap_length: The number of characters to overlap between pages.
-    :vartype page_overlap_length: int
-    :ivar maximum_pages_to_take: The maximum number of pages to take from the output.
-    :vartype maximum_pages_to_take: int
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar textSplitMode: The text split mode to use. Known values are: "pages" and "sentences".
+    :vartype textSplitMode: Union[str, "TextSplitMode"]
+    :ivar maximumPageLength: The maximum number of characters per page.
+    :vartype maximumPageLength: int
+    :ivar pageOverlapLength: The number of characters to overlap between pages.
+    :vartype pageOverlapLength: int
+    :ivar maximumPagesToTake: The maximum number of pages to take from the output.
+    :vartype maximumPagesToTake: int
+    :ivar defaultLanguageCode: A value indicating which language code to use. Default is ``en``.
      Known values are: "am", "bs", "cs", "da", "de", "en", "es", "et", "fi", "fr", "he", "hi", "hr",
      "hu", "id", "is", "it", "ja", "ko", "lv", "nb", "nl", "pl", "pt", "pt-br", "ru", "sk", "sl",
      "sr", "sv", "tr", "ur", and "zh".
-    :vartype default_language_code: Union[str, "SplitSkillLanguage"]
+    :vartype defaultLanguageCode: Union[str, "SplitSkillLanguage"]
     """
 
     textSplitMode: Union[str, "TextSplitMode"]
@@ -3705,8 +3698,8 @@ class McpServerSplitOutputParsing(TypedDict, total=False):
     :ivar kind: The discriminator value. Required. Split the output into pages using the configured
      split parameters.
     :vartype kind: Literal[McpServerOutputParsingKind.SPLIT]
-    :ivar split_parameters: Parameters for split output parsing.
-    :vartype split_parameters: "McpServerOutputParsingSplitParameters"
+    :ivar splitParameters: Parameters for split output parsing.
+    :vartype splitParameters: "McpServerOutputParsingSplitParameters"
     """
 
     kind: Required[Literal[McpServerOutputParsingKind.SPLIT]]
@@ -3721,8 +3714,8 @@ class McpServerStoredHeadersAuthentication(TypedDict, total=False):
 
     :ivar kind: The discriminator value. Required. Authenticate using stored HTTP headers.
     :vartype kind: Literal[McpServerAuthenticationKind.STORED_HEADERS]
-    :ivar stored_headers_parameters: Parameters for stored headers authentication. Required.
-    :vartype stored_headers_parameters: "McpServerStoredHeadersParameters"
+    :ivar storedHeadersParameters: Parameters for stored headers authentication. Required.
+    :vartype storedHeadersParameters: "McpServerStoredHeadersParameters"
     """
 
     kind: Required[Literal[McpServerAuthenticationKind.STORED_HEADERS]]
@@ -3747,14 +3740,14 @@ class McpServerTool(TypedDict, total=False):
 
     :ivar name: The name of the MCP tool to invoke.
     :vartype name: str
-    :ivar output_parsing: Optional configuration for parsing the tool's output.
-    :vartype output_parsing: "McpServerOutputParsing"
-    :ivar results_processing: Controls whether the parsed results from this tool are reranked.
+    :ivar outputParsing: Optional configuration for parsing the tool's output.
+    :vartype outputParsing: "McpServerOutputParsing"
+    :ivar resultsProcessing: Controls whether the parsed results from this tool are reranked.
      Defaults to 'rerank' when not specified. Known values are: "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_tokens: Optional post-parsing token cap for this tool's output. Must be
-     greater than 0 when specified.
-    :vartype max_output_tokens: int
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputTokens: Optional post-parsing token cap for this tool's output. Must be greater
+     than 0 when specified.
+    :vartype maxOutputTokens: int
     """
 
     name: str
@@ -3801,15 +3794,15 @@ user-defined delimiter separating each component part.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar insert_pre_tag: The tag indicates the start of the merged text. By default, the tag is an
+:ivar insertPreTag: The tag indicates the start of the merged text. By default, the tag is an
  empty space.
-:vartype insert_pre_tag: str
-:ivar insert_post_tag: The tag indicates the end of the merged text. By default, the tag is an
+:vartype insertPreTag: str
+:ivar insertPostTag: The tag indicates the end of the merged text. By default, the tag is an
  empty space.
-:vartype insert_post_tag: str
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype insertPostTag: str
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.MergeSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Text.MergeSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Text.MergeSkill"]
 """
 
 
@@ -3830,14 +3823,14 @@ MicrosoftLanguageStemmingTokenizer.__doc__ = """Divides text using language-spec
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar max_token_length: The maximum token length. Tokens longer than the maximum length are
+:ivar maxTokenLength: The maximum token length. Tokens longer than the maximum length are
  split. Maximum token length that can be used is 300 characters. Tokens longer than 300
  characters are first split into tokens of length 300 and then each of those tokens is split
  based on the max token length set. Default is 255.
-:vartype max_token_length: int
-:ivar is_search_tokenizer: A value indicating how the tokenizer is used. Set to true if used as
+:vartype maxTokenLength: int
+:ivar isSearchTokenizer: A value indicating how the tokenizer is used. Set to true if used as
  the search tokenizer, set to false if used as the indexing tokenizer. Default is false.
-:vartype is_search_tokenizer: bool
+:vartype isSearchTokenizer: bool
 :ivar language: The language to use. The default is English. Known values are: "arabic",
  "bangla", "bulgarian", "catalan", "croatian", "czech", "danish", "dutch", "english",
  "estonian", "finnish", "french", "german", "greek", "gujarati", "hebrew", "hindi", "hungarian",
@@ -3846,9 +3839,9 @@ MicrosoftLanguageStemmingTokenizer.__doc__ = """Divides text using language-spec
  "romanian", "russian", "serbianCyrillic", "serbianLatin", "slovak", "slovenian", "spanish",
  "swedish", "tamil", "telugu", "turkish", "ukrainian", and "urdu".
 :vartype language: Union[str, "MicrosoftStemmingTokenizerLanguage"]
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"]
 """
 
 
@@ -3869,14 +3862,14 @@ MicrosoftLanguageTokenizer.__doc__ = """Divides text using language-specific rul
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar max_token_length: The maximum token length. Tokens longer than the maximum length are
+:ivar maxTokenLength: The maximum token length. Tokens longer than the maximum length are
  split. Maximum token length that can be used is 300 characters. Tokens longer than 300
  characters are first split into tokens of length 300 and then each of those tokens is split
  based on the max token length set. Default is 255.
-:vartype max_token_length: int
-:ivar is_search_tokenizer: A value indicating how the tokenizer is used. Set to true if used as
+:vartype maxTokenLength: int
+:ivar isSearchTokenizer: A value indicating how the tokenizer is used. Set to true if used as
  the search tokenizer, set to false if used as the indexing tokenizer. Default is false.
-:vartype is_search_tokenizer: bool
+:vartype isSearchTokenizer: bool
 :ivar language: The language to use. The default is English. Known values are: "bangla",
  "bulgarian", "catalan", "chineseSimplified", "chineseTraditional", "croatian", "czech",
  "danish", "dutch", "english", "french", "german", "greek", "gujarati", "hindi", "icelandic",
@@ -3885,9 +3878,9 @@ MicrosoftLanguageTokenizer.__doc__ = """Divides text using language-specific rul
  "russian", "serbianCyrillic", "serbianLatin", "slovenian", "spanish", "swedish", "tamil",
  "telugu", "thai", "ukrainian", "urdu", and "vietnamese".
 :vartype language: Union[str, "MicrosoftTokenizerLanguage"]
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.MicrosoftLanguageTokenizer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageTokenizer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageTokenizer"]
 """
 
 
@@ -3901,10 +3894,10 @@ NativeBlobSoftDeleteDeletionDetectionPolicy = TypedDict(
 NativeBlobSoftDeleteDeletionDetectionPolicy.__doc__ = """Defines a data deletion detection policy utilizing Azure Blob Storage's native soft delete
 feature for deletion detection.
 
-:ivar odata_type: A URI fragment specifying the type of data deletion detection policy.
+:ivar @odata.type: A URI fragment specifying the type of data deletion detection policy.
  Required. Default value is
  "#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy".
-:vartype odata_type:
+:vartype @odata.type:
  Literal["#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy"]
 """
 
@@ -3925,14 +3918,13 @@ NGramTokenFilter.__doc__ = """Generates n-grams of the given size(s). This token
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar min_gram: The minimum n-gram length. Default is 1. Must be less than the value of
- maxGram.
-:vartype min_gram: int
-:ivar max_gram: The maximum n-gram length. Default is 2.
-:vartype max_gram: int
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar minGram: The minimum n-gram length. Default is 1. Must be less than the value of maxGram.
+:vartype minGram: int
+:ivar maxGram: The maximum n-gram length. Default is 2.
+:vartype maxGram: int
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.NGramTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.NGramTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.NGramTokenFilter"]
 """
 
 
@@ -3952,14 +3944,14 @@ NGramTokenFilterV2.__doc__ = """Generates n-grams of the given size(s). This tok
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
+:ivar minGram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
  value of maxGram.
-:vartype min_gram: int
-:ivar max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
-:vartype max_gram: int
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:vartype minGram: int
+:ivar maxGram: The maximum n-gram length. Default is 2. Maximum is 300.
+:vartype maxGram: int
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.NGramTokenFilterV2".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.NGramTokenFilterV2"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.NGramTokenFilterV2"]
 """
 
 
@@ -3981,16 +3973,16 @@ Apache Lucene.
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar min_gram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
+:ivar minGram: The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
  value of maxGram.
-:vartype min_gram: int
-:ivar max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
-:vartype max_gram: int
-:ivar token_chars: Character classes to keep in the tokens.
-:vartype token_chars: list[Union[str, "TokenCharacterKind"]]
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:vartype minGram: int
+:ivar maxGram: The maximum n-gram length. Default is 2. Maximum is 300.
+:vartype maxGram: int
+:ivar tokenChars: Character classes to keep in the tokens.
+:vartype tokenChars: list[Union[str, "TokenCharacterKind"]]
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.NGramTokenizer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.NGramTokenizer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.NGramTokenizer"]
 """
 
 
@@ -4027,7 +4019,7 @@ OcrSkill.__doc__ = """A skill that extracts text from image files.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+:ivar defaultLanguageCode: A value indicating which language code to use. Default is ``en``.
  Known values are: "af", "sq", "anp", "ar", "ast", "awa", "az", "bfy", "eu", "be", "be-cyrl",
  "be-latn", "bho", "bi", "brx", "bs", "bra", "br", "bg", "bns", "bua", "ca", "ceb", "rab", "ch",
  "hne", "zh-Hans", "zh-Hant", "kw", "co", "crh", "hr", "cs", "da", "prs", "dhi", "doi", "nl",
@@ -4041,17 +4033,17 @@ OcrSkill.__doc__ = """A skill that extracts text from image files.
  "gd", "sr", "sr-Cyrl", "sr-Latn", "xsr", "srx", "sms", "sk", "sl", "so", "sma", "es", "sw",
  "sv", "tg", "tt", "tet", "thf", "to", "tr", "tk", "tyv", "hsb", "ur", "ug", "uz-arab",
  "uz-cyrl", "uz", "vo", "wae", "cy", "fy", "yua", "za", "zu", and "unk".
-:vartype default_language_code: Union[str, "OcrSkillLanguage"]
-:ivar should_detect_orientation: A value indicating to turn orientation detection on or not.
- Default is false.
-:vartype should_detect_orientation: bool
-:ivar line_ending: Defines the sequence of characters to use between the lines of text
+:vartype defaultLanguageCode: Union[str, "OcrSkillLanguage"]
+:ivar detectOrientation: A value indicating to turn orientation detection on or not. Default is
+ false.
+:vartype detectOrientation: bool
+:ivar lineEnding: Defines the sequence of characters to use between the lines of text
  recognized by the OCR skill. The default value is "space". Known values are: "space",
  "carriageReturn", "lineFeed", and "carriageReturnLineFeed".
-:vartype line_ending: Union[str, "OcrLineEnding"]
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype lineEnding: Union[str, "OcrLineEnding"]
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Vision.OcrSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Vision.OcrSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Vision.OcrSkill"]
 """
 
 
@@ -4060,8 +4052,8 @@ class OutputFieldMappingEntry(TypedDict, total=False):
 
     :ivar name: The name of the output defined by the skill. Required.
     :vartype name: str
-    :ivar target_name: The target name of the output. It is optional and default to name.
-    :vartype target_name: str
+    :ivar targetName: The target name of the output. It is optional and default to name.
+    :vartype targetName: str
     """
 
     name: Required[str]
@@ -4093,16 +4085,16 @@ PathHierarchyTokenizerV2.__doc__ = """Tokenizer for path-like hierarchies. This 
 :vartype delimiter: str
 :ivar replacement: A value that, if set, replaces the delimiter character. Default is "/".
 :vartype replacement: str
-:ivar max_token_length: The maximum token length. Default and maximum is 300.
-:vartype max_token_length: int
-:ivar reverse_token_order: A value indicating whether to generate tokens in reverse order.
- Default is false.
-:vartype reverse_token_order: bool
-:ivar number_of_tokens_to_skip: The number of initial tokens to skip. Default is 0.
-:vartype number_of_tokens_to_skip: int
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:ivar maxTokenLength: The maximum token length. Default and maximum is 300.
+:vartype maxTokenLength: int
+:ivar reverse: A value indicating whether to generate tokens in reverse order. Default is
+ false.
+:vartype reverse: bool
+:ivar skip: The number of initial tokens to skip. Default is 0.
+:vartype skip: int
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.PathHierarchyTokenizerV2".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.PathHierarchyTokenizerV2"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.PathHierarchyTokenizerV2"]
 """
 
 
@@ -4125,9 +4117,8 @@ implemented using Apache Lucene.
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar lower_case_terms: A value indicating whether terms should be lower-cased. Default is
- true.
-:vartype lower_case_terms: bool
+:ivar lowercase: A value indicating whether terms should be lower-cased. Default is true.
+:vartype lowercase: bool
 :ivar pattern: A regular expression pattern to match token separators. Default is an expression
  that matches one or more non-word characters.
 :vartype pattern: str
@@ -4136,9 +4127,9 @@ implemented using Apache Lucene.
 :vartype flags: list[Union[str, "RegexFlags"]]
 :ivar stopwords: A list of stopwords.
 :vartype stopwords: list[str]
-:ivar odata_type: A URI fragment specifying the type of analyzer. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of analyzer. Required. Default value is
  "#Microsoft.Azure.Search.PatternAnalyzer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.PatternAnalyzer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.PatternAnalyzer"]
 """
 
 
@@ -4161,12 +4152,12 @@ This token filter is implemented using Apache Lucene.
 :vartype name: str
 :ivar patterns: A list of patterns to match against each token. Required.
 :vartype patterns: list[str]
-:ivar preserve_original: A value indicating whether to return the original token even if one of
+:ivar preserveOriginal: A value indicating whether to return the original token even if one of
  the patterns matches. Default is true.
-:vartype preserve_original: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:vartype preserveOriginal: bool
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.PatternCaptureTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.PatternCaptureTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.PatternCaptureTokenFilter"]
 """
 
 
@@ -4194,9 +4185,9 @@ using Apache Lucene.
 :vartype pattern: str
 :ivar replacement: The replacement text. Required.
 :vartype replacement: str
-:ivar odata_type: A URI fragment specifying the type of char filter. Required. Default value is
- "#Microsoft.Azure.Search.PatternReplaceCharFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.PatternReplaceCharFilter"]
+:ivar @odata.type: A URI fragment specifying the type of char filter. Required. Default value
+ is "#Microsoft.Azure.Search.PatternReplaceCharFilter".
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.PatternReplaceCharFilter"]
 """
 
 
@@ -4224,9 +4215,9 @@ Apache Lucene.
 :vartype pattern: str
 :ivar replacement: The replacement text. Required.
 :vartype replacement: str
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.PatternReplaceTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.PatternReplaceTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.PatternReplaceTokenFilter"]
 """
 
 
@@ -4258,9 +4249,9 @@ implemented using Apache Lucene.
  extract into tokens. Use -1 if you want to use the entire pattern to split the input into
  tokens, irrespective of matching groups. Default is -1.
 :vartype group: int
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.PatternTokenizer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.PatternTokenizer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.PatternTokenizer"]
 """
 
 
@@ -4284,12 +4275,12 @@ PhoneticTokenFilter.__doc__ = """Create tokens for phonetic matches. This token 
  "metaphone", "doubleMetaphone", "soundex", "refinedSoundex", "caverphone1", "caverphone2",
  "cologne", "nysiis", "koelnerPhonetik", "haasePhonetik", and "beiderMorse".
 :vartype encoder: Union[str, "PhoneticEncoder"]
-:ivar replace_original_tokens: A value indicating whether encoded tokens should replace
- original tokens. If false, encoded tokens are added as synonyms. Default is true.
-:vartype replace_original_tokens: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar replace: A value indicating whether encoded tokens should replace original tokens. If
+ false, encoded tokens are added as synonyms. Default is true.
+:vartype replace: bool
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.PhoneticTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.PhoneticTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.PhoneticTokenFilter"]
 """
 
 
@@ -4331,30 +4322,30 @@ the option of masking it.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar default_language_code: A value indicating which language code to use. Default is ``en``.
-:vartype default_language_code: str
-:ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
+:ivar defaultLanguageCode: A value indicating which language code to use. Default is ``en``.
+:vartype defaultLanguageCode: str
+:ivar minimumPrecision: A value between 0 and 1 that be used to only include entities whose
  confidence score is greater than the value specified. If not set (default), or if explicitly
  set to null, all entities will be included.
-:vartype minimum_precision: float
-:ivar masking_mode: A parameter that provides various ways to mask the personal information
+:vartype minimumPrecision: float
+:ivar maskingMode: A parameter that provides various ways to mask the personal information
  detected in the input text. Default is 'none'. Known values are: "none" and "replace".
-:vartype masking_mode: Union[str, "PIIDetectionSkillMaskingMode"]
-:ivar mask: The character used to mask the text if the maskingMode parameter is set to replace.
- Default is '*'.
-:vartype mask: str
-:ivar model_version: The version of the model to use when calling the Text Analytics service.
- It will default to the latest available when not specified. We recommend you do not specify
- this value unless absolutely necessary.
-:vartype model_version: str
-:ivar pii_categories: A list of PII entity categories that should be extracted and masked.
-:vartype pii_categories: list[str]
+:vartype maskingMode: Union[str, "PIIDetectionSkillMaskingMode"]
+:ivar maskingCharacter: The character used to mask the text if the maskingMode parameter is set
+ to replace. Default is '*'.
+:vartype maskingCharacter: str
+:ivar modelVersion: The version of the model to use when calling the Text Analytics service. It
+ will default to the latest available when not specified. We recommend you do not specify this
+ value unless absolutely necessary.
+:vartype modelVersion: str
+:ivar piiCategories: A list of PII entity categories that should be extracted and masked.
+:vartype piiCategories: list[str]
 :ivar domain: If specified, will set the PII domain to include only a subset of the entity
  categories. Possible values include: 'phi', 'none'. Default is 'none'.
 :vartype domain: str
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.PIIDetectionSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Text.PIIDetectionSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Text.PIIDetectionSkill"]
 """
 
 
@@ -4377,13 +4368,13 @@ RemoteSharePointKnowledgeSource.__doc__ = """Configuration for remote SharePoint
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -4391,27 +4382,27 @@ RemoteSharePointKnowledgeSource.__doc__ = """Configuration for remote SharePoint
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: Required. A knowledge source that reads data from remote SharePoint.
 :vartype kind: Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT]
-:ivar remote_share_point_parameters: The parameters for the remote SharePoint knowledge source.
-:vartype remote_share_point_parameters: "RemoteSharePointKnowledgeSourceParameters"
+:ivar remoteSharePointParameters: The parameters for the remote SharePoint knowledge source.
+:vartype remoteSharePointParameters: "RemoteSharePointKnowledgeSourceParameters"
 """
 
 
 class RemoteSharePointKnowledgeSourceParameters(TypedDict, total=False):  # pylint: disable=name-too-long
     """Parameters for remote SharePoint knowledge source.
 
-    :ivar filter_expression: Keyword Query Language (KQL) expression with queryable SharePoint
+    :ivar filterExpression: Keyword Query Language (KQL) expression with queryable SharePoint
      properties and attributes to scope the retrieval before the query runs.
-    :vartype filter_expression: str
-    :ivar resource_metadata: A list of metadata fields to be returned for each item in the
-     response. Only retrievable metadata properties can be included in this list. By default, no
-     metadata is returned.
-    :vartype resource_metadata: list[str]
-    :ivar container_type_id: Container ID for SharePoint Embedded connection. When this is null, it
+    :vartype filterExpression: str
+    :ivar resourceMetadata: A list of metadata fields to be returned for each item in the response.
+     Only retrievable metadata properties can be included in this list. By default, no metadata is
+     returned.
+    :vartype resourceMetadata: list[str]
+    :ivar containerTypeId: Container ID for SharePoint Embedded connection. When this is null, it
      will use SharePoint Online.
-    :vartype container_type_id: str
+    :vartype containerTypeId: str
     """
 
     filterExpression: str
@@ -4428,19 +4419,19 @@ class RemoteSharePointKnowledgeSourceParameters(TypedDict, total=False):  # pyli
 class RescoringOptions(TypedDict, total=False):
     """Contains the options for rescoring.
 
-    :ivar enable_rescoring: If set to true, after the initial search on the compressed vectors, the
+    :ivar enableRescoring: If set to true, after the initial search on the compressed vectors, the
      similarity scores are recalculated using the full-precision vectors. This will improve recall
      at the expense of latency.
-    :vartype enable_rescoring: bool
-    :ivar default_oversampling: Default oversampling factor. Oversampling retrieves a greater set
-     of potential documents to offset the resolution loss due to quantization. This increases the
-     set of results that will be rescored on full-precision vectors. Minimum value is 1, meaning no
+    :vartype enableRescoring: bool
+    :ivar defaultOversampling: Default oversampling factor. Oversampling retrieves a greater set of
+     potential documents to offset the resolution loss due to quantization. This increases the set
+     of results that will be rescored on full-precision vectors. Minimum value is 1, meaning no
      oversampling (1x). This parameter can only be set when 'enableRescoring' is true. Higher values
      improve recall at the expense of latency.
-    :vartype default_oversampling: float
-    :ivar rescore_storage_method: Controls the storage method for original vectors. This setting is
+    :vartype defaultOversampling: float
+    :ivar rescoreStorageMethod: Controls the storage method for original vectors. This setting is
      immutable. Known values are: "preserveOriginals" and "discardOriginals".
-    :vartype rescore_storage_method: Union[str, "VectorSearchCompressionRescoreStorageMethod"]
+    :vartype rescoreStorageMethod: Union[str, "VectorSearchCompressionRescoreStorageMethod"]
     """
 
     enableRescoring: Optional[bool]
@@ -4462,19 +4453,19 @@ class ScalarQuantizationCompression(TypedDict, total=False):
     """Contains configuration options specific to the scalar quantization compression method used
     during indexing and querying.
 
-    :ivar compression_name: The name to associate with this particular configuration. Required.
-    :vartype compression_name: str
-    :ivar rescoring_options: Contains the options for rescoring.
-    :vartype rescoring_options: "RescoringOptions"
-    :ivar truncation_dimension: The number of dimensions to truncate the vectors to. Truncating the
+    :ivar name: The name to associate with this particular configuration. Required.
+    :vartype name: str
+    :ivar rescoringOptions: Contains the options for rescoring.
+    :vartype rescoringOptions: "RescoringOptions"
+    :ivar truncationDimension: The number of dimensions to truncate the vectors to. Truncating the
      vectors reduces the size of the vectors and the amount of data that needs to be transferred
      during search. This can save storage cost and improve search performance at the expense of
      recall. It should be only used for embeddings trained with Matryoshka Representation Learning
      (MRL) such as OpenAI text-embedding-3-large (small). The default value is null, which means no
      truncation.
-    :vartype truncation_dimension: int
-    :ivar parameters: Contains the parameters specific to Scalar Quantization.
-    :vartype parameters: "ScalarQuantizationParameters"
+    :vartype truncationDimension: int
+    :ivar scalarQuantizationParameters: Contains the parameters specific to Scalar Quantization.
+    :vartype scalarQuantizationParameters: "ScalarQuantizationParameters"
     :ivar kind: The name of the kind of compression method being configured for use with vector
      search. Required. Scalar Quantization, a type of compression method. In scalar quantization,
      the original vectors values are compressed to a narrower type by discretizing and representing
@@ -4506,8 +4497,8 @@ class ScalarQuantizationCompression(TypedDict, total=False):
 class ScalarQuantizationParameters(TypedDict, total=False):
     """Contains the parameters specific to Scalar Quantization.
 
-    :ivar quantized_data_type: The quantized data type of compressed vector values. "int8"
-    :vartype quantized_data_type: Union[str, "VectorSearchCompressionTarget"]
+    :ivar quantizedDataType: The quantized data type of compressed vector values. "int8"
+    :vartype quantizedDataType: Union[str, "VectorSearchCompressionTarget"]
     """
 
     quantizedDataType: Optional[Union[str, "VectorSearchCompressionTarget"]]
@@ -4519,15 +4510,14 @@ class ScoringProfile(TypedDict, total=False):
 
     :ivar name: The name of the scoring profile. Required.
     :vartype name: str
-    :ivar text_weights: Parameters that boost scoring based on text matches in certain index
-     fields.
-    :vartype text_weights: "TextWeights"
+    :ivar text: Parameters that boost scoring based on text matches in certain index fields.
+    :vartype text: "TextWeights"
     :ivar functions: The collection of functions that influence the scoring of documents.
     :vartype functions: list["ScoringFunction"]
-    :ivar function_aggregation: A value indicating how the results of individual scoring functions
+    :ivar functionAggregation: A value indicating how the results of individual scoring functions
      should be combined. Defaults to "Sum". Ignored if there are no scoring functions. Known values
      are: "sum", "average", "minimum", "maximum", "firstMatching", and "product".
-    :vartype function_aggregation: Union[str, "ScoringFunctionAggregation"]
+    :vartype functionAggregation: Union[str, "ScoringFunctionAggregation"]
     """
 
     name: Required[str]
@@ -4559,8 +4549,8 @@ name can be used in place of the index name for supported operations.
 :ivar indexes: The name of the index this alias maps to. Only one index name may be specified.
  Required.
 :vartype indexes: list[str]
-:ivar e_tag: The ETag of the alias.
-:vartype e_tag: str
+:ivar @odata.etag: The ETag of the alias.
+:vartype @odata.etag: str
 """
 
 
@@ -4632,24 +4622,24 @@ class SearchField(TypedDict, total=False):
      Collection(Edm.GeographyPoint) cannot be facetable. Default is true for all other simple
      fields.
     :vartype facetable: bool
-    :ivar permission_filter: A value indicating whether the field should be used as a permission
+    :ivar permissionFilter: A value indicating whether the field should be used as a permission
      filter. Known values are: "userIds", "groupIds", and "rbacScope".
-    :vartype permission_filter: Union[str, "PermissionFilter"]
-    :ivar sensitivity_label_id: A value indicating whether the field should be used for sensitivity
+    :vartype permissionFilter: Union[str, "PermissionFilter"]
+    :ivar sensitivityLabelId: A value indicating whether the field should be used for sensitivity
      label ID filtering. This enables document-level filtering based on Microsoft Purview
      sensitivity label IDs.
-    :vartype sensitivity_label_id: bool
-    :ivar sensitivity_label_name: A value indicating whether the field contains the name of a
+    :vartype sensitivityLabelId: bool
+    :ivar sensitivityLabelName: A value indicating whether the field contains the name of a
      Microsoft Purview sensitivity label applied to the document.
-    :vartype sensitivity_label_name: bool
-    :ivar source_document_id: A value indicating whether the field contains the source document
+    :vartype sensitivityLabelName: bool
+    :ivar sourceDocumentId: A value indicating whether the field contains the source document
      identifier used for Purview audit tracking.
-    :vartype source_document_id: bool
-    :ivar sharepoint_site_url: A value indicating whether the field contains a SharePoint site URL
+    :vartype sourceDocumentId: bool
+    :ivar sharepointSiteUrl: A value indicating whether the field contains a SharePoint site URL
      used for SharePoint group-based filtering.
-    :vartype sharepoint_site_url: bool
-    :ivar analyzer_name: The name of the analyzer to use for the field. This option can be used
-     only with searchable fields and it can't be set together with either searchAnalyzer or
+    :vartype sharepointSiteUrl: bool
+    :ivar analyzer: The name of the analyzer to use for the field. This option can be used only
+     with searchable fields and it can't be set together with either searchAnalyzer or
      indexAnalyzer. Once the analyzer is chosen, it cannot be changed for the field. Must be null
      for complex fields. Known values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft",
      "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft",
@@ -4668,11 +4658,11 @@ class SearchField(TypedDict, total=False):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype analyzer_name: Union[str, "LexicalAnalyzerName"]
-    :ivar search_analyzer_name: The name of the analyzer used at search time for the field. This
-     option can be used only with searchable fields. It must be set together with indexAnalyzer and
-     it cannot be set together with the analyzer option. This property cannot be set to the name of
-     a language analyzer; use the analyzer property instead if you need a language analyzer. This
+    :vartype analyzer: Union[str, "LexicalAnalyzerName"]
+    :ivar searchAnalyzer: The name of the analyzer used at search time for the field. This option
+     can be used only with searchable fields. It must be set together with indexAnalyzer and it
+     cannot be set together with the analyzer option. This property cannot be set to the name of a
+     language analyzer; use the analyzer property instead if you need a language analyzer. This
      analyzer can be updated on an existing field. Must be null for complex fields. Known values
      are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft",
      "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene",
@@ -4691,13 +4681,13 @@ class SearchField(TypedDict, total=False):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype search_analyzer_name: Union[str, "LexicalAnalyzerName"]
-    :ivar index_analyzer_name: The name of the analyzer used at indexing time for the field. This
-     option can be used only with searchable fields. It must be set together with searchAnalyzer and
-     it cannot be set together with the analyzer option.  This property cannot be set to the name of
-     a language analyzer; use the analyzer property instead if you need a language analyzer. Once
-     the analyzer is chosen, it cannot be changed for the field. Must be null for complex fields.
-     Known values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene",
+    :vartype searchAnalyzer: Union[str, "LexicalAnalyzerName"]
+    :ivar indexAnalyzer: The name of the analyzer used at indexing time for the field. This option
+     can be used only with searchable fields. It must be set together with searchAnalyzer and it
+     cannot be set together with the analyzer option.  This property cannot be set to the name of a
+     language analyzer; use the analyzer property instead if you need a language analyzer. Once the
+     analyzer is chosen, it cannot be changed for the field. Must be null for complex fields. Known
+     values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene",
      "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft",
      "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft",
      "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft",
@@ -4714,25 +4704,25 @@ class SearchField(TypedDict, total=False):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype index_analyzer_name: Union[str, "LexicalAnalyzerName"]
-    :ivar normalizer_name: The name of the normalizer to use for the field. This option can be used
-     only with fields with filterable, sortable, or facetable enabled. Once the normalizer is
-     chosen, it cannot be changed for the field. Must be null for complex fields. Known values are:
+    :vartype indexAnalyzer: Union[str, "LexicalAnalyzerName"]
+    :ivar normalizer: The name of the normalizer to use for the field. This option can be used only
+     with fields with filterable, sortable, or facetable enabled. Once the normalizer is chosen, it
+     cannot be changed for the field. Must be null for complex fields. Known values are:
      "asciifolding", "elision", "lowercase", "standard", and "uppercase".
-    :vartype normalizer_name: Union[str, "LexicalNormalizerName"]
-    :ivar vector_search_dimensions: The dimensionality of the vector field.
-    :vartype vector_search_dimensions: int
-    :ivar vector_search_profile_name: The name of the vector search profile that specifies the
-     algorithm and vectorizer to use when searching the vector field.
-    :vartype vector_search_profile_name: str
-    :ivar vector_encoding_format: The encoding format to interpret the field contents. "packedBit"
-    :vartype vector_encoding_format: Union[str, "VectorEncodingFormat"]
-    :ivar synonym_map_names: A list of the names of synonym maps to associate with this field. This
+    :vartype normalizer: Union[str, "LexicalNormalizerName"]
+    :ivar dimensions: The dimensionality of the vector field.
+    :vartype dimensions: int
+    :ivar vectorSearchProfile: The name of the vector search profile that specifies the algorithm
+     and vectorizer to use when searching the vector field.
+    :vartype vectorSearchProfile: str
+    :ivar vectorEncoding: The encoding format to interpret the field contents. "packedBit"
+    :vartype vectorEncoding: Union[str, "VectorEncodingFormat"]
+    :ivar synonymMaps: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
      expanded at query-time using the rules in the synonym map. This attribute can be changed on
      existing fields. Must be null or an empty collection for complex fields.
-    :vartype synonym_map_names: list[str]
+    :vartype synonymMaps: list[str]
     :ivar fields: A list of sub-fields if this is a field of type Edm.ComplexType or
      Collection(Edm.ComplexType). Must be null or empty for simple fields.
     :vartype fields: list["SearchField"]
@@ -4948,27 +4938,27 @@ index.
 :vartype description: str
 :ivar fields: The fields of the index. Required.
 :vartype fields: list["SearchField"]
-:ivar scoring_profiles: The scoring profiles for the index.
-:vartype scoring_profiles: list["ScoringProfile"]
-:ivar default_scoring_profile: The name of the scoring profile to use if none is specified in
- the query. If this property is not set and no scoring profile is specified in the query, then
+:ivar scoringProfiles: The scoring profiles for the index.
+:vartype scoringProfiles: list["ScoringProfile"]
+:ivar defaultScoringProfile: The name of the scoring profile to use if none is specified in the
+ query. If this property is not set and no scoring profile is specified in the query, then
  default scoring (tf-idf) will be used.
-:vartype default_scoring_profile: str
-:ivar cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the index.
-:vartype cors_options: "CorsOptions"
+:vartype defaultScoringProfile: str
+:ivar corsOptions: Options to control Cross-Origin Resource Sharing (CORS) for the index.
+:vartype corsOptions: "CorsOptions"
 :ivar suggesters: The suggesters for the index.
 :vartype suggesters: list["SearchSuggester"]
 :ivar analyzers: The analyzers for the index.
 :vartype analyzers: list["LexicalAnalyzer"]
 :ivar tokenizers: The tokenizers for the index.
 :vartype tokenizers: list["LexicalTokenizer"]
-:ivar token_filters: The token filters for the index.
-:vartype token_filters: list["TokenFilter"]
-:ivar char_filters: The character filters for the index.
-:vartype char_filters: list["CharFilter"]
+:ivar tokenFilters: The token filters for the index.
+:vartype tokenFilters: list["TokenFilter"]
+:ivar charFilters: The character filters for the index.
+:vartype charFilters: list["CharFilter"]
 :ivar normalizers: The normalizers for the index.
 :vartype normalizers: list["LexicalNormalizer"]
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your data when you
  want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
  encrypted your data, it will always remain encrypted. The search service will ignore attempts
@@ -4976,28 +4966,27 @@ index.
  encryption key; Your data will be unaffected. Encryption with customer-managed keys is not
  available for free search services, and is only available for paid services created on or after
  January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar similarity: The type of similarity algorithm to be used when scoring and ranking the
  documents matching a search query. The similarity algorithm can only be defined at index
  creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
  algorithm is used.
 :vartype similarity: "SimilarityAlgorithm"
-:ivar semantic_search: Defines parameters for a search index that influence semantic
- capabilities.
-:vartype semantic_search: "SemanticSearch"
-:ivar vector_search: Contains configuration options related to vector search.
-:vartype vector_search: "VectorSearch"
-:ivar permission_filter_option: A value indicating whether permission filtering is enabled for
+:ivar semantic: Defines parameters for a search index that influence semantic capabilities.
+:vartype semantic: "SemanticSearch"
+:ivar vectorSearch: Contains configuration options related to vector search.
+:vartype vectorSearch: "VectorSearch"
+:ivar permissionFilterOption: A value indicating whether permission filtering is enabled for
  the index. Known values are: "enabled" and "disabled".
-:vartype permission_filter_option: Union[str, "SearchIndexPermissionFilterOption"]
-:ivar purview_enabled: A value indicating whether Purview is enabled for the index.
-:vartype purview_enabled: bool
-:ivar share_point_connector_app_registration: Configures a SharePoint connector app
- registration for the index, enabling document-level permissions from SharePoint. If provided,
- the applicationId and federatedCredentialId properties are required.
-:vartype share_point_connector_app_registration: "SharePointConnectorAppRegistration"
-:ivar e_tag: The ETag of the index.
-:vartype e_tag: str
+:vartype permissionFilterOption: Union[str, "SearchIndexPermissionFilterOption"]
+:ivar purviewEnabled: A value indicating whether Purview is enabled for the index.
+:vartype purviewEnabled: bool
+:ivar sharePointConnectorAppRegistration: Configures a SharePoint connector app registration
+ for the index, enabling document-level permissions from SharePoint. If provided, the
+ applicationId and federatedCredentialId properties are required.
+:vartype sharePointConnectorAppRegistration: "SharePointConnectorAppRegistration"
+:ivar @odata.etag: The ETag of the index.
+:vartype @odata.etag: str
 """
 
 
@@ -5026,28 +5015,27 @@ SearchIndexer.__doc__ = """Represents an indexer.
 :vartype name: str
 :ivar description: The description of the indexer.
 :vartype description: str
-:ivar data_source_name: The name of the datasource from which this indexer reads data.
- Required.
-:vartype data_source_name: str
-:ivar skillset_name: The name of the skillset executing with this indexer.
-:vartype skillset_name: str
-:ivar target_index_name: The name of the index to which this indexer writes data. Required.
-:vartype target_index_name: str
+:ivar dataSourceName: The name of the datasource from which this indexer reads data. Required.
+:vartype dataSourceName: str
+:ivar skillsetName: The name of the skillset executing with this indexer.
+:vartype skillsetName: str
+:ivar targetIndexName: The name of the index to which this indexer writes data. Required.
+:vartype targetIndexName: str
 :ivar schedule: The schedule for this indexer.
 :vartype schedule: "IndexingSchedule"
 :ivar parameters: Parameters for indexer execution.
 :vartype parameters: "IndexingParameters"
-:ivar field_mappings: Defines mappings between fields in the data source and corresponding
+:ivar fieldMappings: Defines mappings between fields in the data source and corresponding
  target fields in the index.
-:vartype field_mappings: list["FieldMapping"]
-:ivar output_field_mappings: Output field mappings are applied after enrichment and immediately
+:vartype fieldMappings: list["FieldMapping"]
+:ivar outputFieldMappings: Output field mappings are applied after enrichment and immediately
  before indexing.
-:vartype output_field_mappings: list["FieldMapping"]
-:ivar is_disabled: A value indicating whether the indexer is disabled. Default is false.
-:vartype is_disabled: bool
-:ivar e_tag: The ETag of the indexer.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype outputFieldMappings: list["FieldMapping"]
+:ivar disabled: A value indicating whether the indexer is disabled. Default is false.
+:vartype disabled: bool
+:ivar @odata.etag: The ETag of the indexer.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your indexer
  definition (as well as indexer execution status) when you want full assurance that no one, not
  even Microsoft, can decrypt them. Once you have encrypted your indexer definition, it will
@@ -5056,7 +5044,7 @@ SearchIndexer.__doc__ = """Represents an indexer.
  definition (and indexer execution status) will be unaffected. Encryption with customer-managed
  keys is not available for free search services, and is only available for paid services created
  on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar cache: Adds caching to an enrichment pipeline to allow for incremental modification steps
  without having to rebuild the index every time.
 :vartype cache: "SearchIndexerCache"
@@ -5068,11 +5056,11 @@ class SearchIndexerCache(TypedDict, total=False):
 
     :ivar id: A guid for the SearchIndexerCache.
     :vartype id: str
-    :ivar storage_connection_string: The connection string to the storage account where the cache
+    :ivar storageConnectionString: The connection string to the storage account where the cache
      data will be persisted.
-    :vartype storage_connection_string: str
-    :ivar enable_reprocessing: Specifies whether incremental reprocessing is enabled.
-    :vartype enable_reprocessing: bool
+    :vartype storageConnectionString: str
+    :ivar enableReprocessing: Specifies whether incremental reprocessing is enabled.
+    :vartype enableReprocessing: bool
     :ivar identity: The user-assigned managed identity used for connections to the enrichment
      cache.  If the connection string indicates an identity (ResourceId) and it's not specified, the
      system-assigned managed identity is used. On updates to the indexer, if the identity is
@@ -5124,9 +5112,9 @@ SearchIndexerDataNoneIdentity = TypedDict(
 )
 SearchIndexerDataNoneIdentity.__doc__ = """Clears the identity property of a datasource.
 
-:ivar odata_type: The discriminator for derived types. Required. Default value is
+:ivar @odata.type: The discriminator for derived types. Required. Default value is
  "#Microsoft.Azure.Search.DataNoneIdentity".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.DataNoneIdentity"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.DataNoneIdentity"]
 """
 
 
@@ -5157,9 +5145,9 @@ SearchIndexerDataSourceConnection.__doc__ = """Represents a datasource definitio
 :ivar type: The type of the datasource. Required. Known values are: "azuresql", "cosmosdb",
  "azureblob", "azuretable", "mysql", "adlsgen2", "onelake", and "sharepoint".
 :vartype type: Union[str, "SearchIndexerDataSourceType"]
-:ivar sub_type: A specific type of the data source, in case the resource is capable of
- different modalities. For example, 'MongoDb' for certain 'cosmosDb' accounts.
-:vartype sub_type: str
+:ivar subType: A specific type of the data source, in case the resource is capable of different
+ modalities. For example, 'MongoDb' for certain 'cosmosDb' accounts.
+:vartype subType: str
 :ivar credentials: Credentials for the datasource. Required.
 :vartype credentials: "DataSourceCredentials"
 :ivar container: The data container for the datasource. Required.
@@ -5169,15 +5157,15 @@ SearchIndexerDataSourceConnection.__doc__ = """Represents a datasource definitio
  not specified, the value remains unchanged. If "none" is specified, the value of this property
  is cleared.
 :vartype identity: "SearchIndexerDataIdentity"
-:ivar indexer_permission_options: Ingestion options with various types of permission data.
-:vartype indexer_permission_options: list[Union[str, "IndexerPermissionOption"]]
-:ivar data_change_detection_policy: The data change detection policy for the datasource.
-:vartype data_change_detection_policy: "DataChangeDetectionPolicy"
-:ivar data_deletion_detection_policy: The data deletion detection policy for the datasource.
-:vartype data_deletion_detection_policy: "DataDeletionDetectionPolicy"
-:ivar e_tag: The ETag of the data source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:ivar indexerPermissionOptions: Ingestion options with various types of permission data.
+:vartype indexerPermissionOptions: list[Union[str, "IndexerPermissionOption"]]
+:ivar dataChangeDetectionPolicy: The data change detection policy for the datasource.
+:vartype dataChangeDetectionPolicy: "DataChangeDetectionPolicy"
+:ivar dataDeletionDetectionPolicy: The data deletion detection policy for the datasource.
+:vartype dataDeletionDetectionPolicy: "DataDeletionDetectionPolicy"
+:ivar @odata.etag: The ETag of the data source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your datasource
  definition when you want full assurance that no one, not even Microsoft, can decrypt your data
  source definition. Once you have encrypted your data source definition, it will always remain
@@ -5185,7 +5173,7 @@ SearchIndexerDataSourceConnection.__doc__ = """Represents a datasource definitio
  this property as needed if you want to rotate your encryption key; Your datasource definition
  will be unaffected. Encryption with customer-managed keys is not available for free search
  services, and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 """
 
 
@@ -5200,18 +5188,18 @@ SearchIndexerDataUserAssignedIdentity = TypedDict(
 )
 SearchIndexerDataUserAssignedIdentity.__doc__ = """Specifies the identity for a datasource to use.
 
-:ivar resource_id: The fully qualified Azure resource Id of a user assigned managed identity
- typically in the form
+:ivar userAssignedIdentity: The fully qualified Azure resource Id of a user assigned managed
+ identity typically in the form
  "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"
  that should have been assigned to the search service. Required.
-:vartype resource_id: str
-:ivar odata_type: A URI fragment specifying the type of identity. Required. Default value is
+:vartype userAssignedIdentity: str
+:ivar @odata.type: A URI fragment specifying the type of identity. Required. Default value is
  "#Microsoft.Azure.Search.DataUserAssignedIdentity".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.DataUserAssignedIdentity"]
-:ivar federated_identity_client_id: Multi-tenant User-Assigned Managed Identity Support: The
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.DataUserAssignedIdentity"]
+:ivar federatedIdentityClientId: Multi-tenant User-Assigned Managed Identity Support: The
  client id of the multi-tentant App that has been configured to federate with the user-assigned
  managed identity.
-:vartype federated_identity_client_id: str
+:vartype federatedIdentityClientId: str
 """
 
 
@@ -5235,15 +5223,15 @@ class SearchIndexerIndexProjection(TypedDict, total=False):
 class SearchIndexerIndexProjectionSelector(TypedDict, total=False):
     """Description for what data to store in the designated search index.
 
-    :ivar target_index_name: Name of the search index to project to. Must have a key field with the
+    :ivar targetIndexName: Name of the search index to project to. Must have a key field with the
      'keyword' analyzer set. Required.
-    :vartype target_index_name: str
-    :ivar parent_key_field_name: Name of the field in the search index to map the parent document's
+    :vartype targetIndexName: str
+    :ivar parentKeyFieldName: Name of the field in the search index to map the parent document's
      key value to. Must be a string field that is filterable and not the key field. Required.
-    :vartype parent_key_field_name: str
-    :ivar source_context: Source context for the projections. Represents the cardinality at which
+    :vartype parentKeyFieldName: str
+    :ivar sourceContext: Source context for the projections. Represents the cardinality at which
      the document will be split into multiple sub documents. Required.
-    :vartype source_context: str
+    :vartype sourceContext: str
     :ivar mappings: Mappings for the projection, or which source should be mapped to which field in
      the target index. Required.
     :vartype mappings: list["InputFieldMappingEntry"]
@@ -5267,9 +5255,9 @@ class SearchIndexerIndexProjectionsParameters(TypedDict, total=False):
     """A dictionary of index projection-specific configuration properties. Each name is the name of a
     specific property. Each value must be of a primitive type.
 
-    :ivar projection_mode: Defines behavior of the index projections in relation to the rest of the
+    :ivar projectionMode: Defines behavior of the index projections in relation to the rest of the
      indexer. Known values are: "skipIndexingParentDocuments" and "includeIndexingParentDocuments".
-    :vartype projection_mode: Union[str, "IndexProjectionMode"]
+    :vartype projectionMode: Union[str, "IndexProjectionMode"]
     """
 
     projectionMode: Union[str, "IndexProjectionMode"]
@@ -5280,9 +5268,9 @@ class SearchIndexerIndexProjectionsParameters(TypedDict, total=False):
 class SearchIndexerKnowledgeStore(TypedDict, total=False):
     """Definition of additional projections to azure blob, table, or files, of enriched data.
 
-    :ivar storage_connection_string: The connection string to the storage account projections will
-     be stored in. Required.
-    :vartype storage_connection_string: str
+    :ivar storageConnectionString: The connection string to the storage account projections will be
+     stored in. Required.
+    :vartype storageConnectionString: str
     :ivar projections: A list of additional projections to perform during indexing. Required.
     :vartype projections: list["SearchIndexerKnowledgeStoreProjection"]
     :ivar identity: The user-assigned managed identity used for connections to Azure Storage when
@@ -5314,14 +5302,14 @@ class SearchIndexerKnowledgeStore(TypedDict, total=False):
 class SearchIndexerKnowledgeStoreProjectionSelector(TypedDict, total=False):  # pylint: disable=name-too-long
     """Abstract class to share properties between concrete selectors.
 
-    :ivar reference_key_name: Name of reference key to different projection.
-    :vartype reference_key_name: str
-    :ivar generated_key_name: Name of generated key to store projection under.
-    :vartype generated_key_name: str
+    :ivar referenceKeyName: Name of reference key to different projection.
+    :vartype referenceKeyName: str
+    :ivar generatedKeyName: Name of generated key to store projection under.
+    :vartype generatedKeyName: str
     :ivar source: Source data to project.
     :vartype source: str
-    :ivar source_context: Source context for complex projections.
-    :vartype source_context: str
+    :ivar sourceContext: Source context for complex projections.
+    :vartype sourceContext: str
     :ivar inputs: Nested inputs for complex projections.
     :vartype inputs: list["InputFieldMappingEntry"]
     """
@@ -5343,18 +5331,18 @@ class SearchIndexerKnowledgeStoreBlobProjectionSelector(
 ):  # pylint: disable=name-too-long
     """Abstract class to share properties between concrete selectors.
 
-    :ivar reference_key_name: Name of reference key to different projection.
-    :vartype reference_key_name: str
-    :ivar generated_key_name: Name of generated key to store projection under.
-    :vartype generated_key_name: str
+    :ivar referenceKeyName: Name of reference key to different projection.
+    :vartype referenceKeyName: str
+    :ivar generatedKeyName: Name of generated key to store projection under.
+    :vartype generatedKeyName: str
     :ivar source: Source data to project.
     :vartype source: str
-    :ivar source_context: Source context for complex projections.
-    :vartype source_context: str
+    :ivar sourceContext: Source context for complex projections.
+    :vartype sourceContext: str
     :ivar inputs: Nested inputs for complex projections.
     :vartype inputs: list["InputFieldMappingEntry"]
-    :ivar storage_container: Blob container to store projections in. Required.
-    :vartype storage_container: str
+    :ivar storageContainer: Blob container to store projections in. Required.
+    :vartype storageContainer: str
     """
 
     storageContainer: Required[str]
@@ -5366,18 +5354,18 @@ class SearchIndexerKnowledgeStoreFileProjectionSelector(
 ):  # pylint: disable=name-too-long
     """Projection definition for what data to store in Azure Files.
 
-    :ivar reference_key_name: Name of reference key to different projection.
-    :vartype reference_key_name: str
-    :ivar generated_key_name: Name of generated key to store projection under.
-    :vartype generated_key_name: str
+    :ivar referenceKeyName: Name of reference key to different projection.
+    :vartype referenceKeyName: str
+    :ivar generatedKeyName: Name of generated key to store projection under.
+    :vartype generatedKeyName: str
     :ivar source: Source data to project.
     :vartype source: str
-    :ivar source_context: Source context for complex projections.
-    :vartype source_context: str
+    :ivar sourceContext: Source context for complex projections.
+    :vartype sourceContext: str
     :ivar inputs: Nested inputs for complex projections.
     :vartype inputs: list["InputFieldMappingEntry"]
-    :ivar storage_container: Blob container to store projections in. Required.
-    :vartype storage_container: str
+    :ivar storageContainer: Blob container to store projections in. Required.
+    :vartype storageContainer: str
     """
 
 
@@ -5386,18 +5374,18 @@ class SearchIndexerKnowledgeStoreObjectProjectionSelector(
 ):  # pylint: disable=name-too-long
     """Projection definition for what data to store in Azure Blob.
 
-    :ivar reference_key_name: Name of reference key to different projection.
-    :vartype reference_key_name: str
-    :ivar generated_key_name: Name of generated key to store projection under.
-    :vartype generated_key_name: str
+    :ivar referenceKeyName: Name of reference key to different projection.
+    :vartype referenceKeyName: str
+    :ivar generatedKeyName: Name of generated key to store projection under.
+    :vartype generatedKeyName: str
     :ivar source: Source data to project.
     :vartype source: str
-    :ivar source_context: Source context for complex projections.
-    :vartype source_context: str
+    :ivar sourceContext: Source context for complex projections.
+    :vartype sourceContext: str
     :ivar inputs: Nested inputs for complex projections.
     :vartype inputs: list["InputFieldMappingEntry"]
-    :ivar storage_container: Blob container to store projections in. Required.
-    :vartype storage_container: str
+    :ivar storageContainer: Blob container to store projections in. Required.
+    :vartype storageContainer: str
     """
 
 
@@ -5405,9 +5393,9 @@ class SearchIndexerKnowledgeStoreParameters(TypedDict, total=False):
     """A dictionary of knowledge store-specific configuration properties. Each name is the name of a
     specific property. Each value must be of a primitive type.
 
-    :ivar synthesize_generated_key_name: Whether or not projections should synthesize a generated
-     key name if one isn't already present.
-    :vartype synthesize_generated_key_name: bool
+    :ivar synthesizeGeneratedKeyName: Whether or not projections should synthesize a generated key
+     name if one isn't already present.
+    :vartype synthesizeGeneratedKeyName: bool
     """
 
     synthesizeGeneratedKeyName: bool
@@ -5438,18 +5426,18 @@ class SearchIndexerKnowledgeStoreTableProjectionSelector(
 ):  # pylint: disable=name-too-long
     """Description for what data to store in Azure Tables.
 
-    :ivar reference_key_name: Name of reference key to different projection.
-    :vartype reference_key_name: str
+    :ivar referenceKeyName: Name of reference key to different projection.
+    :vartype referenceKeyName: str
     :ivar source: Source data to project.
     :vartype source: str
-    :ivar source_context: Source context for complex projections.
-    :vartype source_context: str
+    :ivar sourceContext: Source context for complex projections.
+    :vartype sourceContext: str
     :ivar inputs: Nested inputs for complex projections.
     :vartype inputs: list["InputFieldMappingEntry"]
-    :ivar generated_key_name: Name of generated key to store projection under. Required.
-    :vartype generated_key_name: str
-    :ivar table_name: Name of the Azure table to store projected data in. Required.
-    :vartype table_name: str
+    :ivar generatedKeyName: Name of generated key to store projection under. Required.
+    :vartype generatedKeyName: str
+    :ivar tableName: Name of the Azure table to store projected data in. Required.
+    :vartype tableName: str
     """
 
     generatedKeyName: Required[str]
@@ -5480,17 +5468,16 @@ SearchIndexerSkillset.__doc__ = """A list of skills.
 :vartype description: str
 :ivar skills: A list of skills in the skillset. Required.
 :vartype skills: list["SearchIndexerSkill"]
-:ivar cognitive_services_account: Details about the Azure AI service to be used when running
- skills.
-:vartype cognitive_services_account: "CognitiveServicesAccount"
-:ivar knowledge_store: Definition of additional projections to Azure blob, table, or files, of
+:ivar cognitiveServices: Details about the Azure AI service to be used when running skills.
+:vartype cognitiveServices: "CognitiveServicesAccount"
+:ivar knowledgeStore: Definition of additional projections to Azure blob, table, or files, of
  enriched data.
-:vartype knowledge_store: "SearchIndexerKnowledgeStore"
-:ivar index_projection: Definition of additional projections to secondary search index(es).
-:vartype index_projection: "SearchIndexerIndexProjection"
-:ivar e_tag: The ETag of the skillset.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype knowledgeStore: "SearchIndexerKnowledgeStore"
+:ivar indexProjections: Definition of additional projections to secondary search index(es).
+:vartype indexProjections: "SearchIndexerIndexProjection"
+:ivar @odata.etag: The ETag of the skillset.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your skillset
  definition when you want full assurance that no one, not even Microsoft, can decrypt your
  skillset definition. Once you have encrypted your skillset definition, it will always remain
@@ -5498,7 +5485,7 @@ SearchIndexerSkillset.__doc__ = """A list of skills.
  this property as needed if you want to rotate your encryption key; Your skillset definition
  will be unaffected. Encryption with customer-managed keys is not available for free search
  services, and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 """
 
 
@@ -5532,13 +5519,13 @@ SearchIndexKnowledgeSource.__doc__ = """Knowledge Source targeting a search inde
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -5546,26 +5533,26 @@ SearchIndexKnowledgeSource.__doc__ = """Knowledge Source targeting a search inde
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: Required. A knowledge source that reads data from a Search Index.
 :vartype kind: Literal[KnowledgeSourceKind.SEARCH_INDEX]
-:ivar search_index_parameters: The parameters for the knowledge source. Required.
-:vartype search_index_parameters: "SearchIndexKnowledgeSourceParameters"
+:ivar searchIndexParameters: The parameters for the knowledge source. Required.
+:vartype searchIndexParameters: "SearchIndexKnowledgeSourceParameters"
 """
 
 
 class SearchIndexKnowledgeSourceFieldValueBoost(TypedDict, total=False):  # pylint: disable=name-too-long
     """A hint that boosts documents based on a field value.
 
-    :ivar boost_instructions: Natural-language instructions that explain when and how to apply the
+    :ivar boostInstructions: Natural-language instructions that explain when and how to apply the
      boost.
-    :vartype boost_instructions: str
+    :vartype boostInstructions: str
     :ivar kind: The discriminator value. Required. Boost documents based on a field value.
     :vartype kind: Literal[SearchIndexKnowledgeSourceBoostKind.FIELD_VALUE]
     :ivar field: The name of the search index field. Required.
     :vartype field: str
-    :ivar field_values: Representative values for the field.
-    :vartype field_values: list[str]
+    :ivar fieldValues: Representative values for the field.
+    :vartype fieldValues: list[str]
     :ivar boost: A multiplier for the document score. Must be a positive number not equal to 1.0.
      Required.
     :vartype boost: float
@@ -5589,11 +5576,11 @@ class SearchIndexKnowledgeSourceFilterHint(TypedDict, total=False):
 
     :ivar field: The name of the filterable search index field. Required.
     :vartype field: str
-    :ivar field_values: Representative values for the field. Required.
-    :vartype field_values: list[str]
-    :ivar filter_instructions: Natural-language instructions that explain when and how to filter on
+    :ivar fieldValues: Representative values for the field. Required.
+    :vartype fieldValues: list[str]
+    :ivar filterInstructions: Natural-language instructions that explain when and how to filter on
      the field.
-    :vartype filter_instructions: str
+    :vartype filterInstructions: str
     """
 
     field: Required[str]
@@ -5607,14 +5594,14 @@ class SearchIndexKnowledgeSourceFilterHint(TypedDict, total=False):
 class SearchIndexKnowledgeSourceMultiWordExpressionBoost(TypedDict, total=False):  # pylint: disable=name-too-long
     """A hint that boosts documents based on a multi-word expression.
 
-    :ivar boost_instructions: Natural-language instructions that explain when and how to apply the
+    :ivar boostInstructions: Natural-language instructions that explain when and how to apply the
      boost.
-    :vartype boost_instructions: str
+    :vartype boostInstructions: str
     :ivar kind: The discriminator value. Required. Boost documents based on a multi-word
      expression.
     :vartype kind: Literal[SearchIndexKnowledgeSourceBoostKind.MULTI_WORD_EXPRESSION]
-    :ivar field_values: Representative values for the boost.
-    :vartype field_values: list[str]
+    :ivar fieldValues: Representative values for the boost.
+    :vartype fieldValues: list[str]
     :ivar boost: A multiplier for the document score. Must be a positive number not equal to 1.0.
      Required.
     :vartype boost: float
@@ -5633,22 +5620,22 @@ class SearchIndexKnowledgeSourceMultiWordExpressionBoost(TypedDict, total=False)
 class SearchIndexKnowledgeSourceParameters(TypedDict, total=False):
     """Parameters for search index knowledge source.
 
-    :ivar search_index_name: The name of the Search index. Required.
-    :vartype search_index_name: str
-    :ivar source_data_fields: Used to request additional fields for referenced source data.
-    :vartype source_data_fields: list["SearchIndexFieldReference"]
-    :ivar search_fields: Used to restrict which fields to search on the search index.
-    :vartype search_fields: list["SearchIndexFieldReference"]
-    :ivar semantic_configuration_name: Used to specify a different semantic configuration on the
+    :ivar searchIndexName: The name of the Search index. Required.
+    :vartype searchIndexName: str
+    :ivar sourceDataFields: Used to request additional fields for referenced source data.
+    :vartype sourceDataFields: list["SearchIndexFieldReference"]
+    :ivar searchFields: Used to restrict which fields to search on the search index.
+    :vartype searchFields: list["SearchIndexFieldReference"]
+    :ivar semanticConfigurationName: Used to specify a different semantic configuration on the
      target search index other than the default one.
-    :vartype semantic_configuration_name: str
-    :ivar base_filter: A default filter condition applied to the index at retrieval time (e.g.,
+    :vartype semanticConfigurationName: str
+    :ivar baseFilter: A default filter condition applied to the index at retrieval time (e.g.,
      'State eq VA'). Can be overridden at query time via knowledge source runtime parameters.
-    :vartype base_filter: str
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+    :vartype baseFilter: str
+    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
      this search index knowledge source. Request-time query hints replace these defaults as a
      complete object.
-    :vartype query_hints: "SearchIndexKnowledgeSourceQueryHints"
+    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     searchIndexName: Required[str]
@@ -5691,27 +5678,27 @@ class SearchResourceEncryptionKey(TypedDict, total=False):
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
     used to encrypt or decrypt data-at-rest, such as indexes and synonym maps.
 
-    :ivar key_name: The name of your Azure Key Vault key to be used to encrypt your data at rest.
-     Required.
-    :vartype key_name: str
-    :ivar key_version: The version of your Azure Key Vault key to be used to encrypt your data at
-     rest.
-    :vartype key_version: str
-    :ivar vault_uri: The URI of your Azure Key Vault, also referred to as DNS name, that contains
+    :ivar keyVaultKeyName: The name of your Azure Key Vault key to be used to encrypt your data at
+     rest. Required.
+    :vartype keyVaultKeyName: str
+    :ivar keyVaultKeyVersion: The version of your Azure Key Vault key to be used to encrypt your
+     data at rest.
+    :vartype keyVaultKeyVersion: str
+    :ivar keyVaultUri: The URI of your Azure Key Vault, also referred to as DNS name, that contains
      the key to be used to encrypt your data at rest. An example URI might be
      ``https://my-keyvault-name.vault.azure.net``. Required.
-    :vartype vault_uri: str
-    :ivar access_credentials: Optional Azure Active Directory credentials used for accessing your
+    :vartype keyVaultUri: str
+    :ivar accessCredentials: Optional Azure Active Directory credentials used for accessing your
      Azure Key Vault. Not required if using managed identity instead.
-    :vartype access_credentials: "AzureActiveDirectoryApplicationCredentials"
+    :vartype accessCredentials: "AzureActiveDirectoryApplicationCredentials"
     :ivar identity: An explicit managed identity to use for this encryption key. If not specified
      and the access credentials property is null, the system-assigned managed identity is used. On
      update to the resource, if the explicit identity is unspecified, it remains unchanged. If
      "none" is specified, the value of this property is cleared.
     :vartype identity: "SearchIndexerDataIdentity"
-    :ivar is_service_level_key: An optional value indicating whether this key is a service-level
-     key. Default is false.
-    :vartype is_service_level_key: bool
+    :ivar isServiceLevelKey: An optional value indicating whether this key is a service-level key.
+     Default is false.
+    :vartype isServiceLevelKey: bool
     """
 
     keyVaultKeyName: Required[str]
@@ -5739,12 +5726,12 @@ class SearchSuggester(TypedDict, total=False):
 
     :ivar name: The name of the suggester. Required.
     :vartype name: str
-    :ivar search_mode: A value indicating the capabilities of the suggester. Required. Default
-     value is "analyzingInfixMatching".
-    :vartype search_mode: Literal["analyzingInfixMatching"]
-    :ivar source_fields: The list of field names to which the suggester applies. Each field must be
+    :ivar searchMode: A value indicating the capabilities of the suggester. Required. Default value
+     is "analyzingInfixMatching".
+    :vartype searchMode: Literal["analyzingInfixMatching"]
+    :ivar sourceFields: The list of field names to which the suggester applies. Each field must be
      searchable. Required.
-    :vartype source_fields: list[str]
+    :vartype sourceFields: list[str]
     """
 
     name: Required[str]
@@ -5762,16 +5749,16 @@ class SemanticConfiguration(TypedDict, total=False):
 
     :ivar name: The name of the semantic configuration. Required.
     :vartype name: str
-    :ivar prioritized_fields: Describes the title, content, and keyword fields to be used for
+    :ivar prioritizedFields: Describes the title, content, and keyword fields to be used for
      semantic ranking, captions, highlights, and answers. At least one of the three sub properties
      (titleField, prioritizedKeywordsFields and prioritizedContentFields) need to be set. Required.
-    :vartype prioritized_fields: "SemanticPrioritizedFields"
-    :ivar ranking_order: Specifies the score type to be used for the sort order of the search
+    :vartype prioritizedFields: "SemanticPrioritizedFields"
+    :ivar rankingOrder: Specifies the score type to be used for the sort order of the search
      results. Known values are: "BoostedRerankerScore" and "RerankerScore".
-    :vartype ranking_order: Union[str, "RankingOrder"]
-    :ivar flighting_opt_in: Determines which semantic or query rewrite models to use during model
+    :vartype rankingOrder: Union[str, "RankingOrder"]
+    :ivar flightingOptIn: Determines which semantic or query rewrite models to use during model
      flighting/upgrades.
-    :vartype flighting_opt_in: bool
+    :vartype flightingOptIn: bool
     """
 
     name: Required[str]
@@ -5790,8 +5777,8 @@ class SemanticConfiguration(TypedDict, total=False):
 class SemanticField(TypedDict, total=False):
     """A field that is used as part of the semantic configuration.
 
-    :ivar field_name: File name. Required.
-    :vartype field_name: str
+    :ivar fieldName: File name. Required.
+    :vartype fieldName: str
     """
 
     fieldName: Required[str]
@@ -5802,19 +5789,19 @@ class SemanticPrioritizedFields(TypedDict, total=False):
     """Describes the title, content, and keywords fields to be used for semantic ranking, captions,
     highlights, and answers.
 
-    :ivar title_field: Defines the title field to be used for semantic ranking, captions,
+    :ivar titleField: Defines the title field to be used for semantic ranking, captions,
      highlights, and answers. If you don't have a title field in your index, leave this blank.
-    :vartype title_field: "SemanticField"
-    :ivar content_fields: Defines the content fields to be used for semantic ranking, captions,
-     highlights, and answers. For the best result, the selected fields should contain text in
-     natural language form. The order of the fields in the array represents their priority. Fields
-     with lower priority may get truncated if the content is long.
-    :vartype content_fields: list["SemanticField"]
-    :ivar keywords_fields: Defines the keyword fields to be used for semantic ranking, captions,
-     highlights, and answers. For the best result, the selected fields should contain a list of
-     keywords. The order of the fields in the array represents their priority. Fields with lower
-     priority may get truncated if the content is long.
-    :vartype keywords_fields: list["SemanticField"]
+    :vartype titleField: "SemanticField"
+    :ivar prioritizedContentFields: Defines the content fields to be used for semantic ranking,
+     captions, highlights, and answers. For the best result, the selected fields should contain text
+     in natural language form. The order of the fields in the array represents their priority.
+     Fields with lower priority may get truncated if the content is long.
+    :vartype prioritizedContentFields: list["SemanticField"]
+    :ivar prioritizedKeywordsFields: Defines the keyword fields to be used for semantic ranking,
+     captions, highlights, and answers. For the best result, the selected fields should contain a
+     list of keywords. The order of the fields in the array represents their priority. Fields with
+     lower priority may get truncated if the content is long.
+    :vartype prioritizedKeywordsFields: list["SemanticField"]
     """
 
     titleField: "SemanticField"
@@ -5835,9 +5822,9 @@ class SemanticPrioritizedFields(TypedDict, total=False):
 class SemanticSearch(TypedDict, total=False):
     """Defines parameters for a search index that influence semantic capabilities.
 
-    :ivar default_configuration_name: Allows you to set the name of a default semantic
-     configuration in your index, making it optional to pass it on as a query parameter every time.
-    :vartype default_configuration_name: str
+    :ivar defaultConfiguration: Allows you to set the name of a default semantic configuration in
+     your index, making it optional to pass it on as a query parameter every time.
+    :vartype defaultConfiguration: str
     :ivar configurations: The semantic configurations for the index.
     :vartype configurations: list["SemanticConfiguration"]
     """
@@ -5884,21 +5871,21 @@ score found by the service at a sentence and document-level.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+:ivar defaultLanguageCode: A value indicating which language code to use. Default is ``en``.
  Known values are: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT", "ru",
  "es", "sv", and "tr".
-:vartype default_language_code: Union[str, "SentimentSkillLanguage"]
-:ivar include_opinion_mining: If set to true, the skill output will include information from
- Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
- assessment (adjective) in the text. Default is false.
-:vartype include_opinion_mining: bool
-:ivar model_version: The version of the model to use when calling the Text Analytics service.
- It will default to the latest available when not specified. We recommend you do not specify
- this value unless absolutely necessary.
-:vartype model_version: str
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype defaultLanguageCode: Union[str, "SentimentSkillLanguage"]
+:ivar includeOpinionMining: If set to true, the skill output will include information from Text
+ Analytics for opinion mining, namely targets (nouns or verbs) and their associated assessment
+ (adjective) in the text. Default is false.
+:vartype includeOpinionMining: bool
+:ivar modelVersion: The version of the model to use when calling the Text Analytics service. It
+ will default to the latest available when not specified. We recommend you do not specify this
+ value unless absolutely necessary.
+:vartype modelVersion: str
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.V3.SentimentSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Text.V3.SentimentSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Text.V3.SentimentSkill"]
 """
 
 
@@ -5933,9 +5920,9 @@ known as multipart fields).
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.ShaperSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Util.ShaperSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Util.ShaperSkill"]
 """
 
 
@@ -5943,15 +5930,15 @@ class SharePointConnectorAppRegistration(TypedDict, total=False):
     """Configures a SharePoint connector app registration for the index, enabling document-level
     permissions from SharePoint.
 
-    :ivar application_id: The application (client) ID of the app registration used to connect to
+    :ivar applicationId: The application (client) ID of the app registration used to connect to
      SharePoint. Required.
-    :vartype application_id: str
-    :ivar federated_credential_id: The federated credential ID configured on the app registration.
+    :vartype applicationId: str
+    :ivar federatedCredentialId: The federated credential ID configured on the app registration.
      Required.
-    :vartype federated_credential_id: str
-    :ivar tenant_id: The tenant ID of the app registration. If not specified, the tenant of the
+    :vartype federatedCredentialId: str
+    :ivar tenantId: The tenant ID of the app registration. If not specified, the tenant of the
      search service is used.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     """
 
     applicationId: Required[str]
@@ -5984,35 +5971,35 @@ Lucene.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar max_shingle_size: The maximum shingle size. Default and minimum value is 2.
-:vartype max_shingle_size: int
-:ivar min_shingle_size: The minimum shingle size. Default and minimum value is 2. Must be less
+:ivar maxShingleSize: The maximum shingle size. Default and minimum value is 2.
+:vartype maxShingleSize: int
+:ivar minShingleSize: The minimum shingle size. Default and minimum value is 2. Must be less
  than the value of maxShingleSize.
-:vartype min_shingle_size: int
-:ivar output_unigrams: A value indicating whether the output stream will contain the input
+:vartype minShingleSize: int
+:ivar outputUnigrams: A value indicating whether the output stream will contain the input
  tokens (unigrams) as well as shingles. Default is true.
-:vartype output_unigrams: bool
-:ivar output_unigrams_if_no_shingles: A value indicating whether to output unigrams for those
- times when no shingles are available. This property takes precedence when outputUnigrams is set
- to false. Default is false.
-:vartype output_unigrams_if_no_shingles: bool
-:ivar token_separator: The string to use when joining adjacent tokens to form a shingle.
- Default is a single space (" ").
-:vartype token_separator: str
-:ivar filter_token: The string to insert for each position at which there is no token. Default
+:vartype outputUnigrams: bool
+:ivar outputUnigramsIfNoShingles: A value indicating whether to output unigrams for those times
+ when no shingles are available. This property takes precedence when outputUnigrams is set to
+ false. Default is false.
+:vartype outputUnigramsIfNoShingles: bool
+:ivar tokenSeparator: The string to use when joining adjacent tokens to form a shingle. Default
+ is a single space (" ").
+:vartype tokenSeparator: str
+:ivar filterToken: The string to insert for each position at which there is no token. Default
  is an underscore ("_").
-:vartype filter_token: str
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:vartype filterToken: str
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.ShingleTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.ShingleTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.ShingleTokenFilter"]
 """
 
 
 class SkillNames(TypedDict, total=False):
     """The type of the skill names.
 
-    :ivar skill_names: the names of skills to be reset.
-    :vartype skill_names: list[str]
+    :ivar skillNames: the names of skills to be reset.
+    :vartype skillNames: list[str]
     """
 
     skillNames: list[str]
@@ -6040,9 +6027,9 @@ using Apache Lucene.
  "italian", "kp", "lovins", "norwegian", "porter", "portuguese", "romanian", "russian",
  "spanish", "swedish", and "turkish".
 :vartype language: Union[str, "SnowballTokenFilterLanguage"]
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.SnowballTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.SnowballTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.SnowballTokenFilter"]
 """
 
 
@@ -6059,13 +6046,14 @@ SoftDeleteColumnDeletionDetectionPolicy.__doc__ = """Defines a data deletion det
 determines whether an item should be deleted based on the value of a designated 'soft delete'
 column.
 
-:ivar soft_delete_column_name: The name of the column to use for soft-deletion detection.
-:vartype soft_delete_column_name: str
-:ivar soft_delete_marker_value: The marker value that identifies an item as deleted.
-:vartype soft_delete_marker_value: str
-:ivar odata_type: A URI fragment specifying the type of data deletion detection policy.
+:ivar softDeleteColumnName: The name of the column to use for soft-deletion detection.
+:vartype softDeleteColumnName: str
+:ivar softDeleteMarkerValue: The marker value that identifies an item as deleted.
+:vartype softDeleteMarkerValue: str
+:ivar @odata.type: A URI fragment specifying the type of data deletion detection policy.
  Required. Default value is "#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy"]
+:vartype @odata.type:
+ Literal["#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy"]
 """
 
 
@@ -6106,36 +6094,36 @@ SplitSkill.__doc__ = """A skill to split a string into chunks of text.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+:ivar defaultLanguageCode: A value indicating which language code to use. Default is ``en``.
  Known values are: "am", "bs", "cs", "da", "de", "en", "es", "et", "fi", "fr", "he", "hi", "hr",
  "hu", "id", "is", "it", "ja", "ko", "lv", "nb", "nl", "pl", "pt", "pt-br", "ru", "sk", "sl",
  "sr", "sv", "tr", "ur", and "zh".
-:vartype default_language_code: Union[str, "SplitSkillLanguage"]
-:ivar text_split_mode: A value indicating which split mode to perform. Known values are:
- "pages" and "sentences".
-:vartype text_split_mode: Union[str, "TextSplitMode"]
-:ivar maximum_page_length: The desired maximum page length. Default is 10000.
-:vartype maximum_page_length: int
-:ivar page_overlap_length: Only applicable when textSplitMode is set to 'pages'. If specified,
+:vartype defaultLanguageCode: Union[str, "SplitSkillLanguage"]
+:ivar textSplitMode: A value indicating which split mode to perform. Known values are: "pages"
+ and "sentences".
+:vartype textSplitMode: Union[str, "TextSplitMode"]
+:ivar maximumPageLength: The desired maximum page length. Default is 10000.
+:vartype maximumPageLength: int
+:ivar pageOverlapLength: Only applicable when textSplitMode is set to 'pages'. If specified,
  n+1th chunk will start with this number of characters/tokens from the end of the nth chunk.
-:vartype page_overlap_length: int
-:ivar maximum_pages_to_take: Only applicable when textSplitMode is set to 'pages'. If
- specified, the SplitSkill will discontinue splitting after processing the first
- 'maximumPagesToTake' pages, in order to improve performance when only a few initial pages are
- needed from each document.
-:vartype maximum_pages_to_take: int
+:vartype pageOverlapLength: int
+:ivar maximumPagesToTake: Only applicable when textSplitMode is set to 'pages'. If specified,
+ the SplitSkill will discontinue splitting after processing the first 'maximumPagesToTake'
+ pages, in order to improve performance when only a few initial pages are needed from each
+ document.
+:vartype maximumPagesToTake: int
 :ivar unit: Only applies if textSplitMode is set to pages. There are two possible values. The
  choice of the values will decide the length (maximumPageLength and pageOverlapLength)
  measurement. The default is 'characters', which means the length will be measured by character.
  Known values are: "characters" and "azureOpenAITokens".
 :vartype unit: Union[str, "SplitSkillUnit"]
-:ivar azure_open_ai_tokenizer_parameters: Only applies if the unit is set to azureOpenAITokens.
- If specified, the splitSkill will use these parameters when performing the tokenization. The
+:ivar azureOpenAITokenizerParameters: Only applies if the unit is set to azureOpenAITokens. If
+ specified, the splitSkill will use these parameters when performing the tokenization. The
  parameters are a valid 'encoderModelName' and an optional 'allowedSpecialTokens' property.
-:vartype azure_open_ai_tokenizer_parameters: "AzureOpenAITokenizerParameters"
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype azureOpenAITokenizerParameters: "AzureOpenAITokenizerParameters"
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.SplitSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Text.SplitSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Text.SplitSkill"]
 """
 
 
@@ -6149,9 +6137,9 @@ SqlIntegratedChangeTrackingPolicy = TypedDict(
 SqlIntegratedChangeTrackingPolicy.__doc__ = """Defines a data change detection policy that captures changes using the Integrated Change
 Tracking feature of Azure SQL Database.
 
-:ivar odata_type: A URI fragment specifying the type of data change detection policy. Required.
- Default value is "#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"]
+:ivar @odata.type: A URI fragment specifying the type of data change detection policy.
+ Required. Default value is "#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy".
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"]
 """
 
 
@@ -6178,9 +6166,9 @@ implemented using Apache Lucene. See
 :ivar rules: A list of stemming rules in the following format: "word => stem", for example:
  "ran => run". Required.
 :vartype rules: list[str]
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.StemmerOverrideTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.StemmerOverrideTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.StemmerOverrideTokenFilter"]
 """
 
 
@@ -6211,9 +6199,9 @@ StemmerTokenFilter.__doc__ = """Language specific stemming filter. This token fi
  "portuguese", "lightPortuguese", "minimalPortuguese", "portugueseRslp", "romanian", "russian",
  "lightRussian", "spanish", "lightSpanish", "swedish", "lightSwedish", and "turkish".
 :vartype language: Union[str, "StemmerTokenFilterLanguage"]
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.StemmerTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.StemmerTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.StemmerTokenFilter"]
 """
 
 
@@ -6235,9 +6223,9 @@ implemented using Apache Lucene.
 :vartype name: str
 :ivar stopwords: A list of stopwords.
 :vartype stopwords: list[str]
-:ivar odata_type: A URI fragment specifying the type of analyzer. Required. Default value is
+:ivar @odata.type: A URI fragment specifying the type of analyzer. Required. Default value is
  "#Microsoft.Azure.Search.StopAnalyzer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.StopAnalyzer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.StopAnalyzer"]
 """
 
 
@@ -6265,22 +6253,22 @@ See
 :ivar stopwords: The list of stopwords. This property and the stopwords list property cannot
  both be set.
 :vartype stopwords: list[str]
-:ivar stopwords_list: A predefined list of stopwords to use. This property and the stopwords
+:ivar stopwordsList: A predefined list of stopwords to use. This property and the stopwords
  property cannot both be set. Default is English. Known values are: "arabic", "armenian",
  "basque", "brazilian", "bulgarian", "catalan", "czech", "danish", "dutch", "english",
  "finnish", "french", "galician", "german", "greek", "hindi", "hungarian", "indonesian",
  "irish", "italian", "latvian", "norwegian", "persian", "portuguese", "romanian", "russian",
  "sorani", "spanish", "swedish", "thai", and "turkish".
-:vartype stopwords_list: Union[str, "StopwordsList"]
-:ivar ignore_case: A value indicating whether to ignore case. If true, all words are converted
+:vartype stopwordsList: Union[str, "StopwordsList"]
+:ivar ignoreCase: A value indicating whether to ignore case. If true, all words are converted
  to lower case first. Default is false.
-:vartype ignore_case: bool
-:ivar remove_trailing_stop_words: A value indicating whether to ignore the last search term if
- it's a stop word. Default is true.
-:vartype remove_trailing_stop_words: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:vartype ignoreCase: bool
+:ivar removeTrailing: A value indicating whether to ignore the last search term if it's a stop
+ word. Default is true.
+:vartype removeTrailing: bool
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.StopwordsTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.StopwordsTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.StopwordsTokenFilter"]
 """
 
 
@@ -6305,7 +6293,7 @@ SynonymMap.__doc__ = """Represents a synonym map definition.
 :ivar synonyms: A series of synonym rules in the specified synonym map format. The rules must
  be separated by newlines. Required.
 :vartype synonyms: list[str]
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your data when you
  want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
  encrypted your data, it will always remain encrypted. The search service will ignore attempts
@@ -6313,9 +6301,9 @@ SynonymMap.__doc__ = """Represents a synonym map definition.
  encryption key; Your data will be unaffected. Encryption with customer-managed keys is not
  available for free search services, and is only available for paid services created on or after
  January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
-:ivar e_tag: The ETag of the synonym map.
-:vartype e_tag: str
+:vartype encryptionKey: "SearchResourceEncryptionKey"
+:ivar @odata.etag: The ETag of the synonym map.
+:vartype @odata.etag: str
 """
 
 
@@ -6343,9 +6331,8 @@ Apache Lucene.
  separated list of equivalent words. Set the expand option to change how this list is
  interpreted. Required.
 :vartype synonyms: list[str]
-:ivar ignore_case: A value indicating whether to case-fold input for matching. Default is
- false.
-:vartype ignore_case: bool
+:ivar ignoreCase: A value indicating whether to case-fold input for matching. Default is false.
+:vartype ignoreCase: bool
 :ivar expand: A value indicating whether all words in the list of synonyms (if => notation is
  not used) will map to one another. If true, all words in the list of synonyms (if => notation
  is not used) will map to one another. The following list: incredible, unbelievable, fabulous,
@@ -6354,9 +6341,9 @@ Apache Lucene.
  fabulous, amazing will be equivalent to: incredible, unbelievable, fabulous, amazing =>
  incredible. Default is true.
 :vartype expand: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.SynonymTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.SynonymTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.SynonymTokenFilter"]
 """
 
 
@@ -6364,8 +6351,8 @@ class TagScoringFunction(TypedDict, total=False):
     """Defines a function that boosts scores of documents with string values matching a given list of
     tags.
 
-    :ivar field_name: The name of the field used as input to the scoring function. Required.
-    :vartype field_name: str
+    :ivar fieldName: The name of the field used as input to the scoring function. Required.
+    :vartype fieldName: str
     :ivar boost: A multiplier for the raw score. Must be a positive number not equal to 1.0.
      Required.
     :vartype boost: float
@@ -6373,8 +6360,8 @@ class TagScoringFunction(TypedDict, total=False):
      scores; defaults to "Linear". Known values are: "linear", "constant", "quadratic", and
      "logarithmic".
     :vartype interpolation: Union[str, "ScoringFunctionInterpolation"]
-    :ivar parameters: Parameter values for the tag scoring function. Required.
-    :vartype parameters: "TagScoringParameters"
+    :ivar tag: Parameter values for the tag scoring function. Required.
+    :vartype tag: "TagScoringParameters"
     :ivar type: Indicates the type of function to use. Valid values include magnitude, freshness,
      distance, and tag. The function type must be lower case. Required. Default value is "tag".
     :vartype type: Literal["tag"]
@@ -6397,9 +6384,9 @@ class TagScoringFunction(TypedDict, total=False):
 class TagScoringParameters(TypedDict, total=False):
     """Provides parameter values to a tag scoring function.
 
-    :ivar tags_parameter: The name of the parameter passed in search queries to specify the list of
+    :ivar tagsParameter: The name of the parameter passed in search queries to specify the list of
      tags to compare against the target field. Required.
-    :vartype tags_parameter: str
+    :vartype tagsParameter: str
     """
 
     tagsParameter: Required[str]
@@ -6440,23 +6427,23 @@ TextTranslationSkill.__doc__ = """A skill to translate text from one language to
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar default_to_language_code: The language code to translate documents into for documents
- that don't specify the to language explicitly. Required. Known values are: "af", "ar", "bn",
- "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj", "fil",
- "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
- "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
- "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
- "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
-:vartype default_to_language_code: Union[str, "TextTranslationSkillLanguage"]
-:ivar default_from_language_code: The language code to translate documents from for documents
- that don't specify the from language explicitly. Known values are: "af", "ar", "bn", "bs",
+:ivar defaultToLanguageCode: The language code to translate documents into for documents that
+ don't specify the to language explicitly. Required. Known values are: "af", "ar", "bn", "bs",
  "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj", "fil", "fi",
  "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
  "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
  "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
  "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
-:vartype default_from_language_code: Union[str, "TextTranslationSkillLanguage"]
-:ivar suggested_from: The language code to translate documents from when neither the
+:vartype defaultToLanguageCode: Union[str, "TextTranslationSkillLanguage"]
+:ivar defaultFromLanguageCode: The language code to translate documents from for documents that
+ don't specify the from language explicitly. Known values are: "af", "ar", "bn", "bs", "bg",
+ "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj", "fil", "fi", "fr",
+ "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh", "tlh-Latn",
+ "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br", "pt-PT",
+ "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th",
+ "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
+:vartype defaultFromLanguageCode: Union[str, "TextTranslationSkillLanguage"]
+:ivar suggestedFrom: The language code to translate documents from when neither the
  fromLanguageCode input nor the defaultFromLanguageCode parameter are provided, and the
  automatic language detection is unsuccessful. Default is ``en``. Known values are: "af", "ar",
  "bn", "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj",
@@ -6464,10 +6451,10 @@ TextTranslationSkill.__doc__ = """A skill to translate text from one language to
  "tlh", "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt",
  "pt-br", "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty",
  "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
-:vartype suggested_from: Union[str, "TextTranslationSkillLanguage"]
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype suggestedFrom: Union[str, "TextTranslationSkillLanguage"]
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.TranslationSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Text.TranslationSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Text.TranslationSkill"]
 """
 
 
@@ -6501,9 +6488,9 @@ TruncateTokenFilter.__doc__ = """Truncates the terms to a specific length. This 
 :vartype name: str
 :ivar length: The length at which terms will be truncated. Default and maximum is 300.
 :vartype length: int
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.TruncateTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.TruncateTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.TruncateTokenFilter"]
 """
 
 
@@ -6522,12 +6509,12 @@ UaxUrlEmailTokenizer.__doc__ = """Tokenizes urls and emails as one token. This t
  underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar max_token_length: The maximum token length. Default is 255. Tokens longer than the
- maximum length are split. The maximum token length that can be used is 300 characters.
-:vartype max_token_length: int
-:ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+:ivar maxTokenLength: The maximum token length. Default is 255. Tokens longer than the maximum
+ length are split. The maximum token length that can be used is 300 characters.
+:vartype maxTokenLength: int
+:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
  "#Microsoft.Azure.Search.UaxUrlEmailTokenizer".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.UaxUrlEmailTokenizer"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.UaxUrlEmailTokenizer"]
 """
 
 
@@ -6547,12 +6534,12 @@ Apache Lucene.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar only_on_same_position: A value indicating whether to remove duplicates only at the same
+:ivar onlyOnSamePosition: A value indicating whether to remove duplicates only at the same
  position. Default is false.
-:vartype only_on_same_position: bool
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:vartype onlyOnSamePosition: bool
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.UniqueTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.UniqueTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.UniqueTokenFilter"]
 """
 
 
@@ -6617,15 +6604,14 @@ class VectorSearchProfile(TypedDict, total=False):
 
     :ivar name: The name to associate with this particular vector search profile. Required.
     :vartype name: str
-    :ivar algorithm_configuration_name: The name of the vector search algorithm configuration that
-     specifies the algorithm and optional parameters. Required.
-    :vartype algorithm_configuration_name: str
-    :ivar vectorizer_name: The name of the vectorization being configured for use with vector
-     search.
-    :vartype vectorizer_name: str
-    :ivar compression_name: The name of the compression method configuration that specifies the
+    :ivar algorithm: The name of the vector search algorithm configuration that specifies the
+     algorithm and optional parameters. Required.
+    :vartype algorithm: str
+    :ivar vectorizer: The name of the vectorization being configured for use with vector search.
+    :vartype vectorizer: str
+    :ivar compression: The name of the compression method configuration that specifies the
      compression method and optional parameters.
-    :vartype compression_name: str
+    :vartype compression: str
     """
 
     name: Required[str]
@@ -6672,12 +6658,12 @@ Services Vision Vectorize API.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar model_version: The version of the model to use when calling the AI Services Vision
+:ivar modelVersion: The version of the model to use when calling the AI Services Vision
  service. It will default to the latest available when not specified. Required.
-:vartype model_version: str
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype modelVersion: str
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Vision.VectorizeSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Vision.VectorizeSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Vision.VectorizeSkill"]
 """
 
 
@@ -6726,32 +6712,32 @@ your custom code.
 :vartype outputs: list["OutputFieldMappingEntry"]
 :ivar uri: The url for the Web API. Required.
 :vartype uri: str
-:ivar http_headers: The headers required to make the http request.
-:vartype http_headers: "WebApiHttpHeaders"
-:ivar http_method: The method for the http request.
-:vartype http_method: str
+:ivar httpHeaders: The headers required to make the http request.
+:vartype httpHeaders: "WebApiHttpHeaders"
+:ivar httpMethod: The method for the http request.
+:vartype httpMethod: str
 :ivar timeout: The desired timeout for the request. Default is 30 seconds.
 :vartype timeout: str
-:ivar batch_size: The desired batch size which indicates number of documents.
-:vartype batch_size: int
-:ivar degree_of_parallelism: If set, the number of parallel calls that can be made to the Web
+:ivar batchSize: The desired batch size which indicates number of documents.
+:vartype batchSize: int
+:ivar degreeOfParallelism: If set, the number of parallel calls that can be made to the Web
  API.
-:vartype degree_of_parallelism: int
-:ivar auth_resource_id: Applies to custom skills that connect to external code in an Azure
+:vartype degreeOfParallelism: int
+:ivar authResourceId: Applies to custom skills that connect to external code in an Azure
  function or some other application that provides the transformations. This value should be the
  application ID created for the function or app when it was registered with Azure Active
  Directory. When specified, the custom skill connects to the function or app using a managed ID
  (either system or user-assigned) of the search service and the access token of the function or
  app, using this value as the resource id for creating the scope of the access token.
-:vartype auth_resource_id: str
-:ivar auth_identity: The user-assigned managed identity used for outbound connections. If an
+:vartype authResourceId: str
+:ivar authIdentity: The user-assigned managed identity used for outbound connections. If an
  authResourceId is provided and it's not specified, the system-assigned managed identity is
  used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
  If set to "none", the value of this property is cleared.
-:vartype auth_identity: "SearchIndexerDataIdentity"
-:ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+:vartype authIdentity: "SearchIndexerDataIdentity"
+:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Custom.WebApiSkill".
-:vartype odata_type: Literal["#Microsoft.Skills.Custom.WebApiSkill"]
+:vartype @odata.type: Literal["#Microsoft.Skills.Custom.WebApiSkill"]
 """
 
 
@@ -6760,11 +6746,10 @@ class WebApiVectorizer(TypedDict, total=False):
     Integration of an external vectorizer is achieved using the custom Web API interface of a
     skillset.
 
-    :ivar vectorizer_name: The name to associate with this particular vectorization method.
-     Required.
-    :vartype vectorizer_name: str
-    :ivar web_api_parameters: Specifies the properties of the user-defined vectorizer.
-    :vartype web_api_parameters: "WebApiVectorizerParameters"
+    :ivar name: The name to associate with this particular vectorization method. Required.
+    :vartype name: str
+    :ivar customWebApiParameters: Specifies the properties of the user-defined vectorizer.
+    :vartype customWebApiParameters: "WebApiVectorizerParameters"
     :ivar kind: The name of the kind of vectorization method being configured for use with vector
      search. Required. Generate embeddings using a custom web endpoint at query time.
     :vartype kind: Literal[VectorSearchVectorizerKind.CUSTOM_WEB_API]
@@ -6782,26 +6767,26 @@ class WebApiVectorizer(TypedDict, total=False):
 class WebApiVectorizerParameters(TypedDict, total=False):
     """Specifies the properties for connecting to a user-defined vectorizer.
 
-    :ivar url: The URI of the Web API providing the vectorizer.
-    :vartype url: str
-    :ivar http_headers: The headers required to make the HTTP request.
-    :vartype http_headers: dict[str, str]
-    :ivar http_method: The method for the HTTP request.
-    :vartype http_method: str
+    :ivar uri: The URI of the Web API providing the vectorizer.
+    :vartype uri: str
+    :ivar httpHeaders: The headers required to make the HTTP request.
+    :vartype httpHeaders: dict[str, str]
+    :ivar httpMethod: The method for the HTTP request.
+    :vartype httpMethod: str
     :ivar timeout: The desired timeout for the request. Default is 30 seconds.
     :vartype timeout: str
-    :ivar auth_resource_id: Applies to custom endpoints that connect to external code in an Azure
+    :ivar authResourceId: Applies to custom endpoints that connect to external code in an Azure
      function or some other application that provides the transformations. This value should be the
      application ID created for the function or app when it was registered with Azure Active
      Directory. When specified, the vectorization connects to the function or app using a managed ID
      (either system or user-assigned) of the search service and the access token of the function or
      app, using this value as the resource id for creating the scope of the access token.
-    :vartype auth_resource_id: str
-    :ivar auth_identity: The user-assigned managed identity used for outbound connections. If an
+    :vartype authResourceId: str
+    :ivar authIdentity: The user-assigned managed identity used for outbound connections. If an
      authResourceId is provided and it's not specified, the system-assigned managed identity is
      used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
      If set to "none", the value of this property is cleared.
-    :vartype auth_identity: "SearchIndexerDataIdentity"
+    :vartype authIdentity: "SearchIndexerDataIdentity"
     """
 
     uri: str
@@ -6845,13 +6830,13 @@ WebKnowledgeSource.__doc__ = """Knowledge Source targeting web results.
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -6859,11 +6844,11 @@ WebKnowledgeSource.__doc__ = """Knowledge Source targeting web results.
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: Required. A knowledge source that reads data from the web.
 :vartype kind: Literal[KnowledgeSourceKind.WEB]
-:ivar web_parameters: The parameters for the web knowledge source.
-:vartype web_parameters: "WebKnowledgeSourceParameters"
+:ivar webParameters: The parameters for the web knowledge source.
+:vartype webParameters: "WebKnowledgeSourceParameters"
 """
 
 
@@ -6872,8 +6857,8 @@ class WebKnowledgeSourceDomain(TypedDict, total=False):
 
     :ivar address: The address of the domain. Required.
     :vartype address: str
-    :ivar include_subpages: Whether or not to include subpages from this domain.
-    :vartype include_subpages: bool
+    :ivar includeSubpages: Whether or not to include subpages from this domain.
+    :vartype includeSubpages: bool
     """
 
     address: Required[str]
@@ -6885,10 +6870,10 @@ class WebKnowledgeSourceDomain(TypedDict, total=False):
 class WebKnowledgeSourceDomains(TypedDict, total=False):
     """Domain allow/block configuration for web knowledge source.
 
-    :ivar allowed_domains: Domains that are allowed for web results.
-    :vartype allowed_domains: list["WebKnowledgeSourceDomain"]
-    :ivar blocked_domains: Domains that are blocked from web results.
-    :vartype blocked_domains: list["WebKnowledgeSourceDomain"]
+    :ivar allowedDomains: Domains that are allowed for web results.
+    :vartype allowedDomains: list["WebKnowledgeSourceDomain"]
+    :ivar blockedDomains: Domains that are blocked from web results.
+    :vartype blockedDomains: list["WebKnowledgeSourceDomain"]
     """
 
     allowedDomains: list["WebKnowledgeSourceDomain"]
@@ -6957,39 +6942,39 @@ filter is implemented using Apache Lucene.
  or underscores, can only start and end with alphanumeric characters, and is limited to 128
  characters. Required.
 :vartype name: str
-:ivar generate_word_parts: A value indicating whether to generate part words. If set, causes
+:ivar generateWordParts: A value indicating whether to generate part words. If set, causes
  parts of words to be generated; for example "AzureSearch" becomes "Azure" "Search". Default is
  true.
-:vartype generate_word_parts: bool
-:ivar generate_number_parts: A value indicating whether to generate number subwords. Default is
+:vartype generateWordParts: bool
+:ivar generateNumberParts: A value indicating whether to generate number subwords. Default is
  true.
-:vartype generate_number_parts: bool
-:ivar catenate_words: A value indicating whether maximum runs of word parts will be catenated.
+:vartype generateNumberParts: bool
+:ivar catenateWords: A value indicating whether maximum runs of word parts will be catenated.
  For example, if this is set to true, "Azure-Search" becomes "AzureSearch". Default is false.
-:vartype catenate_words: bool
-:ivar catenate_numbers: A value indicating whether maximum runs of number parts will be
+:vartype catenateWords: bool
+:ivar catenateNumbers: A value indicating whether maximum runs of number parts will be
  catenated. For example, if this is set to true, "1-2" becomes "12". Default is false.
-:vartype catenate_numbers: bool
-:ivar catenate_all: A value indicating whether all subword parts will be catenated. For
- example, if this is set to true, "Azure-Search-1" becomes "AzureSearch1". Default is false.
-:vartype catenate_all: bool
-:ivar split_on_case_change: A value indicating whether to split words on caseChange. For
- example, if this is set to true, "AzureSearch" becomes "Azure" "Search". Default is true.
-:vartype split_on_case_change: bool
-:ivar preserve_original: A value indicating whether original words will be preserved and added
+:vartype catenateNumbers: bool
+:ivar catenateAll: A value indicating whether all subword parts will be catenated. For example,
+ if this is set to true, "Azure-Search-1" becomes "AzureSearch1". Default is false.
+:vartype catenateAll: bool
+:ivar splitOnCaseChange: A value indicating whether to split words on caseChange. For example,
+ if this is set to true, "AzureSearch" becomes "Azure" "Search". Default is true.
+:vartype splitOnCaseChange: bool
+:ivar preserveOriginal: A value indicating whether original words will be preserved and added
  to the subword list. Default is false.
-:vartype preserve_original: bool
-:ivar split_on_numerics: A value indicating whether to split on numbers. For example, if this
- is set to true, "Azure1Search" becomes "Azure" "1" "Search". Default is true.
-:vartype split_on_numerics: bool
-:ivar stem_english_possessive: A value indicating whether to remove trailing "'s" for each
+:vartype preserveOriginal: bool
+:ivar splitOnNumerics: A value indicating whether to split on numbers. For example, if this is
+ set to true, "Azure1Search" becomes "Azure" "1" "Search". Default is true.
+:vartype splitOnNumerics: bool
+:ivar stemEnglishPossessive: A value indicating whether to remove trailing "'s" for each
  subword. Default is true.
-:vartype stem_english_possessive: bool
-:ivar protected_words: A list of tokens to protect from being delimited.
-:vartype protected_words: list[str]
-:ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+:vartype stemEnglishPossessive: bool
+:ivar protectedWords: A list of tokens to protect from being delimited.
+:vartype protectedWords: list[str]
+:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
  is "#Microsoft.Azure.Search.WordDelimiterTokenFilter".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.WordDelimiterTokenFilter"]
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.WordDelimiterTokenFilter"]
 """
 
 
@@ -7012,13 +6997,13 @@ WorkIQKnowledgeSource.__doc__ = """Configuration for WorkIQ knowledge source.
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar results_processing: Controls whether results from this knowledge source are reranked
+:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
-:vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar e_tag: The ETag of the knowledge source.
-:vartype e_tag: str
-:ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+:ivar @odata.etag: The ETag of the knowledge source.
+:vartype @odata.etag: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
  you have encrypted your knowledge source definition, it will always remain encrypted. The
@@ -7026,24 +7011,24 @@ WorkIQKnowledgeSource.__doc__ = """Configuration for WorkIQ knowledge source.
  as needed if you want to rotate your encryption key; Your knowledge source definition will be
  unaffected. Encryption with customer-managed keys is not available for free search services,
  and is only available for paid services created on or after January 1, 2019.
-:vartype encryption_key: "SearchResourceEncryptionKey"
+:vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar kind: The discriminator value. Required. A knowledge source that reads data from work IQ.
 :vartype kind: Literal[KnowledgeSourceKind.WORK_IQ]
-:ivar work_iq_parameters: The parameters for the WorkIQ knowledge source, including the
+:ivar workIQParameters: The parameters for the WorkIQ knowledge source, including the
  customer-owned Entra app configuration used for on-behalf-of authentication. Required.
-:vartype work_iq_parameters: "WorkIQKnowledgeSourceParameters"
+:vartype workIQParameters: "WorkIQKnowledgeSourceParameters"
 """
 
 
 class WorkIQKnowledgeSourceParameters(TypedDict, total=False):
     """Parameters for a WorkIQ knowledge source.
 
-    :ivar entra_app_authentication: The customer-owned Microsoft Entra app registration
-     configuration used for on-behalf-of authentication to the Work IQ API. The customer registers a
-     tenant-owned Entra app, grants it the WorkIQAgent.Ask delegated permission, and configures a
-     federated credential so Azure AI Search can authenticate as that app without a stored client
-     secret. Required.
-    :vartype entra_app_authentication: "EntraAppAuthentication"
+    :ivar entraAppAuthentication: The customer-owned Microsoft Entra app registration configuration
+     used for on-behalf-of authentication to the Work IQ API. The customer registers a tenant-owned
+     Entra app, grants it the WorkIQAgent.Ask delegated permission, and configures a federated
+     credential so Azure AI Search can authenticate as that app without a stored client secret.
+     Required.
+    :vartype entraAppAuthentication: "EntraAppAuthentication"
     """
 
     entraAppAuthentication: Required["EntraAppAuthentication"]

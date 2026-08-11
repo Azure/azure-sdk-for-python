@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SearchIndexClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class SearchIndexClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for SearchIndexClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -73,7 +74,7 @@ class SearchIndexClientConfiguration:  # pylint: disable=too-many-instance-attri
             self.authentication_policy = self._infer_policy(**kwargs)
 
 
-class SearchIndexerClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class SearchIndexerClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for SearchIndexerClient.
 
     Note that all parameters used to create this instance are saved as instance
