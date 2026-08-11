@@ -47,10 +47,10 @@ on:
             comment.user?.login === "github-actions[bot]" &&
             comment.body?.includes(runUrl) &&
             comment.body.includes("[Pilot] PR Pipeline Failure Analysis") &&
-            comment.body.includes("**Automated fix:** in progress")
+            comment.body.includes("<!-- pipeline-auto-fix-authorized -->")
           );
           if (matches.length !== 1) {
-            core.setFailed(`Expected one in-progress analysis comment, found ${matches.length}.`);
+            core.setFailed(`Expected one authorized analysis comment, found ${matches.length}.`);
             return;
           }
           core.setOutput("body", matches[0].body);
@@ -69,9 +69,17 @@ on:
           });
           if (pull.state !== "open" || pull.head.sha !== process.env.CI_HEAD_SHA) {
             core.setFailed("The pull request is closed or no longer points to the failed commit.");
+            return;
+          }
+          if (pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`) {
+            core.setFailed("Automated fixing is not supported for fork-owned pull request branches.");
           }
 if: needs.pre_activation.outputs.analysis_comment_result == 'success' && needs.pre_activation.outputs.pr_head_result == 'success'
 engine: copilot
+
+concurrency:
+  group: "pipeline-analysis-auto-fix-${{ github.event.inputs.pr_number }}-${{ github.event.inputs.ci_head_sha }}"
+  cancel-in-progress: false
 
 jobs:
   pre-activation:
@@ -210,14 +218,21 @@ safe-outputs:
                 comment.user?.login === "github-actions[bot]" &&
                 comment.body?.includes(runUrl) &&
                 comment.body.includes("[Pilot] PR Pipeline Failure Analysis") &&
-                comment.body.includes("**Automated fix:** in progress")
+                comment.body.includes("<!-- pipeline-auto-fix-authorized -->")
               );
               if (matches.length !== 1) {
-                core.setFailed(`Expected one in-progress analysis comment, found ${matches.length}.`);
+                core.setFailed(`Expected one authorized analysis comment, found ${matches.length}.`);
+                return;
+              }
+              const requestedStatus =
+                `**Automated fix:** [requested from this analysis run](${runUrl})\n\n` +
+                "<!-- pipeline-auto-fix-authorized -->";
+              if (!matches[0].body.includes(requestedStatus)) {
+                core.setFailed("The authorized analysis comment has an unexpected automated-fix status.");
                 return;
               }
               const body = matches[0].body.replace(
-                "**Automated fix:** in progress",
+                requestedStatus,
                 `Copilot opened a [draft fix](${fixPrUrl}) and triggered its checks. ` +
                   "Review the changes and check results, then merge it if it resolves the failure."
               );

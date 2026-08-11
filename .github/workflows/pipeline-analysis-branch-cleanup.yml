@@ -5,12 +5,6 @@ on:
     workflows: [Agentic Maintenance]
     types: [completed]
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: Report branches without deleting them
-        required: true
-        type: boolean
-        default: true
 
 permissions: {}
 
@@ -26,13 +20,11 @@ jobs:
     steps:
       - name: Delete completed auto-fix branches
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        env:
-          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
         with:
           script: |
             const prefixes = ["pipeline-fix/", "copilot-pipeline-fix/"];
             const branchPattern = /^(?:pipeline-fix|copilot-pipeline-fix)\/pr-\d+-[0-9a-f]{40}\/run-\d+\/.+$/;
-            const dryRun = process.env.DRY_RUN === "true";
+            const orphanMinAgeMs = 24 * 60 * 60 * 1000;
             const refs = [];
             for (const prefix of prefixes) {
               refs.push(...await github.paginate(github.rest.git.listMatchingRefs, {
@@ -55,23 +47,32 @@ jobs:
                 head: `${context.repo.owner}:${branch}`,
                 per_page: 100,
               });
-              if (!pulls.length || pulls.some(pull => pull.state === "open")) {
-                core.info(`Keeping ${branch}: ${pulls.length ? "a correlated PR is open" : "no correlated PR exists"}.`);
+              if (pulls.some(pull => pull.state === "open")) {
+                core.info(`Keeping ${branch}: a correlated PR is open.`);
                 continue;
               }
-              if (dryRun) {
-                core.info(`Would delete ${branch}: all correlated PRs are closed.`);
-                continue;
+              let reason = "all correlated PRs are closed";
+              if (!pulls.length) {
+                const { data: commit } = await github.rest.git.getCommit({
+                  ...context.repo,
+                  commit_sha: ref.object.sha,
+                });
+                const committedAt = Date.parse(commit.committer?.date);
+                if (!Number.isFinite(committedAt) || Date.now() - committedAt < orphanMinAgeMs) {
+                  core.info(`Keeping ${branch}: no correlated PR exists and the branch is less than 24 hours old.`);
+                  continue;
+                }
+                reason = "no correlated PR exists and the branch is at least 24 hours old";
               }
               await github.rest.git.deleteRef({
                 ...context.repo,
                 ref: `heads/${branch}`,
               });
               deleted += 1;
-              core.info(`Deleted ${branch}: all correlated PRs are closed.`);
+              core.info(`Deleted ${branch}: ${reason}.`);
             }
 
             await core.summary
               .addHeading("Pipeline auto-fix branch cleanup")
-              .addRaw(`${dryRun ? "Dry run complete" : `Deleted ${deleted} branch(es)`}. Inspected ${refs.length} branch(es).`)
+              .addRaw(`Deleted ${deleted} branch(es). Inspected ${refs.length} branch(es).`)
               .write();
