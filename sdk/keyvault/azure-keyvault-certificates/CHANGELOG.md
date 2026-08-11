@@ -1,6 +1,6 @@
 # Release History
 
-## 4.12.0b2 (Unreleased)
+## 4.12.0b2 (2026-08-11)
 
 ### Bugs Fixed
 
