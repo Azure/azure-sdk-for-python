@@ -472,7 +472,6 @@ async def test_post_drain_new_append_gets_next_seq_not_zero(manager_local: TaskM
             lease_duration_seconds=60,
             payload={
                 "input": {"initial": True},
-                "metadata": {},
                 "schema_version": "1",
                 "steering": {
                     "pending_inputs": [],

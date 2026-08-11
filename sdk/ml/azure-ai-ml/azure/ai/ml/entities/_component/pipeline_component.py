@@ -39,24 +39,24 @@ module_logger = logging.getLogger(__name__)
 class PipelineComponent(Component):
     """Pipeline component, currently used to store components in an azure.ai.ml.dsl.pipeline.
 
-    :param name: Name of the component.
-    :type name: str
-    :param version: Version of the component.
-    :type version: str
-    :param description: Description of the component.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict
-    :param display_name: Display name of the component.
-    :type display_name: str
-    :param inputs: Component inputs.
-    :type inputs: dict
-    :param outputs: Component outputs.
-    :type outputs: dict
-    :param jobs: Id to components dict inside the pipeline definition.
-    :type jobs: Dict[str, ~azure.ai.ml.entities._builders.BaseNode]
-    :param is_deterministic: Whether the pipeline component is deterministic.
-    :type is_deterministic: bool
+    :keyword name: Name of the component.
+    :paramtype name: str
+    :keyword version: Version of the component.
+    :paramtype version: str
+    :keyword description: Description of the component.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict
+    :keyword display_name: Display name of the component.
+    :paramtype display_name: str
+    :keyword inputs: Component inputs.
+    :paramtype inputs: dict
+    :keyword outputs: Component outputs.
+    :paramtype outputs: dict
+    :keyword jobs: Id to components dict inside the pipeline definition.
+    :paramtype jobs: Dict[str, ~azure.ai.ml.entities._builders.BaseNode]
+    :keyword is_deterministic: Whether the pipeline component is deterministic.
+    :paramtype is_deterministic: bool
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if PipelineComponent cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -176,7 +176,7 @@ class PipelineComponent(Component):
             - All the rest of cases without compute will add compute not set error to validation result.
 
         :keyword parent_node_name: The name of the parent node.
-        :type parent_node_name: Optional[str]
+        :paramtype parent_node_name: Optional[str]
         :return: The validation result
         :rtype: MutableValidationResult
         """

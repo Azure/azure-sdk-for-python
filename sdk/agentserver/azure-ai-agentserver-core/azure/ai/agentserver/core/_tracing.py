@@ -38,14 +38,13 @@ from contextlib import contextmanager, nullcontext
 import logging
 import os
 import threading
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
 
 from . import _config
 from ._constants import Constants
-
-_Content = Union[str, bytes, memoryview]
+from ._types import StreamContent
 
 # GenAI semantic convention attribute keys
 _ATTR_SERVICE_NAME = "service.name"
@@ -618,19 +617,19 @@ def detach_context(token: Any) -> None:
 
 
 async def trace_stream(
-    iterator: AsyncIterable[_Content], span: Any
-) -> AsyncIterator[_Content]:
+    iterator: AsyncIterable[StreamContent], span: Any
+) -> AsyncIterator[StreamContent]:
     """Wrap a streaming body so the span covers the full transmission.
 
     Yields chunks unchanged.  Ends the span when the iterator is
     exhausted or raises an exception.
 
     :param iterator: The async iterable to wrap.
-    :type iterator: AsyncIterable[str or bytes or memoryview]
+    :type iterator: AsyncIterable[~azure.ai.agentserver.core.StreamContent]
     :param span: The OTel span to end on completion, or ``None``.
     :type span: any
     :return: An async iterator yielding chunks unchanged.
-    :rtype: AsyncIterator[str or bytes or memoryview]
+    :rtype: AsyncIterator[~azure.ai.agentserver.core.StreamContent]
     """
     error: Optional[BaseException] = None
     try:

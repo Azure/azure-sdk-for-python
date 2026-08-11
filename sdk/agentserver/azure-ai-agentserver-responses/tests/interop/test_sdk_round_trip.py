@@ -72,7 +72,7 @@ def _capturing(handler):
     """Wrap *handler* so the parsed ``CreateResponse`` is captured."""
     _captured.clear()
 
-    def wrapper(request, context, cancellation_signal):
+    async def wrapper(request, context, cancellation_signal):
         _captured["request"] = request
         _captured["context"] = context
         return handler(request, context, cancellation_signal)
@@ -89,7 +89,7 @@ def _capturing(handler):
 
 
 def _text_message_handler(text: str = "Hello, world!"):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
             s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
@@ -107,7 +107,7 @@ def _function_call_handler(
     call_id: str = "call_abc123",
     arguments: str = '{"location":"Seattle"}',
 ):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
             s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
@@ -124,7 +124,7 @@ def _function_call_output_handler(
     call_id: str = "call_abc123",
     output: str = "72°F and sunny",
 ):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
             s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
@@ -138,7 +138,7 @@ def _function_call_output_handler(
 
 
 def _reasoning_handler(summary: str = "Let me think step by step..."):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
             s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
@@ -152,7 +152,7 @@ def _reasoning_handler(summary: str = "Let me think step by step..."):
 
 
 def _file_search_handler():
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
             s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
@@ -177,7 +177,7 @@ def _web_search_handler():
     the item to include a valid search action.
     """
 
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
             s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
@@ -201,7 +201,7 @@ def _web_search_handler():
 
 
 def _code_interpreter_handler(code: str = "print('hello')"):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
             s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
@@ -219,7 +219,7 @@ def _code_interpreter_handler(code: str = "print('hello')"):
 
 
 def _image_gen_handler():
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
             s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
@@ -239,7 +239,7 @@ def _mcp_call_handler(
     server_label: str = "my-server",
     name: str = "search_docs",
 ):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
             s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
@@ -257,7 +257,7 @@ def _mcp_call_handler(
 
 
 def _mcp_list_tools_handler(server_label: str = "my-server"):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
             s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
@@ -275,7 +275,7 @@ def _mcp_list_tools_handler(server_label: str = "my-server"):
 def _multiple_items_handler():
     """Emit a message, a function call, and a reasoning item."""
 
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
             s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()

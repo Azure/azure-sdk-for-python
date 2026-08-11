@@ -12,7 +12,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
 )
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -117,6 +116,8 @@ def make_onesettings_request(
     headers = headers or {}
 
     try:
+        # requests honors standard proxy environment variables (HTTP_PROXY/HTTPS_PROXY/NO_PROXY)
+        # automatically, so no explicit proxy configuration is needed here.
         result = requests.get(url, params=query_dict, headers=headers, timeout=10)
         # Do NOT call raise_for_status(): HTTP error codes (4xx/5xx) are handled by the parser so
         # the real status_code is preserved. This lets callers distinguish retryable errors
@@ -267,7 +268,11 @@ def evaluate_feature(feature_key: str, settings: Dict[str, Any]) -> Optional[boo
     if not isinstance(feature_config, dict):
         return None
 
-    default_state = feature_config.get("default", "disabled").lower() == "enabled"
+    # Coerce the raw value with str() before .lower(): the OneSettings payload is only JSON-decoded,
+    # so a malformed "default" (e.g. a JSON boolean true instead of the string "enabled") would
+    # otherwise raise AttributeError here. str() keeps a well-formed string unchanged while making a
+    # non-string safely fall through to the default-disabled state instead of crashing the caller.
+    default_state = str(feature_config.get("default", "disabled")).lower() == "enabled"
     override_list = feature_config.get("override", [])
 
     # If no override conditions, return default state

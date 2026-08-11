@@ -84,6 +84,9 @@ from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=imp
     _is_attach_enabled,
     _is_on_functions,
 )
+from azure.monitor.opentelemetry.exporter._configuration._state import (  # pylint: disable=import-error,no-name-in-module
+    get_configuration_manager,
+)
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     _DISTRO_DETECTS_ATTACH,
     AzureDiagnosticLogging,
@@ -144,6 +147,17 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     _send_attach_warning()
 
     configurations = _get_configurations(**kwargs)
+
+    # Contribute distro-level profile fields to the OneSettings control plane before any exporter is
+    # created. initialize() is idempotent and _ConfigurationProfile.fill() is first-wins per field, so
+    # setting component="dst" and the distro version here makes the profile reflect the distro; the
+    # exporters created below still supply ikey/region without overriding these already-set fields.
+    config_manager = get_configuration_manager()
+    if config_manager:
+        config_manager.initialize(
+            component="dst",
+            version=VERSION,
+        )
 
     disable_tracing = configurations[DISABLE_TRACING_ARG]
     disable_logging = configurations[DISABLE_LOGGING_ARG]

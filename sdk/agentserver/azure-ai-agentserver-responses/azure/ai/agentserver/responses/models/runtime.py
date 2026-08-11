@@ -9,19 +9,23 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Literal, Mapping, cast
 
-from azure.ai.agentserver.responses.models import (
-    AgentReference,
-    OutputItem,
-    ResponseStreamEvent,
-)
-
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from ..hosting._event_subject import _ResponseEventSubject
+    from azure.ai.agentserver.core.streaming import EventStream  # pylint: disable=import-error,no-name-in-module
+    from ._generated import AgentReference, OutputItem, ResponseObject, ResponseStreamEvent
 
 
 ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancelled", "incomplete"]
 TerminalResponseStatus = Literal["completed", "failed", "cancelled", "incomplete"]
+
+
+# (Spec 024 Phase 5 — Proposal #6/#11) CancellationReason enum DELETED.
+# Cancel causes are now surfaced as independent booleans / events on
+# :class:`ResponseContext` (``client_cancelled`` bool, ``shutdown``
+# asyncio.Event). Steering pressure manifests as ``cancel.is_set()``
+# without any cause boolean — handlers that want to distinguish
+# steering from explicit cancel inspect ``client_cancelled`` and
+# ``shutdown.is_set()`` after observing ``cancel.is_set()``.
 
 
 class ResponseModeFlags:
@@ -62,10 +66,10 @@ class StreamEventRecord:
         }
 
     @classmethod
-    def from_event(cls, event: ResponseStreamEvent, payload: Mapping[str, Any]) -> "StreamEventRecord":
-        """Create a stream event record from a response stream wire payload.
+    def from_generated(cls, event: ResponseStreamEvent, payload: Mapping[str, Any]) -> "StreamEventRecord":
+        """Create a stream event record from a generated response stream event model.
 
-        :param event: The response stream event payload.
+        :param event: The generated response stream event.
         :type event: ResponseStreamEvent
         :param payload: The event payload mapping.
         :type payload: Mapping[str, Any]
@@ -78,8 +82,7 @@ class StreamEventRecord:
 class ResponseExecution:  # pylint: disable=too-many-instance-attributes
     """Lightweight pipeline state for one response execution.
 
-    This type intentionally does not own persisted stream history. Stream replay
-    concerns are modeled separately in :class:`StreamReplayState`.
+    This type intentionally does not own persisted stream history.
     """
 
     def __init__(
@@ -91,12 +94,12 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         updated_at: datetime | None = None,
         completed_at: datetime | None = None,
         status: ResponseStatus = "in_progress",
-        response: dict[str, Any] | None = None,
+        response: ResponseObject | None = None,
         execution_task: asyncio.Task[Any] | None = None,
         cancel_requested: bool = False,
         client_disconnected: bool = False,
         response_created_seen: bool = False,
-        subject: _ResponseEventSubject | None = None,
+        subject: "EventStream | None" = None,
         cancel_signal: asyncio.Event | None = None,
         input_items: list[OutputItem] | None = None,
         previous_response_id: str | None = None,
@@ -174,7 +177,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         """
         return self.status in {"completed", "failed", "cancelled", "incomplete"}
 
-    def set_response_snapshot(self, response: dict[str, Any]) -> None:
+    def set_response_snapshot(self, response: ResponseObject) -> None:
         """Replace the current response snapshot from handler-emitted events.
 
         :param response: The latest response snapshot to store.
@@ -200,6 +203,13 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         ``response.created`` is processed (FR-001: response not accessible
         before the handler emits ``response.created``).
 
+        For non-background responses (Row 3, both stream=F and stream=T),
+        visibility is deferred until the handler reaches a terminal status
+        — per B16, non-bg in-flight responses are not retrievable. (Spec
+        024 Phase 2 bookkeeping unification places the record in
+        runtime_state at accept-time so cancellation / shutdown / recovery
+        can find it; this property gates GET to preserve B16 semantics.)
+
         :returns: True if this execution can be retrieved via GET.
         :rtype: bool
         """
@@ -208,6 +218,9 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         # FR-001: bg non-stream responses are not visible until response.created.
         if self.mode_flags.background and not self.mode_flags.stream:
             return self.response_created_signal.is_set()
+        # B16: non-bg responses (stream OR non-stream) are visible only after terminal.
+        if not self.mode_flags.background:
+            return self.status in ("completed", "failed", "cancelled", "incomplete")
         return True
 
     def apply_event(self, normalized: ResponseStreamEvent, all_events: list[ResponseStreamEvent]) -> None:
@@ -215,7 +228,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
 
         Does nothing if the execution is already ``"cancelled"``.
 
-        :param normalized: The normalised event wire payload.
+        :param normalized: The normalised event (``ResponseStreamEvent`` model instance).
         :type normalized: ResponseStreamEvent
         :param all_events: The full ordered list of handler events seen so far
             (used to extract the latest response snapshot).
@@ -231,7 +244,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
             return
         event_type = normalized.get("type")
         if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES:
-            agent_reference = (
+            agent_reference: Any = (
                 self.response.get("agent_reference") if self.response is not None else {}  # type: ignore[union-attr]
             ) or {}
             model = self.response.get("model") if self.response is not None else None  # type: ignore[union-attr]
@@ -241,25 +254,29 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
                 agent_reference=agent_reference,
                 model=model,
             )
-            self.set_response_snapshot(snapshot)
+            self.set_response_snapshot(cast("ResponseObject", snapshot))
             resolved = snapshot.get("status")
             if isinstance(resolved, str):
                 self.status = cast(ResponseStatus, resolved)
         elif event_type == "response.output_item.added":
             item = normalized.get("item")
             if item is not None and self.response is not None:
-                if isinstance(item, dict):
+                item_any = cast(Any, item)
+                item_dict = item_any.as_dict() if hasattr(item_any, "as_dict") else item
+                if isinstance(item_dict, dict):
                     output = self.response.setdefault("output", [])
                     if isinstance(output, list):
-                        output.append(deepcopy(item))
+                        cast(list[Any], output).append(deepcopy(item_dict))
         elif event_type == "response.output_item.done":
             item = normalized.get("item")
             output_index = normalized.get("output_index")
             if item is not None and isinstance(output_index, int) and self.response is not None:
-                if isinstance(item, dict):
+                item_any = cast(Any, item)
+                item_dict = item_any.as_dict() if hasattr(item_any, "as_dict") else item
+                if isinstance(item_dict, dict):
                     output = self.response.get("output", [])
                     if isinstance(output, list) and 0 <= output_index < len(output):
-                        output[output_index] = deepcopy(item)
+                        cast(list[Any], output)[output_index] = deepcopy(item_dict)
 
     @property
     def agent_reference(self) -> AgentReference | dict[str, Any]:
@@ -284,7 +301,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         return None
 
 
-class StreamReplayState:
+class _StreamReplayState:
     """Persisted stream replay state for one response identifier."""
 
     def __init__(
@@ -316,18 +333,17 @@ class StreamReplayState:
     def terminal_event_seen(self) -> bool:
         """Return whether replay state has already recorded a terminal event.
 
-        :returns: True if the last recorded event is terminal, False otherwise.
         :rtype: bool
         """
         return bool(self.events and self.events[-1].terminal)
 
 
-def build_cancelled_response(
+def _build_cancelled_response(
     response_id: str,
     agent_reference: AgentReference | dict[str, Any],
     model: str | None,
     created_at: datetime | None = None,
-) -> dict[str, Any]:
+) -> ResponseObject:
     """Build a Response object representing a cancelled terminal state.
 
     :param response_id: The response identifier.
@@ -338,8 +354,8 @@ def build_cancelled_response(
     :type model: str | None
     :param created_at: Optional creation timestamp; defaults to now if omitted.
     :type created_at: datetime | None
-    :returns: A response wire payload with status ``"cancelled"`` and empty output.
-    :rtype: dict[str, Any]
+    :returns: A Response object with status ``"cancelled"`` and empty output.
+    :rtype: ResponseObject
     """
     payload: dict[str, Any] = {
         "id": response_id,
@@ -352,18 +368,18 @@ def build_cancelled_response(
     }
     if created_at is not None:
         payload["created_at"] = int(created_at.timestamp())
-    return payload
+    return cast("ResponseObject", payload)
 
 
-def build_failed_response(
+def _build_failed_response(
     response_id: str,
     agent_reference: AgentReference | dict[str, Any],
     model: str | None,
     created_at: datetime | None = None,
     error_message: str = "An internal server error occurred.",
     error_code: str = "server_error",
-) -> dict[str, Any]:
-    """Build a response wire payload representing a failed terminal state.
+) -> ResponseObject:
+    """Build a ResponseObject representing a failed terminal state.
 
     :param response_id: The response identifier.
     :type response_id: str
@@ -375,10 +391,10 @@ def build_failed_response(
     :type created_at: datetime | None
     :param error_message: Human-readable error message.
     :type error_message: str
-    :param error_code: Error code string (e.g. ``"server_error"`` or ``"storage_error"``).
+    :param error_code: Error code string.
     :type error_code: str
-    :returns: A response wire payload with status ``"failed"`` and empty output.
-    :rtype: dict[str, Any]
+    :returns: A Response object with status ``"failed"`` and empty output.
+    :rtype: ResponseObject
     """
     payload: dict[str, Any] = {
         "id": response_id,
@@ -392,4 +408,109 @@ def build_failed_response(
     }
     if created_at is not None:
         payload["created_at"] = int(created_at.timestamp())
-    return payload
+    return cast("ResponseObject", payload)
+
+
+_DEFAULT_FAILED_ERROR_MESSAGE = "An internal server error occurred."
+
+
+def _apply_failed_terminal(base: Mapping[str, Any], *, error: dict[str, Any]) -> dict[str, Any]:
+    """Overlay a ``failed`` terminal onto an existing response snapshot.
+
+    :param base: The existing response snapshot.
+    :type base: Mapping[str, Any]
+    :keyword error: The error payload to attach.
+    :paramtype error: dict[str, Any]
+    :returns: A new payload dict transitioned to ``failed``.
+    :rtype: dict[str, Any]
+    """
+    as_dict = getattr(base, "as_dict", None)
+    obj = cast("dict[str, Any]", as_dict()) if callable(as_dict) else deepcopy(dict(base))
+    obj["status"] = "failed"
+    obj["error"] = deepcopy(error)
+    obj.pop("completed_at", None)
+    return obj
+
+
+def _apply_cancelled_terminal(base: Mapping[str, Any]) -> dict[str, Any]:
+    """Overlay a ``cancelled`` terminal onto an existing response snapshot.
+
+    :param base: The existing response snapshot.
+    :type base: Mapping[str, Any]
+    :returns: A new payload dict transitioned to ``cancelled``.
+    :rtype: dict[str, Any]
+    """
+    as_dict = getattr(base, "as_dict", None)
+    obj = cast("dict[str, Any]", as_dict()) if callable(as_dict) else deepcopy(dict(base))
+    obj["status"] = "cancelled"
+    obj["output"] = []
+    obj.pop("error", None)
+    obj.pop("completed_at", None)
+    return obj
+
+
+def _resolve_failed_response(
+    base: Mapping[str, Any] | None,
+    response_id: str,
+    agent_reference: AgentReference | dict[str, Any],
+    model: str | None,
+    *,
+    created_at: datetime | None = None,
+    error_code: str = "server_error",
+    error_message: str = _DEFAULT_FAILED_ERROR_MESSAGE,
+) -> ResponseObject:
+    """Build a ``failed`` terminal, preserving the handler's response object.
+
+    :param base: The handler's response snapshot, or ``None`` if none exists.
+    :type base: Mapping[str, Any] | None
+    :param response_id: The response identifier.
+    :type response_id: str
+    :param agent_reference: Agent reference for synthesized responses.
+    :type agent_reference: AgentReference | dict[str, Any]
+    :param model: Model identifier for synthesized responses.
+    :type model: str | None
+    :keyword created_at: Optional creation timestamp for synthesized responses.
+    :paramtype created_at: datetime | None
+    :keyword error_code: Error code for the terminal error payload.
+    :paramtype error_code: str
+    :keyword error_message: Error message for the terminal error payload.
+    :paramtype error_message: str
+    :returns: A failed terminal response payload.
+    :rtype: ResponseObject
+    """
+    if base is not None:
+        return cast(
+            "ResponseObject",
+            _apply_failed_terminal(base, error={"code": error_code, "message": error_message}),
+        )
+    return _build_failed_response(
+        response_id, agent_reference, model, created_at=created_at, error_message=error_message, error_code=error_code
+    )
+
+
+def _resolve_cancelled_response(
+    base: Mapping[str, Any] | None,
+    response_id: str,
+    agent_reference: AgentReference | dict[str, Any],
+    model: str | None,
+    *,
+    created_at: datetime | None = None,
+) -> ResponseObject:
+    """Build a ``cancelled`` terminal, preserving the handler's response object.
+
+    :param base: The handler's response snapshot, or ``None`` if none exists.
+    :type base: Mapping[str, Any] | None
+    :param response_id: The response identifier.
+    :type response_id: str
+    :param agent_reference: Agent reference for synthesized responses.
+    :type agent_reference: AgentReference | dict[str, Any]
+    :param model: Model identifier for synthesized responses.
+    :type model: str | None
+    :keyword created_at: Optional creation timestamp for synthesized responses.
+    :paramtype created_at: datetime | None
+    :returns: A cancelled terminal response payload.
+    :rtype: ResponseObject
+    """
+    if base is not None:
+        return cast("ResponseObject", _apply_cancelled_terminal(base))
+    return _build_cancelled_response(response_id, agent_reference, model, created_at=created_at)

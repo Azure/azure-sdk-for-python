@@ -29,6 +29,14 @@ namespace azure.ai.agentserver.core
     def azure.ai.agentserver.core.end_span(span: Any, exc: Optional[BaseException] = None) -> None: ...
 
 
+    @overload
+    def azure.ai.agentserver.core.experimental(wrapped: type[T]) -> type[T]: ...
+
+
+    @overload
+    def azure.ai.agentserver.core.experimental(wrapped: Callable[P, T]) -> Callable[P, T]: ...
+
+
     def azure.ai.agentserver.core.flush_spans(timeout_millis: int = 5000) -> None: ...
 
 
@@ -53,7 +61,7 @@ namespace azure.ai.agentserver.core
     def azure.ai.agentserver.core.set_request_context(context: FoundryAgentRequestContext) -> Token[FoundryAgentRequestContext]: ...
 
 
-    async def azure.ai.agentserver.core.trace_stream:async(iterator: AsyncIterable[_Content], span: Any) -> AsyncIterator[_Content]: ...
+    async def azure.ai.agentserver.core.trace_stream:async(iterator: AsyncIterable[StreamContent], span: Any) -> AsyncIterator[StreamContent]: ...
 
 
     class azure.ai.agentserver.core.AgentConfig:
@@ -96,6 +104,13 @@ namespace azure.ai.agentserver.core
                 **kwargs: Any
             ) -> None: ...
 
+        def add_middleware(
+                self, 
+                middleware_class: MiddlewareFactory[P], 
+                *args: args, 
+                **kwargs: kwargs
+            ) -> None: ...
+
         def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None: ...
 
         def register_server_version(self, version_segment: str) -> None: ...
@@ -113,9 +128,6 @@ namespace azure.ai.agentserver.core
             ) -> None: ...
 
         def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
-
-        @staticmethod
-        async def sse_keepalive_stream(iterator: AsyncIterable[_Content], interval: int) -> AsyncIterator[_Content]: ...
 
 
     class azure.ai.agentserver.core.FoundryAgentRequestContext:
@@ -200,6 +212,7 @@ namespace azure.ai.agentserver.core.storage
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStateStore(FoundryStorageClient): implements AsyncContextManager 
         property name: str    # Read-only
 
@@ -241,6 +254,7 @@ namespace azure.ai.agentserver.core.storage
                 key: str, 
                 value: JSONObject, 
                 *, 
+                call_id: str | None = ..., 
                 tags: Mapping[str, str] | None = ...
             ) -> StateStoreItemRef: ...
 
@@ -250,18 +264,25 @@ namespace azure.ai.agentserver.core.storage
                 self, 
                 key: str, 
                 *, 
+                call_id: str | None = ..., 
                 if_match: str | None = ...
             ) -> DeletedStateStoreItem: ...
 
         async def get(self) -> StateStore: ...
 
-        async def get_item(self, key: str) -> StateStoreItem | None: ...
+        async def get_item(
+                self, 
+                key: str, 
+                *, 
+                call_id: str | None = ...
+            ) -> StateStoreItem | None: ...
 
         async def list_keys(
                 self, 
                 *, 
                 after: str | None = ..., 
                 before: str | None = ..., 
+                call_id: str | None = ..., 
                 limit: int | None = ..., 
                 order: Order = "desc", 
                 tags: Mapping[str, str] | None = ...
@@ -272,6 +293,7 @@ namespace azure.ai.agentserver.core.storage
                 key: str, 
                 value: JSONObject, 
                 *, 
+                call_id: str | None = ..., 
                 if_match: str | None = ..., 
                 require_exists: bool = False, 
                 tags: Mapping[str, str] | None = ...
@@ -285,6 +307,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> StateStore: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageApiError(FoundryStorageError):
 
         def __init__(
@@ -296,6 +319,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageBadRequestError(FoundryStorageError):
 
         def __init__(
@@ -308,6 +332,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageClient: implements AsyncContextManager 
 
         def __init__(
@@ -323,6 +348,7 @@ namespace azure.ai.agentserver.core.storage
         async def aclose(self) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageConflictError(FoundryStorageBadRequestError):
 
         def __init__(
@@ -335,6 +361,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageEndpoint:
 
         def __init__(
@@ -366,6 +393,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> str: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageError(Exception):
 
         def __init__(
@@ -377,6 +405,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageNotFoundError(FoundryStorageError):
 
         def __init__(
@@ -388,6 +417,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStoragePreconditionError(FoundryStorageError):
 
         def __init__(
@@ -584,6 +614,14 @@ namespace azure.ai.agentserver.core.tasks
         ) -> Callable[[Callable[[TaskContext[Input]], Awaitable[Output]]], MultiTurnTask[Input, Output]]: ...
 
 
+    @experimental
+    def azure.ai.agentserver.core.tasks.resilient_tasks_enabled() -> bool: ...
+
+
+    @experimental
+    def azure.ai.agentserver.core.tasks.set_resilient_tasks_enabled(value: bool = True) -> None: ...
+
+
     @overload
     def azure.ai.agentserver.core.tasks.task(
             fn: Callable[[TaskContext[Input]], Awaitable[Output]], 
@@ -605,6 +643,7 @@ namespace azure.ai.agentserver.core.tasks
         ) -> Callable[[Callable[[TaskContext[Input]], Awaitable[Output]]], Task[Input, Output]]: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.InputTooLarge(ValueError):
 
         def __init__(
@@ -614,6 +653,7 @@ namespace azure.ai.agentserver.core.tasks
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.LastInputIdPreconditionFailed(TaskPreconditionFailed):
 
         def __init__(
@@ -626,6 +666,7 @@ namespace azure.ai.agentserver.core.tasks
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.MultiTurnTask(Generic[Input, Output]):
         property name: str    # Read-only
 
@@ -664,6 +705,7 @@ namespace azure.ai.agentserver.core.tasks
             ) -> TaskRun[Output]: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.RetryPolicy:
 
         def __eq__(self, other: object) -> bool: ...
@@ -722,6 +764,7 @@ namespace azure.ai.agentserver.core.tasks
             ) -> bool: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.SteeringQueueFull(RuntimeError):
 
         def __init__(
@@ -731,6 +774,7 @@ namespace azure.ai.agentserver.core.tasks
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.Task(Generic[Input, Output]):
 
         def __init__(
@@ -762,6 +806,7 @@ namespace azure.ai.agentserver.core.tasks
             ) -> TaskRun[Output]: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.TaskCancelled(Exception):
 
         def __init__(
@@ -773,6 +818,7 @@ namespace azure.ai.agentserver.core.tasks
         def __str__(self) -> str: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.TaskConflictError(RuntimeError):
 
         def __init__(
@@ -783,6 +829,7 @@ namespace azure.ai.agentserver.core.tasks
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.TaskContext(Generic[Input]):
         property pending_input_count: int    # Read-only
 
@@ -794,7 +841,6 @@ namespace azure.ai.agentserver.core.tasks
                 input: Input, 
                 input_id: str | None = ..., 
                 is_steered_turn: bool = False, 
-                metadata: TaskMetadata, 
                 pending_count_provider: Callable[[], int] | None = ..., 
                 recovery_count: int = 0, 
                 retry_attempt: int = 0, 
@@ -806,6 +852,7 @@ namespace azure.ai.agentserver.core.tasks
         async def exit_for_recovery(self) -> Any: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.TaskDeferred(Exception):
 
         def __init__(
@@ -829,6 +876,7 @@ namespace azure.ai.agentserver.core.tasks
         key "type": Literal["exhausted_retries"]
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.TaskFailed(Exception):
         error: Union[TaskErrorDict, TaskExhaustedRetriesErrorDict]
 
@@ -840,78 +888,13 @@ namespace azure.ai.agentserver.core.tasks
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.tasks.TaskManagerNotInitialized(RuntimeError):
 
 
-    class azure.ai.agentserver.core.tasks.TaskMetadata(MutableMapping): implements Collection 
-
-        def __call__(self, name: Optional[str] = None) -> TaskMetadata: ...
-
-        def __delitem__(self, key: str) -> None: ...
-
-        def __getitem__(self, key: str) -> Any: ...
-
-        def __init__(
-                self, 
-                initial: dict[str, Any] | None = None, 
-                *, 
-                _namespace_name: Optional[str] = ..., 
-                _registry: dict[Optional[str], TaskMetadata] | None = ..., 
-                flush_callback: NamespaceFlushCallback | None = ...
-            ) -> None: ...
-
-        def __setitem__(
-                self, 
-                key: str, 
-                value: Any
-            ) -> None: ...
-
-        @classmethod
-        def from_payload(
-                cls, 
-                payload: dict[str, Any] | None, 
-                *, 
-                flush_callback: NamespaceFlushCallback | None = ...
-            ) -> TaskMetadata: ...
-
-        def append(
-                self, 
-                key: str, 
-                value: Any
-            ) -> None: ...
-
-        async def flush(self) -> None: ...
-
-        def get(
-                self, 
-                key: str, 
-                default: Any = None
-            ) -> Any: ...
-
-        def increment(
-                self, 
-                key: str, 
-                delta: int = 1
-            ) -> None: ...
-
-        def items(self) -> ItemsView[str, Any]: ...
-
-        def keys(self) -> KeysView[str]: ...
-
-        def set(
-                self, 
-                key: str, 
-                value: Any
-            ) -> None: ...
-
-        def to_dict(self) -> dict[str, Any]: ...
-
-        def values(self) -> ValuesView[Any]: ...
-
-
+    @experimental
     class azure.ai.agentserver.core.tasks.TaskRun(Generic[Output]): implements Awaitable 
         property is_queued: bool    # Read-only
-        property metadata: TaskMetadata    # Read-only
 
         def __init__(
                 self, 
@@ -922,7 +905,6 @@ namespace azure.ai.agentserver.core.tasks
                 execution_task: Task[Any] | None = ..., 
                 input_id: str | None = ..., 
                 lease_expiry_count: int = 0, 
-                metadata: TaskMetadata | None = ..., 
                 provider: Any = ..., 
                 queued_cancel_callback: Any = ..., 
                 result_future: Future[Any], 

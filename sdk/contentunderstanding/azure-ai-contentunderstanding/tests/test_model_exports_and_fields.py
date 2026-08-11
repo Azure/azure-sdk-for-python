@@ -60,17 +60,14 @@ class TestModelExports:
         """Every name in models.__all__ must be an importable, non-None attribute."""
         attr = getattr(models_module, name, None)
         assert attr is not None, (
-            f"'{name}' is in models.__all__ but is not importable from "
-            f"azure.ai.contentunderstanding.models"
+            f"'{name}' is in models.__all__ but is not importable from " f"azure.ai.contentunderstanding.models"
         )
 
     @pytest.mark.parametrize("name", models_all)
     def test_model_is_class_or_type(self, name):
         """Every exported model should be a class, enum, or type alias."""
         attr = getattr(models_module, name)
-        assert isinstance(attr, type) or callable(attr), (
-            f"'{name}' should be a class or callable, got {type(attr)}"
-        )
+        assert isinstance(attr, type) or callable(attr), f"'{name}' should be a class or callable, got {type(attr)}"
 
     def test_key_models_importable(self):
         """Explicitly test commonly used models are importable."""
@@ -85,12 +82,47 @@ class TestModelExports:
             AnalysisInput,
             AnalysisContent,
             CopyAuthorization,
+            # 2026-06-01-preview additions
+            DocumentSignature,
+            DocumentContentSegment,
+            ContentAnalyzerInlineResponse,
+            ContentAnalyzerWorkflow,
         )
+
+    def test_preview_fields_present(self):
+        """Verify 2026-06-01-preview field additions exist on the models."""
+        from azure.ai.contentunderstanding.models import (
+            AnalysisResult,
+            ContentAnalyzerConfig,
+            ContentAnalyzerInlineResponse,
+        )
+
+        # AnalysisResult.infos (new diagnostic list, mirrors warnings)
+        result = AnalysisResult({"infos": [{"code": "LLMStats", "message": "x"}]})
+        assert result.infos is not None
+        assert result.infos[0].code == "LLMStats"
+
+        # ContentAnalyzerConfig.allow_in_page_segments (renamed from enableSegmentInPage)
+        config = ContentAnalyzerConfig({"allowInPageSegments": True})
+        assert config.allow_in_page_segments is True
+        assert not hasattr(ContentAnalyzerConfig, "enable_segment_in_page")
+
+        # ContentAnalyzerInlineResponse (new inline analysis response model)
+        inline = ContentAnalyzerInlineResponse({"status": "succeeded"})
+        assert inline.status == "succeeded"
+        assert hasattr(inline, "result")
+        assert hasattr(inline, "usage")
+
+    def test_processing_location_members_are_unique(self):
+        """Verify the customized enum exposes one member for each wire value."""
+        from azure.ai.contentunderstanding.models import ProcessingLocation
+
+        assert set(ProcessingLocation.__members__) == {"GEOGRAPHY", "DATA_ZONE", "GLOBAL"}
 
     def test_all_count_minimum(self):
         """Guard against __all__ accidentally shrinking (e.g. regeneration drops models)."""
-        assert len(models_all) >= 69, (
-            f"Expected at least 69 exports in models.__all__, got {len(models_all)}. "
+        assert len(models_all) >= 72, (
+            f"Expected at least 72 exports in models.__all__, got {len(models_all)}. "
             f"Did a regeneration drop models?"
         )
 
@@ -102,9 +134,7 @@ class TestFieldValueProperty:
     def test_value_property_exists(self, field_name, field_info):
         """Verify .value is a property on each field class."""
         field_class, _ = field_info
-        assert hasattr(field_class, "value"), (
-            f"{field_name} should have a .value property"
-        )
+        assert hasattr(field_class, "value"), f"{field_name} should have a .value property"
         assert isinstance(
             getattr(field_class, "value"), property
         ), f"{field_name}.value should be a property, got {type(getattr(field_class, 'value'))}"

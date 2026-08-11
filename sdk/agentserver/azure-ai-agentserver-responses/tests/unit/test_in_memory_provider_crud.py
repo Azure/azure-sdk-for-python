@@ -16,6 +16,7 @@ from typing import Any, cast
 import pytest
 
 from azure.ai.agentserver.responses.models import ResponseObject
+from azure.ai.agentserver.responses.models.runtime import StreamEventRecord
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
 # ---------------------------------------------------------------------------
@@ -74,12 +75,15 @@ def test_create__stores_response_envelope() -> None:
     assert result["id"] == "resp_1"
 
 
-def test_create__duplicate_raises_value_error() -> None:
+def test_create__duplicate_raises_response_already_exists() -> None:
+    from azure.ai.agentserver.responses.store import ResponseAlreadyExistsError
+
     provider = InMemoryResponseProvider()
     asyncio.run(provider.create_response(_response("resp_dup"), None, None))
 
-    with pytest.raises(ValueError, match="already exists"):
+    with pytest.raises(ResponseAlreadyExistsError) as exc_info:
         asyncio.run(provider.create_response(_response("resp_dup"), None, None))
+    assert exc_info.value.response_id == "resp_dup"
 
 
 def test_create__stores_input_items_in_item_store() -> None:
@@ -145,19 +149,29 @@ def test_get_items__missing_ids_return_none() -> None:
     assert result == [None]
 
 
-def test_save_stream_events__overwrites_internal_saved_at() -> None:
+def test_append_stream_event__stores_replay_record() -> None:
     provider = InMemoryResponseProvider()
     future_saved_at = datetime.now(timezone.utc) + timedelta(days=365)
-    event = cast(
-        Any,
-        {"type": "response.created", "sequence_number": 0, "_saved_at": future_saved_at},
+    asyncio.run(
+        provider.create_response(
+            _response("resp_stream"),
+            None,
+            None,
+        )
+    )
+    event = StreamEventRecord(
+        sequence_number=0,
+        event_type="response.created",
+        payload={"type": "response.created", "sequence_number": 0},
+        emitted_at=future_saved_at,
     )
 
-    asyncio.run(provider.save_stream_events("resp_stream", [event]))
-    stored = asyncio.run(provider.get_stream_events("resp_stream"))
+    appended = asyncio.run(provider.append_stream_event("resp_stream", event))
+    stored = asyncio.run(provider.get_replay_events("resp_stream"))
 
+    assert appended is True
     assert stored is not None
-    assert stored[0]["_saved_at"] != future_saved_at
+    assert stored[0].emitted_at == future_saved_at
 
 
 # ===========================================================================

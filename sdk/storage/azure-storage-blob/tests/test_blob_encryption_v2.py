@@ -19,6 +19,7 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import BlobPreparer
+from test_helpers import _deterministic_urandom
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
@@ -127,7 +128,6 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    @mock.patch("os.urandom", mock_urandom)
     def test_validate_encryption_chunked_upload(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -148,7 +148,8 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         content = b"a" * 5 * 1024
 
         # Act
-        blob.upload_blob(content, overwrite=True)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            blob.upload_blob(content, overwrite=True)
 
         blob.require_encryption = False
         blob.key_encryption_key = None
@@ -473,7 +474,6 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    @mock.patch("os.urandom", mock_urandom)
     def test_put_blob_single_region_chunked(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -494,7 +494,8 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         content = b"abcde" * 1024
 
         # Act
-        blob.upload_blob(content, overwrite=True)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            blob.upload_blob(content, overwrite=True)
         data = blob.download_blob().readall()
 
         # Assert
