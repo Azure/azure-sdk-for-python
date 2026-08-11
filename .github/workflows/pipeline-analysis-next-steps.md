@@ -13,8 +13,8 @@ on:
         script: |
           const suite = context.payload.check_suite;
           core.setOutput("run_analysis", "false");
-          if (suite.app?.slug !== "azure-pipelines" || suite.pull_requests.length !== 1) {
-            core.info("Skipping analysis because this is not an Azure Pipelines suite for exactly one pull request.");
+          if (suite.app?.slug !== "azure-pipelines" || !suite.pull_requests.length) {
+            core.info("Skipping analysis because this is not an Azure Pipelines suite for a pull request.");
             return;
           }
           const suites = await github.paginate(github.rest.checks.listSuitesForRef, {
@@ -35,6 +35,10 @@ on:
           core.setOutput("head_sha", suite.head_sha);
 
 if: needs.pre_activation.outputs.run_analysis == 'true'
+
+concurrency:
+  group: "pipeline-analysis-next-steps-${{ github.event.check_suite.head_sha }}"
+  cancel-in-progress: true
 
 permissions:
   actions: read
