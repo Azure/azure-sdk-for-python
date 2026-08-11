@@ -240,7 +240,12 @@ ${{ needs.pre_activation.outputs.analysis_comment }}
 ## Process
 
 1. Use `noop` unless the verified analysis demonstrates at least one deterministic, high-confidence code change. Infrastructure, authentication, timeout, flaky, live-test, ambiguous, incomplete, and out-of-scope failures are not eligible.
-2. Make the smallest source or test change that fixes the demonstrated failure. Do not modify workflow, pipeline, repository automation, or dependency files.
+2. Make the smallest source or test change that fixes the demonstrated failure. Use the `edit`
+  tool for file-content changes. If the fix requires deleting a tracked file, run
+  `git rm <path>` as one standalone shell command; do not combine it with other commands. Leave the
+  resulting workspace changes uncommitted: do not create or switch branches, configure Git, commit,
+  or push. The `create_pull_request` safe output creates the branch and commit from the workspace
+  diff. Do not modify workflow, pipeline, repository automation, or dependency files.
 3. If changes were made, call `create_pull_request` exactly once. Use the title
   `Fix pipeline failure for #${{ github.event.inputs.pr_number }}`. In the body, identify the source pull request and failed commit, then summarize the diagnosis, change, and validation.
 4. Do not poll pull request checks or claim that the fix passed validation. State that validation is pending the automated checks triggered by the draft pull request.
