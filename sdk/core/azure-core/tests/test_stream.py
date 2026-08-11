@@ -386,3 +386,25 @@ def test_stream_sse_chunk_boundary_sweep(chunk_size):
     chunks = [_SSE_SWEEP_PAYLOAD[i : i + chunk_size] for i in range(0, len(_SSE_SWEEP_PAYLOAD), chunk_size)]
     events = list(SSEDecoder().iter_events(iter(chunks)))
     assert events == _SSE_SWEEP_EXPECTED
+
+
+def test_stream_jsonl_single_record_many_fragments():
+    # A single very long JSONL record split into thousands of one-byte chunks
+    # must be reassembled correctly. The incremental framer scans only newly
+    # decoded text (rather than rescanning the whole pending record on every
+    # chunk), so this scales linearly rather than quadratically.
+    payload = json.dumps({"msg": "x" * 200000}).encode("utf-8") + b"\n"
+    chunks = [payload[i : i + 1] for i in range(len(payload))]
+    events = list(JSONLDecoder().iter_events(iter(chunks)))
+    assert len(events) == 1
+    assert events[0].json() == {"msg": "x" * 200000}
+
+
+def test_stream_sse_single_line_many_fragments():
+    # A single very long SSE data line split into thousands of one-byte chunks
+    # must be reassembled into one event. The incremental framer scans only
+    # newly decoded text, so this scales linearly rather than quadratically.
+    payload = b"data: " + b"x" * 200000 + b"\n\n"
+    chunks = [payload[i : i + 1] for i in range(len(payload))]
+    events = list(SSEDecoder().iter_events(iter(chunks)))
+    assert events == [ServerSentEvent(event="message", data="x" * 200000)]

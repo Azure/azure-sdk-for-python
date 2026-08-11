@@ -413,3 +413,36 @@ async def test_stream_sse_chunk_boundary_sweep(chunk_size):
 
     events = [event async for event in AsyncSSEDecoder().aiter_events(_bytes())]
     assert events == _SSE_SWEEP_EXPECTED
+
+
+@pytest.mark.asyncio
+async def test_stream_jsonl_single_record_many_fragments():
+    # A single very long JSONL record split into thousands of one-byte chunks
+    # must be reassembled correctly. The incremental framer scans only newly
+    # decoded text, so this scales linearly rather than quadratically.
+    payload = json.dumps({"msg": "x" * 200000}).encode("utf-8") + b"\n"
+    chunks = [payload[i : i + 1] for i in range(len(payload))]
+
+    async def _bytes():
+        for chunk in chunks:
+            yield chunk
+
+    events = [event async for event in AsyncJSONLDecoder().aiter_events(_bytes())]
+    assert len(events) == 1
+    assert events[0].json() == {"msg": "x" * 200000}
+
+
+@pytest.mark.asyncio
+async def test_stream_sse_single_line_many_fragments():
+    # A single very long SSE data line split into thousands of one-byte chunks
+    # must be reassembled into one event. The incremental framer scans only
+    # newly decoded text, so this scales linearly rather than quadratically.
+    payload = b"data: " + b"x" * 200000 + b"\n\n"
+    chunks = [payload[i : i + 1] for i in range(len(payload))]
+
+    async def _bytes():
+        for chunk in chunks:
+            yield chunk
+
+    events = [event async for event in AsyncSSEDecoder().aiter_events(_bytes())]
+    assert events == [ServerSentEvent(event="message", data="x" * 200000)]

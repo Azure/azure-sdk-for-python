@@ -27,7 +27,7 @@
 import codecs
 import json
 from contextlib import aclosing
-from typing import Iterator, AsyncIterator, Any, Optional, cast
+from typing import Iterator, AsyncIterator, Any, List, Optional, cast
 
 
 class JSONLEvent:
@@ -53,6 +53,64 @@ class JSONLEvent:
         return json.loads(cast(str, self.data))
 
 
+class _JSONLLineFramer:
+    """Incremental JSONL line framer with linear-time behavior.
+
+    JSONL records are separated only by ``"\\n"`` (tolerating ``"\\r\\n"``). Unlike
+    ``str.splitlines()``, other Unicode boundaries (``\\v``, ``\\f``, ``\\x1c``-``\\x1e``,
+    ``\\x85``, ``\\u2028``, ``\\u2029``) are preserved because they are valid inside a JSONL
+    record's string value.
+
+    Rather than re-concatenating and re-splitting the whole pending record on every network chunk
+    (which is O(n^2) for a single long record fragmented across many chunks), the unfinished record
+    is held as a list of fragments and joined only when a terminator arrives (or at EOF). Only the
+    newly decoded text is scanned per chunk, giving O(total) behavior.
+    """
+
+    def __init__(self) -> None:
+        # Fragments of the current, not-yet-terminated record. Never contains a "\n".
+        self._parts: List[str] = []
+
+    def push(self, text: str) -> List[str]:
+        """Feed newly decoded text and return any completed records.
+
+        :param text: Newly decoded text from a single chunk.
+        :type text: str
+        :return: Completed records produced by this chunk (may be empty).
+        :rtype: list[str]
+        """
+        if not text:
+            return []
+
+        segments = text.split("\n")
+        # Fast path: no line terminator, so this is a continuation of the current record. Stash the
+        # fragment without joining or rescanning the accumulated tail.
+        if len(segments) == 1:
+            self._parts.append(text)
+            return []
+
+        first = "".join(self._parts) + segments[0]
+        # All but the final segment are complete records (terminated by "\n"). Strip a trailing "\r"
+        # to tolerate "\r\n" line endings.
+        completed = [line[:-1] if line.endswith("\r") else line for line in [first, *segments[1:-1]]]
+        self._parts = [segments[-1]]
+        return completed
+
+    def flush(self, extra: str = "") -> List[str]:
+        """Return the final unterminated record, if any, at end of stream.
+
+        :param extra: Trailing text from finalizing the incremental decoder.
+        :type extra: str
+        :return: The final record, if non-empty.
+        :rtype: list[str]
+        """
+        tail = "".join(self._parts) + extra
+        self._parts = []
+        if not tail:
+            return []
+        return [tail[:-1] if tail.endswith("\r") else tail]
+
+
 def iter_lines(iter_bytes: Iterator[bytes]) -> Iterator[str]:
     """Iterate over lines from a byte iterator.
 
@@ -62,21 +120,12 @@ def iter_lines(iter_bytes: Iterator[bytes]) -> Iterator[str]:
     :return: An iterator of lines.
     """
     decoder = codecs.getincrementaldecoder("utf-8")()
+    framer = _JSONLLineFramer()
 
-    # Split only on "\n" (tolerating "\r\n") rather than using str.splitlines(),
-    # which would also break on other Unicode boundaries (\v, \f, \x1c-\x1e, \x85,
-    # \u2028, \u2029) that are valid inside a JSONL record's string value.
-    decoded = ""
     for chunk in iter_bytes:
-        decoded += decoder.decode(chunk)
-        if decoded:
-            decoded_lines = [line[:-1] if line.endswith("\r") else line for line in decoded.split("\n")]
-            yield from decoded_lines[:-1]
-            decoded = decoded_lines[-1]
+        yield from framer.push(decoder.decode(chunk))
 
-    decoded += decoder.decode(b"", final=True)
-    if decoded:
-        yield decoded[:-1] if decoded.endswith("\r") else decoded
+    yield from framer.flush(decoder.decode(b"", final=True))
 
 
 async def aiter_lines(iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[str]:
@@ -88,27 +137,19 @@ async def aiter_lines(iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[str]:
     :return: An iterator of lines.
     """
     decoder = codecs.getincrementaldecoder("utf-8")()
+    framer = _JSONLLineFramer()
 
-    # Split only on "\n" (tolerating "\r\n") rather than using str.splitlines(),
-    # which would also break on other Unicode boundaries (\v, \f, \x1c-\x1e, \x85,
-    # \u2028, \u2029) that are valid inside a JSONL record's string value.
-    decoded = ""
     try:
         async for chunk in iter_bytes:
-            decoded += decoder.decode(chunk)
-            if decoded:
-                decoded_lines = [line[:-1] if line.endswith("\r") else line for line in decoded.split("\n")]
-                for line in decoded_lines[:-1]:
-                    yield line
-                decoded = decoded_lines[-1]
+            for line in framer.push(decoder.decode(chunk)):
+                yield line
     finally:
         aclose = getattr(iter_bytes, "aclose", None)
         if aclose is not None:
             await aclose()
 
-    decoded += decoder.decode(b"", final=True)
-    if decoded:
-        yield decoded[:-1] if decoded.endswith("\r") else decoded
+    for line in framer.flush(decoder.decode(b"", final=True)):
+        yield line
 
 
 class JSONLDecoder:
