@@ -8979,7 +8979,7 @@ namespace azure.search.documents.indexes.types
 
     class azure.search.documents.indexes.types.FileKnowledgeSourceParameters(TypedDict, total=False):
         key "createdResources": ForwardRef('CreatedResources', module='types')
-        key "ingestionParameters": ForwardRef('KnowledgeSourceIngestionParameters', module='types')
+        key "ingestionParameters": Optional[KnowledgeSourceIngestionParameters]
         key "queryHints": ForwardRef('SearchIndexKnowledgeSourceQueryHints', module='types')
         created_resources: CreatedResources
         ingestion_parameters: KnowledgeSourceIngestionParameters
@@ -9086,7 +9086,7 @@ namespace azure.search.documents.indexes.types
     class azure.search.documents.indexes.types.IndexedOneLakeKnowledgeSourceParameters(TypedDict, total=False):
         key "createdResources": ForwardRef('CreatedResources', module='types')
         key "fabricWorkspaceId": Required[str]
-        key "ingestionParameters": ForwardRef('KnowledgeSourceIngestionParameters', module='types')
+        key "ingestionParameters": Optional[KnowledgeSourceIngestionParameters]
         key "lakehouseId": Required[str]
         key "queryHints": ForwardRef('SearchIndexKnowledgeSourceQueryHints', module='types')
         key "targetPath": Optional[str]
@@ -9151,7 +9151,7 @@ namespace azure.search.documents.indexes.types
         key "connectionString": Required[str]
         key "createdResources": ForwardRef('CreatedResources', module='types')
         key "highWaterMarkColumnName": str
-        key "ingestionParameters": ForwardRef('KnowledgeSourceIngestionParameters', module='types')
+        key "ingestionParameters": Optional[KnowledgeSourceIngestionParameters]
         key "queryHints": ForwardRef('SearchIndexKnowledgeSourceQueryHints', module='types')
         key "tableOrView": Required[str]
         connection_string: str
@@ -10874,6 +10874,7 @@ namespace azure.search.documents.knowledgebases
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
 
+        @distributed_trace
         def retrieve_stream(
                 self, 
                 retrieval_request: Union[KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]], 
@@ -10978,6 +10979,7 @@ namespace azure.search.documents.knowledgebases.aio
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
 
+        @distributed_trace_async
         async def retrieve_stream(
                 self, 
                 retrieval_request: Union[KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]], 
@@ -13281,7 +13283,6 @@ namespace azure.search.documents.knowledgebases.types
         key "knowledgeSourceName": Required[str]
         key "maxOutputDocuments": int
         key "neverQuerySource": bool
-        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints', module='types')
         key "rerankerThreshold": float
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
         always_query_source: bool
@@ -13293,6 +13294,7 @@ namespace azure.search.documents.knowledgebases.types
         knowledge_source_name: str
         max_output_documents: int
         never_query_source: bool
+        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
         reranker_threshold: float
         results_processing: Union[str, KnowledgeSourceResultsProcessing]
@@ -13371,7 +13373,6 @@ namespace azure.search.documents.knowledgebases.types
         key "knowledgeSourceName": Required[str]
         key "maxOutputDocuments": int
         key "neverQuerySource": bool
-        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints', module='types')
         key "rerankerThreshold": float
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
         always_query_source: bool
@@ -13383,6 +13384,7 @@ namespace azure.search.documents.knowledgebases.types
         knowledge_source_name: str
         max_output_documents: int
         never_query_source: bool
+        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
         reranker_threshold: float
         results_processing: Union[str, KnowledgeSourceResultsProcessing]
@@ -13403,7 +13405,6 @@ namespace azure.search.documents.knowledgebases.types
         key "knowledgeSourceName": Required[str]
         key "maxOutputDocuments": int
         key "neverQuerySource": bool
-        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints', module='types')
         key "rerankerThreshold": float
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
         always_query_source: bool
@@ -13415,6 +13416,7 @@ namespace azure.search.documents.knowledgebases.types
         knowledge_source_name: str
         max_output_documents: int
         never_query_source: bool
+        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
         reranker_threshold: float
         results_processing: Union[str, KnowledgeSourceResultsProcessing]
@@ -13430,7 +13432,6 @@ namespace azure.search.documents.knowledgebases.types
         key "knowledgeSourceName": Required[str]
         key "maxOutputDocuments": int
         key "neverQuerySource": bool
-        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints', module='types')
         key "rerankerThreshold": float
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
         always_query_source: bool
@@ -13442,6 +13443,7 @@ namespace azure.search.documents.knowledgebases.types
         knowledge_source_name: str
         max_output_documents: int
         never_query_source: bool
+        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
         reranker_threshold: float
         results_processing: Union[str, KnowledgeSourceResultsProcessing]
@@ -13457,7 +13459,6 @@ namespace azure.search.documents.knowledgebases.types
         key "knowledgeSourceName": Required[str]
         key "maxOutputDocuments": int
         key "neverQuerySource": bool
-        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints', module='types')
         key "rerankerThreshold": float
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
         always_query_source: bool
@@ -13469,6 +13470,7 @@ namespace azure.search.documents.knowledgebases.types
         knowledge_source_name: str
         max_output_documents: int
         never_query_source: bool
+        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
         reranker_threshold: float
         results_processing: Union[str, KnowledgeSourceResultsProcessing]
@@ -13572,8 +13574,8 @@ namespace azure.search.documents.knowledgebases.types
 
 
     class azure.search.documents.knowledgebases.types.KnowledgeSourceAzureOpenAIVectorizer(TypedDict, total=False):
-        key "azureOpenAIParameters": ForwardRef('AzureOpenAIVectorizerParameters', module='types')
         key "kind": Required[Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]]
+        azureOpenAIParameters: AzureOpenAIVectorizerParameters
         azure_open_ai_parameters: AzureOpenAIVectorizerParameters
         kind: Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]
 
@@ -13658,8 +13660,8 @@ namespace azure.search.documents.knowledgebases.types
 
 
     class azure.search.documents.knowledgebases.types.KnowledgeSourceVectorizer(TypedDict, total=False):
-        key "azureOpenAIParameters": ForwardRef('AzureOpenAIVectorizerParameters', module='types')
         key "kind": Required[Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]]
+        azureOpenAIParameters: AzureOpenAIVectorizerParameters
         azure_open_ai_parameters: AzureOpenAIVectorizerParameters
         kind: Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]
 
@@ -13727,7 +13729,6 @@ namespace azure.search.documents.knowledgebases.types
         key "knowledgeSourceName": Required[str]
         key "maxOutputDocuments": int
         key "neverQuerySource": bool
-        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints', module='types')
         key "rerankerThreshold": float
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
         always_query_source: bool
@@ -13740,6 +13741,7 @@ namespace azure.search.documents.knowledgebases.types
         knowledge_source_name: str
         max_output_documents: int
         never_query_source: bool
+        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
         reranker_threshold: float
         results_processing: Union[str, KnowledgeSourceResultsProcessing]
