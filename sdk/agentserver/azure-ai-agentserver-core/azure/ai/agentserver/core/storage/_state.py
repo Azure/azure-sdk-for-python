@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import base64
+import os
 from collections.abc import Mapping
 from typing import Any
 
@@ -16,10 +17,13 @@ from azure.core.rest import HttpRequest
 
 from azure.ai.agentserver.core._experimental import experimental
 
+from .._config import resolve_state_subdir
+from .._platform_headers import FOUNDRY_CALL_ID
 from .._request_context import get_request_context
 from ._client import JSON_CONTENT_TYPE, FoundryStorageClient
 from ._endpoint import FoundryStorageEndpoint
 from ._errors import FoundryStorageConflictError, FoundryStorageNotFoundError
+from ._local_state import LocalStateStoreBackend
 from ._state_serializer import (
     _UNSET,
     DeletedStateStore,
@@ -44,6 +48,7 @@ from ._state_serializer import (
 
 DEFAULT_ITEM_TTL_SECONDS = 30 * 24 * 60 * 60
 DELEGATED_USER_ID_HEADER = "x-ms-user-id"
+_FOUNDRY_HOSTING_ENVIRONMENT = "FOUNDRY_HOSTING_ENVIRONMENT"
 
 
 def _encode_segment(value: str) -> str:
@@ -127,6 +132,29 @@ class FoundryStateStore(FoundryStorageClient):
         """
         if not name:
             raise ValueError("name must be a non-empty string")
+        self._local_backend: LocalStateStoreBackend | None = None
+        if not os.environ.get(_FOUNDRY_HOSTING_ENVIRONMENT):
+            local_path = (
+                resolve_state_subdir("state_stores") / f"{_encode_segment(name)}.json"
+            )
+            self._local_backend = LocalStateStoreBackend(
+                local_path,
+                name=name,
+                user_isolation=user_isolation,
+                item_ttl_seconds=item_ttl_seconds,
+                description=description,
+                tags={} if tags is None else tags,
+            )
+            self._name = name
+            self._user_isolation = user_isolation
+            self._item_ttl_seconds = item_ttl_seconds
+            self._description = description
+            self._tags = {} if tags is None else dict(tags)
+            self._user_id = user_id
+            self._owns_credential = False
+            self._credential = None
+            return
+
         self._owns_credential = False
         if credential is None:
             try:
@@ -143,7 +171,9 @@ class FoundryStateStore(FoundryStorageClient):
         if isinstance(endpoint, FoundryStorageEndpoint):
             resolved = endpoint
         elif isinstance(endpoint, str):
-            resolved = FoundryStorageEndpoint.from_endpoint(endpoint, api_version=api_version)
+            resolved = FoundryStorageEndpoint.from_endpoint(
+                endpoint, api_version=api_version
+            )
         else:
             resolved = FoundryStorageEndpoint.from_env(api_version=api_version)
 
@@ -157,11 +187,18 @@ class FoundryStateStore(FoundryStorageClient):
 
     async def aclose(self) -> None:
         """Close the pipeline client and any owned default credential."""
+        if getattr(self, "_local_backend", None) is not None:
+            return
         try:
             await super().aclose()
         finally:
-            if self._owns_credential and hasattr(self._credential, "close"):
-                await self._credential.close()
+            credential = self._credential
+            if (
+                self._owns_credential
+                and credential is not None
+                and hasattr(credential, "close")
+            ):
+                await credential.close()
 
     @property
     def name(self) -> str:
@@ -183,16 +220,24 @@ class FoundryStateStore(FoundryStorageClient):
         content: bytes | None = None,
         include_user_id: bool = False,
         if_match: str | None = None,
+        call_id: str | None = None,
         query: Mapping[str, str] | None = None,
     ) -> HttpRequest:
         headers: dict[str, str] = get_request_context().platform_headers()
+        if call_id is not None:
+            headers[FOUNDRY_CALL_ID] = call_id
         if content is not None:
             headers["Content-Type"] = JSON_CONTENT_TYPE
         if include_user_id and self._user_id is not None:
             headers[DELEGATED_USER_ID_HEADER] = self._user_id
         if if_match is not None:
             headers["If-Match"] = if_match
-        return HttpRequest(method, self._endpoint.build_url(path, **(query or {})), content=content, headers=headers)
+        return HttpRequest(
+            method,
+            self._endpoint.build_url(path, **(query or {})),
+            content=content,
+            headers=headers,
+        )
 
     @classmethod
     async def get_or_create(
@@ -252,6 +297,9 @@ class FoundryStateStore(FoundryStorageClient):
             api_version=api_version,
             **kwargs,
         )
+        if store._local_backend is not None:
+            store._local_backend.ensure_store()
+            return store
         try:
             try:
                 await store._fetch_properties()
@@ -276,11 +324,15 @@ class FoundryStateStore(FoundryStorageClient):
             description=self._description,
             tags=self._tags,
         )
-        response = await self._send_storage_request(self._request("POST", "state_stores", content=body))
+        response = await self._send_storage_request(
+            self._request("POST", "state_stores", content=body)
+        )
         return deserialize_state_store(response.text())
 
     async def _fetch_properties(self) -> StateStore:
-        response = await self._send_storage_request(self._request("GET", self._store_path()))
+        response = await self._send_storage_request(
+            self._request("GET", self._store_path())
+        )
         return deserialize_state_store(response.text())
 
     async def update(
@@ -300,11 +352,20 @@ class FoundryStateStore(FoundryStorageClient):
         :return: The updated store descriptor.
         :rtype: ~azure.ai.agentserver.core.storage.StateStore
         """
+        local_backend = getattr(self, "_local_backend", None)
+        if local_backend is not None:
+            return local_backend.update_store(
+                description=description, tags=tags, unset=_UNSET
+            )
         body = serialize_store_update_request(description, tags)
-        response = await self._send_storage_request(self._request("PATCH", self._store_path(), content=body))
+        response = await self._send_storage_request(
+            self._request("PATCH", self._store_path(), content=body)
+        )
         if description is not _UNSET:
             self._description = (
-                description if isinstance(description, str) or description is None else self._description
+                description
+                if isinstance(description, str) or description is None
+                else self._description
             )
         if tags is not _UNSET:
             self._tags = dict(tags) if isinstance(tags, Mapping) else {}
@@ -316,6 +377,7 @@ class FoundryStateStore(FoundryStorageClient):
         value: JSONObject,
         *,
         tags: Mapping[str, str] | None = None,
+        call_id: str | None = None,
     ) -> StateStoreItemRef:
         """Create a new item and fail on duplicate keys.
 
@@ -326,12 +388,24 @@ class FoundryStateStore(FoundryStorageClient):
         :keyword tags: Optional string labels stored with the item and used to
             filter :meth:`list_keys`.
         :paramtype tags: ~collections.abc.Mapping[str, str] or None
+        :keyword call_id: Explicit Foundry call ID to forward. The default
+            ``None`` uses the current request context.
+        :paramtype call_id: str or None
         :return: A reference to the created item.
         :rtype: ~azure.ai.agentserver.core.storage.StateStoreItemRef
         """
+        local_backend = getattr(self, "_local_backend", None)
+        if local_backend is not None:
+            return local_backend.create_item(key, value, tags)
         body = serialize_item_create_request(key, value, tags)
         response = await self._send_storage_request(
-            self._request("POST", f"{self._store_path()}/items", content=body, include_user_id=True)
+            self._request(
+                "POST",
+                f"{self._store_path()}/items",
+                content=body,
+                include_user_id=True,
+                call_id=call_id,
+            )
         )
         return deserialize_state_item_ref(response.text())
 
@@ -343,6 +417,7 @@ class FoundryStateStore(FoundryStorageClient):
         tags: Mapping[str, str] | None = None,
         if_match: str | None = None,
         require_exists: bool = False,
+        call_id: str | None = None,
     ) -> StateStoreItemRef:
         """Create or replace one item by key.
 
@@ -360,13 +435,19 @@ class FoundryStateStore(FoundryStorageClient):
         :keyword require_exists: When ``True``, only replace an existing item and
             fail if the key is absent. Mutually exclusive with ``if_match``.
         :paramtype require_exists: bool
+        :keyword call_id: Explicit Foundry call ID to forward. The default
+            ``None`` uses the current request context.
+        :paramtype call_id: str or None
         :return: A reference to the created or replaced item.
         :rtype: ~azure.ai.agentserver.core.storage.StateStoreItemRef
         """
         if if_match is not None and require_exists:
             raise ValueError("if_match and require_exists are mutually exclusive")
-        body = serialize_item_put_request(value, tags)
         header = "*" if require_exists else if_match
+        local_backend = getattr(self, "_local_backend", None)
+        if local_backend is not None:
+            return local_backend.set_item(key, value, tags, header)
+        body = serialize_item_put_request(value, tags)
         response = await self._send_storage_request(
             self._request(
                 "PUT",
@@ -374,6 +455,7 @@ class FoundryStateStore(FoundryStorageClient):
                 content=body,
                 include_user_id=True,
                 if_match=header,
+                call_id=call_id,
             )
         )
         return deserialize_state_item_ref(response.text())
@@ -386,19 +468,32 @@ class FoundryStateStore(FoundryStorageClient):
         :raises ~azure.ai.agentserver.core.storage.FoundryStorageNotFoundError:
             If the store does not exist.
         """
+        local_backend = getattr(self, "_local_backend", None)
+        if local_backend is not None:
+            return local_backend.get_store()
         return await self._fetch_properties()
 
-    async def get_item(self, key: str) -> StateStoreItem | None:
+    async def get_item(
+        self, key: str, *, call_id: str | None = None
+    ) -> StateStoreItem | None:
         """Fetch one item by key.
 
         :param key: The item key to fetch.
         :type key: str
+        :keyword call_id: Explicit Foundry call ID to forward. The default
+            ``None`` uses the current request context.
+        :paramtype call_id: str or None
         :return: The item, or ``None`` if it does not exist.
         :rtype: ~azure.ai.agentserver.core.storage.StateStoreItem or None
         """
+        local_backend = getattr(self, "_local_backend", None)
+        if local_backend is not None:
+            return local_backend.get_item(key)
         try:
             response = await self._send_storage_request(
-                self._request("GET", self._item_path(key), include_user_id=True)
+                self._request(
+                    "GET", self._item_path(key), include_user_id=True, call_id=call_id
+                )
             )
         except FoundryStorageNotFoundError:
             return None
@@ -410,21 +505,44 @@ class FoundryStateStore(FoundryStorageClient):
         :return: The deleted-store marker.
         :rtype: ~azure.ai.agentserver.core.storage.DeletedStateStore
         """
-        response = await self._send_storage_request(self._request("DELETE", self._store_path()))
+        local_backend = getattr(self, "_local_backend", None)
+        if local_backend is not None:
+            return local_backend.delete_store()
+        response = await self._send_storage_request(
+            self._request("DELETE", self._store_path())
+        )
         return deserialize_deleted_state_store(response.text())
 
-    async def delete_item(self, key: str, *, if_match: str | None = None) -> DeletedStateStoreItem:
+    async def delete_item(
+        self,
+        key: str,
+        *,
+        if_match: str | None = None,
+        call_id: str | None = None,
+    ) -> DeletedStateStoreItem:
         """Delete one item by key.
 
         :param key: The item key to delete.
         :type key: str
         :keyword if_match: Optional concurrency token.
         :paramtype if_match: str or None
+        :keyword call_id: Explicit Foundry call ID to forward. The default
+            ``None`` uses the current request context.
+        :paramtype call_id: str or None
         :return: The deleted-item marker.
         :rtype: ~azure.ai.agentserver.core.storage.DeletedStateStoreItem
         """
+        local_backend = getattr(self, "_local_backend", None)
+        if local_backend is not None:
+            return local_backend.delete_item(key, if_match)
         response = await self._send_storage_request(
-            self._request("DELETE", self._item_path(key), include_user_id=True, if_match=if_match)
+            self._request(
+                "DELETE",
+                self._item_path(key),
+                include_user_id=True,
+                if_match=if_match,
+                call_id=call_id,
+            )
         )
         return deserialize_deleted_state_item(response.text())
 
@@ -436,6 +554,7 @@ class FoundryStateStore(FoundryStorageClient):
         after: str | None = None,
         before: str | None = None,
         order: Order = "desc",
+        call_id: str | None = None,
     ) -> StateStoreItemKeyPage:
         """List keys within the bound store.
 
@@ -452,11 +571,23 @@ class FoundryStateStore(FoundryStorageClient):
         :paramtype before: str or None
         :keyword order: Sort order, ``"asc"`` or ``"desc"`` (default ``"desc"``).
         :paramtype order: str
+        :keyword call_id: Explicit Foundry call ID to forward. The default
+            ``None`` uses the current request context.
+        :paramtype call_id: str or None
         :return: A page of item keys.
         :rtype: ~azure.ai.agentserver.core.storage.StateStoreItemKeyPage
         """
         if after is not None and before is not None:
             raise ValueError("after and before are mutually exclusive")
+        local_backend = getattr(self, "_local_backend", None)
+        if local_backend is not None:
+            return local_backend.list_keys(
+                tags=tags,
+                limit=limit,
+                after=after,
+                before=before,
+                order=order,
+            )
         query: dict[str, str] = {}
         if tags is not None:
             for key, value in tags.items():
@@ -469,6 +600,12 @@ class FoundryStateStore(FoundryStorageClient):
             query["before"] = before
         query["order"] = order
         response = await self._send_storage_request(
-            self._request("GET", f"{self._store_path()}/items:keys", include_user_id=True, query=query)
+            self._request(
+                "GET",
+                f"{self._store_path()}/items:keys",
+                include_user_id=True,
+                call_id=call_id,
+                query=query,
+            )
         )
         return deserialize_list_keys_response(response.text())
