@@ -7,7 +7,7 @@ namespace azure.search.documents
         V2024_07_01 = "2024-07-01"
         V2025_09_01 = "2025-09-01"
         V2026_04_01 = "2026-04-01"
-        V2026_05_01_PREVIEW = "2026-05-01-preview"
+        V2026_08_01_PREVIEW = "2026-08-01-preview"
 
 
     class azure.search.documents.IndexDocumentsBatch(MutableMapping[str, Any]):
@@ -96,7 +96,7 @@ namespace azure.search.documents
             ) -> List[IndexingResult]: ...
 
         @distributed_trace
-        @api_version_validation(params_added_on={'2026-05-01-preview': ['query_source_authorization', 'enable_elevated_read']}, api_versions_list=['2025-11-01-preview', '2026-04-01', '2026-05-01-preview'])
+        @api_version_validation(params_added_on={'2026-05-01-preview': ['query_source_authorization', 'enable_elevated_read']}, api_versions_list=['2025-11-01-preview', '2026-04-01', '2026-05-01-preview', '2026-08-01-preview'])
         def get_document(
                 self, 
                 key: str, 
@@ -360,7 +360,7 @@ namespace azure.search.documents.aio
             ) -> List[IndexingResult]: ...
 
         @distributed_trace_async
-        @api_version_validation(params_added_on={'2026-05-01-preview': ['query_source_authorization', 'enable_elevated_read']}, api_versions_list=['2025-11-01-preview', '2026-04-01', '2026-05-01-preview'])
+        @api_version_validation(params_added_on={'2026-05-01-preview': ['query_source_authorization', 'enable_elevated_read']}, api_versions_list=['2025-11-01-preview', '2026-04-01', '2026-05-01-preview', '2026-08-01-preview'])
         async def get_document(
                 self, 
                 key: str, 
@@ -577,7 +577,7 @@ namespace azure.search.documents.indexes
         @overload
         def create_alias(
                 self, 
-                alias: JSON, 
+                alias: SearchAlias, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -604,7 +604,7 @@ namespace azure.search.documents.indexes
         @overload
         def create_index(
                 self, 
-                index: JSON, 
+                index: SearchIndex, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -631,7 +631,7 @@ namespace azure.search.documents.indexes
         @overload
         def create_knowledge_base(
                 self, 
-                knowledge_base: JSON, 
+                knowledge_base: KnowledgeBase, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -658,7 +658,7 @@ namespace azure.search.documents.indexes
         @overload
         def create_knowledge_source(
                 self, 
-                knowledge_source: JSON, 
+                knowledge_source: KnowledgeSource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -731,7 +731,7 @@ namespace azure.search.documents.indexes
         @overload
         def create_synonym_map(
                 self, 
-                synonym_map: JSON, 
+                synonym_map: SynonymMap, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -872,26 +872,34 @@ namespace azure.search.documents.indexes
         def list_alias_names(self, **kwargs: Any) -> ItemPaged[str]: ...
 
         @distributed_trace
-        def list_aliases(self, **kwargs: Any) -> ItemPaged[SearchAlias]: ...
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['search', 'page_size', 'search_type']}, api_versions_list=['2025-11-01-preview', '2026-04-01', '2026-05-01-preview', '2026-08-01-preview'])
+        def list_aliases(
+                self, 
+                *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[SearchAlias]: ...
 
         @distributed_trace
         def list_index_names(
                 self, 
                 *, 
-                count: Optional[bool] = ..., 
-                skip: Optional[int] = ..., 
-                top: Optional[int] = ..., 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[str]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'accept', 'top', 'skip', 'count', 'client_request_id']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'accept', 'search', 'page_size', 'search_type', 'client_request_id']}, api_versions_list=['2026-08-01-preview'])
         def list_index_stats_summary(
                 self, 
                 *, 
-                count: Optional[bool] = ..., 
-                skip: Optional[int] = ..., 
-                top: Optional[int] = ..., 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[IndexStatisticsSummary]: ...
 
@@ -899,26 +907,47 @@ namespace azure.search.documents.indexes
         def list_indexes(
                 self, 
                 *, 
-                count: Optional[bool] = ..., 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 select: Optional[List[str]] = ..., 
-                skip: Optional[int] = ..., 
-                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[SearchIndex]: ...
 
         @distributed_trace
-        def list_knowledge_bases(self, **kwargs: Any) -> ItemPaged[KnowledgeBase]: ...
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['search', 'page_size', 'search_type']}, api_versions_list=['2025-11-01-preview', '2026-04-01', '2026-05-01-preview', '2026-08-01-preview'])
+        def list_knowledge_bases(
+                self, 
+                *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[KnowledgeBase]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'accept', 'client_request_id', 'name']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'accept', 'client_request_id', 'name'], '2026-08-01-preview': ['prefix', 'search', 'page_size', 'search_type']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
         def list_knowledge_source_files(
                 self, 
                 name: str, 
+                *, 
+                page_size: Optional[int] = ..., 
+                prefix: Optional[str] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[KnowledgeSourceFile]: ...
 
         @distributed_trace
-        def list_knowledge_sources(self, **kwargs: Any) -> ItemPaged[KnowledgeSource]: ...
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['search', 'page_size', 'search_type']}, api_versions_list=['2025-11-01-preview', '2026-04-01', '2026-05-01-preview', '2026-08-01-preview'])
+        def list_knowledge_sources(
+                self, 
+                *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[KnowledgeSource]: ...
 
         def send_request(
                 self, 
@@ -928,6 +957,24 @@ namespace azure.search.documents.indexes
                 **kwargs: Any
             ) -> HttpResponse: ...
 
+        @overload
+        def update_knowledge_source_file(
+                self, 
+                file_id: str, 
+                name: str, 
+                body: UpdateKnowledgeSourceFileRequest, 
+                **kwargs: Any
+            ) -> KnowledgeSourceFile: ...
+
+        @overload
+        def update_knowledge_source_file(
+                self, 
+                file_id: str, 
+                name: str, 
+                body: UpdateKnowledgeSourceFileRequest, 
+                **kwargs: Any
+            ) -> KnowledgeSourceFile: ...
+
         @distributed_trace
         def upload_knowledge_source_file(
                 self, 
@@ -936,6 +983,22 @@ namespace azure.search.documents.indexes
                 *, 
                 content_disposition: Optional[str] = ..., 
                 filename: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> KnowledgeSourceFile: ...
+
+        @overload
+        def upload_knowledge_source_file_multipart(
+                self, 
+                name: str, 
+                body: UploadKnowledgeSourceFileMultipartRequest, 
+                **kwargs: Any
+            ) -> KnowledgeSourceFile: ...
+
+        @overload
+        def upload_knowledge_source_file_multipart(
+                self, 
+                name: str, 
+                body: UploadKnowledgeSourceFileMultipartRequest, 
                 **kwargs: Any
             ) -> KnowledgeSourceFile: ...
 
@@ -966,7 +1029,7 @@ namespace azure.search.documents.indexes
         @overload
         def create_data_source_connection(
                 self, 
-                data_source_connection: JSON, 
+                data_source_connection: SearchIndexerDataSourceConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -993,7 +1056,7 @@ namespace azure.search.documents.indexes
         @overload
         def create_indexer(
                 self, 
-                indexer: JSON, 
+                indexer: SearchIndexer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1052,7 +1115,7 @@ namespace azure.search.documents.indexes
         @overload
         def create_skillset(
                 self, 
-                skillset: JSON, 
+                skillset: SearchIndexerSkillset, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1240,7 +1303,7 @@ namespace azure.search.documents.indexes.aio
         @overload
         async def create_alias(
                 self, 
-                alias: JSON, 
+                alias: SearchAlias, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1267,7 +1330,7 @@ namespace azure.search.documents.indexes.aio
         @overload
         async def create_index(
                 self, 
-                index: JSON, 
+                index: SearchIndex, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1294,7 +1357,7 @@ namespace azure.search.documents.indexes.aio
         @overload
         async def create_knowledge_base(
                 self, 
-                knowledge_base: JSON, 
+                knowledge_base: KnowledgeBase, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1321,7 +1384,7 @@ namespace azure.search.documents.indexes.aio
         @overload
         async def create_knowledge_source(
                 self, 
-                knowledge_source: JSON, 
+                knowledge_source: KnowledgeSource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1394,7 +1457,7 @@ namespace azure.search.documents.indexes.aio
         @overload
         async def create_synonym_map(
                 self, 
-                synonym_map: JSON, 
+                synonym_map: SynonymMap, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1535,26 +1598,34 @@ namespace azure.search.documents.indexes.aio
         def list_alias_names(self, **kwargs) -> AsyncItemPaged[str]: ...
 
         @distributed_trace
-        def list_aliases(self, **kwargs: Any) -> AsyncItemPaged[SearchAlias]: ...
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['search', 'page_size', 'search_type']}, api_versions_list=['2025-11-01-preview', '2026-04-01', '2026-05-01-preview', '2026-08-01-preview'])
+        def list_aliases(
+                self, 
+                *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[SearchAlias]: ...
 
         @distributed_trace
         def list_index_names(
                 self, 
                 *, 
-                count: Optional[bool] = ..., 
-                skip: Optional[int] = ..., 
-                top: Optional[int] = ..., 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[str]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'accept', 'top', 'skip', 'count', 'client_request_id']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'accept', 'search', 'page_size', 'search_type', 'client_request_id']}, api_versions_list=['2026-08-01-preview'])
         def list_index_stats_summary(
                 self, 
                 *, 
-                count: Optional[bool] = ..., 
-                skip: Optional[int] = ..., 
-                top: Optional[int] = ..., 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[IndexStatisticsSummary]: ...
 
@@ -1562,26 +1633,47 @@ namespace azure.search.documents.indexes.aio
         def list_indexes(
                 self, 
                 *, 
-                count: Optional[bool] = ..., 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 select: Optional[List[str]] = ..., 
-                skip: Optional[int] = ..., 
-                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[SearchIndex]: ...
 
         @distributed_trace
-        def list_knowledge_bases(self, **kwargs: Any) -> AsyncItemPaged[KnowledgeBase]: ...
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['search', 'page_size', 'search_type']}, api_versions_list=['2025-11-01-preview', '2026-04-01', '2026-05-01-preview', '2026-08-01-preview'])
+        def list_knowledge_bases(
+                self, 
+                *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[KnowledgeBase]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'accept', 'client_request_id', 'name']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'accept', 'client_request_id', 'name'], '2026-08-01-preview': ['prefix', 'search', 'page_size', 'search_type']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
         def list_knowledge_source_files(
                 self, 
                 name: str, 
+                *, 
+                page_size: Optional[int] = ..., 
+                prefix: Optional[str] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[KnowledgeSourceFile]: ...
 
         @distributed_trace
-        def list_knowledge_sources(self, **kwargs: Any) -> AsyncItemPaged[KnowledgeSource]: ...
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['search', 'page_size', 'search_type']}, api_versions_list=['2025-11-01-preview', '2026-04-01', '2026-05-01-preview', '2026-08-01-preview'])
+        def list_knowledge_sources(
+                self, 
+                *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[KnowledgeSource]: ...
 
         def send_request(
                 self, 
@@ -1591,6 +1683,24 @@ namespace azure.search.documents.indexes.aio
                 **kwargs: Any
             ) -> Awaitable[AsyncHttpResponse]: ...
 
+        @overload
+        async def update_knowledge_source_file(
+                self, 
+                file_id: str, 
+                name: str, 
+                body: UpdateKnowledgeSourceFileRequest, 
+                **kwargs: Any
+            ) -> KnowledgeSourceFile: ...
+
+        @overload
+        async def update_knowledge_source_file(
+                self, 
+                file_id: str, 
+                name: str, 
+                body: UpdateKnowledgeSourceFileRequest, 
+                **kwargs: Any
+            ) -> KnowledgeSourceFile: ...
+
         @distributed_trace_async
         async def upload_knowledge_source_file(
                 self, 
@@ -1599,6 +1709,22 @@ namespace azure.search.documents.indexes.aio
                 *, 
                 content_disposition: Optional[str] = ..., 
                 filename: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> KnowledgeSourceFile: ...
+
+        @overload
+        async def upload_knowledge_source_file_multipart(
+                self, 
+                name: str, 
+                body: UploadKnowledgeSourceFileMultipartRequest, 
+                **kwargs: Any
+            ) -> KnowledgeSourceFile: ...
+
+        @overload
+        async def upload_knowledge_source_file_multipart(
+                self, 
+                name: str, 
+                body: UploadKnowledgeSourceFileMultipartRequest, 
                 **kwargs: Any
             ) -> KnowledgeSourceFile: ...
 
@@ -1629,7 +1755,7 @@ namespace azure.search.documents.indexes.aio
         @overload
         async def create_data_source_connection(
                 self, 
-                data_source_connection: JSON, 
+                data_source_connection: SearchIndexerDataSourceConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1656,7 +1782,7 @@ namespace azure.search.documents.indexes.aio
         @overload
         async def create_indexer(
                 self, 
-                indexer: JSON, 
+                indexer: SearchIndexer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1715,7 +1841,7 @@ namespace azure.search.documents.indexes.aio
         @overload
         async def create_skillset(
                 self, 
-                skillset: JSON, 
+                skillset: SearchIndexerSkillset, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2079,6 +2205,7 @@ namespace azure.search.documents.indexes.models
         encryption_key: SearchResourceEncryptionKey
         kind: Literal[KnowledgeSourceKind.AZURE_BLOB]
         name: str
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -2088,7 +2215,8 @@ namespace azure.search.documents.indexes.models
                 description: Optional[str] = ..., 
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
-                name: str
+                name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -2102,6 +2230,7 @@ namespace azure.search.documents.indexes.models
         folder_path: Optional[str]
         ingestion_parameters: Optional[KnowledgeSourceIngestionParameters]
         is_adls_gen2: Optional[bool]
+        query_hints: Optional[SearchIndexKnowledgeSourceQueryHints]
 
         @overload
         def __init__(
@@ -2111,7 +2240,8 @@ namespace azure.search.documents.indexes.models
                 container_name: str, 
                 folder_path: Optional[str] = ..., 
                 ingestion_parameters: Optional[KnowledgeSourceIngestionParameters] = ..., 
-                is_adls_gen2: Optional[bool] = ...
+                is_adls_gen2: Optional[bool] = ..., 
+                query_hints: Optional[SearchIndexKnowledgeSourceQueryHints] = ...
             ) -> None: ...
 
         @overload
@@ -2239,10 +2369,14 @@ namespace azure.search.documents.indexes.models
         GPT51 = "gpt-5.1"
         GPT52 = "gpt-5.2"
         GPT54 = "gpt-5.4"
-        GPT_5_4_MINI = "gpt-5.4-mini"
-        GPT_5_4_NANO = "gpt-5.4-nano"
-        GPT_5_MINI = "gpt-5-mini"
-        GPT_5_NANO = "gpt-5-nano"
+        GPT55 = "gpt-5.5"
+        GPT56_LUNA = "gpt-5.6-luna"
+        GPT56_SOL = "gpt-5.6-sol"
+        GPT56_TERRA = "gpt-5.6-terra"
+        GPT5_4_MINI = "gpt-5.4-mini"
+        GPT5_4_NANO = "gpt-5.4-nano"
+        GPT5_MINI = "gpt-5-mini"
+        GPT5_NANO = "gpt-5-nano"
         TEXT_EMBEDDING3_LARGE = "text-embedding-3-large"
         TEXT_EMBEDDING3_SMALL = "text-embedding-3-small"
         TEXT_EMBEDDING_ADA002 = "text-embedding-ada-002"
@@ -3328,6 +3462,24 @@ namespace azure.search.documents.indexes.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.search.documents.indexes.models.EntraAppAuthentication(_Model):
+        application_id: str
+        federated_credential_id: str
+        tenant_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                application_id: str, 
+                federated_credential_id: str, 
+                tenant_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.search.documents.indexes.models.ExhaustiveKnnAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, discriminator='exhaustiveKnn'):
         kind: Literal[VectorSearchAlgorithmKind.EXHAUSTIVE_KNN]
         name: str
@@ -3366,6 +3518,7 @@ namespace azure.search.documents.indexes.models
         fabric_data_agent_parameters: FabricDataAgentKnowledgeSourceParameters
         kind: Literal[KnowledgeSourceKind.FABRIC_DATA_AGENT]
         name: str
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -3375,7 +3528,8 @@ namespace azure.search.documents.indexes.models
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
                 fabric_data_agent_parameters: FabricDataAgentKnowledgeSourceParameters, 
-                name: str
+                name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -3405,6 +3559,7 @@ namespace azure.search.documents.indexes.models
         fabric_ontology_parameters: FabricOntologyKnowledgeSourceParameters
         kind: Literal[KnowledgeSourceKind.FABRIC_ONTOLOGY]
         name: str
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -3414,7 +3569,8 @@ namespace azure.search.documents.indexes.models
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
                 fabric_ontology_parameters: FabricOntologyKnowledgeSourceParameters, 
-                name: str
+                name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -3472,37 +3628,64 @@ namespace azure.search.documents.indexes.models
 
 
     class azure.search.documents.indexes.models.FileKnowledgeSource(KnowledgeSource, discriminator='file'):
+        cors_options: Optional[CorsOptions]
         description: str
         e_tag: str
         encryption_key: SearchResourceEncryptionKey
         file_parameters: FileKnowledgeSourceParameters
         kind: Literal[KnowledgeSourceKind.FILE]
         name: str
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                cors_options: Optional[CorsOptions] = ..., 
                 description: Optional[str] = ..., 
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
                 file_parameters: FileKnowledgeSourceParameters, 
-                name: str
+                name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.search.documents.indexes.models.FileKnowledgeSourceExtractionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MINIMAL = "minimal"
+        STANDARD = "standard"
+
+
     class azure.search.documents.indexes.models.FileKnowledgeSourceParameters(_Model):
         created_resources: Optional[CreatedResources]
         ingestion_parameters: Optional[KnowledgeSourceIngestionParameters]
+        query_hints: Optional[SearchIndexKnowledgeSourceQueryHints]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                ingestion_parameters: Optional[KnowledgeSourceIngestionParameters] = ...
+                ingestion_parameters: Optional[KnowledgeSourceIngestionParameters] = ..., 
+                query_hints: Optional[SearchIndexKnowledgeSourceQueryHints] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.indexes.models.FileUploadMetadata(_Model):
+        file_name: Optional[str]
+        metadata: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                file_name: Optional[str] = ..., 
+                metadata: Optional[dict[str, str]] = ...
             ) -> None: ...
 
         @overload
@@ -3720,6 +3903,7 @@ namespace azure.search.documents.indexes.models
         indexed_one_lake_parameters: IndexedOneLakeKnowledgeSourceParameters
         kind: Literal[KnowledgeSourceKind.INDEXED_ONELAKE]
         name: str
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -3729,7 +3913,8 @@ namespace azure.search.documents.indexes.models
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
                 indexed_one_lake_parameters: IndexedOneLakeKnowledgeSourceParameters, 
-                name: str
+                name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -3741,6 +3926,7 @@ namespace azure.search.documents.indexes.models
         fabric_workspace_id: str
         ingestion_parameters: Optional[KnowledgeSourceIngestionParameters]
         lakehouse_id: str
+        query_hints: Optional[SearchIndexKnowledgeSourceQueryHints]
         target_path: Optional[str]
 
         @overload
@@ -3750,6 +3936,7 @@ namespace azure.search.documents.indexes.models
                 fabric_workspace_id: str, 
                 ingestion_parameters: Optional[KnowledgeSourceIngestionParameters] = ..., 
                 lakehouse_id: str, 
+                query_hints: Optional[SearchIndexKnowledgeSourceQueryHints] = ..., 
                 target_path: Optional[str] = ...
             ) -> None: ...
 
@@ -3770,6 +3957,7 @@ namespace azure.search.documents.indexes.models
         indexed_share_point_parameters: IndexedSharePointKnowledgeSourceParameters
         kind: Literal[KnowledgeSourceKind.INDEXED_SHARE_POINT]
         name: str
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -3779,7 +3967,8 @@ namespace azure.search.documents.indexes.models
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
                 indexed_share_point_parameters: IndexedSharePointKnowledgeSourceParameters, 
-                name: str
+                name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -3792,6 +3981,7 @@ namespace azure.search.documents.indexes.models
         created_resources: Optional[CreatedResources]
         ingestion_parameters: Optional[KnowledgeSourceIngestionParameters]
         query: Optional[str]
+        query_hints: Optional[SearchIndexKnowledgeSourceQueryHints]
 
         @overload
         def __init__(
@@ -3800,7 +3990,8 @@ namespace azure.search.documents.indexes.models
                 connection_string: str, 
                 container_name: Union[str, IndexedSharePointContainerName], 
                 ingestion_parameters: Optional[KnowledgeSourceIngestionParameters] = ..., 
-                query: Optional[str] = ...
+                query: Optional[str] = ..., 
+                query_hints: Optional[SearchIndexKnowledgeSourceQueryHints] = ...
             ) -> None: ...
 
         @overload
@@ -3814,6 +4005,7 @@ namespace azure.search.documents.indexes.models
         indexed_sql_parameters: IndexedSqlKnowledgeSourceParameters
         kind: Literal[KnowledgeSourceKind.INDEXED_SQL]
         name: str
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -3823,7 +4015,8 @@ namespace azure.search.documents.indexes.models
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
                 indexed_sql_parameters: IndexedSqlKnowledgeSourceParameters, 
-                name: str
+                name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -3837,6 +4030,7 @@ namespace azure.search.documents.indexes.models
         embedding_columns: Optional[list[EmbeddingColumnMapping]]
         high_water_mark_column_name: Optional[str]
         ingestion_parameters: Optional[KnowledgeSourceIngestionParameters]
+        query_hints: Optional[SearchIndexKnowledgeSourceQueryHints]
         table_or_view: str
 
         @overload
@@ -3848,6 +4042,7 @@ namespace azure.search.documents.indexes.models
                 embedding_columns: Optional[list[EmbeddingColumnMapping]] = ..., 
                 high_water_mark_column_name: Optional[str] = ..., 
                 ingestion_parameters: Optional[KnowledgeSourceIngestionParameters] = ..., 
+                query_hints: Optional[SearchIndexKnowledgeSourceQueryHints] = ..., 
                 table_or_view: str
             ) -> None: ...
 
@@ -4221,12 +4416,31 @@ namespace azure.search.documents.indexes.models
         AZURE_OPEN_AI = "azureOpenAI"
 
 
+    class azure.search.documents.indexes.models.KnowledgeBaseRetrieveDefaults(_Model):
+        max_output_documents: Optional[int]
+        max_output_size_in_tokens: Optional[int]
+        max_runtime_in_seconds: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_output_documents: Optional[int] = ..., 
+                max_output_size_in_tokens: Optional[int] = ..., 
+                max_runtime_in_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.search.documents.indexes.models.KnowledgeSource(_Model):
         description: Optional[str]
         e_tag: Optional[str]
         encryption_key: Optional[SearchResourceEncryptionKey]
         kind: str
         name: str
+        results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]]
 
         @overload
         def __init__(
@@ -4236,7 +4450,8 @@ namespace azure.search.documents.indexes.models
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
                 kind: str, 
-                name: str
+                name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -4251,10 +4466,14 @@ namespace azure.search.documents.indexes.models
     class azure.search.documents.indexes.models.KnowledgeSourceFile(_Model):
         created_at: Optional[datetime]
         error_message: Optional[str]
+        extraction_mode: Optional[Union[str, FileKnowledgeSourceExtractionMode]]
         file_id: Optional[str]
         file_name: Optional[str]
         file_size_bytes: Optional[int]
         last_updated_at: Optional[datetime]
+        metadata: Optional[dict[str, str]]
+        parsing_mode: Optional[Union[str, BlobIndexerParsingMode]]
+        prefix: Optional[str]
 
 
     class azure.search.documents.indexes.models.KnowledgeSourceIngestionPermissionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4295,6 +4514,11 @@ namespace azure.search.documents.indexes.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NONE = "none"
+        RERANK = "rerank"
 
 
     class azure.search.documents.indexes.models.KnowledgeSourceSynchronizationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4536,6 +4760,10 @@ namespace azure.search.documents.indexes.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.search.documents.indexes.models.ListingSearchType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PREFIX = "prefix"
+
+
     class azure.search.documents.indexes.models.LuceneStandardAnalyzer(LexicalAnalyzer, discriminator='#Microsoft.Azure.Search.StandardAnalyzer'):
         max_token_length: Optional[int]
         name: str
@@ -4742,6 +4970,7 @@ namespace azure.search.documents.indexes.models
         kind: Literal[KnowledgeSourceKind.MCP_SERVER]
         mcp_server_parameters: McpServerKnowledgeSourceParameters
         name: str
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -4751,7 +4980,8 @@ namespace azure.search.documents.indexes.models
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
                 mcp_server_parameters: McpServerKnowledgeSourceParameters, 
-                name: str
+                name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -4890,28 +5120,23 @@ namespace azure.search.documents.indexes.models
 
 
     class azure.search.documents.indexes.models.McpServerTool(_Model):
-        inclusion_mode: Optional[Union[str, McpServerToolInclusionMode]]
         max_output_tokens: Optional[int]
         name: Optional[str]
         output_parsing: Optional[McpServerOutputParsing]
+        results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                inclusion_mode: Optional[Union[str, McpServerToolInclusionMode]] = ..., 
                 max_output_tokens: Optional[int] = ..., 
                 name: Optional[str] = ..., 
-                output_parsing: Optional[McpServerOutputParsing] = ...
+                output_parsing: Optional[McpServerOutputParsing] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.search.documents.indexes.models.McpServerToolInclusionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ALWAYS = "always"
-        RERANKED = "reranked"
 
 
     class azure.search.documents.indexes.models.MergeSkill(SearchIndexerSkill, discriminator='#Microsoft.Skills.Text.MergeSkill'):
@@ -5600,6 +5825,7 @@ namespace azure.search.documents.indexes.models
         kind: Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT]
         name: str
         remote_share_point_parameters: Optional[RemoteSharePointKnowledgeSourceParameters]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -5609,7 +5835,8 @@ namespace azure.search.documents.indexes.models
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
                 name: str, 
-                remote_share_point_parameters: Optional[RemoteSharePointKnowledgeSourceParameters] = ...
+                remote_share_point_parameters: Optional[RemoteSharePointKnowledgeSourceParameters] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -5875,6 +6102,7 @@ namespace azure.search.documents.indexes.models
         encryption_key: SearchResourceEncryptionKey
         kind: Literal[KnowledgeSourceKind.SEARCH_INDEX]
         name: str
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
         search_index_parameters: SearchIndexKnowledgeSourceParameters
 
         @overload
@@ -5885,7 +6113,87 @@ namespace azure.search.documents.indexes.models
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
                 name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ..., 
                 search_index_parameters: SearchIndexKnowledgeSourceParameters
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.indexes.models.SearchIndexKnowledgeSourceBoost(_Model):
+        boost_instructions: Optional[str]
+        kind: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                boost_instructions: Optional[str] = ..., 
+                kind: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.indexes.models.SearchIndexKnowledgeSourceBoostKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FIELD_VALUE = "fieldValue"
+        MULTI_WORD_EXPRESSION = "multiWordExpression"
+
+
+    class azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFieldValueBoost(SearchIndexKnowledgeSourceBoost, discriminator='fieldValue'):
+        boost: float
+        boost_instructions: str
+        field: str
+        field_values: Optional[list[str]]
+        kind: Literal[SearchIndexKnowledgeSourceBoostKind.FIELD_VALUE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                boost: float, 
+                boost_instructions: Optional[str] = ..., 
+                field: str, 
+                field_values: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFilterHint(_Model):
+        field: str
+        field_values: list[str]
+        filter_instructions: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                field: str, 
+                field_values: list[str], 
+                filter_instructions: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.indexes.models.SearchIndexKnowledgeSourceMultiWordExpressionBoost(SearchIndexKnowledgeSourceBoost, discriminator='multiWordExpression'):
+        boost: float
+        boost_instructions: str
+        field_values: Optional[list[str]]
+        kind: Literal[SearchIndexKnowledgeSourceBoostKind.MULTI_WORD_EXPRESSION]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                boost: float, 
+                boost_instructions: Optional[str] = ..., 
+                field_values: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -5894,6 +6202,7 @@ namespace azure.search.documents.indexes.models
 
     class azure.search.documents.indexes.models.SearchIndexKnowledgeSourceParameters(_Model):
         base_filter: Optional[str]
+        query_hints: Optional[SearchIndexKnowledgeSourceQueryHints]
         search_fields: Optional[list[SearchIndexFieldReference]]
         search_index_name: str
         semantic_configuration_name: Optional[str]
@@ -5904,10 +6213,27 @@ namespace azure.search.documents.indexes.models
                 self, 
                 *, 
                 base_filter: Optional[str] = ..., 
+                query_hints: Optional[SearchIndexKnowledgeSourceQueryHints] = ..., 
                 search_fields: Optional[list[SearchIndexFieldReference]] = ..., 
                 search_index_name: str, 
                 semantic_configuration_name: Optional[str] = ..., 
                 source_data_fields: Optional[list[SearchIndexFieldReference]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints(_Model):
+        boosts: Optional[list[SearchIndexKnowledgeSourceBoost]]
+        filters: Optional[list[SearchIndexKnowledgeSourceFilterHint]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                boosts: Optional[list[SearchIndexKnowledgeSourceBoost]] = ..., 
+                filters: Optional[list[SearchIndexKnowledgeSourceFilterHint]] = ...
             ) -> None: ...
 
         @overload
@@ -6463,6 +6789,7 @@ namespace azure.search.documents.indexes.models
         max_field_nesting_depth_per_index: Optional[int]
         max_fields_per_index: Optional[int]
         max_storage_per_index_in_bytes: Optional[int]
+        max_vector_index_size_per_index_in_bytes: Optional[int]
 
         @overload
         def __init__(
@@ -6473,7 +6800,8 @@ namespace azure.search.documents.indexes.models
                 max_cumulative_indexer_runtime_seconds: Optional[int] = ..., 
                 max_field_nesting_depth_per_index: Optional[int] = ..., 
                 max_fields_per_index: Optional[int] = ..., 
-                max_storage_per_index_in_bytes: Optional[int] = ...
+                max_storage_per_index_in_bytes: Optional[int] = ..., 
+                max_vector_index_size_per_index_in_bytes: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -7377,6 +7705,38 @@ namespace azure.search.documents.indexes.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest(_Model):
+        content: Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]
+        metadata: FileUploadMetadata
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: FileType, 
+                metadata: FileUploadMetadata
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.indexes.models.UploadKnowledgeSourceFileMultipartRequest(_Model):
+        content: Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]
+        metadata: FileUploadMetadata
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: FileType, 
+                metadata: FileUploadMetadata
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.search.documents.indexes.models.VectorEncodingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         PACKED_BIT = "packedBit"
 
@@ -7630,6 +7990,7 @@ namespace azure.search.documents.indexes.models
         encryption_key: SearchResourceEncryptionKey
         kind: Literal[KnowledgeSourceKind.WEB]
         name: str
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
         web_parameters: Optional[WebKnowledgeSourceParameters]
 
         @overload
@@ -7640,6 +8001,7 @@ namespace azure.search.documents.indexes.models
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
                 name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ..., 
                 web_parameters: Optional[WebKnowledgeSourceParameters] = ...
             ) -> None: ...
 
@@ -7742,6 +8104,8 @@ namespace azure.search.documents.indexes.models
         encryption_key: SearchResourceEncryptionKey
         kind: Literal[KnowledgeSourceKind.WORK_IQ]
         name: str
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+        work_iq_parameters: WorkIQKnowledgeSourceParameters
 
         @overload
         def __init__(
@@ -7750,11 +8114,2544 @@ namespace azure.search.documents.indexes.models
                 description: Optional[str] = ..., 
                 e_tag: Optional[str] = ..., 
                 encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
-                name: str
+                name: str, 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ..., 
+                work_iq_parameters: WorkIQKnowledgeSourceParameters
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.indexes.models.WorkIQKnowledgeSourceParameters(_Model):
+        entra_app_authentication: EntraAppAuthentication
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                entra_app_authentication: EntraAppAuthentication
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+namespace azure.search.documents.indexes.types
+
+    class azure.search.documents.indexes.types.AIServicesAccountIdentity(TypedDict):
+        key "description": str
+        key "identity": Optional[SearchIndexerDataIdentity]
+        @odata.type: Required[Literal["#AIServicesByIdentity"]]
+        description: str
+        identity: SearchIndexerDataIdentity
+        odata_type: Literal[#AIServicesByIdentity]
+        subdomainUrl: Required[str]
+        subdomain_url: str
+
+
+    class azure.search.documents.indexes.types.AIServicesAccountKey(TypedDict):
+        key "description": str
+        @odata.type: Required[Literal["#AIServicesByKey"]]
+        description: str
+        key: Required[str]
+        odata_type: Literal[#AIServicesByKey]
+        subdomainUrl: Required[str]
+        subdomain_url: str
+
+
+    class azure.search.documents.indexes.types.AIServicesVisionParameters(TypedDict, total=False):
+        key "apiKey": str
+        key "authIdentity": Optional[SearchIndexerDataIdentity]
+        api_key: str
+        auth_identity: SearchIndexerDataIdentity
+        modelVersion: Required[Optional[str]]
+        model_version: str
+        resourceUri: Required[str]
+        resource_uri: str
+
+
+    class azure.search.documents.indexes.types.AIServicesVisionVectorizer(TypedDict, total=False):
+        key "aiServicesVisionParameters": ForwardRef('AIServicesVisionParameters')
+        ai_services_vision_parameters: AIServicesVisionParameters
+        kind: Required[Literal[VectorSearchVectorizerKind.AI_SERVICES_VISION]]
+        name: Required[str]
+        vectorizer_name: str
+
+
+    class azure.search.documents.indexes.types.AnalyzeResult(TypedDict, total=False):
+        tokens: Required[list[AnalyzedTokenInfo]]
+
+
+    class azure.search.documents.indexes.types.AnalyzeTextOptions(TypedDict, total=False):
+        key "analyzer": Union[str, LexicalAnalyzerName]
+        key "charFilters": list[Union[str, CharFilterName]]
+        key "normalizer": Union[str, LexicalNormalizerName]
+        key "tokenFilters": list[Union[str, TokenFilterName]]
+        key "tokenizer": Union[str, LexicalTokenizerName]
+        analyzer_name: Union[str, LexicalAnalyzerName]
+        char_filters: list[Union[str, CharFilterName]]
+        normalizer_name: Union[str, LexicalNormalizerName]
+        text: Required[str]
+        token_filters: list[Union[str, TokenFilterName]]
+        tokenizer_name: Union[str, LexicalTokenizerName]
+
+
+    class azure.search.documents.indexes.types.AnalyzedTokenInfo(TypedDict, total=False):
+        endOffset: Required[int]
+        end_offset: int
+        position: Required[int]
+        startOffset: Required[int]
+        start_offset: int
+        token: Required[str]
+
+
+    class azure.search.documents.indexes.types.AsciiFoldingTokenFilter(TypedDict):
+        key "preserveOriginal": bool
+        @odata.type: Required[Literal["#AsciiFoldingTokenFilter"]]
+        name: Required[str]
+        odata_type: Literal[#AsciiFoldingTokenFilter]
+        preserve_original: bool
+
+
+    class azure.search.documents.indexes.types.AzureActiveDirectoryApplicationCredentials(TypedDict, total=False):
+        key "applicationSecret": str
+        applicationId: Required[str]
+        application_id: str
+        application_secret: str
+
+
+    class azure.search.documents.indexes.types.AzureBlobKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        azureBlobParameters: Required[AzureBlobKnowledgeSourceParameters]
+        azure_blob_parameters: AzureBlobKnowledgeSourceParameters
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        kind: Required[Literal[KnowledgeSourceKind.AZURE_BLOB]]
+        name: Required[str]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.indexes.types.AzureBlobKnowledgeSourceParameters(TypedDict, total=False):
+        key "createdResources": ForwardRef('CreatedResources')
+        key "folderPath": Optional[str]
+        key "ingestionParameters": Optional[KnowledgeSourceIngestionParameters]
+        key "isADLSGen2": bool
+        key "queryHints": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        connectionString: Required[str]
+        connection_string: str
+        containerName: Required[str]
+        container_name: str
+        created_resources: CreatedResources
+        folder_path: str
+        ingestion_parameters: KnowledgeSourceIngestionParameters
+        is_adls_gen2: bool
+        query_hints: SearchIndexKnowledgeSourceQueryHints
+
+
+    class azure.search.documents.indexes.types.AzureMachineLearningParameters(TypedDict, total=False):
+        key "key": Optional[str]
+        key "modelName": Union[str, AIFoundryModelCatalogName]
+        key "region": Optional[str]
+        key "resourceId": Optional[str]
+        key "timeout": Optional[str]
+        authentication_key: str
+        model_name: Union[str, AIFoundryModelCatalogName]
+        region: str
+        resource_id: str
+        scoring_uri: str
+        timeout: str
+        uri: Required[Optional[str]]
+
+
+    class azure.search.documents.indexes.types.AzureMachineLearningSkill(TypedDict):
+        key "context": str
+        key "degreeOfParallelism": Optional[int]
+        key "description": str
+        key "key": Optional[str]
+        key "name": str
+        key "region": Optional[str]
+        key "resourceId": Optional[str]
+        key "timeout": Optional[str]
+        key "uri": Optional[str]
+        @odata.type: Required[Literal["#AmlSkill"]]
+        authentication_key: str
+        context: str
+        degree_of_parallelism: int
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        name: str
+        odata_type: Literal[#AmlSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+        region: str
+        resource_id: str
+        scoring_uri: str
+        timeout: str
+
+
+    class azure.search.documents.indexes.types.AzureMachineLearningVectorizer(TypedDict, total=False):
+        key "amlParameters": ForwardRef('AzureMachineLearningParameters')
+        aml_parameters: AzureMachineLearningParameters
+        kind: Required[Literal[VectorSearchVectorizerKind.AML]]
+        name: Required[str]
+        vectorizer_name: str
+
+
+    class azure.search.documents.indexes.types.AzureOpenAIEmbeddingSkill(TypedDict):
+        key "apiKey": str
+        key "authIdentity": ForwardRef('SearchIndexerDataIdentity')
+        key "context": str
+        key "deploymentId": str
+        key "description": str
+        key "dimensions": Optional[int]
+        key "modelName": Union[str, AzureOpenAIModelName]
+        key "name": str
+        key "resourceUri": str
+        @odata.type: Required[Literal["#AzureOpenAIEmbeddingSkill"]]
+        api_key: str
+        auth_identity: SearchIndexerDataIdentity
+        context: str
+        deployment_name: str
+        description: str
+        dimensions: int
+        inputs: Required[list[InputFieldMappingEntry]]
+        model_name: Union[str, AzureOpenAIModelName]
+        name: str
+        odata_type: Literal[#AzureOpenAIEmbeddingSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+        resource_url: str
+
+
+    class azure.search.documents.indexes.types.AzureOpenAITokenizerParameters(TypedDict, total=False):
+        key "allowedSpecialTokens": list[str]
+        key "encoderModelName": Optional[Union[str, SplitSkillEncoderModelName]]
+        allowed_special_tokens: list[str]
+        encoder_model_name: Union[str, SplitSkillEncoderModelName]
+
+
+    class azure.search.documents.indexes.types.AzureOpenAIVectorizer(TypedDict, total=False):
+        key "azureOpenAIParameters": ForwardRef('AzureOpenAIVectorizerParameters')
+        kind: Required[Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]]
+        name: Required[str]
+        parameters: AzureOpenAIVectorizerParameters
+        vectorizer_name: str
+
+
+    class azure.search.documents.indexes.types.AzureOpenAIVectorizerParameters(TypedDict, total=False):
+        key "apiKey": str
+        key "authIdentity": ForwardRef('SearchIndexerDataIdentity')
+        key "deploymentId": str
+        key "modelName": Union[str, AzureOpenAIModelName]
+        key "resourceUri": str
+        api_key: str
+        auth_identity: SearchIndexerDataIdentity
+        deployment_name: str
+        model_name: Union[str, AzureOpenAIModelName]
+        resource_url: str
+
+
+    class azure.search.documents.indexes.types.BM25SimilarityAlgorithm(TypedDict):
+        key "b": Optional[float]
+        key "k1": Optional[float]
+        @odata.type: Required[Literal["#BM25Similarity"]]
+        b: float
+        k1: float
+        odata_type: Literal[#BM25Similarity]
+
+
+    class azure.search.documents.indexes.types.BinaryQuantizationCompression(TypedDict, total=False):
+        key "rescoringOptions": Optional[RescoringOptions]
+        key "truncationDimension": Optional[int]
+        compression_name: str
+        kind: Required[Literal[VectorSearchCompressionKind.BINARY_QUANTIZATION]]
+        name: Required[str]
+        rescoring_options: RescoringOptions
+        truncation_dimension: int
+
+
+    class azure.search.documents.indexes.types.ChatCompletionCommonModelParameters(TypedDict, total=False):
+        key "frequencyPenalty": Optional[float]
+        key "maxTokens": Optional[int]
+        key "model": Optional[str]
+        key "presencePenalty": Optional[float]
+        key "seed": Optional[int]
+        key "stop": Optional[list[str]]
+        key "temperature": Optional[float]
+        frequency_penalty: float
+        max_tokens: int
+        model_name: str
+        presence_penalty: float
+        seed: int
+        stop: list[str]
+        temperature: float
+
+
+    class azure.search.documents.indexes.types.ChatCompletionResponseFormat(TypedDict, total=False):
+        key "jsonSchemaProperties": Optional[ChatCompletionSchemaProperties]
+        key "type": Union[str, ChatCompletionResponseFormatType]
+        json_schema_properties: ChatCompletionSchemaProperties
+        type: Union[str, ChatCompletionResponseFormatType]
+
+
+    class azure.search.documents.indexes.types.ChatCompletionSchema(TypedDict, total=False):
+        key "additionalProperties": bool
+        key "properties": str
+        key "required": list[str]
+        key "type": str
+        additional_properties: bool
+        properties: str
+        required: list[str]
+        type: str
+
+
+    class azure.search.documents.indexes.types.ChatCompletionSchemaProperties(TypedDict, total=False):
+        key "description": Optional[str]
+        key "name": Optional[str]
+        key "schema": ForwardRef('ChatCompletionSchema')
+        key "strict": bool
+        description: str
+        name: str
+        schema: ChatCompletionSchema
+        strict: bool
+
+
+    class azure.search.documents.indexes.types.ChatCompletionSkill(TypedDict):
+        key "apiKey": str
+        key "authIdentity": Optional[SearchIndexerDataIdentity]
+        key "commonModelParameters": ForwardRef('ChatCompletionCommonModelParameters')
+        key "context": str
+        key "description": str
+        key "extraParameters": Optional[dict[str, Any]]
+        key "extraParametersBehavior": Union[str, ChatCompletionExtraParametersBehavior]
+        key "name": str
+        key "responseFormat": ForwardRef('ChatCompletionResponseFormat')
+        @odata.type: Required[Literal["#ChatCompletionSkill"]]
+        api_key: str
+        auth_identity: SearchIndexerDataIdentity
+        common_model_parameters: ChatCompletionCommonModelParameters
+        context: str
+        description: str
+        extra_parameters: dict[str, Any]
+        extra_parameters_behavior: Union[str, ChatCompletionExtraParametersBehavior]
+        inputs: Required[list[InputFieldMappingEntry]]
+        name: str
+        odata_type: Literal[#ChatCompletionSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+        response_format: ChatCompletionResponseFormat
+        uri: Required[str]
+
+
+    class azure.search.documents.indexes.types.CjkBigramTokenFilter(TypedDict):
+        key "ignoreScripts": list[Union[str, CjkBigramTokenFilterScripts]]
+        key "outputUnigrams": bool
+        @odata.type: Required[Literal["#CjkBigramTokenFilter"]]
+        ignore_scripts: list[Union[str, CjkBigramTokenFilterScripts]]
+        name: Required[str]
+        odata_type: Literal[#CjkBigramTokenFilter]
+        output_unigrams: bool
+
+
+    class azure.search.documents.indexes.types.ClassicSimilarityAlgorithm(TypedDict):
+        @odata.type: Required[Literal["#ClassicSimilarity"]]
+        odata_type: Literal[#ClassicSimilarity]
+
+
+    class azure.search.documents.indexes.types.ClassicTokenizer(TypedDict):
+        key "maxTokenLength": int
+        @odata.type: Required[Literal["#ClassicTokenizer"]]
+        max_token_length: int
+        name: Required[str]
+        odata_type: Literal[#ClassicTokenizer]
+
+
+    class azure.search.documents.indexes.types.CognitiveServicesAccountKey(TypedDict):
+        key "description": str
+        @odata.type: Required[Literal["#CognitiveServicesByKey"]]
+        description: str
+        key: Required[str]
+        odata_type: Literal[#CognitiveServicesByKey]
+
+
+    class azure.search.documents.indexes.types.CommonGramTokenFilter(TypedDict):
+        key "ignoreCase": bool
+        key "queryMode": bool
+        @odata.type: Required[Literal["#CommonGramTokenFilter"]]
+        commonWords: Required[list[str]]
+        common_words: list[str]
+        ignore_case: bool
+        name: Required[str]
+        odata_type: Literal[#CommonGramTokenFilter]
+        use_query_mode: bool
+
+
+    class azure.search.documents.indexes.types.ConditionalSkill(TypedDict):
+        key "context": str
+        key "description": str
+        key "name": str
+        @odata.type: Required[Literal["#ConditionalSkill"]]
+        context: str
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        name: str
+        odata_type: Literal[#ConditionalSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.ContentColumnMapping(TypedDict, total=False):
+        name: Required[str]
+        searchFieldType: Required[str]
+        search_field_type: str
+        sourceField: Required[str]
+        source_field: str
+
+
+    class azure.search.documents.indexes.types.ContentUnderstandingSkill(TypedDict):
+        key "chunkingProperties": Optional[ContentUnderstandingSkillChunkingProperties]
+        key "context": str
+        key "description": str
+        key "extractionOptions": Optional[list[Union[str, ContentUnderstandingSkillExtractionOptions]]]
+        key "name": str
+        @odata.type: Required[Literal["#ContentUnderstandingSkill"]]
+        chunking_properties: ContentUnderstandingSkillChunkingProperties
+        context: str
+        description: str
+        extraction_options: list[Union[str, ContentUnderstandingSkillExtractionOptions]]
+        inputs: Required[list[InputFieldMappingEntry]]
+        name: str
+        odata_type: Literal[#ContentUnderstandingSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.ContentUnderstandingSkillChunkingProperties(TypedDict, total=False):
+        key "maximumLength": Optional[int]
+        key "method": Union[str, ContentUnderstandingSkillChunkingMethod]
+        key "overlapLength": Optional[int]
+        key "unit": Optional[Union[str, ContentUnderstandingSkillChunkingUnit]]
+        maximum_length: int
+        method: Union[str, ContentUnderstandingSkillChunkingMethod]
+        overlap_length: int
+        unit: Union[str, ContentUnderstandingSkillChunkingUnit]
+
+
+    class azure.search.documents.indexes.types.CorsOptions(TypedDict, total=False):
+        key "maxAgeInSeconds": Optional[int]
+        allowedOrigins: Required[list[str]]
+        allowed_origins: list[str]
+        max_age_in_seconds: int
+
+
+    class azure.search.documents.indexes.types.CreatedResources(TypedDict, total=False):
+
+
+    class azure.search.documents.indexes.types.CustomAnalyzer(TypedDict):
+        key "charFilters": list[Union[str, CharFilterName]]
+        key "tokenFilters": list[Union[str, TokenFilterName]]
+        @odata.type: Required[Literal["#CustomAnalyzer"]]
+        char_filters: list[Union[str, CharFilterName]]
+        name: Required[str]
+        odata_type: Literal[#CustomAnalyzer]
+        token_filters: list[Union[str, TokenFilterName]]
+        tokenizer: Required[Union[str, LexicalTokenizerName]]
+        tokenizer_name: Union[str, LexicalTokenizerName]
+
+
+    class azure.search.documents.indexes.types.CustomEntity(TypedDict, total=False):
+        key "accentSensitive": Optional[bool]
+        key "aliases": Optional[list[CustomEntityAlias]]
+        key "caseSensitive": Optional[bool]
+        key "defaultAccentSensitive": Optional[bool]
+        key "defaultCaseSensitive": Optional[bool]
+        key "defaultFuzzyEditDistance": Optional[int]
+        key "description": Optional[str]
+        key "fuzzyEditDistance": Optional[int]
+        key "id": Optional[str]
+        key "subtype": Optional[str]
+        key "type": Optional[str]
+        accent_sensitive: bool
+        aliases: list[CustomEntityAlias]
+        case_sensitive: bool
+        default_accent_sensitive: bool
+        default_case_sensitive: bool
+        default_fuzzy_edit_distance: int
+        description: str
+        fuzzy_edit_distance: int
+        id: str
+        name: Required[str]
+        subtype: str
+        type: str
+
+
+    class azure.search.documents.indexes.types.CustomEntityAlias(TypedDict, total=False):
+        key "accentSensitive": Optional[bool]
+        key "caseSensitive": Optional[bool]
+        key "fuzzyEditDistance": Optional[int]
+        accent_sensitive: bool
+        case_sensitive: bool
+        fuzzy_edit_distance: int
+        text: Required[str]
+
+
+    class azure.search.documents.indexes.types.CustomEntityLookupSkill(TypedDict):
+        key "context": str
+        key "defaultLanguageCode": Optional[Union[str, CustomEntityLookupSkillLanguage]]
+        key "description": str
+        key "entitiesDefinitionUri": Optional[str]
+        key "globalDefaultAccentSensitive": Optional[bool]
+        key "globalDefaultCaseSensitive": Optional[bool]
+        key "globalDefaultFuzzyEditDistance": Optional[int]
+        key "inlineEntitiesDefinition": Optional[list[CustomEntity]]
+        key "name": str
+        @odata.type: Required[Literal["#CustomEntityLookupSkill"]]
+        context: str
+        default_language_code: Union[str, CustomEntityLookupSkillLanguage]
+        description: str
+        entities_definition_uri: str
+        global_default_accent_sensitive: bool
+        global_default_case_sensitive: bool
+        global_default_fuzzy_edit_distance: int
+        inline_entities_definition: list[CustomEntity]
+        inputs: Required[list[InputFieldMappingEntry]]
+        name: str
+        odata_type: Literal[#CustomEntityLookupSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.CustomNormalizer(TypedDict):
+        key "charFilters": list[Union[str, CharFilterName]]
+        key "tokenFilters": list[Union[str, TokenFilterName]]
+        @odata.type: Required[Literal["#CustomNormalizer"]]
+        char_filters: list[Union[str, CharFilterName]]
+        name: Required[str]
+        odata_type: Literal[#CustomNormalizer]
+        token_filters: list[Union[str, TokenFilterName]]
+
+
+    class azure.search.documents.indexes.types.DataSourceCredentials(TypedDict, total=False):
+        key "connectionString": str
+        connection_string: str
+
+
+    class azure.search.documents.indexes.types.DefaultCognitiveServicesAccount(TypedDict):
+        key "description": str
+        @odata.type: Required[Literal["#DefaultCognitiveServices"]]
+        description: str
+        odata_type: Literal[#DefaultCognitiveServices]
+
+
+    class azure.search.documents.indexes.types.DictionaryDecompounderTokenFilter(TypedDict):
+        key "maxSubwordSize": int
+        key "minSubwordSize": int
+        key "minWordSize": int
+        key "onlyLongestMatch": bool
+        @odata.type: Required[Literal["#DictionaryDecompounderTokenFilter"]]
+        max_subword_size: int
+        min_subword_size: int
+        min_word_size: int
+        name: Required[str]
+        odata_type: Literal[#DictionaryDecompounderTokenFilter]
+        only_longest_match: bool
+        wordList: Required[list[str]]
+        word_list: list[str]
+
+
+    class azure.search.documents.indexes.types.DistanceScoringFunction(TypedDict, total=False):
+        key "interpolation": Union[str, ScoringFunctionInterpolation]
+        boost: Required[float]
+        distance: Required[DistanceScoringParameters]
+        fieldName: Required[str]
+        field_name: str
+        interpolation: Union[str, ScoringFunctionInterpolation]
+        parameters: DistanceScoringParameters
+        type: Required[Literal["distance"]]
+
+
+    class azure.search.documents.indexes.types.DistanceScoringParameters(TypedDict, total=False):
+        boostingDistance: Required[float]
+        boosting_distance: float
+        referencePointParameter: Required[str]
+        reference_point_parameter: str
+
+
+    class azure.search.documents.indexes.types.DocumentExtractionSkill(TypedDict):
+        key "configuration": Optional[dict[str, Any]]
+        key "context": str
+        key "dataToExtract": Optional[str]
+        key "description": str
+        key "name": str
+        key "parsingMode": Optional[str]
+        @odata.type: Required[Literal["#DocumentExtractionSkill"]]
+        configuration: dict[str, Any]
+        context: str
+        data_to_extract: str
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        name: str
+        odata_type: Literal[#DocumentExtractionSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+        parsing_mode: str
+
+
+    class azure.search.documents.indexes.types.DocumentIntelligenceLayoutSkill(TypedDict):
+        key "chunkingProperties": Optional[DocumentIntelligenceLayoutSkillChunkingProperties]
+        key "context": str
+        key "description": str
+        key "extractionOptions": Optional[list[Union[str, DocumentIntelligenceLayoutSkillExtractionOptions]]]
+        key "markdownHeaderDepth": Optional[Union[str, DocumentIntelligenceLayoutSkillMarkdownHeaderDepth]]
+        key "name": str
+        key "outputFormat": Optional[Union[str, DocumentIntelligenceLayoutSkillOutputFormat]]
+        key "outputMode": Optional[Union[str, DocumentIntelligenceLayoutSkillOutputMode]]
+        @odata.type: Required[Literal["#DocumentIntelligenceLayoutSkill"]]
+        chunking_properties: DocumentIntelligenceLayoutSkillChunkingProperties
+        context: str
+        description: str
+        extraction_options: list[Union[str, DocumentIntelligenceLayoutSkillExtractionOptions]]
+        inputs: Required[list[InputFieldMappingEntry]]
+        markdown_header_depth: Union[str, DocumentIntelligenceLayoutSkillMarkdownHeaderDepth]
+        name: str
+        odata_type: Literal[#DocumentIntelligenceLayoutSkill]
+        output_format: Union[str, DocumentIntelligenceLayoutSkillOutputFormat]
+        output_mode: Union[str, DocumentIntelligenceLayoutSkillOutputMode]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.DocumentIntelligenceLayoutSkillChunkingProperties(TypedDict, total=False):
+        key "maximumLength": Optional[int]
+        key "overlapLength": Optional[int]
+        key "unit": Optional[Union[str, DocumentIntelligenceLayoutSkillChunkingUnit]]
+        maximum_length: int
+        overlap_length: int
+        unit: Union[str, DocumentIntelligenceLayoutSkillChunkingUnit]
+
+
+    class azure.search.documents.indexes.types.DocumentKeysOrIds(TypedDict, total=False):
+        key "datasourceDocumentIds": list[str]
+        key "documentKeys": list[str]
+        datasource_document_ids: list[str]
+        document_keys: list[str]
+
+
+    class azure.search.documents.indexes.types.EdgeNGramTokenFilter(TypedDict):
+        key "maxGram": int
+        key "minGram": int
+        key "side": Union[str, EdgeNGramTokenFilterSide]
+        @odata.type: Required[Literal["#EdgeNGramTokenFilter"]]
+        max_gram: int
+        min_gram: int
+        name: Required[str]
+        odata_type: Literal[#EdgeNGramTokenFilter]
+        side: Union[str, EdgeNGramTokenFilterSide]
+
+
+    class azure.search.documents.indexes.types.EdgeNGramTokenFilterV2(TypedDict):
+        key "maxGram": int
+        key "minGram": int
+        key "side": Union[str, EdgeNGramTokenFilterSide]
+        @odata.type: Required[Literal["#EdgeNGramTokenFilterV2"]]
+        max_gram: int
+        min_gram: int
+        name: Required[str]
+        odata_type: Literal[#EdgeNGramTokenFilterV2]
+        side: Union[str, EdgeNGramTokenFilterSide]
+
+
+    class azure.search.documents.indexes.types.EdgeNGramTokenizer(TypedDict):
+        key "maxGram": int
+        key "minGram": int
+        key "tokenChars": list[Union[str, TokenCharacterKind]]
+        @odata.type: Required[Literal["#EdgeNGramTokenizer"]]
+        max_gram: int
+        min_gram: int
+        name: Required[str]
+        odata_type: Literal[#EdgeNGramTokenizer]
+        token_chars: list[Union[str, TokenCharacterKind]]
+
+
+    class azure.search.documents.indexes.types.ElisionTokenFilter(TypedDict):
+        key "articles": list[str]
+        @odata.type: Required[Literal["#ElisionTokenFilter"]]
+        articles: list[str]
+        name: Required[str]
+        odata_type: Literal[#ElisionTokenFilter]
+
+
+    class azure.search.documents.indexes.types.EmbeddingColumnMapping(TypedDict, total=False):
+        name: Required[str]
+        sourceField: Required[str]
+        source_field: str
+
+
+    class azure.search.documents.indexes.types.EntityLinkingSkill(TypedDict):
+        key "context": str
+        key "defaultLanguageCode": Optional[str]
+        key "description": str
+        key "minimumPrecision": float
+        key "modelVersion": Optional[str]
+        key "name": str
+        @odata.type: Required[Literal["#EntityLinkingSkill"]]
+        context: str
+        default_language_code: str
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        minimum_precision: float
+        model_version: str
+        name: str
+        odata_type: Literal[#EntityLinkingSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.EntityRecognitionSkillV3(TypedDict):
+        key "categories": list[Union[str, EntityCategory]]
+        key "context": str
+        key "defaultLanguageCode": Optional[Union[str, EntityRecognitionSkillLanguage]]
+        key "description": str
+        key "minimumPrecision": float
+        key "modelVersion": Optional[str]
+        key "name": str
+        @odata.type: Required[Literal["#EntityRecognitionSkill"]]
+        categories: list[Union[str, EntityCategory]]
+        context: str
+        default_language_code: Union[str, EntityRecognitionSkillLanguage]
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        minimum_precision: float
+        model_version: str
+        name: str
+        odata_type: Literal[#EntityRecognitionSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.EntraAppAuthentication(TypedDict, total=False):
+        key "tenantId": str
+        applicationId: Required[str]
+        application_id: str
+        federatedCredentialId: Required[str]
+        federated_credential_id: str
+        tenant_id: str
+
+
+    class azure.search.documents.indexes.types.ExhaustiveKnnAlgorithmConfiguration(TypedDict, total=False):
+        key "exhaustiveKnnParameters": ForwardRef('ExhaustiveKnnParameters')
+        kind: Required[Literal[VectorSearchAlgorithmKind.EXHAUSTIVE_KNN]]
+        name: Required[str]
+        parameters: ExhaustiveKnnParameters
+
+
+    class azure.search.documents.indexes.types.ExhaustiveKnnParameters(TypedDict, total=False):
+        key "metric": Optional[Union[str, VectorSearchAlgorithmMetric]]
+        metric: Union[str, VectorSearchAlgorithmMetric]
+
+
+    class azure.search.documents.indexes.types.FabricDataAgentKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        fabricDataAgentParameters: Required[FabricDataAgentKnowledgeSourceParameters]
+        fabric_data_agent_parameters: FabricDataAgentKnowledgeSourceParameters
+        kind: Required[Literal[KnowledgeSourceKind.FABRIC_DATA_AGENT]]
+        name: Required[str]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.indexes.types.FabricDataAgentKnowledgeSourceParameters(TypedDict, total=False):
+        dataAgentId: Required[str]
+        data_agent_id: str
+        workspaceId: Required[str]
+        workspace_id: str
+
+
+    class azure.search.documents.indexes.types.FabricOntologyKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        fabricOntologyParameters: Required[FabricOntologyKnowledgeSourceParameters]
+        fabric_ontology_parameters: FabricOntologyKnowledgeSourceParameters
+        kind: Required[Literal[KnowledgeSourceKind.FABRIC_ONTOLOGY]]
+        name: Required[str]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.indexes.types.FabricOntologyKnowledgeSourceParameters(TypedDict, total=False):
+        ontologyId: Required[str]
+        ontology_id: str
+        workspaceId: Required[str]
+        workspace_id: str
+
+
+    class azure.search.documents.indexes.types.FieldMapping(TypedDict, total=False):
+        key "mappingFunction": Optional[FieldMappingFunction]
+        key "targetFieldName": str
+        mapping_function: FieldMappingFunction
+        sourceFieldName: Required[str]
+        source_field_name: str
+        target_field_name: str
+
+
+    class azure.search.documents.indexes.types.FieldMappingFunction(TypedDict, total=False):
+        key "parameters": Optional[dict[str, Any]]
+        name: Required[str]
+        parameters: dict[str, Any]
+
+
+    class azure.search.documents.indexes.types.FileKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "corsOptions": ForwardRef('CorsOptions')
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        cors_options: CorsOptions
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        fileParameters: Required[FileKnowledgeSourceParameters]
+        file_parameters: FileKnowledgeSourceParameters
+        kind: Required[Literal[KnowledgeSourceKind.FILE]]
+        name: Required[str]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.indexes.types.FileKnowledgeSourceParameters(TypedDict, total=False):
+        key "createdResources": ForwardRef('CreatedResources')
+        key "ingestionParameters": ForwardRef('KnowledgeSourceIngestionParameters')
+        key "queryHints": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        created_resources: CreatedResources
+        ingestion_parameters: KnowledgeSourceIngestionParameters
+        query_hints: SearchIndexKnowledgeSourceQueryHints
+
+
+    class azure.search.documents.indexes.types.FileUploadMetadata(TypedDict, total=False):
+        key "fileName": str
+        key "metadata": dict[str, str]
+        file_name: str
+        metadata: dict[str, str]
+
+
+    class azure.search.documents.indexes.types.FreshnessScoringFunction(TypedDict, total=False):
+        key "interpolation": Union[str, ScoringFunctionInterpolation]
+        boost: Required[float]
+        fieldName: Required[str]
+        field_name: str
+        freshness: Required[FreshnessScoringParameters]
+        interpolation: Union[str, ScoringFunctionInterpolation]
+        parameters: FreshnessScoringParameters
+        type: Required[Literal["freshness"]]
+
+
+    class azure.search.documents.indexes.types.FreshnessScoringParameters(TypedDict, total=False):
+        boostingDuration: Required[str]
+        boosting_duration: str
+
+
+    class azure.search.documents.indexes.types.GetIndexStatisticsResult(TypedDict, total=False):
+        documentCount: Required[int]
+        document_count: int
+        storageSize: Required[int]
+        storage_size: int
+        vectorIndexSize: Required[int]
+        vector_index_size: int
+
+
+    class azure.search.documents.indexes.types.HighWaterMarkChangeDetectionPolicy(TypedDict):
+        @odata.type: Required[Literal["#HighWaterMarkChangeDetectionPolicy"]]
+        highWaterMarkColumnName: Required[str]
+        high_water_mark_column_name: str
+        odata_type: Literal[#HighWaterMarkChangeDetectionPolicy]
+
+
+    class azure.search.documents.indexes.types.HnswAlgorithmConfiguration(TypedDict, total=False):
+        key "hnswParameters": ForwardRef('HnswParameters')
+        kind: Required[Literal[VectorSearchAlgorithmKind.HNSW]]
+        name: Required[str]
+        parameters: HnswParameters
+
+
+    class azure.search.documents.indexes.types.HnswParameters(TypedDict, total=False):
+        key "efConstruction": int
+        key "efSearch": int
+        key "m": int
+        key "metric": Optional[Union[str, VectorSearchAlgorithmMetric]]
+        ef_construction: int
+        ef_search: int
+        m: int
+        metric: Union[str, VectorSearchAlgorithmMetric]
+
+
+    class azure.search.documents.indexes.types.ImageAnalysisSkill(TypedDict):
+        key "context": str
+        key "defaultLanguageCode": Union[str, ImageAnalysisSkillLanguage]
+        key "description": str
+        key "details": list[Union[str, ImageDetail]]
+        key "name": str
+        key "visualFeatures": list[Union[str, VisualFeature]]
+        @odata.type: Required[Literal["#ImageAnalysisSkill"]]
+        context: str
+        default_language_code: Union[str, ImageAnalysisSkillLanguage]
+        description: str
+        details: list[Union[str, ImageDetail]]
+        inputs: Required[list[InputFieldMappingEntry]]
+        name: str
+        odata_type: Literal[#ImageAnalysisSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+        visual_features: list[Union[str, VisualFeature]]
+
+
+    class azure.search.documents.indexes.types.IndexedOneLakeKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        indexedOneLakeParameters: Required[IndexedOneLakeKnowledgeSourceParameters]
+        indexed_one_lake_parameters: IndexedOneLakeKnowledgeSourceParameters
+        kind: Required[Literal[KnowledgeSourceKind.INDEXED_ONELAKE]]
+        name: Required[str]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.indexes.types.IndexedOneLakeKnowledgeSourceParameters(TypedDict, total=False):
+        key "createdResources": ForwardRef('CreatedResources')
+        key "ingestionParameters": ForwardRef('KnowledgeSourceIngestionParameters')
+        key "queryHints": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        key "targetPath": Optional[str]
+        created_resources: CreatedResources
+        fabricWorkspaceId: Required[str]
+        fabric_workspace_id: str
+        ingestion_parameters: KnowledgeSourceIngestionParameters
+        lakehouseId: Required[str]
+        lakehouse_id: str
+        query_hints: SearchIndexKnowledgeSourceQueryHints
+        target_path: str
+
+
+    class azure.search.documents.indexes.types.IndexedSharePointKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        indexedSharePointParameters: Required[IndexedSharePointKnowledgeSourceParameters]
+        indexed_share_point_parameters: IndexedSharePointKnowledgeSourceParameters
+        kind: Required[Literal[KnowledgeSourceKind.INDEXED_SHARE_POINT]]
+        name: Required[str]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.indexes.types.IndexedSharePointKnowledgeSourceParameters(TypedDict, total=False):
+        key "createdResources": ForwardRef('CreatedResources')
+        key "ingestionParameters": Optional[KnowledgeSourceIngestionParameters]
+        key "query": Optional[str]
+        key "queryHints": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        connectionString: Required[str]
+        connection_string: str
+        containerName: Required[Union[str, IndexedSharePointContainerName]]
+        container_name: Union[str, IndexedSharePointContainerName]
+        created_resources: CreatedResources
+        ingestion_parameters: KnowledgeSourceIngestionParameters
+        query: str
+        query_hints: SearchIndexKnowledgeSourceQueryHints
+
+
+    class azure.search.documents.indexes.types.IndexedSqlKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        indexedSqlParameters: Required[IndexedSqlKnowledgeSourceParameters]
+        indexed_sql_parameters: IndexedSqlKnowledgeSourceParameters
+        kind: Required[Literal[KnowledgeSourceKind.INDEXED_SQL]]
+        name: Required[str]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.indexes.types.IndexedSqlKnowledgeSourceParameters(TypedDict, total=False):
+        key "contentColumns": list[ContentColumnMapping]
+        key "createdResources": ForwardRef('CreatedResources')
+        key "embeddingColumns": list[EmbeddingColumnMapping]
+        key "highWaterMarkColumnName": str
+        key "ingestionParameters": ForwardRef('KnowledgeSourceIngestionParameters')
+        key "queryHints": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        connectionString: Required[str]
+        connection_string: str
+        content_columns: list[ContentColumnMapping]
+        created_resources: CreatedResources
+        embedding_columns: list[EmbeddingColumnMapping]
+        high_water_mark_column_name: str
+        ingestion_parameters: KnowledgeSourceIngestionParameters
+        query_hints: SearchIndexKnowledgeSourceQueryHints
+        tableOrView: Required[str]
+        table_or_view: str
+
+
+    class azure.search.documents.indexes.types.IndexerResyncBody(TypedDict, total=False):
+        key "options": Optional[list[Union[str, IndexerResyncOption]]]
+        options: list[Union[str, IndexerResyncOption]]
+
+
+    class azure.search.documents.indexes.types.IndexingParameters(TypedDict, total=False):
+        key "batchSize": Optional[int]
+        key "configuration": ForwardRef('IndexingParametersConfiguration')
+        key "maxFailedItems": Optional[int]
+        key "maxFailedItemsPerBatch": Optional[int]
+        batch_size: int
+        configuration: IndexingParametersConfiguration
+        max_failed_items: int
+        max_failed_items_per_batch: int
+
+
+    class azure.search.documents.indexes.types.IndexingParametersConfiguration(TypedDict, total=False):
+        key "allowSkillsetToReadFileData": bool
+        key "dataToExtract": Union[str, BlobIndexerDataToExtract]
+        key "delimitedTextDelimiter": str
+        key "delimitedTextHeaders": str
+        key "documentRoot": str
+        key "excludedFileNameExtensions": str
+        key "executionEnvironment": Union[str, IndexerExecutionEnvironment]
+        key "failOnUnprocessableDocument": bool
+        key "failOnUnsupportedContentType": bool
+        key "firstLineContainsHeaders": bool
+        key "imageAction": Union[str, BlobIndexerImageAction]
+        key "indexStorageMetadataOnlyForOversizedDocuments": bool
+        key "indexedFileNameExtensions": str
+        key "markdownHeaderDepth": Optional[Union[str, MarkdownHeaderDepth]]
+        key "markdownParsingSubmode": Optional[Union[str, MarkdownParsingSubmode]]
+        key "parsingMode": Union[str, BlobIndexerParsingMode]
+        key "pdfTextRotationAlgorithm": Union[str, BlobIndexerPDFTextRotationAlgorithm]
+        key "queryTimeout": str
+        allow_skillset_to_read_file_data: bool
+        data_to_extract: Union[str, BlobIndexerDataToExtract]
+        delimited_text_delimiter: str
+        delimited_text_headers: str
+        document_root: str
+        excluded_file_name_extensions: str
+        execution_environment: Union[str, IndexerExecutionEnvironment]
+        fail_on_unprocessable_document: bool
+        fail_on_unsupported_content_type: bool
+        first_line_contains_headers: bool
+        image_action: Union[str, BlobIndexerImageAction]
+        index_storage_metadata_only_for_oversized_documents: bool
+        indexed_file_name_extensions: str
+        markdown_header_depth: Union[str, MarkdownHeaderDepth]
+        markdown_parsing_submode: Union[str, MarkdownParsingSubmode]
+        parsing_mode: Union[str, BlobIndexerParsingMode]
+        pdf_text_rotation_algorithm: Union[str, BlobIndexerPDFTextRotationAlgorithm]
+        query_timeout: str
+
+
+    class azure.search.documents.indexes.types.IndexingSchedule(TypedDict, total=False):
+        key "startTime": str
+        interval: Required[str]
+        start_time: str
+
+
+    class azure.search.documents.indexes.types.InputFieldMappingEntry(TypedDict, total=False):
+        key "inputs": list[InputFieldMappingEntry]
+        key "source": str
+        key "sourceContext": str
+        inputs: list[InputFieldMappingEntry]
+        name: Required[str]
+        source: str
+        source_context: str
+
+
+    class azure.search.documents.indexes.types.KeepTokenFilter(TypedDict):
+        key "keepWordsCase": bool
+        @odata.type: Required[Literal["#KeepTokenFilter"]]
+        keepWords: Required[list[str]]
+        keep_words: list[str]
+        lower_case_keep_words: bool
+        name: Required[str]
+        odata_type: Literal[#KeepTokenFilter]
+
+
+    class azure.search.documents.indexes.types.KeyPhraseExtractionSkill(TypedDict):
+        key "context": str
+        key "defaultLanguageCode": Union[str, KeyPhraseExtractionSkillLanguage]
+        key "description": str
+        key "maxKeyPhraseCount": Optional[int]
+        key "modelVersion": Optional[str]
+        key "name": str
+        @odata.type: Required[Literal["#KeyPhraseExtractionSkill"]]
+        context: str
+        default_language_code: Union[str, KeyPhraseExtractionSkillLanguage]
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        max_key_phrase_count: int
+        model_version: str
+        name: str
+        odata_type: Literal[#KeyPhraseExtractionSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.KeywordMarkerTokenFilter(TypedDict):
+        key "ignoreCase": bool
+        @odata.type: Required[Literal["#KeywordMarkerTokenFilter"]]
+        ignore_case: bool
+        keywords: Required[list[str]]
+        name: Required[str]
+        odata_type: Literal[#KeywordMarkerTokenFilter]
+
+
+    class azure.search.documents.indexes.types.KeywordTokenizer(TypedDict):
+        key "bufferSize": int
+        @odata.type: Required[Literal["#KeywordTokenizer"]]
+        buffer_size: int
+        name: Required[str]
+        odata_type: Literal[#KeywordTokenizer]
+
+
+    class azure.search.documents.indexes.types.KeywordTokenizerV2(TypedDict):
+        key "maxTokenLength": int
+        @odata.type: Required[Literal["#KeywordTokenizerV2"]]
+        max_token_length: int
+        name: Required[str]
+        odata_type: Literal[#KeywordTokenizerV2]
+
+
+    class azure.search.documents.indexes.types.KnowledgeBase(TypedDict):
+        key "@odata.etag": str
+        key "answerInstructions": str
+        key "corsOptions": ForwardRef('CorsOptions')
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "models": list[KnowledgeBaseModel]
+        key "outputMode": Union[str, KnowledgeRetrievalOutputMode]
+        key "retrievalInstructions": str
+        key "retrievalReasoningEffort": ForwardRef('KnowledgeRetrievalReasoningEffort')
+        key "retrieveDefaults": ForwardRef('KnowledgeBaseRetrieveDefaults')
+        key "tags": dict[str, str]
+        answer_instructions: str
+        cors_options: CorsOptions
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        knowledgeSources: Required[list[KnowledgeSourceReference]]
+        knowledge_sources: list[KnowledgeSourceReference]
+        models: list[KnowledgeBaseModel]
+        name: Required[str]
+        output_mode: Union[str, KnowledgeRetrievalOutputMode]
+        retrieval_instructions: str
+        retrieval_reasoning_effort: KnowledgeRetrievalReasoningEffort
+        retrieve_defaults: KnowledgeBaseRetrieveDefaults
+        tags: dict[str, str]
+
+
+    class azure.search.documents.indexes.types.KnowledgeBaseAzureOpenAIModel(TypedDict, total=False):
+        azureOpenAIParameters: Required[AzureOpenAIVectorizerParameters]
+        azure_open_ai_parameters: AzureOpenAIVectorizerParameters
+        kind: Required[Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI]]
+
+
+    class azure.search.documents.indexes.types.KnowledgeBaseModel(TypedDict, total=False):
+        azureOpenAIParameters: Required[AzureOpenAIVectorizerParameters]
+        azure_open_ai_parameters: AzureOpenAIVectorizerParameters
+        kind: Required[Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI]]
+
+
+    class azure.search.documents.indexes.types.KnowledgeBaseModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_OPEN_AI = "azureOpenAI"
+
+
+    class azure.search.documents.indexes.types.KnowledgeBaseRetrieveDefaults(TypedDict, total=False):
+        key "maxOutputDocuments": int
+        key "maxOutputSizeInTokens": int
+        key "maxRuntimeInSeconds": int
+        max_output_documents: int
+        max_output_size_in_tokens: int
+        max_runtime_in_seconds: int
+
+
+    class azure.search.documents.indexes.types.KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_BLOB = "azureBlob"
+        FABRIC_DATA_AGENT = "fabricDataAgent"
+        FABRIC_ONTOLOGY = "fabricOntology"
+        FILE = "file"
+        INDEXED_ONELAKE = "indexedOneLake"
+        INDEXED_SHARE_POINT = "indexedSharePoint"
+        INDEXED_SQL = "indexedSql"
+        MCP_SERVER = "mcpServer"
+        REMOTE_SHARE_POINT = "remoteSharePoint"
+        SEARCH_INDEX = "searchIndex"
+        WEB = "web"
+        WORK_IQ = "workIQ"
+
+
+    class azure.search.documents.indexes.types.KnowledgeSourceReference(TypedDict, total=False):
+        key "enableFreshness": bool
+        key "enableImageServing": bool
+        enable_freshness: bool
+        enable_image_serving: bool
+        name: Required[str]
+
+
+    class azure.search.documents.indexes.types.LanguageDetectionSkill(TypedDict):
+        key "context": str
+        key "defaultCountryHint": Optional[str]
+        key "description": str
+        key "modelVersion": Optional[str]
+        key "name": str
+        @odata.type: Required[Literal["#LanguageDetectionSkill"]]
+        context: str
+        default_country_hint: str
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        model_version: str
+        name: str
+        odata_type: Literal[#LanguageDetectionSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.LengthTokenFilter(TypedDict):
+        key "max": int
+        key "min": int
+        @odata.type: Required[Literal["#LengthTokenFilter"]]
+        max_length: int
+        min_length: int
+        name: Required[str]
+        odata_type: Literal[#LengthTokenFilter]
+
+
+    class azure.search.documents.indexes.types.LexicalNormalizer(TypedDict):
+        key "charFilters": list[Union[str, CharFilterName]]
+        key "tokenFilters": list[Union[str, TokenFilterName]]
+        @odata.type: Required[Literal["#CustomNormalizer"]]
+        char_filters: list[Union[str, CharFilterName]]
+        name: Required[str]
+        odata_type: Literal[#CustomNormalizer]
+        token_filters: list[Union[str, TokenFilterName]]
+
+
+    class azure.search.documents.indexes.types.LimitTokenFilter(TypedDict):
+        key "consumeAllTokens": bool
+        key "maxTokenCount": int
+        @odata.type: Required[Literal["#LimitTokenFilter"]]
+        consume_all_tokens: bool
+        max_token_count: int
+        name: Required[str]
+        odata_type: Literal[#LimitTokenFilter]
+
+
+    class azure.search.documents.indexes.types.LuceneStandardAnalyzer(TypedDict):
+        key "maxTokenLength": int
+        key "stopwords": list[str]
+        @odata.type: Required[Literal["#StandardAnalyzer"]]
+        max_token_length: int
+        name: Required[str]
+        odata_type: Literal[#StandardAnalyzer]
+        stopwords: list[str]
+
+
+    class azure.search.documents.indexes.types.LuceneStandardTokenizer(TypedDict):
+        key "maxTokenLength": int
+        @odata.type: Required[Literal["#StandardTokenizer"]]
+        max_token_length: int
+        name: Required[str]
+        odata_type: Literal[#StandardTokenizer]
+
+
+    class azure.search.documents.indexes.types.LuceneStandardTokenizerV2(TypedDict):
+        key "maxTokenLength": int
+        @odata.type: Required[Literal["#StandardTokenizerV2"]]
+        max_token_length: int
+        name: Required[str]
+        odata_type: Literal[#StandardTokenizerV2]
+
+
+    class azure.search.documents.indexes.types.MagnitudeScoringFunction(TypedDict, total=False):
+        key "interpolation": Union[str, ScoringFunctionInterpolation]
+        boost: Required[float]
+        fieldName: Required[str]
+        field_name: str
+        interpolation: Union[str, ScoringFunctionInterpolation]
+        magnitude: Required[MagnitudeScoringParameters]
+        parameters: MagnitudeScoringParameters
+        type: Required[Literal["magnitude"]]
+
+
+    class azure.search.documents.indexes.types.MagnitudeScoringParameters(TypedDict, total=False):
+        key "constantBoostBeyondRange": bool
+        boostingRangeEnd: Required[float]
+        boostingRangeStart: Required[float]
+        boosting_range_end: float
+        boosting_range_start: float
+        should_boost_beyond_range_by_constant: bool
+
+
+    class azure.search.documents.indexes.types.MappingCharFilter(TypedDict):
+        @odata.type: Required[Literal["#MappingCharFilter"]]
+        mappings: Required[list[str]]
+        name: Required[str]
+        odata_type: Literal[#MappingCharFilter]
+
+
+    class azure.search.documents.indexes.types.McpServerAuthenticationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FOUNDRY_CONNECTION = "foundryConnection"
+        STORED_HEADERS = "storedHeaders"
+
+
+    class azure.search.documents.indexes.types.McpServerAutoOutputParsing(TypedDict, total=False):
+        kind: Required[Literal[McpServerOutputParsingKind.AUTO]]
+
+
+    class azure.search.documents.indexes.types.McpServerFoundryConnectionAuthentication(TypedDict, total=False):
+        foundryConnectionParameters: Required[McpServerFoundryConnectionParameters]
+        foundry_connection_parameters: McpServerFoundryConnectionParameters
+        kind: Required[Literal[McpServerAuthenticationKind.FOUNDRY_CONNECTION]]
+
+
+    class azure.search.documents.indexes.types.McpServerFoundryConnectionParameters(TypedDict, total=False):
+        key "connectionId": str
+        connection_id: str
+
+
+    class azure.search.documents.indexes.types.McpServerHeaders(TypedDict, total=False):
+
+
+    class azure.search.documents.indexes.types.McpServerJsonOutputParsing(TypedDict, total=False):
+        jsonParameters: Required[McpServerOutputParsingJsonParameters]
+        json_parameters: McpServerOutputParsingJsonParameters
+        kind: Required[Literal[McpServerOutputParsingKind.JSON]]
+
+
+    class azure.search.documents.indexes.types.McpServerKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        kind: Required[Literal[KnowledgeSourceKind.MCP_SERVER]]
+        mcpServerParameters: Required[McpServerKnowledgeSourceParameters]
+        mcp_server_parameters: McpServerKnowledgeSourceParameters
+        name: Required[str]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.indexes.types.McpServerKnowledgeSourceParameters(TypedDict, total=False):
+        key "authentication": ForwardRef('McpServerAuthentication')
+        authentication: McpServerAuthentication
+        serverURL: Required[str]
+        server_url: str
+        tools: Required[list[McpServerTool]]
+
+
+    class azure.search.documents.indexes.types.McpServerNoneOutputParsing(TypedDict, total=False):
+        kind: Required[Literal[McpServerOutputParsingKind.NONE]]
+
+
+    class azure.search.documents.indexes.types.McpServerOutputParsingJsonParameters(TypedDict, total=False):
+        key "includeContext": bool
+        documentsPath: Required[str]
+        documents_path: str
+        include_context: bool
+
+
+    class azure.search.documents.indexes.types.McpServerOutputParsingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUTO = "auto"
+        JSON = "json"
+        NONE = "none"
+        SPLIT = "split"
+
+
+    class azure.search.documents.indexes.types.McpServerOutputParsingSplitParameters(TypedDict, total=False):
+        key "defaultLanguageCode": Union[str, SplitSkillLanguage]
+        key "maximumPageLength": int
+        key "maximumPagesToTake": int
+        key "pageOverlapLength": int
+        key "textSplitMode": Union[str, TextSplitMode]
+        default_language_code: Union[str, SplitSkillLanguage]
+        maximum_page_length: int
+        maximum_pages_to_take: int
+        page_overlap_length: int
+        text_split_mode: Union[str, TextSplitMode]
+
+
+    class azure.search.documents.indexes.types.McpServerSplitOutputParsing(TypedDict, total=False):
+        key "splitParameters": ForwardRef('McpServerOutputParsingSplitParameters')
+        kind: Required[Literal[McpServerOutputParsingKind.SPLIT]]
+        split_parameters: McpServerOutputParsingSplitParameters
+
+
+    class azure.search.documents.indexes.types.McpServerStoredHeadersAuthentication(TypedDict, total=False):
+        kind: Required[Literal[McpServerAuthenticationKind.STORED_HEADERS]]
+        storedHeadersParameters: Required[McpServerStoredHeadersParameters]
+        stored_headers_parameters: McpServerStoredHeadersParameters
+
+
+    class azure.search.documents.indexes.types.McpServerStoredHeadersParameters(TypedDict, total=False):
+        key "headers": ForwardRef('McpServerHeaders')
+        headers: McpServerHeaders
+
+
+    class azure.search.documents.indexes.types.McpServerTool(TypedDict, total=False):
+        key "maxOutputTokens": int
+        key "name": str
+        key "outputParsing": ForwardRef('McpServerOutputParsing')
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        max_output_tokens: int
+        name: str
+        output_parsing: McpServerOutputParsing
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.indexes.types.MergeSkill(TypedDict):
+        key "context": str
+        key "description": str
+        key "insertPostTag": str
+        key "insertPreTag": str
+        key "name": str
+        @odata.type: Required[Literal["#MergeSkill"]]
+        context: str
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        insert_post_tag: str
+        insert_pre_tag: str
+        name: str
+        odata_type: Literal[#MergeSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.MicrosoftLanguageStemmingTokenizer(TypedDict):
+        key "isSearchTokenizer": bool
+        key "language": Union[str, MicrosoftStemmingTokenizerLanguage]
+        key "maxTokenLength": int
+        @odata.type: Required[Literal["#MicrosoftLanguageStemmingTokenizer"]]
+        is_search_tokenizer: bool
+        language: Union[str, MicrosoftStemmingTokenizerLanguage]
+        max_token_length: int
+        name: Required[str]
+        odata_type: Literal[#MicrosoftLanguageStemmingTokenizer]
+
+
+    class azure.search.documents.indexes.types.MicrosoftLanguageTokenizer(TypedDict):
+        key "isSearchTokenizer": bool
+        key "language": Union[str, MicrosoftTokenizerLanguage]
+        key "maxTokenLength": int
+        @odata.type: Required[Literal["#MicrosoftLanguageTokenizer"]]
+        is_search_tokenizer: bool
+        language: Union[str, MicrosoftTokenizerLanguage]
+        max_token_length: int
+        name: Required[str]
+        odata_type: Literal[#MicrosoftLanguageTokenizer]
+
+
+    class azure.search.documents.indexes.types.NGramTokenFilter(TypedDict):
+        key "maxGram": int
+        key "minGram": int
+        @odata.type: Required[Literal["#NGramTokenFilter"]]
+        max_gram: int
+        min_gram: int
+        name: Required[str]
+        odata_type: Literal[#NGramTokenFilter]
+
+
+    class azure.search.documents.indexes.types.NGramTokenFilterV2(TypedDict):
+        key "maxGram": int
+        key "minGram": int
+        @odata.type: Required[Literal["#NGramTokenFilterV2"]]
+        max_gram: int
+        min_gram: int
+        name: Required[str]
+        odata_type: Literal[#NGramTokenFilterV2]
+
+
+    class azure.search.documents.indexes.types.NGramTokenizer(TypedDict):
+        key "maxGram": int
+        key "minGram": int
+        key "tokenChars": list[Union[str, TokenCharacterKind]]
+        @odata.type: Required[Literal["#NGramTokenizer"]]
+        max_gram: int
+        min_gram: int
+        name: Required[str]
+        odata_type: Literal[#NGramTokenizer]
+        token_chars: list[Union[str, TokenCharacterKind]]
+
+
+    class azure.search.documents.indexes.types.NativeBlobSoftDeleteDeletionDetectionPolicy(TypedDict):
+        @odata.type: Required[Literal["#NativeBlobSoftDeleteDeletionDetectionPolicy"]]
+        odata_type: Literal[#NativeBlobSoftDeleteDeletionDetectionPolicy]
+
+
+    class azure.search.documents.indexes.types.OcrSkill(TypedDict):
+        key "context": str
+        key "defaultLanguageCode": Union[str, OcrSkillLanguage]
+        key "description": str
+        key "detectOrientation": bool
+        key "lineEnding": Union[str, OcrLineEnding]
+        key "name": str
+        @odata.type: Required[Literal["#OcrSkill"]]
+        context: str
+        default_language_code: Union[str, OcrSkillLanguage]
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        line_ending: Union[str, OcrLineEnding]
+        name: str
+        odata_type: Literal[#OcrSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+        should_detect_orientation: bool
+
+
+    class azure.search.documents.indexes.types.OutputFieldMappingEntry(TypedDict, total=False):
+        key "targetName": str
+        name: Required[str]
+        target_name: str
+
+
+    class azure.search.documents.indexes.types.PIIDetectionSkill(TypedDict):
+        key "context": str
+        key "defaultLanguageCode": Optional[str]
+        key "description": str
+        key "domain": Optional[str]
+        key "maskingCharacter": str
+        key "maskingMode": Union[str, PIIDetectionSkillMaskingMode]
+        key "minimumPrecision": float
+        key "modelVersion": Optional[str]
+        key "name": str
+        key "piiCategories": list[str]
+        @odata.type: Required[Literal["#PIIDetectionSkill"]]
+        context: str
+        default_language_code: str
+        description: str
+        domain: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        mask: str
+        masking_mode: Union[str, PIIDetectionSkillMaskingMode]
+        minimum_precision: float
+        model_version: str
+        name: str
+        odata_type: Literal[#PIIDetectionSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+        pii_categories: list[str]
+
+
+    class azure.search.documents.indexes.types.PathHierarchyTokenizerV2(TypedDict):
+        key "delimiter": str
+        key "maxTokenLength": int
+        key "replacement": str
+        key "reverse": bool
+        key "skip": int
+        @odata.type: Required[Literal["#PathHierarchyTokenizerV2"]]
+        delimiter: str
+        max_token_length: int
+        name: Required[str]
+        number_of_tokens_to_skip: int
+        odata_type: Literal[#PathHierarchyTokenizerV2]
+        replacement: str
+        reverse_token_order: bool
+
+
+    class azure.search.documents.indexes.types.PatternAnalyzer(TypedDict):
+        key "flags": list[Union[str, RegexFlags]]
+        key "lowercase": bool
+        key "pattern": str
+        key "stopwords": list[str]
+        @odata.type: Required[Literal["#PatternAnalyzer"]]
+        flags: list[Union[str, RegexFlags]]
+        lower_case_terms: bool
+        name: Required[str]
+        odata_type: Literal[#PatternAnalyzer]
+        pattern: str
+        stopwords: list[str]
+
+
+    class azure.search.documents.indexes.types.PatternCaptureTokenFilter(TypedDict):
+        key "preserveOriginal": bool
+        @odata.type: Required[Literal["#PatternCaptureTokenFilter"]]
+        name: Required[str]
+        odata_type: Literal[#PatternCaptureTokenFilter]
+        patterns: Required[list[str]]
+        preserve_original: bool
+
+
+    class azure.search.documents.indexes.types.PatternReplaceCharFilter(TypedDict):
+        @odata.type: Required[Literal["#PatternReplaceCharFilter"]]
+        name: Required[str]
+        odata_type: Literal[#PatternReplaceCharFilter]
+        pattern: Required[str]
+        replacement: Required[str]
+
+
+    class azure.search.documents.indexes.types.PatternReplaceTokenFilter(TypedDict):
+        @odata.type: Required[Literal["#PatternReplaceTokenFilter"]]
+        name: Required[str]
+        odata_type: Literal[#PatternReplaceTokenFilter]
+        pattern: Required[str]
+        replacement: Required[str]
+
+
+    class azure.search.documents.indexes.types.PatternTokenizer(TypedDict):
+        key "flags": list[Union[str, RegexFlags]]
+        key "group": int
+        key "pattern": str
+        @odata.type: Required[Literal["#PatternTokenizer"]]
+        flags: list[Union[str, RegexFlags]]
+        group: int
+        name: Required[str]
+        odata_type: Literal[#PatternTokenizer]
+        pattern: str
+
+
+    class azure.search.documents.indexes.types.PhoneticTokenFilter(TypedDict):
+        key "encoder": Union[str, PhoneticEncoder]
+        key "replace": bool
+        @odata.type: Required[Literal["#PhoneticTokenFilter"]]
+        encoder: Union[str, PhoneticEncoder]
+        name: Required[str]
+        odata_type: Literal[#PhoneticTokenFilter]
+        replace_original_tokens: bool
+
+
+    class azure.search.documents.indexes.types.RemoteSharePointKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "remoteSharePointParameters": ForwardRef('RemoteSharePointKnowledgeSourceParameters')
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        kind: Required[Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT]]
+        name: Required[str]
+        remote_share_point_parameters: RemoteSharePointKnowledgeSourceParameters
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.indexes.types.RemoteSharePointKnowledgeSourceParameters(TypedDict, total=False):
+        key "containerTypeId": str
+        key "filterExpression": str
+        key "resourceMetadata": list[str]
+        container_type_id: str
+        filter_expression: str
+        resource_metadata: list[str]
+
+
+    class azure.search.documents.indexes.types.RescoringOptions(TypedDict, total=False):
+        key "defaultOversampling": Optional[float]
+        key "enableRescoring": Optional[bool]
+        key "rescoreStorageMethod": Optional[Union[str, VectorSearchCompressionRescoreStorageMethod]]
+        default_oversampling: float
+        enable_rescoring: bool
+        rescore_storage_method: Union[str, VectorSearchCompressionRescoreStorageMethod]
+
+
+    class azure.search.documents.indexes.types.ScalarQuantizationCompression(TypedDict, total=False):
+        key "rescoringOptions": Optional[RescoringOptions]
+        key "scalarQuantizationParameters": ForwardRef('ScalarQuantizationParameters')
+        key "truncationDimension": Optional[int]
+        compression_name: str
+        kind: Required[Literal[VectorSearchCompressionKind.SCALAR_QUANTIZATION]]
+        name: Required[str]
+        parameters: ScalarQuantizationParameters
+        rescoring_options: RescoringOptions
+        truncation_dimension: int
+
+
+    class azure.search.documents.indexes.types.ScalarQuantizationParameters(TypedDict, total=False):
+        key "quantizedDataType": Optional[Union[str, VectorSearchCompressionTarget]]
+        quantized_data_type: Union[str, VectorSearchCompressionTarget]
+
+
+    class azure.search.documents.indexes.types.ScoringProfile(TypedDict, total=False):
+        key "functionAggregation": Union[str, ScoringFunctionAggregation]
+        key "functions": list[ScoringFunction]
+        key "text": Optional[TextWeights]
+        function_aggregation: Union[str, ScoringFunctionAggregation]
+        functions: list[ScoringFunction]
+        name: Required[str]
+        text_weights: TextWeights
+
+
+    class azure.search.documents.indexes.types.SearchAlias(TypedDict):
+        key "@odata.etag": str
+        e_tag: str
+        indexes: Required[list[str]]
+        name: Required[str]
+
+
+    class azure.search.documents.indexes.types.SearchField(TypedDict, total=False):
+        key "analyzer": Optional[Union[str, LexicalAnalyzerName]]
+        key "dimensions": int
+        key "facetable": bool
+        key "fields": list[SearchField]
+        key "filterable": bool
+        key "indexAnalyzer": Optional[Union[str, LexicalAnalyzerName]]
+        key "key": bool
+        key "normalizer": Optional[Union[str, LexicalNormalizerName]]
+        key "permissionFilter": Optional[Union[str, PermissionFilter]]
+        key "retrievable": bool
+        key "searchAnalyzer": Optional[Union[str, LexicalAnalyzerName]]
+        key "searchable": bool
+        key "sensitivityLabelId": bool
+        key "sensitivityLabelName": bool
+        key "sharepointSiteUrl": bool
+        key "sortable": bool
+        key "sourceDocumentId": bool
+        key "stored": bool
+        key "synonymMaps": list[str]
+        key "vectorEncoding": Optional[Union[str, VectorEncodingFormat]]
+        key "vectorSearchProfile": Optional[str]
+        analyzer_name: Union[str, LexicalAnalyzerName]
+        facetable: bool
+        fields: list[SearchField]
+        filterable: bool
+        index_analyzer_name: Union[str, LexicalAnalyzerName]
+        key: bool
+        name: Required[str]
+        normalizer_name: Union[str, LexicalNormalizerName]
+        permission_filter: Union[str, PermissionFilter]
+        retrievable: bool
+        search_analyzer_name: Union[str, LexicalAnalyzerName]
+        searchable: bool
+        sensitivity_label_id: bool
+        sensitivity_label_name: bool
+        sharepoint_site_url: bool
+        sortable: bool
+        source_document_id: bool
+        stored: bool
+        synonym_map_names: list[str]
+        type: Required[Union[str, SearchFieldDataType]]
+        vector_encoding_format: Union[str, VectorEncodingFormat]
+        vector_search_dimensions: int
+        vector_search_profile_name: str
+
+
+    class azure.search.documents.indexes.types.SearchIndex(TypedDict):
+        key "@odata.etag": str
+        key "analyzers": list[LexicalAnalyzer]
+        key "charFilters": list[CharFilter]
+        key "corsOptions": Optional[CorsOptions]
+        key "defaultScoringProfile": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "normalizers": list[LexicalNormalizer]
+        key "permissionFilterOption": Optional[Union[str, SearchIndexPermissionFilterOption]]
+        key "purviewEnabled": Optional[bool]
+        key "scoringProfiles": list[ScoringProfile]
+        key "semantic": Optional[SemanticSearch]
+        key "sharePointConnectorAppRegistration": ForwardRef('SharePointConnectorAppRegistration')
+        key "similarity": ForwardRef('SimilarityAlgorithm')
+        key "suggesters": list[SearchSuggester]
+        key "tokenFilters": list[TokenFilter]
+        key "tokenizers": list[LexicalTokenizer]
+        key "vectorSearch": Optional[VectorSearch]
+        analyzers: list[LexicalAnalyzer]
+        char_filters: list[CharFilter]
+        cors_options: CorsOptions
+        default_scoring_profile: str
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        fields: Required[list[SearchField]]
+        name: Required[str]
+        normalizers: list[LexicalNormalizer]
+        permission_filter_option: Union[str, SearchIndexPermissionFilterOption]
+        purview_enabled: bool
+        scoring_profiles: list[ScoringProfile]
+        semantic_search: SemanticSearch
+        share_point_connector_app_registration: SharePointConnectorAppRegistration
+        similarity: SimilarityAlgorithm
+        suggesters: list[SearchSuggester]
+        token_filters: list[TokenFilter]
+        tokenizers: list[LexicalTokenizer]
+        vector_search: VectorSearch
+
+
+    class azure.search.documents.indexes.types.SearchIndexFieldReference(TypedDict, total=False):
+        name: Required[str]
+
+
+    class azure.search.documents.indexes.types.SearchIndexKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        kind: Required[Literal[KnowledgeSourceKind.SEARCH_INDEX]]
+        name: Required[str]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+        searchIndexParameters: Required[SearchIndexKnowledgeSourceParameters]
+        search_index_parameters: SearchIndexKnowledgeSourceParameters
+
+
+    class azure.search.documents.indexes.types.SearchIndexKnowledgeSourceBoostKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FIELD_VALUE = "fieldValue"
+        MULTI_WORD_EXPRESSION = "multiWordExpression"
+
+
+    class azure.search.documents.indexes.types.SearchIndexKnowledgeSourceFieldValueBoost(TypedDict, total=False):
+        key "boostInstructions": str
+        key "fieldValues": list[str]
+        boost: Required[float]
+        boost_instructions: str
+        field: Required[str]
+        field_values: list[str]
+        kind: Required[Literal[SearchIndexKnowledgeSourceBoostKind.FIELD_VALUE]]
+
+
+    class azure.search.documents.indexes.types.SearchIndexKnowledgeSourceFilterHint(TypedDict, total=False):
+        key "filterInstructions": str
+        field: Required[str]
+        fieldValues: Required[list[str]]
+        field_values: list[str]
+        filter_instructions: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexKnowledgeSourceMultiWordExpressionBoost(TypedDict, total=False):
+        key "boostInstructions": str
+        key "fieldValues": list[str]
+        boost: Required[float]
+        boost_instructions: str
+        field_values: list[str]
+        kind: Required[Literal[SearchIndexKnowledgeSourceBoostKind.MULTI_WORD_EXPRESSION]]
+
+
+    class azure.search.documents.indexes.types.SearchIndexKnowledgeSourceParameters(TypedDict, total=False):
+        key "baseFilter": str
+        key "queryHints": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        key "searchFields": list[SearchIndexFieldReference]
+        key "semanticConfigurationName": str
+        key "sourceDataFields": list[SearchIndexFieldReference]
+        base_filter: str
+        query_hints: SearchIndexKnowledgeSourceQueryHints
+        searchIndexName: Required[str]
+        search_fields: list[SearchIndexFieldReference]
+        search_index_name: str
+        semantic_configuration_name: str
+        source_data_fields: list[SearchIndexFieldReference]
+
+
+    class azure.search.documents.indexes.types.SearchIndexKnowledgeSourceQueryHints(TypedDict, total=False):
+        key "boosts": list[SearchIndexKnowledgeSourceBoost]
+        key "filters": list[SearchIndexKnowledgeSourceFilterHint]
+        boosts: list[SearchIndexKnowledgeSourceBoost]
+        filters: list[SearchIndexKnowledgeSourceFilterHint]
+
+
+    class azure.search.documents.indexes.types.SearchIndexer(TypedDict):
+        key "@odata.etag": str
+        key "cache": Optional[SearchIndexerCache]
+        key "description": str
+        key "disabled": Optional[bool]
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "fieldMappings": list[FieldMapping]
+        key "outputFieldMappings": list[FieldMapping]
+        key "parameters": Optional[IndexingParameters]
+        key "schedule": Optional[IndexingSchedule]
+        key "skillsetName": str
+        cache: SearchIndexerCache
+        dataSourceName: Required[str]
+        data_source_name: str
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        field_mappings: list[FieldMapping]
+        is_disabled: bool
+        name: Required[str]
+        output_field_mappings: list[FieldMapping]
+        parameters: IndexingParameters
+        schedule: IndexingSchedule
+        skillset_name: str
+        targetIndexName: Required[str]
+        target_index_name: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexerCache(TypedDict, total=False):
+        key "enableReprocessing": Optional[bool]
+        key "id": str
+        key "identity": Optional[SearchIndexerDataIdentity]
+        key "storageConnectionString": str
+        enable_reprocessing: bool
+        id: str
+        identity: SearchIndexerDataIdentity
+        storage_connection_string: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexerDataContainer(TypedDict, total=False):
+        key "query": str
+        name: Required[str]
+        query: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexerDataNoneIdentity(TypedDict):
+        @odata.type: Required[Literal["#DataNoneIdentity"]]
+        odata_type: Literal[#DataNoneIdentity]
+
+
+    class azure.search.documents.indexes.types.SearchIndexerDataSourceConnection(TypedDict):
+        key "@odata.etag": str
+        key "dataChangeDetectionPolicy": Optional[DataChangeDetectionPolicy]
+        key "dataDeletionDetectionPolicy": Optional[DataDeletionDetectionPolicy]
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "identity": Optional[SearchIndexerDataIdentity]
+        key "indexerPermissionOptions": Optional[list[Union[str, IndexerPermissionOption]]]
+        key "subType": str
+        container: Required[SearchIndexerDataContainer]
+        credentials: Required[DataSourceCredentials]
+        data_change_detection_policy: DataChangeDetectionPolicy
+        data_deletion_detection_policy: DataDeletionDetectionPolicy
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        identity: SearchIndexerDataIdentity
+        indexer_permission_options: list[Union[str, IndexerPermissionOption]]
+        name: Required[str]
+        sub_type: str
+        type: Required[Union[str, SearchIndexerDataSourceType]]
+
+
+    class azure.search.documents.indexes.types.SearchIndexerDataUserAssignedIdentity(TypedDict):
+        key "federatedIdentityClientId": str
+        @odata.type: Required[Literal["#DataUserAssignedIdentity"]]
+        federated_identity_client_id: str
+        odata_type: Literal[#DataUserAssignedIdentity]
+        resource_id: str
+        userAssignedIdentity: Required[str]
+
+
+    class azure.search.documents.indexes.types.SearchIndexerIndexProjection(TypedDict, total=False):
+        key "parameters": ForwardRef('SearchIndexerIndexProjectionsParameters')
+        parameters: SearchIndexerIndexProjectionsParameters
+        selectors: Required[list[SearchIndexerIndexProjectionSelector]]
+
+
+    class azure.search.documents.indexes.types.SearchIndexerIndexProjectionSelector(TypedDict, total=False):
+        mappings: Required[list[InputFieldMappingEntry]]
+        parentKeyFieldName: Required[str]
+        parent_key_field_name: str
+        sourceContext: Required[str]
+        source_context: str
+        targetIndexName: Required[str]
+        target_index_name: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexerIndexProjectionsParameters(TypedDict, total=False):
+        key "projectionMode": Union[str, IndexProjectionMode]
+        projection_mode: Union[str, IndexProjectionMode]
+
+
+    class azure.search.documents.indexes.types.SearchIndexerKnowledgeStore(TypedDict, total=False):
+        key "identity": Optional[SearchIndexerDataIdentity]
+        key "parameters": ForwardRef('SearchIndexerKnowledgeStoreParameters')
+        identity: SearchIndexerDataIdentity
+        parameters: SearchIndexerKnowledgeStoreParameters
+        projections: Required[list[SearchIndexerKnowledgeStoreProjection]]
+        storageConnectionString: Required[str]
+        storage_connection_string: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexerKnowledgeStoreBlobProjectionSelector(SearchIndexerKnowledgeStoreProjectionSelector):
+        key "generatedKeyName": str
+        key "inputs": list[InputFieldMappingEntry]
+        key "referenceKeyName": str
+        key "source": str
+        key "sourceContext": str
+        generated_key_name: str
+        inputs: list[InputFieldMappingEntry]
+        reference_key_name: str
+        source: str
+        source_context: str
+        storageContainer: Required[str]
+        storage_container: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexerKnowledgeStoreFileProjectionSelector(SearchIndexerKnowledgeStoreBlobProjectionSelector):
+        key "generatedKeyName": str
+        key "inputs": list[InputFieldMappingEntry]
+        key "referenceKeyName": str
+        key "source": str
+        key "sourceContext": str
+        generated_key_name: str
+        inputs: list[InputFieldMappingEntry]
+        reference_key_name: str
+        source: str
+        source_context: str
+        storageContainer: Required[str]
+        storage_container: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexerKnowledgeStoreObjectProjectionSelector(SearchIndexerKnowledgeStoreBlobProjectionSelector):
+        key "generatedKeyName": str
+        key "inputs": list[InputFieldMappingEntry]
+        key "referenceKeyName": str
+        key "source": str
+        key "sourceContext": str
+        generated_key_name: str
+        inputs: list[InputFieldMappingEntry]
+        reference_key_name: str
+        source: str
+        source_context: str
+        storageContainer: Required[str]
+        storage_container: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexerKnowledgeStoreParameters(TypedDict, total=False):
+        key "synthesizeGeneratedKeyName": bool
+        synthesize_generated_key_name: bool
+
+
+    class azure.search.documents.indexes.types.SearchIndexerKnowledgeStoreProjection(TypedDict, total=False):
+        key "files": list[SearchIndexerKnowledgeStoreFileProjectionSelector]
+        key "objects": list[SearchIndexerKnowledgeStoreObjectProjectionSelector]
+        key "tables": list[SearchIndexerKnowledgeStoreTableProjectionSelector]
+        files: list[SearchIndexerKnowledgeStoreFileProjectionSelector]
+        objects: list[SearchIndexerKnowledgeStoreObjectProjectionSelector]
+        tables: list[SearchIndexerKnowledgeStoreTableProjectionSelector]
+
+
+    class azure.search.documents.indexes.types.SearchIndexerKnowledgeStoreProjectionSelector(TypedDict, total=False):
+        key "generatedKeyName": str
+        key "inputs": list[InputFieldMappingEntry]
+        key "referenceKeyName": str
+        key "source": str
+        key "sourceContext": str
+        generated_key_name: str
+        inputs: list[InputFieldMappingEntry]
+        reference_key_name: str
+        source: str
+        source_context: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexerKnowledgeStoreTableProjectionSelector(SearchIndexerKnowledgeStoreProjectionSelector):
+        key "inputs": list[InputFieldMappingEntry]
+        key "referenceKeyName": str
+        key "source": str
+        key "sourceContext": str
+        generatedKeyName: Required[str]
+        generated_key_name: str
+        inputs: list[InputFieldMappingEntry]
+        reference_key_name: str
+        source: str
+        source_context: str
+        tableName: Required[str]
+        table_name: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexerSkillset(TypedDict):
+        key "@odata.etag": str
+        key "cognitiveServices": ForwardRef('CognitiveServicesAccount')
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "indexProjections": ForwardRef('SearchIndexerIndexProjection')
+        key "knowledgeStore": ForwardRef('SearchIndexerKnowledgeStore')
+        cognitive_services_account: CognitiveServicesAccount
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        index_projection: SearchIndexerIndexProjection
+        knowledge_store: SearchIndexerKnowledgeStore
+        name: Required[str]
+        skills: Required[list[SearchIndexerSkill]]
+
+
+    class azure.search.documents.indexes.types.SearchResourceEncryptionKey(TypedDict, total=False):
+        key "accessCredentials": ForwardRef('AzureActiveDirectoryApplicationCredentials')
+        key "identity": Optional[SearchIndexerDataIdentity]
+        key "isServiceLevelKey": bool
+        key "keyVaultKeyVersion": str
+        access_credentials: AzureActiveDirectoryApplicationCredentials
+        identity: SearchIndexerDataIdentity
+        is_service_level_key: bool
+        keyVaultKeyName: Required[str]
+        keyVaultUri: Required[str]
+        key_name: str
+        key_version: str
+        vault_uri: str
+
+
+    class azure.search.documents.indexes.types.SearchSuggester(TypedDict, total=False):
+        name: Required[str]
+        searchMode: Required[Literal["analyzingInfixMatching"]]
+        search_mode: Literal[analyzingInfixMatching]
+        sourceFields: Required[list[str]]
+        source_fields: list[str]
+
+
+    class azure.search.documents.indexes.types.SemanticConfiguration(TypedDict, total=False):
+        key "flightingOptIn": bool
+        key "rankingOrder": Optional[Union[str, RankingOrder]]
+        flighting_opt_in: bool
+        name: Required[str]
+        prioritizedFields: Required[SemanticPrioritizedFields]
+        prioritized_fields: SemanticPrioritizedFields
+        ranking_order: Union[str, RankingOrder]
+
+
+    class azure.search.documents.indexes.types.SemanticField(TypedDict, total=False):
+        fieldName: Required[str]
+        field_name: str
+
+
+    class azure.search.documents.indexes.types.SemanticPrioritizedFields(TypedDict, total=False):
+        key "prioritizedContentFields": list[SemanticField]
+        key "prioritizedKeywordsFields": list[SemanticField]
+        key "titleField": ForwardRef('SemanticField')
+        content_fields: list[SemanticField]
+        keywords_fields: list[SemanticField]
+        title_field: SemanticField
+
+
+    class azure.search.documents.indexes.types.SemanticSearch(TypedDict, total=False):
+        key "configurations": list[SemanticConfiguration]
+        key "defaultConfiguration": str
+        configurations: list[SemanticConfiguration]
+        default_configuration_name: str
+
+
+    class azure.search.documents.indexes.types.SentimentSkillV3(TypedDict):
+        key "context": str
+        key "defaultLanguageCode": Optional[Union[str, SentimentSkillLanguage]]
+        key "description": str
+        key "includeOpinionMining": bool
+        key "modelVersion": Optional[str]
+        key "name": str
+        @odata.type: Required[Literal["#SentimentSkill"]]
+        context: str
+        default_language_code: Union[str, SentimentSkillLanguage]
+        description: str
+        include_opinion_mining: bool
+        inputs: Required[list[InputFieldMappingEntry]]
+        model_version: str
+        name: str
+        odata_type: Literal[#SentimentSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.ShaperSkill(TypedDict):
+        key "context": str
+        key "description": str
+        key "name": str
+        @odata.type: Required[Literal["#ShaperSkill"]]
+        context: str
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        name: str
+        odata_type: Literal[#ShaperSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.SharePointConnectorAppRegistration(TypedDict, total=False):
+        key "tenantId": str
+        applicationId: Required[str]
+        application_id: str
+        federatedCredentialId: Required[str]
+        federated_credential_id: str
+        tenant_id: str
+
+
+    class azure.search.documents.indexes.types.ShingleTokenFilter(TypedDict):
+        key "filterToken": str
+        key "maxShingleSize": int
+        key "minShingleSize": int
+        key "outputUnigrams": bool
+        key "outputUnigramsIfNoShingles": bool
+        key "tokenSeparator": str
+        @odata.type: Required[Literal["#ShingleTokenFilter"]]
+        filter_token: str
+        max_shingle_size: int
+        min_shingle_size: int
+        name: Required[str]
+        odata_type: Literal[#ShingleTokenFilter]
+        output_unigrams: bool
+        output_unigrams_if_no_shingles: bool
+        token_separator: str
+
+
+    class azure.search.documents.indexes.types.SkillNames(TypedDict, total=False):
+        key "skillNames": list[str]
+        skill_names: list[str]
+
+
+    class azure.search.documents.indexes.types.SnowballTokenFilter(TypedDict):
+        @odata.type: Required[Literal["#SnowballTokenFilter"]]
+        language: Required[Union[str, SnowballTokenFilterLanguage]]
+        name: Required[str]
+        odata_type: Literal[#SnowballTokenFilter]
+
+
+    class azure.search.documents.indexes.types.SoftDeleteColumnDeletionDetectionPolicy(TypedDict):
+        key "softDeleteColumnName": str
+        key "softDeleteMarkerValue": str
+        @odata.type: Required[Literal["#SoftDeleteColumnDeletionDetectionPolicy"]]
+        odata_type: Literal[#SoftDeleteColumnDeletionDetectionPolicy]
+        soft_delete_column_name: str
+        soft_delete_marker_value: str
+
+
+    class azure.search.documents.indexes.types.SplitSkill(TypedDict):
+        key "azureOpenAITokenizerParameters": Optional[AzureOpenAITokenizerParameters]
+        key "context": str
+        key "defaultLanguageCode": Union[str, SplitSkillLanguage]
+        key "description": str
+        key "maximumPageLength": Optional[int]
+        key "maximumPagesToTake": Optional[int]
+        key "name": str
+        key "pageOverlapLength": Optional[int]
+        key "textSplitMode": Union[str, TextSplitMode]
+        key "unit": Optional[Union[str, SplitSkillUnit]]
+        @odata.type: Required[Literal["#SplitSkill"]]
+        azure_open_ai_tokenizer_parameters: AzureOpenAITokenizerParameters
+        context: str
+        default_language_code: Union[str, SplitSkillLanguage]
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        maximum_page_length: int
+        maximum_pages_to_take: int
+        name: str
+        odata_type: Literal[#SplitSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+        page_overlap_length: int
+        text_split_mode: Union[str, TextSplitMode]
+        unit: Union[str, SplitSkillUnit]
+
+
+    class azure.search.documents.indexes.types.SqlIntegratedChangeTrackingPolicy(TypedDict):
+        @odata.type: Required[Literal["#SqlIntegratedChangeTrackingPolicy"]]
+        odata_type: Literal[#SqlIntegratedChangeTrackingPolicy]
+
+
+    class azure.search.documents.indexes.types.StemmerOverrideTokenFilter(TypedDict):
+        @odata.type: Required[Literal["#StemmerOverrideTokenFilter"]]
+        name: Required[str]
+        odata_type: Literal[#StemmerOverrideTokenFilter]
+        rules: Required[list[str]]
+
+
+    class azure.search.documents.indexes.types.StemmerTokenFilter(TypedDict):
+        @odata.type: Required[Literal["#StemmerTokenFilter"]]
+        language: Required[Union[str, StemmerTokenFilterLanguage]]
+        name: Required[str]
+        odata_type: Literal[#StemmerTokenFilter]
+
+
+    class azure.search.documents.indexes.types.StopAnalyzer(TypedDict):
+        key "stopwords": list[str]
+        @odata.type: Required[Literal["#StopAnalyzer"]]
+        name: Required[str]
+        odata_type: Literal[#StopAnalyzer]
+        stopwords: list[str]
+
+
+    class azure.search.documents.indexes.types.StopwordsTokenFilter(TypedDict):
+        key "ignoreCase": bool
+        key "removeTrailing": bool
+        key "stopwords": list[str]
+        key "stopwordsList": Union[str, StopwordsList]
+        @odata.type: Required[Literal["#StopwordsTokenFilter"]]
+        ignore_case: bool
+        name: Required[str]
+        odata_type: Literal[#StopwordsTokenFilter]
+        remove_trailing_stop_words: bool
+        stopwords: list[str]
+        stopwords_list: Union[str, StopwordsList]
+
+
+    class azure.search.documents.indexes.types.SynonymMap(TypedDict):
+        key "@odata.etag": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        format: Required[Literal["solr"]]
+        name: Required[str]
+        synonyms: Required[list[str]]
+
+
+    class azure.search.documents.indexes.types.SynonymTokenFilter(TypedDict):
+        key "expand": bool
+        key "ignoreCase": bool
+        @odata.type: Required[Literal["#SynonymTokenFilter"]]
+        expand: bool
+        ignore_case: bool
+        name: Required[str]
+        odata_type: Literal[#SynonymTokenFilter]
+        synonyms: Required[list[str]]
+
+
+    class azure.search.documents.indexes.types.TagScoringFunction(TypedDict, total=False):
+        key "interpolation": Union[str, ScoringFunctionInterpolation]
+        boost: Required[float]
+        fieldName: Required[str]
+        field_name: str
+        interpolation: Union[str, ScoringFunctionInterpolation]
+        parameters: TagScoringParameters
+        tag: Required[TagScoringParameters]
+        type: Required[Literal["tag"]]
+
+
+    class azure.search.documents.indexes.types.TagScoringParameters(TypedDict, total=False):
+        tagsParameter: Required[str]
+        tags_parameter: str
+
+
+    class azure.search.documents.indexes.types.TextTranslationSkill(TypedDict):
+        key "context": str
+        key "defaultFromLanguageCode": Union[str, TextTranslationSkillLanguage]
+        key "description": str
+        key "name": str
+        key "suggestedFrom": Optional[Union[str, TextTranslationSkillLanguage]]
+        @odata.type: Required[Literal["#TranslationSkill"]]
+        context: str
+        defaultToLanguageCode: Required[Union[str, TextTranslationSkillLanguage]]
+        default_from_language_code: Union[str, TextTranslationSkillLanguage]
+        default_to_language_code: Union[str, TextTranslationSkillLanguage]
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        name: str
+        odata_type: Literal[#TranslationSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+        suggested_from: Union[str, TextTranslationSkillLanguage]
+
+
+    class azure.search.documents.indexes.types.TextWeights(TypedDict, total=False):
+        weights: Required[dict[str, float]]
+
+
+    class azure.search.documents.indexes.types.TruncateTokenFilter(TypedDict):
+        key "length": int
+        @odata.type: Required[Literal["#TruncateTokenFilter"]]
+        length: int
+        name: Required[str]
+        odata_type: Literal[#TruncateTokenFilter]
+
+
+    class azure.search.documents.indexes.types.UaxUrlEmailTokenizer(TypedDict):
+        key "maxTokenLength": int
+        @odata.type: Required[Literal["#UaxUrlEmailTokenizer"]]
+        max_token_length: int
+        name: Required[str]
+        odata_type: Literal[#UaxUrlEmailTokenizer]
+
+
+    class azure.search.documents.indexes.types.UniqueTokenFilter(TypedDict):
+        key "onlyOnSamePosition": bool
+        @odata.type: Required[Literal["#UniqueTokenFilter"]]
+        name: Required[str]
+        odata_type: Literal[#UniqueTokenFilter]
+        only_on_same_position: bool
+
+
+    class azure.search.documents.indexes.types.UpdateKnowledgeSourceFileRequest(TypedDict, total=False):
+        content: Required[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]
+        metadata: Required[FileUploadMetadata]
+
+
+    class azure.search.documents.indexes.types.UploadKnowledgeSourceFileMultipartRequest(TypedDict, total=False):
+        content: Required[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]
+        metadata: Required[FileUploadMetadata]
+
+
+    class azure.search.documents.indexes.types.VectorSearch(TypedDict, total=False):
+        key "algorithms": list[VectorSearchAlgorithmConfiguration]
+        key "compressions": list[VectorSearchCompression]
+        key "profiles": list[VectorSearchProfile]
+        key "vectorizers": list[VectorSearchVectorizer]
+        algorithms: list[VectorSearchAlgorithmConfiguration]
+        compressions: list[VectorSearchCompression]
+        profiles: list[VectorSearchProfile]
+        vectorizers: list[VectorSearchVectorizer]
+
+
+    class azure.search.documents.indexes.types.VectorSearchAlgorithmKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EXHAUSTIVE_KNN = "exhaustiveKnn"
+        HNSW = "hnsw"
+
+
+    class azure.search.documents.indexes.types.VectorSearchCompressionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BINARY_QUANTIZATION = "binaryQuantization"
+        SCALAR_QUANTIZATION = "scalarQuantization"
+
+
+    class azure.search.documents.indexes.types.VectorSearchProfile(TypedDict, total=False):
+        key "compression": str
+        key "vectorizer": str
+        algorithm: Required[str]
+        algorithm_configuration_name: str
+        compression_name: str
+        name: Required[str]
+        vectorizer_name: str
+
+
+    class azure.search.documents.indexes.types.VectorSearchVectorizerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AI_SERVICES_VISION = "aiServicesVision"
+        AML = "aml"
+        AZURE_OPEN_AI = "azureOpenAI"
+        CUSTOM_WEB_API = "customWebApi"
+
+
+    class azure.search.documents.indexes.types.VisionVectorizeSkill(TypedDict):
+        key "context": str
+        key "description": str
+        key "name": str
+        @odata.type: Required[Literal["#VectorizeSkill"]]
+        context: str
+        description: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        modelVersion: Required[Optional[str]]
+        model_version: str
+        name: str
+        odata_type: Literal[#VectorizeSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+
+
+    class azure.search.documents.indexes.types.WebApiHttpHeaders(TypedDict, total=False):
+
+
+    class azure.search.documents.indexes.types.WebApiSkill(TypedDict):
+        key "authIdentity": Optional[SearchIndexerDataIdentity]
+        key "authResourceId": Optional[str]
+        key "batchSize": Optional[int]
+        key "context": str
+        key "degreeOfParallelism": Optional[int]
+        key "description": str
+        key "httpHeaders": ForwardRef('WebApiHttpHeaders')
+        key "httpMethod": str
+        key "name": str
+        key "timeout": str
+        @odata.type: Required[Literal["#WebApiSkill"]]
+        auth_identity: SearchIndexerDataIdentity
+        auth_resource_id: str
+        batch_size: int
+        context: str
+        degree_of_parallelism: int
+        description: str
+        http_headers: WebApiHttpHeaders
+        http_method: str
+        inputs: Required[list[InputFieldMappingEntry]]
+        name: str
+        odata_type: Literal[#WebApiSkill]
+        outputs: Required[list[OutputFieldMappingEntry]]
+        timeout: str
+        uri: Required[str]
+
+
+    class azure.search.documents.indexes.types.WebApiVectorizer(TypedDict, total=False):
+        key "customWebApiParameters": ForwardRef('WebApiVectorizerParameters')
+        kind: Required[Literal[VectorSearchVectorizerKind.CUSTOM_WEB_API]]
+        name: Required[str]
+        vectorizer_name: str
+        web_api_parameters: WebApiVectorizerParameters
+
+
+    class azure.search.documents.indexes.types.WebApiVectorizerParameters(TypedDict, total=False):
+        key "authIdentity": Optional[SearchIndexerDataIdentity]
+        key "authResourceId": Optional[str]
+        key "httpHeaders": dict[str, str]
+        key "httpMethod": str
+        key "timeout": str
+        key "uri": str
+        auth_identity: SearchIndexerDataIdentity
+        auth_resource_id: str
+        http_headers: dict[str, str]
+        http_method: str
+        timeout: str
+        url: str
+
+
+    class azure.search.documents.indexes.types.WebKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        key "webParameters": ForwardRef('WebKnowledgeSourceParameters')
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        kind: Required[Literal[KnowledgeSourceKind.WEB]]
+        name: Required[str]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+        web_parameters: WebKnowledgeSourceParameters
+
+
+    class azure.search.documents.indexes.types.WebKnowledgeSourceDomain(TypedDict, total=False):
+        key "includeSubpages": bool
+        address: Required[str]
+        include_subpages: bool
+
+
+    class azure.search.documents.indexes.types.WebKnowledgeSourceDomains(TypedDict, total=False):
+        key "allowedDomains": list[WebKnowledgeSourceDomain]
+        key "blockedDomains": list[WebKnowledgeSourceDomain]
+        allowed_domains: list[WebKnowledgeSourceDomain]
+        blocked_domains: list[WebKnowledgeSourceDomain]
+
+
+    class azure.search.documents.indexes.types.WebKnowledgeSourceParameters(TypedDict, total=False):
+        key "count": int
+        key "domains": ForwardRef('WebKnowledgeSourceDomains')
+        key "freshness": str
+        key "language": str
+        key "market": str
+        count: int
+        domains: WebKnowledgeSourceDomains
+        freshness: str
+        language: str
+        market: str
+
+
+    class azure.search.documents.indexes.types.WordDelimiterTokenFilter(TypedDict):
+        key "catenateAll": bool
+        key "catenateNumbers": bool
+        key "catenateWords": bool
+        key "generateNumberParts": bool
+        key "generateWordParts": bool
+        key "preserveOriginal": bool
+        key "protectedWords": list[str]
+        key "splitOnCaseChange": bool
+        key "splitOnNumerics": bool
+        key "stemEnglishPossessive": bool
+        @odata.type: Required[Literal["#WordDelimiterTokenFilter"]]
+        catenate_all: bool
+        catenate_numbers: bool
+        catenate_words: bool
+        generate_number_parts: bool
+        generate_word_parts: bool
+        name: Required[str]
+        odata_type: Literal[#WordDelimiterTokenFilter]
+        preserve_original: bool
+        protected_words: list[str]
+        split_on_case_change: bool
+        split_on_numerics: bool
+        stem_english_possessive: bool
+
+
+    class azure.search.documents.indexes.types.WorkIQKnowledgeSource(TypedDict):
+        key "@odata.etag": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        description: str
+        e_tag: str
+        encryption_key: SearchResourceEncryptionKey
+        kind: Required[Literal[KnowledgeSourceKind.WORK_IQ]]
+        name: Required[str]
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+        workIQParameters: Required[WorkIQKnowledgeSourceParameters]
+        work_iq_parameters: WorkIQKnowledgeSourceParameters
+
+
+    class azure.search.documents.indexes.types.WorkIQKnowledgeSourceParameters(TypedDict, total=False):
+        entraAppAuthentication: Required[EntraAppAuthentication]
+        entra_app_authentication: EntraAppAuthentication
 
 
 namespace azure.search.documents.knowledgebases
@@ -7780,16 +10677,18 @@ namespace azure.search.documents.knowledgebases
                 *, 
                 content_type: str = "application/json", 
                 query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
 
         @overload
         def retrieve(
                 self, 
-                retrieval_request: JSON, 
+                retrieval_request: KnowledgeBaseRetrievalRequest, 
                 *, 
                 content_type: str = "application/json", 
                 query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
 
@@ -7800,8 +10699,18 @@ namespace azure.search.documents.knowledgebases
                 *, 
                 content_type: str = "application/json", 
                 query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
+
+        def retrieve_stream(
+                self, 
+                retrieval_request: Union[KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]], 
+                *, 
+                query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> KnowledgeBaseRetrievalStream: ...
 
         def send_request(
                 self, 
@@ -7812,7 +10721,44 @@ namespace azure.search.documents.knowledgebases
             ) -> HttpResponse: ...
 
 
+    class azure.search.documents.knowledgebases.KnowledgeBaseRetrievalEvent:
+        data: Optional[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent, dict[str, Any], list[Any], str, int, float, bool]]
+        event_type: str
+
+        def __init__(
+                self, 
+                event_type: str, 
+                data: KnowledgeBaseRetrievalEventData
+            ) -> None: ...
+
+        def __repr__(self) -> str: ...
+
+
+    class azure.search.documents.knowledgebases.KnowledgeBaseRetrievalStream(Iterator[KnowledgeBaseRetrievalEvent]): implements ContextManager , Iterator 
+
+        def __init__(
+                self, 
+                *, 
+                raw_stream: Iterator[bytes], 
+                response: Any
+            ) -> None: ...
+
+        def close(self) -> None: ...
+
+
 namespace azure.search.documents.knowledgebases.aio
+
+    class azure.search.documents.knowledgebases.aio.AsyncKnowledgeBaseRetrievalStream(AsyncIterator[KnowledgeBaseRetrievalEvent]): implements AsyncContextManager , AsyncIterable , AsyncIterator 
+
+        def __init__(
+                self, 
+                *, 
+                raw_stream: AsyncIterator[bytes], 
+                response: Any
+            ) -> None: ...
+
+        async def close(self) -> None: ...
+
 
     class azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient): implements AsyncContextManager 
 
@@ -7835,16 +10781,18 @@ namespace azure.search.documents.knowledgebases.aio
                 *, 
                 content_type: str = "application/json", 
                 query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
 
         @overload
         async def retrieve(
                 self, 
-                retrieval_request: JSON, 
+                retrieval_request: KnowledgeBaseRetrievalRequest, 
                 *, 
                 content_type: str = "application/json", 
                 query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
 
@@ -7855,8 +10803,18 @@ namespace azure.search.documents.knowledgebases.aio
                 *, 
                 content_type: str = "application/json", 
                 query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
+
+        async def retrieve_stream(
+                self, 
+                retrieval_request: Union[KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]], 
+                *, 
+                query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncKnowledgeBaseRetrievalStream: ...
 
         def send_request(
                 self, 
@@ -7865,6 +10823,19 @@ namespace azure.search.documents.knowledgebases.aio
                 stream: bool = False, 
                 **kwargs: Any
             ) -> Awaitable[AsyncHttpResponse]: ...
+
+
+    class azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalEvent:
+        data: Optional[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent, dict[str, Any], list[Any], str, int, float, bool]]
+        event_type: str
+
+        def __init__(
+                self, 
+                event_type: str, 
+                data: KnowledgeBaseRetrievalEventData
+            ) -> None: ...
+
+        def __repr__(self) -> str: ...
 
 
 namespace azure.search.documents.knowledgebases.models
@@ -7910,7 +10881,10 @@ namespace azure.search.documents.knowledgebases.models
         kind: Literal[KnowledgeSourceKind.AZURE_BLOB]
         knowledge_source_name: str
         max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints]
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -7923,7 +10897,10 @@ namespace azure.search.documents.knowledgebases.models
                 include_references: Optional[bool] = ..., 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -7961,7 +10938,9 @@ namespace azure.search.documents.knowledgebases.models
         kind: Literal[KnowledgeSourceKind.FABRIC_DATA_AGENT]
         knowledge_source_name: str
         max_output_documents: int
+        never_query_source: bool
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -7974,7 +10953,9 @@ namespace azure.search.documents.knowledgebases.models
                 include_references: Optional[bool] = ..., 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -7990,7 +10971,9 @@ namespace azure.search.documents.knowledgebases.models
         kind: Literal[KnowledgeSourceKind.FABRIC_ONTOLOGY]
         knowledge_source_name: str
         max_output_documents: int
+        never_query_source: bool
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -8003,7 +10986,9 @@ namespace azure.search.documents.knowledgebases.models
                 include_references: Optional[bool] = ..., 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -8019,7 +11004,10 @@ namespace azure.search.documents.knowledgebases.models
         kind: Literal[KnowledgeSourceKind.FILE]
         knowledge_source_name: str
         max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints]
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -8032,7 +11020,10 @@ namespace azure.search.documents.knowledgebases.models
                 include_references: Optional[bool] = ..., 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -8056,6 +11047,7 @@ namespace azure.search.documents.knowledgebases.models
     class azure.search.documents.knowledgebases.models.ImageServingStatistics(_Model):
         images_retrieved: Optional[int]
         images_sent_to_model: Optional[int]
+        served_images: Optional[list[ServedImage]]
         total_image_size_bytes: Optional[int]
         verbalization_used: Optional[bool]
 
@@ -8065,6 +11057,7 @@ namespace azure.search.documents.knowledgebases.models
                 *, 
                 images_retrieved: Optional[int] = ..., 
                 images_sent_to_model: Optional[int] = ..., 
+                served_images: Optional[list[ServedImage]] = ..., 
                 total_image_size_bytes: Optional[int] = ..., 
                 verbalization_used: Optional[bool] = ...
             ) -> None: ...
@@ -8082,7 +11075,10 @@ namespace azure.search.documents.knowledgebases.models
         kind: Literal[KnowledgeSourceKind.INDEXED_ONELAKE]
         knowledge_source_name: str
         max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints]
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -8095,7 +11091,10 @@ namespace azure.search.documents.knowledgebases.models
                 include_references: Optional[bool] = ..., 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -8111,7 +11110,10 @@ namespace azure.search.documents.knowledgebases.models
         kind: Literal[KnowledgeSourceKind.INDEXED_SHARE_POINT]
         knowledge_source_name: str
         max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints]
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -8124,7 +11126,10 @@ namespace azure.search.documents.knowledgebases.models
                 include_references: Optional[bool] = ..., 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -8140,7 +11145,10 @@ namespace azure.search.documents.knowledgebases.models
         kind: Literal[KnowledgeSourceKind.INDEXED_SQL]
         knowledge_source_name: str
         max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints]
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -8153,7 +11161,10 @@ namespace azure.search.documents.knowledgebases.models
                 include_references: Optional[bool] = ..., 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -8161,9 +11172,11 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecord(_Model):
+        completed_at: Optional[datetime]
         elapsed_ms: Optional[int]
         error: Optional[KnowledgeBaseErrorDetail]
         id: int
+        started_at: Optional[datetime]
         type: str
         warning: Optional[str]
 
@@ -8171,11 +11184,29 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
                 id: int, 
+                started_at: Optional[datetime] = ..., 
                 type: str, 
                 warning: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordModel(_Model):
+        deployment_id: Optional[str]
+        model_name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_id: Optional[str] = ..., 
+                model_name: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -8201,12 +11232,35 @@ namespace azure.search.documents.knowledgebases.models
         WORK_IQ = "workIQ"
 
 
+    class azure.search.documents.knowledgebases.models.KnowledgeBaseActivityStartedEvent(_Model):
+        id: int
+        knowledge_source_name: Optional[str]
+        started_at: datetime
+        type: Union[str, KnowledgeBaseActivityRecordType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: int, 
+                knowledge_source_name: Optional[str] = ..., 
+                started_at: datetime, 
+                type: Union[str, KnowledgeBaseActivityRecordType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.search.documents.knowledgebases.models.KnowledgeBaseAgenticReasoningActivityRecord(KnowledgeBaseActivityRecord, discriminator='agenticReasoning'):
+        completed_at: datetime
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
         id: int
+        logical_reasoning_effort: Optional[KnowledgeRetrievalReasoningEffort]
         reasoning_tokens: Optional[int]
         retrieval_reasoning_effort: Optional[KnowledgeRetrievalReasoningEffort]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.AGENTIC_REASONING]
         warning: str
 
@@ -8214,12 +11268,31 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
                 id: int, 
+                logical_reasoning_effort: Optional[KnowledgeRetrievalReasoningEffort] = ..., 
                 reasoning_tokens: Optional[int] = ..., 
                 retrieval_reasoning_effort: Optional[KnowledgeRetrievalReasoningEffort] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.knowledgebases.models.KnowledgeBaseAnswerCompletedEvent(_Model):
+        message: KnowledgeBaseMessage
+        message_index: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                message: KnowledgeBaseMessage, 
+                message_index: int
             ) -> None: ...
 
         @overload
@@ -8242,13 +11315,16 @@ namespace azure.search.documents.knowledgebases.models
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseAzureBlobActivityRecord(KnowledgeBaseActivityRecord, discriminator='azureBlob'):
         azure_blob_arguments: Optional[KnowledgeBaseAzureBlobActivityArguments]
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
         id: int
         image_serving: Optional[ImageServingStatistics]
         knowledge_source_name: Optional[str]
+        query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing]
         query_time: Optional[datetime]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.AZURE_BLOB]
         warning: str
 
@@ -8257,13 +11333,16 @@ namespace azure.search.documents.knowledgebases.models
                 self, 
                 *, 
                 azure_blob_arguments: Optional[KnowledgeBaseAzureBlobActivityArguments] = ..., 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
                 id: int, 
                 image_serving: Optional[ImageServingStatistics] = ..., 
                 knowledge_source_name: Optional[str] = ..., 
+                query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing] = ..., 
                 query_time: Optional[datetime] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -8274,6 +11353,7 @@ namespace azure.search.documents.knowledgebases.models
     class azure.search.documents.knowledgebases.models.KnowledgeBaseAzureBlobReference(KnowledgeBaseReference, discriminator='azureBlob'):
         activity_source: int
         blob_url: Optional[str]
+        citation_url: Optional[str]
         id: str
         reranker_score: float
         search_sensitivity_label_info: Optional[PurviewSensitivityLabelInfo]
@@ -8286,6 +11366,7 @@ namespace azure.search.documents.knowledgebases.models
                 *, 
                 activity_source: int, 
                 blob_url: Optional[str] = ..., 
+                citation_url: Optional[str] = ..., 
                 id: str, 
                 reranker_score: Optional[float] = ..., 
                 search_sensitivity_label_info: Optional[PurviewSensitivityLabelInfo] = ..., 
@@ -8324,6 +11405,7 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseFabricDataAgentActivityRecord(KnowledgeBaseActivityRecord, discriminator='fabricDataAgent'):
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
@@ -8332,6 +11414,7 @@ namespace azure.search.documents.knowledgebases.models
         image_serving: Optional[ImageServingStatistics]
         knowledge_source_name: Optional[str]
         query_time: Optional[datetime]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.FABRIC_DATA_AGENT]
         warning: str
 
@@ -8339,6 +11422,7 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
@@ -8347,6 +11431,7 @@ namespace azure.search.documents.knowledgebases.models
                 image_serving: Optional[ImageServingStatistics] = ..., 
                 knowledge_source_name: Optional[str] = ..., 
                 query_time: Optional[datetime] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -8394,6 +11479,7 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseFabricOntologyActivityRecord(KnowledgeBaseActivityRecord, discriminator='fabricOntology'):
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
@@ -8402,6 +11488,7 @@ namespace azure.search.documents.knowledgebases.models
         image_serving: Optional[ImageServingStatistics]
         knowledge_source_name: Optional[str]
         query_time: Optional[datetime]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.FABRIC_ONTOLOGY]
         warning: str
 
@@ -8409,6 +11496,7 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
@@ -8417,6 +11505,7 @@ namespace azure.search.documents.knowledgebases.models
                 image_serving: Optional[ImageServingStatistics] = ..., 
                 knowledge_source_name: Optional[str] = ..., 
                 query_time: Optional[datetime] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -8464,6 +11553,7 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseFileActivityRecord(KnowledgeBaseActivityRecord, discriminator='file'):
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
@@ -8471,7 +11561,9 @@ namespace azure.search.documents.knowledgebases.models
         id: int
         image_serving: Optional[ImageServingStatistics]
         knowledge_source_name: Optional[str]
+        query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing]
         query_time: Optional[datetime]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.FILE]
         warning: str
 
@@ -8479,6 +11571,7 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
@@ -8486,7 +11579,9 @@ namespace azure.search.documents.knowledgebases.models
                 id: int, 
                 image_serving: Optional[ImageServingStatistics] = ..., 
                 knowledge_source_name: Optional[str] = ..., 
+                query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing] = ..., 
                 query_time: Optional[datetime] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -8496,6 +11591,7 @@ namespace azure.search.documents.knowledgebases.models
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseFileReference(KnowledgeBaseReference, discriminator='file'):
         activity_source: int
+        citation_url: Optional[str]
         doc_name: Optional[str]
         id: str
         reranker_score: float
@@ -8507,6 +11603,7 @@ namespace azure.search.documents.knowledgebases.models
                 self, 
                 *, 
                 activity_source: int, 
+                citation_url: Optional[str] = ..., 
                 doc_name: Optional[str] = ..., 
                 id: str, 
                 reranker_score: Optional[float] = ..., 
@@ -8546,6 +11643,7 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedOneLakeActivityRecord(KnowledgeBaseActivityRecord, discriminator='indexedOneLake'):
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
@@ -8553,7 +11651,9 @@ namespace azure.search.documents.knowledgebases.models
         image_serving: Optional[ImageServingStatistics]
         indexed_one_lake_arguments: Optional[KnowledgeBaseIndexedOneLakeActivityArguments]
         knowledge_source_name: Optional[str]
+        query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing]
         query_time: Optional[datetime]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.INDEXED_ONELAKE]
         warning: str
 
@@ -8561,6 +11661,7 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
@@ -8568,7 +11669,9 @@ namespace azure.search.documents.knowledgebases.models
                 image_serving: Optional[ImageServingStatistics] = ..., 
                 indexed_one_lake_arguments: Optional[KnowledgeBaseIndexedOneLakeActivityArguments] = ..., 
                 knowledge_source_name: Optional[str] = ..., 
+                query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing] = ..., 
                 query_time: Optional[datetime] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -8578,6 +11681,7 @@ namespace azure.search.documents.knowledgebases.models
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator='indexedOneLake'):
         activity_source: int
+        citation_url: Optional[str]
         doc_url: Optional[str]
         id: str
         reranker_score: float
@@ -8590,6 +11694,7 @@ namespace azure.search.documents.knowledgebases.models
                 self, 
                 *, 
                 activity_source: int, 
+                citation_url: Optional[str] = ..., 
                 doc_url: Optional[str] = ..., 
                 id: str, 
                 reranker_score: Optional[float] = ..., 
@@ -8616,6 +11721,7 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSharePointActivityRecord(KnowledgeBaseActivityRecord, discriminator='indexedSharePoint'):
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
@@ -8623,7 +11729,9 @@ namespace azure.search.documents.knowledgebases.models
         image_serving: Optional[ImageServingStatistics]
         indexed_share_point_arguments: Optional[KnowledgeBaseIndexedSharePointActivityArguments]
         knowledge_source_name: Optional[str]
+        query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing]
         query_time: Optional[datetime]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.INDEXED_SHARE_POINT]
         warning: str
 
@@ -8631,6 +11739,7 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
@@ -8638,7 +11747,9 @@ namespace azure.search.documents.knowledgebases.models
                 image_serving: Optional[ImageServingStatistics] = ..., 
                 indexed_share_point_arguments: Optional[KnowledgeBaseIndexedSharePointActivityArguments] = ..., 
                 knowledge_source_name: Optional[str] = ..., 
+                query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing] = ..., 
                 query_time: Optional[datetime] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -8648,6 +11759,7 @@ namespace azure.search.documents.knowledgebases.models
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discriminator='indexedSharePoint'):
         activity_source: int
+        citation_url: Optional[str]
         doc_url: Optional[str]
         id: str
         reranker_score: float
@@ -8660,6 +11772,7 @@ namespace azure.search.documents.knowledgebases.models
                 self, 
                 *, 
                 activity_source: int, 
+                citation_url: Optional[str] = ..., 
                 doc_url: Optional[str] = ..., 
                 id: str, 
                 reranker_score: Optional[float] = ..., 
@@ -8686,6 +11799,7 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSqlActivityRecord(KnowledgeBaseActivityRecord, discriminator='indexedSql'):
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
@@ -8693,7 +11807,9 @@ namespace azure.search.documents.knowledgebases.models
         image_serving: Optional[ImageServingStatistics]
         indexed_sql_arguments: Optional[KnowledgeBaseIndexedSqlActivityArguments]
         knowledge_source_name: Optional[str]
+        query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing]
         query_time: Optional[datetime]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.INDEXED_SQL]
         warning: str
 
@@ -8701,6 +11817,7 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
@@ -8708,7 +11825,9 @@ namespace azure.search.documents.knowledgebases.models
                 image_serving: Optional[ImageServingStatistics] = ..., 
                 indexed_sql_arguments: Optional[KnowledgeBaseIndexedSqlActivityArguments] = ..., 
                 knowledge_source_name: Optional[str] = ..., 
+                query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing] = ..., 
                 query_time: Optional[datetime] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -8718,6 +11837,7 @@ namespace azure.search.documents.knowledgebases.models
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSqlReference(KnowledgeBaseReference, discriminator='indexedSql'):
         activity_source: int
+        citation_url: Optional[str]
         doc_url: Optional[str]
         id: str
         reranker_score: float
@@ -8729,6 +11849,7 @@ namespace azure.search.documents.knowledgebases.models
                 self, 
                 *, 
                 activity_source: int, 
+                citation_url: Optional[str] = ..., 
                 doc_url: Optional[str] = ..., 
                 id: str, 
                 reranker_score: Optional[float] = ..., 
@@ -8756,6 +11877,7 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseMcpServerActivityRecord(KnowledgeBaseActivityRecord, discriminator='mcpServer'):
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
@@ -8764,6 +11886,7 @@ namespace azure.search.documents.knowledgebases.models
         knowledge_source_name: Optional[str]
         mcp_server_arguments: Optional[KnowledgeBaseMcpServerActivityArguments]
         query_time: Optional[datetime]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.MCP_SERVER]
         warning: str
 
@@ -8771,6 +11894,7 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
@@ -8779,6 +11903,7 @@ namespace azure.search.documents.knowledgebases.models
                 knowledge_source_name: Optional[str] = ..., 
                 mcp_server_arguments: Optional[KnowledgeBaseMcpServerActivityArguments] = ..., 
                 query_time: Optional[datetime] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -8877,12 +12002,14 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseModelAnswerSynthesisActivityRecord(KnowledgeBaseActivityRecord, discriminator='modelAnswerSynthesis'):
+        completed_at: datetime
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
         id: int
         input_tokens: Optional[int]
-        model_name: Optional[str]
+        model: Optional[KnowledgeBaseActivityRecordModel]
         output_tokens: Optional[int]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.MODEL_ANSWER_SYNTHESIS]
         warning: str
 
@@ -8890,12 +12017,14 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
                 id: int, 
                 input_tokens: Optional[int] = ..., 
-                model_name: Optional[str] = ..., 
+                model: Optional[KnowledgeBaseActivityRecordModel] = ..., 
                 output_tokens: Optional[int] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -8904,12 +12033,14 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseModelQueryPlanningActivityRecord(KnowledgeBaseActivityRecord, discriminator='modelQueryPlanning'):
+        completed_at: datetime
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
         id: int
         input_tokens: Optional[int]
-        model_name: Optional[str]
+        model: Optional[KnowledgeBaseActivityRecordModel]
         output_tokens: Optional[int]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.MODEL_QUERY_PLANNING]
         warning: str
 
@@ -8917,12 +12048,14 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
                 id: int, 
                 input_tokens: Optional[int] = ..., 
-                model_name: Optional[str] = ..., 
+                model: Optional[KnowledgeBaseActivityRecordModel] = ..., 
                 output_tokens: Optional[int] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -8931,12 +12064,14 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseModelWebSummarizationActivityRecord(KnowledgeBaseActivityRecord, discriminator='modelWebSummarization'):
+        completed_at: datetime
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
         id: int
         input_tokens_count: Optional[int]
-        model_name: Optional[str]
+        model: Optional[KnowledgeBaseActivityRecordModel]
         output_tokens_count: Optional[int]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.MODEL_WEB_SUMMARIZATION]
         warning: str
 
@@ -8944,13 +12079,31 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
                 id: int, 
                 input_tokens_count: Optional[int] = ..., 
-                model_name: Optional[str] = ..., 
+                model: Optional[KnowledgeBaseActivityRecordModel] = ..., 
                 output_tokens_count: Optional[int] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.knowledgebases.models.KnowledgeBaseQueryHintProcessing(_Model):
+        generated_boost: Optional[str]
+        generated_filter: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                generated_boost: Optional[str] = ..., 
+                generated_filter: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -9011,6 +12164,7 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseRemoteSharePointActivityRecord(KnowledgeBaseActivityRecord, discriminator='remoteSharePoint'):
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
@@ -9019,6 +12173,7 @@ namespace azure.search.documents.knowledgebases.models
         knowledge_source_name: Optional[str]
         query_time: Optional[datetime]
         remote_share_point_arguments: Optional[KnowledgeBaseRemoteSharePointActivityArguments]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.REMOTE_SHARE_POINT]
         warning: str
 
@@ -9026,6 +12181,7 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
@@ -9034,6 +12190,7 @@ namespace azure.search.documents.knowledgebases.models
                 knowledge_source_name: Optional[str] = ..., 
                 query_time: Optional[datetime] = ..., 
                 remote_share_point_arguments: Optional[KnowledgeBaseRemoteSharePointActivityArguments] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -9060,6 +12217,22 @@ namespace azure.search.documents.knowledgebases.models
                 search_sensitivity_label_info: Optional[PurviewSensitivityLabelInfo] = ..., 
                 source_data: Optional[dict[str, Any]] = ..., 
                 web_url: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent(_Model):
+        response: KnowledgeBaseRetrievalResponse
+        status_code: Union[int, KnowledgeBaseRetrievalStatusCode]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                response: KnowledgeBaseRetrievalResponse, 
+                status_code: Union[int, KnowledgeBaseRetrievalStatusCode]
             ) -> None: ...
 
         @overload
@@ -9118,8 +12291,34 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent(_Model):
+        knowledge_base_name: str
+        output_mode: Union[str, KnowledgeRetrievalOutputMode]
+        reasoning_effort: KnowledgeRetrievalReasoningEffort
+        request_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                knowledge_base_name: str, 
+                output_mode: Union[str, KnowledgeRetrievalOutputMode], 
+                reasoning_effort: KnowledgeRetrievalReasoningEffort, 
+                request_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStatusCode(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+        OK = 200
+        PARTIAL_CONTENT = 206
+
+
     class azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexActivityArguments(_Model):
         filter: Optional[str]
+        query_type: Optional[Union[str, QueryType]]
         search: Optional[str]
         search_fields: Optional[list[SearchIndexFieldReference]]
         semantic_configuration_name: Optional[str]
@@ -9130,6 +12329,7 @@ namespace azure.search.documents.knowledgebases.models
                 self, 
                 *, 
                 filter: Optional[str] = ..., 
+                query_type: Optional[Union[str, QueryType]] = ..., 
                 search: Optional[str] = ..., 
                 search_fields: Optional[list[SearchIndexFieldReference]] = ..., 
                 semantic_configuration_name: Optional[str] = ..., 
@@ -9141,14 +12341,17 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexActivityRecord(KnowledgeBaseActivityRecord, discriminator='searchIndex'):
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
         id: int
         image_serving: Optional[ImageServingStatistics]
         knowledge_source_name: Optional[str]
+        query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing]
         query_time: Optional[datetime]
         search_index_arguments: Optional[KnowledgeBaseSearchIndexActivityArguments]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.SEARCH_INDEX]
         warning: str
 
@@ -9156,14 +12359,17 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
                 id: int, 
                 image_serving: Optional[ImageServingStatistics] = ..., 
                 knowledge_source_name: Optional[str] = ..., 
+                query_hint_processing: Optional[KnowledgeBaseQueryHintProcessing] = ..., 
                 query_time: Optional[datetime] = ..., 
                 search_index_arguments: Optional[KnowledgeBaseSearchIndexActivityArguments] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ...
             ) -> None: ...
 
@@ -9173,6 +12379,7 @@ namespace azure.search.documents.knowledgebases.models
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator='searchIndex'):
         activity_source: int
+        citation_url: Optional[str]
         doc_key: Optional[str]
         id: str
         reranker_score: float
@@ -9185,11 +12392,28 @@ namespace azure.search.documents.knowledgebases.models
                 self, 
                 *, 
                 activity_source: int, 
+                citation_url: Optional[str] = ..., 
                 doc_key: Optional[str] = ..., 
                 id: str, 
                 reranker_score: Optional[float] = ..., 
                 search_sensitivity_label_info: Optional[PurviewSensitivityLabelInfo] = ..., 
                 source_data: Optional[dict[str, Any]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.knowledgebases.models.KnowledgeBaseStreamErrorEvent(_Model):
+        activity: Optional[list[KnowledgeBaseActivityRecord]]
+        error: Optional[KnowledgeBaseErrorDetail]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                activity: Optional[list[KnowledgeBaseActivityRecord]] = ..., 
+                error: Optional[KnowledgeBaseErrorDetail] = ...
             ) -> None: ...
 
         @overload
@@ -9219,6 +12443,7 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseWebActivityRecord(KnowledgeBaseActivityRecord, discriminator='web'):
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
@@ -9226,6 +12451,7 @@ namespace azure.search.documents.knowledgebases.models
         image_serving: Optional[ImageServingStatistics]
         knowledge_source_name: Optional[str]
         query_time: Optional[datetime]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.WEB]
         warning: str
         web_arguments: Optional[KnowledgeBaseWebActivityArguments]
@@ -9234,6 +12460,7 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
@@ -9241,6 +12468,7 @@ namespace azure.search.documents.knowledgebases.models
                 image_serving: Optional[ImageServingStatistics] = ..., 
                 knowledge_source_name: Optional[str] = ..., 
                 query_time: Optional[datetime] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ..., 
                 web_arguments: Optional[KnowledgeBaseWebActivityArguments] = ...
             ) -> None: ...
@@ -9289,6 +12517,7 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseWorkIQActivityRecord(KnowledgeBaseActivityRecord, discriminator='workIQ'):
+        completed_at: datetime
         count: Optional[int]
         elapsed_ms: int
         error: KnowledgeBaseErrorDetail
@@ -9296,6 +12525,7 @@ namespace azure.search.documents.knowledgebases.models
         image_serving: Optional[ImageServingStatistics]
         knowledge_source_name: Optional[str]
         query_time: Optional[datetime]
+        started_at: datetime
         type: Literal[KnowledgeBaseActivityRecordType.WORK_IQ]
         warning: str
         work_iq_arguments: Optional[KnowledgeBaseWorkIQActivityArguments]
@@ -9304,6 +12534,7 @@ namespace azure.search.documents.knowledgebases.models
         def __init__(
                 self, 
                 *, 
+                completed_at: Optional[datetime] = ..., 
                 count: Optional[int] = ..., 
                 elapsed_ms: Optional[int] = ..., 
                 error: Optional[KnowledgeBaseErrorDetail] = ..., 
@@ -9311,6 +12542,7 @@ namespace azure.search.documents.knowledgebases.models
                 image_serving: Optional[ImageServingStatistics] = ..., 
                 knowledge_source_name: Optional[str] = ..., 
                 query_time: Optional[datetime] = ..., 
+                started_at: Optional[datetime] = ..., 
                 warning: Optional[str] = ..., 
                 work_iq_arguments: Optional[KnowledgeBaseWorkIQActivityArguments] = ...
             ) -> None: ...
@@ -9321,9 +12553,9 @@ namespace azure.search.documents.knowledgebases.models
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseWorkIQReference(KnowledgeBaseReference, discriminator='workIQ'):
         activity_source: int
-        attributions: Optional[list[WorkIQAttribution]]
         id: str
         reranker_score: float
+        search_sensitivity_label_info: Optional[PurviewSensitivityLabelInfo]
         source_data: dict[str, any]
         type: Literal[KnowledgeBaseReferenceType.WORK_IQ]
 
@@ -9332,11 +12564,21 @@ namespace azure.search.documents.knowledgebases.models
                 self, 
                 *, 
                 activity_source: int, 
-                attributions: Optional[list[WorkIQAttribution]] = ..., 
                 id: str, 
                 reranker_score: Optional[float] = ..., 
+                search_sensitivity_label_info: Optional[PurviewSensitivityLabelInfo] = ..., 
                 source_data: Optional[dict[str, Any]] = ...
             ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.knowledgebases.models.KnowledgeRetrievalAutoReasoningEffort(KnowledgeRetrievalReasoningEffort, discriminator='auto'):
+        kind: Literal[KnowledgeRetrievalReasoningEffortKind.AUTO]
+
+        @overload
+        def __init__(self) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -9410,6 +12652,7 @@ namespace azure.search.documents.knowledgebases.models
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffortKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUTO = "auto"
         LOW = "low"
         MEDIUM = "medium"
         MINIMAL = "minimal"
@@ -9456,6 +12699,7 @@ namespace azure.search.documents.knowledgebases.models
         identity: Optional[SearchIndexerDataIdentity]
         ingestion_permission_options: Optional[list[Union[str, KnowledgeSourceIngestionPermissionOption]]]
         ingestion_schedule: Optional[IndexingSchedule]
+        network_access_mode: Optional[Union[str, KnowledgeSourceNetworkAccessMode]]
 
         @overload
         def __init__(
@@ -9470,11 +12714,17 @@ namespace azure.search.documents.knowledgebases.models
                 freshness_policy: Optional[FreshnessPolicy] = ..., 
                 identity: Optional[SearchIndexerDataIdentity] = ..., 
                 ingestion_permission_options: Optional[list[Union[str, KnowledgeSourceIngestionPermissionOption]]] = ..., 
-                ingestion_schedule: Optional[IndexingSchedule] = ...
+                ingestion_schedule: Optional[IndexingSchedule] = ..., 
+                network_access_mode: Optional[Union[str, KnowledgeSourceNetworkAccessMode]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.knowledgebases.models.KnowledgeSourceNetworkAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PRIVATE = "private"
+        PUBLIC = "public"
 
 
     class azure.search.documents.knowledgebases.models.KnowledgeSourceParams(_Model):
@@ -9486,7 +12736,9 @@ namespace azure.search.documents.knowledgebases.models
         kind: str
         knowledge_source_name: str
         max_output_documents: Optional[int]
+        never_query_source: Optional[bool]
         reranker_threshold: Optional[float]
+        results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]]
 
         @overload
         def __init__(
@@ -9500,7 +12752,9 @@ namespace azure.search.documents.knowledgebases.models
                 kind: str, 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -9596,7 +12850,9 @@ namespace azure.search.documents.knowledgebases.models
         kind: Literal[KnowledgeSourceKind.MCP_SERVER]
         knowledge_source_name: str
         max_output_documents: int
+        never_query_source: bool
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -9609,7 +12865,9 @@ namespace azure.search.documents.knowledgebases.models
                 include_references: Optional[bool] = ..., 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -9650,7 +12908,9 @@ namespace azure.search.documents.knowledgebases.models
         kind: Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT]
         knowledge_source_name: str
         max_output_documents: int
+        never_query_source: bool
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -9664,7 +12924,9 @@ namespace azure.search.documents.knowledgebases.models
                 include_references: Optional[bool] = ..., 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -9681,7 +12943,10 @@ namespace azure.search.documents.knowledgebases.models
         kind: Literal[KnowledgeSourceKind.SEARCH_INDEX]
         knowledge_source_name: str
         max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints]
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -9695,7 +12960,28 @@ namespace azure.search.documents.knowledgebases.models
                 include_references: Optional[bool] = ..., 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                query_hint_overrides: Optional[SearchIndexKnowledgeSourceQueryHints] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.search.documents.knowledgebases.models.ServedImage(_Model):
+        image_id: Optional[str]
+        image_path: Optional[str]
+        size_bytes: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                image_id: Optional[str] = ..., 
+                image_path: Optional[str] = ..., 
+                size_bytes: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -9737,7 +13023,9 @@ namespace azure.search.documents.knowledgebases.models
         language: Optional[str]
         market: Optional[str]
         max_output_documents: int
+        never_query_source: bool
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -9754,21 +13042,9 @@ namespace azure.search.documents.knowledgebases.models
                 language: Optional[str] = ..., 
                 market: Optional[str] = ..., 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.search.documents.knowledgebases.models.WorkIQAttribution(_Model):
-        see_more_web_url: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                see_more_web_url: Optional[str] = ...
+                never_query_source: Optional[bool] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
@@ -9784,7 +13060,9 @@ namespace azure.search.documents.knowledgebases.models
         kind: Literal[KnowledgeSourceKind.WORK_IQ]
         knowledge_source_name: str
         max_output_documents: int
+        never_query_source: bool
         reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
         @overload
         def __init__(
@@ -9797,11 +13075,554 @@ namespace azure.search.documents.knowledgebases.models
                 include_references: Optional[bool] = ..., 
                 knowledge_source_name: str, 
                 max_output_documents: Optional[int] = ..., 
-                reranker_threshold: Optional[float] = ...
+                never_query_source: Optional[bool] = ..., 
+                reranker_threshold: Optional[float] = ..., 
+                results_processing: Optional[Union[str, KnowledgeSourceResultsProcessing]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+namespace azure.search.documents.knowledgebases.types
+
+    class azure.search.documents.knowledgebases.types.AIServices(TypedDict, total=False):
+        key "apiKey": str
+        api_key: str
+        uri: Required[str]
+
+
+    class azure.search.documents.knowledgebases.types.AssetStore(TypedDict, total=False):
+        connectionString: Required[str]
+        connection_string: str
+        containerName: Required[str]
+        container_name: str
+
+
+    class azure.search.documents.knowledgebases.types.AzureBlobKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        enable_image_serving: bool
+        fail_on_error: bool
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.AZURE_BLOB]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.knowledgebases.types.CompletedSynchronizationState(TypedDict, total=False):
+        endTime: Required[str]
+        end_time: str
+        itemsSkipped: Required[int]
+        itemsUpdatesFailed: Required[int]
+        itemsUpdatesProcessed: Required[int]
+        items_skipped: int
+        items_updates_failed: int
+        items_updates_processed: int
+        startTime: Required[str]
+        start_time: str
+
+
+    class azure.search.documents.knowledgebases.types.FabricDataAgentKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        enable_image_serving: bool
+        fail_on_error: bool
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.FABRIC_DATA_AGENT]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        max_output_documents: int
+        never_query_source: bool
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.knowledgebases.types.FabricOntologyKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        enable_image_serving: bool
+        fail_on_error: bool
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.FABRIC_ONTOLOGY]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        max_output_documents: int
+        never_query_source: bool
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.knowledgebases.types.FileKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        enable_image_serving: bool
+        fail_on_error: bool
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.FILE]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.knowledgebases.types.FreshnessPolicy(TypedDict, total=False):
+        key "boostingDuration": str
+        boosting_duration: str
+
+
+    class azure.search.documents.knowledgebases.types.IndexedOneLakeKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        enable_image_serving: bool
+        fail_on_error: bool
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.INDEXED_ONELAKE]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.knowledgebases.types.IndexedSharePointKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        enable_image_serving: bool
+        fail_on_error: bool
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.INDEXED_SHARE_POINT]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.knowledgebases.types.IndexedSqlKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        enable_image_serving: bool
+        fail_on_error: bool
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.INDEXED_SQL]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeBaseImageContent(TypedDict, total=False):
+        url: Required[str]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeBaseMessage(TypedDict, total=False):
+        key "role": str
+        content: Required[list[KnowledgeBaseMessageContent]]
+        role: str
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeBaseMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        IMAGE = "image"
+        TEXT = "text"
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeBaseMessageImageContent(TypedDict, total=False):
+        image: Required[KnowledgeBaseImageContent]
+        type: Required[Literal[KnowledgeBaseMessageContentType.IMAGE]]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeBaseMessageTextContent(TypedDict, total=False):
+        text: Required[str]
+        type: Required[Literal[KnowledgeBaseMessageContentType.TEXT]]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeBaseRetrievalRequest(TypedDict, total=False):
+        key "includeActivity": bool
+        key "intents": list[KnowledgeRetrievalIntent]
+        key "knowledgeSourceParams": list[KnowledgeSourceParams]
+        key "maxOutputDocuments": int
+        key "maxOutputSize": int
+        key "maxOutputSizeInTokens": int
+        key "maxRuntimeInSeconds": int
+        key "messages": list[KnowledgeBaseMessage]
+        key "outputMode": Union[str, KnowledgeRetrievalOutputMode]
+        key "retrievalReasoningEffort": ForwardRef('KnowledgeRetrievalReasoningEffort')
+        include_activity: bool
+        intents: list[KnowledgeRetrievalIntent]
+        knowledge_source_params: list[KnowledgeSourceParams]
+        max_output_documents: int
+        max_output_size: int
+        max_output_size_in_tokens: int
+        max_runtime_in_seconds: int
+        messages: list[KnowledgeBaseMessage]
+        output_mode: Union[str, KnowledgeRetrievalOutputMode]
+        retrieval_reasoning_effort: KnowledgeRetrievalReasoningEffort
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeRetrievalAutoReasoningEffort(TypedDict, total=False):
+        kind: Required[Literal[KnowledgeRetrievalReasoningEffortKind.AUTO]]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeRetrievalIntent(TypedDict, total=False):
+        search: Required[str]
+        type: Required[Literal[KnowledgeRetrievalIntentType.SEMANTIC]]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeRetrievalIntentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SEMANTIC = "semantic"
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeRetrievalLowReasoningEffort(TypedDict, total=False):
+        kind: Required[Literal[KnowledgeRetrievalReasoningEffortKind.LOW]]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeRetrievalMediumReasoningEffort(TypedDict, total=False):
+        kind: Required[Literal[KnowledgeRetrievalReasoningEffortKind.MEDIUM]]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeRetrievalMinimalReasoningEffort(TypedDict, total=False):
+        kind: Required[Literal[KnowledgeRetrievalReasoningEffortKind.MINIMAL]]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeRetrievalReasoningEffortKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUTO = "auto"
+        LOW = "low"
+        MEDIUM = "medium"
+        MINIMAL = "minimal"
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeRetrievalSemanticIntent(TypedDict, total=False):
+        search: Required[str]
+        type: Required[Literal[KnowledgeRetrievalIntentType.SEMANTIC]]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeSourceAzureOpenAIVectorizer(TypedDict, total=False):
+        key "azureOpenAIParameters": ForwardRef('AzureOpenAIVectorizerParameters')
+        azure_open_ai_parameters: AzureOpenAIVectorizerParameters
+        kind: Required[Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeSourceIngestionParameters(TypedDict, total=False):
+        key "aiServices": Optional[AIServices]
+        key "assetStore": ForwardRef('AssetStore')
+        key "chatCompletionModel": Optional[KnowledgeBaseModel]
+        key "contentExtractionMode": Optional[Union[str, KnowledgeSourceContentExtractionMode]]
+        key "disableImageVerbalization": bool
+        key "embeddingModel": Optional[KnowledgeSourceVectorizer]
+        key "freshnessPolicy": ForwardRef('FreshnessPolicy')
+        key "identity": Optional[SearchIndexerDataIdentity]
+        key "ingestionPermissionOptions": Optional[list[Union[str, KnowledgeSourceIngestionPermissionOption]]]
+        key "ingestionSchedule": Optional[IndexingSchedule]
+        key "networkAccessMode": Union[str, KnowledgeSourceNetworkAccessMode]
+        ai_services: AIServices
+        asset_store: AssetStore
+        chat_completion_model: KnowledgeBaseModel
+        content_extraction_mode: Union[str, KnowledgeSourceContentExtractionMode]
+        disable_image_verbalization: bool
+        embedding_model: KnowledgeSourceVectorizer
+        freshness_policy: FreshnessPolicy
+        identity: SearchIndexerDataIdentity
+        ingestion_permission_options: list[Union[str, KnowledgeSourceIngestionPermissionOption]]
+        ingestion_schedule: IndexingSchedule
+        network_access_mode: Union[str, KnowledgeSourceNetworkAccessMode]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_BLOB = "azureBlob"
+        FABRIC_DATA_AGENT = "fabricDataAgent"
+        FABRIC_ONTOLOGY = "fabricOntology"
+        FILE = "file"
+        INDEXED_ONELAKE = "indexedOneLake"
+        INDEXED_SHARE_POINT = "indexedSharePoint"
+        INDEXED_SQL = "indexedSql"
+        MCP_SERVER = "mcpServer"
+        REMOTE_SHARE_POINT = "remoteSharePoint"
+        SEARCH_INDEX = "searchIndex"
+        WEB = "web"
+        WORK_IQ = "workIQ"
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeSourceStatistics(TypedDict, total=False):
+        averageItemsProcessedPerSynchronization: Required[int]
+        averageSynchronizationDuration: Required[str]
+        average_items_processed_per_synchronization: int
+        average_synchronization_duration: str
+        totalSynchronization: Required[int]
+        total_synchronization: int
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeSourceStatus(TypedDict, total=False):
+        key "currentSynchronizationState": Optional[SynchronizationState]
+        key "kind": Union[str, KnowledgeSourceKind]
+        key "lastSynchronizationState": Optional[CompletedSynchronizationState]
+        key "statistics": Optional[KnowledgeSourceStatistics]
+        key "synchronizationInterval": Optional[str]
+        current_synchronization_state: SynchronizationState
+        kind: Union[str, KnowledgeSourceKind]
+        last_synchronization_state: CompletedSynchronizationState
+        statistics: KnowledgeSourceStatistics
+        synchronizationStatus: Required[Union[str, KnowledgeSourceSynchronizationStatus]]
+        synchronization_interval: str
+        synchronization_status: Union[str, KnowledgeSourceSynchronizationStatus]
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeSourceSynchronizationError(TypedDict, total=False):
+        key "details": str
+        key "docId": str
+        key "documentationLink": str
+        key "name": str
+        key "statusCode": int
+        details: str
+        doc_id: str
+        documentation_link: str
+        errorMessage: Required[str]
+        error_message: str
+        name: str
+        status_code: int
+
+
+    class azure.search.documents.knowledgebases.types.KnowledgeSourceVectorizer(TypedDict, total=False):
+        key "azureOpenAIParameters": ForwardRef('AzureOpenAIVectorizerParameters')
+        azure_open_ai_parameters: AzureOpenAIVectorizerParameters
+        kind: Required[Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]]
+
+
+    class azure.search.documents.knowledgebases.types.McpServerKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        enable_image_serving: bool
+        fail_on_error: bool
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.MCP_SERVER]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        max_output_documents: int
+        never_query_source: bool
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.knowledgebases.types.RemoteSharePointKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "filterExpressionAddOn": str
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        enable_image_serving: bool
+        fail_on_error: bool
+        filter_expression_add_on: str
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        max_output_documents: int
+        never_query_source: bool
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.knowledgebases.types.SearchIndexKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "filterAddOn": str
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "queryHintOverrides": ForwardRef('SearchIndexKnowledgeSourceQueryHints')
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        enable_image_serving: bool
+        fail_on_error: bool
+        filter_add_on: str
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.SEARCH_INDEX]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        max_output_documents: int
+        never_query_source: bool
+        query_hint_overrides: SearchIndexKnowledgeSourceQueryHints
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.knowledgebases.types.SynchronizationState(TypedDict, total=False):
+        key "errors": list[KnowledgeSourceSynchronizationError]
+        errors: list[KnowledgeSourceSynchronizationError]
+        itemsSkipped: Required[int]
+        itemsUpdatesFailed: Required[int]
+        itemsUpdatesProcessed: Required[int]
+        items_skipped: int
+        items_updates_failed: int
+        items_updates_processed: int
+        startTime: Required[str]
+        start_time: str
+
+
+    class azure.search.documents.knowledgebases.types.VectorSearchVectorizerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AI_SERVICES_VISION = "aiServicesVision"
+        AML = "aml"
+        AZURE_OPEN_AI = "azureOpenAI"
+        CUSTOM_WEB_API = "customWebApi"
+
+
+    class azure.search.documents.knowledgebases.types.WebKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "count": int
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "freshness": str
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "language": str
+        key "market": str
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        count: int
+        enable_image_serving: bool
+        fail_on_error: bool
+        freshness: str
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.WEB]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        language: str
+        market: str
+        max_output_documents: int
+        never_query_source: bool
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
+
+
+    class azure.search.documents.knowledgebases.types.WorkIQKnowledgeSourceParams(TypedDict, total=False):
+        key "alwaysQuerySource": bool
+        key "enableImageServing": bool
+        key "failOnError": bool
+        key "includeReferenceSourceData": bool
+        key "includeReferences": bool
+        key "maxOutputDocuments": int
+        key "neverQuerySource": bool
+        key "rerankerThreshold": float
+        key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
+        always_query_source: bool
+        enable_image_serving: bool
+        fail_on_error: bool
+        include_reference_source_data: bool
+        include_references: bool
+        kind: Required[Literal[KnowledgeSourceKind.WORK_IQ]]
+        knowledgeSourceName: Required[str]
+        knowledge_source_name: str
+        max_output_documents: int
+        never_query_source: bool
+        reranker_threshold: float
+        results_processing: Union[str, KnowledgeSourceResultsProcessing]
 
 
 namespace azure.search.documents.models
@@ -10395,6 +14216,505 @@ namespace azure.search.documents.models
 
     class azure.search.documents.models.VectorsDebugInfo(_Model):
         subscores: Optional[QueryResultDocumentSubscores]
+
+
+namespace azure.search.documents.types
+
+    class azure.search.documents.types.AutocompleteItem(TypedDict, total=False):
+        queryPlusText: Required[str]
+        query_plus_text: str
+        text: Required[str]
+
+
+    class azure.search.documents.types.AutocompletePostRequest(TypedDict, total=False):
+        key "autocompleteMode": Union[str, AutocompleteMode]
+        key "filter": str
+        key "fuzzy": bool
+        key "highlightPostTag": str
+        key "highlightPreTag": str
+        key "minimumCoverage": float
+        key "searchFields": list[str]
+        key "top": int
+        autocomplete_mode: Union[str, AutocompleteMode]
+        filter: str
+        highlight_post_tag: str
+        highlight_pre_tag: str
+        minimum_coverage: float
+        search: Required[str]
+        search_fields: list[str]
+        search_text: str
+        suggesterName: Required[str]
+        suggester_name: str
+        top: int
+        use_fuzzy_matching: bool
+
+
+    class azure.search.documents.types.DebugInfo(TypedDict, total=False):
+        key "queryRewrites": ForwardRef('QueryRewritesDebugInfo')
+        query_rewrites: QueryRewritesDebugInfo
+
+
+    class azure.search.documents.types.DocumentDebugInfo(TypedDict, total=False):
+        key "innerHits": dict[str, list[QueryResultDocumentInnerHit]]
+        key "semantic": ForwardRef('SemanticDebugInfo')
+        key "vectors": ForwardRef('VectorsDebugInfo')
+        inner_hits: dict[str, list[QueryResultDocumentInnerHit]]
+        semantic: SemanticDebugInfo
+        vectors: VectorsDebugInfo
+
+
+    class azure.search.documents.types.FacetResult(TypedDict):
+        key "@search.facets": dict[str, list[FacetResult]]
+        key "avg": float
+        key "cardinality": int
+        key "count": int
+        key "max": float
+        key "min": float
+        key "sum": float
+        avg: float
+        cardinality: int
+        count: int
+        facets: dict[str, list[FacetResult]]
+        max: float
+        min: float
+        sum: float
+
+
+    class azure.search.documents.types.HybridSearch(TypedDict, total=False):
+        key "countAndFacetMode": Union[str, HybridCountAndFacetMode]
+        key "maxTextRecallSize": int
+        count_and_facet_mode: Union[str, HybridCountAndFacetMode]
+        max_text_recall_size: int
+
+
+    class azure.search.documents.types.IndexAction(TypedDict):
+        key "@search.action": Union[str, IndexActionType]
+        action_type: Union[str, IndexActionType]
+
+
+    class azure.search.documents.types.IndexDocumentsBatch(TypedDict, total=False):
+        actions: list[IndexAction]
+        value: Required[list[IndexAction]]
+
+
+    class azure.search.documents.types.IndexingResult(TypedDict, total=False):
+        key "errorMessage": str
+        error_message: str
+        key: Required[str]
+        status: Required[bool]
+        statusCode: Required[int]
+        status_code: int
+        succeeded: bool
+
+
+    class azure.search.documents.types.QueryAnswerResult(TypedDict, total=False):
+        key "highlights": Optional[str]
+        key "key": str
+        key "score": float
+        key "text": str
+        highlights: str
+        key: str
+        score: float
+        text: str
+
+
+    class azure.search.documents.types.QueryCaptionResult(TypedDict, total=False):
+        key "highlights": Optional[str]
+        key "text": str
+        highlights: str
+        text: str
+
+
+    class azure.search.documents.types.QueryResultDocumentInnerHit(TypedDict, total=False):
+        key "ordinal": int
+        key "vectors": list[dict[str, SingleVectorFieldResult]]
+        ordinal: int
+        vectors: list[dict[str, SingleVectorFieldResult]]
+
+
+    class azure.search.documents.types.QueryResultDocumentRerankerInput(TypedDict, total=False):
+        key "content": str
+        key "keywords": str
+        key "title": str
+        content: str
+        keywords: str
+        title: str
+
+
+    class azure.search.documents.types.QueryResultDocumentSemanticField(TypedDict, total=False):
+        key "name": str
+        key "state": Union[str, SemanticFieldState]
+        name: str
+        state: Union[str, SemanticFieldState]
+
+
+    class azure.search.documents.types.QueryResultDocumentSubscores(TypedDict, total=False):
+        key "documentBoost": float
+        key "text": ForwardRef('TextResult')
+        key "vectors": list[dict[str, SingleVectorFieldResult]]
+        document_boost: float
+        text: TextResult
+        vectors: list[dict[str, SingleVectorFieldResult]]
+
+
+    class azure.search.documents.types.QueryRewritesDebugInfo(TypedDict, total=False):
+        key "text": ForwardRef('QueryRewritesValuesDebugInfo')
+        key "vectors": list[QueryRewritesValuesDebugInfo]
+        text: QueryRewritesValuesDebugInfo
+        vectors: list[QueryRewritesValuesDebugInfo]
+
+
+    class azure.search.documents.types.QueryRewritesValuesDebugInfo(TypedDict, total=False):
+        key "inputQuery": str
+        key "rewrites": list[str]
+        input_query: str
+        rewrites: list[str]
+
+
+    class azure.search.documents.types.SearchDocumentsResult(TypedDict):
+        key "@odata.count": int
+        key "@odata.nextLink": str
+        key "@search.answers": Optional[list[QueryAnswerResult]]
+        key "@search.coverage": float
+        key "@search.debug": Optional[DebugInfo]
+        key "@search.facets": dict[str, list[FacetResult]]
+        key "@search.nextPageParameters": ForwardRef('SearchRequest')
+        key "@search.semanticPartialResponseReason": Union[str, SemanticErrorReason]
+        key "@search.semanticPartialResponseType": Union[str, SemanticSearchResultsType]
+        key "@search.semanticQueryRewritesResultType": Union[str, SemanticQueryRewritesResultType]
+        answers: list[QueryAnswerResult]
+        count: int
+        coverage: float
+        debug_info: DebugInfo
+        facets: dict[str, list[FacetResult]]
+        next_link: str
+        next_page_parameters: SearchRequest
+        results: list[SearchResult]
+        semantic_partial_response_reason: Union[str, SemanticErrorReason]
+        semantic_partial_response_type: Union[str, SemanticSearchResultsType]
+        semantic_query_rewrites_result_type: Union[str, SemanticQueryRewritesResultType]
+        value: Required[list[SearchResult]]
+
+
+    class azure.search.documents.types.SearchPostRequest(TypedDict, total=False):
+        key "answers": Union[str, QueryAnswerType]
+        key "captions": Union[str, QueryCaptionType]
+        key "count": bool
+        key "debug": Union[str, QueryDebugMode]
+        key "facets": list[str]
+        key "filter": str
+        key "highlight": list[str]
+        key "highlightPostTag": str
+        key "highlightPreTag": str
+        key "hybridSearch": ForwardRef('HybridSearch')
+        key "minimumCoverage": float
+        key "orderby": list[str]
+        key "queryLanguage": Union[str, QueryLanguage]
+        key "queryRewrites": Union[str, QueryRewritesType]
+        key "queryType": Union[str, QueryType]
+        key "scoringParameters": list[str]
+        key "scoringProfile": str
+        key "scoringStatistics": Union[str, ScoringStatistics]
+        key "search": str
+        key "searchFields": list[str]
+        key "searchMode": Union[str, SearchMode]
+        key "select": list[str]
+        key "semanticConfiguration": str
+        key "semanticErrorHandling": Union[str, SemanticErrorMode]
+        key "semanticFields": list[str]
+        key "semanticMaxWaitInMilliseconds": int
+        key "semanticQuery": str
+        key "sessionId": str
+        key "skip": int
+        key "speller": Union[str, QuerySpellerType]
+        key "top": int
+        key "vectorFilterMode": Union[str, VectorFilterMode]
+        key "vectorQueries": list[VectorQuery]
+        answers: Union[str, QueryAnswerType]
+        captions: Union[str, QueryCaptionType]
+        debug: Union[str, QueryDebugMode]
+        facets: list[str]
+        filter: str
+        highlight_fields: list[str]
+        highlight_post_tag: str
+        highlight_pre_tag: str
+        hybrid_search: HybridSearch
+        include_total_count: bool
+        minimum_coverage: float
+        order_by: list[str]
+        query_language: Union[str, QueryLanguage]
+        query_rewrites: Union[str, QueryRewritesType]
+        query_speller: Union[str, QuerySpellerType]
+        query_type: Union[str, QueryType]
+        scoring_parameters: list[str]
+        scoring_profile: str
+        scoring_statistics: Union[str, ScoringStatistics]
+        search_fields: list[str]
+        search_mode: Union[str, SearchMode]
+        search_text: str
+        select: list[str]
+        semantic_configuration_name: str
+        semantic_error_handling: Union[str, SemanticErrorMode]
+        semantic_fields: list[str]
+        semantic_max_wait_in_milliseconds: int
+        semantic_query: str
+        session_id: str
+        skip: int
+        top: int
+        vector_filter_mode: Union[str, VectorFilterMode]
+        vector_queries: list[VectorQuery]
+
+
+    class azure.search.documents.types.SearchRequest(TypedDict, total=False):
+        key "answers": Union[str, QueryAnswerType]
+        key "captions": Union[str, QueryCaptionType]
+        key "count": bool
+        key "debug": Union[str, QueryDebugMode]
+        key "facets": list[str]
+        key "filter": str
+        key "highlight": list[str]
+        key "highlightPostTag": str
+        key "highlightPreTag": str
+        key "hybridSearch": ForwardRef('HybridSearch')
+        key "minimumCoverage": float
+        key "orderby": list[str]
+        key "queryLanguage": Union[str, QueryLanguage]
+        key "queryRewrites": Union[str, QueryRewritesType]
+        key "queryType": Union[str, QueryType]
+        key "scoringParameters": list[str]
+        key "scoringProfile": str
+        key "scoringStatistics": Union[str, ScoringStatistics]
+        key "search": str
+        key "searchFields": list[str]
+        key "searchMode": Union[str, SearchMode]
+        key "select": list[str]
+        key "semanticConfiguration": str
+        key "semanticErrorHandling": Union[str, SemanticErrorMode]
+        key "semanticFields": list[str]
+        key "semanticMaxWaitInMilliseconds": int
+        key "semanticQuery": str
+        key "sessionId": str
+        key "skip": int
+        key "speller": Union[str, QuerySpellerType]
+        key "top": int
+        key "vectorFilterMode": Union[str, VectorFilterMode]
+        key "vectorQueries": list[VectorQuery]
+        answers: Union[str, QueryAnswerType]
+        captions: Union[str, QueryCaptionType]
+        debug: Union[str, QueryDebugMode]
+        facets: list[str]
+        filter: str
+        highlight_fields: list[str]
+        highlight_post_tag: str
+        highlight_pre_tag: str
+        hybrid_search: HybridSearch
+        include_total_count: bool
+        minimum_coverage: float
+        order_by: list[str]
+        query_language: Union[str, QueryLanguage]
+        query_rewrites: Union[str, QueryRewritesType]
+        query_speller: Union[str, QuerySpellerType]
+        query_type: Union[str, QueryType]
+        scoring_parameters: list[str]
+        scoring_profile: str
+        scoring_statistics: Union[str, ScoringStatistics]
+        search_fields: list[str]
+        search_mode: Union[str, SearchMode]
+        search_text: str
+        select: list[str]
+        semantic_configuration_name: str
+        semantic_error_handling: Union[str, SemanticErrorMode]
+        semantic_fields: list[str]
+        semantic_max_wait_in_milliseconds: int
+        semantic_query: str
+        session_id: str
+        skip: int
+        top: int
+        vector_filter_mode: Union[str, VectorFilterMode]
+        vector_queries: list[VectorQuery]
+
+
+    class azure.search.documents.types.SearchResult(TypedDict):
+        key "@search.captions": Optional[list[QueryCaptionResult]]
+        key "@search.documentDebugInfo": Optional[DocumentDebugInfo]
+        key "@search.highlights": dict[str, list[str]]
+        key "@search.rerankerBoostedScore": Optional[float]
+        key "@search.rerankerScore": Optional[float]
+        @search.score: Required[float]
+        captions: list[QueryCaptionResult]
+        document_debug_info: DocumentDebugInfo
+        highlights: dict[str, list[str]]
+        reranker_boosted_score: float
+        reranker_score: float
+        score: float
+
+
+    class azure.search.documents.types.SearchScoreThreshold(TypedDict, total=False):
+        kind: Required[Literal[VectorThresholdKind.SEARCH_SCORE]]
+        value: Required[float]
+
+
+    class azure.search.documents.types.SemanticDebugInfo(TypedDict, total=False):
+        key "contentFields": list[QueryResultDocumentSemanticField]
+        key "keywordFields": list[QueryResultDocumentSemanticField]
+        key "rerankerInput": ForwardRef('QueryResultDocumentRerankerInput')
+        key "titleField": ForwardRef('QueryResultDocumentSemanticField')
+        content_fields: list[QueryResultDocumentSemanticField]
+        keyword_fields: list[QueryResultDocumentSemanticField]
+        reranker_input: QueryResultDocumentRerankerInput
+        title_field: QueryResultDocumentSemanticField
+
+
+    class azure.search.documents.types.SingleVectorFieldResult(TypedDict, total=False):
+        key "searchScore": float
+        key "vectorSimilarity": float
+        search_score: float
+        vector_similarity: float
+
+
+    class azure.search.documents.types.SuggestPostRequest(TypedDict, total=False):
+        key "filter": str
+        key "fuzzy": bool
+        key "highlightPostTag": str
+        key "highlightPreTag": str
+        key "minimumCoverage": float
+        key "orderby": list[str]
+        key "searchFields": list[str]
+        key "select": list[str]
+        key "top": int
+        filter: str
+        highlight_post_tag: str
+        highlight_pre_tag: str
+        minimum_coverage: float
+        order_by: list[str]
+        search: Required[str]
+        search_fields: list[str]
+        search_text: str
+        select: list[str]
+        suggesterName: Required[str]
+        suggester_name: str
+        top: int
+        use_fuzzy_matching: bool
+
+
+    class azure.search.documents.types.SuggestResult(TypedDict):
+        @search.text: Required[str]
+        text: str
+
+
+    class azure.search.documents.types.TextResult(TypedDict, total=False):
+        key "searchScore": float
+        search_score: float
+
+
+    class azure.search.documents.types.VectorQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        IMAGE_BINARY = "imageBinary"
+        IMAGE_URL = "imageUrl"
+        TEXT = "text"
+        VECTOR = "vector"
+
+
+    class azure.search.documents.types.VectorSimilarityThreshold(TypedDict, total=False):
+        kind: Required[Literal[VectorThresholdKind.VECTOR_SIMILARITY]]
+        value: Required[float]
+
+
+    class azure.search.documents.types.VectorThresholdKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SEARCH_SCORE = "searchScore"
+        VECTOR_SIMILARITY = "vectorSimilarity"
+
+
+    class azure.search.documents.types.VectorizableImageBinaryQuery(TypedDict, total=False):
+        key "base64Image": str
+        key "exhaustive": bool
+        key "fields": str
+        key "filterOverride": str
+        key "k": int
+        key "oversampling": float
+        key "perDocumentVectorLimit": int
+        key "threshold": ForwardRef('VectorThreshold')
+        key "weight": float
+        base64_image: str
+        exhaustive: bool
+        fields: str
+        filter_override: str
+        k_nearest_neighbors: int
+        kind: Required[Literal[VectorQueryKind.IMAGE_BINARY]]
+        oversampling: float
+        per_document_vector_limit: int
+        threshold: VectorThreshold
+        weight: float
+
+
+    class azure.search.documents.types.VectorizableImageUrlQuery(TypedDict, total=False):
+        key "exhaustive": bool
+        key "fields": str
+        key "filterOverride": str
+        key "k": int
+        key "oversampling": float
+        key "perDocumentVectorLimit": int
+        key "threshold": ForwardRef('VectorThreshold')
+        key "url": str
+        key "weight": float
+        exhaustive: bool
+        fields: str
+        filter_override: str
+        k_nearest_neighbors: int
+        kind: Required[Literal[VectorQueryKind.IMAGE_URL]]
+        oversampling: float
+        per_document_vector_limit: int
+        threshold: VectorThreshold
+        url: str
+        weight: float
+
+
+    class azure.search.documents.types.VectorizableTextQuery(TypedDict, total=False):
+        key "exhaustive": bool
+        key "fields": str
+        key "filterOverride": str
+        key "k": int
+        key "oversampling": float
+        key "perDocumentVectorLimit": int
+        key "queryRewrites": Union[str, QueryRewritesType]
+        key "threshold": ForwardRef('VectorThreshold')
+        key "weight": float
+        exhaustive: bool
+        fields: str
+        filter_override: str
+        k_nearest_neighbors: int
+        kind: Required[Literal[VectorQueryKind.TEXT]]
+        oversampling: float
+        per_document_vector_limit: int
+        query_rewrites: Union[str, QueryRewritesType]
+        text: Required[str]
+        threshold: VectorThreshold
+        weight: float
+
+
+    class azure.search.documents.types.VectorizedQuery(TypedDict, total=False):
+        key "exhaustive": bool
+        key "fields": str
+        key "filterOverride": str
+        key "k": int
+        key "oversampling": float
+        key "perDocumentVectorLimit": int
+        key "threshold": ForwardRef('VectorThreshold')
+        key "weight": float
+        exhaustive: bool
+        fields: str
+        filter_override: str
+        k_nearest_neighbors: int
+        kind: Required[Literal[VectorQueryKind.VECTOR]]
+        oversampling: float
+        per_document_vector_limit: int
+        threshold: VectorThreshold
+        vector: Required[list[float]]
+        weight: float
+
+
+    class azure.search.documents.types.VectorsDebugInfo(TypedDict, total=False):
+        key "subscores": ForwardRef('QueryResultDocumentSubscores')
+        subscores: QueryResultDocumentSubscores
 
 
 ```
