@@ -26,9 +26,9 @@ class SearchIndexClient(_SearchIndexClient):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Known values are
-     listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
+        listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
         ``ApiVersion.V2026_08_01_PREVIEW``. Note that overriding this default value may
-     result in unsupported behavior.
+        result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
@@ -54,9 +54,9 @@ class SearchIndexerClient(_SearchIndexerClient):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Known values are
-     listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
+        listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
         ``ApiVersion.V2026_08_01_PREVIEW``. Note that overriding this default value may
-     result in unsupported behavior.
+        result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud

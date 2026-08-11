@@ -133,8 +133,8 @@ class TestKnowledgeBaseRetrievalStream:
         payload = (
             b"\xef\xbb\xbf: keep-alive\r\n"
             b"event: future.event\r"
-            b"data: {\"message\":\r\n"
-            b"data: \"caf\xc3\xa9\"}\r\n\r\n"
+            b'data: {"message":\r\n'
+            b'data: "caf\xc3\xa9"}\r\n\r\n'
         )
         chunks = [payload[index : index + chunk_size] for index in range(0, len(payload), chunk_size)]
         response = _Response()

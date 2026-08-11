@@ -11,6 +11,7 @@ from typing import Any, IO, Optional, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._client import KnowledgeBaseRetrievalClient as _KnowledgeBaseRetrievalClient
 from .. import models
@@ -29,9 +30,9 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
     :param knowledge_base_name: The name of the knowledge base. Required.
     :type knowledge_base_name: str
     :keyword api_version: The API version to use for this operation. Known values are
-     listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
+        listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
         ``ApiVersion.V2026_08_01_PREVIEW``. Note that overriding this default value may
-     result in unsupported behavior.
+        result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
@@ -46,6 +47,7 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
             kwargs.setdefault("credential_scopes", [audience.rstrip("/") + "/.default"])
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
+    @distributed_trace_async
     async def retrieve_stream(
         self,
         retrieval_request: Union[models.KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]],

@@ -59,9 +59,9 @@ class SearchClient(_SearchClient):
     :param index_name: The name of the index. Required.
     :type index_name: str
     :keyword api_version: The API version to use for this operation. Known values are
-     listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
+        listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
         ``ApiVersion.V2026_08_01_PREVIEW``. Note that overriding this default value may
-     result in unsupported behavior.
+        result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
@@ -165,7 +165,7 @@ class SearchIndexingBufferedSender:
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions in queue to index.
 
-        :rtype: list[IndexAction]
+        :rtype: list[~azure.search.documents.types.IndexAction]
         """
         return self._index_documents_batch.actions if self._index_documents_batch.actions else []
 
@@ -327,7 +327,7 @@ class SearchIndexingBufferedSender:
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
         :return: Indexing result of each action in the batch.
-        :rtype: list[IndexingResult]
+        :rtype: list[~azure.search.documents.types.IndexingResult]
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """
         return self._index_documents_actions(actions=batch.actions if batch.actions else [], **kwargs)

@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, IO, Optional, Union
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.tracing.decorator import distributed_trace
 
 from ._client import KnowledgeBaseRetrievalClient as _KnowledgeBaseRetrievalClient
 from . import models
@@ -28,9 +29,9 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
     :param knowledge_base_name: The name of the knowledge base. Required.
     :type knowledge_base_name: str
     :keyword api_version: The API version to use for this operation. Known values are
-     listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
+        listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
         ``ApiVersion.V2026_08_01_PREVIEW``. Note that overriding this default value may
-     result in unsupported behavior.
+        result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
@@ -43,6 +44,7 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
             kwargs.setdefault("credential_scopes", [audience.rstrip("/") + "/.default"])
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
+    @distributed_trace
     def retrieve_stream(
         self,
         retrieval_request: Union[models.KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]],
@@ -108,3 +110,23 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    from . import types
+
+    query_parameter_types = (
+        types.AzureBlobKnowledgeSourceParams,
+        types.FileKnowledgeSourceParams,
+        types.IndexedOneLakeKnowledgeSourceParams,
+        types.IndexedSharePointKnowledgeSourceParams,
+        types.IndexedSqlKnowledgeSourceParams,
+        types.SearchIndexKnowledgeSourceParams,
+    )
+    for parameter_type in query_parameter_types:
+        parameter_type.__annotations__["queryHintOverrides"] = (
+            "azure.search.documents.indexes.types.SearchIndexKnowledgeSourceQueryHints"
+        )
+    types.KnowledgeSourceAzureOpenAIVectorizer.__annotations__["azureOpenAIParameters"] = (
+        "azure.search.documents.indexes.types.AzureOpenAIVectorizerParameters"
+    )
+    types.KnowledgeSourceIngestionParameters.__annotations__["ingestionSchedule"] = Optional[
+        "azure.search.documents.indexes.types.IndexingSchedule"
+    ]

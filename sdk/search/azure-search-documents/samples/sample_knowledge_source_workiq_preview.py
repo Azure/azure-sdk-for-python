@@ -102,9 +102,7 @@ def main():
             )
             retrieval_result = retrieval_client.retrieve(
                 request,
-                query_work_iq_source_authorization=os.environ[
-                    "AZURE_SEARCH_QUERY_WORK_IQ_SOURCE_AUTHORIZATION"
-                ],
+                query_work_iq_source_authorization=os.environ["AZURE_SEARCH_QUERY_WORK_IQ_SOURCE_AUTHORIZATION"],
             )
         finally:
             retrieval_client.close()
