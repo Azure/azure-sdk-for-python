@@ -94,9 +94,7 @@ with (
     )
     job_id = poller.details["job_id"]
     if not job_id:
-        raise RuntimeError(
-            "The create operation did not return an optimization job ID."
-        )
+        raise RuntimeError("The create operation did not return an optimization job ID.")
     job = project_client.beta.agents.get_optimization_job(job_id=job_id)
     print(f"Created job: id={job.id}, status={job.status}")
 

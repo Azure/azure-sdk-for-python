@@ -261,6 +261,7 @@ class AgentsOperations(GeneratedAgentsOperations):
                         new_exc.model = exc.model
                         raise new_exc from exc
             raise
+
     @distributed_trace
     def create_version_from_code(
         self,

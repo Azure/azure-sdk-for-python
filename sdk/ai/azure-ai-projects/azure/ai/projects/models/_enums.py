@@ -20,6 +20,8 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """EXTERNAL_AGENTS_V1_PREVIEW."""
     DRAFT_AGENTS_V1_PREVIEW = "DraftAgents=V1Preview"
     """DRAFT_AGENTS_V1_PREVIEW."""
+    VOICE_AGENTS_V1_PREVIEW = "VoiceAgents=V1Preview"
+    """VOICE_AGENTS_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -123,6 +125,15 @@ class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AGENT_CONTAINER."""
 
 
+class AgentOptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminator values for the dataset input union."""
+
+    INLINE = "inline"
+    """Inline dataset — items are provided directly in the request body."""
+    REFERENCE = "reference"
+    """Reference to a registered Foundry dataset by name and version."""
+
+
 class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of an agent session."""
 
@@ -151,6 +162,17 @@ class AgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Agent endpoint accepts requests. This is the default state on creation."""
     DISABLED = "disabled"
     """Agent endpoint rejects all requests."""
+
+
+class AgentStateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the source of an agent's operational state. Empty when the state is not derived from
+    a specific source.
+    """
+
+    AGENT_INSTANCE_IDENTITY = "agent_instance_identity"
+    """The state is derived from the agent's instance identity."""
+    AGENT_BLUEPRINT = "agent_blueprint"
+    """The state is derived from the agent's blueprint."""
 
 
 class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -797,15 +819,6 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has failed."""
     CANCELED = "Canceled"
     """The operation has been canceled by the user."""
-
-
-class OptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Discriminator values for the dataset input union."""
-
-    INLINE = "inline"
-    """Inline dataset — items are provided directly in the request body."""
-    REFERENCE = "reference"
-    """Reference to a registered Foundry dataset by name and version."""
 
 
 class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):

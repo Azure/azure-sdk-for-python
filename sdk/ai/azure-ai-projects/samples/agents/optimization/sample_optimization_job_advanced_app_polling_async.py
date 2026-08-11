@@ -96,9 +96,7 @@ async def main() -> None:
         )
         job_id = poller.details["job_id"]
         if not job_id:
-            raise RuntimeError(
-                "The create operation did not return an optimization job ID."
-            )
+            raise RuntimeError("The create operation did not return an optimization job ID.")
         job = await project_client.beta.agents.get_optimization_job(job_id=job_id)
         print(f"Created job: id={job.id}, status={job.status}")
 
@@ -127,9 +125,7 @@ async def main() -> None:
         # 3. Inspect the results.
         # ------------------------------------------------------------------
         if job.result is None:
-            raise RuntimeError(
-                f"Optimization job `{job.id}` completed without a result."
-            )
+            raise RuntimeError(f"Optimization job `{job.id}` completed without a result.")
 
         result = job.result
         print(f"\nBaseline candidate: {result.baseline}")
