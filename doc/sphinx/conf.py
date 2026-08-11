@@ -58,6 +58,11 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctes
               'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon',
               'myst_parser', 'sphinxcontrib.jquery']
 
+# TODO: Remove after azure-search-documents upgrades to an emitter that escapes
+# special characters in autoattribute names.
+if os.path.basename(os.getcwd()) == 'azure-search-documents':
+    suppress_warnings = ['autodoc']
+
 intersphinx_mapping = {
     # Dependencies
     'python': ('https://docs.python.org/3.11', None),
