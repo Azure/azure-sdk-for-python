@@ -126,15 +126,6 @@ class _WrappedContentKey:
         self.encrypted_key = encrypted_key
         self.key_id = key_id
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, _WrappedContentKey):
-            return NotImplemented
-        return (
-            self.algorithm == other.algorithm
-            and self.encrypted_key == other.encrypted_key
-            and self.key_id == other.key_id
-        )
-
 
 class _EncryptedRegionInfo:
     """
@@ -159,15 +150,6 @@ class _EncryptedRegionInfo:
         self.nonce_length = nonce_length
         self.tag_length = tag_length
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, _EncryptedRegionInfo):
-            return NotImplemented
-        return (
-            self.data_length == other.data_length
-            and self.nonce_length == other.nonce_length
-            and self.tag_length == other.tag_length
-        )
-
 
 class _EncryptionAgent:
     """
@@ -187,11 +169,6 @@ class _EncryptionAgent:
 
         self.encryption_algorithm = str(encryption_algorithm)
         self.protocol = protocol
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, _EncryptionAgent):
-            return NotImplemented
-        return self.encryption_algorithm == other.encryption_algorithm and self.protocol == other.protocol
 
 
 class _EncryptionData:
@@ -239,15 +216,48 @@ class _EncryptionData:
         self.wrapped_content_key = wrapped_content_key
         self.key_wrapping_metadata = key_wrapping_metadata
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, _EncryptionData):
-            return NotImplemented
-        return (
-            self.content_encryption_IV == other.content_encryption_IV
-            and self.encrypted_region_info == other.encrypted_region_info
-            and self.encryption_agent == other.encryption_agent
-            and self.wrapped_content_key == other.wrapped_content_key
-        )
+    def matches(self, other: "_EncryptionData") -> bool:
+        """
+        Determines whether this encryption data refers to the same encrypted content by comparing
+        every field that affects decryption. This is used to detect whether a blob's encryption
+        metadata has changed partway through a download, which could indicate the blob was
+        overwritten or tampered with.
+
+        :param _EncryptionData other: The encryption data to compare against.
+        :return: True if the decryption-relevant metadata matches, False otherwise.
+        :rtype: bool
+        """
+        if (
+            self.encryption_agent.protocol != other.encryption_agent.protocol
+            or self.encryption_agent.encryption_algorithm != other.encryption_agent.encryption_algorithm
+        ):
+            return False
+
+        if (
+            self.wrapped_content_key.key_id != other.wrapped_content_key.key_id
+            or self.wrapped_content_key.algorithm != other.wrapped_content_key.algorithm
+            or self.wrapped_content_key.encrypted_key != other.wrapped_content_key.encrypted_key
+        ):
+            return False
+
+        # Compare the content encryption IV (used for AES-CBC / V1).
+        if self.content_encryption_IV != other.content_encryption_IV:
+            return False
+
+        # Compare the encrypted region info (used for AES-GCM / V2).
+        self_region = self.encrypted_region_info
+        other_region = other.encrypted_region_info
+        if (self_region is None) != (other_region is None):
+            return False
+        if self_region is not None and other_region is not None:
+            if (
+                self_region.data_length != other_region.data_length
+                or self_region.nonce_length != other_region.nonce_length
+                or self_region.tag_length != other_region.tag_length
+            ):
+                return False
+
+        return True
 
 
 class GCMBlobEncryptionStream:
@@ -927,7 +937,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         return content
 
     # Validate that the encryption metadata has not changed since the start of the download.
-    if expected_encryption_data is not None and expected_encryption_data != encryption_data:
+    if expected_encryption_data is not None and not expected_encryption_data.matches(encryption_data):
         raise ValueError(
             "The encryption metadata in the download response does not match the encryption metadata "
             "retrieved at the start of the download. The blob's encryption metadata may have been modified "
