@@ -4,11 +4,30 @@
 
 ### Features Added
 
-Placeholder
+* Method `.beta.agents.begin_create_optimization_job` now returns a custom LRO poller named `AgentOptimizationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
+* Method `.beta.datasets.begin_create_generation_job` now returns a custom LRO poller named `DatasetGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
+* Method `.beta.evaluators.begin_create_generation_job` now returns a custom LRO poller named `EvaluatorGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
+* Added the optional read-only `state_source` property to `AgentDetails` and the new `AgentStateSource` enum.
 
 ### Breaking Changes
 
-Placeholder
+All breaking changes are associated with beta features.
+
+* Renamed enum `OptimizationDatasetInputType` to `AgentOptimizationDatasetInputType`.
+* Renamed class `OptimizationAgentIdentifier` to `OptimizedAgentIdentifier`.
+* Renamed class `OptimizationCandidate` to `AgentOptimizationCandidate`.
+* Renamed class `OptimizationDatasetCriterion` to `AgentOptimizationDatasetCriterion`.
+* Renamed class `OptimizationDatasetInput` to `AgentOptimizationDatasetInput`.
+* Renamed class `OptimizationDatasetItem` to `AgentOptimizationDatasetItem`.
+* Renamed class `OptimizationEvaluatorRef` to `AgentOptimizationEvaluatorRef`.
+* Renamed class `OptimizationInlineDatasetInput` to `AgentOptimizationInlineDatasetInput`.
+* Renamed class `OptimizationJob` to `AgentOptimizationJob`.
+* Renamed class `OptimizationJobInputs` to `AgentOptimizationJobInputs`.
+* Renamed class `OptimizationJobListItem` to `AgentOptimizationJobListItem`.
+* Renamed class `OptimizationJobProgress` to `AgentOptimizationJobProgress`.
+* Renamed class `OptimizationJobResult` to `AgentOptimizationJobResult`.
+* Renamed class `OptimizationOptions` to `AgentOptimizationOptions`.
+* Renamed class `OptimizationReferenceDatasetInput` to `AgentOptimizationReferenceDatasetInput`.
 
 ### Bugs Fixed
 
@@ -17,6 +36,7 @@ Placeholder
 ### Sample updates
 
 * Added `sample_dataset_generation_job_simpleqna_for_finetuning_async.py` under `samples/datasets/`, demonstrating asynchronous generation of a SimpleQnA dataset for fine-tuning.
+* Added `sample_dataset_generation_job_simpleqna_for_finetuning_with_app_polling.py` under `samples/datasets/`, demonstrating application-managed polling for a SimpleQnA fine-tuning data generation job.
 * Added logging samples under `samples/logs/`:
   * `sample_log_all.py` demonstrating combined logging for Azure SDK and `.get_openai_client()` operations.
   * `sample_log_from_openai_client.py` demonstrating logging for an OpenAI client created from `.get_openai_client()`.
