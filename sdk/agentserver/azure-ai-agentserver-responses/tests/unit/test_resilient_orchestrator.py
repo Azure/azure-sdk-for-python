@@ -18,35 +18,6 @@ from azure.ai.agentserver.responses.hosting._resilient_input import ResilientRes
 from azure.ai.agentserver.responses.models._generated import CreateResponse
 
 
-class _FakeTaskMetadata(dict):
-    """Test fixture mimicking the TaskMetadata callable+dict-like shape.
-
-    Real TaskMetadata is callable for named namespaces; plain dicts are
-    not. Handlers may reach developer metadata namespaces via
-    ``ctx.metadata(name)``, so unit-test fixtures provide something that
-    responds to ``__call__`` (returning an isolated sub-store) as well as
-    ``__getitem__/__setitem__/get/in``. (Spec 039 R1: the framework itself
-    no longer creates a ``_responses`` namespace — recovery routing reads
-    the durable task input instead.)
-    """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self._namespaces: dict[str, "_FakeTaskMetadata"] = {}
-
-    def __call__(self, name: Optional[str] = None) -> "_FakeTaskMetadata":
-        if name is None:
-            return self
-        ns = self._namespaces.get(name)
-        if ns is None:
-            ns = _FakeTaskMetadata()
-            self._namespaces[name] = ns
-        return ns
-
-    async def flush(self) -> None:  # no-op for tests
-        return None
-
-
 class TestEntryModeMapping:
     """Tests for recovery-entry classification (spec 024 Phase 5 Proposal #10/#13).
 
@@ -167,7 +138,6 @@ class TestResilientOrchestratorExecuteInTask:
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
-        ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
@@ -207,9 +177,8 @@ class TestResilientOrchestratorExecuteInTask:
         classifiers land directly on ``ResponseContext`` flat fields.
         The pre-Phase-5 ``ResilienceContext`` indirection is deleted —
         this test asserts the post-Phase-5 contract: ``is_recovery``,
-        ``is_steered_turn``, ``pending_input_count`` and a swapped-in
-        ``conversation_chain_metadata`` namespace facade are set on the context
-        BEFORE the handler runs.
+        ``is_steered_turn`` and ``pending_input_count`` are set on the context
+        before the handler runs.
         """
         orch = ResilientResponseOrchestrator(
             create_fn=AsyncMock(),
@@ -234,7 +203,6 @@ class TestResilientOrchestratorExecuteInTask:
         ctx.entry_mode = "fresh"
         ctx.is_steered_turn = True
         ctx.pending_input_count = 2
-        ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
@@ -260,12 +228,6 @@ class TestResilientOrchestratorExecuteInTask:
         assert real_context.is_steered_turn is True
         assert real_context.pending_input_count == 2
         assert not hasattr(real_context, "resilience")
-        # The metadata facade was swapped in to back the task metadata.
-        from azure.ai.agentserver.responses._resilience_context import (
-            _DeveloperMetadataFacade,
-        )
-
-        assert isinstance(real_context.conversation_chain_metadata, _DeveloperMetadataFacade)
 
     @pytest.mark.asyncio
     async def test_steerable_returns_none_for_implicit_suspend(self) -> None:
@@ -284,7 +246,6 @@ class TestResilientOrchestratorExecuteInTask:
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
-        ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
@@ -325,7 +286,6 @@ class TestResilientOrchestratorExecuteInTask:
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
-        ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
@@ -366,7 +326,6 @@ class TestResilientOrchestratorCancellationBridge:
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
-        ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
@@ -628,7 +587,6 @@ class TestMalformedInputFailsClosed:
 
         ctx = MagicMock()
         ctx.entry_mode = "recovered"
-        ctx.metadata = _FakeTaskMetadata()
         ctx.task_id = "poison-task"
         # Malformed: response_id present (addressable) but NO request.
         ctx.input = {"response_id": "resp_malformed", "user_id_key": "u"}
@@ -648,9 +606,8 @@ class TestMalformedInputFailsClosed:
 
 class TestRecoveryDispositionFromInput:
     """Spec 039 R1 — recovery routing (disposition + background) is sourced from
-    the durable task INPUT, not a ``_responses`` framework metadata namespace.
-    ``_handle_recovery_disposition`` takes the values as args (from
-    ``ResilientResponseInput`` / the request) and never touches ``ctx.metadata``.
+    the durable task input. ``_handle_recovery_disposition`` takes the values
+    as arguments from ``ResilientResponseInput`` and the request.
     """
 
     def _orch(self) -> ResilientResponseOrchestrator:
