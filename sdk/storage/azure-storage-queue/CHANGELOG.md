@@ -4,6 +4,11 @@
 
 ### Features Added
 
+### Other Changes
+- Fixed an issue where the `network_activity_logging` sample could raise
+`UnicodeEncodeError` when printing queue message content containing non-ASCII
+characters.
+
 ## 12.18.0b1 (2026-08-10)
 
 ### Features Added
