@@ -20,6 +20,8 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """EXTERNAL_AGENTS_V1_PREVIEW."""
     DRAFT_AGENTS_V1_PREVIEW = "DraftAgents=V1Preview"
     """DRAFT_AGENTS_V1_PREVIEW."""
+    VOICE_AGENTS_V1_PREVIEW = "VoiceAgents=V1Preview"
+    """VOICE_AGENTS_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -82,6 +84,15 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INVOCATIONS."""
     INVOCATIONS_WS = "invocations_ws"
     """WebSocket-based protocol for hosted voice and real-time streaming agents."""
+
+
+class AgentHarness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The execution runtime for a agent. When omitted, the request is served by the existing prompt
+    agent runtime. When set, the request is routed to the corresponding managed runtime.
+    """
+
+    GITHUB_COPILOT = "github-copilot"
+    """Github Copilot based managed runtime."""
 
 
 class AgentIdentityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -151,6 +162,17 @@ class AgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Agent endpoint accepts requests. This is the default state on creation."""
     DISABLED = "disabled"
     """Agent endpoint rejects all requests."""
+
+
+class AgentStateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the source of an agent's operational state. Empty when the state is not derived from
+    a specific source.
+    """
+
+    AGENT_INSTANCE_IDENTITY = "agent_instance_identity"
+    """The state is derived from the agent's instance identity."""
+    AGENT_BLUEPRINT = "agent_blueprint"
+    """The state is derived from the agent's blueprint."""
 
 
 class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -252,6 +274,15 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Query type ``vector_simple_hybrid``."""
     VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
     """Query type ``vector_semantic_hybrid``."""
+
+
+class CallableToolAllowedCaller(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CallableToolAllowedCaller."""
+
+    DIRECT = "direct"
+    """DIRECT."""
+    PROGRAMMATIC = "programmatic"
+    """PROGRAMMATIC."""
 
 
 class CodeDependencyResolution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -838,6 +869,39 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DEFAULT_2024_11_15."""
 
 
+class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Constrains effort on reasoning for reasoning models. Currently supported values are ``none``,
+    ``minimal``, ``low``, ``medium``, ``high``, ``xhigh``, and ``max``. Reducing reasoning effort
+    can result in faster responses and fewer tokens used on reasoning in a response. Not all
+    reasoning models support every value. See the `reasoning guide
+    <https://platform.openai.com/docs/guides/reasoning>`_ for model-specific support.
+    """
+
+    NONE = "none"
+    """NONE."""
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+    MAX = "max"
+    """MAX."""
+
+
+class ReasoningModeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ReasoningModeEnum."""
+
+    STANDARD = "standard"
+    """STANDARD."""
+    PRO = "pro"
+    """PRO."""
+
+
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recurrence type."""
 
@@ -1146,6 +1210,8 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP."""
     CUSTOM = "custom"
     """CUSTOM."""
+    PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"
+    """PROGRAMMATIC_TOOL_CALLING."""
     APPLY_PATCH = "apply_patch"
     """APPLY_PATCH."""
     SHELL = "shell"
@@ -1194,6 +1260,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP."""
     CODE_INTERPRETER = "code_interpreter"
     """CODE_INTERPRETER."""
+    PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"
+    """PROGRAMMATIC_TOOL_CALLING."""
     IMAGE_GENERATION = "image_generation"
     """IMAGE_GENERATION."""
     LOCAL_SHELL = "local_shell"
