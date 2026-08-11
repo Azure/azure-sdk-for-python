@@ -216,6 +216,21 @@ class _EncryptionData:
         self.wrapped_content_key = wrapped_content_key
         self.key_wrapping_metadata = key_wrapping_metadata
 
+    def matches(self, other: "_EncryptionData") -> bool:
+        """
+        Determines whether this encryption data refers to the same encryption metadata.
+        This is used to detect whether a blob's encryption metadata has changed 
+        partway through a download.
+
+        :param _EncryptionData other: The encryption data to compare against.
+        :return: True if the metadata matches, False otherwise.
+        :rtype: bool
+        """
+        return (
+            self.wrapped_content_key.key_id == other.wrapped_content_key.key_id
+            and self.encryption_agent.protocol == other.encryption_agent.protocol
+        )
+
 
 class GCMBlobEncryptionStream:
     """
@@ -847,6 +862,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     start_offset: int,
     end_offset: int,
     response_headers: Dict[str, Any],
+    expected_encryption_data: Optional[_EncryptionData] = None,
 ) -> bytes:
     """
     Decrypts the given blob contents and returns only the requested range.
@@ -874,6 +890,10 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     :param Dict[str, Any] response_headers:
         A dictionary of response headers from the download request. Expected to include the
         'x-ms-meta-encryptiondata' header if the blob was encrypted.
+    :param Optional[_EncryptionData] expected_encryption_data:
+        The encryption data retrieved at the start of the download. If provided, the encryption
+        metadata on this response is validated against it (by key id and protocol) to detect the
+        blob's encryption metadata being modified (tampered with) partway through a download.
     :return: The decrypted blob content.
     :rtype: bytes
     """
@@ -887,6 +907,14 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
             ) from exc
 
         return content
+
+    # Validate that the encryption metadata has not changed since the start of the download.
+    if expected_encryption_data is not None and not expected_encryption_data.matches(encryption_data):
+        raise ValueError(
+            "The encryption metadata in the download response does not match the encryption metadata "
+            "retrieved at the start of the download. The blob's encryption metadata may have been modified "
+            "while the download was in progress."
+        )
 
     algorithm = encryption_data.encryption_agent.encryption_algorithm
     if algorithm not in (_EncryptionAlgorithm.AES_CBC_256, _EncryptionAlgorithm.AES_GCM_256):
