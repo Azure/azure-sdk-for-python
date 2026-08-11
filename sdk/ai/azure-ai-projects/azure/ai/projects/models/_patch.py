@@ -34,11 +34,11 @@ from ._patch_evaluation_typeddicts import (
 )
 from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import (
+    AgentOptimizationJobResult,
     DataGenerationJobResult,
     EvaluatorVersion,
     MemoryStoreUpdateCompletedResult,
     MemoryStoreUpdateResult,
-    OptimizationJobResult,
 )
 from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
 
@@ -547,7 +547,7 @@ class AsyncEvaluatorGenerationLROPoller(AsyncLROPoller[EvaluatorVersion]):
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
-class AgentOptimizationLROPoller(LROPoller[OptimizationJobResult]):
+class AgentOptimizationLROPoller(LROPoller[AgentOptimizationJobResult]):
     """Custom LROPoller for agent optimization job operations."""
 
     def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
@@ -567,7 +567,7 @@ class AgentOptimizationLROPoller(LROPoller[OptimizationJobResult]):
 
     @classmethod
     def from_continuation_token(
-        cls, polling_method: PollingMethod[OptimizationJobResult], continuation_token: str, **kwargs: Any
+        cls, polling_method: PollingMethod[AgentOptimizationJobResult], continuation_token: str, **kwargs: Any
     ) -> "AgentOptimizationLROPoller":
         """Create a poller from a continuation token.
 
@@ -584,7 +584,7 @@ class AgentOptimizationLROPoller(LROPoller[OptimizationJobResult]):
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
-class AsyncAgentOptimizationLROPoller(AsyncLROPoller[OptimizationJobResult]):
+class AsyncAgentOptimizationLROPoller(AsyncLROPoller[AgentOptimizationJobResult]):
     """Custom AsyncLROPoller for agent optimization job operations."""
 
     def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
@@ -605,7 +605,7 @@ class AsyncAgentOptimizationLROPoller(AsyncLROPoller[OptimizationJobResult]):
     @classmethod
     def from_continuation_token(
         cls,
-        polling_method: AsyncPollingMethod[OptimizationJobResult],
+        polling_method: AsyncPollingMethod[AgentOptimizationJobResult],
         continuation_token: str,
         **kwargs: Any,
     ) -> "AsyncAgentOptimizationLROPoller":
