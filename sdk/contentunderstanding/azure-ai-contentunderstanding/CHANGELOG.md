@@ -16,10 +16,6 @@
   - Troubleshoot analyses with diagnostic information from `AnalysisResult.infos`. See [sample_analysis_diagnostics.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analysis_diagnostics.py).
   - Track inline page usage and agentic workflow token consumption with expanded `UsageDetails`, available from `AnalyzeLROPoller.usage`, `AnalyzeAsyncLROPoller.usage`, and `ContentAnalyzerInlineResponse.usage`. See [sample_analyze_invoice.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_invoice.py), [sample_analyze_inline.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_inline.py), and [sample_analyze_binary_inline.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_binary_inline.py).
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - Renamed the optional `to_llm_input` caller dictionary from `metadata` to `custom_metadata`; it is emitted under a nested `customMetadata:` front-matter block.
