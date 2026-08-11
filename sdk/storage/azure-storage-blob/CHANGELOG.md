@@ -4,11 +4,6 @@
 
 ### Features Added
 
-### Other Changes
-- Fixed an issue where the `blob_samples_walk_blob_hierarchy` samples could raise
-`UnicodeEncodeError` when printing blob or container names containing non-ASCII
-characters.
-
 ## 12.31.0b1 (2026-08-10)
 
 ### Features Added
