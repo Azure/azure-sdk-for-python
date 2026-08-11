@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2025-03-01",
+  "apiVersion": "2026-06-01",
   "apiVersions": {
-    "Microsoft.CostManagement": "2025-03-01"
+    "Microsoft.CostManagement": "2026-06-01"
   },
-  "commit": "ea850a065dc8679f82dc3fdbba9ceff53eeba116",
+  "commit": "162c2fda74d6187784e71735f293b65973b9cbc4",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/cost-management/resource-manager/Microsoft.CostManagement/CostManagement",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.34.1"
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.35.1"
 }
