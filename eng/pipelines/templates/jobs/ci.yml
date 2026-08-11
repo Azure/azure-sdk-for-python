@@ -142,12 +142,13 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-      parameters:
-        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-          TokenToUseForAuth: $(azuresdk-github-pat)
-        Paths:
-          - '**'
+    - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+      - checkout: self
+    - ${{ else }}:
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - '**'
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -181,12 +182,13 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-      parameters:
-        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-          TokenToUseForAuth: $(azuresdk-github-pat)
-        Paths:
-          - '**'
+    - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+      - checkout: self
+    - ${{ else }}:
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - '**'
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
