@@ -120,6 +120,26 @@ REPLACEMENTS = (
 """
         ),
     ),
+    Replacement(
+        "azure/search/documents/indexes/_operations/_operations.py",
+        "suppress protected access for the generated SearchIndexResponse type",
+        """list[_models1._models.SearchIndexResponse],
+            deserialized.get("value", []),
+    """,
+        """list[_models1._models.SearchIndexResponse],  # pylint: disable=protected-access
+            deserialized.get("value", []),
+    """,
+    ),
+    Replacement(
+        "azure/search/documents/indexes/aio/_operations/_operations.py",
+        "suppress protected access for the generated async SearchIndexResponse type",
+        """list[_models2._models.SearchIndexResponse],
+            deserialized.get("value", []),
+    """,
+        """list[_models2._models.SearchIndexResponse],  # pylint: disable=protected-access
+            deserialized.get("value", []),
+    """,
+    ),
 )
 
 
