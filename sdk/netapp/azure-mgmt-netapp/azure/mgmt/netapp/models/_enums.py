@@ -478,7 +478,9 @@ class ElasticVolumeRestorationState(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
 
 class EnableSubvolumes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Flag indicating whether subvolume operations are enabled on the volume."""
+    """Flag indicating whether subvolume operations are enabled on the volume Deprecated. This type
+    will be removed in a future API version.
+    """
 
     ENABLED = "Enabled"
     """subvolumes are enabled."""

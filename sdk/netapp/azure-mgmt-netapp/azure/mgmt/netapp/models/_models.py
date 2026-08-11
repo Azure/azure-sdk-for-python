@@ -6442,6 +6442,20 @@ class LdapConfiguration(_Model):
     :ivar certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
      TLS requires the CN host name to create DNS host entry.
     :vartype certificate_cn_host: str
+    :ivar dns_servers: List of DNS server IPv4 addresses for resolving the CN host certificate.
+     This parameter is used when LDAP over TLS is enabled.
+    :vartype dns_servers: list[str]
+    :ivar ldap_port: Port number for LDAP communication. Default is 389 for LDAP.
+    :vartype ldap_port: int
+    :ivar user_dn: This specifies the user DN (Distinguished Name), which overrides the base DN for
+     user lookups.
+    :vartype user_dn: str
+    :ivar group_dn: This specifies the group DN (Distinguished Name), which overrides the base DN
+     for group lookups.
+    :vartype group_dn: str
+    :ivar net_group_dn: This specifies the netgroup DN (Distinguished Name), which overrides the
+     base DN for netgroup lookups.
+    :vartype net_group_dn: str
     :ivar bind_authentication_level: The authentication level to use when binding to the LDAP
      server, defaults to Anonymous. Known values are: "Anonymous" and "Simple".
     :vartype bind_authentication_level: str or ~azure.mgmt.netapp.models.BindAuthenticationLevel
@@ -6472,6 +6486,23 @@ class LdapConfiguration(_Model):
     )
     """The CN host name used while generating the certificate, LDAP Over TLS requires the CN host name
      to create DNS host entry."""
+    dns_servers: Optional[list[str]] = rest_field(
+        name="dnsServers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of DNS server IPv4 addresses for resolving the CN host certificate. This parameter is used
+     when LDAP over TLS is enabled."""
+    ldap_port: Optional[int] = rest_field(name="ldapPort", visibility=["read", "create", "update", "delete", "query"])
+    """Port number for LDAP communication. Default is 389 for LDAP."""
+    user_dn: Optional[str] = rest_field(name="userDN", visibility=["read", "create", "update", "delete", "query"])
+    """This specifies the user DN (Distinguished Name), which overrides the base DN for user lookups."""
+    group_dn: Optional[str] = rest_field(name="groupDN", visibility=["read", "create", "update", "delete", "query"])
+    """This specifies the group DN (Distinguished Name), which overrides the base DN for group
+     lookups."""
+    net_group_dn: Optional[str] = rest_field(
+        name="netGroupDN", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This specifies the netgroup DN (Distinguished Name), which overrides the base DN for netgroup
+     lookups."""
     bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = rest_field(
         name="bindAuthenticationLevel", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6494,6 +6525,11 @@ class LdapConfiguration(_Model):
         ldap_over_tls: Optional[bool] = None,
         server_ca_certificate: Optional[str] = None,
         certificate_cn_host: Optional[str] = None,
+        dns_servers: Optional[list[str]] = None,
+        ldap_port: Optional[int] = None,
+        user_dn: Optional[str] = None,
+        group_dn: Optional[str] = None,
+        net_group_dn: Optional[str] = None,
         bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = None,
         bind_dn: Optional[str] = None,
         bind_password_akv_config: Optional["_models.BindPasswordAkvConfig"] = None,
@@ -6525,6 +6561,20 @@ class LdapConfigurationPatch(_Model):
     :ivar certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
      TLS requires the CN host name to create DNS host entry.
     :vartype certificate_cn_host: str
+    :ivar dns_servers: List of DNS server IPv4 addresses for resolving the CN host certificate.
+     This parameter is used when LDAP over TLS is enabled.
+    :vartype dns_servers: list[str]
+    :ivar ldap_port: Port number for LDAP communication. Default is 389 for LDAP.
+    :vartype ldap_port: int
+    :ivar user_dn: This specifies the user DN (Distinguished Name), which overrides the base DN for
+     user lookups.
+    :vartype user_dn: str
+    :ivar group_dn: This specifies the group DN (Distinguished Name), which overrides the base DN
+     for group lookups.
+    :vartype group_dn: str
+    :ivar net_group_dn: This specifies the netgroup DN (Distinguished Name), which overrides the
+     base DN for netgroup lookups.
+    :vartype net_group_dn: str
     :ivar bind_authentication_level: The authentication level to use when binding to the LDAP
      server, defaults to Anonymous. Known values are: "Anonymous" and "Simple".
     :vartype bind_authentication_level: str or ~azure.mgmt.netapp.models.BindAuthenticationLevel
@@ -6555,6 +6605,23 @@ class LdapConfigurationPatch(_Model):
     )
     """The CN host name used while generating the certificate, LDAP Over TLS requires the CN host name
      to create DNS host entry."""
+    dns_servers: Optional[list[str]] = rest_field(
+        name="dnsServers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of DNS server IPv4 addresses for resolving the CN host certificate. This parameter is used
+     when LDAP over TLS is enabled."""
+    ldap_port: Optional[int] = rest_field(name="ldapPort", visibility=["read", "create", "update", "delete", "query"])
+    """Port number for LDAP communication. Default is 389 for LDAP."""
+    user_dn: Optional[str] = rest_field(name="userDN", visibility=["read", "create", "update", "delete", "query"])
+    """This specifies the user DN (Distinguished Name), which overrides the base DN for user lookups."""
+    group_dn: Optional[str] = rest_field(name="groupDN", visibility=["read", "create", "update", "delete", "query"])
+    """This specifies the group DN (Distinguished Name), which overrides the base DN for group
+     lookups."""
+    net_group_dn: Optional[str] = rest_field(
+        name="netGroupDN", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This specifies the netgroup DN (Distinguished Name), which overrides the base DN for netgroup
+     lookups."""
     bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = rest_field(
         name="bindAuthenticationLevel", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6577,6 +6644,11 @@ class LdapConfigurationPatch(_Model):
         ldap_over_tls: Optional[bool] = None,
         server_ca_certificate: Optional[str] = None,
         certificate_cn_host: Optional[str] = None,
+        dns_servers: Optional[list[str]] = None,
+        ldap_port: Optional[int] = None,
+        user_dn: Optional[str] = None,
+        group_dn: Optional[str] = None,
+        net_group_dn: Optional[str] = None,
         bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = None,
         bind_dn: Optional[str] = None,
         bind_password_akv_config: Optional["_models.BindPasswordAkvConfigPatch"] = None,
@@ -9521,7 +9593,8 @@ class SnapshotRestoreFiles(_Model):
 
 
 class SubvolumeInfo(ProxyResource):
-    """Subvolume Information properties.
+    """Subvolume Information properties Deprecated. This resource type will be removed in a future API
+    version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -11376,8 +11449,9 @@ class VolumeProperties(_Model):
     :vartype encrypted: bool
     :ivar placement_rules: Application specific placement rules for the particular volume.
     :vartype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
-    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
-     volume. Known values are: "Enabled" and "Disabled".
+    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the volume
+     Deprecated. Subvolume operations and this flag will be removed in a future API version. Known
+     values are: "Enabled" and "Disabled".
     :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
     :ivar provisioned_availability_zone: The availability zone where the volume is provisioned.
      This refers to the logical availability zone where the volume resides.
@@ -11637,8 +11711,9 @@ class VolumeProperties(_Model):
     enable_subvolumes: Optional[Union[str, "_models.EnableSubvolumes"]] = rest_field(
         name="enableSubvolumes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Flag indicating whether subvolume operations are enabled on the volume. Known values are:
-     \"Enabled\" and \"Disabled\"."""
+    """Flag indicating whether subvolume operations are enabled on the volume Deprecated. Subvolume
+     operations and this flag will be removed in a future API version. Known values are: \"Enabled\"
+     and \"Disabled\"."""
     provisioned_availability_zone: Optional[str] = rest_field(name="provisionedAvailabilityZone", visibility=["read"])
     """The availability zone where the volume is provisioned. This refers to the logical availability
      zone where the volume resides."""

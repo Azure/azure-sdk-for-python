@@ -1,14 +1,21 @@
 ## Release History
 
-### 4.16.3 (Unreleased)
+### 4.16.4 (Unreleased)
 
 #### Features Added
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed regression with handling of v1 legacy containers when passing `{}` as a partition key. `{}` and `NonePartitionKeyValue` now both resolve to the `Undefined` effective partition key. See [PR 48422](https://github.com/Azure/azure-sdk-for-python/pull/48422)
+* Fixed the same `TypeError` on system key (migrated) containers, where a missing partition key value resolves to `_Empty` instead of `Undefined`. It now maps to the minimum effective partition key. See [PR 48422](https://github.com/Azure/azure-sdk-for-python/pull/48422)
 
 #### Other Changes
+
+### 4.16.3 (2026-07-29)
+
+#### Bugs Fixed
+* Fixed regression introduced in 4.16.0 on [47105](https://github.com/Azure/azure-sdk-for-python/pull/47105) for complete-partition-key queries scanning documents instead of using partition-key routing, which caused excessive RU consumption and latency for aggregates such as `COUNT`. See [PR 48237](https://github.com/Azure/azure-sdk-for-python/pull/48237)
 
 ### 4.16.2 (2026-07-15)
 

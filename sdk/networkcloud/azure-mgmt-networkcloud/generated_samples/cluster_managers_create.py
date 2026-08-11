@@ -49,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/ClusterManagers_Create.json
+# x-ms-original-file: 2026-07-01/ClusterManagers_Create.json
 if __name__ == "__main__":
     main()

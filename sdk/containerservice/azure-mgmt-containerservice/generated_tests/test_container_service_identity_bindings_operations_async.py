@@ -50,6 +50,18 @@ class TestContainerServiceIdentityBindingsOperationsAsync(AzureMgmtRecordedTestC
                             "objectId": "str",
                             "tenantId": "str",
                         },
+                        "allowedSubjects": [
+                            {
+                                "namespaceSelector": {
+                                    "matchExpressions": [{"key": "str", "operator": "str", "values": ["str"]}],
+                                    "matchLabels": ["str"],
+                                },
+                                "serviceAccountSelector": {
+                                    "matchExpressions": [{"key": "str", "operator": "str", "values": ["str"]}],
+                                    "matchLabels": ["str"],
+                                },
+                            }
+                        ],
                         "oidcIssuer": {"oidcIssuerUrl": "str"},
                         "provisioningState": "str",
                     },

@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-04-15-preview/ElasticBackups_Delete.json
+# x-ms-original-file: 2026-05-15-preview/ElasticBackups_Delete.json
 if __name__ == "__main__":
     main()

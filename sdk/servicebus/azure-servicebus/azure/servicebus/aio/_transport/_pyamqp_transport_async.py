@@ -15,7 +15,7 @@ import queue
 from ..._pyamqp import constants
 from ..._pyamqp.message import BatchMessage
 from ..._pyamqp.utils import amqp_string_value, amqp_uint_value
-from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync
+from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync, AMQPClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
 from ..._pyamqp.error import (
@@ -58,7 +58,6 @@ if TYPE_CHECKING:
     from .._servicebus_sender_async import ServiceBusSender
     from ..._pyamqp.performatives import AttachFrame
     from ..._pyamqp.message import Message
-    from ..._pyamqp.aio._client_async import AMQPClientAsync
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -90,6 +89,36 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param ~pyamqp.aio.ConnectionAsync connection: pyamqp Connection.
         """
         await connection.close()
+
+    @staticmethod
+    def create_mgmt_client_async(config: "Configuration", **kwargs: Any) -> "AMQPClientAsync": # pylint: disable=docstring-keyword-should-match-keyword-only
+        """Creates and returns an async pyamqp AMQPClient for management-only operations.
+
+        Unlike SendClient/ReceiveClient, this client does not create a sender or
+        receiver link. It only opens a connection and authenticates, suitable for
+        management requests that don't need an associated link.
+
+        :param ~azure.servicebus._common._configuration.Configuration config: The configuration. Required.
+        :keyword ~pyamqp.aio.authentication.JWTTokenAuthAsync auth: Required.
+        :keyword retry_policy: Required.
+        :keyword str client_name: Required.
+        :keyword dict properties: Required.
+        :return: AMQPClientAsync
+        :rtype: ~pyamqp.aio.AMQPClientAsync
+        """
+        return AMQPClientAsync(
+            config.hostname,
+            network_trace=config.logging_enable,
+            keep_alive_interval=config.keep_alive,
+            custom_endpoint_address=config.custom_endpoint_address,
+            connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
+            transport_type=config.transport_type,
+            http_proxy=config.http_proxy,
+            socket_timeout=config.socket_timeout,
+            use_tls=config.use_tls,
+            **kwargs,
+        )
 
     @staticmethod
     def create_send_client_async(config: "Configuration", **kwargs: Any) -> "SendClientAsync": # pylint:disable=docstring-keyword-should-match-keyword-only
@@ -236,10 +265,14 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         while True:
             # pylint: disable=protected-access
             try:
+                start_time = time.time_ns()
                 message = await receiver._inner_anext(wait_time=max_wait_time)
                 links = get_receive_links(message)
-                with receive_trace_context_manager(receiver, links=links):
-                    yield message
+                # Close the receive span before yielding so its HTTP instrumentation
+                # suppression does not leak into the caller's message processing.
+                with receive_trace_context_manager(receiver, links=links, start_time=start_time):
+                    pass
+                yield message
             except StopAsyncIteration:
                 break
 

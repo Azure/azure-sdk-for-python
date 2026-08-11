@@ -1,5 +1,27 @@
 # Release History
 
+## 18.0.0b2 (2026-07-27)
+
+### Features Added
+
+  - Model `LdapConfiguration` added property `dns_servers`
+  - Model `LdapConfiguration` added property `group_dn`
+  - Model `LdapConfiguration` added property `ldap_port`
+  - Model `LdapConfiguration` added property `net_group_dn`
+  - Model `LdapConfiguration` added property `user_dn`
+  - Model `LdapConfigurationPatch` added property `dns_servers`
+  - Model `LdapConfigurationPatch` added property `group_dn`
+  - Model `LdapConfigurationPatch` added property `ldap_port`
+  - Model `LdapConfigurationPatch` added property `net_group_dn`
+  - Model `LdapConfigurationPatch` added property `user_dn`
+
+## 17.1.0 (2026-07-22)
+
+### Features Added
+
+  - Model `VolumeProperties` added property `breakthrough_mode`
+  - Added enum `BreakthroughMode`
+
 ## 18.0.0b1 (2026-06-29)
 
 ### Features Added

@@ -22,7 +22,7 @@ import sys
 import shutil
 import tempfile
 from enum import Enum
-from typing import Dict, Union, Type, Callable, Optional
+from typing import Dict, Tuple, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
 from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
 from breaking_changes_tracker import BreakingChangesTracker
@@ -576,6 +576,8 @@ def compare_report_dicts(stable: Dict, current: Dict, package_name: str, changel
         stable = report_azure_mgmt_versioned_module(stable)
         current = report_azure_mgmt_versioned_module(current)
 
+    stable, current = drop_shadow_types_modules(stable, current)
+
     tracker_cls = ChangelogTracker if changelog else BreakingChangesTracker
     checker = tracker_cls(
         stable,
@@ -660,6 +662,53 @@ def report_azure_mgmt_versioned_module(code_report):
     return merged_report
 
 
+def drop_shadow_types_modules(stable: Dict, current: Dict) -> Tuple[Dict, Dict]:
+    """Drop the generated shadow ``types`` module from both code reports before diffing.
+
+    TypeSpec generated libraries emit a ``types`` module of ``TypedDict`` input aliases that
+    shadow the real classes in the sibling ``models`` module. It carries no API contract of its
+    own: which models get a ``TypedDict`` is decided by the emitter's input-reachability rules,
+    so the module's contents churn across emitter upgrades even when the service API is
+    unchanged. Diffing it yields either duplicates of the ``models`` entries or -- when a model
+    stops being used as input and only its ``TypedDict`` disappears -- false ``Deleted or renamed
+    model`` reports for classes that are still part of the public API.
+
+    A ``types`` module is only treated as a shadow when every class it declares also exists in a
+    sibling ``models`` module; that subset relation is what makes it a projection rather than an
+    API surface of its own. A ``types`` module that owns even one class -- hand-written or a
+    generated ``TypedDict`` with no counterpart model -- is kept and diffed normally.
+
+    The decision is made across both reports so the filter is symmetric; dropping the module from
+    only one side would surface a phantom added/removed module.
+    """
+
+    def is_shadow(module: str) -> bool:
+        if not module.endswith(".types"):
+            return False
+        models_module = module[: -len("types")] + "models"
+        seen = False
+        for report in (stable, current):
+            if module not in report:
+                continue
+            if models_module not in report:
+                return False
+            seen = True
+            types_classes = set(report[module].get("class_nodes", {}))
+            models_classes = set(report[models_module].get("class_nodes", {}))
+            if not types_classes <= models_classes:
+                return False
+        return seen
+
+    shadow_modules = {module for module in set(stable) | set(current) if is_shadow(module)}
+    if shadow_modules:
+        _LOGGER.info("Skipping generated shadow `types` module(s): %s", ", ".join(sorted(shadow_modules)))
+
+    return (
+        {module: nodes for module, nodes in stable.items() if module not in shadow_modules},
+        {module: nodes for module, nodes in current.items() if module not in shadow_modules},
+    )
+
+
 def generate_apistub_markdown(
     package_name: str, out_dir: str, version: Optional[str] = None, from_pypi: bool = True
 ) -> str:
@@ -735,12 +784,18 @@ def _resolve_pypi_version(package_name: str, latest_pypi_version: bool) -> str:
     """
     from pypi_tools.pypi import PyPIClient
 
-    client = PyPIClient()
+    # Force the public PyPI backend: in CI ``PIP_INDEX_URL`` points at the curated
+    # Azure Artifacts feed, which is not a full mirror of PyPI. A package can be
+    # released on public PyPI while absent from that feed, so query pypi.org
+    # directly to resolve the version to compare against.
+    client = PyPIClient(force_pypi=True)
     try:
         if latest_pypi_version:
             return str(client.get_ordered_versions(package_name)[-1])
         return str(client.get_relevant_versions(package_name)[1])
-    except IndexError:
+    except (IndexError, KeyError):
+        # IndexError: the package exists but has no relevant/previous version.
+        # KeyError: the package is brand new and not published on PyPI yet.
         _LOGGER.warning(f"No relevant version for {package_name} on PyPi. Exiting...")
         exit(0)
 
