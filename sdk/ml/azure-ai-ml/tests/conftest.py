@@ -110,8 +110,9 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.hash_version", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
     add_body_key_sanitizer(json_path="$.accessToken", value="Sanitized")
-    add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
-    add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
+    tenant_id = os.environ.get("ML_TENANT_ID")
+    if tenant_id:
+        add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=tenant_id)
     add_general_regex_sanitizer(
         value="00000000000000000000000000000000", regex="\\/LocalUpload\\/(\\S{32})\\/?", group_for_replace="1"
     )
@@ -134,6 +135,11 @@ def add_sanitizers(test_proxy, fake_datastore_key):
 
     add_general_regex_sanitizer(
         value="00000000000000000000000000000000", regex=r"/LocalUpload/([a-f0-9]{36}[a-f0-9]+)/?", group_for_replace="1"
+    )
+    add_general_regex_sanitizer(
+        value="Sanitized",
+        regex=r"https://(?<storage_account_name>[^.]+)\.blob\.core\.windows\.net",
+        group_for_replace="storage_account_name",
     )
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
@@ -183,7 +189,7 @@ def mock_operation_config_no_progress() -> OperationConfig:
 @pytest.fixture
 def sanitized_environment_variables(environment_variables, fake_datastore_key) -> dict:
     sanitizings = {
-        "ML_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
+        "ML_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000000",
         "ML_RESOURCE_GROUP": "00000",
         "ML_WORKSPACE_NAME": "00000",
         "ML_FEATURE_STORE_NAME": "00000",
