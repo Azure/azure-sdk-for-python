@@ -2,6 +2,21 @@
 
 File-by-file inventory of every non-empty `_patch.py` in `azure-search-documents`. Use this after running `tsp-client update` to verify each customization still holds.
 
+## Temporary Python emitter workarounds
+
+Until the issues in `GENERATOR-BUGS.md` are fixed upstream, run the package-owned rewriter after
+every regeneration:
+
+```bash
+python .github/skills/azure-search-documents/scripts/apply_generator_workarounds.py
+python .github/skills/azure-search-documents/scripts/apply_generator_workarounds.py --check
+```
+
+The script is idempotent and applies exact replacements only. It exits with an error before writing
+files if the emitter output no longer matches either the known generated or patched form. Remove the
+script and these instructions after the emitter produces all four corrected type surfaces and the
+package passes MyPy without the rewriter.
+
 ---
 
 ## File: `azure/search/documents/_patch.py`

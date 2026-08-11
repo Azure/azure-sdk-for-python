@@ -379,7 +379,7 @@ SearchDocumentsResult = TypedDict(
         "@odata.nextLink": str,
         "@search.semanticPartialResponseReason": Union[str, "SemanticErrorReason"],
         "@search.semanticPartialResponseType": Union[str, "SemanticSearchResultsType"],
-        "@search.semanticQueryRewritesResultType": Union[str, "_enums.SemanticQueryRewritesResultType"],
+        "@search.semanticQueryRewritesResultType": Union[str, "SemanticQueryRewritesResultType"],
     },
     total=False,
 )

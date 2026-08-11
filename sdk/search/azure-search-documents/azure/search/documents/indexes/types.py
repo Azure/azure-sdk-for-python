@@ -5421,9 +5421,7 @@ class SearchIndexerKnowledgeStoreProjection(TypedDict, total=False):
     """Projections to Azure File storage."""
 
 
-class SearchIndexerKnowledgeStoreTableProjectionSelector(
-    SearchIndexerKnowledgeStoreProjectionSelector
-):  # pylint: disable=name-too-long
+class SearchIndexerKnowledgeStoreTableProjectionSelector(TypedDict, total=False):  # pylint: disable=name-too-long
     """Description for what data to store in Azure Tables.
 
     :ivar referenceKeyName: Name of reference key to different projection.
@@ -5440,6 +5438,14 @@ class SearchIndexerKnowledgeStoreTableProjectionSelector(
     :vartype tableName: str
     """
 
+    referenceKeyName: str
+    """Name of reference key to different projection."""
+    source: str
+    """Source data to project."""
+    sourceContext: str
+    """Source context for complex projections."""
+    inputs: list["InputFieldMappingEntry"]
+    """Nested inputs for complex projections."""
     generatedKeyName: Required[str]
     """Name of generated key to store projection under. Required."""
     tableName: Required[str]

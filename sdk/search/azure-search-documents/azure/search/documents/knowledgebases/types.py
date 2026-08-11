@@ -28,7 +28,6 @@ if TYPE_CHECKING:
     from ..indexesmodels import (
         KnowledgeSourceContentExtractionMode,
         KnowledgeSourceIngestionPermissionOption,
-        KnowledgeSourceKind,
         KnowledgeSourceResultsProcessing,
         KnowledgeSourceSynchronizationStatus,
     )

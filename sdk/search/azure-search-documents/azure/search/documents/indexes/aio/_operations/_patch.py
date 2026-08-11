@@ -16,7 +16,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._operations._patch import _convert_index_response
 from ._operations import (
     _SearchIndexClientOperationsMixin as _SearchIndexClientOperationsMixinGenerated,
@@ -501,8 +501,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """
         result = await self._get_synonym_maps(select=select, **kwargs)
         assert result.synonym_maps is not None  # Hint for mypy
-        # typed_result = [cast(_models.SynonymMap, x) for x in result.synonym_maps]
-        typed_result = result.synonym_maps
+        typed_result = [cast(_models.SynonymMap, item) for item in result.synonym_maps]
         return typed_result
 
     @distributed_trace_async
@@ -745,7 +744,10 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._resync(name=name, indexer_resync=indexer_resync, **kwargs)
+        typed_indexer_resync = cast(
+            Union[_models.IndexerResyncBody, _types.IndexerResyncBody, IO[bytes]], indexer_resync
+        )
+        return await self._resync(name=name, indexer_resync=typed_indexer_resync, **kwargs)
 
     @distributed_trace_async
     async def reset_documents(
@@ -771,7 +773,10 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._reset_documents(name=name, keys_or_ids=keys_or_ids, overwrite=overwrite, **kwargs)
+        typed_keys_or_ids = cast(
+            Optional[Union[_models.DocumentKeysOrIds, _types.DocumentKeysOrIds, IO[bytes]]], keys_or_ids
+        )
+        return await self._reset_documents(name=name, keys_or_ids=typed_keys_or_ids, overwrite=overwrite, **kwargs)
 
     @distributed_trace_async
     async def delete_skillset(
@@ -861,7 +866,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._reset_skills(name=name, skill_names=skill_names, **kwargs)
+        typed_skill_names = cast(Union[_models.SkillNames, _types.SkillNames, IO[bytes]], skill_names)
+        return await self._reset_skills(name=name, skill_names=typed_skill_names, **kwargs)
 
     @distributed_trace_async
     async def get_skillsets(
@@ -879,8 +885,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """
         result = await self._get_skillsets(select=select, **kwargs)
         assert result.skillsets is not None  # Hint for mypy
-        # typed_result = [cast(_models.SearchIndexerSkillset, x) for x in result.skillsets]
-        typed_result = result.skillsets
+        typed_result = [cast(_models.SearchIndexerSkillset, item) for item in result.skillsets]
         return typed_result
 
     @distributed_trace_async
@@ -897,8 +902,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """
         result = await self._get_indexers(select=select, **kwargs)
         assert result.indexers is not None  # Hint for mypy
-        # typed_result = [cast(_models.SearchIndexer, x) for x in result.indexers]
-        typed_result = result.indexers
+        typed_result = [cast(_models.SearchIndexer, item) for item in result.indexers]
         return typed_result
 
     @distributed_trace_async
@@ -927,8 +931,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """
         result = await self._get_data_source_connections(select=select, **kwargs)
         assert result.data_sources is not None  # Hint for mypy
-        # typed_result = [cast(_models.SearchIndexerDataSourceConnection, x) for x in result.data_sources]
-        typed_result = result.data_sources
+        typed_result = [cast(_models.SearchIndexerDataSourceConnection, item) for item in result.data_sources]
         return typed_result
 
     @distributed_trace_async

@@ -7,14 +7,14 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, IO, Optional, Union
+from typing import Any, cast, IO, Optional, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._client import KnowledgeBaseRetrievalClient as _KnowledgeBaseRetrievalClient
-from .. import models
+from .. import models, types
 from .._stream import AsyncKnowledgeBaseRetrievalStream, KnowledgeBaseRetrievalEvent, KnowledgeBaseRetrievalEventData
 
 
@@ -48,12 +48,13 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def retrieve_stream(
+    async def retrieve_stream(  # type: ignore[override]
         self,
         retrieval_request: Union[models.KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]],
         *,
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
+        content_type: str = "application/json",
         **kwargs: Any,
     ) -> AsyncKnowledgeBaseRetrievalStream:
         """Retrieve relevant data and asynchronously stream typed server-sent events.
@@ -67,6 +68,8 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
         :keyword query_work_iq_source_authorization: User assertion token for a customer-owned Entra
          app registration configured on a Work IQ knowledge source. Default value is None.
         :paramtype query_work_iq_source_authorization: str
+        :keyword content_type: Body parameter content type. Default value is "application/json".
+        :paramtype content_type: str
         :return: An asynchronous stream of typed knowledge base retrieval events.
         :rtype: ~azure.search.documents.knowledgebases.aio.AsyncKnowledgeBaseRetrievalStream
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -82,17 +85,28 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
             callback_context.update(pipeline_response=pipeline_response, response_headers=response_headers)
             return stream
 
-        stream = await super().retrieve_stream(
+        typed_retrieval_request = cast(
+            Union[models.KnowledgeBaseRetrievalRequest, types.KnowledgeBaseRetrievalRequest, IO[bytes]],
             retrieval_request,
-            query_source_authorization=query_source_authorization,
-            query_work_iq_source_authorization=query_work_iq_source_authorization,
-            cls=_wrap_stream,
-            **kwargs,
-        )  # type: ignore[return-value]
+        )
+        stream = cast(
+            AsyncKnowledgeBaseRetrievalStream,
+            await super().retrieve_stream(
+                typed_retrieval_request,
+                query_source_authorization=query_source_authorization,
+                query_work_iq_source_authorization=query_work_iq_source_authorization,
+                content_type=content_type,
+                cls=_wrap_stream,
+                **kwargs,
+            ),
+        )
         if not custom_cls:
             return stream
         try:
-            return custom_cls(callback_context["pipeline_response"], stream, callback_context["response_headers"])
+            return cast(
+                AsyncKnowledgeBaseRetrievalStream,
+                custom_cls(callback_context["pipeline_response"], stream, callback_context["response_headers"]),
+            )
         except Exception:
             await stream.close()
             raise
