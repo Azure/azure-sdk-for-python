@@ -126,6 +126,15 @@ class _WrappedContentKey:
         self.encrypted_key = encrypted_key
         self.key_id = key_id
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, _WrappedContentKey):
+            return NotImplemented
+        return (
+            self.algorithm == other.algorithm
+            and self.encrypted_key == other.encrypted_key
+            and self.key_id == other.key_id
+        )
+
 
 class _EncryptedRegionInfo:
     """
@@ -150,6 +159,15 @@ class _EncryptedRegionInfo:
         self.nonce_length = nonce_length
         self.tag_length = tag_length
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, _EncryptedRegionInfo):
+            return NotImplemented
+        return (
+            self.data_length == other.data_length
+            and self.nonce_length == other.nonce_length
+            and self.tag_length == other.tag_length
+        )
+
 
 class _EncryptionAgent:
     """
@@ -169,6 +187,11 @@ class _EncryptionAgent:
 
         self.encryption_algorithm = str(encryption_algorithm)
         self.protocol = protocol
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, _EncryptionAgent):
+            return NotImplemented
+        return self.encryption_algorithm == other.encryption_algorithm and self.protocol == other.protocol
 
 
 class _EncryptionData:
@@ -216,19 +239,14 @@ class _EncryptionData:
         self.wrapped_content_key = wrapped_content_key
         self.key_wrapping_metadata = key_wrapping_metadata
 
-    def matches(self, other: "_EncryptionData") -> bool:
-        """
-        Determines whether this encryption data refers to the same encryption metadata.
-        This is used to detect whether a blob's encryption metadata has changed 
-        partway through a download.
-
-        :param _EncryptionData other: The encryption data to compare against.
-        :return: True if the metadata matches, False otherwise.
-        :rtype: bool
-        """
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, _EncryptionData):
+            return NotImplemented
         return (
-            self.wrapped_content_key.key_id == other.wrapped_content_key.key_id
-            and self.encryption_agent.protocol == other.encryption_agent.protocol
+            self.content_encryption_IV == other.content_encryption_IV
+            and self.encrypted_region_info == other.encrypted_region_info
+            and self.encryption_agent == other.encryption_agent
+            and self.wrapped_content_key == other.wrapped_content_key
         )
 
 
@@ -892,8 +910,8 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         'x-ms-meta-encryptiondata' header if the blob was encrypted.
     :param Optional[_EncryptionData] expected_encryption_data:
         The encryption data retrieved at the start of the download. If provided, the encryption
-        metadata on this response is validated against it (by key id and protocol) to detect the
-        blob's encryption metadata being modified (tampered with) partway through a download.
+        metadata on this response is validated against it to detect the blob's encryption metadata
+        being modified (tampered with) partway through a download.
     :return: The decrypted blob content.
     :rtype: bytes
     """
@@ -909,7 +927,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         return content
 
     # Validate that the encryption metadata has not changed since the start of the download.
-    if expected_encryption_data is not None and not expected_encryption_data.matches(encryption_data):
+    if expected_encryption_data is not None and expected_encryption_data != encryption_data:
         raise ValueError(
             "The encryption metadata in the download response does not match the encryption metadata "
             "retrieved at the start of the download. The blob's encryption metadata may have been modified "
