@@ -17,13 +17,9 @@ async def test_begin_create_optimization_job_exposes_job_id_async():
     """The async create operation exposes its job ID without SDK polling."""
     operation = BetaAgentsOperations.__new__(BetaAgentsOperations)
     operation._client = MagicMock()  # pylint: disable=protected-access
-    operation._config = MagicMock(
-        polling_interval=0
-    )  # pylint: disable=protected-access
+    operation._config = MagicMock(polling_interval=0)  # pylint: disable=protected-access
     operation._serialize = MagicMock()  # pylint: disable=protected-access
-    operation._serialize.url.return_value = (
-        "https://example.test"  # pylint: disable=protected-access
-    )
+    operation._serialize.url.return_value = "https://example.test"  # pylint: disable=protected-access
     operation._deserialize = MagicMock()  # pylint: disable=protected-access
 
     initial_response = MagicMock()

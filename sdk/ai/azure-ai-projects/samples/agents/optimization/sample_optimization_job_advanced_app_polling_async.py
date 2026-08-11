@@ -40,13 +40,13 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
+    AgentOptimizationEvaluatorRef,
+    AgentOptimizationJob,
+    AgentOptimizationJobInputs,
+    AgentOptimizationOptions,
+    AgentOptimizationReferenceDatasetInput,
     JobStatus,
-    OptimizationAgentIdentifier as AgentIdentifier,
-    OptimizationEvaluatorRef as EvaluatorRef,
-    OptimizationJob,
-    OptimizationJobInputs,
-    OptimizationOptions,
-    OptimizationReferenceDatasetInput as ReferenceDatasetInput,
+    OptimizedAgentIdentifier,
 )
 
 load_dotenv()
@@ -74,15 +74,15 @@ async def main() -> None:
         # ------------------------------------------------------------------
         print("Creating optimization job...")
 
-        job = OptimizationJob(
-            inputs=OptimizationJobInputs(
-                agent=AgentIdentifier(agent_name=agent_name),
-                train_dataset=ReferenceDatasetInput(
+        job = AgentOptimizationJob(
+            inputs=AgentOptimizationJobInputs(
+                agent=OptimizedAgentIdentifier(agent_name=agent_name),
+                train_dataset=AgentOptimizationReferenceDatasetInput(
                     name=dataset_name,
                     version=dataset_version,
                 ),
-                evaluators=[EvaluatorRef(name=evaluator_name)],
-                options=OptimizationOptions(
+                evaluators=[AgentOptimizationEvaluatorRef(name=evaluator_name)],
+                options=AgentOptimizationOptions(
                     max_candidates=3,
                     eval_model=eval_model,
                     optimization_model=optimization_model,
@@ -96,9 +96,7 @@ async def main() -> None:
         )
         job_id = poller.details["job_id"]
         if not job_id:
-            raise RuntimeError(
-                "The create operation did not return an optimization job ID."
-            )
+            raise RuntimeError("The create operation did not return an optimization job ID.")
         job = await project_client.beta.agents.get_optimization_job(job_id=job_id)
         print(f"Created job: id={job.id}, status={job.status}")
 
@@ -127,9 +125,7 @@ async def main() -> None:
         # 3. Inspect the results.
         # ------------------------------------------------------------------
         if job.result is None:
-            raise RuntimeError(
-                f"Optimization job `{job.id}` completed without a result."
-            )
+            raise RuntimeError(f"Optimization job `{job.id}` completed without a result.")
 
         result = job.result
         print(f"\nBaseline candidate: {result.baseline}")

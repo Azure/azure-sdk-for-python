@@ -332,7 +332,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     @overload
     async def begin_create_optimization_job(
         self,
-        job: _models.OptimizationJob,
+        job: _models.AgentOptimizationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -362,7 +362,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     @distributed_trace_async
     async def begin_create_optimization_job(
         self,
-        job: Union[_models.OptimizationJob, JSON, IO[bytes]],
+        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
@@ -370,11 +370,11 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
         """Create an agent optimization job.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob or JSON or IO[bytes]
+        :type job: ~azure.ai.projects.models.AgentOptimizationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
-        :return: A poller that returns OptimizationJobResult and exposes the job ID in ``details``.
+        :return: A poller that returns AgentOptimizationJobResult and exposes the job ID in ``details``.
         :rtype: ~azure.ai.projects.models.AsyncAgentOptimizationLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -408,7 +408,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-            deserialized = _deserialize(_models.OptimizationJobResult, response.json().get("result", {}))
+            deserialized = _deserialize(_models.AgentOptimizationJobResult, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized

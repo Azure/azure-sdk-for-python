@@ -76,9 +76,7 @@ TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 # Unique per-run output name so repeated runs do not collide.
 # Output names are capped at 50 characters by the service.
-run_id = (
-    f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
-)
+run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
 output_name = f"{dataset_name}-{run_id}"
 if len(output_name) > 50:
     raise ValueError(
@@ -140,9 +138,7 @@ with (
         print(".", end="", flush=True)
     print()
     if seed_file.status != "processed":
-        raise RuntimeError(
-            f"Azure OpenAI file `{seed_file.id}` failed to process: status=`{seed_file.status}`."
-        )
+        raise RuntimeError(f"Azure OpenAI file `{seed_file.id}` failed to process: status=`{seed_file.status}`.")
 
     # ------------------------------------------------------------------
     # 2. Submit a fine-tuning data generation job without SDK polling.
@@ -202,9 +198,7 @@ with (
     if job.status == JobStatus.CANCELLED:
         raise RuntimeError(f"Data generation job `{job.id}` was cancelled.")
     if job.result is None:
-        raise RuntimeError(
-            f"Data generation job `{job.id}` completed without a result."
-        )
+        raise RuntimeError(f"Data generation job `{job.id}` completed without a result.")
 
     job_result = job.result
     print(f"Data generation result: {job_result}")
@@ -215,11 +209,7 @@ with (
     # `train_split=0.8` produces two Azure OpenAI files: a training partition
     # and a validation partition. Both are emitted as FileDataGenerationJobOutput
     # entries in `job_result.outputs`.
-    file_outputs = [
-        output
-        for output in (job_result.outputs or [])
-        if isinstance(output, FileDataGenerationJobOutput)
-    ]
+    file_outputs = [output for output in (job_result.outputs or []) if isinstance(output, FileDataGenerationJobOutput)]
     if not file_outputs:
         raise RuntimeError("The data generation job did not produce any file outputs.")
 
@@ -229,9 +219,7 @@ with (
             raise RuntimeError("A file output was returned without an id.")
         # Resolve the Azure OpenAI file to surface its real filename and size.
         file_info = openai_client.files.retrieve(file_id=output.id)
-        print(
-            f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}"
-        )
+        print(f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}")
     if job_result.generated_samples is not None:
         print(f"Generated samples: {job_result.generated_samples}")
 

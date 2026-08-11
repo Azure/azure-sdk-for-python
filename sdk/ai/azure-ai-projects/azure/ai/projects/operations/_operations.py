@@ -17187,7 +17187,11 @@ class BetaAgentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     def _create_optimization_job_initial(
-        self, job: Union[_models.OptimizationJob, JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any
+        self,
+        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -17257,35 +17261,35 @@ class BetaAgentsOperations:
     @overload
     def begin_create_optimization_job(
         self,
-        job: _models.OptimizationJob,
+        job: _models.AgentOptimizationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OptimizationJobResult]:
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
         retry.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob
+        :type job: ~azure.ai.projects.models.AgentOptimizationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OptimizationJobResult. The OptimizationJobResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_create_optimization_job(
         self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.OptimizationJobResult]:
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
@@ -17299,9 +17303,9 @@ class BetaAgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OptimizationJobResult. The OptimizationJobResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -17313,7 +17317,7 @@ class BetaAgentsOperations:
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OptimizationJobResult]:
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
@@ -17327,37 +17331,41 @@ class BetaAgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OptimizationJobResult. The OptimizationJobResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def begin_create_optimization_job(
-        self, job: Union[_models.OptimizationJob, JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any
-    ) -> LROPoller[_models.OptimizationJobResult]:
+        self,
+        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
         retry.
 
-        :param job: The job to create. Is one of the following types: OptimizationJob, JSON, IO[bytes]
-         Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob or JSON or IO[bytes]
+        :param job: The job to create. Is one of the following types: AgentOptimizationJob, JSON,
+         IO[bytes] Required.
+        :type job: ~azure.ai.projects.models.AgentOptimizationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
-        :return: An instance of LROPoller that returns OptimizationJobResult. The OptimizationJobResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.OptimizationJobResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentOptimizationJobResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -17382,7 +17390,7 @@ class BetaAgentsOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-            deserialized = _deserialize(_models.OptimizationJobResult, response.json().get("result", {}))
+            deserialized = _deserialize(_models.AgentOptimizationJobResult, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -17400,26 +17408,26 @@ class BetaAgentsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.OptimizationJobResult].from_continuation_token(
+            return LROPoller[_models.AgentOptimizationJobResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.OptimizationJobResult](
+        return LROPoller[_models.AgentOptimizationJobResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
-    def get_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
+    def get_optimization_job(self, job_id: str, **kwargs: Any) -> _models.AgentOptimizationJob:
         """Get an agent optimization job.
 
         Retrieves an optimization job by its identifier.
 
         :param job_id: The ID of the job. Required.
         :type job_id: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
+        :return: AgentOptimizationJob. The AgentOptimizationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -17433,7 +17441,7 @@ class BetaAgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OptimizationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentOptimizationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_agents_get_optimization_job_request(
             job_id=job_id,
@@ -17473,7 +17481,7 @@ class BetaAgentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.OptimizationJob, response.json())
+            deserialized = _deserialize(_models.AgentOptimizationJob, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17490,7 +17498,7 @@ class BetaAgentsOperations:
         status: Optional[Union[str, _models.JobStatus]] = None,
         agent_name: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.OptimizationJobListItem"]:
+    ) -> ItemPaged["_models.AgentOptimizationJobListItem"]:
         """List agent optimization jobs.
 
         Lists optimization jobs with cursor pagination and optional status or agent name filters.
@@ -17514,14 +17522,14 @@ class BetaAgentsOperations:
         :paramtype status: str or ~azure.ai.projects.models.JobStatus
         :keyword agent_name: Filter to jobs targeting this agent name. Default value is None.
         :paramtype agent_name: str
-        :return: An iterator like instance of OptimizationJobListItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.OptimizationJobListItem]
+        :return: An iterator like instance of AgentOptimizationJobListItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentOptimizationJobListItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OptimizationJobListItem]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AgentOptimizationJobListItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -17553,7 +17561,7 @@ class BetaAgentsOperations:
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.OptimizationJobListItem],
+                List[_models.AgentOptimizationJobListItem],
                 deserialized.get("data", []),
             )
             if cls:
@@ -17582,7 +17590,7 @@ class BetaAgentsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
+    def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _models.AgentOptimizationJob:
         """Cancel an agent optimization job.
 
         Requests cancellation of a running or queued job and returns an error if the job is already in
@@ -17590,8 +17598,8 @@ class BetaAgentsOperations:
 
         :param job_id: The ID of the job to cancel. Required.
         :type job_id: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
+        :return: AgentOptimizationJob. The AgentOptimizationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -17605,7 +17613,7 @@ class BetaAgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OptimizationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentOptimizationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_agents_cancel_optimization_job_request(
             job_id=job_id,
@@ -17642,7 +17650,7 @@ class BetaAgentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.OptimizationJob, response.json())
+            deserialized = _deserialize(_models.AgentOptimizationJob, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
