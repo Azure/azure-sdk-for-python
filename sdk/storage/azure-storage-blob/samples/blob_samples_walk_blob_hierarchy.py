@@ -36,12 +36,18 @@ C: container3
 C: container4
 """
 
+import io
 import os
 import sys
 
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobServiceClient
 from azure.storage.blob import BlobPrefix
+
+# Ensure non-ASCII blob/container names don't crash printing on consoles
+# using a limited codec (e.g. cp1252 on Windows).
+if isinstance(sys.stdout, io.TextIOWrapper):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 try:
     CONNECTION_STRING = os.environ["STORAGE_CONNECTION_STRING"]
