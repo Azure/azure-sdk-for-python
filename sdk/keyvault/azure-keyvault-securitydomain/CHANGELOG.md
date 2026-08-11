@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2026-08-11)
+## 1.0.0b2 (Unreleased)
 
 ### Features Added
 
@@ -11,13 +11,6 @@
 - Renamed internal class "Error" to "KeyVaultErrorError" to align with other KeyVault SDKs.
 
 ### Bugs Fixed
-
-- Fixed a replay bug in the challenge authentication policy where a request copy stashed on the shared policy
-  instance was never cleared, allowing one request's method, URL, and body to leak into a later, unrelated request
-  made by the same client (for example, after an Entra ID Continuous Access Evaluation challenge). The original
-  request is now stored per-request instead of on the policy instance. This mirrors the fix already applied to
-  `azure-keyvault-keys` and `azure-keyvault-administration` in
-  [#47742](https://github.com/Azure/azure-sdk-for-python/pull/47742).
 
 ### Other Changes
 
