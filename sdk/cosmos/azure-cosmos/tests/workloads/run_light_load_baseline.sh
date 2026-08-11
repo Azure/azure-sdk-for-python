@@ -9,17 +9,21 @@
 # from the loaded phases are not meaningful as an SLA reference.
 #
 # Backend is selectable so the same probe runs both engines:
+#   source ./profiling_activate.sh                              # required first
 #   ./run_light_load_baseline.sh 480                         # core-python + rust
 #   BASELINE_BACKENDS=rust ./run_light_load_baseline.sh 480  # rust only
 # Override the verified default only when intentionally testing a different rate:
 #   BASELINE_READ_RPS=100 ./run_light_load_baseline.sh 480
-# Results land in perfdb/perfresults-v2 tagged
+# Results use the active profiling session's RUN_ID and land in
+# perfdb/perfresults-v2 tagged
 # PERF_WORKLOAD_ID=baseline-<op>-<backend>-<run-id>; read them with latency_report.py.
 set -uo pipefail
 cd "$(dirname "$0")"
-source ~/perf_secrets.env
-source ./perf_env.sh >/dev/null 2>&1 || exit 1
-source ~/venvs/perfdrill/bin/activate
+source ./profiling_common.sh
+profiling_load_env || exit 2
+: "${RUN_ID:?source ./profiling_activate.sh before running the baseline}"
+: "${ARTIFACTS:?source ./profiling_activate.sh before running the baseline}"
+profiling_load_session "${ARTIFACTS}" || exit 2
 
 DURATION="${1:-480}"
 OPERATIONS=(${BASELINE_OPERATIONS:-read})
@@ -36,10 +40,7 @@ if ! [[ "${BASELINE_READ_RPS}" =~ ^[0-9]+([.][0-9]+)?$ ]] ||
   exit 2
 fi
 
-_ns="$(date +%N 2>/dev/null || echo 000000000)"
-[[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
-RUN_ID="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
-LOG_DIR="logs/light-load-baseline-${RUN_ID}"
+LOG_DIR="${ARTIFACTS}/light-load-baseline-${RUN_ID}"
 mkdir -p "$LOG_DIR"
 
 # The isolated probe container keeps this off the loaded phases' data. Seed it

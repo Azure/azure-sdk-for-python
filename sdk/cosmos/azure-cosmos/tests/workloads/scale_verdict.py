@@ -20,7 +20,7 @@ turns the sweep rows into an explicit verdict per (op, backend):
   4. Crossover. Per op, the rust-vs-core throughput ratio across shared concurrency
      levels (geomean and range).
 
-  5. Provenance gate (enforced, exits non-zero). Every point's runtime_backend must
+  5. Backend match check (enforced, exits non-zero). Every point's runtime_backend must
      match its config_backend label, so a "rust" point that fell back to
      core-python is never reported as a rust ceiling. Empty reporting windows
      (count 0/None, e.g. cold-start or idle intervals) carry no engine label and
@@ -32,8 +32,8 @@ USAGE:
       [--warmup 600] [--knee-gain 0.05]
 
 EXIT CODE:
-  0 = provenance gate passed (the scaling verdict is trustworthy).
-  1 = provenance gate failed (a point's runtime_backend did not match its label).
+  0 = backend match check passed (the scaling verdict is trustworthy).
+  1 = backend match check failed (a point's runtime_backend did not match its label).
   2 = configuration error (env vars not set, no rows for the stamp).
 """
 
@@ -42,7 +42,7 @@ import math
 import os
 import sys
 
-import perf_provenance_gate as _prov
+import perf_driver_commit_gate as _driver_gate
 
 try:
     from azure.cosmos import CosmosClient
@@ -115,7 +115,7 @@ def main():
     ap.add_argument("--warmup", type=float, default=WARMUP_S, help="warmup seconds to drop")
     ap.add_argument("--knee-gain", type=float, default=KNEE_GAIN,
                     help="fractional throughput gain below which a level is a plateau")
-    _prov.add_cli_flag(ap)
+    _driver_gate.add_cli_flag(ap)
     args = ap.parse_args()
 
     container = _connect()
@@ -165,7 +165,7 @@ def main():
             rb = r.get("runtime_backend")
             labels[key][rb] = labels[key].get(rb, 0) + 1
 
-    # ---- provenance gate (enforced) ----
+    # ---- backend match check (enforced) ----
     print("\n### GATE: backend purity per (op, backend, concurrency) ###")
     gate_fail = False
     for key in sorted(labels):
@@ -185,10 +185,10 @@ def main():
     if not gate_fail:
         print("  OK -- every point's runtime_backend matches its config_backend label.")
 
-    # ---- Rust driver provenance gate (enforced; scoped to rust rows) ----
-    prov_ok, prov_lines = _prov.evaluate(rows, strict=_prov.strict_from(args))
+    # ---- Rust driver commit check (enforced; scoped to rust rows) ----
+    commit_ok, commit_lines = _driver_gate.evaluate(rows, strict=_driver_gate.strict_from(args))
     print()
-    for _l in prov_lines:
+    for _l in commit_lines:
         print(_l)
 
     # Reduce each cell to a pooled point.
@@ -266,9 +266,9 @@ def main():
                 print(f"    -> rust/core throughput: geomean {geomean(sp):.2f}x "
                       f"(range {min(sp):.2f}-{max(sp):.2f}x) across {len(sp)} shared level(s).")
 
-    overall_fail = gate_fail or not prov_ok
+    overall_fail = gate_fail or not commit_ok
     print("\n### GATE:", "FAIL" if overall_fail else "PASS",
-          "(backend purity + rust driver provenance) ###")
+          "(backend purity + rust driver commit) ###")
     sys.exit(1 if overall_fail else 0)
 
 

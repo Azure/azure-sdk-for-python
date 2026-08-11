@@ -244,5 +244,13 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
             .get_type_bound::<wire::UnsupportedQueryFeatureError>(),
     )?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
+    m.add(
+        "__python_commit__",
+        env!("AZURE_COSMOS_BUILD_PYTHON_COMMIT"),
+    )?;
+    m.add(
+        "__rust_driver_commit__",
+        env!("AZURE_COSMOS_BUILD_RUST_DRIVER_COMMIT"),
+    )?;
     Ok(())
 }

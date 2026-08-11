@@ -7,7 +7,7 @@ plateaus looks flat, while a whole-run regression over the same trace reports a
 fake slope because it spans the step. This script produces a reproducible verdict
 per (config_backend, operation):
 
-  1. Provenance gate (enforced, exits non-zero). Every row for a backend must
+  1. Backend match check (enforced, exits non-zero). Every row for a backend must
      carry the matching runtime_backend ('core-python' or 'AsyncRustBackend'). A
      blank or mismatched value means the engine is unproven, so the run fails.
 
@@ -30,8 +30,8 @@ USAGE:
       --prefix  workload_id prefix for the leak sweep (default 'leak-').
 
 EXIT CODE:
-  0 = provenance gate passed (verdicts are trustworthy).
-  1 = provenance gate failed (blank/mismatched runtime_backend rows).
+  0 = backend match check passed (verdicts are trustworthy).
+  1 = backend match check failed (blank/mismatched runtime_backend rows).
   2 = configuration error (env vars not set, no rows for the stamp).
 """
 
@@ -39,7 +39,7 @@ import argparse
 import os
 import sys
 
-import perf_provenance_gate as _prov
+import perf_driver_commit_gate as _driver_gate
 
 try:
     from azure.cosmos import CosmosClient
@@ -207,7 +207,7 @@ def spark(ys):
 
 
 # runtime_backend (the live class) that each config_backend label must resolve
-# to. A row that does not match -- or is None/blank -- fails the provenance gate.
+# to. A row that does not match -- or is None/blank -- fails the backend match check.
 _EXPECTED_RUNTIME = {"core-python": {"core-python"}, "rust": {"AsyncRustBackend"}}
 
 
@@ -248,7 +248,7 @@ def main():
     ap = argparse.ArgumentParser(description="Automated leak verdict.")
     ap.add_argument("--stamp", default=None, help="run stamp YYYYMMDD-HHMMSS (default: latest)")
     ap.add_argument("--prefix", default="leak-", help="workload_id prefix (default 'leak-')")
-    _prov.add_cli_flag(ap)
+    _driver_gate.add_cli_flag(ap)
     args = ap.parse_args()
 
     container = _connect()
@@ -274,7 +274,7 @@ def main():
         print(f"ERROR: no result rows for stamp {stamp}.", file=sys.stderr)
         sys.exit(2)
 
-    # ---- provenance gate (enforced) ----
+    # ---- backend match check (enforced) ----
     grp = {}                                  # (config_backend, op) -> [(elapsed, rss)]
     labels = {}                               # (config_backend, op) -> {runtime_backend: count}
     err_docs = {}                             # (config_backend, op) -> count of error documents
@@ -284,7 +284,7 @@ def main():
         key = (bk, op)
         # Error documents are a separate doc type: perf_reporter writes them with an
         # error_message and none of the measurement fields -- no memory_bytes,
-        # elapsed_seconds, or runtime_backend. They must stay out of the provenance
+        # elapsed_seconds, or runtime_backend. They must stay out of the backend match
         # gate, or their missing runtime_backend reads as a None "mismatch" and fails
         # a clean run. Tally them instead, so a real error surge is still visible.
         if r.get("memory_bytes") is None:
@@ -313,12 +313,12 @@ def main():
         for (bk, op), n in sorted(err_docs.items()):
             print(f"    {bk:11s} {op:11s} error_docs={n}")
     print("GATE:", "FAIL" if gate_fail else "PASS",
-          "(None/blank/mismatched runtime_backend rows indicate provenance not proven)")
+          "(None/blank/mismatched runtime_backend rows mean the backend is unconfirmed)")
 
-    # ---- Rust driver provenance gate (enforced; scoped to rust rows) ----
-    prov_ok, prov_lines = _prov.evaluate(rows, strict=_prov.strict_from(args))
+    # ---- Rust driver commit check (enforced; scoped to rust rows) ----
+    commit_ok, commit_lines = _driver_gate.evaluate(rows, strict=_driver_gate.strict_from(args))
     print()
-    for _l in prov_lines:
+    for _l in commit_lines:
         print(_l)
 
     backends = sorted({k[0] for k in grp})
@@ -372,7 +372,7 @@ def main():
                 return "n/a"
             print(f"{op:11s} {rrss:8.0f} {crss:8.0f} {fmt(rr):>18s} {fmt(cr):>18s}")
 
-    sys.exit(1 if (gate_fail or not prov_ok) else 0)
+    sys.exit(1 if (gate_fail or not commit_ok) else 0)
 
 
 if __name__ == "__main__":

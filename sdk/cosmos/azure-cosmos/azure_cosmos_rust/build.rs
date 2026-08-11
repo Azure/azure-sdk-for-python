@@ -27,6 +27,8 @@ mod query_plan_binary;
 
 const SOURCE_DIRECTORY_ENV: &str = "AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR";
 const STAGING_ACTIVE_ENV: &str = "AZURE_COSMOS_QUERYPLANINTEROP_STAGING_ACTIVE";
+const PYTHON_COMMIT_ENV: &str = "AZURE_COSMOS_BUILD_PYTHON_COMMIT";
+const RUST_DRIVER_COMMIT_ENV: &str = "AZURE_COSMOS_BUILD_RUST_DRIVER_COMMIT";
 
 fn primary_library_name(target_os: &str) -> &'static str {
     match target_os {
@@ -50,6 +52,15 @@ fn is_native_library(path: &Path, target_os: &str) -> bool {
 }
 
 fn main() {
+    // Profiling builds supply both source commits explicitly. Embedding them in
+    // the extension lets a later run prove that the binary it imported matches
+    // the currently checked-out sources, even when compilation is skipped.
+    for variable in [PYTHON_COMMIT_ENV, RUST_DRIVER_COMMIT_ENV] {
+        println!("cargo:rerun-if-env-changed={variable}");
+        let value = env::var(variable).unwrap_or_else(|_| "unknown".to_string());
+        println!("cargo:rustc-env={variable}={value}");
+    }
+
     println!("cargo:rerun-if-env-changed={SOURCE_DIRECTORY_ENV}");
     println!("cargo:rerun-if-env-changed={STAGING_ACTIVE_ENV}");
 

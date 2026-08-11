@@ -40,13 +40,13 @@ export COSMOS_THROUGHPUT="${COSMOS_THROUGHPUT:-100000}"
 # The VM's region, listed first, so the client prefers the local replica.
 export COSMOS_PREFERRED_LOCATIONS="${COSMOS_PREFERRED_LOCATIONS:-West US 2}"
 
-# ---- Driver provenance (computed ONCE, inherited by every child) ----------
+# ---- Driver commit (computed ONCE, inherited by every child) --------------
 # The exact azure-sdk-for-rust DRIVER commit the binding was built against. We
 # resolve the sibling clone and export it here so every process in a run -- incl.
 # the N children of a scale-out point -- stamps the SAME driver commit on its rows
 # without each one shelling out to git (and so a mid-run rebuild can't split one
-# run's provenance). perf_config.py falls back to resolving it per process when
-# this is unset. Best-effort: a missing clone/git must never fail a run.
+# run across two driver builds). perf_config.py falls back to resolving it per
+# process when this is unset. Best-effort: a missing clone/git must never fail a run.
 if [[ -z "${PERF_DRIVER_COMMIT:-}" ]]; then
   _hdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
   _driver_dir="${AZURE_SDK_FOR_RUST_DIR:-}"
@@ -119,7 +119,7 @@ echo "perf_env.sh sourced: account=${COSMOS_URI} db=${COSMOS_DATABASE} cont=${CO
 # ---- Run manifest (post-hoc reproducibility / apples-to-apples audit) ------
 # WHY: a row's numbers are only trustworthy if we can later PROVE which code,
 # host, container and load policy produced them. The reporter now stamps the
-# load-shape config on every row, but the BUILD and HOST provenance (commit, the
+# load-shape config on every row, but the BUILD and HOST details (commit, the
 # Rust extension actually loaded, rustc/python versions, the VM and its core
 # count, the RU budget) live nowhere in the rows. write_run_manifest captures all
 # of that ONCE per run into the log dir, next to the per-cell logs, so a future
@@ -131,11 +131,15 @@ write_run_manifest() {
   mkdir -p "${log_dir}" 2>/dev/null || true
   # All probes are best-effort: a missing tool must never abort a 22h run.
   local git_sha git_branch git_dirty rustc_ver py_ver cosmos_ver ext_ver ext_path
+  local ext_python_commit ext_driver_commit
   local ext_mtime kernel host nproc_n mem_kb vm_sku vm_zone now_utc
   local driver_dir driver_sha driver_branch driver_dirty _drv_root
   git_sha="$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse HEAD 2>/dev/null || echo unknown)"
   git_branch="$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
-  if git -C "$(dirname "${BASH_SOURCE[0]}")" diff --quiet 2>/dev/null; then git_dirty=false; else git_dirty=true; fi
+  # ANY local modification, not just unstaged tracked edits: 'git diff --quiet'
+  # would report clean for staged or newly added files, so the commit recorded
+  # here would not describe what was actually built.
+  if [[ -n "$(git -C "$(dirname "${BASH_SOURCE[0]}")" status --porcelain --untracked-files=normal 2>/dev/null)" ]]; then git_dirty=true; else git_dirty=false; fi
   # The azure-sdk-for-rust DRIVER commit. git_sha above is THIS repo (harness +
   # binding); the driver we build from is a sibling clone (see
   # azure_cosmos_rust/Cargo.toml path dep). Resolve it via this clone's git
@@ -153,13 +157,16 @@ write_run_manifest() {
   fi
   driver_sha="$(git -C "${driver_dir}" rev-parse HEAD 2>/dev/null || echo unknown)"
   driver_branch="$(git -C "${driver_dir}" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
-  if git -C "${driver_dir}" diff --quiet 2>/dev/null; then driver_dirty=false; else driver_dirty=true; fi
+  # Same rule as git_dirty above: staged and untracked changes count.
+  if [[ -n "$(git -C "${driver_dir}" status --porcelain --untracked-files=normal 2>/dev/null)" ]]; then driver_dirty=true; else driver_dirty=false; fi
   rustc_ver="$(rustc --version 2>/dev/null || echo unknown)"
   py_ver="$(python3 -c 'import platform;print(platform.python_version())' 2>/dev/null || echo unknown)"
   cosmos_ver="$(python3 -c 'import azure.cosmos as c;print(getattr(c,"__version__","unknown"))' 2>/dev/null || echo unknown)"
   # The Rust extension actually importable (proves WHICH binding build is live)
-  # and whether it carries the provenance counter (operation_count).
+  # and whether it carries the operation counter (operation_count).
   ext_ver="$(python3 -c 'from azure.cosmos import _rust;print(getattr(_rust,"__version__","unknown"))' 2>/dev/null || echo none)"
+  ext_python_commit="$(python3 -c 'from azure.cosmos import _rust;print(getattr(_rust,"__python_commit__","unknown"))' 2>/dev/null || echo unknown)"
+  ext_driver_commit="$(python3 -c 'from azure.cosmos import _rust;print(getattr(_rust,"__rust_driver_commit__","unknown"))' 2>/dev/null || echo unknown)"
   local ext_has_counter
   ext_has_counter="$(python3 -c 'from azure.cosmos import _rust;print(hasattr(_rust,"operation_count"))' 2>/dev/null || echo unknown)"
   ext_path="$(python3 -c 'from azure.cosmos import _rust;print(_rust.__file__)' 2>/dev/null || echo none)"
@@ -188,7 +195,9 @@ write_run_manifest() {
     "python": "${py_ver}",
     "azure_cosmos": "${cosmos_ver}",
     "rust_extension_version": "${ext_ver}",
-    "rust_extension_has_provenance_counter": "${ext_has_counter}",
+    "rust_extension_python_commit": "${ext_python_commit}",
+    "rust_extension_driver_commit": "${ext_driver_commit}",
+    "rust_extension_has_operation_counter": "${ext_has_counter}",
     "rust_extension_path": "${ext_path}",
     "rust_extension_mtime_utc": "${ext_mtime}"
   },
@@ -215,8 +224,13 @@ write_run_manifest() {
     "request_timeout_s": "${COSMOS_REQUEST_TIMEOUT}",
     "arrival_rate": "${WORKLOAD_ARRIVAL_RATE}",
     "max_inflight": "${WORKLOAD_MAX_INFLIGHT}",
+    "operations": "${WORKLOAD_OPERATIONS:-}",
+    "use_proxy": "${WORKLOAD_USE_PROXY:-false}",
     "use_sync": "${WORKLOAD_USE_SYNC}",
     "gc_freeze": "${WORKLOAD_GC_FREEZE}",
+    "loop_lag_monitor": "${WORKLOAD_LOOP_LAG_MONITOR:-true}",
+    "log_level": "${COSMOS_LOG_LEVEL:-WARNING}",
+    "diagnostics_logging": "${COSMOS_ENABLE_DIAGNOSTICS_LOGGING:-false}",
     "multi_write": "${COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS:-false}",
     "report_interval_s": "${PERF_REPORT_INTERVAL}"
   },
@@ -229,7 +243,7 @@ EOF
   echo "run manifest written: ${out}"
   if [[ "${ext_has_counter}" != "True" && "${COSMOS_BACKEND:-}" == "rust" ]]; then
     echo "    !! WARNING: rust backend selected but the loaded _rust extension has" >&2
-    echo "       no operation_count() -- binding provenance will be UNKNOWN. Rebuild" >&2
+    echo "       no operation_count() -- the binding build will be UNKNOWN. Rebuild" >&2
     echo "       the extension before trusting 'rust' rows." >&2
   fi
 }

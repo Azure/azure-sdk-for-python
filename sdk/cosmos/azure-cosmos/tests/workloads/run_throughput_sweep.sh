@@ -125,7 +125,7 @@ echo "=== Running post-run integrity gate (Phase C) ==="
 # Same gate Phase A runs: prove every cell did real, low-error work on both
 # backends, dropped no reporting window, and -- critically for the drill's
 # biggest error source -- that each row actually ran on the engine it claims
-# (binding_calls provenance, --prefix sweep-). A failure here fails the script
+# (binding_calls check, --prefix sweep-). A failure here fails the script
 # (the sweep itself is already done) so an unattended run cannot pass unnoticed.
 overall_rc=0
 if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "sweep-"; then
@@ -141,11 +141,11 @@ echo "=== Running automated scaling verdict (Phase C) ==="
 # chart by eye" instruction. scale_verdict.py pools throughput per point, finds
 # the saturation knee automatically (first level whose gain over the previous one
 # drops below 5%), flags error/CPU saturation, and reports the rust-vs-core
-# crossover -- all reproducibly. It exits non-zero on a provenance violation.
+# crossover -- all reproducibly. It exits non-zero when a row names the wrong backend.
 if python3 scale_verdict.py --stamp "${STAMP}" --prefix "sweep-"; then
-  echo "=== scaling verdict provenance gate PASSED ==="
+  echo "=== scaling verdict backend check PASSED ==="
 else
-  echo "!! scaling verdict provenance gate FAILED -- explain the flagged points before trusting the knee/crossover." >&2
+  echo "!! scaling verdict backend check FAILED -- explain the flagged points before trusting the knee/crossover." >&2
   overall_rc=1
 fi
 
@@ -159,7 +159,7 @@ echo "          timeout --signal=INT ${DURATION_SECONDS}s python3 workload.py ) 
 
 echo
 if [[ "${overall_rc}" != "0" ]]; then
-  echo "=== Phase C FAILED (a provenance/integrity gate failed); exit ${overall_rc}. ===" >&2
+  echo "=== Phase C FAILED (a driver-commit or integrity check failed); exit ${overall_rc}. ===" >&2
 else
   echo "=== Phase C OK (all gates passed). ==="
 fi

@@ -24,7 +24,7 @@ import argparse
 import os
 import sys
 
-import perf_provenance_gate as _prov
+import perf_driver_commit_gate as _driver_gate
 
 try:
     from azure.cosmos import CosmosClient
@@ -232,7 +232,7 @@ def main():
         default=10.0,
         help="exclusive Rust p99 ceiling for --point-read-gate (default 10)",
     )
-    _prov.add_cli_flag(ap)
+    _driver_gate.add_cli_flag(ap)
     args = ap.parse_args()
 
     container = _connect()
@@ -284,15 +284,15 @@ def main():
                 f"{_pctile_ms(py,99.9):>8.2f} {_pctile_ms(ru,99.9):>8.2f}"
             )
 
-    # ---- Rust driver provenance gate (enforced; scoped to rust rows) ----
+    # ---- Rust driver commit check (enforced; scoped to rust rows) ----
     commits, missing, rust_rows = prov_info
-    prov_ok, prov_lines = _prov.decide(
-        commits, missing, rust_rows, strict=_prov.strict_from(args)
+    commit_ok, commit_lines = _driver_gate.decide(
+        commits, missing, rust_rows, strict=_driver_gate.strict_from(args)
     )
     print()
-    for _l in prov_lines:
+    for _l in commit_lines:
         print(_l)
-    print("\n### GATE:", "FAIL" if not prov_ok else "PASS", "(rust driver provenance) ###")
+    print("\n### GATE:", "FAIL" if not commit_ok else "PASS", "(rust driver commit) ###")
 
     latency_ok = True
     if args.point_read_gate:
@@ -343,7 +343,7 @@ def main():
             print(f"  [{'PASS' if ok else 'FAIL'}] {message}")
         print("### POINT-READ GATE:", "PASS" if latency_ok else "FAIL", "###")
 
-    sys.exit(0 if prov_ok and latency_ok else 1)
+    sys.exit(0 if commit_ok and latency_ok else 1)
 
 
 if __name__ == "__main__":

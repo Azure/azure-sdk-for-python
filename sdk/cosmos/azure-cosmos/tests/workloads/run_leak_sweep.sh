@@ -89,7 +89,7 @@ echo "    ops = ${OPERATIONS[*]} (closed-loop, one op per process)"
 echo "    logs -> ${LOG_DIR}"
 echo
 
-# Overall script status. A real child failure or a failed provenance/integrity
+# Overall script status. A real child failure or a failed driver-commit or integrity
 # gate flips this to 1 so the sweep exits non-zero (an unattended/CI run cannot
 # silently "pass"). Substantive verdict findings (a WATCH/STAIRCASE op) stay
 # informational -- only hard failures fail the script.
@@ -153,13 +153,13 @@ echo "=== Running automated leak verdict (Phase B) ==="
 # Replaces the old "plot memory_bytes vs elapsed_seconds and judge the slope by
 # eye" instruction. leak_verdict.py fits the final-plateau slope with a 95% CI
 # (so "flat" is statistical, not visual), cross-checks with a robust Theil-Sen
-# slope, detects staircase steps, and enforces backend provenance. Informational
+# slope, detects staircase steps, and enforces that rows name the expected backend. Informational
 # at the sweep level (a WATCH/STAIRCASE op is a finding, not a harness failure),
-# but it exits non-zero on a provenance violation so a mislabeled run is loud.
+# but it exits non-zero when a row names the wrong backend so a mislabeled run is loud.
 if python3 leak_verdict.py --stamp "${STAMP}" --prefix "leak-"; then
-  echo "=== leak verdict provenance gate PASSED ==="
+  echo "=== leak verdict backend check PASSED ==="
 else
-  echo "!! leak verdict provenance gate FAILED -- explain the flagged rows before trusting the verdict." >&2
+  echo "!! leak verdict backend check FAILED -- explain the flagged rows before trusting the verdict." >&2
   overall_rc=1
 fi
 
@@ -167,7 +167,7 @@ echo
 echo "=== Running post-run integrity gate (Phase B) ==="
 # Close the gap that only Phase A used to gate: prove no reporting window was
 # dropped (a dropped BAD window could hide a leak step) and that every "rust" row
-# actually ran on Rust (binding_calls provenance, --prefix leak-). A failure here
+# actually ran on Rust (binding_calls check, --prefix leak-). A failure here
 # fails the sweep so a mislabeled/incomplete run cannot pass unnoticed.
 if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "leak-"; then
   echo "=== integrity gate PASSED ==="
@@ -178,7 +178,7 @@ fi
 
 echo
 if [[ "${overall_rc}" != "0" ]]; then
-  echo "=== Phase B FAILED (a child process failed or a provenance/integrity gate failed); exit ${overall_rc}. ===" >&2
+  echo "=== Phase B FAILED (a child process failed or a driver-commit or integrity check failed); exit ${overall_rc}. ===" >&2
 else
   echo "=== Phase B OK (all batches clean, all gates passed). ==="
 fi

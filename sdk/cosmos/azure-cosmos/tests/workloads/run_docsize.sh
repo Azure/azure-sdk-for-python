@@ -66,7 +66,7 @@ for prof in "${PROFILES[@]}"; do
     # op field is the real op (create) so latency_report's _OP_ORDER matches; the
     # profile is folded into the backend segment, so _split_wid reads
     # backend="<bk>-<profile>" (e.g. core-python-large) and shows one row per
-    # backend/profile. "rust" stays inside the backend string so the provenance
+    # backend/profile. "rust" stays inside the backend string so the driver commit
     # gate still fires on rust rows.
     wid="docsize-create-${bk}-${prof}-${STAMP}"
     log="${LOG_DIR}/${wid}.log"
@@ -86,13 +86,13 @@ for prof in "${PROFILES[@]}"; do
 done
 echo "=== Doc-size run complete. stamp=${STAMP} ==="
 echo
-echo "=== Running doc-size report + provenance gate ==="
-# Lightweight post-run gate for this mini-phase: validate Rust driver provenance
+echo "=== Running doc-size report + driver commit check ==="
+# Lightweight post-run gate for this mini-phase: validate the Rust driver commit
 # and print pooled create latency per backend/profile for this stamp.
 if python3 latency_report.py --prefix "docsize-" --run-id "${STAMP}"; then
-  echo "=== doc-size report provenance gate PASSED ==="
+  echo "=== doc-size report driver commit check PASSED ==="
 else
-  echo "!! doc-size report provenance gate FAILED -- inspect rows before trusting payload-size metrics." >&2
+  echo "!! doc-size report driver commit check FAILED -- inspect rows before trusting payload-size metrics." >&2
   overall_rc=1
 fi
 exit "${overall_rc}"

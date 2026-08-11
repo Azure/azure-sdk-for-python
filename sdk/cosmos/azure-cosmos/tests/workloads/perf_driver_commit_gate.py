@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Shared Rust-driver provenance gate for the perf report/verdict tools.
+"""Shared check that every Rust result row names one known driver build.
 
 Every headline number must be tied to ONE known azure-sdk-for-rust driver build.
 A rust result set is trustworthy only if every rust row carries the same,
@@ -24,12 +24,12 @@ across all rows (OK)" -- the exact claim the gate exists to refuse. Any value in
 ``UNSTAMPED_COMMIT_VALUES`` therefore counts as no commit at all.
 
 Reading a historical run that predates driver stamping is still possible: pass
-``--allow-missing-provenance`` (or set ``PERF_ALLOW_MISSING_PROVENANCE=1``) to
+``--allow-missing-driver-commit`` (or set ``PERF_ALLOW_MISSING_DRIVER_COMMIT=1``) to
 downgrade the gate back to a warning.
 """
 import os
 
-HEADER = "### Rust driver provenance (azure-sdk-for-rust commit) ###"
+HEADER = "### Rust driver commit (azure-sdk-for-rust) ###"
 
 # Values that name no build. ``perf_config._get_git_sha`` returns "unknown" when
 # git is unavailable; the rest are the usual stand-ins for an absent field. All
@@ -72,7 +72,7 @@ def collect(rows):
 
 
 def decide(commits, missing, rust_rows, strict=True):
-    """Pure decision + human-readable lines from pre-aggregated provenance facts.
+    """Pure decision + human-readable lines from pre-aggregated commit facts.
 
     ``commits`` is the sorted list of distinct non-empty rust driver commits,
     ``missing`` the count of rust rows with no commit, ``rust_rows`` the total
@@ -81,13 +81,13 @@ def decide(commits, missing, rust_rows, strict=True):
     """
     lines = [HEADER]
     if rust_rows == 0:
-        lines.append("  no rust rows in this set -- driver provenance not applicable.")
+        lines.append("  no rust rows in this set -- no driver commit to check.")
         return True, lines
     ok = True
     if missing:
         lines.append(
             f"  {missing} rust row(s) carry NO driver_commit (absent or a placeholder "
-            "such as 'unknown') -- provenance unproven. "
+            "such as 'unknown') -- the driver build is unknown. "
             "Stamp the build (PERF_DRIVER_COMMIT / rebuild) and re-run."
         )
         if strict:
@@ -120,16 +120,16 @@ def evaluate(rows, strict=True):
 def add_cli_flag(ap):
     """Register the standard override flag on an argparse parser."""
     ap.add_argument(
-        "--allow-missing-provenance",
+        "--allow-missing-driver-commit",
         action="store_true",
-        help="downgrade the rust driver-provenance gate from FAIL to a warning "
+        help="downgrade the rust driver-commit check from FAIL to a warning "
         "(use only to read historical runs that predate driver stamping).",
     )
 
 
 def strict_from(args):
-    """Strict unless the override flag or PERF_ALLOW_MISSING_PROVENANCE is set."""
-    env = os.environ.get("PERF_ALLOW_MISSING_PROVENANCE", "").strip().lower()
+    """Strict unless the override flag or PERF_ALLOW_MISSING_DRIVER_COMMIT is set."""
+    env = os.environ.get("PERF_ALLOW_MISSING_DRIVER_COMMIT", "").strip().lower()
     if env in ("1", "true", "yes"):
         return False
-    return not getattr(args, "allow_missing_provenance", False)
+    return not getattr(args, "allow_missing_driver_commit", False)

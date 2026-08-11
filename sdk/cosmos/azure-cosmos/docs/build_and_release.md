@@ -20,7 +20,7 @@ Maturin builds the `azure_cosmos_rust` binding against a sibling
 - [4. The output Python can't import yet: `cdylib`](#4-the-output-python-cant-import-yet-cdylib)
 - [5. What Cargo produces for this project](#5-what-cargo-produces-for-this-project)
 - [6. How Maturin, Cargo, and the Python build command work together](#6-how-maturin-cargo-and-the-python-build-command-work-together)
-- [7. How Maturin knows what to do: `pyproject.toml` and the four names](#7-how-maturin-knows-what-to-do-pyprojecttoml-and-the-four-names)
+- [7. How Maturin knows what to do: `pyproject.toml`](#7-how-maturin-knows-what-to-do-pyprojecttoml)
 - [8. What actually ships: the wheel](#8-what-actually-ships-the-wheel)
 - [9. Why QueryPlanInterop must be shipped beside `_rust`](#9-why-queryplaninterop-must-be-shipped-beside-_rust)
 - [10. One wheel becomes many: platforms, `abi3`, and `manylinux`](#10-one-wheel-becomes-many-platforms-abi3-and-manylinux)
@@ -467,15 +467,16 @@ where the Python package lives, and why the names must agree.
 
 ---
 
-## 7. How Maturin knows what to do: `pyproject.toml` and the four names
+## 7. How Maturin knows what to do: `pyproject.toml`
 
-Maturin's behavior depends on settings it reads from `pyproject.toml`, and
-one of those settings must match a name buried in the Rust source — get them out of sync
-and the build *succeeds* while the import *fails at runtime*, which is a confusing failure
-to debug.
+Maturin needs four pieces of information:
 
+1. Which Rust crate should it compile?
+2. Where are the Python `.py` files?
+3. Where should it install the compiled extension?
+4. Which Python module must that extension initialize when Python loads it?
 
-Here's the relevant `pyproject.toml`:
+The relevant `pyproject.toml` settings provide those answers:
 
 ```toml
 [build-system]
@@ -490,18 +491,62 @@ module-name   = "azure.cosmos._rust"            # the import path of the compile
 features      = ["pyo3/extension-module"]
 ```
 
-Across the whole build there are four names, and only a specific pair
-must match:
+At a high level, the flow is:
 
-| # | Name | Where it's set | Example | Who sees it |
-|---|------|----------------|---------|-------------|
-| 1 | Crate library name | binding `Cargo.toml`, `[lib] name` | `azure_cosmos_rust` | Cargo / the Rust linker (internal) |
-| 2 | Distribution name | release metadata consumed by the selected build backend; currently only `setup.py` carries it | `azure-cosmos` | Customers, after `pip install` |
-| 3 | Python import path | `pyproject.toml`, `module-name` | `azure.cosmos._rust` | The Python code: `from azure.cosmos import _rust` |
-| 4 | `#[pymodule]` function name | the binding's `src/lib.rs` | `_rust` | The Python interpreter, when it loads the `.pyd` |
+```text
+pyproject.toml
+    tells Maturin which Cargo.toml to use
+                 ↓
+Cargo compiles azure_cosmos_rust and its Rust-driver dependency
+                 ↓
+Maturin turns the compiled library into a Python extension
+                 ↓
+Maturin installs it at azure.cosmos._rust
+                 ↓
+Python calls the #[pymodule] function named _rust
+```
 
-Names **3 and 4 must match on the last segment.** Because `module-name = "azure.cosmos._rust"`,
-the Rust entry-point function must be named `_rust`:
+Four names appear across that flow, and each serves a different audience:
+
+### 1. Rust crate library name
+
+The binding's `Cargo.toml` names the Rust library `azure_cosmos_rust`. Cargo uses this internal
+name for its raw build output. Customers do not import that raw filename directly; Maturin later
+gives it the platform-specific Python extension name, such as `_rust.pyd` on Windows or
+`_rust.abi3.so` on Linux.
+
+### 2. Python distribution name
+
+The distribution name is what customers install:
+
+```bash
+pip install azure-cosmos
+```
+
+It also determines the distribution portion of the wheel filename, where the dash is normalized
+to an underscore: `azure_cosmos-...whl`. This name identifies the complete product containing the
+Python files and the compiled extension; it is separate from the Rust crate's internal name.
+
+### 3. Python import path
+
+This setting:
+
+```toml
+module-name = "azure.cosmos._rust"
+```
+
+tells Maturin to install the compiled extension inside the `azure.cosmos` package so Python code
+can run:
+
+```python
+from azure.cosmos import _rust  # type: ignore[attr-defined]  # generated native extension
+```
+
+### 4. PyO3 module function
+
+After Python opens the compiled extension, it needs an initialization entry point that creates the
+module and registers its Python-callable functions. PyO3 supplies that through the `#[pymodule]`
+function in `azure_cosmos_rust/src/lib.rs`:
 
 ```rust
 #[pymodule]
@@ -513,44 +558,33 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
 }
 ```
 
-When CPython loads a compiled extension it calls **one specific function inside it** (the
-"entry point") to build the module. In a PyO3 project that's the `#[pymodule]` function.
-If `fn _rust` is renamed to `fn cosmos_rust` without updating `module-name`, the
-build succeeds, but `import azure.cosmos._rust` fails at run time because CPython opens the
-`.pyd` looking for an entry point called `_rust` and doesn't find it. 
+### The required matching rule
 
-Names 1 and 2 can differ, but both must be configured. The crate name controls Cargo's
-internal library output; separate Python project metadata must keep the distribution named
-`azure-cosmos`. The current Maturin configuration does not yet provide that release metadata,
-so it derives `azure_cosmos_rust==0.1.0` from the binding crate.
+Names 3 and 4 must match on the final segment:
 
-> Name #1 only decides what Cargo calls its *raw* output — `azure_cosmos_rust.dll`
-> on Windows, `libazure_cosmos_rust.so` on Linux — under `target/`. That name never reaches
-> Python: Maturin renames it to `_rust.pyd` on Windows or `_rust.abi3.so` on Linux/macOS
-> and places it in `azure/cosmos/` .
-> So the crate library name is a purely internal, build-time label, which is why the table's
-> "who sees it" column says *Cargo / the Rust linker*. And that single raw file already
-> contains the **driver's** compiled code because the binding lists the driver under
-> `[dependencies]`. There is no separate Cosmos driver `.dll`/`.so` beside it. This
-> does not mean every native dependency is linked into it. In particular, the enabled
-> native-query-plan feature looks for a separate QueryPlanInterop library at runtime.
-> The wheel configuration can place that library and its native dependencies in
-> `azure/cosmos/.libs`; release builds still need approved target-platform artifacts to supply
-> to that configuration.
->
-> **What is "the Rust linker"?** Compiling happens in two phases. First the compiler turns
-> each crate's `.rs` source into a separate chunk of machine code (an "object file") — the
-> binding, the driver, PyO3, Tokio, each compiled on its own. Then the **linker** is the
-> tool that stitches all those separate chunks into **one** loadable file and fills in the
-> cross-references between them — e.g. when the binding's code says "call the driver's
-> `create_item`," the linker writes in the actual location of that function inside the
-> combined file. Cargo runs the linker automatically at the end of a build (it's
-> `link.exe` on Windows, `ld`/`lld` on Linux); it's never invoked by hand. Its output here
-> is the `azure_cosmos_rust.dll` that Maturin then renames to `_rust.pyd`.
+```text
+module-name = "azure.cosmos._rust"
+                              └────┘
+                                  must match
+#[pymodule]
+fn _rust(...)
+   └────┘
+```
+
+If the Rust function is renamed to `cosmos_rust` without changing `module-name`, compilation can
+succeed while `import azure.cosmos._rust` fails at run time. Python opens the extension expecting
+the `_rust` initialization entry point and cannot find it.
+
+The crate library name does not need to match `_rust`; Maturin translates the internal Cargo
+output into the configured Python module path.
+
+
+In one sentence: `pyproject.toml` tells Maturin which Rust crate to compile and where to install
+it; Cargo's library name is internal, while the final segment of `module-name` must match the Rust
+`#[pymodule]` function that Python calls.
 
 `maturin develop` gives a live platform extension in the working tree,
-and everything imports. But that's a local dev environment. Customers don't get a working
-tree — they get a wheel from PyPI. What is a wheel, and what's actually inside the one that
+and everything imports. But that's a local dev environment. Customers get a wheel from PyPI. What is a wheel, and what's actually inside the one that
 ships?
 
 ---
@@ -622,7 +656,7 @@ exactly one platform. So one wheel is no longer enough.
 azure_cosmos-5.0.0-cp39-abi3-win_amd64.whl
 ```
 
-The wheel contains `_rust.pyd`. That file contains the PyO3 binding and the Rust Cosmos driver.
+The wheel contains `_rust.pyd`. 
 It does **not** contain the code that creates a local query plan. That code is in a separate file
 named `Cosmos.QueryPlanInterop.dll`.
 
@@ -638,8 +672,7 @@ This is why a wheel that is meant to provide local query planning needs two nati
 | Linux | `_rust.abi3.so` | `libqueryplaninterop.so` |
 | macOS | `_rust.abi3.so` | `libqueryplaninterop.dylib` |
 
-A **native library** is a compiled `.dll`, `.so`, or `.dylib` file. The operating system loads
-it as machine code. QueryPlanInterop may need other native libraries, so those files must also be
+QueryPlanInterop may need other native libraries, so those files must also be
 included in the wheel.
 
 ### Files installed for a Windows customer
@@ -657,97 +690,101 @@ azure/cosmos/
 `QueryPlanInteropDependency.dll` is only an example name. The real wheel must include every DLL
 that `Cosmos.QueryPlanInterop.dll` needs and that Windows does not already provide.
 
-Linux uses `libqueryplaninterop.so` and macOS uses `libqueryplaninterop.dylib`. Customers do not
-copy these files themselves. They also do not set `PATH`, `LD_LIBRARY_PATH`, or
-`DYLD_LIBRARY_PATH`. The SDK finds the files under its own installed `azure/cosmos/.libs`
-directory.
 
 ### How a release build adds the files
 
-The build sets:
+For an official release, each platform's CI wheel job must receive native files already built for
+that operating system and processor. The job sets:
 
 ```
 AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR=<directory containing the native files>
 ```
 
-For example, a Windows x64 build directory may contain:
+No build converts a Windows DLL into a Linux or macOS library. The QueryPlanInterop owner or
+artifact pipeline must build each one separately:
 
-```
-C:\query-plan\x64\
-├── Cosmos.QueryPlanInterop.dll
-└── QueryPlanInteropDependency.dll
+```text
+Windows x64 build -> Cosmos.QueryPlanInterop.dll
+Linux x64 build   -> libqueryplaninterop.so
+macOS ARM64 build -> libqueryplaninterop.dylib
 ```
 
-The build then runs:
+The directory must contain exactly one primary QueryPlanInterop library for the target platform.
+It also contains additional native files only when that primary library really depends on them.
+`QueryPlanInteropDependency.dll` in the earlier example is a placeholder, not a second file that
+every wheel automatically requires.
+
+For example, the Windows x64 CI job might set:
 
 ```powershell
+$env:AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR = "C:\build-artifacts\query-plan\windows-x64"
 python -m build --wheel
 ```
 
-The steps are:
+That directory might contain only:
 
-1. The Python build code waits if another wheel build from the same checkout is currently
-   copying files into `azure/cosmos/.libs`. It stops waiting and reports an error after
-   600 seconds.
-2. It cleans up after any earlier build that was killed before it finished. That step is
-   described below.
-3. It writes a JSON file in the system temporary directory **before copying anything**. The
-   JSON file lists the file names this build is about to copy.
-4. It copies `.dll` files on Windows, `.so` files on Linux, or `.dylib` files on macOS into
-   `azure/cosmos/.libs`.
-5. `build.rs`, the binding crate's Cargo build script, checks every copied native file before
-   Maturin creates the wheel.
-6. Maturin builds `_rust` and adds `.libs/*` to the wheel.
-7. The Python build code deletes the files listed in the JSON file, removes the JSON file, and
-   removes the temporary `.libs` directory.
+```text
+C:\build-artifacts\query-plan\windows-x64\
+└── Cosmos.QueryPlanInterop.dll
+```
 
-Step 3 has to happen before step 4, and that ordering is the whole reason the JSON file exists.
-Suppose the build process is killed after copying two DLLs but before cleanup. Nothing recorded
-which two. Because the JSON file was already on disk listing all the names this build would
-copy, the next build reads it and deletes exactly those names — the two that were copied, plus
-the ones that never got written, which is harmless. If `.libs` then still contains a file that
-is not listed in the JSON file, the build stops and leaves that file unchanged rather than
-deleting something it does not own.
+or it might contain the primary DLL plus its real native dependencies.
+
+The wheel build then follows this path:
+
+```text
+platform artifact directory
+    -> azure_cosmos_build_backend.py temporarily copies the native files
+    -> source checkout: azure/cosmos/.libs/
+    -> build.rs verifies the files match the target OS and processor
+    -> Maturin packages _rust and .libs/* into the wheel
+    -> the backend removes only the temporary copies from the source checkout
+```
+
+The cleanup does **not** remove the files from the completed wheel. After installation, a Windows
+customer has a layout such as:
+
+```text
+site-packages/azure/cosmos/
+├── _rust.pyd
+└── .libs/
+    └── Cosmos.QueryPlanInterop.dll
+```
+
+The Python Rust backend finds that installed `.libs` directory and tells the Rust driver to load
+QueryPlanInterop from it. This is why the source checkout can be cleaned while the installed SDK
+can still create query plans locally.
+
+The same packaging variable can be set manually when a developer wants to test a wheel build
+locally:
+
+```powershell
+$env:AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR = "C:\query-plan\x64"
+python -m build --wheel
+```
 
 Calling `maturin build` directly skips these copy and cleanup steps. Release wheel builds must
 therefore use `python -m build --wheel`.
 
-An editable build does not copy release DLLs, `.so` files, or `.dylib` files into the source
-checkout. A developer who needs QueryPlanInterop locally can set:
+An editable local build such as `maturin develop --release` deliberately does not package release
+sidecars. To use local query planning, the developer points the running SDK at an external native
+library directory instead:
 
 ```
 AZURE_COSMOS_QUERYPLANINTEROP_DIR=<directory containing the native files>
 ```
+
+Without that runtime setting or an operating-system-visible native library, Rust queries still
+work, but the driver asks the Cosmos Gateway for their query plans.
 
 ### How the build rejects the wrong native file
 
 Each wheel is for one operating system and CPU. The native files under `.libs` must match it.
 
 The check lives in `azure_cosmos_rust/build.rs`, a **build script** — a Rust file Cargo
-compiles and runs before it compiles the crate itself. It reads each native file's header
-through `azure_cosmos_rust/query_plan_binary.rs` and compares the CPU recorded there against
-the target Cargo was told to build for.
+compiles and runs before it compiles the crate itself. 
 
-Concrete Windows values:
-
-- x64 PE machine value: `0x8664`
-- ARM64 PE machine value: `0xAA64`
-
-If the build is creating a `win_amd64` wheel and a DLL has the ARM64 value `0xAA64`, `build.rs`
-panics and the build stops. It checks the main QueryPlanInterop file and every native file
-copied beside it.
-
-The matching check covers:
-
-- PE files on Windows;
-- ELF files on Linux; and
-- Mach-O files on macOS.
-
-For Linux, `build.rs` also checks whether the ELF file is 32-bit or 64-bit. For example, a
-64-bit `manylinux_2_17_x86_64` wheel rejects an `ELFCLASS32` library even if the ELF CPU field
-says x86-64.
-
-### How the installed SDK finds QueryPlanInterop
+### How the installed wheel finds QueryPlanInterop
 
 Both the sync and async Rust backends calculate this directory when they import `_rust`:
 
@@ -780,56 +817,11 @@ the bare name and uses the normal Windows DLL search. Linux and macOS use the sa
 model with `dlopen`. The Linux wheel repair step must make dependent-library paths relative to
 `$ORIGIN`. The macOS equivalent is `@loader_path`.
 
-### What customers see when the library is missing
-
-The package still imports. The SDK does not call the legacy Python query code.
-
-For example:
-
-1. the customer runs a query with the Rust backend;
-2. the driver cannot load `Cosmos.QueryPlanInterop.dll`;
-3. the driver asks the Cosmos Gateway for the query plan; and
-4. the query continues through the Rust path.
-
-Release notes must distinguish these two cases:
-
-- A clean installed wheel loaded QueryPlanInterop and used local query planning.
-- QueryPlanInterop was absent or failed to load, so the query used Gateway planning.
-
-### Three switches that sound like the same switch
-
-A recurring question is whether a customer has to turn something on in their Azure account to
-get local query planning. The answer is no, and the confusion comes from three unrelated
-controls that all sound like "enable native query planning."
-
-| Control | What it is | Where it is set | What it decides |
-|---|---|---|---|
-| `__internal_native_query_plan` | a Cargo build feature | `azure_cosmos_rust/Cargo.toml` | whether the driver's local-planning code and its library loader are compiled into `_rust` at all |
-| `_backend="rust"` | a Python constructor keyword, or the `COSMOS_BACKEND` environment variable | customer code, at `CosmosClient(...)` | whether an eligible query runs on the Rust engine instead of the existing Python path |
-| account metadata | a value the driver reads from the account | the Cosmos DB account | nothing about on/off — see below |
-
-The first is already enabled in this repository, so every `_rust` build contains the loader.
-The second defaults to `core-python`, so a customer who changes nothing keeps the existing
-Python path and never reaches the Rust query engine.
-
-The third is the one that gets misread. The driver reads a `query_engine_configuration` value
-from the account's cached metadata and passes it into QueryPlanInterop as an argument, alongside
-the query text and the partition-key paths. It is an **input to plan generation**, not a switch
-that permits it. When the account returns no such value the driver substitutes an empty default
-and still generates the plan. Gateway query-plan generation is likewise always available and has
-no customer-facing toggle.
-
-So there is no Azure account or service feature flag to request, document, or gate the release
-on. What decides whether a customer gets local planning is entirely on the client side: whether
-the wheel they installed contains QueryPlanInterop, and whether they selected the Rust backend.
 
 ### Remaining release work
 
-The code now builds the `.libs` wheel layout, checks native file types and CPU values, finds the
-installed files from both sync and async clients, and uses Gateway planning when the files are
-missing.
 
-Five release checks are still missing:
+Five release checks - each one is listed here and explained below:
 
 1. **Supply the libraries.** No checked-in Python pipeline sets
    `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR`, so no pipeline currently gives the build the

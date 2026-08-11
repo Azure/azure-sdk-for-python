@@ -25,7 +25,7 @@ and sums their achieved req/s into a per-N throughput curve.
   4. Repeatability. Reruns of the same point (...-rR-...) are pooled and their
      spread (min..max) printed.
 
-  5. Provenance gate (enforced, exits non-zero). Every row's runtime_backend must
+  5. Backend match check (enforced, exits non-zero). Every row's runtime_backend must
      match its config_backend label, and the azure-sdk-for-rust driver commit is
      printed; a mixed-build curve is called out, not silently pooled.
 
@@ -35,8 +35,8 @@ USAGE:
       [--warmup 600]
 
 EXIT CODE:
-  0 = provenance gate passed (the scale-out curve is trustworthy).
-  1 = provenance gate failed (a row's runtime_backend did not match its label).
+  0 = backend match check passed (the scale-out curve is trustworthy).
+  1 = backend match check failed (a row's runtime_backend did not match its label).
   2 = configuration error (env vars not set, no rows for the stamp).
 """
 
@@ -44,7 +44,7 @@ import argparse
 import os
 import sys
 
-import perf_provenance_gate as _prov
+import perf_driver_commit_gate as _driver_gate
 
 try:
     from azure.cosmos import CosmosClient
@@ -115,7 +115,7 @@ def main():
     ap.add_argument("--prefix", default="scaleout-", help="workload_id prefix (default scaleout-)")
     ap.add_argument("--warmup", type=float, default=WARMUP_S,
                     help=f"drop windows with elapsed_seconds <= this (default {WARMUP_S:.0f})")
-    _prov.add_cli_flag(ap)
+    _driver_gate.add_cli_flag(ap)
     args = ap.parse_args()
 
     container = _connect()
@@ -170,7 +170,7 @@ def main():
         d["ruc"] += r.get("ru_count") or 0
         d["syscpu"] = max(d["syscpu"], r.get("system_cpu_percent") or 0)
 
-    # ---- provenance gate (enforced) ----
+    # ---- backend match check (enforced) ----
     print("\n### GATE: backend purity per (op, backend) ###")
     gate_fail = False
     for (op, bk), seen in sorted(labels.items()):
@@ -182,10 +182,10 @@ def main():
     if not gate_fail:
         print("  OK -- every row's runtime_backend matches its config_backend label.")
 
-    # ---- Rust driver provenance gate (enforced; scoped to rust rows) ----
-    prov_ok, prov_lines = _prov.evaluate(rows, strict=_prov.strict_from(args))
+    # ---- Rust driver commit check (enforced; scoped to rust rows) ----
+    commit_ok, commit_lines = _driver_gate.evaluate(rows, strict=_driver_gate.strict_from(args))
     print()
-    for _l in prov_lines:
+    for _l in commit_lines:
         print(_l)
 
     # Point throughput per (op, bk, N, rep) = SUM of the N processes' throughputs.
@@ -260,9 +260,9 @@ def main():
                           f"(x{tp['thr']/base:,.1f} the single-process {base:,.0f} ops/s; "
                           f"efficiency {tp['thr']/(topn*base):.2f}).")
 
-    overall_fail = gate_fail or not prov_ok
+    overall_fail = gate_fail or not commit_ok
     print("\n### GATE:", "FAIL" if overall_fail else "PASS",
-          "(backend purity + rust driver provenance) ###")
+          "(backend purity + rust driver commit) ###")
     sys.exit(1 if overall_fail else 0)
 
 

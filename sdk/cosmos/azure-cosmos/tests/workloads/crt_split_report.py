@@ -29,7 +29,7 @@ import argparse
 import os
 import sys
 
-import perf_provenance_gate as _prov
+import perf_driver_commit_gate as _driver_gate
 
 try:
     from azure.cosmos import CosmosClient
@@ -180,7 +180,7 @@ def main():
     ap.add_argument("--run-id", default=None, help="run id (default: latest)")
     ap.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
     ap.add_argument("--prefix", default="crepro-", help="workload_id prefix (default crepro-)")
-    _prov.add_cli_flag(ap)
+    _driver_gate.add_cli_flag(ap)
     args = ap.parse_args()
 
     container = _connect()
@@ -237,16 +237,16 @@ def main():
             re = _c(ru, 99.9) - _s(ru, 99.9)
             print(f"  {op:8s} {pe:>10.2f} {re:>10.2f} {re-pe:>8.2f}")
 
-    # ---- Rust driver provenance gate (enforced; scoped to rust rows) ----
+    # ---- Rust driver commit check (enforced; scoped to rust rows) ----
     commits, missing, rust_rows = prov_info
-    prov_ok, prov_lines = _prov.decide(
-        commits, missing, rust_rows, strict=_prov.strict_from(args)
+    commit_ok, commit_lines = _driver_gate.decide(
+        commits, missing, rust_rows, strict=_driver_gate.strict_from(args)
     )
     print()
-    for _l in prov_lines:
+    for _l in commit_lines:
         print(_l)
-    print("\n### GATE:", "FAIL" if not prov_ok else "PASS", "(rust driver provenance) ###")
-    sys.exit(0 if prov_ok else 1)
+    print("\n### GATE:", "FAIL" if not commit_ok else "PASS", "(rust driver commit) ###")
+    sys.exit(0 if commit_ok else 1)
 
 
 if __name__ == "__main__":

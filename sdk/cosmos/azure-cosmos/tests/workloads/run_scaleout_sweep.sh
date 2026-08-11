@@ -153,9 +153,9 @@ echo "    workload_id LIKE 'scaleout-%-${STAMP}'."
 echo
 echo "=== Running scale-out report (Phase C) ==="
 if python3 scaleout_report.py --stamp "${STAMP}" --prefix "scaleout-"; then
-  echo "=== scale-out provenance gate PASSED ==="
+  echo "=== scale-out backend check PASSED ==="
 else
-  echo "!! scale-out provenance gate FAILED -- explain the flagged points before trusting the curve." >&2
+  echo "!! scale-out backend check FAILED -- explain the flagged points before trusting the curve." >&2
   overall_rc=1
 fi
 

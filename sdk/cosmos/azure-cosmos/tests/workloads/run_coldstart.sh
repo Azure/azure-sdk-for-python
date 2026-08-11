@@ -84,13 +84,13 @@ for op in "${OPERATIONS[@]}"; do
 done
 echo "=== Cold-start run complete. stamp=${STAMP} ==="
 echo
-echo "=== Running cold-start report + provenance gate ==="
-# Lightweight post-run gate for this mini-phase: validate Rust driver provenance
+echo "=== Running cold-start report + driver commit check ==="
+# Lightweight post-run gate for this mini-phase: validate the Rust driver commit
 # and print first-call pooled distributions for this stamp.
 if python3 coldstart_report.py --prefix "cold-" --stamp "${STAMP}"; then
-  echo "=== cold-start report provenance gate PASSED ==="
+  echo "=== cold-start report driver commit check PASSED ==="
 else
-  echo "!! cold-start report provenance gate FAILED -- inspect rows before trusting cold metrics." >&2
+  echo "!! cold-start report driver commit check FAILED -- inspect rows before trusting cold metrics." >&2
   overall_rc=1
 fi
 exit "${overall_rc}"

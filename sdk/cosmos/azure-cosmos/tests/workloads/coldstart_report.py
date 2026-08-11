@@ -28,7 +28,7 @@ USAGE:
 import argparse
 import sys
 
-import perf_provenance_gate as _prov
+import perf_driver_commit_gate as _driver_gate
 from latency_report import _connect, _latest_run_id, _split_wid
 
 _OP_ORDER = ["read", "create", "upsert", "replace", "delete", "patch"]
@@ -128,7 +128,7 @@ def main():
     )
     ap.add_argument("--stamp", default=None, help="run stamp YYYYMMDD-HHMMSS (default: latest)")
     ap.add_argument("--prefix", default="cold-", help="workload_id prefix (default cold-)")
-    _prov.add_cli_flag(ap)
+    _driver_gate.add_cli_flag(ap)
     args = ap.parse_args()
 
     container = _connect()
@@ -175,13 +175,13 @@ def main():
         print()
 
     commits, missing, rust_rows = prov_info
-    prov_ok, prov_lines = _prov.decide(
-        commits, missing, rust_rows, strict=_prov.strict_from(args)
+    commit_ok, commit_lines = _driver_gate.decide(
+        commits, missing, rust_rows, strict=_driver_gate.strict_from(args)
     )
-    for _l in prov_lines:
+    for _l in commit_lines:
         print(_l)
-    print("\n### GATE:", "FAIL" if not prov_ok else "PASS", "(rust driver provenance) ###")
-    sys.exit(0 if prov_ok else 1)
+    print("\n### GATE:", "FAIL" if not commit_ok else "PASS", "(rust driver commit) ###")
+    sys.exit(0 if commit_ok else 1)
 
 
 if __name__ == "__main__":

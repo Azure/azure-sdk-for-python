@@ -66,13 +66,13 @@ for bk in "${BACKENDS[@]}"; do
 done
 echo "=== Mixed run complete. stamp=${STAMP} ==="
 echo
-echo "=== Running mixed report + provenance gate ==="
-# Lightweight post-run gate for this mini-phase: validate the single-build Rust
-# provenance and print blended/per-op pooled latency from the just-finished stamp.
+echo "=== Running mixed report + driver commit check ==="
+# Lightweight post-run check for this mini-phase: confirm every rust row names
+# the same driver build, and print blended/per-op pooled latency for this stamp.
 if python3 mixed_report.py --prefix "mixed-" --stamp "${STAMP}"; then
-  echo "=== mixed report provenance gate PASSED ==="
+  echo "=== mixed report driver commit check PASSED ==="
 else
-  echo "!! mixed report provenance gate FAILED -- inspect rows before trusting mixed metrics." >&2
+  echo "!! mixed report driver commit check FAILED -- inspect rows before trusting mixed metrics." >&2
   overall_rc=1
 fi
 exit "${overall_rc}"
