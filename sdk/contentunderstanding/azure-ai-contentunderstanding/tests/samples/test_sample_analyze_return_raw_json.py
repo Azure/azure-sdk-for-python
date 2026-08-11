@@ -25,7 +25,10 @@ USAGE:
 import os
 import json
 from devtools_testutils import recorded_by_proxy
-from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
+from testpreparer import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBase,
+)
 
 
 class TestSampleAnalyzeReturnRawJson(ContentUnderstandingClientTestBase):
@@ -98,7 +101,7 @@ class TestSampleAnalyzeReturnRawJson(ContentUnderstandingClientTestBase):
         assert len(json_str) > 0, "Response string should not be empty"
         print(f"[PASS] Response converted to JSON string: {len(json_str)} characters")
 
-        # Verify the response contains expected structure (matching C# sample validation)
+        # Verify the response contains expected structure
         assert "result" in response_json, "Response should contain 'result' key"
         result_data = response_json["result"]
         print("[PASS] Response contains 'result' key")

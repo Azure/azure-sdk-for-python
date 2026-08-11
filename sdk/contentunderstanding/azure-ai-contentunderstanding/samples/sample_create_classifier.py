@@ -34,6 +34,12 @@ DESCRIPTION:
     - enable_segment = True: Automatically splits the file into segments by category (classify and
       segment)
 
+
+    After classification, use ``to_llm_input(result)`` to convert classification results into
+    LLM-ready text. The helper expands the parent document and renders each categorized child
+    with its category label. For advanced ``to_llm_input`` options, see
+    ``sample_to_llm_input.py``.
+
 USAGE:
     python sample_create_classifier.py
 
@@ -114,7 +120,7 @@ def main() -> None:
         base_analyzer_id="prebuilt-document",
         description="Custom classifier for financial document categorization",
         config=config,
-        models={"completion": "gpt-4.1"},
+        models={"completion": "gpt-5.2"},
     )
 
     # Create the classifier
@@ -149,9 +155,7 @@ def main() -> None:
     # Display classification results
     if analyze_result.contents and len(analyze_result.contents) > 0:
         document_content = cast(DocumentContent, analyze_result.contents[0])
-        print(
-            f"Pages: {document_content.start_page_number}-{document_content.end_page_number}"
-        )
+        print(f"Pages: {document_content.start_page_number}-{document_content.end_page_number}")
 
         # Display segments (classification results)
         if document_content.segments and len(document_content.segments) > 0:

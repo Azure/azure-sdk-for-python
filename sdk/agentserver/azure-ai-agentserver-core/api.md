@@ -129,6 +129,7 @@ namespace azure.ai.agentserver.core
 
         def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
 
+
     class azure.ai.agentserver.core.FoundryAgentRequestContext:
         call_id: str | None
         session_id: str | None
@@ -253,6 +254,7 @@ namespace azure.ai.agentserver.core.storage
                 key: str, 
                 value: JSONObject, 
                 *, 
+                call_id: str | None = ..., 
                 tags: Mapping[str, str] | None = ...
             ) -> StateStoreItemRef: ...
 
@@ -262,18 +264,25 @@ namespace azure.ai.agentserver.core.storage
                 self, 
                 key: str, 
                 *, 
+                call_id: str | None = ..., 
                 if_match: str | None = ...
             ) -> DeletedStateStoreItem: ...
 
         async def get(self) -> StateStore: ...
 
-        async def get_item(self, key: str) -> StateStoreItem | None: ...
+        async def get_item(
+                self, 
+                key: str, 
+                *, 
+                call_id: str | None = ...
+            ) -> StateStoreItem | None: ...
 
         async def list_keys(
                 self, 
                 *, 
                 after: str | None = ..., 
                 before: str | None = ..., 
+                call_id: str | None = ..., 
                 limit: int | None = ..., 
                 order: Order = "desc", 
                 tags: Mapping[str, str] | None = ...
@@ -284,6 +293,7 @@ namespace azure.ai.agentserver.core.storage
                 key: str, 
                 value: JSONObject, 
                 *, 
+                call_id: str | None = ..., 
                 if_match: str | None = ..., 
                 require_exists: bool = False, 
                 tags: Mapping[str, str] | None = ...
@@ -831,7 +841,6 @@ namespace azure.ai.agentserver.core.tasks
                 input: Input, 
                 input_id: str | None = ..., 
                 is_steered_turn: bool = False, 
-                metadata: TaskMetadata, 
                 pending_count_provider: Callable[[], int] | None = ..., 
                 recovery_count: int = 0, 
                 retry_attempt: int = 0, 
@@ -884,76 +893,8 @@ namespace azure.ai.agentserver.core.tasks
 
 
     @experimental
-    class azure.ai.agentserver.core.tasks.TaskMetadata(MutableMapping): implements Collection 
-
-        def __call__(self, name: Optional[str] = None) -> TaskMetadata: ...
-
-        def __delitem__(self, key: str) -> None: ...
-
-        def __getitem__(self, key: str) -> Any: ...
-
-        def __init__(
-                self, 
-                initial: dict[str, Any] | None = None, 
-                *, 
-                _namespace_name: Optional[str] = ..., 
-                _registry: dict[Optional[str], TaskMetadata] | None = ..., 
-                flush_callback: NamespaceFlushCallback | None = ...
-            ) -> None: ...
-
-        def __setitem__(
-                self, 
-                key: str, 
-                value: Any
-            ) -> None: ...
-
-        @classmethod
-        def from_payload(
-                cls, 
-                payload: dict[str, Any] | None, 
-                *, 
-                flush_callback: NamespaceFlushCallback | None = ...
-            ) -> TaskMetadata: ...
-
-        def append(
-                self, 
-                key: str, 
-                value: Any
-            ) -> None: ...
-
-        async def flush(self) -> None: ...
-
-        def get(
-                self, 
-                key: str, 
-                default: Any = None
-            ) -> Any: ...
-
-        def increment(
-                self, 
-                key: str, 
-                delta: int = 1
-            ) -> None: ...
-
-        def items(self) -> ItemsView[str, Any]: ...
-
-        def keys(self) -> KeysView[str]: ...
-
-        def set(
-                self, 
-                key: str, 
-                value: Any
-            ) -> None: ...
-
-        def to_dict(self) -> dict[str, Any]: ...
-
-        def values(self) -> ValuesView[Any]: ...
-
-
-    @experimental
     class azure.ai.agentserver.core.tasks.TaskRun(Generic[Output]): implements Awaitable 
         property is_queued: bool    # Read-only
-        property metadata: TaskMetadata    # Read-only
 
         def __init__(
                 self, 
@@ -964,7 +905,6 @@ namespace azure.ai.agentserver.core.tasks
                 execution_task: Task[Any] | None = ..., 
                 input_id: str | None = ..., 
                 lease_expiry_count: int = 0, 
-                metadata: TaskMetadata | None = ..., 
                 provider: Any = ..., 
                 queued_cancel_callback: Any = ..., 
                 result_future: Future[Any], 

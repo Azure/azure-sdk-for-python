@@ -26,6 +26,7 @@
 import pytest
 from utils import HTTP_REQUESTS
 
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError

@@ -1,5 +1,36 @@
 # Release History
 
+## 2.1.0b1 (2026-08-11)
+
+### Breaking Changes
+
+- Removed `ResponseContext.conversation_chain_metadata` and the
+  `ConversationChainMetadataNamespace` protocol. Resilient response
+  applications now persist cross-turn state explicitly with
+  `FoundryStateStore`.
+
+### Other Changes
+
+- Updated the resilient Responses samples to use conversation-scoped
+  `FoundryStateStore` instances directly.
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.1.0b1`,
+  which adds the local `FoundryStateStore` fallback used by the samples.
+
+## 2.0.0 (2026-08-07)
+
+### Features Added
+
+- First stable release of the Azure AI Agent Server Responses client library.
+
+### Breaking Changes
+
+- Removed the duplicate `azure.ai.agentserver.responses.get_input_expanded`
+  export. Import it from `azure.ai.agentserver.responses.models` instead.
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to the stable `2.0.0` release.
+
 ## 2.0.0b1 (2026-08-04)
 
 ### Other Changes

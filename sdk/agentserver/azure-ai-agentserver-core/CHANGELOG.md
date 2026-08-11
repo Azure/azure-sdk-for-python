@@ -1,5 +1,25 @@
 # Release History
 
+## 2.1.0b1 (2026-08-11)
+
+### Features Added
+
+- `FoundryStateStore` now uses a file-backed local fallback when AgentServer is not hosted, and item operations accept an explicit `call_id` for forwarding recovered durable work outside the original request context.
+
+### Breaking Changes
+
+- Removed `TaskMetadata`, `TaskContext.metadata`, and `TaskRun.metadata`.
+  Durable application state now belongs in an explicit `FoundryStateStore`
+  and no longer shares task lifecycle PATCHes or lease renewal. Typed task
+  inputs may carry a top-level `call_id`, which the framework restores in
+  `FoundryAgentRequestContext` for every handler attempt.
+
+## 2.0.0 (2026-08-05)
+
+### Other Changes
+
+- Promoted `azure-ai-agentserver-core` to GA.
+
 ## 2.0.0b11 (2026-08-05)
 
 ### Features Added

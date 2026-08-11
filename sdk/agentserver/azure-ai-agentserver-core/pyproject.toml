@@ -64,6 +64,9 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 [tool.setuptools.package-data]
 "azure.ai.agentserver.core" = ["py.typed"]
 
+[tool.azure-sdk-conda]
+in_bundle = false
+
 [tool.azure-sdk-build]
 breaking = false
 mypy = true
@@ -72,7 +75,6 @@ verifytypes = false
 latestdependency = false
 pylint = true
 type_check_samples = false
-# apistub crashes on Generic[Input, Output] classes (Python 3.10 inspect.getsource bug)
-apistub = false
+apistub = true
 
 [tool.uv.sources]
