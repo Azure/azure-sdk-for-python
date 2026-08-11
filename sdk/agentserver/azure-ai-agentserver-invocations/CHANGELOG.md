@@ -1,12 +1,10 @@
 # Release History
 
-## 1.1.0b1 (2026-08-07)
+## 1.1.0b1 (2026-08-11)
 
 ### Samples
 
 - Simplified the resilient samples to use conversation-scoped `FoundryStateStore` instances directly for application state.
-- Migrated the resilient LangGraph, multi-turn, and research samples from task
-  metadata and custom file stores to direct State Store checkpoints.
 
 ### Other Changes
 
