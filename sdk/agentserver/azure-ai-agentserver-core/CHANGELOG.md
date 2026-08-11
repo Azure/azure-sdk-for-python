@@ -14,6 +14,11 @@
   inputs may carry a top-level `call_id`, which the framework restores in
   `FoundryAgentRequestContext` for every handler attempt.
 
+### Other Changes
+
+- Updated AgentServer durability guidance to use explicit `FoundryStateStore`
+  application state across Core, Invocations, and Responses.
+
 ## 2.0.0 (2026-08-05)
 
 ### Other Changes

@@ -13,6 +13,9 @@
 
 - Updated the resilient Responses samples to use conversation-scoped
   `FoundryStateStore` instances directly.
+- Updated resilient response guidance to use framework response checkpoints for
+  response-local recovery and explicit State Store persistence for cross-turn
+  application state.
 - Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.1.0b1`,
   which adds the local `FoundryStateStore` fallback used by the samples.
 
