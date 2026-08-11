@@ -217,7 +217,7 @@ deliberately incomplete, and it is finished in a *different file*. Two manifests
 
 | File | What it declares for `tokio` |
 |---|---|
-| `azure_cosmos_rust/Cargo.toml` (the binding crate) | *which* crate to depend on, and which features it needs — `rt-multi-thread`, `macros` |
+| `sdk/cosmos/azure-cosmos/azure_cosmos_rust/Cargo.toml` (the binding crate) | *which* crate to depend on, and which features it needs — `rt-multi-thread`, `macros` |
 | `sdk/cosmos/azure-cosmos/Cargo.toml` (the workspace root) | *what version* every member crate gets — `tokio = "1"` |
 
 `workspace = true` is the binding manifest saying "take the version from the root manifest's
@@ -945,11 +945,13 @@ The chosen source archive must then be used to build a wheel from an unpacked, c
 directory. That test proves the crates.io dependency and the archive's included source files
 are sufficient without either repository already checked out nearby.
 
-**The new problem:** a native build must produce binaries for every supported target.
+**Problem:** a native build must produce binaries for every supported target.
 The current shared pipeline provides Windows, Linux, and macOS jobs, which is the simplest
-place to build and test each operating-system wheel. Cross-compilation may be possible for
-some targets, but the repository does not define or validate such a policy. The current
-Cosmos package-generation work runs only in the Linux job.
+feedback on the docum,entplace to build and test each operating-system wheel. A build machine could potentially create
+a wheel for a different CPU—for example, a Linux x64 machine could build a Linux ARM64 wheel.
+However, this repository does not configure or test that process, so the release cannot rely on
+it yet. Today, only the Linux CI job creates the `azure-cosmos` package; the Windows and macOS
+jobs do not create release packages.
 
 ---
 

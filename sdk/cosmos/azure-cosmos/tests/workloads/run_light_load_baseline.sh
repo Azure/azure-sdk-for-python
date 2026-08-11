@@ -14,6 +14,10 @@
 #   BASELINE_BACKENDS=rust ./run_light_load_baseline.sh 480  # rust only
 # Override the verified default only when intentionally testing a different rate:
 #   BASELINE_READ_RPS=100 ./run_light_load_baseline.sh 480
+# The baseline measures a dedicated low-load probe container, lat_probe_db/
+# lat_probe_cont, not the session target; override with BASELINE_DATABASE and
+# BASELINE_CONTAINER, and re-check BASELINE_READ_RPS against that container's
+# throughput if you do.
 # Results use the active profiling session's RUN_ID and land in
 # perfdb/perfresults-v2 tagged
 # PERF_WORKLOAD_ID=baseline-<op>-<backend>-<run-id>; read them with latency_report.py.
@@ -43,22 +47,56 @@ fi
 LOG_DIR="${ARTIFACTS}/light-load-baseline-${RUN_ID}"
 mkdir -p "$LOG_DIR"
 
-# The isolated probe container keeps this off the loaded phases' data. Seed it
-# once with initial-setup.py (same COSMOS_DATABASE/COSMOS_CONTAINER overrides)
-# so read/replace/delete/patch have existing items to touch.
-export COSMOS_DATABASE=lat_probe_db
-export COSMOS_CONTAINER=lat_probe_cont
+# The isolated probe container keeps this off the loaded phases' data, and its
+# 400-RU/s budget is what the default 250 reads/s is sized against. Seed it once
+# with initial-setup.py (same BASELINE_DATABASE/BASELINE_CONTAINER overrides) so
+# read/replace/delete/patch have existing items to touch.
+#
+# profiling_load_session has just verified the session manifest against the
+# ACTIVE target, so silently pointing the run somewhere else would mean the
+# validated target and the measured one are different containers. The probe
+# target is therefore overridable, and any divergence from the session target is
+# announced rather than assumed.
+BASELINE_DATABASE="${BASELINE_DATABASE:-lat_probe_db}"
+BASELINE_CONTAINER="${BASELINE_CONTAINER:-lat_probe_cont}"
+if [[ "${BASELINE_DATABASE}" != "${COSMOS_DATABASE:-}" ||
+      "${BASELINE_CONTAINER}" != "${COSMOS_CONTAINER:-}" ]]; then
+  echo "NOTE: the baseline measures ${BASELINE_DATABASE}/${BASELINE_CONTAINER}," >&2
+  echo "      not the session target ${COSMOS_DATABASE:-unset}/${COSMOS_CONTAINER:-unset}." >&2
+  echo "      That is the dedicated low-load probe container; ${BASELINE_READ_RPS}" >&2
+  echo "      reads/s is sized against its 400-RU/s budget. Set BASELINE_DATABASE" >&2
+  echo "      and BASELINE_CONTAINER to measure the session target instead, and" >&2
+  echo "      re-check the arrival rate against that container's throughput." >&2
+fi
+export COSMOS_DATABASE="${BASELINE_DATABASE}"
+export COSMOS_CONTAINER="${BASELINE_CONTAINER}"
 export COSMOS_CONCURRENT_REQUESTS=1
 export WORKLOAD_NUM_CLIENTS=1
+# The pacing this baseline depends on lives only in the async open-loop path
+# (workload.py). The sync client ignores WORKLOAD_ARRIVAL_RATE and runs a closed
+# loop, yet the reporter still stamps config_arrival_rate from the environment --
+# so an inherited WORKLOAD_USE_SYNC=true would publish an unpaced run labelled as
+# a scheduled one. Pin it rather than inherit it.
+export WORKLOAD_USE_SYNC=false
 export WORKLOAD_ARRIVAL_RATE="${BASELINE_READ_RPS}"
 export WORKLOAD_USE_PROXY=false
 export COSMOS_REQUEST_TIMEOUT=30
 export PERF_REPORT_INTERVAL=60
+
+# Persist the exact data target used by this child process. The parent shell
+# does not inherit exports from `bash ./run_light_load_baseline.sh`, so the
+# later transport proof reads this file to avoid proving a different container.
+BASELINE_TARGET_FILE="${LOG_DIR}/baseline-target.env"
+{
+  printf 'BASELINE_DATABASE=%q\n' "${BASELINE_DATABASE}"
+  printf 'BASELINE_CONTAINER=%q\n' "${BASELINE_CONTAINER}"
+  printf 'BASELINE_PARTITION_KEY=%q\n' "${COSMOS_PARTITION_KEY:-id}"
+} >"${BASELINE_TARGET_FILE}"
 write_run_manifest "${LOG_DIR}" "${RUN_ID}" "light-load-baseline"
 
 echo "=== Rate-limited point-read latency baseline ==="
 echo "    run_id=${RUN_ID} dur=${DURATION}s rate=${BASELINE_READ_RPS} reads/s backends=${BACKENDS[*]}"
-echo "    container=lat_probe_db/lat_probe_cont  results -> perfdb/perfresults-v2 (workload_id LIKE baseline-%)"
+echo "    container=${BASELINE_DATABASE}/${BASELINE_CONTAINER}  results -> perfdb/perfresults-v2 (workload_id LIKE baseline-%)"
 echo
 overall_rc=0
 
@@ -88,7 +126,9 @@ for op in "${OPERATIONS[@]}"; do
 done
 echo "=== Light-load baseline complete. run_id=${RUN_ID} ==="
 echo "=== Checking the light-load baseline results ==="
-if python3 perf_validate.py --run-id "${RUN_ID}" --log-dir "${LOG_DIR}" --prefix "baseline-"; then
+BACKEND_CSV="$(IFS=,; echo "${BACKENDS[*]}")"
+if python3 perf_validate.py --run-id "${RUN_ID}" --log-dir "${LOG_DIR}" \
+  --prefix "baseline-" --required-backends "${BACKEND_CSV}"; then
   echo "=== integrity gate PASSED ==="
 else
   echo "!! integrity gate FAILED -- inspect rows/logs before trusting the baseline." >&2
@@ -97,6 +137,7 @@ fi
 echo "=== Checking the point-read p99 gate ==="
 if python3 latency_report.py --prefix "baseline-" --run-id "${RUN_ID}" \
   --point-read-gate --expected-rps "${BASELINE_READ_RPS}" --max-p99-ms 10 \
+  --gate-backends "${BACKEND_CSV}" \
   | tee "${LOG_DIR}/latency-report.txt"; then
   echo "=== point-read p99 gate PASSED ==="
 else

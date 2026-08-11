@@ -212,8 +212,19 @@ def main():
             if not a:
                 continue
             note = ""
-            if a["no_server_windows"] and a["server_count"] == 0:
+            # Percentiles from a partial sample are not comparable to the client
+            # percentiles beside them: if only some requests carried
+            # x-ms-request-duration-ms, srv_p99 is the p99 of that subset, not of
+            # the same population as cli_p99. Absent headers and partial headers
+            # are both worth flagging, and they are different problems.
+            if a["server_count"] == 0:
                 note = "  [!] no server header (old harness / header absent)"
+            elif a["server_count"] < a["count"]:
+                pct = 100.0 * a["server_count"] / a["count"]
+                note = (
+                    f"  [!] server header on {pct:.1f}% of requests; server"
+                    " percentiles cover that subset only"
+                )
             print(
                 f"  {op:8s} {a['count']:>8d} {a['server_count']:>8d} "
                 f"{_c(a,50):>8.2f} {_s(a,50):>8.2f} {_c(a,50)-_s(a,50):>7.2f} "
@@ -235,7 +246,13 @@ def main():
                 continue
             pe = _c(py, 99.9) - _s(py, 99.9)
             re = _c(ru, 99.9) - _s(ru, 99.9)
-            print(f"  {op:8s} {pe:>10.2f} {re:>10.2f} {re-pe:>8.2f}")
+            # Excess is client minus server, so a partial server sample on
+            # either side makes the difference between the two excesses an
+            # apples-to-oranges number rather than a client-side finding.
+            flag = ""
+            if py["server_count"] < py["count"] or ru["server_count"] < ru["count"]:
+                flag = "  [!] partial server coverage; excess is not comparable"
+            print(f"  {op:8s} {pe:>10.2f} {re:>10.2f} {re-pe:>8.2f}{flag}")
 
     # ---- Rust driver commit check (enforced; scoped to rust rows) ----
     commits, missing, rust_rows = prov_info

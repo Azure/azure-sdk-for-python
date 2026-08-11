@@ -94,14 +94,13 @@ def _latest_run_id(container, prefix: str) -> str:
 _MAX_ERROR_FRACTION = 0.01
 
 
-def check_quality(container, prefix: str, run_id: str):
+def check_quality(container, prefix: str, run_id: str, required_backends):
     """Every cell must have real work (count > 0) and near-zero errors, and every
-    operation must have both backends present, before any latency number is
-    believed. This runs first: a "fast" p50 means nothing if the cell did nothing.
+    operation must have all requested backends present, before any latency number
+    is believed. This runs first: a "fast" p50 means nothing if the cell did nothing.
 
-    We do not require core and rust to have equal counts. They run the same
-    duration closed-loop, so the faster backend completes more ops; equal counts
-    would be the wrong test. We just need both sides to do real, low-error work.
+    We do not require backends to have equal counts. We just need every requested
+    side to do real, low-error work.
     """
     rows = list(
         container.query_items(
@@ -149,15 +148,18 @@ def check_quality(container, prefix: str, run_id: str):
             f"err_frac={err_frac*100:.2f}%"
         )
 
-    # Every operation must have been measured on BOTH backends, or the matrix
-    # produced a one-sided comparison no one should read as rust-vs-core.
+    required = set(required_backends)
+    # Every operation must have been measured on every backend the caller asked
+    # for. The default remains the two-sided rust-vs-core comparison, while an
+    # explicitly selected rust-only baseline is still a valid path proof.
     for op in sorted(backends_by_op):
         present = backends_by_op[op]
-        if not {"core-python", "rust"}.issubset(present):
+        missing = required - present
+        if missing:
             all_ok = False
             lines.append(
-                f"  [BAD] op={op}: missing a backend (have {sorted(present)}); "
-                "comparison is one-sided"
+                f"  [BAD] op={op}: missing required backend(s) {sorted(missing)} "
+                f"(have {sorted(present)})"
             )
     return all_ok, lines
 
@@ -280,7 +282,7 @@ def check_warnings(log_dir: str, strict: bool = True):
     return False, lines
 
 
-def check_backend_execution(container, prefix: str, run_id: str):
+def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_binding: bool = False):
     """Prove every cell ran on the engine its label claims, from counters in the
     rows rather than COSMOS_BACKEND.
 
@@ -344,6 +346,18 @@ def check_backend_execution(container, prefix: str, run_id: str):
         a = agg[wid]
         label = (a["backend"] or "").strip().lower()
         if label == "rust":
+            # binding_calls is incremented inside the compiled extension, so it
+            # is the only counter whose movement is evidence that compiled code
+            # ran. rust_execute_calls is incremented by a Python-side wrapper
+            # around the backend object's execute, so it proves a backend object
+            # existed and returned responses -- weaker, and taken on the Python
+            # side of the boundary rather than beyond it. (The run cannot start
+            # with COSMOS_BACKEND=rust and no extension at all: workload.py
+            # refuses on the backend mismatch check before any row is written.
+            # The difference here is where the count is taken, not whether the
+            # extension loaded.) A row with no binding_calls therefore cannot
+            # carry the document's proof, so it fails unless the caller
+            # explicitly opts into the weaker evidence.
             if a["binding_known"]:
                 proof = a["binding"]
                 proof_name = "binding_calls"
@@ -355,6 +369,7 @@ def check_backend_execution(container, prefix: str, run_id: str):
                 proof > 0
                 and a["execute"] > 0
                 and proof >= min_expected
+                and (a["binding_known"] or allow_unknown_binding)
             )
             flag = "OK " if cell_ok else "BAD"
             lines.append(
@@ -363,10 +378,19 @@ def check_backend_execution(container, prefix: str, run_id: str):
                 f"rust_execute_calls={a['execute']}"
             )
             if not cell_ok:
-                lines.append(
-                    "        -> labeled rust but the Rust path did not cover the "
-                    "work; this row may actually be core-python."
-                )
+                if not a["binding_known"] and not allow_unknown_binding:
+                    lines.append(
+                        "        -> no binding_calls counter on any row, so nothing "
+                        "proves compiled code ran; rust_execute_calls is counted on "
+                        "the Python side of the boundary. Re-run with a harness that "
+                        "records binding_calls, or pass --allow-unknown-binding to "
+                        "score this run on the weaker evidence."
+                    )
+                else:
+                    lines.append(
+                        "        -> labeled rust but the Rust path did not cover the "
+                        "work; this row may actually be core-python."
+                    )
         else:
             cell_ok = a["execute"] == 0 and a["binding"] == 0
             flag = "OK " if cell_ok else "BAD"
@@ -396,12 +420,34 @@ def main():
         "scoring a run whose per-cell logs were not kept",
     )
     ap.add_argument(
+        "--allow-unknown-binding",
+        action="store_true",
+        default=os.environ.get("PERF_ALLOW_UNKNOWN_BINDING", "") not in ("", "0", "false"),
+        help="accept rust-labelled rows that carry no binding_calls counter, "
+        "scoring them on rust_execute_calls instead. Weaker evidence: that "
+        "counter is incremented on the Python side of the boundary, not "
+        "inside the compiled extension.",
+    )
+    ap.add_argument(
         "--prefix",
         default="lat-",
         help="workload_id prefix identifying the run. Used to find the latest "
         "run id and to label the report.",
     )
+    ap.add_argument(
+        "--required-backends",
+        default="core-python,rust",
+        help="comma-separated backends every operation must contain "
+        "(default core-python,rust)",
+    )
     args = ap.parse_args()
+    required_backends = [
+        backend.strip()
+        for backend in args.required_backends.split(",")
+        if backend.strip()
+    ]
+    if not required_backends:
+        ap.error("--required-backends must name at least one backend")
 
     report_interval_s = float(os.environ.get("PERF_REPORT_INTERVAL", "300") or "300")
     container = _connect()
@@ -412,8 +458,13 @@ def main():
         sys.exit(2)
 
     print(f"=== integrity gate (prefix {args.prefix}, run id {run_id}) ===")
-    print("-- 0. work-done: count > 0, near-zero errors, both backends present --")
-    qual_ok, qual_lines = check_quality(container, args.prefix, run_id)
+    print(
+        "-- 0. work-done: count > 0, near-zero errors, "
+        f"required backends present ({','.join(required_backends)}) --"
+    )
+    qual_ok, qual_lines = check_quality(
+        container, args.prefix, run_id, required_backends
+    )
     print("\n".join(qual_lines))
     print("-- 1. row-continuity (no dropped windows) --")
     cont_ok, cont_lines = check_continuity(container, args.prefix, run_id, report_interval_s)
@@ -422,7 +473,9 @@ def main():
     warn_ok, warn_lines = check_warnings(args.log_dir, strict=not args.allow_missing_logs)
     print("\n".join(warn_lines))
     print("-- 3. backend check: each row ran on the engine it claims --")
-    prov_ok, prov_lines = check_backend_execution(container, args.prefix, run_id)
+    prov_ok, prov_lines = check_backend_execution(
+        container, args.prefix, run_id, allow_unknown_binding=args.allow_unknown_binding
+    )
     print("\n".join(prov_lines))
 
     ok = qual_ok and cont_ok and warn_ok and prov_ok

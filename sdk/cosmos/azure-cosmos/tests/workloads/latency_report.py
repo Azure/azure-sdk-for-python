@@ -114,6 +114,7 @@ def _aggregate(container, prefix: str, run_id: str):
             "SELECT c.workload_id, c.count, c.errors, c.throttled_429, "
             "c.window_seconds, c.hist_b64, c.mean_ru, c.p99_9_ms, c.driver_commit, "
             "c.config_arrival_rate, c.config_concurrency, c.config_proxy_enabled, "
+            "c.config_num_clients, c.config_use_sync, "
             "c.attempt_calls, c.retry_calls "
             "FROM c WHERE STARTSWITH(c.workload_id, @prefix) "
             "AND ENDSWITH(c.workload_id, @stamp)",
@@ -152,6 +153,8 @@ def _aggregate(container, prefix: str, run_id: str):
                 "scalar_p999_weighted": 0.0,  # count-weighted fallback only
                 "arrival_rates": set(),
                 "concurrencies": set(),
+                "client_counts": set(),
+                "sync_values": set(),
                 "proxy_values": set(),
                 "attempt_calls": 0,
                 "retry_calls": 0,
@@ -162,6 +165,12 @@ def _aggregate(container, prefix: str, run_id: str):
         a["throttled_429"] += int(r.get("throttled_429", 0) or 0)
         a["arrival_rates"].add(float(r.get("config_arrival_rate", 0.0) or 0.0))
         a["concurrencies"].add(int(r.get("config_concurrency", 0) or 0))
+        # -1 / None mean the field was absent, i.e. an older harness wrote the
+        # row. That is distinct from a recorded value and must not read as one.
+        _nc = r.get("config_num_clients")
+        a["client_counts"].add(int(_nc) if _nc is not None else -1)
+        _us = r.get("config_use_sync")
+        a["sync_values"].add(bool(_us) if _us is not None else None)
         a["proxy_values"].add(bool(r.get("config_proxy_enabled", False)))
         a["attempt_calls"] += int(r.get("attempt_calls", 0) or 0)
         a["retry_calls"] += int(r.get("retry_calls", 0) or 0)
@@ -232,8 +241,16 @@ def main():
         default=10.0,
         help="exclusive Rust p99 ceiling for --point-read-gate (default 10)",
     )
+    ap.add_argument(
+        "--gate-backends",
+        default="core-python,rust",
+        help="comma-separated backends the --point-read-gate shape checks apply "
+        "to (default core-python,rust). Narrow it only when the run "
+        "deliberately exercised one engine, e.g. BASELINE_BACKENDS=rust.",
+    )
     _driver_gate.add_cli_flag(ap)
     args = ap.parse_args()
+    args.gate_backends = [b.strip() for b in args.gate_backends.split(",") if b.strip()]
 
     container = _connect()
     run_id = args.run_id or _latest_run_id(container, args.prefix)
@@ -297,50 +314,96 @@ def main():
     latency_ok = True
     if args.point_read_gate:
         checks = []
-        read = agg.get(("read", "rust"))
-        if read is None:
-            checks.append((False, "Rust read row exists"))
-        else:
-            achieved_rps = read["count"] / read["window_s"] if read["window_s"] else 0.0
+        notes = []
+        # The document's clean-baseline requirements are about the RUN, not one
+        # engine: a core-Python row full of errors, 429s or retries is not a
+        # comparable baseline even if the Rust row is spotless. So the shape
+        # checks run per backend, and only the p99 threshold is Rust-specific.
+        for backend in args.gate_backends:
+            row = agg.get(("read", backend))
+            if row is None:
+                checks.append((False, f"{backend} read row exists"))
+                continue
+            achieved = row["count"] / row["window_s"] if row["window_s"] else 0.0
             checks.extend([
-                (read["count"] > 0, f"successful reads > 0 ({read['count']})"),
-                (read["errors"] == 0, f"errors = 0 ({read['errors']})"),
+                (row["count"] > 0, f"{backend}: successful reads > 0 ({row['count']})"),
+                (row["errors"] == 0, f"{backend}: errors = 0 ({row['errors']})"),
                 (
-                    read["throttled_429"] == 0,
-                    f"terminal 429 responses = 0 ({read['throttled_429']})",
+                    row["throttled_429"] == 0,
+                    f"{backend}: terminal 429 responses = 0 ({row['throttled_429']})",
                 ),
                 (
-                    read["retry_calls"] == 0,
-                    f"driver retries = 0 ({read['retry_calls']})",
+                    row["no_hist_windows"] == 0,
+                    f"{backend}: all windows have histograms "
+                    f"(missing={row['no_hist_windows']})",
                 ),
                 (
-                    read["no_hist_windows"] == 0,
-                    f"all windows have histograms (missing={read['no_hist_windows']})",
+                    row["arrival_rates"] == {args.expected_rps},
+                    f"{backend}: configured arrival rate = {args.expected_rps:g} "
+                    f"({sorted(row['arrival_rates'])})",
                 ),
                 (
-                    read["arrival_rates"] == {args.expected_rps},
-                    f"configured arrival rate = {args.expected_rps:g} "
-                    f"({sorted(read['arrival_rates'])})",
+                    row["proxy_values"] == {False},
+                    f"{backend}: proxy disabled ({sorted(row['proxy_values'])})",
                 ),
                 (
-                    read["proxy_values"] == {False},
-                    f"proxy disabled ({sorted(read['proxy_values'])})",
+                    row["concurrencies"] == {1},
+                    f"{backend}: concurrency = 1 ({sorted(row['concurrencies'])})",
                 ),
                 (
-                    abs(achieved_rps - args.expected_rps) <= args.expected_rps * 0.05,
-                    f"achieved rate within 5% of {args.expected_rps:g} "
-                    f"({achieved_rps:.1f})",
+                    row["client_counts"] == {1},
+                    f"{backend}: client count = 1 "
+                    f"({sorted(row['client_counts'])}; -1 means not recorded)",
+                ),
+                # config_arrival_rate is copied from the environment whether or
+                # not anything paced the run. The sync client ignores it and
+                # runs a closed loop, so this is the check that makes the
+                # recorded rate mean what the report says it means.
+                (
+                    row["sync_values"] == {False},
+                    f"{backend}: async open-loop client, so the arrival rate was "
+                    f"actually scheduled (config_use_sync="
+                    f"{[str(v) for v in row['sync_values']]})",
                 ),
                 (
-                    _pctile_ms(read, 99) < args.max_p99_ms,
-                    f"Rust p99 < {args.max_p99_ms:g} ms "
-                    f"({_pctile_ms(read, 99):.2f} ms)",
+                    abs(achieved - args.expected_rps) <= args.expected_rps * 0.05,
+                    f"{backend}: achieved rate within 5% of {args.expected_rps:g} "
+                    f"({achieved:.1f})",
                 ),
             ])
+            # retry_calls is read from the Rust binding's own counter, so a
+            # core-Python row reports 0 whether or not core Python retried.
+            # Gating on it there would manufacture a passing check out of an
+            # uninstrumented backend, so the check is scoped to Rust and the
+            # gap is printed rather than hidden.
+            if "rust" in backend.lower():
+                checks.append(
+                    (
+                        row["retry_calls"] == 0,
+                        f"{backend}: driver retries = 0 ({row['retry_calls']})",
+                    )
+                )
+            else:
+                notes.append(
+                    f"  [n/a] {backend}: driver retries not instrumented "
+                    "(retry_calls comes from the Rust binding only), so this "
+                    "row's retry behaviour is unverified"
+                )
+        read = agg.get(("read", "rust"))
+        if read is not None:
+            checks.append(
+                (
+                    _pctile_ms(read, 99) < args.max_p99_ms,
+                    f"rust: p99 < {args.max_p99_ms:g} ms "
+                    f"({_pctile_ms(read, 99):.2f} ms)",
+                )
+            )
         latency_ok = all(ok for ok, _ in checks)
         print("\n### POINT-READ GATE ###")
         for ok, message in checks:
             print(f"  [{'PASS' if ok else 'FAIL'}] {message}")
+        for message in notes:
+            print(message)
         print("### POINT-READ GATE:", "PASS" if latency_ok else "FAIL", "###")
 
     sys.exit(0 if commit_ok and latency_ok else 1)

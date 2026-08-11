@@ -274,6 +274,13 @@ class PerfReporter:
         except (ValueError, TypeError):
             arrival_rate = 0.0
         max_inflight = _safe_int_env("WORKLOAD_MAX_INFLIGHT", 0)
+        # How many client processes shared this workload, and whether the run
+        # used the sync client. Both are recorded because arrival_rate alone
+        # does not describe the arrival process: the sync client ignores
+        # WORKLOAD_ARRIVAL_RATE and runs a closed loop, so a row with
+        # use_sync == True was unpaced no matter what arrival_rate says.
+        num_clients = _safe_int_env("WORKLOAD_NUM_CLIENTS", 1)
+        use_sync = os.environ.get("WORKLOAD_USE_SYNC", "false").lower() == "true"
         # Which backend produced these numbers: "rust" or "core-python" (the
         # default). Tagged so the two can be told apart in the results store.
         backend = os.environ.get("COSMOS_BACKEND", "core-python")
@@ -470,6 +477,8 @@ class PerfReporter:
                 "config_excluded_regions": excluded,
                 "config_request_timeout": request_timeout,
                 "config_arrival_rate": arrival_rate,
+                "config_num_clients": num_clients,
+                "config_use_sync": use_sync,
                 "config_max_inflight": max_inflight,
                 "config_workload_mix": workload_mix,
                 "config_doc_profile": doc_profile,
