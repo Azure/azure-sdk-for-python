@@ -1,0 +1,78 @@
+name: Pipeline Analysis Branch Cleanup
+
+on:
+  workflow_run:
+    workflows: [Agentic Maintenance]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Report branches without deleting them
+        required: true
+        type: boolean
+        default: true
+
+permissions: {}
+
+jobs:
+  cleanup:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success' ||
+      (github.event.repository.fork && github.event.workflow_run.conclusion == 'skipped')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - name: Delete completed auto-fix branches
+        uses: actions/github-script@v9.0.0
+        env:
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+        with:
+          script: |
+            const prefixes = ["pipeline-fix/", "copilot-pipeline-fix/"];
+            const branchPattern = /^(?:pipeline-fix|copilot-pipeline-fix)\/pr-\d+-[0-9a-f]{40}\/run-\d+\/.+$/;
+            const dryRun = process.env.DRY_RUN === "true";
+            const refs = [];
+            for (const prefix of prefixes) {
+              refs.push(...await github.paginate(github.rest.git.listMatchingRefs, {
+                ...context.repo,
+                ref: `heads/${prefix}`,
+                per_page: 100,
+              }));
+            }
+
+            let deleted = 0;
+            for (const ref of refs) {
+              const branch = ref.ref.replace(/^refs\/heads\//, "");
+              if (!branchPattern.test(branch)) {
+                core.info(`Keeping ${branch}: branch name does not match the generated auto-fix pattern.`);
+                continue;
+              }
+              const pulls = await github.paginate(github.rest.pulls.list, {
+                ...context.repo,
+                state: "all",
+                head: `${context.repo.owner}:${branch}`,
+                per_page: 100,
+              });
+              if (!pulls.length || pulls.some(pull => pull.state === "open")) {
+                core.info(`Keeping ${branch}: ${pulls.length ? "a correlated PR is open" : "no correlated PR exists"}.`);
+                continue;
+              }
+              if (dryRun) {
+                core.info(`Would delete ${branch}: all correlated PRs are closed.`);
+                continue;
+              }
+              await github.rest.git.deleteRef({
+                ...context.repo,
+                ref: `heads/${branch}`,
+              });
+              deleted += 1;
+              core.info(`Deleted ${branch}: all correlated PRs are closed.`);
+            }
+
+            await core.summary
+              .addHeading("Pipeline auto-fix branch cleanup")
+              .addRaw(`${dryRun ? "Dry run complete" : `Deleted ${deleted} branch(es)`}. Inspected ${refs.length} branch(es).`)
+              .write();
