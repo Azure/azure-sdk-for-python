@@ -1,5 +1,11 @@
 # Release History
 
+## 1.43.0b1 (Unreleased)
+
+### Features Added
+
+- Added streaming support via the `azure.core.streaming` module for JSONL and Server-Sent Events (SSE), including the `Stream`/`AsyncStream` iterators and the `JSONLDecoder`/`AsyncJSONLDecoder` and `SSEDecoder`/`AsyncSSEDecoder` decoders. #38806
+
 ## 1.42.0 (Unreleased)
 
 ### Features Added

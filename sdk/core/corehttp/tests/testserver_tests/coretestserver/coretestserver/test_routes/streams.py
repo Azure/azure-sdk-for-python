@@ -39,6 +39,94 @@ def stream_compressed_header_error():
     yield b"test"
 
 
+def stream_jsonl_basic():
+    data = [
+        b'{"msg": "this is a message"}\n',
+        b'{"msg": "this is another message"}\n',
+        b'{"msg": "this is a third message"}\n{"msg": "this is a fourth message"}\n',
+    ]
+    yield from data
+
+
+def stream_jsonl_multiple_kv():
+    data = [
+        b'{"msg": "this is a hello world message", "planet": {"earth": "hello earth", "mars": "hello mars"}}\n',
+        b'{"msg": "this is a hello world message", "planet": {"venus": "hello venus", "jupiter": "hello jupiter"}}\n',
+    ]
+    yield from data
+
+
+def stream_jsonl_no_final_line_separator():
+    data = b'{"msg": "this is a message"}'
+    yield data
+
+
+def stream_jsonl_broken_up_data():
+    data = [b'{"msg": "this is a first message"}\n{"msg": ', b'"this is a second message"}\n']
+    yield from data
+
+
+def stream_jsonl_broken_up_data_cr():
+    data = [b'{"msg": "this is a first message"}\r\n{"msg": ', b'"this is a second message"}\r\n']
+    yield from data
+
+
+def stream_jsonl_invalid_data():
+    data = [b'{"msg": "this is a third m']
+    yield from data
+
+
+def stream_jsonl_escaped_newline_data():
+    data = b'{"msg": "this is a...\\nmessage"}\n'
+    yield data
+
+
+def stream_jsonl_escaped_broken_newline_data():
+    data = [b'{"msg": "this is a first message"}\n{"msg": "\\n', b'this is a second message"}\n']
+    yield from data
+
+
+def stream_jsonl_broken_incomplete_char():
+    data = [
+        b'{"msg": "this is a first message"}\n{"msg": "\xf0\x9d',
+        b"\x9c\x8bthis is a second message\xf0\x9d",
+        b'\x9c\x8b"}',
+        b'\n{"msg": "this is a third message"}',
+    ]
+    yield from data
+
+
+def stream_jsonl_list():
+    data = [
+        b'["this", "is", "a", "first", "message"]\n',
+        b'["this", "is", "a", "second", "message"]\n',
+        b'["this", "is", "a", "third", "message"]\n',
+    ]
+    yield from data
+
+
+def stream_jsonl_string():
+    data = [
+        b'"this"\n',
+        b'"is"\n',
+        b'"a"\n',
+        b'"message"\n',
+    ]
+    yield from data
+
+
+def stream_jsonl_unicode_line_boundary():
+    # \u2028 (line separator), \u2029 (paragraph separator) and \x85 (NEL) are Unicode
+    # boundaries that str.splitlines() splits on, but JSONL only delimits records on \n.
+    # Each record embeds those characters inside its JSON string value and records are
+    # delimited by a real \n, so they must not be split mid-record.
+    data = [
+        '{"msg": "first\u2028line\u2029boundary\u0085record"}\n'.encode("utf-8"),
+        '{"msg": "second\u2028line\u2029boundary\u0085record"}\n'.encode("utf-8"),
+    ]
+    yield from data
+
+
 @streams_api.route("/basic", methods=["GET"])
 def basic():
     return Response(streaming_body(), status=200)
@@ -104,3 +192,209 @@ def upload():
             break
         byte_content += chunk
     return Response(byte_content, status=200)
+
+
+@streams_api.route("/jsonl_basic", methods=["GET"])
+def jsonl_basic():
+    return Response(stream_jsonl_basic(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_multiple_kv", methods=["GET"])
+def jsonl_multiple_kv():
+    return Response(stream_jsonl_multiple_kv(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_no_final_line_separator", methods=["GET"])
+def jsonl_no_final_line_separator():
+    return Response(stream_jsonl_no_final_line_separator(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_broken_up_data", methods=["GET"])
+def jsonl_broken_up_data():
+    return Response(stream_jsonl_broken_up_data(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_broken_up_data_cr", methods=["GET"])
+def jsonl_broken_up_data_cr():
+    return Response(stream_jsonl_broken_up_data_cr(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_invalid_data", methods=["GET"])
+def jsonl_invalid_data():
+    return Response(stream_jsonl_invalid_data(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_escaped_newline_data", methods=["GET"])
+def jsonl_escaped_newline_data():
+    return Response(stream_jsonl_escaped_newline_data(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_escaped_broken_newline_data", methods=["GET"])
+def jsonl_escaped_broken_newline_data():
+    return Response(
+        stream_jsonl_escaped_broken_newline_data(), status=200, headers={"Content-Type": "application/jsonl"}
+    )
+
+
+@streams_api.route("/jsonl_broken_incomplete_char", methods=["GET"])
+def jsonl_broken_incomplete_char():
+    return Response(stream_jsonl_broken_incomplete_char(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_list", methods=["GET"])
+def json_list():
+    return Response(stream_jsonl_list(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_string", methods=["GET"])
+def json_string():
+    return Response(stream_jsonl_string(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_unicode_line_boundary", methods=["GET"])
+def jsonl_unicode_line_boundary():
+    return Response(stream_jsonl_unicode_line_boundary(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+def stream_sse_basic():
+    data = [
+        b"data: hello\n\n",
+        b"data: world\n\n",
+    ]
+    yield from data
+
+
+def stream_sse_multiline_data():
+    # Multiple data lines in one event are joined with "\n".
+    data = [
+        b"event: greeting\n",
+        b"data: line one\n",
+        b"data: line two\n",
+        b"\n",
+    ]
+    yield from data
+
+
+def stream_sse_comments_and_fields():
+    # Comment lines (":"-prefixed) are ignored; one leading space after ":" is stripped.
+    data = [
+        b": this is a comment\n",
+        b"event: update\n",
+        b"data: payload\n",
+        b"\n",
+    ]
+    yield from data
+
+
+def stream_sse_crlf():
+    # SSE allows CRLF line separators.
+    data = [
+        b"data: crlf-line\r\n\r\n",
+    ]
+    yield from data
+
+
+def stream_sse_lone_cr():
+    # SSE allows a lone CR as a line separator.
+    data = [
+        b"data: cr-line\r\r",
+    ]
+    yield from data
+
+
+def stream_sse_broken_up():
+    # An event split across multiple chunks, including a CRLF split at the chunk boundary.
+    data = [
+        b"data: hel",
+        b"lo\r",
+        b"\n\r\n",
+    ]
+    yield from data
+
+
+def stream_sse_id_and_retry():
+    data = [
+        b"id: 42\n",
+        b"retry: 3000\n",
+        b"data: first\n",
+        b"\n",
+        b"data: second\n",
+        b"\n",
+    ]
+    yield from data
+
+
+@streams_api.route("/sse_basic", methods=["GET"])
+def sse_basic():
+    return Response(stream_sse_basic(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_multiline_data", methods=["GET"])
+def sse_multiline_data():
+    return Response(stream_sse_multiline_data(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_comments_and_fields", methods=["GET"])
+def sse_comments_and_fields():
+    return Response(stream_sse_comments_and_fields(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_crlf", methods=["GET"])
+def sse_crlf():
+    return Response(stream_sse_crlf(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_lone_cr", methods=["GET"])
+def sse_lone_cr():
+    return Response(stream_sse_lone_cr(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_broken_up", methods=["GET"])
+def sse_broken_up():
+    return Response(stream_sse_broken_up(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_id_and_retry", methods=["GET"])
+def sse_id_and_retry():
+    return Response(stream_sse_id_and_retry(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+def stream_sse_bom():
+    # A single leading UTF-8 BOM must be ignored per the SSE spec.
+    data = [
+        b"\xef\xbb\xbfdata: with-bom\n\n",
+    ]
+    yield from data
+
+
+def stream_sse_bom_split():
+    # The leading BOM may be split across chunk boundaries.
+    data = [
+        b"\xef",
+        b"\xbb\xbf",
+        b"data: split-bom\n\n",
+    ]
+    yield from data
+
+
+def stream_sse_invalid_utf8():
+    # Invalid UTF-8 byte sequences must be replaced with U+FFFD, not crash the stream.
+    data = [
+        b"data: caf\xff\n\n",
+    ]
+    yield from data
+
+
+@streams_api.route("/sse_bom", methods=["GET"])
+def sse_bom():
+    return Response(stream_sse_bom(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_bom_split", methods=["GET"])
+def sse_bom_split():
+    return Response(stream_sse_bom_split(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_invalid_utf8", methods=["GET"])
+def sse_invalid_utf8():
+    return Response(stream_sse_invalid_utf8(), status=200, headers={"Content-Type": "text/event-stream"})

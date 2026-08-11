@@ -33,6 +33,27 @@ pip install corehttp[requests,httpx]
 
 If no transports are specified, `corehttp` will default to using `RequestsTransport` for synchronous pipeline requests and `AioHttpTransport` for asynchronous pipeline requests.
 
+### Streaming
+
+`corehttp` provides a stream-agnostic `Stream` iterator for consuming streaming responses. Currently, JSON Lines (JSONL) and Server-Sent Events (SSE) streaming are supported, with the format inferred from the response `Content-Type` header. Pass the streamed response together with a `deserialization_callback` that receives the response and each decoded event:
+
+```python
+from corehttp.rest import HttpRequest, HttpResponse
+from corehttp.streaming import Stream
+
+request = HttpRequest("GET", "https://example.com/stream")
+response = client.send_request(request, stream=True)
+
+def deserialize(response, event):
+    return event  # or deserialize into a model
+
+with Stream(response=response, deserialization_callback=deserialize) as stream:
+    for item in stream:
+        print(item)
+```
+
+An asynchronous equivalent is available using `AsyncStream`.
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require

@@ -229,6 +229,27 @@ foo = Foo(
 )
 ```
 
+#### Streaming
+
+`azure.core` provides a stream-agnostic `Stream` iterator for consuming streaming responses. Currently, JSON Lines (JSONL) and Server-Sent Events (SSE) streaming are supported, with the format inferred from the response `Content-Type` header. Pass the streamed response together with a `deserialization_callback` that receives the response and each decoded event:
+
+```python
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.streaming import Stream
+
+request = HttpRequest("GET", "https://example.com/stream")
+response = client.send_request(request, stream=True)
+
+def deserialize(response, event):
+    return event  # or deserialize into a model
+
+with Stream(response=response, deserialization_callback=deserialize) as stream:
+    for item in stream:
+        print(item)
+```
+
+An asynchronous equivalent is available using `AsyncStream`.
+
 ## Logging
 
 Azure libraries follow the guidance of Python's standard [logging](https://docs.python.org/3/library/logging.html) module. By following the Python documentation on logging, you should be able to configure logging for Azure libraries effectively.
