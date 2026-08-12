@@ -55,6 +55,7 @@ from azure.core.pipeline.transport import HttpTransport
 from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
+SANITIZED_SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
 
 
@@ -99,7 +100,7 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     )
 
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=subscription_id, value=SANITIZED_SUBSCRIPTION_ID)
 
     add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$....key", value=fake_datastore_key)
@@ -189,7 +190,7 @@ def mock_operation_config_no_progress() -> OperationConfig:
 @pytest.fixture
 def sanitized_environment_variables(environment_variables, fake_datastore_key) -> dict:
     sanitizings = {
-        "ML_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000000",
+        "ML_SUBSCRIPTION_ID": SANITIZED_SUBSCRIPTION_ID,
         "ML_RESOURCE_GROUP": "00000",
         "ML_WORKSPACE_NAME": "00000",
         "ML_FEATURE_STORE_NAME": "00000",
