@@ -143,6 +143,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
     :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
      wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
      and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+    :keyword bool await_settlement_outcome: Whether settlement operations (`complete_message`,
+     `abandon_message`, `defer_message` and `dead_letter_message`) should wait for the service to
+     confirm the outcome and raise if the settlement was not applied. The default is `False`, in
+     which case settlements are sent pre-settled and a settlement the service does not process
+     cannot be distinguished from a successful one, surfacing instead as the message being
+     redelivered at lock expiry. Enabling this adds a service round trip per settlement. Only
+     valid in `PEEK_LOCK` mode and only supported on the default pyamqp transport.
      a larger than default value may need to be passed in.
     """
 
@@ -158,6 +165,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional["AutoLockRenewer"] = None,
         prefetch_count: int = 0,
+        await_settlement_outcome: bool = False,
         **kwargs: Any,
     ) -> None:
         self._session_id = None
@@ -174,6 +182,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
+                await_settlement_outcome=await_settlement_outcome,
                 **kwargs,
             )
         else:
@@ -196,6 +205,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
+                await_settlement_outcome=await_settlement_outcome,
                 **kwargs,
             )
 
@@ -207,6 +217,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             max_wait_time=max_wait_time,
             auto_lock_renewer=auto_lock_renewer,
             prefetch_count=prefetch_count,
+            await_settlement_outcome=await_settlement_outcome,
             **kwargs,
         )
         self._session = None if self._session_id is None else ServiceBusSession(cast(str, self._session_id), self)
@@ -297,6 +308,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
          Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
+        :keyword bool await_settlement_outcome: Whether settlement operations should wait for the
+         service to confirm the outcome and raise if the settlement was not applied. The default is
+         `False`, in which case a settlement the service does not process cannot be distinguished
+         from a successful one. Only valid in `PEEK_LOCK` mode and only supported on the default
+         pyamqp transport.
         :returns: The ServiceBusReceiver.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
@@ -442,9 +458,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
 
         # The following condition check is a hot fix for settling a message received for non-session queue after
         # lock expiration.
-        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
-        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
-        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
+        # By default settlements are sent pre-settled, so the service returns no disposition result and there is
+        # no way to tell whether one succeeded (for uamqp this is a hard limitation, see issue:
+        # https://github.com/Azure/azure-uamqp-c/issues/274). Set `await_settlement_outcome=True` on the receiver
+        # to have pyamqp wait for the service to confirm the outcome instead.
         if not self._session and message._lock_expired:
             raise MessageLockLostError(
                 message="The lock on the message lock has expired.",
@@ -480,6 +497,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
                         settle_operation,
                         dead_letter_reason=dead_letter_reason,
                         dead_letter_error_description=dead_letter_error_description,
+                        await_outcome=self._await_settlement_outcome,
+                        outcome_timeout=self._config.timeout,
                     )
                     return
                 except RuntimeError as exception:

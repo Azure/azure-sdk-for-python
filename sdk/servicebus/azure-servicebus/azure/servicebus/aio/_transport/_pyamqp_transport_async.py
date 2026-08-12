@@ -23,6 +23,7 @@ from ..._pyamqp.error import (
     AMQPError,
     AMQPException,
     MessageException,
+    MessageSettlementUnconfirmed,
     ErrorCondition,
 )
 
@@ -401,11 +402,22 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         settle_operation: str,
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
+        *,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None,
     ) -> None:
         # pylint: disable=protected-access
+        if handler is None:
+            raise RuntimeError("handler is not initialized and cannot complete the message")
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                return await handler.settle_messages_async(message._delivery_id, message._delivery_tag, "accepted")
+                return await handler.settle_messages_async(
+                    message._delivery_id,
+                    message._delivery_tag,
+                    "accepted",
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
+                )
             if settle_operation == MESSAGE_ABANDON:
                 return await handler.settle_messages_async(
                     message._delivery_id,
@@ -413,6 +425,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     "modified",
                     delivery_failed=True,
                     undeliverable_here=False,
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
                 )
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return await handler.settle_messages_async(
@@ -427,6 +441,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                             RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
                         },
                     ),
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
                 )
             if settle_operation == MESSAGE_DEFER:
                 return await handler.settle_messages_async(
@@ -435,9 +451,24 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     "modified",
                     delivery_failed=True,
                     undeliverable_here=True,
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
+
+        except MessageSettlementUnconfirmed as mse:
+            # The service never confirmed the disposition, so the result is unknown. Signal the
+            # caller to re-settle over the management link, which is request/response and
+            # therefore authoritative.
+            raise RuntimeError("The service did not confirm the settlement on the receiver link.") from mse
+
+        except MessageException:
+            # A rejected outcome is a definitive answer from the service. Propagate it with its own
+            # condition (e.g. com.microsoft:message-lock-lost) rather than letting the generic
+            # AMQPException handler below flatten it into a ServiceBusConnectionError. Only an
+            # awaited settlement can produce one; the pre-settled path never reports an outcome.
+            raise
 
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e

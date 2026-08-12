@@ -292,7 +292,17 @@ try:
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
+            *,
+            await_outcome: bool = False,
+            outcome_timeout: Optional[float] = None,
         ) -> None:
+            if await_outcome:
+                # uamqp cannot observe disposition outcomes at all, so fail loudly rather
+                # than silently ignore the request and return a false success.
+                raise NotImplementedError(
+                    "await_settlement_outcome is not supported by the uamqp transport. "
+                    "Use the default pyamqp transport to enable it."
+                )
             await get_running_loop().run_in_executor(
                 None,
                 UamqpTransportAsync.settle_message_via_receiver_link_impl(
