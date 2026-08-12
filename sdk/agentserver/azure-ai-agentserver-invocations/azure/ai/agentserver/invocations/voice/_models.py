@@ -9,7 +9,7 @@ import datetime
 import reprlib
 import uuid
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field, fields
+from dataclasses import MISSING, dataclass, field, fields
 from enum import Enum
 from types import MappingProxyType
 from typing import Any, ClassVar, Literal
@@ -120,6 +120,30 @@ def _freeze_json(value: Any) -> Any:
     if value is None or isinstance(value, (str, bool, int, float)):
         return value
     raise TypeError("voice must contain only JSON-compatible values")
+
+
+def _document_dataclass_defaults(*model_types: type[Any]) -> None:
+    """Attach accurate defaults to generated dataclass constructor docs.
+
+    :param model_types: Voice dataclass types whose generated constructors need documentation.
+    :type model_types: type
+    """
+    for model_type in model_types:
+        default_lines = []
+        for model_field in fields(model_type):
+            if not model_field.init:
+                continue
+            if model_field.default_factory is not MISSING:
+                default_value = "..."
+            elif model_field.default is MISSING:
+                continue
+            elif model_field.default is None:
+                default_value = "None"
+            else:
+                default_value = "..."
+            default_lines.append(f":param {model_field.name}: Default value is {default_value}.")
+        if default_lines:
+            model_type.__init__.__doc__ = "\n".join(default_lines) + "\n\n"
 
 
 @experimental
@@ -651,6 +675,33 @@ class AgentError(_OutboundMessage):
     message: str
     response_id: str | None = None
     item_id: str | None = None
+
+
+_document_dataclass_defaults(
+    ResponseTimeouts,
+    InputTextPart,
+    SessionDisconnected,
+    SessionStart,
+    UserMessage,
+    UserNoInput,
+    UserSpeechStarted,
+    BargeIn,
+    ResponseAccepted,
+    ResponseDropped,
+    ResponseCancelled,
+    ResponseTimeout,
+    SessionEnd,
+    SessionReady,
+    SessionRejected,
+    ResponseCreated,
+    ResponseNone,
+    ResponseOutputTextDelta,
+    ResponseOutputTextDone,
+    ResponseDone,
+    ResponseCancel,
+    EndCall,
+    AgentError,
+)
 
 
 OutboundVoiceMessage = (

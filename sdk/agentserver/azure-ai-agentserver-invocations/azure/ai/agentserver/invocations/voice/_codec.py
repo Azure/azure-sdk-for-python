@@ -48,6 +48,7 @@ MAX_IDENTIFIER_BYTES = 256
 MAX_INTEGER_DIGITS = 128
 MAX_JSON_DEPTH = 32
 MAX_JSON_NODES = 8_192
+MAX_ADMISSION_TIMEOUT_MS = 60_000
 
 _CREDENTIAL_FIELD = re.compile(
     r"(?:^|_)(?:authorization(?:_header)?|credentials?|password|passwd|pwd|secret(?:_value)?|"
@@ -227,10 +228,7 @@ def encode_outbound_message(message: OutboundVoiceMessage) -> str:
                 raise ValueError("reply response.created cannot contain proactive admission controls")
         else:
             if message.admission_timeout_ms is not None:
-                payload["admission_timeout_ms"] = _validate_positive_integer_value(
-                    message.admission_timeout_ms,
-                    "admission_timeout_ms",
-                )
+                payload["admission_timeout_ms"] = _validate_admission_timeout_ms(message.admission_timeout_ms)
             _put_optional_string(payload, "supersede_key", message.supersede_key, non_empty=True)
     elif isinstance(message, ResponseNone):
         payload["in_reply_to"] = _validate_input_prefix(message.in_reply_to)
@@ -536,6 +534,13 @@ def _validate_positive_integer_value(value: Any, name: str) -> int:
     if value <= 0:
         raise ValueError(f"{name} must be positive")
     return value
+
+
+def _validate_admission_timeout_ms(value: Any) -> int:
+    timeout = _validate_positive_integer_value(value, "admission_timeout_ms")
+    if timeout > MAX_ADMISSION_TIMEOUT_MS:
+        raise ValueError("admission_timeout_ms must be at most 60000")
+    return timeout
 
 
 def _validate_identifier_value(value: Any, name: str) -> str:

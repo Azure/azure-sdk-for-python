@@ -40,6 +40,7 @@ words:
   - dedup
   - dedups
   - dones
+  - dtmf
   - Dunders
   - elts
   - ename
@@ -91,6 +92,7 @@ words:
   - RAPI
   - rchain
   - RDWR
+  - retriable
   - rtype
   - sess
   - starlette

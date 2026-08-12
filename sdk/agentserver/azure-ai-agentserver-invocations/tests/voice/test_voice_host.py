@@ -383,8 +383,10 @@ async def test_connection_terminating_rejects_awaitable_result_without_leaking(c
         return async_cleanup()
 
     with caplog.at_level(logging.ERROR, logger="azure.ai.agentserver"):
-        await app._handle_voice_connection(websocket)  # pylint: disable=protected-access
+        with pytest.raises(WebSocketDisconnect) as raised:
+            await app._handle_voice_connection(websocket)  # pylint: disable=protected-access
 
+    assert raised.value.code == 1002
     assert "Connection terminating callback must return None" in caplog.text
 
 
@@ -407,9 +409,11 @@ async def test_connection_terminating_cancels_returned_task(caplog):
         return task
 
     with caplog.at_level(logging.ERROR, logger="azure.ai.agentserver"):
-        await app._handle_voice_connection(websocket)  # pylint: disable=protected-access
+        with pytest.raises(WebSocketDisconnect) as raised:
+            await app._handle_voice_connection(websocket)  # pylint: disable=protected-access
     await asyncio.sleep(0)
 
+    assert raised.value.code == 1002
     assert len(returned_tasks) == 1
     assert returned_tasks[0].cancelled()
     assert cleanup_started is False
@@ -440,8 +444,10 @@ async def test_connection_terminating_closes_custom_awaitable(caplog):
         return awaitable
 
     with caplog.at_level(logging.ERROR, logger="azure.ai.agentserver"):
-        await app._handle_voice_connection(websocket)  # pylint: disable=protected-access
+        with pytest.raises(WebSocketDisconnect) as raised:
+            await app._handle_voice_connection(websocket)  # pylint: disable=protected-access
 
+    assert raised.value.code == 1002
     assert len(returned_awaitables) == 1
     assert returned_awaitables[0].coroutine.cr_frame is None
     assert "Connection terminating callback must return None" in caplog.text
