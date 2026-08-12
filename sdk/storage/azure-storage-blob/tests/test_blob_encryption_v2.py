@@ -23,7 +23,7 @@ from test_helpers import _deterministic_urandom
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from azure.storage.blob import BlobServiceClient, BlobType, ContentSettings
+from azure.storage.blob import BlobBlock, BlobServiceClient, BlobType, ContentSettings
 from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _GCM_NONCE_LENGTH,
@@ -468,6 +468,45 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         blob.set_blob_metadata(metadata)
         with pytest.raises(HttpResponseError) as e:
             blob.download_blob()
+
+        assert "Decryption failed." in str(e.value)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_encryption_reordered_regions(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper("key1")
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+            max_single_put_size=1024,
+            max_block_size=4 * MiB,
+            require_encryption=True,
+            encryption_version="2.0",
+            key_encryption_key=kek,
+        )
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b"abcd" * 3 * MiB  # 12 MiB -- three full 4 MiB encryption regions
+
+        # Upload with the block size equal to the encryption region size so each
+        # committed block corresponds to a single encryption region.
+        blob.upload_blob(content, overwrite=True)
+
+        # Reorder the committed blocks so the encryption regions are out of order.
+        plain_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        metadata = plain_blob.get_blob_properties().metadata
+        committed, _ = plain_blob.get_block_list(block_list_type="committed")
+        reordered = committed[:-2] + committed[-1:] + committed[-2:-1]
+        reordered = [BlobBlock(block_id=block.id) for block in reordered]
+        plain_blob.commit_block_list(reordered, metadata=metadata)
+
+        # Act / Assert -- a region's nonce no longer matches its position
+        with pytest.raises(HttpResponseError) as e:
+            blob.download_blob().readall()
 
         assert "Decryption failed." in str(e.value)
 

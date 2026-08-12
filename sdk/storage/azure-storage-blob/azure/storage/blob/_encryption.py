@@ -887,6 +887,21 @@ def generate_blob_encryption_data(
     return content_encryption_key, initialization_vector, encryption_data
 
 
+def _parse_content_range(content_range: str) -> Tuple[int, int, int]:
+    """
+    Parses a Content-Range header of the form 'bytes x-y/size' into its
+    start, end, and total size components.
+
+    :param str content_range: The Content-Range header value.
+    :return: A tuple of (start, end, total size).
+    :rtype: Tuple[int, int, int]
+    """
+    # Format: 'bytes x-y/size' -- ignore the leading 'bytes' word.
+    byte_range, size = content_range.split(" ")[1].split("/")
+    start, end = byte_range.split("-")
+    return int(start), int(end), int(size)
+
+
 def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     require_encryption: bool,
     key_encryption_key: Optional[KeyEncryptionKey],
@@ -963,16 +978,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         iv: Optional[bytes] = None
         unpad = False
         if "content-range" in response_headers:
-            content_range = response_headers["content-range"]
-            # Format: 'bytes x-y/size'
-
-            # Ignore the word 'bytes'
-            content_range = content_range.split(" ")
-
-            content_range = content_range[1].split("-")
-            content_range = content_range[1].split("/")
-            end_range = int(content_range[0])
-            blob_size = int(content_range[1])
+            _, end_range, blob_size = _parse_content_range(response_headers["content-range"])
 
             if start_offset >= 16:
                 iv = content[:16]
@@ -1016,6 +1022,22 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         tag_length = encryption_data.encrypted_region_info.tag_length
         region_length = nonce_length + data_length + tag_length
 
+        # During encryption the nonce for each region is a counter of the region's index
+        # within the blob. The downloaded content always begins on an encryption region
+        # boundary, so derive the index of the first region from the download range. This
+        # lets us validate each region's nonce and detect if regions have been reordered.
+        # When there is no content-range header the whole blob was downloaded, so the first
+        # region is index 0.
+        start_range = 0
+        if "content-range" in response_headers:
+            start_range, _, _ = _parse_content_range(response_headers["content-range"])
+        nonce_counter = start_range // region_length
+
+        # The nonce validation can be bypassed via an environment variable to allow for
+        # data recovery scenarios where the encryption regions have been reordered. This
+        # is not recommended for normal usage as it can allow tampered data to be decrypted.
+        validate_nonce = not os.environ.get("AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS")
+
         decrypted_content = bytearray()
         while offset < total_size:
             # Process one encryption region at a time
@@ -1024,6 +1046,12 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
 
             # First bytes are the nonce
             nonce = encrypted_region[:nonce_length]
+            # Validate the nonce matches the expected counter value for this region. A
+            # mismatch indicates the encryption regions have been reordered or tampered with.
+            if validate_nonce:
+                expected_nonce = nonce_counter.to_bytes(nonce_length, "big")
+                if nonce != expected_nonce:
+                    raise ValueError("The encryption metadata is not valid and may have been modified.")
             ciphertext_with_tag = encrypted_region[nonce_length:]
 
             aesgcm = AESGCM(content_encryption_key)
@@ -1031,6 +1059,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
             decrypted_content.extend(decrypted_data)
 
             offset += process_size
+            nonce_counter += 1
 
         # Read the caller requested data from the decrypted content
         return decrypted_content[start_offset:end_offset]
