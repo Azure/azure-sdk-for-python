@@ -6,9 +6,75 @@ pipeline** change when a Rust extension is added.
 It follows the transition from the pure-Python package model to a **proposed** v5
 native-package model: a compiled Rust extension with platform-specific wheels.
 
-Maturin builds the `azure_cosmos_rust` binding against a sibling
-`azure-sdk-for-rust` checkout directory(only for local development).
+The current development checkout builds the `azure_cosmos_rust` binding against a
+sibling `azure-sdk-for-rust` directory. That path is for local development only. The
+configuration committed for release must select the approved driver published on
+crates.io.
 
+## Proposed release plan at a glance
+
+The intended release arrangement is:
+
+1. Commit the Python-owned binding source and build configuration to
+   `azure-sdk-for-python`.
+2. In `azure_cosmos_rust/Cargo.toml`, select an approved published
+   `azure_data_cosmos_driver` crates.io version and enable its required
+   `__internal_native_query_plan` feature.
+3. Check in `sdk/cosmos/azure-cosmos/rust-toolchain.toml` with the exact stable Rust
+   compiler selected for release, at or above the package MSRV.
+4. On each CI build machine, Cargo downloads that driver source from crates.io and
+   compiles the binding and driver into one dynamic library.
+5. Maturin gives that library its Python extension name—`_rust.pyd` on Windows or
+   `_rust.abi3.so` on Linux and macOS—and places it under `azure/cosmos/` in the
+   wheel.
+6. The custom build wrapper adds the matching QueryPlanInterop files under
+   `azure/cosmos/.libs`, then lets Maturin finish the wheel.
+7. Publish one `azure-cosmos` wheel for each supported operating-system and processor
+   combination.
+
+The Rust driver source is **not committed to `azure-sdk-for-python`**. The following
+table separates what is stored and what is delivered:
+
+| Location or artifact | Contains the Rust driver source? | Contains compiled driver code? |
+|----------------------|----------------------------------|--------------------------------|
+| `azure-sdk-for-python` repository | No; it contains the binding source and a crates.io version declaration | No committed release binary |
+| CI build directory | Yes; Cargo downloads the selected crates.io source while building | Yes, after Cargo compiles it |
+| Customer wheel | No Rust source | Yes; the binding and driver are linked into `_rust.pyd` or `_rust.abi3.so` |
+| Optional `azure-cosmos` source distribution | It does not need to embed the driver source; Cargo can download the declared crates.io dependency during the customer's build | No, until the customer builds it |
+| crates.io package for `azure_data_cosmos_driver` | Yes | No platform-specific Python extension |
+
+### Customer wheel requirements at a glance
+
+The detailed compatibility contract appears in section 10. At a glance, a customer
+installing a compatible wheel needs:
+
+- A supported CPython version, currently proposed as CPython 3.9 through 3.13.
+- A supported operating system and processor combination.
+- A sufficiently recent `pip`.
+
+`pip` installs the declared Python dependencies. The customer does not need Rust,
+Cargo, Maturin, a compiler, an `azure-sdk-for-rust` checkout, or a separate
+QueryPlanInterop download.
+
+### Customer building from a source distribution
+
+A **source distribution**, or **sdist**, is an archive containing source and build
+instructions rather than precompiled `_rust` code. Maturin can create an sdist, but
+whether the v5 release publishes one remains a release-policy decision.
+
+If an sdist is published and customers are expected to build it, they need:
+
+- A supported CPython version and `pip`.
+- Rust and Cargo at or above the declared minimum.
+- The native compiler and operating-system build tools required for their platform.
+- Network access to crates.io, unless the approved driver source is supplied through
+  an approved internal source mirror.
+- Every other native dependency required by the build.
+- An approved QueryPlanInterop input if the source-built wheel is expected to include
+  local query planning. Without it, the current design builds without that sidecar and
+  the driver uses the Cosmos DB Gateway for query plans.
+
+During that build, Cargo downloads the published Rust driver source.
 
 ---
 
@@ -28,7 +94,7 @@ Maturin builds the `azure_cosmos_rust` binding against a sibling
 - [12. The package-level edits](#12-the-package-level-edits)
 - [13. The CI pipeline edits](#13-the-ci-pipeline-edits)
 - [14. The shape that comes out the other end](#14-the-shape-that-comes-out-the-other-end)
-- [15. What has to be arranged with System Engineering](#15-what-has-to-be-arranged-with-system-engineering)
+- [15. What System Engineering must implement and confirm](#15-what-system-engineering-must-implement-and-confirm)
 - [16. Rolling it out without breaking a release](#16-rolling-it-out-without-breaking-a-release)
 - [17. What stays the same unless service requirements change](#17-what-stays-the-same-unless-service-requirements-change)
 - [18. Where it all ends up: the customer's machine](#18-where-it-all-ends-up-the-customers-machine)
@@ -104,9 +170,21 @@ know how to compile Rust or construct this particular wheel. Instead, it reads
 build-backend = "azure_cosmos_build_backend"
 ```
 
-That backend is `azure_cosmos_build_backend.py`, a small layer customized for
-`azure-cosmos`. Its special responsibility is handling QueryPlanInterop, the native
-query-planning library that must ship alongside the Rust extension.
+That backend is the file `azure_cosmos_build_backend.py`. This document calls it the
+**custom wrapper** because it runs immediately around Maturin: it performs
+Cosmos-specific preparation, calls Maturin for the normal Rust extension and wheel build,
+and then performs Cosmos-specific cleanup. It does not replace Maturin and does not rename
+or move Cargo's Rust extension output itself.
+
+For a wheel build, the wrapper performs this sequence:
+
+1. Temporarily copy the target platform's QueryPlanInterop files into
+   `azure/cosmos/.libs`.
+2. Call Maturin.
+3. Let Maturin invoke Cargo, give the resulting extension its Python filename, place it
+   under `azure/cosmos/`, and assemble the wheel.
+4. Remove the temporary QueryPlanInterop copies from the source checkout after the build,
+   whether the build succeeds or fails.
 
 The backend receives a QueryPlanInterop binary built for the target platform—for example,
 Windows x64—and temporarily copies it into:
@@ -207,9 +285,44 @@ azure_core = { workspace = true }
 # ... pyo3-async-runtimes, parking_lot, serde, serde_json, url, async-trait ...
 ```
 
-Cargo walks the binding's complete dependency graph, so it compiles the path-based driver
-and links it into the binding's `cdylib` without the driver being a member. Membership
-decides who shares settings; the dependency graph decides what gets built.
+That snippet shows the **current local-development configuration**, not the required
+release configuration. Before the v5 build configuration is merged to `main`, the committed
+dependency must instead have this form:
+
+```toml
+azure_data_cosmos_driver = {
+    version = "<approved crates.io version>",
+    features = ["__internal_native_query_plan"],
+}
+```
+
+The two fields answer different questions:
+
+- `version` tells Cargo which published `azure_data_cosmos_driver` source release to
+  download from crates.io. This removes any dependency on the directory layout of a
+  developer's machine.
+- `features` enables optional code that exists inside that selected driver release.
+  `__internal_native_query_plan` includes the driver's local query-plan functionality.
+  The selected crates.io version must contain that feature and have the behavior required
+  by this SDK.
+
+The Python repository does not need to copy the Rust driver's source into
+`azure-sdk-for-python`. The committed `main` branch contains the binding source and the
+versioned dependency declaration; Cargo obtains the published driver source from crates.io
+during the build.
+
+A developer who needs to test unpublished driver changes may locally override that
+crates.io dependency with the sibling checkout using a Cargo patch or local Cargo
+configuration. That override must remain outside the committed release package. Editing
+the committed binding manifest back to a sibling `path = ...` dependency would make clean
+CI, an unpacked sdist, and release agents depend on a developer-specific directory again.
+
+Cargo walks the binding's complete dependency graph. With the current development
+declaration, it reads the driver from the sibling path. With the required release
+declaration, it downloads the approved version from crates.io. In both cases Cargo compiles
+the driver and links it into the binding's `cdylib` without making the driver a workspace
+member. Membership decides who shares workspace settings; the dependency declaration
+decides which source Cargo builds.
 
 **Declaring versions in one place.** Look again at `tokio = { workspace = true }` in the
 snippet above: it names a crate and its features but no version. That declaration is
@@ -263,13 +376,63 @@ manifest ranges rather than commit the generated lock. That distinction follows 
 Cargo version-range model: `Cargo.toml` says what the build will *accept*, while
 `Cargo.lock` records what one build actually *got*. 
 
-**The compiler floor is also inconsistent.** `rust-version` is package metadata, not a
-dependency requirement that Cargo merges. The binding declares a minimum of 1.75 and the
-driver declares 1.88; the compiler used for the combined build must satisfy both, making 1.88
-driver declares 1.88; the compiler used for the combined build must satisfy both, making 1.88
-the effective minimum for this pairing. Update the binding workspace metadata to match,
-confirming the figure against the driver revision being shipped — otherwise the Python
-manifest understates the toolchain the build agents need (§15).
+**The Rust compiler policy needs two values, not one vague "stable" setting.**
+
+- The **minimum supported Rust version**, or **MSRV**, is the oldest compiler the package
+  promises can build the source. The package MSRV is the higher of the binding's requirement
+  and the selected published driver's requirement. The current binding declares 1.75, while
+  the inspected driver declares 1.88, so 1.88 is the effective minimum for that inspected
+  pairing. Confirm the exact value against the driver version selected for release, then
+  update the root `rust-version`.
+- The **release-wheel compiler** should be one exact, pinned stable Rust version at or above
+  that MSRV. Do not use an unpinned `stable` channel whose version can change between builds.
+  Record the selected version in a checked-in `rust-toolchain.toml` so local package builds
+  and Windows, Linux, and macOS CI jobs select the same compiler.
+
+`rust-toolchain.toml` is a `rustup` configuration file, not a Cargo dependency manifest.
+When a developer or CI job runs `cargo`, `rustc`, or Maturin in the file's directory or a
+child directory, `rustup` reads the file and selects the declared compiler toolchain. If
+that toolchain is not already installed, `rustup` can install it before the build. This
+prevents a floating `stable` channel from silently changing the compiler between two local
+or release builds. The file can also declare required Rust components and compilation
+targets if the build later needs them.
+
+The file does **not**:
+
+- define the package's MSRV; `rust-version` in `Cargo.toml` does that;
+- lock Rust crate dependency versions; `Cargo.lock` does that; or
+- install Rust on a machine that does not already provide `rustup` or an equivalent
+  EngSys-managed toolchain installation mechanism.
+
+No `rust-toolchain.toml` exists in this repository today. The preferred location is:
+
+```text
+sdk/cosmos/azure-cosmos/rust-toolchain.toml
+```
+
+`rustup` applies a toolchain file to its directory and descendants. Keeping it at the
+package root therefore makes the selection apply to the Cosmos binding workspace while
+avoiding a repository-wide compiler change for unrelated Python SDK packages. Its final
+contents would have this shape:
+
+```toml
+[toolchain]
+channel = "<approved-pinned-stable-version>"
+profile = "minimal"
+```
+
+The placeholder must be replaced by the exact approved stable version. `profile = "minimal"`
+requests only the components needed for compilation rather than the larger default
+installation. Maturin ultimately invokes Cargo, so the Cargo process selected through
+`rustup` uses this pinned compiler without requiring Maturin-specific compiler selection.
+EngSys must ensure that each native-package job has `rustup` or an equivalent installer and
+honors this file inside the Windows environment, Linux build and emulation environments,
+and macOS environment. If EngSys requires one shared repository-level toolchain file
+instead, that placement must be agreed explicitly because it can affect other packages.
+
+If customer sdist builds are supported, CI should also perform a separate build with the
+declared MSRV. Building release wheels with a newer pinned stable compiler does not prove
+that the advertised minimum compiler can build the source.
 
 **One enabled feature adds a second native component.** The binding enables the driver's
 explicitly internal `__internal_native_query_plan` feature. The Rust driver code is linked into
@@ -312,23 +475,41 @@ PyO3 supplies the exported CPython entry point and conversions described in §5.
 Python extensions are **always** dynamic libraries, because the "program" loading them is
 `python.exe`, and it loads extension modules on the fly when an `import` runs.
 
-But there's a naming mismatch. Cargo's raw output on Windows is `azure_cosmos_rust.dll`,
-and Python does not import that raw Cargo filename. Maturin gives this ABI3 project the
-platform-specific Python extension name:
+But there's a naming mismatch. Cargo produces a library named for the Rust crate, while
+Python must import a file named for the Python module:
 
-| Platform | This project imports | Cargo's raw `cdylib` suffix |
-|----------|----------------------|------------------------------|
-| Windows  | `_rust.pyd`          | `.dll`                       |
-| Linux    | `_rust.abi3.so`      | `.so`                        |
-| macOS    | `_rust.abi3.so`      | `.dylib`                     |
+| Platform | Cargo's raw `cdylib` output | Python imports |
+|----------|------------------------------|----------------|
+| Windows  | `azure_cosmos_rust.dll`      | `_rust.pyd` |
+| Linux    | `libazure_cosmos_rust.so`    | `_rust.abi3.so` |
+| macOS    | `libazure_cosmos_rust.dylib` | `_rust.abi3.so` |
 
-The word s *compiled extension*, *platform extension*, *native extension*, and *the `.pyd`/`.so`* — they all mean this same single file:
-`_rust.pyd` on Windows, `_rust.abi3.so` on Linux and macOS. "Platform" and "native" just
-emphasize that it is machine code built for one OS/CPU; "extension" is Python's word for a
-module written in compiled code rather than `.py`.
+The terms *compiled extension*, *platform extension*, *native extension*, and *the
+`.pyd`/`.so`* all mean this same single Python-loadable file: `_rust.pyd` on Windows and
+`_rust.abi3.so` on Linux and macOS. "Platform" and "native" emphasize that it contains
+machine code built for one operating system and processor architecture. "Extension" is
+Python's term for an importable module implemented in compiled code rather than a `.py`
+file.
 
-So Cargo's `azure_cosmos_rust.dll` has to be **renamed** to `_rust.pyd` and **placed**
-inside `azure/cosmos/` before Python can import it. Cargo does neither of those steps.
+Cargo alone does not create the final Python filename or package location. The configured
+build system does. `pyproject.toml` sets:
+
+```toml
+[tool.maturin]
+manifest-path = "azure_cosmos_rust/Cargo.toml"
+python-source = "."
+module-name = "azure.cosmos._rust"
+```
+
+The package's custom build backend wrapper, `azure_cosmos_build_backend.py`, calls Maturin.
+Maturin builds the Cargo `cdylib`, locates Cargo's output, gives it the correct Python
+extension filename, and places it under `azure/cosmos/` while assembling the wheel. The CI
+pipeline should invoke that configured backend/Maturin build; it should not contain separate
+code that searches for, renames, or moves the Rust library.
+
+The custom build backend wrapper has a different responsibility: it temporarily stages the
+QueryPlanInterop files under `azure/cosmos/.libs` and then delegates normal extension
+building and wheel assembly to Maturin.
 
 **Problem:** even after renaming the file by hand and getting Python to load it, the
 functions inside are still unreachable. They speak Rust — Rust types, Rust calling
@@ -883,13 +1064,32 @@ on an older one. The tag `manylinux_2_17` is a promise that the wheel was built 
 2.17 or older. A future pipeline would need to build in a compatible manylinux environment
 to make that promise; the current Cosmos pipeline does not configure this.
 
-The following **five-wheel matrix is a proposed target**, not current configuration:
+The review established one platform decision: **macOS support is Apple Silicon ARM64
+only; Intel macOS is not a target.** The remaining minimum operating-system versions and
+Linux compatibility floor still require release-owner confirmation.
+
+The proposed support contract is:
+
+| Support area | Proposed statement |
+|--------------|--------------------|
+| Python implementation | CPython only |
+| Python versions | CPython 3.9 through 3.13 |
+| Python ABI | `cp39-abi3`: build against the CPython stable ABI with Python 3.9 as the floor |
+| Later CPython versions | Not supported merely because `abi3` may load; add support only after testing and an explicit declaration |
+| PyPy | Not supported unless a separate PyPy build and test policy is approved |
+| Windows | 64-bit x86 (`AMD64`) |
+| Linux | x86-64 and ARM64, using the approved manylinux floor; ARM64 runs under CI emulation |
+| macOS | Apple Silicon ARM64 only |
+| Intel macOS | Not supported |
+| Windows ARM64 | `cibuildwheel` can cross-compile it, but it is not a supported release target until CI can run and validate the resulting wheel or another approved test mechanism exists |
+
+That contract would produce a proposed **four-wheel matrix**, not current
+configuration:
 
 ```
 azure_cosmos-5.0.0-cp39-abi3-win_amd64.whl
 azure_cosmos-5.0.0-cp39-abi3-manylinux_2_17_x86_64.whl
 azure_cosmos-5.0.0-cp39-abi3-manylinux_2_17_aarch64.whl
-azure_cosmos-5.0.0-cp39-abi3-macosx_10_12_x86_64.whl
 azure_cosmos-5.0.0-cp39-abi3-macosx_11_0_arm64.whl
 ```
 
@@ -898,15 +1098,67 @@ azure_cosmos-5.0.0-cp39-abi3-macosx_11_0_arm64.whl
 | Windows 64-bit | `win_amd64` |
 | Linux x86_64 | `manylinux_2_17_x86_64` |
 | Linux ARM64 | `manylinux_2_17_aarch64` |
-| macOS Intel | `macosx_10_12_x86_64` |
 | macOS Apple Silicon | `macosx_11_0_arm64` |
 
-The exact platform tags and supported architectures must be confirmed with the release
-owners. **`cibuildwheel`** is the tool that would produce that matrix: given a list of target
-platforms, it runs the package's build once per target — setting up the right Python and
-build environment for each — and collects the resulting wheels. It reads that target list
-from a `[tool.cibuildwheel]` table in `pyproject.toml`, and the current `pyproject.toml`
-has none.
+The `macosx_11_0_arm64` suffix means ARM64 machine code with macOS 11.0 as the minimum
+declared operating-system version. That minimum version, the `manylinux_2_17` floor, and
+the other exact tags must still be approved before they become release promises.
+
+These declarations are split across two TOML files; they are not all
+`[tool.cibuildwheel]` settings:
+
+| Declaration | Configuration location | Purpose |
+|-------------|------------------------|---------|
+| CPython stable ABI and 3.9 ABI floor | `azure_cosmos_rust/Cargo.toml`: PyO3 feature `abi3-py39` | Controls which CPython C API the Rust extension uses and produces the `cp39-abi3` wheel tags |
+| Supported Python versions and minimum Python version | Release metadata in `pyproject.toml`, such as `requires-python` and classifiers | Tells pip, PyPI, and customers which Python versions the SDK supports |
+| CPython build selector | `[tool.cibuildwheel]` in `pyproject.toml` | Selects the CPython build used to produce each `abi3` wheel and excludes unapproved implementations such as PyPy |
+| Windows architecture | `[tool.cibuildwheel.windows]` | Selects `AMD64` |
+| Linux architectures, build image, and emulator | `[tool.cibuildwheel.linux]` plus EngSys job setup | Selects x86-64 and ARM64, uses the approved manylinux image, and enables the emulator used to run ARM64 builds and tests on the Linux x86-64 agent |
+| macOS architecture and minimum deployment version | `[tool.cibuildwheel.macos]` and its build environment | Selects ARM64 only and supplies the approved `MACOSX_DEPLOYMENT_TARGET` |
+
+**`cibuildwheel`** is the tool that would produce this matrix. Given the approved
+targets, it runs the package build once per operating-system and processor combination
+and collects the resulting wheels. The current `pyproject.toml` has no
+`[tool.cibuildwheel]` table and no `[project]` release metadata, so the proposed support
+contract is documented here but is not yet encoded in the package build.
+
+### Detailed customer wheel compatibility contract
+
+The release-plan summary at the top of this document gives the short customer requirements.
+This section defines what “compatible wheel” means, including the exact Python, processor,
+and operating-system constraints:
+
+1. A supported **CPython** version. The current proposed declaration is CPython 3.9
+   through 3.13. The `abi3` setting may allow the extension to load on a later CPython
+   version, but that version is not supported until the SDK tests and declares it.
+2. A supported operating system and processor combination matching one published wheel:
+   Windows AMD64, Linux x86-64, Linux ARM64, or macOS ARM64 under the proposed matrix.
+3. An operating-system version that satisfies the wheel tag. For example,
+   `macosx_11_0_arm64` requires macOS 11.0 or later on Apple Silicon, while
+   `manylinux_2_17_x86_64` requires a compatible x86-64 Linux system with glibc 2.17 or
+   later. The `win_amd64` tag identifies the Windows processor architecture but does not
+   state a minimum Windows release, so the SDK support policy must declare that separately.
+4. `pip`, or another Python installer that understands wheel compatibility tags.
+
+`pip` installs the declared Python dependencies, such as `azure-core` and
+`typing-extensions`, automatically. The finished wheel must contain `_rust` and the
+matching QueryPlanInterop files. Platform wheel repair and signing must also ensure that
+any nonstandard native dependencies are included or otherwise satisfied by the documented
+operating-system baseline.
+
+A customer installing a compatible wheel should **not** need:
+
+- Rust or Cargo.
+- Maturin or `cibuildwheel`.
+- A C or C++ compiler.
+- An `azure-sdk-for-rust` source checkout.
+- A separately downloaded QueryPlanInterop library.
+
+If no compatible wheel exists and an sdist is published, pip may try to build from source.
+That path can require Rust, Cargo, a compiler, native build tools, and access to every
+source dependency. The release policy must therefore either make the sdist build complete
+and document those requirements or publish wheels only. Customers must not unexpectedly
+fall from a missing platform wheel into an unsupported native source build.
 
 An **sdist** (short for **source distribution**) is a `.tar.gz` archive containing the
 package's source files and build instructions, rather than an already-built wheel. If `pip`
@@ -946,159 +1198,131 @@ directory. That test proves the crates.io dependency and the archive's included 
 are sufficient without either repository already checked out nearby.
 
 **Problem:** a native build must produce binaries for every supported target.
-The current shared pipeline provides Windows, Linux, and macOS jobs, which is the simplest
-feedback on the docum,entplace to build and test each operating-system wheel. A build machine could potentially create
-a wheel for a different CPU—for example, a Linux x64 machine could build a Linux ARM64 wheel.
-However, this repository does not configure or test that process, so the release cannot rely on
-it yet. Today, only the Linux CI job creates the `azure-cosmos` package; the Windows and macOS
-jobs do not create release packages.
+The current shared pipeline provides Windows x86-64, Linux x86-64, and macOS ARM64 jobs.
+The proposed `cibuildwheel` configuration uses those jobs to build and test Windows x86-64
+and macOS ARM64 natively, Linux x86-64 in its native container, and Linux ARM64 through an
+emulated ARM64 container on the Linux x86-64 agent. `cibuildwheel` can cross-compile Windows
+ARM64, but that wheel remains outside the supported matrix until an approved environment
+can run its validation. None of this is configured for Cosmos today: only the Linux CI job
+creates the `azure-cosmos` package, and the current parser does not select the Maturin
+native-wheel path.
 
 ---
 
 ## 11. The release math changes: today vs. after v5
 
-The release shape changes enough that the pure-Python assumptions ("one wheel, one active
-package-build job") need to be revisited.
+The number and type of `azure-cosmos` release files change, but the repository does not
+need a new multi-platform packaging system designed specifically for Cosmos. The shared
+Azure SDK build system already has a native-package path used by packages such as
+`azure-storage-extensions`. That path can run package generation on Windows, Linux, and
+macOS, keep each platform's output separate, and collect the outputs afterward.
+
+The preferred plan is to make `azure-cosmos` recognizable to that existing native-package
+path and provide the Rust-specific configuration and inputs it needs. Sections 12 and 13
+separate those Cosmos and EngSys changes.
 
 **The planning view — put today and the proposed target side by side.**
 
 | Aspect | Pure-Python baseline | Proposed native release |
 |--------|---------------------|---------------------------|
-| Active package-generation OS jobs | Linux only | Windows + Linux + macOS |
+| Shared build path selected for `azure-cosmos` | Pure-Python package path | Existing native-package path |
+| Active package-generation OS jobs | Linux only | Existing Windows, Linux, and macOS native-package jobs |
 | Wheels per release | 1 universal wheel | One wheel per supported OS/CPU target |
 | Release artifacts | Wheel + sdist | Target-dependent; sdist strategy unresolved |
 | Compilation | none | Rust → compiled binary, on each platform |
 | Build time | Existing pipeline measurement | Must be measured after CI integration |
-| Cross-compilation | no | Architecture and agent strategy still to be decided |
+| Non-native target handling | Not needed because no platform-specific code is compiled | Let `cibuildwheel` orchestrate Linux ARM64 through containers and emulation; use native macOS ARM64; keep Windows ARM64 outside the supported matrix until a runnable validation path is approved |
+| New aggregation design | Not needed | Not needed; use the existing per-platform artifact collection |
 
-Two consequences to hold onto:
+What remains Cosmos-specific:
 
-- **The active package-build jobs may grow from Linux-only to the existing Windows and macOS
-  jobs.** Native builds on their matching operating systems are the current shared-pipeline
-  pattern. Linux ARM64 could use an ARM64 agent or an x86 agent with suitable
-  cross-compilation/emulation; the repository does not choose between them yet.
+- Make the package metadata identify `azure-cosmos` as a Maturin-built native package.
+- Declare the approved CPython, ABI, operating-system, and processor matrix.
+- Provide a suitable Rust toolchain and the published crates.io driver dependency.
+- Supply the matching QueryPlanInterop files to each platform build.
+- Install and test every finished wheel before it enters the existing artifact collection.
+
+Two consequences still require proof or measurement:
+
+- **Linux ARM64 emulation.** The `cibuildwheel`/EngSys configuration must prove that the
+  emulated ARM64 environment builds the wheel, installs it, loads `_rust` and
+  QueryPlanInterop, and runs the required tests on the Linux x86-64 agent.
 - **Build time will increase, but the number is not established.** Rust dependencies must be
   compiled on a cold build, while cached builds can be much faster. CI measurements are
   required before setting job timeouts or release estimates.
 
-Note: The package metadata, migration
-from the local driver path to the approved crates.io release, platform matrix, and shared
-pipeline integration all still need explicit implementation.
+Existing native-package infrastructure proves the multi-platform job and artifact flow.
+It does not by itself prove that the current Cosmos package is detected correctly, that
+Rust and QueryPlanInterop are available on every target, or that the complete wheel set is
+ready for publication. Those are the remaining integration tasks.
 
 ---
 
 ## 12. The package-level edits
 
-Package-level means **files inside `sdk/cosmos/azure-cosmos/` that the Cosmos Python SDK
-team owns** — `pyproject.toml`, `setup.py`, `sdk_packaging.toml`, `MANIFEST.in`, and the
-Rust build files and source. Here, the **Rust manifest files** are specifically the two
-`Cargo.toml` files: the workspace manifest at `sdk/cosmos/azure-cosmos/Cargo.toml` and the
-binding-crate manifest at `azure_cosmos_rust/Cargo.toml`. `Cargo.lock` is the generated
-dependency lock file, not a manifest, and `azure_cosmos_rust/src/*.rs` are the Rust source
-files. That's the distinction from sections 13-15, where files live in `eng/` or the
-capability lives on a build agent and EngSys has to be involved.
+Here, **package** means the `azure-cosmos` Python distribution, especially the wheel
+installed by a customer with:
 
-**Current state:**
+```bash
+pip install azure-cosmos
+```
 
-- The root and binding `Cargo.toml` files exist, and the binding builds a `cdylib`.
-- `Cargo.lock` is generated on disk, explicitly ignored by `/Cargo.lock`, and not committed;
-  release owners must confirm whether unlocked registry resolution is acceptable.
-- The binding enables `__internal_native_query_plan`. Package-local discovery and wheel staging
-  are implemented: the binding configures `azure/cosmos/.libs`, and
-  `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR` supplies target-platform artifacts to the PEP 517
-  build wrapper. The wrapper serializes parallel staging and tracks crash recovery outside the
-  source tree, and the binding's `build.rs` build script validates every packaged PE/ELF/Mach-O
-  binary against the target wheel's operating system and architecture. No approved
-  QueryPlanInterop artifact source is present in this checkout.
-- `pyproject.toml` selects the package's PEP 517 wrapper, which delegates compilation and wheel
-  assembly to Maturin, points Maturin at `azure_cosmos_rust/Cargo.toml`, and uses
-  `module-name = "azure.cosmos._rust"`.
-- `pyproject.toml` does **not** define the release distribution metadata or a
-  `[tool.cibuildwheel]` platform matrix.
-- `MANIFEST.in` does not include the Rust manifests, lock file, or binding source.
-- `sdk_packaging.toml` contains only `[packaging] auto_update = false`. Nothing in it marks
-  the package as containing compiled code, and nothing in the repository shows that adding
-  such a key would change the build path (see item 7 below). Whether this file is the right
-  place for that marker is an EngSys decision.
+It also means the source and configuration files under
+`sdk/cosmos/azure-cosmos/` that are used to build that wheel. A wheel containing
+native code is specific to an operating system and processor architecture. The
+release will therefore contain several `azure-cosmos` wheels rather than one
+universal pure-Python wheel.
 
-Other changes to be made:
+The **distribution name** remains `azure-cosmos`. Python packaging normalizes `-`
+to `_` in a wheel filename, so a filename such as
+`azure_cosmos-5.0.0-cp39-abi3-win_amd64.whl` still represents the distribution
+installed with `pip install azure-cosmos`.
 
-1. Driver source — make the build work on a machine that isn't a developer's - replace the path dependency with the
-   approved **published crates.io version** of `azure_data_cosmos_driver`, then prove both a
-   clean CI checkout and an unpacked sdist can resolve and build it. Keep any sibling-checkout
-   override local-only.
+The other customer-facing distribution information includes:
 
+- **Version:** the release number pip and PyPI use to distinguish releases. For
+  the first v5 release, this is expected to be `5.0.0`. The current
+  `azure/cosmos/_version.py` value is `4.16.2`.
+- **Dependencies:** other Python distributions pip must install with
+  `azure-cosmos`. `setup.py` currently declares `azure-core>=1.30.0` and
+  `typing-extensions>=4.6.0`, plus the optional `aio` dependency.
+- **Metadata:** the description, required Python version, license, project URL,
+  classifiers, README text, and other information stored in the wheel and shown
+  by package indexes such as PyPI.
 
-2. **Toolchain declaration — make the manifest describe the real compiler floor.**
-   The root `sdk/cosmos/azure-cosmos/Cargo.toml` declares
-   `rust-version = "1.75"`, while the inspected driver requires Rust 1.88. Because Cargo
-   compiles both crates, the build must satisfy the higher minimum. *What:* update the root
-   `rust-version` after confirming the requirement of the published driver version selected
-   for release. 
+`MANIFEST.in` has a different job. The current `setup.py sdist` command uses it to
+choose which repository files are copied into a **source distribution**, or
+**sdist**. An sdist is a source archive from which another machine may try to
+build a wheel. `MANIFEST.in` does not directly choose the files in a Maturin-built
+wheel. If the release publishes an sdist through `setup.py`, it must include the
+Rust manifests and Rust source required for that build. If Maturin owns the sdist,
+Cargo and Maturin inclusion rules apply instead.
 
+| Change and why it is needed | Where to make it | Owner |
+|---|---|---|
+| **Use an approved published Rust driver dependency.** `azure_cosmos_rust/Cargo.toml` currently refers to a neighboring `azure-sdk-for-rust` checkout. Clean CI agents and customers building an sdist will not have that developer checkout, so the release build must resolve an approved `azure_data_cosmos_driver` version from crates.io. Any sibling-checkout override must remain local-only. | `azure_cosmos_rust/Cargo.toml`; remove other release-time sibling paths from the root `Cargo.toml` if they are not required by the binding | Cosmos SDK |
+| **Declare the MSRV and pin the release compiler.** The root manifest currently declares Rust 1.75, while the inspected driver requires 1.88. The package MSRV must be the higher requirement after the exact published driver is selected. Add a package-level `rust-toolchain.toml` containing one exact stable compiler version at or above that MSRV instead of using a floating `stable` channel. If sdist builds are supported, test the declared MSRV separately. | Root `Cargo.toml` for `rust-version`; new `sdk/cosmos/azure-cosmos/rust-toolchain.toml` for the release compiler; shared job setup must honor the file | Cosmos SDK declares the MSRV and checks in the toolchain file; EngSys installs and uses that toolchain on each build machine |
+| **Choose and complete the source-distribution strategy.** If an sdist is published, it must contain all Python and Rust inputs needed to build without either source repository beside it. The current `setup.py` sdist is controlled by `MANIFEST.in`, which omits the Rust manifests and Rust source. A Maturin sdist follows different inclusion rules. The team must choose one supported path, decide whether `Cargo.lock` is included, and prove that an unpacked sdist builds a wheel. The alternative is an explicitly approved and enforced wheel-only policy. | `MANIFEST.in`, `pyproject.toml`, both `Cargo.toml` files, the `Cargo.lock` policy, and release policy | Cosmos SDK and release-policy owners; EngSys confirms what the shared release system supports |
+| **Provide QueryPlanInterop for every supported platform.** Package-local loading and staging into `azure/cosmos/.libs` are implemented, but no approved QueryPlanInterop artifacts are available in this checkout. Each wheel needs the licensed and approved binary and dependencies matching its operating system and processor architecture. The final installed wheels must prove both native query-plan selection and Gateway fallback when the library is unavailable. | Supply build inputs through `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR`; stage wheel files under `azure/cosmos/.libs`; maintain validation in the build wrapper, `build.rs`, and package tests | Cosmos SDK obtains the approved libraries and implements behavior/tests; EngSys provides secure CI delivery, platform repair, and signing |
+| **Keep the customer distribution identity as `azure-cosmos`.** Maturin currently reads `[package] name = "azure_cosmos_rust"` and `version = "0.1.0"` from the binding crate, while the customer package metadata remains in `setup.py`. Left unchanged, the native build can produce a wheel identified as `azure-cosmos-rust`, which `pip install azure-cosmos` will not select. The Maturin build must instead produce the `azure-cosmos` distribution with the v5 release version, Python dependencies, required Python version, description, license, classifiers, README, and project information. The wheel filename may contain the normalized spelling `azure_cosmos`; its distribution identity is still `azure-cosmos`. | Primarily add authoritative release metadata to `pyproject.toml` in the form supported by Maturin and EngSys; keep `azure/cosmos/_version.py`, `setup.py`, and Cargo metadata consistent or remove duplicate authority after the build design is approved | Cosmos SDK |
+| **Declare the supported wheel matrix.** Compiled machine code cannot use one universal wheel. The proposed matrix is Windows AMD64, Linux x86-64, Linux ARM64, and macOS ARM64. `cibuildwheel` can build and test Linux ARM64 through an emulator on the Linux x86-64 agent. Intel macOS is not a target. Windows ARM64 can be cross-compiled but is not supported until an approved runnable test path exists. The package currently has no `[tool.cibuildwheel]` table. | Add `[tool.cibuildwheel]` and platform-specific settings to `pyproject.toml`; configure Linux ARM64 emulation in the EngSys job; keep the PyO3 `abi3-py39` setting in `azure_cosmos_rust/Cargo.toml` | Cosmos SDK applies the package matrix; EngSys supplies emulation and shared-job support; both approve the support contract |
+| **Mark `azure-cosmos` as containing compiled code.** The shared Azure SDK builder currently parses `setup.py`, sees no `ext_modules`, and treats this as a pure-Python package. It therefore does not select `cibuildwheel`, even though `pyproject.toml` uses Maturin. The package must use an EngSys-supported marker or metadata shape that makes both native-build gates recognize it. An unverified key such as `extension = true` must not be invented. | The EngSys-approved package metadata location, possibly `sdk_packaging.toml`, `pyproject.toml`, or another supported file | EngSys defines the supported detection mechanism; Cosmos SDK applies the package-local edit |
+| **Enable native package jobs on all approved operating systems.** The current shared platform switch recognizes `azure-storage-extensions`, so Windows and macOS do not generate Cosmos packages. The switch must recognize `azure-cosmos` through the approved mechanism. This change is required to produce more than a Linux wheel. | Shared platform-selection logic under `eng/pipelines/`; section 13 identifies the current hardcoded check | EngSys |
+| **Make the shared builder invoke Maturin through `cibuildwheel`.** Enabling Windows and macOS jobs is not enough: the current parser still sees zero `setup.py` extensions and would run the pure-Python wheel path. The shared builder must recognize the PEP 517/Maturin extension and call the native wheel build path. | Shared package parser and build logic under `eng/` | EngSys |
+| **Provide the pinned Rust toolchain in every selected build environment.** Maturin cannot compile `_rust` unless the Windows x86-64 agent, Linux x86-64 environment, emulated Linux ARM64 environment, and macOS ARM64 agent use the selected stable Rust version at or above the package MSRV. | Shared pipeline steps, build containers, emulator setup, or managed build-agent images | EngSys |
+| **Build and test every produced wheel.** A successful source compilation does not prove that the installed wheel contains the correct `_rust` extension and QueryPlanInterop library or that fallback works. CI must install each finished wheel in a clean environment and run the applicable tests, including the existing `native_query_plan` category rather than ignoring it. | Package tests and shared per-platform CI jobs | Cosmos SDK writes and enables the tests; EngSys executes them on every approved platform |
+| **Repair and sign the native wheels before publication.** Apply the required platform repair, then unpack the Windows and macOS wheels, sign `_rust` and the packaged native sidecar libraries, and repack the wheels with correct wheel records. Install and test the final repacked wheels because signing changes the files customers receive. Only then collect and publish the complete wheel set under one `azure-cosmos` version. | Shared wheel-repair, signing, repacking, validation, artifact aggregation, and release infrastructure | EngSys and release owners |
 
-3. **Source-distribution strategy — make one source-build path complete.**
-   The current EngSys `setup.py sdist` path is controlled by `MANIFEST.in` and omits
-   Rust inputs, while a Maturin sdist uses Cargo/Maturin inclusion rules instead. Both still
-   fail as standalone inputs until the selected crates.io dependency replaces the external
-   sibling path. *What:* choose the backend that owns the release sdist, include the required
-   Python and Rust source, apply the crates.io driver dependency, decide the lock policy, and
-   prove a wheel can be built from the unpacked archive; or approve wheel-only publication
-   and make release/support policy enforce that choice.
+The responsibility split is:
 
-
-4. **Native query-plan artifacts — provide and validate the actual platform libraries.**
-   Package-local loading and `.libs` wheel staging are implemented, but the required
-   QueryPlanInterop binaries are not in either checkout. Obtain approved, licensed, signed
-   artifacts and dependencies for every supported OS/architecture, supply each build through
-   `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR`, run the platform wheel repair/signing step, inspect
-   the final wheel archive, and prove both native selection and no-library Gateway fallback from
-   clean installed wheels using a deterministic signal supported by the selected driver revision.
-   CI must also enable `test_category="native_query_plan"` so the 64 existing native-library tests
-   run instead of being ignored.
-
-
-5. **Distribution identity — make the build produce `azure-cosmos`.**
-   Maturin derives the package name and version from the crate it's told to build, so
-   today it emits `azure_cosmos_rust-0.1.0-*.whl`. Publishing that would put a wrong-named
-   package on PyPI; existing customers' `pip install azure-cosmos` wouldn't find it. The
-   `setup.py` metadata that carries the real name and version isn't what the Maturin build
-   reads. *What:* supply the release metadata (name `azure-cosmos`, version `5.0.0`,
-   description, classifiers, dependencies) so the native build stamps the right identity onto
-   the wheel.
-
-
-6. **Wheel matrix — declare which platforms get built.**
-   We established that one wheel per OS/CPU is now required, and `cibuildwheel` is the
-   tool that drives that fan-out — but it reads its target list from a `[tool.cibuildwheel]`
-   table in `pyproject.toml`, and this package has no such table. Today's `pyproject.toml`
-   has `[build-system]`, `[tool.maturin]`, `[tool.azure-sdk-build]`, and
-   `[tool.azure-sdk-conda]` — nothing that names a platform. *What:* add that table, naming
-   the approved targets and minimum platform tags, roughly:
-
-   ```toml
-   [tool.cibuildwheel]
-   build = "cp39-*"                      # one abi3 wheel per platform, 3.9 floor
-   # ...plus the approved archs and minimum tags per OS, e.g.
-   # [tool.cibuildwheel.linux]   archs = ["x86_64", "aarch64"], manylinux image
-   # [tool.cibuildwheel.macos]   archs = ["x86_64", "arm64"], MACOSX_DEPLOYMENT_TARGET
-   # [tool.cibuildwheel.windows] archs = ["AMD64"]
-   ```
-
-   Deliberately **after** the matrix is approved , so we don't encode a guess about
-   which of the five targets are actually supported and then have to unpick it.
-
-
-7. **Azure SDK packaging integration — satisfy both native-build gates.**
-   Section 13 shows two separate blockers: the platform fan-out switch is hardcoded for
-   `azure-storage-extensions`, and `sdk_build` parses this package through `setup.py`, where
-   it sees zero `ext_modules` and therefore does not select `cibuildwheel`. use the
-   package marker and metadata shape that EngSys supports so both the Windows/macOS jobs and
-   the compiled-extension build path are selected. Nothing in the repository confirms that
-   adding an invented `extension = true` key to `sdk_packaging.toml` would do this.
-
-Items 1-5 are package and release-policy work. Items 6 and 7 also require agreement with
-EngSys on the supported matrix and package-detection mechanism.
+- **Cosmos SDK:** package source, Rust dependencies, customer-facing metadata,
+  native-library behavior, and tests.
+- **EngSys/System Engineering:** package detection in shared tooling, platform
+  jobs, build agents, Rust installation, wheel repair, signing, aggregation, and
+  publication.
+- **Joint decisions:** supported platforms, sdist versus wheel-only publication,
+  the official compiled-package marker, QueryPlanInterop delivery, and the
+  authority for package name and version.
 
 ---
 
@@ -1158,19 +1382,68 @@ At minimum, the completed pipeline must:
 1. Select the native multi-platform build path for `azure-cosmos`.
 2. Make the package parser/builder recognize the Maturin extension and invoke its PEP
    517/Maturin build through `cibuildwheel`.
-3. Install or provide Rust.
+3. Read the exact stable Rust version from the checked-in package-level
+   `rust-toolchain.toml` and install it on each build machine. It must be at or above the
+   package MSRV declared after choosing the published driver version. If source builds are
+   supported, run a separate build using the exact MSRV.
 4. Build against the approved published crates.io driver version; remove any dependency on a
    sibling `azure-sdk-for-rust` checkout from the release package and CI job.
-5. Build and test every approved platform wheel.
-6. Aggregate and publish only after all required artifacts pass validation.
+5. Build and test the four proposed wheel targets:
 
-`cibuildwheel` is already present in the central CI tool set, but Cosmos has no package-level
-configuration for it. Maturin is declared as a build-system requirement in the package
-`pyproject.toml`; whether EngSys also wants it preinstalled on agents is an implementation
-decision, not a current repository fact.
+   | Build machine | Wheel target | How tests run |
+   |---------------|--------------|---------------|
+   | Windows x86-64 | Windows x86-64 (`win_amd64`) | Directly on the agent |
+   | Linux x86-64 | Linux x86-64 (`manylinux_*_x86_64`) | Directly in the Linux build environment |
+   | Linux x86-64 | Linux ARM64 (`manylinux_*_aarch64`) | In the emulator orchestrated for `cibuildwheel` |
+   | macOS ARM64 | macOS ARM64 (`macosx_*_arm64`) | Directly on the agent |
 
-**The new problem:** with those edits in, what does the pipeline actually *look* like when
-it runs — and does it introduce any step the old pipeline never had?
+   Windows ARM64 can be cross-compiled by `cibuildwheel`, but it must not be published as a
+   supported target until the pipeline can run and validate that wheel through an approved
+   mechanism.
+6. Apply the required platform wheel repair.
+7. For Windows and macOS, unpack each wheel, sign `_rust` and the packaged native sidecar
+   libraries, then repack the wheel with correct wheel records.
+8. Install and test the repaired and signed wheel in clean environments for every declared
+   CPython version, currently proposed as 3.9 through 3.13. This proves that the single
+   `cp39-abi3` wheel is usable across the versions the SDK claims to support. PyPy is not
+   part of this test matrix.
+9. Aggregate and publish only after every required final wheel passes validation.
+
+`cibuildwheel` is already present in the central CI tool set. The Cosmos-owned selector and
+architecture matrix should be added to the package's `pyproject.toml`, for example:
+
+```toml
+[tool.cibuildwheel]
+# Build once at the CPython 3.9 ABI floor; PyO3 produces an abi3 wheel.
+build = "cp39-*"
+
+[tool.cibuildwheel.windows]
+archs = ["AMD64"]
+
+[tool.cibuildwheel.linux]
+archs = ["x86_64", "aarch64"]
+
+[tool.cibuildwheel.macos]
+archs = ["arm64"]
+```
+
+The approved manylinux image, Linux ARM64 emulator setup, macOS deployment target, test
+command, and other release settings must be added after those values are confirmed. Do not
+add Windows ARM64, Intel macOS, or PyPy selectors to the supported matrix without their own
+approved validation policy.
+
+This package configuration tells `cibuildwheel` what to build after a native-package job
+starts. It cannot create build machines, enable the shared Windows and macOS jobs, or make
+the shared package parser choose `cibuildwheel`; those remain EngSys integration work.
+
+Maturin is declared in `[build-system].requires`, so a normal isolated PEP 517 build installs
+the declared Maturin version into its temporary build environment. EngSys may still choose
+to cache or preinstall it for performance, but correctness should come from the declared
+build requirement rather than an undeclared agent installation.
+
+The remaining question is therefore not where the matrix belongs. It belongs in
+`pyproject.toml`. The remaining question is how the existing shared pipeline recognizes
+`azure-cosmos` as a native package and starts `cibuildwheel` with that configuration.
 
 ---
 
@@ -1188,38 +1461,78 @@ That aggregation plumbing is current repository behavior. The Cosmos-native outp
 - With only that variable enabled, all three jobs run `sdk_build`, but the current package
   parser still sees `setup.py` with zero `ext_modules`, so it does not select
   `cibuildwheel`.
-- After both gates are fixed, each job can contribute its approved wheel or wheels to the
-  existing aggregation path. Repository source proves CI artifact collation, but it does not
-  by itself prove production signing or a complete multi-file PyPI release.
+- EngSys will adjust the shared build system so `azure-cosmos` selects the native package
+  path, receives the pinned Rust toolchain, and builds through `cibuildwheel` using the
+  package matrix in `pyproject.toml`.
+- The preferred design is for `cibuildwheel` to orchestrate the supported wheel outputs
+  inside the existing Windows x86-64, Linux x86-64, and macOS ARM64 jobs. The implementation
+  must prove that the Linux job also builds and tests the Linux ARM64 wheel through its
+  configured emulator, that the four-wheel matrix is exact, and that each final wheel is
+  returned through the existing per-platform artifact directories.
+- After that integration, the existing `Build_Extended` job can collect the approved final
+  wheels. No Cosmos-specific artifact aggregator is required.
 
-The intended end state is therefore not a new aggregation design. It is a correctly detected
-Maturin package feeding validated native wheels into the aggregation design that already
-exists.
+The intended end state is therefore the existing native-package and aggregation design,
+extended by EngSys to recognize the Maturin package and supply its Rust toolchain. Cosmos
+owns the `pyproject.toml` matrix, package build configuration, native inputs, and tests;
+EngSys owns starting and supporting that build in the shared pipeline.
+
+Repository source proves the existing artifact collation, but the completed implementation
+must still prove wheel repair, Windows/macOS signing and repacking, post-signing installation
+tests, and complete multi-file publication.
 
 ---
 
 
-## 15. What has to be arranged with System Engineering
+## 15. What System Engineering must implement and confirm
 
-The pipeline edits depend on capabilities that are not established by the repository files
-audited here. Each needs an explicit confirmation before v5's release branch is cut.
+EngSys will adjust the shared build system to support the Rust toolchain and native wheel
+build. The following implementation details still need to be completed and demonstrated
+before the v5 release branch is cut.
 
-1. **Agent toolchain.** Do the Windows, Linux, and macOS agents provide a Rust toolchain at
-   or above the minimum the *driver* requires (§3 — higher than the version our own binding
-   workspace currently declares)? If not, should each build install it, or should the agent
-   image provide it?
+1. **Agent toolchain.** Agree on one exact stable Rust compiler at or above the package
+   MSRV and record it in `sdk/cosmos/azure-cosmos/rust-toolchain.toml`. Configure the
+   Windows x86-64, Linux x86-64, the emulated Linux ARM64 build environment, and macOS
+   ARM64 jobs to install and honor that file. If sdist builds are supported, also run a
+   separate build with the exact MSRV. Use a repository-root toolchain file only if EngSys
+   intentionally wants the same Rust version to apply beyond this package.
 
-2. **ARM coverage — ARM and x86 are two different CPU designs, and machine code built for
-   one will not run on the other. So who builds the ARM wheels? Either we rent an ARM machine
-   and build there (simplest, needs that agent to exist), or we build on our existing x86
-   machines by telling the compiler "target ARM" (cross-compilation — no new machine, but
-   nothing on that box can actually *run* the result to test it), or we fake an ARM CPU in
-   software (emulation — it runs, but slowly).
+2. **Build machines and target handling.** Configure `cibuildwheel` around the available
+   agents:
 
-3. **Signing and multi-file publication.** The CI templates prove that platform artifacts
-   can be collected. Confirm separately that release tooling signs the native binaries as
-   required, publishes the complete required artifact set as one version, and fails safely
-   if any required wheel is missing.
+   | Build machine | Target | Build and test method |
+   |---------------|--------|-----------------------|
+   | Windows x86-64 | Windows x86-64 | Native build and direct test |
+   | Linux x86-64 | Linux x86-64 | Native container build and direct test |
+   | Linux x86-64 | Linux ARM64 | ARM64 container and emulator build; run tests through the emulator |
+   | macOS ARM64 | macOS ARM64 | Native build and direct test |
+
+   `cibuildwheel` can also orchestrate a Windows ARM64 cross-compile on the Windows x86-64
+   agent. That capability alone does not make Windows ARM64 supported because the current
+   agent cannot run the resulting wheel. Add that target only after an approved runtime
+   validation method exists. Intel macOS is not a target.
+
+3. **Signing and mixed wheel/sdist publication.** Signing already works in an EngSys
+   branch; the remaining work is to generalize that implementation for services whose
+   release contains both built distributions and source distributions. A **built
+   distribution**, or **bdist**, is the prebuilt wheel. The sdist is the source `.tar.gz`
+   archive.
+
+   For `azure-cosmos`, the release tooling must:
+
+   1. Identify wheel files separately from sdist files.
+   2. After platform repair, unpack the Windows and macOS wheels.
+   3. Sign `_rust` and the packaged native sidecar libraries.
+   4. Repack each wheel with correct wheel records.
+   5. Leave the sdist on its source-archive path rather than treating it as a wheel that
+      contains signable platform binaries.
+   6. Install and test the repacked wheels.
+   7. Publish the required wheel set and the sdist, if the release policy includes one, as
+      the same `azure-cosmos` version.
+
+   Release tooling must fail safely if signing, repacking, post-signing validation, or any
+   required artifact is missing. The branch proves that signing mechanics exist; it does
+   not yet prove the generalized mixed-bdist/sdist release flow.
 
 4. **Build and test timeouts.** Measure cold and cached Rust builds on each selected agent,
    then set caching, sharding, and timeout policy from data rather than estimates.
@@ -1231,15 +1544,21 @@ them all as artifacts — as opposed to the single `py3-none-any` wheel every pu
 package produces. That machinery exists and is proven: `azure-storage-extensions` uses it
 today. So the multi-platform *plumbing* is not something Cosmos has to invent.
 
-What is **not** proven is the Cosmos-specific part of it. `azure-storage-extensions` is a **C**
-extension and proves that the existing native path can build that package on the selected
-agents. Cosmos needs a **Rust** toolchain and must be able to resolve the approved crates.io
-driver version from every build environment. Both still need explicit confirmation.
+`azure-storage-extensions` is a **C** extension, so it proves the shared native path but not
+the Rust-specific package integration. Cosmos owns the package configuration, approved
+crates.io driver version, wheel contents, and tests. The remaining shared build-system work
+belongs to EngSys:
 
-The operating-system jobs and artifact aggregation already exist, but Rust setup, package
-detection, crates.io driver resolution, target coverage, signing, and publication policy
-still have to be proven together. Turning them all on in one change immediately before a
-release would create avoidable release risk.
+1. Detect that `azure-cosmos` is a Rust-backed native package and invoke `cibuildwheel` to
+   produce the configured platform wheels.
+2. Sign the native artifacts inside the applicable built-distribution wheels and return
+   correctly repacked, tested wheels.
+3. Publish one release that can contain a mixture of signed built-distribution wheels and
+   an sdist source archive, when the release policy includes an sdist.
+
+The existing operating-system jobs and artifact aggregation are the foundation for these
+changes. EngSys must implement and validate the three extensions above; Cosmos must provide
+the package configuration and test contract they execute.
 
 ---
 
@@ -1309,7 +1628,7 @@ flowchart TD
         L["one linked cdylib<br/>(binding + driver code)"]
         M["maturin<br/>name → _rust.pyd / _rust.abi3.so<br/>place → azure/cosmos/"]
         W["one wheel<br/>.py sources + _rust.&lt;ext&gt;<br/>+ .libs/ QueryPlanInterop when supplied"]
-        MX["repeat per platform:<br/>win_amd64<br/>manylinux x86_64 / aarch64<br/>macosx x86_64 / arm64"]
+        MX["repeat per platform:<br/>win_amd64<br/>manylinux x86_64<br/>manylinux aarch64 (emulated)<br/>macosx arm64"]
         B --> C
         D --> C
         C --> LK --> L --> M --> W --> MX
