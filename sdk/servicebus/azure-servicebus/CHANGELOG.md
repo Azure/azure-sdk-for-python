@@ -6,7 +6,7 @@
 
 - Added `ServiceBusReceivedMessage.from_bytes()` classmethod to construct a `ServiceBusReceivedMessage` from raw AMQP payload bytes without requiring the deprecated `uamqp` library. ([#43979](https://github.com/Azure/azure-sdk-for-python/issues/43979))
 - Added `ServiceBusClient.list_queue_sessions()` and `ServiceBusClient.list_subscription_sessions()` (sync and async) to list session IDs for entities with active messages, with optional filtering by session-state update timestamp. The methods return an `ItemPaged[str]` (`AsyncItemPaged[str]` on the async client) so callers can iterate every session transparently or page with `by_page()`. Implements the `com.microsoft:get-message-sessions` management operation. ([#46575](https://github.com/Azure/azure-sdk-for-python/pull/46575))
-- Added an `await_settlement_outcome` keyword to the sync and async `ServiceBusReceiver` and to the `get_queue_receiver`/`get_subscription_receiver` factory methods, making `PEEK_LOCK` settlement outcomes observable. See the corresponding entry under "Bugs Fixed" for details.
+- Added an `await_settlement_outcome` keyword to the sync and async `ServiceBusReceiver` and to the `get_queue_receiver`/`get_subscription_receiver` factory methods, making `PEEK_LOCK` settlement outcomes observable. Because it adds a service round trip per settlement, high-throughput async callers should settle concurrently, for example `await asyncio.gather(*(receiver.complete_message(m) for m in messages))`. See the corresponding entry under "Bugs Fixed" for details.
 
 ### Bugs Fixed
 

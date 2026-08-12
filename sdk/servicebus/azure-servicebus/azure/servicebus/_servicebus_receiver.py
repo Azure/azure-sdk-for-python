@@ -143,6 +143,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
     :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
      wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
      and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+     a larger than default value may need to be passed in.
     :keyword bool await_settlement_outcome: Whether settlement operations (`complete_message`,
      `abandon_message`, `defer_message` and `dead_letter_message`) should wait for the service to
      confirm the outcome and raise if the settlement was not applied. The default is `False`, in
@@ -150,7 +151,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
      cannot be distinguished from a successful one, surfacing instead as the message being
      redelivered at lock expiry. Enabling this adds a service round trip per settlement. Only
      valid in `PEEK_LOCK` mode and only supported on the default pyamqp transport.
-     a larger than default value may need to be passed in.
     """
 
     def __init__(
@@ -458,10 +458,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
 
         # The following condition check is a hot fix for settling a message received for non-session queue after
         # lock expiration.
-        # By default settlements are sent pre-settled, so the service returns no disposition result and there is
-        # no way to tell whether one succeeded (for uamqp this is a hard limitation, see issue:
-        # https://github.com/Azure/azure-uamqp-c/issues/274). Set `await_settlement_outcome=True` on the receiver
-        # to have pyamqp wait for the service to confirm the outcome instead.
+        # Settlements are pre-settled by default, so success cannot be verified (uamqp never can:
+        # https://github.com/Azure/azure-uamqp-c/issues/274). Opt in with await_settlement_outcome=True.
         if not self._session and message._lock_expired:
             raise MessageLockLostError(
                 message="The lock on the message lock has expired.",

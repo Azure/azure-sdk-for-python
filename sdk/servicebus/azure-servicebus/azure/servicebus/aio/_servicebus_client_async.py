@@ -412,8 +412,10 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :keyword bool await_settlement_outcome: Whether settlement operations should wait for the
          service to confirm the outcome and raise if the settlement was not applied. The default is
          `False`, in which case a settlement the service does not process cannot be distinguished
-         from a successful one. Only valid in `PEEK_LOCK` mode and only supported on the default
-         pyamqp transport.
+         from a successful one. Enabling this adds a service round trip per settlement, so settle
+         many messages concurrently, for example
+         `await asyncio.gather(*(receiver.complete_message(m) for m in messages))`. Only valid in
+         `PEEK_LOCK` mode and only supported on the default pyamqp transport.
         :returns: The ServiceBusReceiver for the queue.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
@@ -611,8 +613,10 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :keyword bool await_settlement_outcome: Whether settlement operations should wait for the
          service to confirm the outcome and raise if the settlement was not applied. The default is
          `False`, in which case a settlement the service does not process cannot be distinguished
-         from a successful one. Only valid in `PEEK_LOCK` mode and only supported on the default
-         pyamqp transport.
+         from a successful one. Enabling this adds a service round trip per settlement, so settle
+         many messages concurrently, for example
+         `await asyncio.gather(*(receiver.complete_message(m) for m in messages))`. Only valid in
+         `PEEK_LOCK` mode and only supported on the default pyamqp transport.
         :returns: The ServiceBusReceiver for the topic subscription.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 

@@ -914,8 +914,7 @@ try:
             outcome_timeout: Optional[float] = None,
         ) -> None:
             if await_outcome:
-                # uamqp cannot observe disposition outcomes at all, so fail loudly rather
-                # than silently ignore the request and return a false success.
+                # uamqp cannot observe outcomes; fail loudly rather than return a false success.
                 raise NotImplementedError(
                     "await_settlement_outcome is not supported by the uamqp transport. "
                     "Use the default pyamqp transport to enable it."

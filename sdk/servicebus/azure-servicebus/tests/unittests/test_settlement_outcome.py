@@ -260,6 +260,32 @@ def test_receiver_role_dispositions_are_ignored():
     assert link._session._connection.listen_calls == 2
 
 
+def test_huge_advertised_range_costs_only_the_pending_deliveries():
+    """`first`/`last` are peer-controlled 32-bit values.
+
+    Resolving the outcome must be proportional to what we are actually tracking, not to the
+    advertised range. Note that a regression here manifests as a hang rather than a failure,
+    because the old code walked every ID in the range.
+    """
+    link = build_sync_link(frames=[disposition_frame(0, 2**32 - 1, True, ACCEPTED)])
+    settle(link, outcome_timeout=5)
+    assert link._pending_dispositions == {}
+
+
+def test_inverted_range_is_rejected_rather_than_confirming_nothing():
+    """An empty range would register no deliveries and then report instant success."""
+    link = build_sync_link()
+    with pytest.raises(ValueError):
+        link.send_disposition(
+            first_delivery_id=DELIVERY_ID,
+            last_delivery_id=DELIVERY_ID - 1,
+            delivery_tag=DELIVERY_TAG,
+            settled=False,
+            delivery_state=Accepted(),
+            await_outcome=True,
+        )
+
+
 # ---------------------------------------------------------------------------
 # Async link -- the PBI requires parity on both receivers
 # ---------------------------------------------------------------------------
@@ -388,8 +414,41 @@ def test_option_is_rejected_in_receive_and_delete_mode():
             )
 
 
-def test_uamqp_transport_rejects_the_option():
-    """uamqp cannot observe outcomes, so opting in must fail loudly rather than lie."""
+def test_non_pyamqp_transport_is_rejected_at_construction():
+    """The guard must fire while building the receiver, not at settle time.
+
+    The transport raises NotImplementedError, which subclasses RuntimeError and would be
+    swallowed by the management-link fallback -- silently settling instead of failing loudly.
+    Exercised through a stand-in transport so the guard stays covered where uamqp is absent.
+    """
+    receiver = ServiceBusReceiver.__new__(ServiceBusReceiver)
+    receiver._entity_name = "q"
+    receiver.fully_qualified_namespace = "ns.servicebus.windows.net"
+    receiver._config = MagicMock(name="config")
+    receiver._amqp_transport = MagicMock(name="transport")
+    receiver._amqp_transport.KIND = "uamqp"
+    receiver._amqp_transport.TIMEOUT_FACTOR = 1
+
+    with pytest.raises(ValueError, match="uamqp"):
+        receiver._populate_attributes(queue_name="q", await_settlement_outcome=True)
+
+
+def test_pyamqp_transport_accepts_the_option():
+    """The same construction path succeeds on the supported transport."""
+    receiver = ServiceBusReceiver.__new__(ServiceBusReceiver)
+    receiver._entity_name = "q"
+    receiver.fully_qualified_namespace = "ns.servicebus.windows.net"
+    receiver._config = MagicMock(name="config")
+    receiver._amqp_transport = MagicMock(name="transport")
+    receiver._amqp_transport.KIND = "pyamqp"
+    receiver._amqp_transport.TIMEOUT_FACTOR = 1
+
+    receiver._populate_attributes(queue_name="q", await_settlement_outcome=True)
+    assert receiver._await_settlement_outcome is True
+
+
+def test_uamqp_transport_settle_call_still_refuses():
+    """Defense in depth: the transport itself must not silently ignore the request."""
     uamqp_transport = pytest.importorskip("azure.servicebus._transport._uamqp_transport")
     if not hasattr(uamqp_transport, "UamqpTransport"):
         pytest.skip("uamqp is not installed")

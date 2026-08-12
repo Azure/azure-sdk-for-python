@@ -458,16 +458,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
 
         except MessageSettlementUnconfirmed as mse:
-            # The service never confirmed the disposition, so the result is unknown. Signal the
-            # caller to re-settle over the management link, which is request/response and
-            # therefore authoritative.
+            # Result unknown: signal the caller to re-settle over the authoritative mgmt link.
             raise RuntimeError("The service did not confirm the settlement on the receiver link.") from mse
 
         except MessageException:
-            # A rejected outcome is a definitive answer from the service. Propagate it with its own
-            # condition (e.g. com.microsoft:message-lock-lost) rather than letting the generic
-            # AMQPException handler below flatten it into a ServiceBusConnectionError. Only an
-            # awaited settlement can produce one; the pre-settled path never reports an outcome.
+            # Definitive answer: keep its condition (e.g. message-lock-lost) instead of letting the
+            # AMQPException handler below flatten it into ServiceBusConnectionError.
             raise
 
         except AMQPConnectionError as e:

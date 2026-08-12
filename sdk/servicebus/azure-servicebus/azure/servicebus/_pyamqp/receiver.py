@@ -19,8 +19,7 @@ from .error import AMQPException, ErrorCondition, MessageException, MessageSettl
 
 _LOGGER = logging.getLogger(__name__)
 
-#: Fallback used only if no timeout is supplied. Callers are expected to pass one
-#: (Service Bus sources it from its operation timeout, which also defaults to 60s).
+#: Fallback only; Service Bus passes its own operation timeout (also 60s).
 DEFAULT_SETTLEMENT_OUTCOME_TIMEOUT = 60
 
 
@@ -91,8 +90,7 @@ class ReceiverLink(Link):
         self._received_payload = bytearray()
         self._first_frame = None
         self._received_delivery_tags = set()
-        # Deliveries whose settlement outcome is being awaited, keyed by delivery ID.
-        # Only populated by send_disposition(await_outcome=True); empty on the default path.
+        # Awaited settlements by delivery ID; empty on the default fire-and-forget path.
         self._pending_dispositions: Dict[int, Dict[str, Any]] = {}
 
     @classmethod
@@ -164,12 +162,10 @@ class ReceiverLink(Link):
                     raise self._error
 
     def _incoming_disposition(self, frame):
-        # Only tracked when a settlement outcome was explicitly awaited; the default
-        # fire-and-forget path leaves _pending_dispositions empty and does no work here.
+        # Nothing to resolve unless an outcome is being awaited.
         if not self._pending_dispositions:
             return
-        # The role field identifies the endpoint that sent the disposition. Deliveries on a
-        # receiver link are settled by the remote sender, so ignore anything else.
+        # Our deliveries are settled by the remote sender; ignore anything else.
         if frame[0] != Role.Sender:
             return
         settled = frame[3]
@@ -178,9 +174,9 @@ class ReceiverLink(Link):
             # Non-terminal disposition; the remote endpoint has not reported an outcome yet.
             return
         last_delivery_id = frame[2] if frame[2] is not None else frame[1]
-        for delivery_id in range(frame[1], last_delivery_id + 1):
-            pending = self._pending_dispositions.get(delivery_id)
-            if pending is not None:
+        # `first`/`last` are peer-controlled 32-bit values: walk what we track, not the range.
+        for delivery_id, pending in self._pending_dispositions.items():
+            if frame[1] <= delivery_id <= last_delivery_id:
                 pending["outcome"] = outcome
                 pending["settled"] = True
 
@@ -213,9 +209,7 @@ class ReceiverLink(Link):
                     )
                 self._session._connection.listen(wait=False)  # pylint: disable=protected-access
                 if self.state in (LinkState.DETACHED, LinkState.ERROR):
-                    # Report this as unconfirmed rather than raising the raw link error: the
-                    # settlement outcome is genuinely unknown, and only an unconfirmed result
-                    # routes the caller to the authoritative management-link fallback.
+                    # Unconfirmed, not failed: only this routes the caller to the mgmt-link fallback.
                     raise MessageSettlementUnconfirmed(
                         condition=ErrorCondition.LinkDetachForced,
                         description=(
@@ -307,6 +301,9 @@ class ReceiverLink(Link):
         if settled:
             raise ValueError("A settlement outcome cannot be awaited when the disposition is pre-settled.")
         last = last_delivery_id if last_delivery_id is not None else first_delivery_id
+        if last < first_delivery_id:
+            # An empty range would register nothing, then "confirm" instantly: a false success.
+            raise ValueError("last_delivery_id cannot be lower than first_delivery_id.")
         delivery_ids = list(range(first_delivery_id, last + 1))
         for delivery_id in delivery_ids:
             self._pending_dispositions[delivery_id] = {"settled": False, "outcome": None}

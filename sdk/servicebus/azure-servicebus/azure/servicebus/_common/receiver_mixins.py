@@ -67,12 +67,19 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             )
 
         self._await_settlement_outcome = bool(kwargs.get("await_settlement_outcome", False))
-        if self._await_settlement_outcome and self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE:
-            raise ValueError(
-                "Messages received in RECEIVE_AND_DELETE receive mode are settled by the service on "
-                "delivery and are never settled by the client, so requesting await_settlement_outcome "
-                "in this mode is invalid."
-            )
+        if self._await_settlement_outcome:
+            if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE:
+                raise ValueError(
+                    "Messages received in RECEIVE_AND_DELETE receive mode are settled by the service on "
+                    "delivery and are never settled by the client, so requesting await_settlement_outcome "
+                    "in this mode is invalid."
+                )
+            # NotImplementedError subclasses RuntimeError, which the settle fallback swallows.
+            if self._amqp_transport.KIND != "pyamqp":
+                raise ValueError(
+                    "await_settlement_outcome is not supported by the uamqp transport, which cannot "
+                    "observe settlement outcomes. Use the default pyamqp transport to enable it."
+                )
 
     def _get_source(self):
         if self._session:
