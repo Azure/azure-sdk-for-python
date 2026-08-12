@@ -137,11 +137,12 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_general_regex_sanitizer(
         value="00000000000000000000000000000000", regex=r"/LocalUpload/([a-f0-9]{36}[a-f0-9]+)/?", group_for_replace="1"
     )
-    add_general_regex_sanitizer(
-        value="Sanitized",
-        regex=r"https://(?<storage_account_name>[^.]+)\.blob\.core\.windows\.net",
-        group_for_replace="storage_account_name",
-    )
+    storage_account_name = os.environ.get("ML_TEST_STORAGE_ACCOUNT_NAME")
+    if storage_account_name:
+        add_general_string_sanitizer(
+            value="https://Sanitized.blob.core.windows.net",
+            target=f"https://{storage_account_name}.blob.core.windows.net",
+        )
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
@@ -660,6 +661,12 @@ def snapshot_hash_sanitizer(test_proxy):
         value="000000000000000000000000000000000000",
         regex=_query_param_regex("hash"),
         function_scoped=True,
+    )
+    set_custom_default_matcher(
+        compare_bodies=True,
+        excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length,Accept",
+        ignored_query_parameters="api-version,hash",
+        ignore_query_ordering=True,
     )
 
 
