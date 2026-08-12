@@ -52,7 +52,7 @@ The auto-generated PR includes:
 ### Review, Approve, and Cleanup (manual)
 
 1. **Review the PR.** Check the report in the pipeline output for any packages that encountered unexpected behavior and may need manual fixes.
-   - The PR triggers a [public build](https://dev.azure.com/azure-sdk/public/_build?definitionId=8092) which validates the changes to the Conda recipes.
+   - ⚠️ **Note:** The public conda validation pipeline has been disabled. The internal validation pipeline remains active and will validate changes during the build phase.
 
 2. **Merge the PR** into `main`.
 
