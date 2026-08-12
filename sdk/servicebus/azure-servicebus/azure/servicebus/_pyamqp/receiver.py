@@ -168,11 +168,11 @@ class ReceiverLink(Link):
         # Our deliveries are settled by the remote sender; ignore anything else.
         if frame[0] != Role.Sender:
             return
-        settled = frame[3]
-        outcome = frame[4]  # state
-        if not settled and not outcome:
-            # Non-terminal disposition; the remote endpoint has not reported an outcome yet.
+        # An unsettled disposition does not confirm settlement, even when it carries an
+        # outcome -- rcv-settle-mode Second is only satisfied once the sender settles.
+        if not frame[3]:  # settled
             return
+        outcome = frame[4]  # state
         last_delivery_id = frame[2] if frame[2] is not None else frame[1]
         # `first`/`last` are peer-controlled 32-bit values: walk what we track, not the range.
         for delivery_id, pending in self._pending_dispositions.items():

@@ -23,6 +23,7 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
   * [Entity not found errors](#entity-not-found-errors)
 * [Troubleshooting message handling issues](#troubleshooting-message-handling-issues)
   * [Message and session lock issues](#message-and-session-lock-issues)
+  * [Messages are redelivered even though settlement succeeded](#messages-are-redelivered-even-though-settlement-succeeded)
   * [Message size issues](#message-size-issues)
 * [Troubleshooting receiver issues](#troubleshooting-receiver-issues)
   * [Number of messages returned doesn't match number requested](#number-of-messages-returned-doesnt-match-number-requested)
@@ -279,6 +280,45 @@ with receiver:
         # Process message
         receiver.complete_message(message)
 ```
+
+### Messages are redelivered even though settlement succeeded
+
+By default, settlements (`complete_message`, `abandon_message`, `defer_message`, `dead_letter_message`) are
+sent pre-settled on the pure-Python AMQP transport: the call returns as soon as the frame is written, without
+waiting for the service to confirm the outcome. A settlement the service did not apply is therefore
+indistinguishable from one that succeeded, and the only symptom is the message reappearing when its lock
+expires, with an increased `delivery_count`.
+
+Construct the receiver with `await_settlement_outcome=True` to wait for the service to confirm each
+settlement and raise when it is rejected (for example with `MessageLockLostError`):
+
+```python
+from azure.servicebus.exceptions import MessageLockLostError
+
+receiver = client.get_queue_receiver(queue_name=QUEUE_NAME, await_settlement_outcome=True)
+with receiver:
+    for message in receiver.receive_messages(max_message_count=10):
+        try:
+            receiver.complete_message(message)
+        except MessageLockLostError:
+            # The service rejected the settlement -- the message will be redelivered.
+            pass
+```
+
+This turns a silent redelivery into an exception you can act on, and distinguishes the two causes: a
+rejection means the lock was already lost at settle time (see
+[Message and session lock issues](#message-and-session-lock-issues) and `AutoLockRenewer`), while a
+settlement that succeeds and *still* redelivers points elsewhere.
+
+Because it adds a service round trip per settlement, settling one message at a time becomes slow at volume.
+On the async client, settle concurrently:
+
+```python
+await asyncio.gather(*(receiver.complete_message(m) for m in messages))
+```
+
+The option applies to `PEEK_LOCK` mode only and is supported on the default pyamqp transport (not
+`uamqp_transport=True`, which cannot observe settlement outcomes).
 
 ### Message size issues
 

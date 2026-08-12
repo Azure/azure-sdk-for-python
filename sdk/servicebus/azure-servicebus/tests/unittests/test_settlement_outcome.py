@@ -260,6 +260,23 @@ def test_receiver_role_dispositions_are_ignored():
     assert link._session._connection.listen_calls == 2
 
 
+def test_unsettled_disposition_carrying_an_outcome_does_not_confirm():
+    """rcv-settle-mode Second is satisfied only once the sender settles.
+
+    A disposition that carries a terminal outcome with settled=False is still unsettled;
+    treating it as confirmation would report success before the service committed.
+    """
+    link = build_sync_link(
+        frames=[
+            disposition_frame(DELIVERY_ID, DELIVERY_ID, False, ACCEPTED),
+            disposition_frame(DELIVERY_ID, DELIVERY_ID, True, ACCEPTED),
+        ]
+    )
+    settle(link, outcome_timeout=5)
+    # Two listens: the unsettled frame was ignored, the settled one resolved it.
+    assert link._session._connection.listen_calls == 2
+
+
 def test_huge_advertised_range_costs_only_the_pending_deliveries():
     """`first`/`last` are peer-controlled 32-bit values.
 
