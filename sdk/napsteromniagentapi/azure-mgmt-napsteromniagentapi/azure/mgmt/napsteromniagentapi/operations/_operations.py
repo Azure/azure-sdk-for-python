@@ -32,14 +32,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import NapsterOmniAgentApiMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -50,7 +49,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-24-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-11"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +70,7 @@ def build_organizations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-24-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-11"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +99,7 @@ def build_organizations_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-24-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-11"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +130,7 @@ def build_organizations_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-24-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-11"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +159,7 @@ def build_organizations_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-24-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-11"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Napster.CompanionAPI/organizations/{organizationname}"
     path_format_arguments = {
@@ -183,7 +182,7 @@ def build_organizations_list_by_resource_group_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-24-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-11"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -210,7 +209,7 @@ def build_organizations_list_by_subscription_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-24-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-11"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -237,7 +236,7 @@ def build_organizations_link_saa_s_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-24-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-11"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -267,7 +266,7 @@ def build_organizations_latest_linked_saa_s_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-24-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-11"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -296,7 +295,7 @@ def build_saa_soperation_group_activate_resource_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-24-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-11"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -318,7 +317,7 @@ def build_saa_soperation_group_activate_resource_request(  # pylint: disable=nam
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -430,7 +429,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class OrganizationsOperations:
+class OrganizationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -523,7 +522,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organizationname: str,
-        resource: Union[_models.OrganizationResource, JSON, IO[bytes]],
+        resource: Union[_models.OrganizationResource, _types.OrganizationResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -630,7 +629,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organizationname: str,
-        resource: JSON,
+        resource: _types.OrganizationResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -643,7 +642,7 @@ class OrganizationsOperations:
         :param organizationname: Name of the Organization resource. Required.
         :type organizationname: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.napsteromniagentapi.types.OrganizationResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -688,7 +687,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organizationname: str,
-        resource: Union[_models.OrganizationResource, JSON, IO[bytes]],
+        resource: Union[_models.OrganizationResource, _types.OrganizationResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OrganizationResource]:
         """Create a OrganizationResource.
@@ -698,10 +697,10 @@ class OrganizationsOperations:
         :type resource_group_name: str
         :param organizationname: Name of the Organization resource. Required.
         :type organizationname: str
-        :param resource: Resource create parameters. Is one of the following types:
-         OrganizationResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.napsteromniagentapi.models.OrganizationResource or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a OrganizationResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.napsteromniagentapi.models.OrganizationResource or
+         ~azure.mgmt.napsteromniagentapi.types.OrganizationResource or IO[bytes]
         :return: An instance of LROPoller that returns OrganizationResource. The OrganizationResource
          is compatible with MutableMapping
         :rtype:
@@ -764,7 +763,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organizationname: str,
-        properties: Union[_models.OrganizationResourceUpdate, JSON, IO[bytes]],
+        properties: Union[_models.OrganizationResourceUpdate, _types.OrganizationResourceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -869,7 +868,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organizationname: str,
-        properties: JSON,
+        properties: _types.OrganizationResourceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -882,7 +881,7 @@ class OrganizationsOperations:
         :param organizationname: Name of the Organization resource. Required.
         :type organizationname: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.napsteromniagentapi.types.OrganizationResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -927,7 +926,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organizationname: str,
-        properties: Union[_models.OrganizationResourceUpdate, JSON, IO[bytes]],
+        properties: Union[_models.OrganizationResourceUpdate, _types.OrganizationResourceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OrganizationResource]:
         """Update a OrganizationResource.
@@ -937,10 +936,10 @@ class OrganizationsOperations:
         :type resource_group_name: str
         :param organizationname: Name of the Organization resource. Required.
         :type organizationname: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         OrganizationResourceUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.napsteromniagentapi.models.OrganizationResourceUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         OrganizationResourceUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.napsteromniagentapi.models.OrganizationResourceUpdate or
+         ~azure.mgmt.napsteromniagentapi.types.OrganizationResourceUpdate or IO[bytes]
         :return: An instance of LROPoller that returns OrganizationResource. The OrganizationResource
          is compatible with MutableMapping
         :rtype:
@@ -1313,7 +1312,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organizationname: str,
-        body: Union[_models.SaaSData, JSON, IO[bytes]],
+        body: Union[_models.SaaSData, _types.SaaSData, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1423,7 +1422,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organizationname: str,
-        body: JSON,
+        body: _types.SaaSData,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1438,7 +1437,7 @@ class OrganizationsOperations:
         :param organizationname: Name of the Organization resource. Required.
         :type organizationname: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.napsteromniagentapi.types.SaaSData
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1485,7 +1484,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organizationname: str,
-        body: Union[_models.SaaSData, JSON, IO[bytes]],
+        body: Union[_models.SaaSData, _types.SaaSData, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OrganizationResource]:
         """Links a new SaaS to the Napster organization of the underlying monitor.
@@ -1497,9 +1496,10 @@ class OrganizationsOperations:
         :type resource_group_name: str
         :param organizationname: Name of the Organization resource. Required.
         :type organizationname: str
-        :param body: The content of the action request. Is one of the following types: SaaSData, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.napsteromniagentapi.models.SaaSData or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a SaaSData type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.napsteromniagentapi.models.SaaSData or
+         ~azure.mgmt.napsteromniagentapi.types.SaaSData or IO[bytes]
         :return: An instance of LROPoller that returns OrganizationResource. The OrganizationResource
          is compatible with MutableMapping
         :rtype:
@@ -1639,7 +1639,7 @@ class OrganizationsOperations:
         return deserialized  # type: ignore
 
 
-class SaaSOperationGroupOperations:
+class SaaSOperationGroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1659,7 +1659,9 @@ class SaaSOperationGroupOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     def _activate_resource_initial(
-        self, body: Union[_models.ActivateSaaSParameterRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[_models.ActivateSaaSParameterRequest, _types.ActivateSaaSParameterRequest, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1747,12 +1749,12 @@ class SaaSOperationGroupOperations:
 
     @overload
     def begin_activate_resource(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.ActivateSaaSParameterRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.SaaSResourceDetailsResponse]:
         """Resolve the token to get the SaaS resource ID and activate the SaaS resource.
 
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.napsteromniagentapi.types.ActivateSaaSParameterRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1783,14 +1785,16 @@ class SaaSOperationGroupOperations:
 
     @distributed_trace
     def begin_activate_resource(
-        self, body: Union[_models.ActivateSaaSParameterRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[_models.ActivateSaaSParameterRequest, _types.ActivateSaaSParameterRequest, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.SaaSResourceDetailsResponse]:
         """Resolve the token to get the SaaS resource ID and activate the SaaS resource.
 
-        :param body: The request body. Is one of the following types: ActivateSaaSParameterRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.napsteromniagentapi.models.ActivateSaaSParameterRequest or JSON or
-         IO[bytes]
+        :param body: The request body. Is either a ActivateSaaSParameterRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.napsteromniagentapi.models.ActivateSaaSParameterRequest or
+         ~azure.mgmt.napsteromniagentapi.types.ActivateSaaSParameterRequest or IO[bytes]
         :return: An instance of LROPoller that returns SaaSResourceDetailsResponse. The
          SaaSResourceDetailsResponse is compatible with MutableMapping
         :rtype:
