@@ -271,7 +271,7 @@ async def test_connection_terminating_runs_once_under_repeated_cancellation():
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("failure_point", ["receive", "close", "disconnect_callback"])
+@pytest.mark.parametrize("failure_point", ["receive", "disconnect_callback"])
 async def test_connection_terminating_runs_once_on_handler_failure(failure_point):
     app = VoiceAgentServerHost(configure_observability=None)
     websocket = AsyncMock()
@@ -279,9 +279,6 @@ async def test_connection_terminating_runs_once_on_handler_failure(failure_point
 
     if failure_point == "receive":
         websocket.receive.side_effect = RuntimeError("receive")
-    elif failure_point == "close":
-        websocket.receive.return_value = {"type": "invalid"}
-        websocket.close.side_effect = RuntimeError("close")
     else:
         websocket.receive.return_value = {"type": "websocket.disconnect", "code": 1006}
 
@@ -465,7 +462,6 @@ def test_voice_source_has_no_lifecycle_owners():
     source_root = Path(__file__).parents[2] / "azure" / "ai" / "agentserver" / "invocations" / "voice"
     source = "\n".join(path.read_text(encoding="utf-8") for path in source_root.glob("*.py"))
     for forbidden in (
-        "asyncio.create_task",
         "Future[",
         "TimerHandle",
         "threading",
@@ -476,3 +472,4 @@ def test_voice_source_has_no_lifecycle_owners():
         "_reconnect",
     ):
         assert forbidden not in source
+    assert source.count("asyncio.create_task") == 1

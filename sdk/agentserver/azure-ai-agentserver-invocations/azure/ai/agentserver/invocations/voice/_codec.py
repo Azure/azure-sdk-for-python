@@ -66,8 +66,8 @@ _VOICE_TYPES = {
     "azure-realtime-native",
 }
 _RFC3339 = re.compile(
-    r"^(?P<date>\d{4}-\d{2}-\d{2})T(?P<time>(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d)"
-    r"(?:\.\d{1,9})?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$"
+    r"^(?P<date>[0-9]{4}-[0-9]{2}-[0-9]{2})T(?P<time>(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])"
+    r"(?:\.[0-9]{1,9})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$"
 )
 _KNOWN_UNSUPPORTED_INBOUND = {
     "conversation.item.create",
@@ -430,6 +430,11 @@ def _validate_json_tree(value: Any) -> None:
             if not math.isfinite(current):
                 raise VoiceProtocolError("Voice frame contains a non-finite number")
         elif isinstance(current, dict):
+            for key in current:
+                try:
+                    key.encode("utf-8")
+                except UnicodeEncodeError as exc:
+                    raise VoiceProtocolError("Voice frame contains invalid Unicode") from exc
             pending.extend((item, depth + 1) for item in current.values())
         elif isinstance(current, list):
             pending.extend((item, depth + 1) for item in current)

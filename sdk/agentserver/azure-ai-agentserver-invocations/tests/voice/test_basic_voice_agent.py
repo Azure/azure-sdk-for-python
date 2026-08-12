@@ -4,7 +4,7 @@
 """Behavior tests for the developer-owned lifecycle in the basic Voice sample."""
 
 import asyncio
-import importlib
+import importlib.util
 import sys
 from pathlib import Path
 
@@ -42,13 +42,22 @@ def sample_module(monkeypatch):
             super().__init__(**kwargs)
 
     monkeypatch.setattr(voice, "VoiceAgentServerHost", QuietVoiceAgentServerHost)
-    module_name = "samples.basic_voice_agent.basic_voice_agent"
+    module_name = "_basic_voice_agent_sample"
     sys.modules.pop(module_name, None)
-    module = importlib.import_module(module_name)
-    yield module
-    module.generations.clear()
-    module.input_generations.clear()
-    sys.modules.pop(module_name, None)
+    spec = importlib.util.spec_from_file_location(module_name, _SAMPLE_ROOT / "basic_voice_agent.py")
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Unable to load the basic Voice sample")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    try:
+        spec.loader.exec_module(module)
+        yield module
+    finally:
+        if hasattr(module, "generations"):
+            module.generations.clear()
+        if hasattr(module, "input_generations"):
+            module.input_generations.clear()
+        sys.modules.pop(module_name, None)
 
 
 def _session_start(protocol_version):

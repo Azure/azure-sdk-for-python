@@ -139,6 +139,19 @@ def test_session_start_preserves_safe_open_caller_context():
     assert event.caller == {"future_context": {"token_count": 7, "secretary_name": "Ada"}}
 
 
+def test_session_start_rejects_invalid_unicode_in_caller_key():
+    with pytest.raises(VoiceProtocolError, match="invalid Unicode"):
+        decode_inbound_message(
+            _frame(
+                "session.start",
+                protocol_version="1.0",
+                reconnect=False,
+                response_timeouts={"first_output_ms": 1, "idle_ms": 2, "max_duration_ms": 3},
+                caller={"\ud800": "value"},
+            )
+        )
+
+
 def test_selected_registry_is_exactly_ten_each_direction():
     inbound = InboundVoiceMessage.__args__
     outbound = OutboundVoiceMessage.__args__
@@ -328,6 +341,19 @@ def test_image_content_fails_loud():
 def test_invalid_inbound_frame_fails_context_free(frame):
     with pytest.raises(VoiceProtocolError):
         decode_inbound_message(frame)
+
+
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        "٢٠٢٦-08-12T00:00:00Z",
+        "2026-08-12T00:00:00.١Z",
+        "2026-08-12T00:00:00+٠١:00",
+    ],
+)
+def test_timestamp_rejects_non_ascii_digits(timestamp):
+    with pytest.raises(VoiceProtocolError, match="RFC 3339"):
+        decode_inbound_message(_frame("session.end", reason="completed", ts=timestamp))
 
 
 @pytest.mark.parametrize(

@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 import inspect
 import logging
 import time
@@ -14,9 +15,9 @@ from typing import Any, NoReturn, TypeVar, cast
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from opentelemetry.propagators.textmap import Getter
-from starlette.routing import Host, Match, Mount, WebSocketRoute
+from starlette.routing import Host, Match, Mount, Router, WebSocketRoute
 from starlette.types import Receive, Scope, Send
-from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
+from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from azure.ai.agentserver.core import (
     FoundryAgentRequestContext,
@@ -99,16 +100,18 @@ def _dispose_invalid_awaitable(awaitable: Any) -> None:
 class _VoiceWebSocketRoute(WebSocketRoute):
     """Reserved Voice route that preserves matching Host and Mount authority."""
 
-    def __init__(self, endpoint: Callable[..., Any], *, authority_routes: tuple[Host | Mount, ...]) -> None:
+    def __init__(self, endpoint: Callable[..., Any], *, router: Router) -> None:
         super().__init__(InvocationsWSConstants.ROUTE_PATH, endpoint, name="invocations_ws")
-        self._authority_routes = authority_routes
+        self._router = router
 
     def matches(self, scope: Scope) -> tuple[Match, Scope]:
         match, child_scope = super().matches(scope)
         if match is not Match.FULL:
             return match, child_scope
 
-        for route in self._authority_routes:
+        for route in tuple(self._router.routes):
+            if route is self or not isinstance(route, (Host, Mount)):
+                continue
             authority_match, authority_scope = route.matches(scope)
             if authority_match is Match.FULL:
                 selected_scope: dict[Any, Any] = dict(authority_scope)
@@ -165,12 +168,19 @@ def _selected_voice_close_code(websocket: WebSocket, default_code: int) -> int:
     return int(selected) if isinstance(selected, int) else default_code
 
 
-async def _close_voice_connection(websocket: WebSocket, code: int, reason: str) -> NoReturn:
+def _select_voice_close_code(websocket: WebSocket, code: int) -> None:
     scope = getattr(websocket, "scope", None)
     if isinstance(scope, MutableMapping):
         scope.setdefault(_VOICE_CLOSE_CODE, code)
-    await websocket.close(code=code, reason=reason)
+
+
+def _raise_voice_disconnect(websocket: WebSocket, code: int, reason: str) -> NoReturn:
+    _select_voice_close_code(websocket, code)
     raise WebSocketDisconnect(code=code, reason=reason)
+
+
+async def _raise_pending_cancellation() -> None:
+    await asyncio.sleep(0)
 
 
 @experimental
@@ -212,14 +222,14 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                 if route is self._voice_route:
                     return
                 raise RuntimeError(_VOICE_ROUTE_CONFLICT)
-        authority_routes = tuple(route for route in self.router.routes if isinstance(route, (Host, Mount)))
-        voice_route = _VoiceWebSocketRoute(self._ws_endpoint, authority_routes=authority_routes)
+        voice_route = _VoiceWebSocketRoute(self._ws_endpoint, router=self.router)
         self._voice_route = voice_route
         self.router.routes.insert(0, voice_route)
 
     async def _ws_endpoint(self, websocket: WebSocket) -> None:
         session_id = self.config.session_id or str(uuid.uuid4())
         start_ns = time.monotonic_ns()
+        voice_session: Session | None = None
         trace_token = _otel_context.attach(_extract_voice_websocket_context(websocket))
         platform_token = set_request_context(
             FoundryAgentRequestContext(
@@ -239,20 +249,24 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     ]
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                await self._finalize_session(
-                    websocket=None,
+                self._emit_voice_close_event(
                     session_id=session_id,
                     start_ns=start_ns,
                     close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
                     error_code="accept_failed",
                 )
-                logger.error("Voice WebSocket accept failed for session %s: %s", session_id, exc, exc_info=True)
+                try:
+                    logger.error("Voice WebSocket accept failed for session %s: %s", session_id, exc, exc_info=True)
+                except BaseException:  # pylint: disable=broad-exception-caught
+                    pass
                 return
 
+            voice_session = Session._create(websocket)  # pylint: disable=protected-access
             close_code = InvocationsWSConstants.CLOSE_NORMAL
             handler_exc: BaseException | None = None
             try:
                 close_code, handler_exc = await self._invoke_user_handler(websocket, session_id)
+                await _raise_pending_cancellation()
                 close_code = _selected_voice_close_code(websocket, close_code)
             except BaseException as exc:  # pylint: disable=broad-exception-caught
                 close_code = _selected_voice_close_code(websocket, InvocationsWSConstants.CLOSE_INTERNAL_ERROR)
@@ -266,37 +280,84 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                 else:
                     error_code = "cancelled"
                 await self._finalize_voice_session(
-                    websocket=websocket,
+                    voice_session=voice_session,
                     session_id=session_id,
                     start_ns=start_ns,
                     close_code=close_code,
                     error_code=error_code,
+                    cancellation=handler_exc if isinstance(handler_exc, asyncio.CancelledError) else None,
                 )
         finally:
+            if voice_session is not None:
+                Session._release(websocket, voice_session)  # pylint: disable=protected-access
             reset_request_context(platform_token)
             try:
                 _otel_context.detach(trace_token)
             except ValueError:
                 pass
 
+    async def _invoke_user_handler(
+        self,
+        websocket: WebSocket,
+        session_id: str,
+    ) -> tuple[int, BaseException | None]:
+        ws_fn = self._ws_fn
+        if ws_fn is None:
+            raise RuntimeError("_invoke_user_handler called with no registered ws_handler")
+        try:
+            await ws_fn(websocket)
+            return InvocationsWSConstants.CLOSE_NORMAL, None
+        except WebSocketDisconnect as exc:
+            return int(exc.code) if exc.code else InvocationsWSConstants.CLOSE_NORMAL, None
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            try:
+                logger.error("Voice WebSocket handler raised for session %s: %s", session_id, exc, exc_info=True)
+            except BaseException:  # pylint: disable=broad-exception-caught
+                pass
+            return InvocationsWSConstants.CLOSE_INTERNAL_ERROR, exc
+
     async def _finalize_voice_session(
         self,
         *,
-        websocket: WebSocket,
+        voice_session: Session,
+        session_id: str,
+        start_ns: int,
+        close_code: int,
+        error_code: str | None,
+        cancellation: asyncio.CancelledError | None,
+    ) -> None:
+        self._emit_voice_close_event(
+            session_id=session_id,
+            start_ns=start_ns,
+            close_code=close_code,
+            error_code=error_code,
+        )
+        reason = "Internal server error" if close_code == InvocationsWSConstants.CLOSE_INTERNAL_ERROR else ""
+        try:
+            await voice_session._close(  # pylint: disable=protected-access
+                close_code,
+                reason,
+                prior_cancellation=cancellation,
+            )
+        except Exception:  # pylint: disable=broad-exception-caught
+            try:
+                logger.debug("Error closing Voice WebSocket session %s", session_id, exc_info=True)
+            except BaseException:  # pylint: disable=broad-exception-caught
+                pass
+
+    def _emit_voice_close_event(
+        self,
+        *,
         session_id: str,
         start_ns: int,
         close_code: int,
         error_code: str | None,
     ) -> None:
         duration_ms = (time.monotonic_ns() - start_ns) // 1_000_000
-        self._emit_close_event(session_id, close_code, duration_ms, error_code=error_code)
-        if websocket.application_state == WebSocketState.DISCONNECTED:
-            return
-        reason = "Internal server error" if close_code == InvocationsWSConstants.CLOSE_INTERNAL_ERROR else ""
         try:
-            await websocket.close(code=close_code, reason=reason)
-        except Exception:  # pylint: disable=broad-exception-caught
-            logger.debug("Error closing Voice WebSocket session %s", session_id, exc_info=True)
+            self._emit_close_event(session_id, close_code, duration_ms, error_code=error_code)
+        except BaseException:  # pylint: disable=broad-exception-caught
+            pass
 
     def ws_handler(self, fn: Any) -> NoReturn:
         """Reject raw-handler registration on the typed Voice host.
@@ -462,7 +523,8 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         return cast(_CallbackT, callback)
 
     async def _handle_voice_connection(self, websocket: WebSocket) -> None:
-        session = Session._create(websocket)  # pylint: disable=protected-access
+        bound_session = Session._current(websocket)  # pylint: disable=protected-access
+        session = bound_session or Session._create(websocket)  # pylint: disable=protected-access
         try:
             while True:
                 raw_message = await websocket.receive()
@@ -471,6 +533,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     code = int(raw_message.get("code") or 1000)
                     raw_reason = raw_message.get("reason")
                     reason = raw_reason if isinstance(raw_reason, str) else None
+                    _select_voice_close_code(websocket, code)
                     callback = self._voice_callbacks.get("disconnect")
                     if callback is not None:
                         await callback(session, SessionDisconnected(code=code, reason=reason))
@@ -480,17 +543,17 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     )
                 if raw_type != "websocket.receive":
                     reason = "Invalid Voice WebSocket event"
-                    await _close_voice_connection(websocket, 1002, reason)
+                    _raise_voice_disconnect(websocket, 1002, reason)
                 frame = raw_message.get("text")
                 if frame is None:
                     reason = "Voice messages must be text frames"
-                    await _close_voice_connection(websocket, 1003, reason)
+                    _raise_voice_disconnect(websocket, 1003, reason)
                 try:
                     event = decode_inbound_message(frame)
                 except VoiceProtocolError as exc:
                     reason = "Invalid Voice message"
                     try:
-                        await _close_voice_connection(websocket, exc.close_code, reason)
+                        _raise_voice_disconnect(websocket, exc.close_code, reason)
                     except WebSocketDisconnect as disconnect:
                         raise disconnect from exc
                 if event is None:
@@ -512,6 +575,8 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                         logger.exception("Voice connection termination callback failed")
                     except BaseException:  # pylint: disable=broad-exception-caught
                         pass
+            if bound_session is None:
+                Session._release(websocket, session)  # pylint: disable=protected-access
 
     def _build_hypercorn_config(self, host: str, port: int) -> object:
         """Create a Hypercorn config with the Voice frame admission limit.
