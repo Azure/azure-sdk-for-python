@@ -6,7 +6,7 @@
 
 - Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
 
-## 2.1.0b1 (2026-08-06)
+## 2.1.0b1 (2026-08-11)
 
 ### Features Added
 

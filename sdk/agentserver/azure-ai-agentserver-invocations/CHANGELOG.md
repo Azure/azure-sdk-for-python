@@ -10,7 +10,7 @@
 
 - Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.1.0b2`.
 
-## 1.1.0b1 (2026-08-07)
+## 1.1.0b1 (2026-08-11)
 
 ### Samples
 
