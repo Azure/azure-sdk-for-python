@@ -72,17 +72,50 @@ class ConfigurationSetting(Model):
     kind = "Generic"
     content_type = None
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        key: Optional[str] = None,
+        label: Optional[str] = None,
+        value: Optional[str] = None,
+        etag: Optional[str] = None,
+        content_type: Optional[str] = None,
+        last_modified: Optional[datetime] = None,
+        read_only: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        description: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """
+        :keyword key: The key of the configuration setting.
+        :paramtype key: str or None
+        :keyword label: The label of the configuration setting.
+        :paramtype label: str or None
+        :keyword value: The value of the configuration setting.
+        :paramtype value: str or None
+        :keyword etag: A value representing the current state of the resource.
+        :paramtype etag: str or None
+        :keyword content_type: The content type of the configuration setting.
+        :paramtype content_type: str or None
+        :keyword last_modified: The last time the configuration setting was modified.
+        :paramtype last_modified: ~datetime.datetime or None
+        :keyword read_only: Whether the configuration setting is read-only.
+        :paramtype read_only: bool or None
+        :keyword tags: The tags assigned to the configuration setting.
+        :paramtype tags: dict[str, str] or None
+        :keyword description: The description of the configuration setting.
+        :paramtype description: str or None
+        """
         super(ConfigurationSetting, self).__init__(**kwargs)
-        self.key = kwargs.get("key", None)  # type: ignore[assignment]
-        self.label = kwargs.get("label", None)  # type: ignore[assignment]
-        self.value = kwargs.get("value", None)  # type: ignore[assignment]
-        self.etag = kwargs.get("etag", None)  # type: ignore[assignment]
-        self.content_type = kwargs.get("content_type", None)
-        self.last_modified = kwargs.get("last_modified", None)  # type: ignore[assignment]
-        self.read_only = kwargs.get("read_only", None)  # type: ignore[assignment]
-        self.tags = kwargs.get("tags", {})
-        self.description = kwargs.get("description", None)
+        self.key = key  # type: ignore[assignment]
+        self.label = label  # type: ignore[assignment]
+        self.value = value  # type: ignore[assignment]
+        self.etag = etag  # type: ignore[assignment]
+        self.content_type = content_type
+        self.last_modified = last_modified  # type: ignore[assignment]
+        self.read_only = read_only  # type: ignore[assignment]
+        self.tags = tags or {}
+        self.description = description
 
     @classmethod
     def _from_generated(cls, key_value: KeyValue) -> "ConfigurationSetting":
@@ -865,8 +898,8 @@ class FeatureFlag(Model):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        name: str,
         *,
+        name: str,
         enabled: bool = False,
         label: Optional[str] = None,
         description: Optional[str] = None,

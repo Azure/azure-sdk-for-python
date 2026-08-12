@@ -203,9 +203,9 @@ class FeatureFlagClient:
         self,
         name: str,
         label: Optional[str] = None,
-        *,
-        etag: Optional[str] = None,
+        etag: Optional[str] = "*",
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        *,
         accept_datetime: Optional[Union[datetime, str]] = None,
         **kwargs: Any,
     ) -> Union[None, "FeatureFlag"]:
@@ -215,10 +215,10 @@ class FeatureFlagClient:
         :type name: str
         :param label: Label used to identify the FeatureFlag. Default is `None`.
         :type label: str or None
-        :keyword etag: Check if the FeatureFlag is changed. Set None to skip checking etag
-        :paramtype etag: str or None
-        :keyword match_condition: The match condition to use upon the etag
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :param etag: Check if the FeatureFlag is changed. Set None to skip checking etag
+        :type etag: str or None
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
         :keyword accept_datetime: Retrieve FeatureFlag that existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
         :return: The matched FeatureFlag object
