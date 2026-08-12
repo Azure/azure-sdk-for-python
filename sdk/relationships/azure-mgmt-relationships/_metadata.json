@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2023-09-01-preview",
+  "apiVersion": "2026-03-01-preview",
   "apiVersions": {
-    "Microsoft.Relationships": "2023-09-01-preview"
+    "Microsoft.Relationships": "2026-03-01-preview"
   },
-  "commit": "fe03e53383d9c9c97ec22a65abd1d8c18e401abe",
+  "commit": "2831f359f052615c26675394fd3939cf6ca92a3b",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/relationships/Relationships.Management",
-  "emitterVersion": "0.61.2"
+  "typespec_src": "specification/relationships/resource-manager/Microsoft.Relationships/Relationships",
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.35.1"
 }

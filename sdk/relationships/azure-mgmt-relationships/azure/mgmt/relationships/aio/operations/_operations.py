@@ -33,27 +33,31 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_contains_relationships_list_by_resource_group_request,
+    build_contains_relationships_list_by_subscription_request,
     build_dependency_of_relationships_create_or_update_request,
     build_dependency_of_relationships_delete_request,
     build_dependency_of_relationships_get_request,
+    build_dependency_of_relationships_list_by_parent_request,
     build_operations_list_request,
     build_service_group_member_relationships_create_or_update_request,
     build_service_group_member_relationships_delete_request,
     build_service_group_member_relationships_get_request,
+    build_service_group_member_relationships_list_by_parent_request,
 )
 from .._configuration import RelationshipsMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -117,7 +121,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -160,7 +167,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DependencyOfRelationshipsOperations:
+class DependencyOfRelationshipsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -181,7 +188,7 @@ class DependencyOfRelationshipsOperations:
         self,
         resource_uri: str,
         name: str,
-        resource: Union[_models.DependencyOfRelationship, JSON, IO[bytes]],
+        resource: Union[_models.DependencyOfRelationship, _types.DependencyOfRelationship, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -284,7 +291,13 @@ class DependencyOfRelationshipsOperations:
 
     @overload
     async def begin_create_or_update(
-        self, resource_uri: str, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_uri: str,
+        name: str,
+        resource: _types.DependencyOfRelationship,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DependencyOfRelationship]:
         """Create a DependencyOfRelationship.
 
@@ -294,7 +307,7 @@ class DependencyOfRelationshipsOperations:
         :param name: Name of dependencyOf relationship. Required.
         :type name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.relationships.types.DependencyOfRelationship
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -339,7 +352,7 @@ class DependencyOfRelationshipsOperations:
         self,
         resource_uri: str,
         name: str,
-        resource: Union[_models.DependencyOfRelationship, JSON, IO[bytes]],
+        resource: Union[_models.DependencyOfRelationship, _types.DependencyOfRelationship, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DependencyOfRelationship]:
         """Create a DependencyOfRelationship.
@@ -349,9 +362,10 @@ class DependencyOfRelationshipsOperations:
         :type resource_uri: str
         :param name: Name of dependencyOf relationship. Required.
         :type name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         DependencyOfRelationship, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.relationships.models.DependencyOfRelationship or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a DependencyOfRelationship type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.relationships.models.DependencyOfRelationship or
+         ~azure.mgmt.relationships.types.DependencyOfRelationship or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DependencyOfRelationship. The
          DependencyOfRelationship is compatible with MutableMapping
         :rtype:
@@ -590,8 +604,110 @@ class DependencyOfRelationshipsOperations:
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "resource_uri", "accept"]},
+        api_versions_list=["2026-03-01-preview"],
+    )
+    def list_by_parent(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged["_models.DependencyOfRelationship"]:
+        """List DependencyOfRelationship resources by parent.
 
-class ServiceGroupMemberRelationshipsOperations:  # pylint: disable=name-too-long
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :return: An iterator like instance of DependencyOfRelationship
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.relationships.models.DependencyOfRelationship]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.DependencyOfRelationship]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_dependency_of_relationships_list_by_parent_request(
+                    resource_uri=resource_uri,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.DependencyOfRelationship],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ServiceGroupMemberRelationshipsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -612,7 +728,7 @@ class ServiceGroupMemberRelationshipsOperations:  # pylint: disable=name-too-lon
         self,
         resource_uri: str,
         name: str,
-        resource: Union[_models.ServiceGroupMemberRelationship, JSON, IO[bytes]],
+        resource: Union[_models.ServiceGroupMemberRelationship, _types.ServiceGroupMemberRelationship, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -715,7 +831,13 @@ class ServiceGroupMemberRelationshipsOperations:  # pylint: disable=name-too-lon
 
     @overload
     async def begin_create_or_update(
-        self, resource_uri: str, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_uri: str,
+        name: str,
+        resource: _types.ServiceGroupMemberRelationship,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.ServiceGroupMemberRelationship]:
         """Create a ServiceGroupMemberRelationship.
 
@@ -725,7 +847,7 @@ class ServiceGroupMemberRelationshipsOperations:  # pylint: disable=name-too-lon
         :param name: Name of ServiceGroupMember relationship. Required.
         :type name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.relationships.types.ServiceGroupMemberRelationship
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -770,7 +892,7 @@ class ServiceGroupMemberRelationshipsOperations:  # pylint: disable=name-too-lon
         self,
         resource_uri: str,
         name: str,
-        resource: Union[_models.ServiceGroupMemberRelationship, JSON, IO[bytes]],
+        resource: Union[_models.ServiceGroupMemberRelationship, _types.ServiceGroupMemberRelationship, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServiceGroupMemberRelationship]:
         """Create a ServiceGroupMemberRelationship.
@@ -780,10 +902,10 @@ class ServiceGroupMemberRelationshipsOperations:  # pylint: disable=name-too-lon
         :type resource_uri: str
         :param name: Name of ServiceGroupMember relationship. Required.
         :type name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         ServiceGroupMemberRelationship, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.relationships.models.ServiceGroupMemberRelationship or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a ServiceGroupMemberRelationship type or
+         a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.relationships.models.ServiceGroupMemberRelationship or
+         ~azure.mgmt.relationships.types.ServiceGroupMemberRelationship or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServiceGroupMemberRelationship. The
          ServiceGroupMemberRelationship is compatible with MutableMapping
         :rtype:
@@ -1021,3 +1143,341 @@ class ServiceGroupMemberRelationshipsOperations:  # pylint: disable=name-too-lon
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "resource_uri", "accept"]},
+        api_versions_list=["2026-03-01-preview"],
+    )
+    def list_by_parent(
+        self, resource_uri: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ServiceGroupMemberRelationship"]:
+        """List ServiceGroupMemberRelationship resources by parent.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :return: An iterator like instance of ServiceGroupMemberRelationship
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.relationships.models.ServiceGroupMemberRelationship]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ServiceGroupMemberRelationship]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_service_group_member_relationships_list_by_parent_request(
+                    resource_uri=resource_uri,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ServiceGroupMemberRelationship],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ContainsRelationshipsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.relationships.aio.RelationshipsMgmtClient`'s
+        :attr:`contains_relationships` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: RelationshipsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "filter", "accept"]},
+        api_versions_list=["2026-03-01-preview"],
+    )
+    def list_by_subscription(
+        self, *, filter: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ContainsRelationship"]:
+        """List ContainsRelationship resources by subscription ID.
+
+        :keyword filter: Filters the results by target resource type. Example:
+         properties.metadata.targetType eq 'Microsoft.Compute/virtualMachines'. Default value is None.
+        :paramtype filter: str
+        :return: An iterator like instance of ContainsRelationship
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.relationships.models.ContainsRelationship]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ContainsRelationship]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_contains_relationships_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ContainsRelationship],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "filter", "accept"]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, *, filter: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ContainsRelationship"]:
+        """List ContainsRelationship resources by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :keyword filter: Filters the results by target resource type. Example:
+         properties.metadata.targetType eq 'Microsoft.Compute/virtualMachines'. Default value is None.
+        :paramtype filter: str
+        :return: An iterator like instance of ContainsRelationship
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.relationships.models.ContainsRelationship]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ContainsRelationship]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_contains_relationships_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ContainsRelationship],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
