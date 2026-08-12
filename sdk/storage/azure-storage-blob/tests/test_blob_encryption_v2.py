@@ -479,11 +479,14 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper("key1")
+        # Each encrypted region is the plaintext region plus a nonce and tag. Size each
+        # block to a full encrypted region so every committed block is exactly one region.
+        region_length = 4 * MiB + _GCM_NONCE_LENGTH + _GCM_TAG_LENGTH
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key.secret,
             max_single_put_size=1024,
-            max_block_size=4 * MiB,
+            max_block_size=region_length,
             require_encryption=True,
             encryption_version="2.0",
             key_encryption_key=kek,
@@ -491,9 +494,6 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
         content = b"abcd" * 3 * MiB  # 12 MiB -- three full 4 MiB encryption regions
-
-        # Upload with the block size equal to the encryption region size so each
-        # committed block corresponds to a single encryption region.
         blob.upload_blob(content, overwrite=True)
 
         # Reorder the committed blocks so the encryption regions are out of order.
