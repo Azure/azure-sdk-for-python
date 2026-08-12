@@ -178,8 +178,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
-        # The generated client should not include snapshot in the base URL since
-        # it is passed as a method parameter by operations that need it.
         self._client = AzureBlobStorage(
             self.url,
             version=get_api_version(kwargs),

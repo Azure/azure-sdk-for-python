@@ -369,7 +369,7 @@ class BlobServiceClient(  # type: ignore [misc]
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_service_properties(  # pylint: disable=protected-access
+    async def set_service_properties(
         self,
         analytics_logging: Optional["BlobAnalyticsLogging"] = None,
         hour_metrics: Optional["Metrics"] = None,
