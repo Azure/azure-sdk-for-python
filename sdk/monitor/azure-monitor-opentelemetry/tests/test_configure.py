@@ -28,13 +28,21 @@ from azure.monitor.opentelemetry._configure import (
     configure_azure_monitor,
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _DISTRO_DETECTS_ATTACH
-
+from azure.monitor.opentelemetry._version import VERSION
 
 TEST_RESOURCE = Resource({"foo": "bar"})
 
 
 # pylint: disable=too-many-public-methods
 class TestConfigure(unittest.TestCase):
+    def setUp(self):
+        # Patch get_configuration_manager for every test so configure_azure_monitor never starts the
+        # real OneSettings worker thread. Tests that care about the interaction use
+        # self._get_config_manager_mock to control the returned manager.
+        patcher = patch("azure.monitor.opentelemetry._configure.get_configuration_manager")
+        self._get_config_manager_mock = patcher.start()
+        self.addCleanup(patcher.stop)
+
     @patch(
         "azure.monitor.opentelemetry._configure._send_attach_warning",
     )
@@ -72,6 +80,89 @@ class TestConfigure(unittest.TestCase):
         live_metrics_mock.assert_called_once()
         instrumentation_mock.assert_called_once()
         detect_attach_mock.assert_called_once()
+
+    @patch(
+        "azure.monitor.opentelemetry._configure._send_attach_warning",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_instrumentations",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_live_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_logging",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_tracing",
+    )
+    def test_configure_azure_monitor_initializes_config_manager(
+        self,
+        tracing_mock,
+        logging_mock,
+        metrics_mock,
+        live_metrics_mock,
+        instrumentation_mock,
+        detect_attach_mock,
+    ):
+        config_manager_mock = self._get_config_manager_mock.return_value
+        # Record the order of manager initialization relative to exporter setup. initialize() must run
+        # before any exporter setup so the distro's component="dst" wins under first-wins fill(); if it
+        # ran afterward the profile would revert to the exporter's component="ext".
+        call_order = []
+        config_manager_mock.initialize.side_effect = lambda *a, **k: call_order.append("initialize")
+        metrics_mock.side_effect = lambda *a, **k: call_order.append("metrics")
+        tracing_mock.side_effect = lambda *a, **k: call_order.append("tracing")
+        logging_mock.side_effect = lambda *a, **k: call_order.append("logging")
+        configure_azure_monitor(connection_string="test_cs")
+        # Distro contributes component="dst" and its version before any exporter is created.
+        config_manager_mock.initialize.assert_called_once_with(
+            component="dst",
+            version=VERSION,
+        )
+        # initialize() is recorded first, ahead of every exporter setup step.
+        self.assertEqual(call_order[0], "initialize")
+        self.assertIn("metrics", call_order)
+        self.assertIn("tracing", call_order)
+        self.assertIn("logging", call_order)
+
+    @patch(
+        "azure.monitor.opentelemetry._configure._send_attach_warning",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_instrumentations",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_live_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_logging",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_tracing",
+    )
+    def test_configure_azure_monitor_config_manager_disabled(
+        self,
+        tracing_mock,
+        logging_mock,
+        metrics_mock,
+        live_metrics_mock,
+        instrumentation_mock,
+        detect_attach_mock,
+    ):
+        # When the control plane is disabled, get_configuration_manager returns None and the distro
+        # skips initialize() without raising.
+        self._get_config_manager_mock.return_value = None
+        configure_azure_monitor(connection_string="test_cs")
+        tracing_mock.assert_called_once()
+        logging_mock.assert_called_once()
+        metrics_mock.assert_called_once()
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",

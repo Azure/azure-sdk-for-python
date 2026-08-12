@@ -1,5 +1,11 @@
 # Release History
 
+## Unreleased
+
+### Bugs Fixed
+
+- Fixed SQLAlchemy connection pools failing to create subsequent connections when using Entra authentication.
+
 ## 1.0.2 (2026-04-28)
 
 ### Bugs Fixed
