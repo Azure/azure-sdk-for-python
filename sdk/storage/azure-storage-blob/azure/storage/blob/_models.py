@@ -1247,6 +1247,8 @@ class BlobSasPermissions(object):
     :keyword bool set_immutability_policy:
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
+    :keyword bool list:
+        List blobs in a directory or the specified prefix.
     """
 
     read: bool = False
@@ -1273,6 +1275,8 @@ class BlobSasPermissions(object):
         get the POSIX ACL of a blob."""
     set_immutability_policy: Optional[bool]
     """To get immutability policy, you just need read permission."""
+    list: Optional[bool]
+    """List blobs in a directory or the specified prefix."""
 
     def __init__(
         self,
@@ -1296,6 +1300,7 @@ class BlobSasPermissions(object):
         self.move = kwargs.pop("move", False)
         self.execute = kwargs.pop("execute", False)
         self.set_immutability_policy = kwargs.pop("set_immutability_policy", False)
+        self.list = kwargs.pop("list", False)
         self._str = (
             ("r" if self.read else "")
             + ("a" if self.add else "")
@@ -1304,6 +1309,7 @@ class BlobSasPermissions(object):
             + ("d" if self.delete else "")
             + ("x" if self.delete_previous_version else "")
             + ("y" if self.permanent_delete else "")
+            + ("l" if self.list else "")
             + ("t" if self.tag else "")
             + ("m" if self.move else "")
             + ("e" if self.execute else "")
@@ -1333,6 +1339,7 @@ class BlobSasPermissions(object):
         p_delete = "d" in permission
         p_delete_previous_version = "x" in permission
         p_permanent_delete = "y" in permission
+        p_list = "l" in permission
         p_tag = "t" in permission
         p_move = "m" in permission
         p_execute = "e" in permission
@@ -1347,6 +1354,7 @@ class BlobSasPermissions(object):
             delete_previous_version=p_delete_previous_version,
             tag=p_tag,
             permanent_delete=p_permanent_delete,
+            list=p_list,
             move=p_move,
             execute=p_execute,
             set_immutability_policy=p_set_immutability_policy,
