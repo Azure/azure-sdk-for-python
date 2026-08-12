@@ -29,6 +29,7 @@ from azure.storage.blob._encryption import (
     _GCM_NONCE_LENGTH,
     _GCM_TAG_LENGTH,
     _validate_and_unwrap_cek,
+    decrypt_blob,
 )
 
 TEST_CONTAINER_PREFIX = "encryptionv2_container"
@@ -509,6 +510,70 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
             blob.download_blob().readall()
 
         assert "Decryption failed." in str(e.value)
+
+    def test_decrypt_dotnet_v2_1_nonce_encoding(self):
+        # Regression test for cross-SDK interoperability. Blobs produced by the .NET
+        # Storage SDK encode each region's GCM nonce as a one-based counter written
+        # little-endian into the final 8 nonce bytes, whereas Python/Java use a zero-based
+        # big-endian counter. Python must still decrypt these .NET-produced V2.1 blobs while
+        # continuing to detect reordered regions.
+        kek = KeyWrapper("key1")
+        cek = os.urandom(32)
+
+        region_data_length = 32
+        num_regions = 3
+        plaintext_regions = [bytes([i]) * region_data_length for i in range(num_regions)]
+
+        def dotnet_nonce(region_index):
+            # 4 zero bytes + one-based counter, little-endian, 8 bytes -- see .NET
+            # GcmAuthenticatedCryptographicTransform.GetNewNonce().
+            return b"\x00\x00\x00\x00" + (region_index + 1).to_bytes(8, "little")
+
+        aesgcm = AESGCM(cek)
+        encrypted_regions = [
+            dotnet_nonce(i) + aesgcm.encrypt(dotnet_nonce(i), region, None)
+            for i, region in enumerate(plaintext_regions)
+        ]
+
+        # Wrap the CEK the way the V2 protocol requires (version prefix padded to 8 bytes).
+        wrapped_cek = kek.wrap_key(b"2.1".ljust(8, b"\x00") + cek)
+        encryption_data = {
+            "WrappedContentKey": {
+                "KeyId": kek.get_kid(),
+                "EncryptedKey": base64.b64encode(wrapped_cek).decode(),
+                "Algorithm": kek.get_key_wrap_algorithm(),
+            },
+            "EncryptionAgent": {"Protocol": "2.1", "EncryptionAlgorithm": "AES_GCM_256"},
+            "EncryptedRegionInfo": {"DataLength": region_data_length, "NonceLength": _GCM_NONCE_LENGTH},
+            "KeyWrappingMetadata": {"EncryptionLibrary": "Dotnet"},
+        }
+        headers = {"x-ms-meta-encryptiondata": dumps(encryption_data)}
+        plaintext = b"".join(plaintext_regions)
+
+        # Act / Assert -- the .NET nonce encoding is accepted and the content round-trips.
+        decrypted = decrypt_blob(
+            require_encryption=True,
+            key_encryption_key=kek,
+            key_resolver=None,
+            content=b"".join(encrypted_regions),
+            start_offset=0,
+            end_offset=len(plaintext),
+            response_headers=headers,
+        )
+        assert decrypted == plaintext
+
+        # Reordering the .NET-produced regions must still be detected.
+        reordered = encrypted_regions[0] + encrypted_regions[2] + encrypted_regions[1]
+        with pytest.raises(ValueError):
+            decrypt_blob(
+                require_encryption=True,
+                key_encryption_key=kek,
+                key_resolver=None,
+                content=reordered,
+                start_offset=0,
+                end_offset=len(plaintext),
+                response_headers=headers,
+            )
 
     @BlobPreparer()
     @recorded_by_proxy

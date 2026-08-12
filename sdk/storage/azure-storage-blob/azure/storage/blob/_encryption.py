@@ -15,7 +15,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, Callable, Dict, IO, Optional, Tuple, TYPE_CHECKING
+from typing import Any, Callable, Dict, IO, List, Optional, Tuple, TYPE_CHECKING
 from typing import OrderedDict as TypedOrderedDict
 from typing_extensions import Protocol
 
@@ -902,6 +902,34 @@ def _parse_content_range(content_range: str) -> Tuple[int, int, int]:
     return int(start), int(end), int(size)
 
 
+def _region_nonce_candidates(region_index: int, nonce_length: int) -> List[bytes]:
+    """
+    Returns the valid nonce encodings for the encryption region at the given zero-based index.
+
+    The per-region nonce is a counter of the region's position, but SDKs encode it
+    differently, so all supported encodings must be accepted for interoperability:
+    Python/Java use a zero-based big-endian counter; .NET uses a one-based little-endian
+    counter in the trailing 8 bytes. Each encoding is a bijection of the index, so accepting all
+    of them does not weaken reordering detection.
+
+    :param int region_index: The zero-based index of the region within the blob.
+    :param int nonce_length: The length of the nonce in bytes.
+    :return: The list of valid nonce byte encodings for the region.
+    :rtype: List[bytes]
+    """
+    candidates = [region_index.to_bytes(nonce_length, "big")]
+
+    # .NET: one-based little-endian counter in the trailing 8 bytes, zero-padded.
+    dotnet_counter_length = 8
+    if nonce_length >= dotnet_counter_length:
+        candidates.append(
+            b"\x00" * (nonce_length - dotnet_counter_length)
+            + (region_index + 1).to_bytes(dotnet_counter_length, "little")
+        )
+
+    return candidates
+
+
 def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     require_encryption: bool,
     key_encryption_key: Optional[KeyEncryptionKey],
@@ -1022,20 +1050,17 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         tag_length = encryption_data.encrypted_region_info.tag_length
         region_length = nonce_length + data_length + tag_length
 
-        # During encryption the nonce for each region is a counter of the region's index
-        # within the blob. The downloaded content always begins on an encryption region
-        # boundary, so derive the index of the first region from the download range. This
-        # lets us validate each region's nonce and detect if regions have been reordered.
-        # When there is no content-range header the whole blob was downloaded, so the first
-        # region is index 0.
+        # The per-region nonce is a counter of the region's index within the blob. The
+        # downloaded content always begins on a region boundary, so derive the first
+        # region's index from the download range (0 when the whole blob was downloaded).
+        # This lets us validate each nonce and detect reordered regions.
         start_range = 0
         if "content-range" in response_headers:
             start_range, _, _ = _parse_content_range(response_headers["content-range"])
         nonce_counter = start_range // region_length
 
-        # The nonce validation can be bypassed via an environment variable to allow for
-        # data recovery scenarios where the encryption regions have been reordered. This
-        # is not recommended for normal usage as it can allow tampered data to be decrypted.
+        # Bypass nonce validation via an environment variable for data-recovery scenarios
+        # where regions were reordered. Not recommended: it can allow tampered data through.
         validate_nonce = not os.environ.get("AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS")
 
         decrypted_content = bytearray()
@@ -1049,8 +1074,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
             # Validate the nonce matches the expected counter value for this region. A
             # mismatch indicates the encryption regions have been reordered or tampered with.
             if validate_nonce:
-                expected_nonce = nonce_counter.to_bytes(nonce_length, "big")
-                if nonce != expected_nonce:
+                if nonce not in _region_nonce_candidates(nonce_counter, nonce_length):
                     raise ValueError("The encryption metadata is not valid and may have been modified.")
             ciphertext_with_tag = encrypted_region[nonce_length:]
 
