@@ -39,7 +39,7 @@ namespace azure.ai.agentserver.activity
 
         def add_middleware(
                 self, 
-                middleware_class: _MiddlewareFactory[P], 
+                middleware_class: MiddlewareFactory[P], 
                 *args: args, 
                 **kwargs: kwargs
             ) -> None: ...

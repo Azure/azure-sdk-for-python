@@ -18,6 +18,7 @@ import base64
 import re
 import typing
 import enum
+import types
 import email.utils
 from datetime import datetime, date, time, timedelta, timezone
 from json import JSONEncoder
@@ -903,16 +904,18 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
 
     # is it optional?
     try:
-        if any(a for a in annotation.__args__ if a == type(None)):  # pyright: ignore
+        if any(a for a in annotation.__args__ if a == types.NoneType):
             if len(annotation.__args__) <= 2:  # pyright: ignore
                 if_obj_deserializer = _get_deserialize_callable_from_annotation(
-                    next(a for a in annotation.__args__ if a != type(None)), module, rf  # pyright: ignore
+                    next(a for a in annotation.__args__ if a != types.NoneType),
+                    module,
+                    rf,
                 )
 
                 return functools.partial(_deserialize_with_optional, if_obj_deserializer)
             # the type is Optional[Union[...]], we need to remove the None type from the Union
             annotation_copy = copy.copy(annotation)
-            annotation_copy.__args__ = [a for a in annotation_copy.__args__ if a != type(None)]  # pyright: ignore
+            annotation_copy.__args__ = [a for a in annotation_copy.__args__ if a != types.NoneType]
             return _get_deserialize_callable_from_annotation(annotation_copy, module, rf)
     except AttributeError:
         pass

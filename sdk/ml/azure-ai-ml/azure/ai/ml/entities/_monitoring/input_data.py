@@ -20,17 +20,16 @@ class MonitorInputData(RestTranslatableMixin):
     """Monitor input data.
 
     :keyword type: Specifies the type of monitoring input data.
-    :paramtype type: MonitorInputDataType
-    :keyword input_dataset: Input data used by the monitor
-    :paramtype input_dataset: Optional[~azure.ai.ml.Input]
-    :keyword dataset_context: The context of the input dataset. Accepted values are "model_inputs",
+    :paramtype type: Optional[~azure.ai.ml.constants.MonitorInputDataType]
+    :keyword data_context: The context of the input dataset. Accepted values are "model_inputs",
         "model_outputs", "training", "test", "validation", and "ground_truth".
-    :paramtype dataset_context: Optional[Union[str, ~azure.ai.ml.constants.MonitorDatasetContext]]
-    :keyword target_column_name: The target column in the given input dataset.
-    :paramtype target_column_name: Optional[str]
-    :keyword pre_processing_component: The ARM (Azure Resource Manager) resource ID of the component resource used to
-        preprocess the data.
-    :paramtype pre_processing_component: Optional[str]
+    :paramtype data_context: Optional[~azure.ai.ml.constants.MonitorDatasetContext]
+    :keyword target_columns: The target columns in the given input dataset.
+    :paramtype target_columns: Optional[Dict]
+    :keyword job_type: The job type of the input data.
+    :paramtype job_type: Optional[str]
+    :keyword uri: The URI of the input data.
+    :paramtype uri: Optional[str]
     """
 
     def __init__(
@@ -61,9 +60,18 @@ class MonitorInputData(RestTranslatableMixin):
 
 
 class FixedInputData(MonitorInputData):
-    """
+    """Fixed input data for monitoring.
+
     :ivar type: Specifies the type of monitoring input data. Set automatically to "Fixed" for this class.
-    :var type: MonitorInputDataType
+    :vartype type: MonitorInputDataType
+    :keyword data_context: The context of the input dataset. Defaults to None.
+    :paramtype data_context: Optional[~azure.ai.ml.constants.MonitorDatasetContext]
+    :keyword target_columns: The target columns in the given input dataset. Defaults to None.
+    :paramtype target_columns: Optional[Dict]
+    :keyword job_type: The job type of the input data. Defaults to None.
+    :paramtype job_type: Optional[str]
+    :keyword uri: The URI of the input data. Defaults to None.
+    :paramtype uri: Optional[str]
     """
 
     def __init__(
@@ -101,9 +109,24 @@ class FixedInputData(MonitorInputData):
 
 
 class TrailingInputData(MonitorInputData):
-    """
+    """Trailing input data for monitoring.
+
     :ivar type: Specifies the type of monitoring input data. Set automatically to "Trailing" for this class.
-    :var type: MonitorInputDataType
+    :vartype type: MonitorInputDataType
+    :keyword data_context: The context of the input dataset. Defaults to None.
+    :paramtype data_context: Optional[~azure.ai.ml.constants.MonitorDatasetContext]
+    :keyword target_columns: The target columns in the given input dataset. Defaults to None.
+    :paramtype target_columns: Optional[Dict]
+    :keyword job_type: The job type of the input data. Defaults to None.
+    :paramtype job_type: Optional[str]
+    :keyword uri: The URI of the input data. Defaults to None.
+    :paramtype uri: Optional[str]
+    :keyword window_size: The trailing lookback window size. Defaults to None.
+    :paramtype window_size: Optional[str]
+    :keyword window_offset: The trailing lookback window offset. Defaults to None.
+    :paramtype window_offset: Optional[str]
+    :keyword pre_processing_component_id: The ARM resource ID of the preprocessing component. Defaults to None.
+    :paramtype pre_processing_component_id: Optional[str]
     """
 
     def __init__(
@@ -161,9 +184,24 @@ class TrailingInputData(MonitorInputData):
 
 
 class StaticInputData(MonitorInputData):
-    """
+    """Static input data for monitoring.
+
     :ivar type: Specifies the type of monitoring input data. Set automatically to "Static" for this class.
-    :var type: MonitorInputDataType
+    :vartype type: MonitorInputDataType
+    :keyword data_context: The context of the input dataset. Defaults to None.
+    :paramtype data_context: Optional[~azure.ai.ml.constants.MonitorDatasetContext]
+    :keyword target_columns: The target columns in the given input dataset. Defaults to None.
+    :paramtype target_columns: Optional[Dict]
+    :keyword job_type: The job type of the input data. Defaults to None.
+    :paramtype job_type: Optional[str]
+    :keyword uri: The URI of the input data. Defaults to None.
+    :paramtype uri: Optional[str]
+    :keyword pre_processing_component_id: The ARM resource ID of the preprocessing component. Defaults to None.
+    :paramtype pre_processing_component_id: Optional[str]
+    :keyword window_start: The start of the static data window (YYYY-MM-DD). Defaults to None.
+    :paramtype window_start: Optional[str]
+    :keyword window_end: The end of the static data window (YYYY-MM-DD). Defaults to None.
+    :paramtype window_end: Optional[str]
     """
 
     def __init__(
