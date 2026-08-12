@@ -7,6 +7,7 @@ from typing import Optional, List
 from subprocess import CalledProcessError
 
 from .Check import Check
+from ._tool_reqs import load_requirements, pinned_version
 from ci_tools.functions import install_into_venv
 from ci_tools.variables import in_ci, set_envvar_defaults, discover_repo_root
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
@@ -14,8 +15,10 @@ from ci_tools.scenario.generation import create_package_and_install
 
 from ci_tools.logging import logger
 
-PYRIGHT_VERSION = "1.1.407"
-NEXT_PYRIGHT_VERSION = "1.1.411"
+# Tool versions are pinned in eng/tool_requirements/{pyright,pyright_next}.txt
+# (single source of truth). Constants are derived for backwards compatibility.
+PYRIGHT_VERSION = pinned_version("pyright", "pyright")
+NEXT_PYRIGHT_VERSION = pinned_version("pyright_next", "pyright")
 REPO_ROOT = discover_repo_root()
 
 
@@ -89,11 +92,8 @@ class pyright(Check):
             logger.info(f"Processing {package_name} for pyright check")
 
             try:
-                if args.next:
-                    # use latest version of pyright
-                    install_into_venv(executable, [f"pyright=={NEXT_PYRIGHT_VERSION}"], package_dir)
-                else:
-                    install_into_venv(executable, [f"pyright=={PYRIGHT_VERSION}"], package_dir)
+                requirements = load_requirements("pyright_next" if args.next else "pyright")
+                install_into_venv(executable, requirements, package_dir)
             except CalledProcessError as e:
                 logger.error("Failed to install pyright:", e)
                 return e.returncode

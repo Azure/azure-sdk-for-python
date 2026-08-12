@@ -6,12 +6,15 @@ import subprocess
 from subprocess import check_call, CalledProcessError
 
 from .Check import Check
+from ._tool_reqs import load_requirements, pinned_version
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.logging import logger
 from ci_tools.functions import install_into_venv, get_pip_command
 
-BANDIT_VERSION = "1.6.2"
+# Tool version is pinned in eng/tool_requirements/bandit.txt (single source of
+# truth). Constant is derived for backwards compatibility.
+BANDIT_VERSION = pinned_version("bandit", "bandit")
 
 
 class bandit(Check):
@@ -55,7 +58,7 @@ class bandit(Check):
 
             try:
                 # pbr is required by the pinned version of bandit
-                install_into_venv(executable, [f"bandit=={BANDIT_VERSION}", "pbr"], package_dir)
+                install_into_venv(executable, load_requirements("bandit"), package_dir)
             except CalledProcessError as e:
                 logger.error(f"Failed to install bandit and dependencies: {e}")
                 return e.returncode
