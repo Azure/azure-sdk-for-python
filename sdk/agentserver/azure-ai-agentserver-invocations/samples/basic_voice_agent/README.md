@@ -48,3 +48,10 @@ Omitting the version selects the previously shipped non-Bridge integration.
 The sample intentionally uses a simulated model stream. Replace
 `generate_answer` with the application's model call while preserving the
 application-owned task cleanup shown by the event callbacks.
+
+`on_connection_terminating` synchronously cancels the sample's generation tasks
+whenever the connection handler exits. The tasks remain responsible for their
+own asynchronous resource cleanup, while `on_session_end` provides the graceful
+path that also waits for them. The termination callback must stay non-blocking;
+the SDK does not join application tasks or guarantee cleanup after process
+termination.

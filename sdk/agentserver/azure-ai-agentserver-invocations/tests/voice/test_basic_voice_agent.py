@@ -16,6 +16,7 @@ from azure.ai.agentserver.invocations.voice import (
     InputTextPart,
     ResponseTimeouts,
     SessionDisconnected,
+    SessionEnd,
     SessionReady,
     SessionRejected,
     SessionStart,
@@ -89,7 +90,7 @@ async def test_session_start_accepts_only_the_supported_protocol(sample_module):
 
 
 @pytest.mark.asyncio
-async def test_transport_disconnect_cancels_sample_owned_generation(sample_module, monkeypatch):
+async def test_connection_termination_cancels_sample_owned_generation(sample_module, monkeypatch):
     generation_started = asyncio.Event()
     generation_release = asyncio.Event()
 
@@ -113,7 +114,58 @@ async def test_transport_disconnect_cancels_sample_owned_generation(sample_modul
     generation = next(iter(sample_module.generations.values()))
 
     await sample_module.on_disconnect(session, SessionDisconnected(code=1006))
+    assert not generation.task.done()
+
+    sample_module.on_connection_terminating(session)
+
+    with pytest.raises(asyncio.CancelledError):
+        await generation.task
+    await asyncio.sleep(0)
 
     assert generation.task.cancelled()
+    assert not sample_module.generations
+    assert not sample_module.input_generations
+
+
+@pytest.mark.asyncio
+async def test_session_end_joins_cleanup_before_later_termination_signals(sample_module, monkeypatch):
+    generation_started = asyncio.Event()
+    cleanup_finished = asyncio.Event()
+
+    async def blocked_generation(_text):
+        generation_started.set()
+        try:
+            await asyncio.Future()
+        finally:
+            cleanup_finished.set()
+        yield "not reached"
+
+    monkeypatch.setattr(sample_module, "generate_answer", blocked_generation)
+    session = _CapturingSession()
+    await sample_module.on_user_message(
+        session,
+        UserMessage(
+            id="m_user",
+            ts="2026-08-12T00:00:00Z",
+            item_id="in_1",
+            content=(InputTextPart(text="hello"),),
+        ),
+    )
+    await asyncio.wait_for(generation_started.wait(), timeout=1)
+    generation = next(iter(sample_module.generations.values()))
+
+    await sample_module.on_session_end(
+        session,
+        SessionEnd(id="m_end", ts="2026-08-12T00:00:01Z", reason="completed"),
+    )
+
+    assert cleanup_finished.is_set()
+    assert generation.task.cancelled()
+    assert not sample_module.generations
+    assert not sample_module.input_generations
+
+    await sample_module.on_disconnect(session, SessionDisconnected(code=1000))
+    sample_module.on_connection_terminating(session)
+
     assert not sample_module.generations
     assert not sample_module.input_generations

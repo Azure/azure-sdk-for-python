@@ -113,11 +113,17 @@ def cancel_generation(session: Session, response_id: str) -> None:
         generation.task.cancel()
 
 
-async def cancel_session_generations(session: Session) -> None:
-    """Cancel and join all application-owned tasks for one connection."""
-    tasks = [generation.task for generation in tuple(generations.values()) if generation.session is session]
+def cancel_session_generation_tasks(session: Session) -> tuple[asyncio.Task[None], ...]:
+    """Synchronously signal every application-owned task for one connection."""
+    tasks = tuple(generation.task for generation in tuple(generations.values()) if generation.session is session)
     for task in tasks:
         task.cancel()
+    return tasks
+
+
+async def cancel_session_generations(session: Session) -> None:
+    """Cancel and join all application-owned tasks for one connection."""
+    tasks = cancel_session_generation_tasks(session)
     if tasks:
         await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -198,9 +204,15 @@ async def on_session_end(session: Session, event: SessionEnd) -> None:
 
 @app.on_disconnect
 async def on_disconnect(session: Session, event: SessionDisconnected) -> None:
-    """Release application tasks when the transport closes without session.end."""
+    """Observe a peer transport disconnect."""
+    del session
     logger.info("Voice transport disconnected with close code %d", event.code)
-    await cancel_session_generations(session)
+
+
+@app.on_connection_terminating
+def on_connection_terminating(session: Session) -> None:
+    """Synchronously cancel application tasks whenever the handler exits."""
+    cancel_session_generation_tasks(session)
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import inspect
+import logging
 from collections.abc import Awaitable, Callable
 from typing import Any, NoReturn, TypeVar, cast
 
@@ -42,9 +43,36 @@ ResponseCancelledCallback = Callable[[Session, ResponseCancelled], Awaitable[Non
 ResponseTimeoutCallback = Callable[[Session, ResponseTimeout], Awaitable[None]]
 SessionEndCallback = Callable[[Session, SessionEnd], Awaitable[None]]
 DisconnectCallback = Callable[[Session, SessionDisconnected], Awaitable[None]]
+ConnectionTerminatingCallback = Callable[[Session], None]
 
 _CallbackT = TypeVar("_CallbackT", bound=Callable[..., Awaitable[None]])
 _VoiceCallback = Callable[[Session, Any], Awaitable[None]]
+logger = logging.getLogger("azure.ai.agentserver")
+
+
+def _is_async_callable(callback: Callable[..., Any]) -> bool:
+    for candidate in (callback, getattr(callback, "__call__", None)):
+        if candidate is None:
+            continue
+        unwrapped = inspect.unwrap(candidate)
+        if inspect.iscoroutinefunction(unwrapped) or inspect.isasyncgenfunction(unwrapped):
+            return True
+    return False
+
+
+def _dispose_invalid_awaitable(awaitable: Any) -> None:
+    cancel = getattr(awaitable, "cancel", None)
+    if callable(cancel):
+        cancel()
+        return
+    close = getattr(awaitable, "close", None)
+    if callable(close):
+        close()
+        return
+    iterator = awaitable.__await__()
+    close = getattr(iterator, "close", None)
+    if callable(close):
+        close()
 
 
 @experimental
@@ -70,6 +98,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         **kwargs: Any,
     ) -> None:
         self._voice_callbacks: dict[str, _VoiceCallback] = {}
+        self._connection_terminating_callback: ConnectionTerminatingCallback | None = None
         super().__init__(
             openapi_spec=openapi_spec,
             asyncapi_spec_json=asyncapi_spec_json,
@@ -189,7 +218,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         return self._register_voice_callback(SessionEnd.type, callback)
 
     def on_disconnect(self, callback: DisconnectCallback) -> DisconnectCallback:
-        """Register the local transport-disconnect callback.
+        """Register the peer transport-disconnect callback.
 
         :param callback: Async callback receiving the thin Session and transport event.
         :type callback: DisconnectCallback
@@ -197,6 +226,37 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         :rtype: DisconnectCallback
         """
         return self._register_voice_callback("disconnect", callback)
+
+    def on_connection_terminating(self, callback: ConnectionTerminatingCallback) -> ConnectionTerminatingCallback:
+        """Register a synchronous signal that the connection handler is exiting.
+
+        The host invokes the callback once whenever the connection handler
+        unwinds in process. The callback must return promptly, be idempotent,
+        and must not send frames. Applications can use it to synchronously
+        cancel their connection-owned tasks or set their own stop signals. The
+        SDK does not wait for those tasks to finish.
+
+        :param callback: Synchronous callback receiving the thin Session.
+        :type callback: ConnectionTerminatingCallback
+        :return: The callback, unchanged.
+        :rtype: ConnectionTerminatingCallback
+        :raises TypeError: If the callback is async or cannot accept Session.
+        :raises RuntimeError: If a callback is already registered.
+        """
+        try:
+            is_async = _is_async_callable(callback)
+        except ValueError as exc:
+            raise TypeError("on_connection_terminating expects a synchronous function") from exc
+        if is_async:
+            raise TypeError("on_connection_terminating expects a synchronous function")
+        try:
+            inspect.signature(callback).bind(None)
+        except TypeError as exc:
+            raise TypeError("Connection terminating callback must accept Session") from exc
+        if self._connection_terminating_callback is not None:
+            raise RuntimeError("A callback is already registered for connection termination")
+        self._connection_terminating_callback = callback
+        return callback
 
     def _register_voice_callback(self, message_type: str, callback: _CallbackT) -> _CallbackT:
         if not inspect.iscoroutinefunction(callback):
@@ -212,37 +272,52 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
 
     async def _handle_voice_connection(self, websocket: WebSocket) -> None:
         session = Session._create(websocket)  # pylint: disable=protected-access
-        while True:
-            raw_message = await websocket.receive()
-            raw_type = raw_message.get("type")
-            if raw_type == "websocket.disconnect":
-                code = int(raw_message.get("code") or 1000)
-                raw_reason = raw_message.get("reason")
-                reason = raw_reason if isinstance(raw_reason, str) else None
-                callback = self._voice_callbacks.get("disconnect")
+        try:
+            while True:
+                raw_message = await websocket.receive()
+                raw_type = raw_message.get("type")
+                if raw_type == "websocket.disconnect":
+                    code = int(raw_message.get("code") or 1000)
+                    raw_reason = raw_message.get("reason")
+                    reason = raw_reason if isinstance(raw_reason, str) else None
+                    callback = self._voice_callbacks.get("disconnect")
+                    if callback is not None:
+                        await callback(session, SessionDisconnected(code=code, reason=reason))
+                    raise WebSocketDisconnect(
+                        code=code,
+                        reason=reason,
+                    )
+                if raw_type != "websocket.receive":
+                    await websocket.close(code=1002, reason="Invalid Voice WebSocket event")
+                    return
+                frame = raw_message.get("text")
+                if frame is None:
+                    await websocket.close(code=1003, reason="Voice messages must be text frames")
+                    return
+                try:
+                    event = decode_inbound_message(frame)
+                except VoiceProtocolError as exc:
+                    await websocket.close(code=exc.close_code, reason="Invalid Voice message")
+                    return
+                if event is None:
+                    continue
+                callback = self._voice_callbacks.get(event.type)
                 if callback is not None:
-                    await callback(session, SessionDisconnected(code=code, reason=reason))
-                raise WebSocketDisconnect(
-                    code=code,
-                    reason=reason,
-                )
-            if raw_type != "websocket.receive":
-                await websocket.close(code=1002, reason="Invalid Voice WebSocket event")
-                return
-            frame = raw_message.get("text")
-            if frame is None:
-                await websocket.close(code=1003, reason="Voice messages must be text frames")
-                return
-            try:
-                event = decode_inbound_message(frame)
-            except VoiceProtocolError as exc:
-                await websocket.close(code=exc.close_code, reason="Invalid Voice message")
-                return
-            if event is None:
-                continue
-            callback = self._voice_callbacks.get(event.type)
-            if callback is not None:
-                await callback(session, cast(InboundVoiceMessage, event))
+                    await callback(session, cast(InboundVoiceMessage, event))
+        finally:
+            terminating_callback = self._connection_terminating_callback
+            if terminating_callback is not None:
+                try:
+                    result = terminating_callback(session)
+                    if result is not None:
+                        if inspect.isawaitable(result):
+                            _dispose_invalid_awaitable(result)
+                        raise TypeError("Connection terminating callback must return None")
+                except BaseException:  # pylint: disable=broad-exception-caught
+                    try:
+                        logger.exception("Voice connection termination callback failed")
+                    except BaseException:  # pylint: disable=broad-exception-caught
+                        pass
 
     def _build_hypercorn_config(self, host: str, port: int) -> object:
         """Create a Hypercorn config with the Voice frame admission limit.

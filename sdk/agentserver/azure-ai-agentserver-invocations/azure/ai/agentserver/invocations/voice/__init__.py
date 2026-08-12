@@ -37,6 +37,7 @@ from ._models import (
 from ._session import Session
 from ._voice_host import (
     BargeInCallback,
+    ConnectionTerminatingCallback,
     DisconnectCallback,
     ResponseAcceptedCallback,
     ResponseCancelledCallback,
@@ -54,6 +55,7 @@ __all__ = [
     "AgentError",
     "BargeIn",
     "BargeInCallback",
+    "ConnectionTerminatingCallback",
     "DisconnectCallback",
     "EndCall",
     "EndCallMode",

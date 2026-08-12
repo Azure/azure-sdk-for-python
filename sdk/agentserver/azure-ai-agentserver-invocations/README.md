@@ -369,12 +369,24 @@ terminal arbitration, timeout/cancel operations, generation tasks, history, or
 reconnect state.
 
 When the peer or proxy closes the WebSocket, `@app.on_disconnect` receives a
-local `SessionDisconnected` event. Applications use that callback to cancel and
-join their own connection-scoped tasks; the SDK does not retain or cancel them.
+local `SessionDisconnected` event. This callback represents only the observed
+peer disconnect.
+
+`@app.on_connection_terminating` is the common cleanup signal for every
+in-process exit from the connection handler, including peer disconnect, local
+protocol close, callback failure, transport failure, and task cancellation. It
+is synchronous so applications can promptly call `Task.cancel()` or set their
+own stop signals without making WebSocket teardown wait for asynchronous
+cleanup. The callback must be non-blocking and must not send frames. The SDK
+invokes it once as each connection handler unwinds, and applications must keep
+their signaling idempotent. The SDK does not retain, join, or guarantee
+completion of application-owned tasks.
 
 For full-duplex streaming, the agent creates and owns a generation task, returns
 from `on_user_message`, and cancels that task from `on_barge_in`,
-`on_response_cancelled`, or `on_response_timeout`. See the complete
+`on_response_cancelled`, `on_response_timeout`, or
+`on_connection_terminating`. Each task remains responsible for its own
+asynchronous resource cleanup. See the complete
 [`basic_voice_agent`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/basic_voice_agent)
 sample.
 
