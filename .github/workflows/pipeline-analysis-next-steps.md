@@ -48,14 +48,14 @@ on:
             return;
           }
           const pull = matchingPulls[0];
+          if (pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`) {
+            core.info("Skipping analysis because external fork-owned pull request branches are not supported.");
+            return;
+          }
           const prNumber = pull.number;
           core.setOutput("run_analysis", "true");
           core.setOutput("pr_number", String(prNumber));
           core.setOutput("head_sha", suite.head_sha);
-          core.setOutput(
-            "auto_fix_supported",
-            String(pull.head.repo?.full_name === `${context.repo.owner}/${context.repo.repo}`)
-          );
 
 if: needs.pre_activation.outputs.run_analysis == 'true'
 
@@ -126,7 +126,6 @@ jobs:
       run_analysis: ${{ steps.analysis_gate.outputs.run_analysis }}
       pr_number: ${{ steps.analysis_gate.outputs.pr_number }}
       head_sha: ${{ steps.analysis_gate.outputs.head_sha }}
-      auto_fix_supported: ${{ steps.analysis_gate.outputs.auto_fix_supported }}
 
 safe-outputs:
   noop:
@@ -184,10 +183,6 @@ safe-outputs:
 5. Group evidence by build, platform, artifact file, and failed test. Preserve platform-specific
   failures when titles overlap, but consolidate failures with one demonstrated root cause.
 6. Categorize the failures and determine whether any are fixable by an automated code change.
-  Automated fixing is supported only when `${{ needs.pre_activation.outputs.auto_fix_supported }}`
-  is `true`. For a fork-owned source branch, still diagnose the failure, but classify the analysis
-  as `non-fixable` and explain that this workflow cannot safely create a fix targeting the
-  contributor's branch.
 
 ## Comment format
 
@@ -241,5 +236,3 @@ azsdk azp analyze https://github.com/${{ github.repository }}/pull/${{ needs.pre
 - For `fixable`, use the exact requested-status line and hidden authorization marker from the
   comment format, then call `dispatch_workflow` exactly once with this structure:
   `workflow_name: "pipeline-analysis-auto-fix"` and `inputs: { "pr_number": "${{ needs.pre_activation.outputs.pr_number }}", "ci_head_sha": "${{ needs.pre_activation.outputs.head_sha }}", "parent_run_id": "${{ github.run_id }}" }`. Do not place the workflow inputs at the top level.
-- Never publish `fixable` or call `dispatch_workflow` when
-  `${{ needs.pre_activation.outputs.auto_fix_supported }}` is not `true`.
