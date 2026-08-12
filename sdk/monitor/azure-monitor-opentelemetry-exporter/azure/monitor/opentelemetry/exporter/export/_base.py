@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import getpass
+import json
 import logging
 import os
 import tempfile
@@ -26,6 +27,9 @@ from azure.monitor.opentelemetry.exporter._generated.exporter._configuration imp
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
+)
+from azure.monitor.opentelemetry.exporter._generated.exporter._utils.model_base import (
+    SdkJSONEncoder,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
@@ -94,6 +98,15 @@ logger = logging.getLogger(__name__)
 _AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
+
+# Maximum request body size (in bytes) the ingestion endpoint accepts on the wire before
+# responding with 413 (Payload Too Large).
+_MAX_INGESTION_PAYLOAD_SIZE_BYTES = 30 * 1000 * 1000
+
+# Maximum size (in bytes) of a single telemetry item the ingestion endpoint accepts. Items
+# larger than this are rejected per-item (surfaced as a 400 within a 206 partial response) and
+# cannot be split further. ~1.2 MiB.
+_MAX_INGESTION_ITEM_SIZE_BYTES = 1258291
 
 
 class ExportResult(Enum):
@@ -317,6 +330,41 @@ class BaseExporter:
             if self._should_collect_customer_sdkstats():
                 track_dropped_items(envelopes, DropCode.CLIENT_STORAGE_DISABLED)
 
+    def _handle_payload_too_large(
+        self, envelopes: List[TelemetryItem], response_error: HttpResponseError
+    ) -> ExportResult:
+        """Handle a 413 (Payload Too Large) response by splitting and persisting for retry."""
+        if len(envelopes) <= 1 or not self.storage:
+            if not self._is_stats_exporter():
+                logger.warning(
+                    "Payload too large and cannot be split further; dropping %d envelope(s): %s.",
+                    len(envelopes),
+                    response_error.message,
+                )
+                if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
+                    track_dropped_items(envelopes, response_error.status_code)
+            return ExportResult.FAILED_NOT_RETRYABLE
+
+        for sub_batch in _split_oversized_batch(envelopes):
+            try:
+                self.storage.put([x.as_dict() for x in sub_batch])
+            except Exception:  # pylint: disable=broad-except
+                # Persisting a split sub-batch failed (e.g. disk full or a serialization
+                # error). Drop just this sub-batch rather than aborting the whole split so the
+                # remaining sub-batches still get a chance to be persisted and retried.
+                if not self._is_stats_exporter():
+                    logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                        "Failed to persist a split sub-batch of %d envelope(s) after a 413; "
+                        "these envelopes are dropped.",
+                        len(sub_batch),
+                    )
+                    if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
+                        track_dropped_items(sub_batch, response_error.status_code)
+                continue
+            if self._should_collect_customer_sdkstats():
+                track_retry_items(sub_batch, response_error)
+        return ExportResult.FAILED_NOT_RETRYABLE
+
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-statements
@@ -446,12 +494,31 @@ class BaseExporter:
                                         and isinstance(error.status_code, int)
                                     ):
                                         track_dropped_items([envelopes[error.index]], error.status_code)
-                                logger.error(
-                                    "Data drop %s: %s %s.",
-                                    error.status_code,
-                                    error.message,
-                                    (envelopes[error.index] if error.index is not None else ""),
-                                )
+                                dropped_envelope = envelopes[error.index] if error.index is not None else None
+                                # An envelope that exceeds the per-item ingestion size limit (~1.2 MiB)
+                                # cannot be split further and is dropped here. Dumping it would flood the
+                                # log with a huge (and potentially PII-laden) payload, so log a concise
+                                # summary instead. For all other drops keep the existing behavior of
+                                # logging the full envelope to aid debugging.
+                                if (
+                                    dropped_envelope is not None
+                                    and _get_envelope_serialized_size(dropped_envelope)
+                                    > _MAX_INGESTION_ITEM_SIZE_BYTES
+                                ):
+                                    logger.error(
+                                        "Data drop %s: %s. Envelope of type %s exceeds the per-item "
+                                        "ingestion size limit and is omitted from the log.",
+                                        error.status_code,
+                                        error.message,
+                                        dropped_envelope.name,
+                                    )
+                                else:
+                                    logger.error(
+                                        "Data drop %s: %s. %s",
+                                        error.status_code,
+                                        error.message,
+                                        (dropped_envelope if dropped_envelope is not None else ""),
+                                    )
                     storage = self.storage
                     if storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
@@ -580,27 +647,8 @@ class BaseExporter:
                 elif response_error.status_code == 413:
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_FAILURE_NAME[1], value=response_error.status_code)
-                    if self.storage and len(envelopes) > 1:
-                        midpoint = len(envelopes) // 2
-                        for half in (envelopes[:midpoint], envelopes[midpoint:]):
-                            envelopes_to_store = [x.as_dict() for x in half]
-                            self.storage.put(envelopes_to_store)
-                            if self._should_collect_customer_sdkstats():
-                                # These halves are persisted for retry at a smaller size.
-                                track_retry_items(half, response_error)
-                    else:
-                        # Single envelope (or storage disabled): cannot split, so drop it.
-                        if not self._is_stats_exporter():
-                            logger.error(
-                                "Payload too large and cannot be split further: %s.",
-                                response_error.message,
-                            )
-                            if self._should_collect_customer_sdkstats() and isinstance(
-                                response_error.status_code, int
-                            ):
-                                track_dropped_items(envelopes, response_error.status_code)
-                    # Mark as not retryable because we already write to storage here
-                    result = ExportResult.FAILED_NOT_RETRYABLE
+                    result = self._handle_payload_too_large(envelopes, response_error)
+
                 else:
                     # Any other status code counts as failure (non-retryable)
                     # 400 - Invalid - The server cannot or will not process the request due to the invalid telemetry (invalid data, iKey, etc.)
@@ -828,6 +876,43 @@ class BaseExporter:
             if current_host.endswith(suffix) and redirect_host.endswith(suffix):
                 return True
         return False
+
+
+def _get_envelope_serialized_size(envelope: TelemetryItem) -> int:
+    """Return the serialized wire size (in bytes) of a single envelope on the wire."""
+    try:
+        serialized = json.dumps(envelope, cls=SdkJSONEncoder, exclude_readonly=True)
+        return len(serialized.encode("utf-8"))
+    except Exception:  # pylint: disable=broad-except
+        return _MAX_INGESTION_PAYLOAD_SIZE_BYTES
+
+
+def _split_oversized_batch(envelopes: List[TelemetryItem]) -> List[List[TelemetryItem]]:
+    """Split an oversized batch into sub-batches that each fit under the ingestion size limit."""
+    chunks: List[List[TelemetryItem]] = []
+    current: List[TelemetryItem] = []
+    current_size = 2  # account for the enclosing "[" and "]" of the JSON array
+    for envelope in envelopes:
+        envelope_size = _get_envelope_serialized_size(envelope)
+        # Every element after the first is preceded by a "," separator inside the JSON array.
+        separator_size = 1 if current else 0
+        if current and current_size + separator_size + envelope_size > _MAX_INGESTION_PAYLOAD_SIZE_BYTES:
+            chunks.append(current)
+            current = []
+            current_size = 2
+            separator_size = 0
+        current.append(envelope)
+        current_size += separator_size + envelope_size
+    if current:
+        chunks.append(current)
+    # Guarantee progress: if size-based packing produced a single chunk (e.g. because the byte
+    # estimate under-reported), fall back to halving by count so repeated 413s keep shrinking the
+    # batch. Only split when there is more than one envelope; a single envelope cannot be divided
+    # and is handled by the caller (which drops it), so this never produces an empty sub-batch.
+    if len(chunks) < 2 and len(envelopes) > 1:
+        midpoint = len(envelopes) // 2
+        chunks = [envelopes[:midpoint], envelopes[midpoint:]]
+    return chunks
 
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:
