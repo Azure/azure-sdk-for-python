@@ -325,7 +325,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
             if limit <= 0:
                 return []
-            return resolved[:limit]
+            # Keep the most recent N history items (drop oldest when over limit).
+            return resolved[-limit:]
 
     async def create_execution(self, execution: ResponseExecution, *, ttl_seconds: int | None = None) -> None:
         """Create a new execution and replay container for ``execution.response_id``.
