@@ -100,6 +100,9 @@ class _FakeFoundryStorage:
 
         status, payload = self._dispatch(request.method, path, query, body, caller)
         response = _FakeHttpResponse(status, payload)
+        # This stands in for the whole of ``_send_storage_request`` (which is
+        # replaced wholesale), so the status → exception mapping it performs
+        # has to happen here too.
         raise_for_storage_error(response)
         return response
 
@@ -250,7 +253,9 @@ def hosted_storage(monkeypatch: pytest.MonkeyPatch) -> _FakeFoundryStorage:
     # task manager is installed.  Hosted deployments treat that as a platform
     # failure (durability is mandatory) — orthogonal to storage isolation, so
     # the durability gate is neutralized to let the handler run in-process.
-    # Storage still resolves to the hosted FoundryStorageProvider above.
+    # This only gates the ``TaskManagerNotInitialized`` branch; store selection
+    # reads ``AgentConfig.is_hosted`` from the env vars set above, so the host
+    # still resolves its provider to FoundryStorageProvider.
     monkeypatch.setattr(_orch, "_is_hosted_environment", lambda: False)
 
     async def _send(_self: FoundryStorageProvider, request: Any) -> _FakeHttpResponse:
