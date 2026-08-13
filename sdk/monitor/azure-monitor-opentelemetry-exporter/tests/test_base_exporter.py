@@ -1146,9 +1146,7 @@ class TestBaseExporter(unittest.TestCase):
                     ),
                 ],
             )
-            with self.assertLogs(
-                "azure.monitor.opentelemetry.exporter.export._base", level="ERROR"
-            ) as cm:
+            with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as cm:
                 result = exporter._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         log_output = "\n".join(cm.output)
@@ -1181,9 +1179,7 @@ class TestBaseExporter(unittest.TestCase):
                     ),
                 ],
             )
-            with self.assertLogs(
-                "azure.monitor.opentelemetry.exporter.export._base", level="ERROR"
-            ) as cm:
+            with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as cm:
                 result = exporter._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         log_output = "\n".join(cm.output)
@@ -1421,9 +1417,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         # The batch is dropped with the storage-disabled reason, matching every other
         # retryable failure when offline storage is turned off.
-        mock_track_dropped.assert_called_once_with(
-            custom_envelopes_to_export, DropCode.CLIENT_STORAGE_DISABLED
-        )
+        mock_track_dropped.assert_called_once_with(custom_envelopes_to_export, DropCode.CLIENT_STORAGE_DISABLED)
 
     def test_transmission_413_persists_and_retries(self):
         """End-to-end with real on-disk storage: a 413 persists the split halves to
@@ -1478,9 +1472,7 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test4", time=datetime.now()),
         ]
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
-            with self.assertLogs(
-                "azure.monitor.opentelemetry.exporter.export._base", level="DEBUG"
-            ) as cm:
+            with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="DEBUG") as cm:
                 result = exporter._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         # Both sub-batches were attempted despite the first failing (loop did not abort).
