@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Relationships": "2026-03-01-preview"
   },
-  "commit": "ad48a6c4c835ed1a4242ff178cdeb32a74c5c6a3",
+  "commit": "e9b8d33567e9422a09711667279fe178fada51a1",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/relationships/resource-manager/Microsoft.Relationships/Relationships",
   "emitterVersion": "0.63.3",
