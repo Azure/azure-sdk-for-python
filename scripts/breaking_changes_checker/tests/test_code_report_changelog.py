@@ -471,28 +471,25 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
         )
 
     assert build_report.call_count == 2, "Expected separate apistub reports for current and stable"
-    events.assert_has_calls(
-        [
-            mock.call.uninstall("azure-mgmt-network", "/tmp/azure-mgmt-network"),
-            mock.call.build_report(
-                "azure-mgmt-network",
-                "/tmp/azure-mgmt-network",
-                version="30.2.0",
-                debug=False,
-                label="stable",
-                from_pypi=True,
-            ),
-            mock.call.uninstall("azure-mgmt-network", "/tmp/azure-mgmt-network"),
-            mock.call.build_report(
-                "azure-mgmt-network",
-                "/tmp/azure-mgmt-network",
-                debug=False,
-                label="current",
-                from_pypi=False,
-            ),
-        ],
-        any_order=False,
-    )
+    assert events.mock_calls == [
+        mock.call.uninstall("azure-mgmt-network", "/tmp/azure-mgmt-network"),
+        mock.call.build_report(
+            "azure-mgmt-network",
+            "/tmp/azure-mgmt-network",
+            version="30.2.0",
+            debug=False,
+            label="stable",
+            from_pypi=True,
+        ),
+        mock.call.uninstall("azure-mgmt-network", "/tmp/azure-mgmt-network"),
+        mock.call.build_report(
+            "azure-mgmt-network",
+            "/tmp/azure-mgmt-network",
+            debug=False,
+            label="current",
+            from_pypi=False,
+        ),
+    ]
 
     # The resolver must force the public PyPI backend: in CI PIP_INDEX_URL points
     # at the curated Azure Artifacts feed, which is not a full mirror of PyPI.
