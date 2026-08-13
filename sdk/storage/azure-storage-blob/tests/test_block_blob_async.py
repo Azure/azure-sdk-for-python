@@ -62,10 +62,8 @@ class _RecordingBlockBlobServiceAsync:
     def __init__(self):
         self.blocks = {}  # block_id -> staged bytes
 
-    async def stage_block(self, block_id, length, data=None, body=None, **kwargs):  # pylint: disable=unused-argument
-        content = data if data is not None else body
-        if hasattr(content, "read"):
-            content = content.read()
+    async def stage_block(self, body, *, block_id, content_length, **kwargs):  # pylint: disable=unused-argument
+        content = body.read() if hasattr(body, "read") else body
         self.blocks[block_id] = content
 
 
