@@ -646,7 +646,9 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         # Mock the internal response to raise ServiceResponseError on first chunk processing
         from azure.storage.blob.aio._download_async import process_content as real_process_content
 
-        async def mock_process_content_with_error(response, start_offset, end_offset, encryption, expected_encryption_data):
+        async def mock_process_content_with_error(
+            response, start_offset, end_offset, encryption, expected_encryption_data
+        ):
             retry_counter.simple_count(retry)
             conn_error = AzureError("Connection reset by peer")
             if retry_counter.count == 1:
