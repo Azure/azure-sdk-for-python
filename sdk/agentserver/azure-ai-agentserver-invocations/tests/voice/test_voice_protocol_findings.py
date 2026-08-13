@@ -19,9 +19,9 @@ from conftest import _records_with_ws_extras
 @pytest.mark.parametrize(
     ("frame_kind", "frame", "expected_code"),
     [
-        ("text", "not-json", 1002),
-        ("bytes", b"binary", 1003),
-        ("text", "x" * (MAX_FRAME_BYTES + 1), 1009),
+        pytest.param("text", "not-json", 1002, id="invalid-json"),
+        pytest.param("bytes", b"binary", 1003, id="binary-frame"),
+        pytest.param("oversized-text", None, 1009, id="oversized-text"),
     ],
 )
 def test_voice_sdk_close_code_matches_structured_telemetry(caplog, frame_kind, frame, expected_code):
@@ -32,6 +32,8 @@ def test_voice_sdk_close_code_matches_structured_telemetry(caplog, frame_kind, f
             with TestClient(app).websocket_connect("/invocations_ws") as websocket:
                 if frame_kind == "text":
                     websocket.send_text(frame)
+                elif frame_kind == "oversized-text":
+                    websocket.send_text("x" * (MAX_FRAME_BYTES + 1))
                 else:
                     websocket.send_bytes(frame)
                 websocket.receive_text()
