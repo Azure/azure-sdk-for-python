@@ -13,6 +13,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
+import sys
 import traceback
 from collections.abc import Awaitable, Callable, Mapping
 from typing import Any, TypeVar
@@ -34,7 +35,14 @@ from ._attachments import (
     _ref_key,
     _resolve_input_storage,
 )
-from ._decorator import TaskOptions, _deserialize_input, _resolve_effective_timeout, _serialize_input
+from ._decorator import (
+    TaskOptions,
+    _TIMEOUT_HARD_STOP_GRACE,
+    _deserialize_input,
+    _resolve_effective_timeout,
+    _resolve_hard_stop_grace,
+    _serialize_input,
+)
 from ._exceptions import (
     EtagConflict,
     OutputTooLarge,
@@ -139,6 +147,94 @@ _RECLAIM_BACKOFF_BASE_SECONDS: float = 0.2
 # re-stamped on crash recovery so the watchdog can compute remaining
 # budget = max(0, opts.timeout - (now - _turn_started_at)).
 _TURN_STARTED_AT_KEY: str = "turn_started_at"
+
+# Spec 037 #8 (hard execution cap) — top-level payload field storing the
+# ISO-8601 UTC timestamp of the moment the per-turn timeout fired its
+# cooperative cancel. Written when the watchdog fires; cleared atomically with
+# the ``turn_started_at`` re-stamp at every turn-start boundary. Recovery treats
+# a task carrying a marker (correlated: marker >= turn_started_at) as
+# "already timed out" and finalizes it instead of re-running the turn.
+_TIMEOUT_CANCELLED_AT_KEY: str = "timeout_cancelled_at"
+
+# Isolation feature flag. Process-isolated handler execution (the hard-cap
+# enforcement mechanism) is opt-in via env while under development / for the
+# hosted POC. When off, handlers run in-process as before (cooperative-only,
+# no hard kill). Read live (not cached) so tests can toggle it per-case.
+def _isolation_enabled() -> bool:
+    return os.environ.get("AGENTSERVER_TASK_ISOLATION", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+        "on",
+    )
+
+
+# Per-chain persistent worker reuse (§13.6). Layered ON TOP of isolation and
+# applied ONLY to multi-turn chains: instead of spawning a fresh child per turn
+# (paying the ~1-2s re-import N times for an N-turn chain), a single worker is
+# created per ``task_id`` and reused across the chain's turns. Opt-in, read live.
+# When off (default) OR for one-shot tasks, the per-turn-spawn path is used
+# unchanged. A warm worker survives the suspend gap between turns; the idle-TTL
+# reaper evicts workers idle beyond the TTL so long/indefinite parks release memory.
+def _worker_reuse_enabled() -> bool:
+    return os.environ.get("AGENTSERVER_TASK_WORKER_REUSE", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+        "on",
+    )
+
+
+def _resolve_worker_idle_ttl() -> float:
+    """Seconds a reused per-chain worker may sit idle before eviction.
+
+    Configured via ``AGENTSERVER_TASK_WORKER_IDLE_TTL_SECONDS`` (default 300).
+    Values <= 0 disable the TTL (workers live until kill/crash/shutdown).
+    """
+    raw = os.environ.get("AGENTSERVER_TASK_WORKER_IDLE_TTL_SECONDS", "").strip()
+    if not raw:
+        return 300.0
+    try:
+        return float(raw)
+    except ValueError:
+        logger.warning(
+            "invalid AGENTSERVER_TASK_WORKER_IDLE_TTL_SECONDS=%r; using default 300s", raw
+        )
+        return 300.0
+
+
+# Fork worker backend (§ fork-worker-design). Unix-only: when on AND isolation
+# is on, worker children are created via ``fork`` (inherit the imported app —
+# no re-import, COW memory, ~ms start) instead of ``create_subprocess_exec``
+# (spawn). Ignored on non-Linux (no fork / unsafe) → spawn is used. Opt-in,
+# read live; composes with reuse.
+def _worker_fork_enabled() -> bool:
+    if not sys.platform.startswith("linux"):
+        return False
+    return os.environ.get("AGENTSERVER_TASK_WORKER_FORK", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+        "on",
+    )
+
+
+def _apply_namespace(metadata: Any, namespace: Optional[str], data: dict) -> None:
+    """Replace one metadata namespace's contents (main-process side).
+
+    Used to keep main's ``ctx.metadata`` in sync with an isolated worker's
+    flushes / terminal snapshot so the end-of-turn ``_flush_all`` is consistent.
+
+    :param metadata: The main-process ``TaskMetadata``.
+    :param namespace: ``None`` for the default namespace, else the name.
+    :param data: The full namespace contents to install.
+    """
+    try:
+        facade = metadata if namespace is None else metadata(namespace)
+        facade.clear()
+        facade.update(data)
+    except Exception:  # pylint: disable=broad-except
+        logger.warning("failed to apply metadata namespace %r from worker", namespace, exc_info=True)
 
 
 def _utc_now_iso() -> str:
@@ -344,6 +440,9 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         # slot or it is unsettable (the historic bug: it was read but never
         # storable).
         "_pending_input_count",
+        # Hard-cap: the currently-running isolated worker (if isolation is on),
+        # so the timeout watchdog can force-kill it.
+        "isolated_run",
     )
 
     def __init__(
@@ -373,6 +472,9 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         self.input_type = input_type
         self.opts = opts
         self.retry = retry
+        # Hard-cap: the in-flight isolated worker (set by _run_handler when
+        # isolation is enabled); the timeout watchdog force-kills it.
+        self.isolated_run: Any = None
         # ``asyncio.get_running_loop().time()`` value at the last successful
         # lease refresh -- updated by the renewal loop AND by every
         # payload PATCH that piggybacks lease ownership (see
@@ -448,6 +550,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # fresh one bound to the new turn's _turn_started_at. Cleared
         # on terminal exit.
         self._timeout_watchdogs: dict[str, asyncio.Task[None]] = {}
+        # §13.6 — per-chain persistent worker reuse registry. Keyed by
+        # task_id; survives across suspend/resume (unlike _active_tasks which
+        # is popped at every suspend boundary). Torn down on hard-cap kill,
+        # crash, idle-TTL eviction, or manager shutdown. Only populated when
+        # AGENTSERVER_TASK_WORKER_REUSE is on AND the task is multi-turn.
+        self._reuse_workers: dict[str, Any] = {}
+        self._worker_reaper_task: "asyncio.Task[None] | None" = None
 
     @staticmethod
     def _build_source(fn_name: str) -> dict[str, str]:
@@ -809,6 +918,22 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 pass
             self._periodic_recovery_task = None
 
+        # §13.6 — stop the idle-TTL reaper and tear down all persistent
+        # reuse workers so no child processes are orphaned on shutdown.
+        if self._worker_reaper_task is not None:
+            self._worker_reaper_task.cancel()
+            try:
+                await self._worker_reaper_task
+            except (asyncio.CancelledError, Exception):  # pylint: disable=broad-exception-caught
+                pass
+            self._worker_reaper_task = None
+        if self._reuse_workers:
+            for tid, worker in list(self._reuse_workers.items()):
+                try:
+                    await worker.aclose()
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("failed to close reuse worker for task %s", tid, exc_info=True)
+            self._reuse_workers.clear()
         # Signal shutdown on all active contexts. Yield once so the bridge
         # tasks (running in the event loop) get a chance to observe the
         # shutdown event and notify their handlers before we proceed —
@@ -1388,6 +1513,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         turn_start_payload: dict[str, Any] = {}
         if entry_mode != "recovered":
             turn_start_payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
+            # Clear the hard-cap marker atomically with the turn-start stamp so
+            # it is strictly per-turn (recovery correlates marker >= turn_start).
+            turn_start_payload[_TIMEOUT_CANCELLED_AT_KEY] = None
 
         #  / SOT §11/§20: the framework does not write
         # payload["output"] at any point. No clear is needed on resume.
@@ -1603,30 +1731,27 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         cancel_event: asyncio.Event,
         ctx: "TaskContext[Any] | None" = None,
         *,
+        task_id: str | None = None,
         remaining_seconds: float | None = None,
     ) -> None:
-        """/: per-turn timeout watchdog.
+        """Per-turn timeout watchdog with a hard execution cap.
 
-        Cooperative-only. On firing, sets ``ctx.timeout_exceeded = True``
-        then sets ``cancel_event`` and exits. Does NOT cancel the lease
-        renewal or force-stop the handler. An ignoring handler runs
-        until process death or external :meth:`TaskRun.cancel`.
+        Stage 1 (cooperative): when the per-turn budget elapses, sets
+        ``ctx.timeout_exceeded`` then ``cancel_event`` (ordering invariant) and
+        persists a durable ``timeout_cancelled_at`` marker. Stage 2 (hard cap):
+        after :func:`_resolve_hard_stop_grace` more time, if the handler is
+        still running it is FORCE-stopped via
+        :meth:`_hard_stop_timed_out_task`.
 
-        :param timeout_seconds: Total per-turn timeout budget (used as
-            the clock-skew clamp ceiling).
-        :type timeout_seconds: float
+        :param timeout_seconds: Total per-turn timeout budget (also the
+            clock-skew clamp ceiling).
         :param cancel_event: Event to set for cooperative cancel.
-        :type cancel_event: asyncio.Event
         :param ctx: TaskContext to set ``timeout_exceeded`` on BEFORE
-            ``cancel_event`` (ordering invariant).
-        :type ctx: TaskContext[Any] | None
-        :keyword remaining_seconds: Optional override for "time left in
-            this turn" — used on recovery to honor the persisted
-            turn-start timestamp. Clamped to
-            ``[0, timeout_seconds]`` for clock-skew safety.
-            When ``None``, the watchdog uses ``timeout_seconds`` directly
-            (fresh-entry / drain-re-entry case).
-        :paramtype remaining_seconds: float | None
+            ``cancel_event``.
+        :keyword task_id: The task id (enables marker persistence + hard cap).
+            When ``None`` the watchdog is cooperative-only (legacy behavior).
+        :keyword remaining_seconds: Optional "time left in this turn" override
+            for recovery; clamped to ``[0, timeout_seconds]``.
         """
         if remaining_seconds is None:
             sleep_for = timeout_seconds
@@ -1643,13 +1768,86 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if ctx is not None:
             ctx.timeout_exceeded = True
         cancel_event.set()
+
+        if task_id is None:
+            logger.info(
+                "Timeout watchdog fired cooperative cancel (slept %.3fs of %.3fs "
+                "budget; cooperative-only)",
+                sleep_for,
+                timeout_seconds,
+            )
+            return
+
+        grace = _resolve_hard_stop_grace().total_seconds()
         logger.info(
-            "Timeout watchdog fired cooperative cancel (slept %.3fs of "
-            "%.3fs budget; cooperative-only — handler must check "
-            "ctx.cancel.is_set() and ctx.timeout_exceeded to wind down)",
+            "Timeout watchdog fired cooperative cancel for task %s (slept %.3fs of "
+            "%.3fs budget); will FORCE-stop after %.0fs hard-cap grace if the "
+            "handler does not wind down",
+            task_id,
             sleep_for,
             timeout_seconds,
+            grace,
         )
+        # Stage 1b — persist the durable "this turn entered timeout
+        # cancellation" marker (the moment cancellation happened).
+        await self._persist_timeout_cancelled_marker(task_id)
+        # Stage 2 — grace, then hard stop. If the handler winds down first, the
+        # turn ends, _cancel_watchdog_for_turn cancels this sleep, and no hard
+        # stop happens.
+        await asyncio.sleep(grace)
+        await self._hard_stop_timed_out_task(task_id)
+
+    async def _persist_timeout_cancelled_marker(self, task_id: str) -> None:
+        """Persist ``payload.timeout_cancelled_at`` = now (best-effort).
+
+        Enables recovery to detect a turn that already entered timeout
+        cancellation and finalize it rather than re-running (nanny non-recovery).
+
+        :param task_id: The task id.
+        """
+        try:
+            await self._provider_update_locked(
+                task_id,
+                TaskPatchRequest(payload={_TIMEOUT_CANCELLED_AT_KEY: _utc_now_iso()}),
+            )
+        except Exception:  # pylint: disable=broad-except
+            logger.warning(
+                "failed to persist timeout-cancelled marker for task %s (recovery "
+                "backstop still applies)",
+                task_id,
+                exc_info=True,
+            )
+
+    async def _hard_stop_timed_out_task(self, task_id: str) -> None:
+        """Force-stop a handler that ignored its per-turn timeout (hard cap).
+
+        Isolated: kills the child worker (``_WorkerKilled`` → the execute loop's
+        cancel finalization moves the record out of ``in_progress``).
+        Non-isolated fallback: cancels the in-process execution task.
+
+        :param task_id: The task id to hard-stop.
+        """
+        active = self._active_tasks.get(task_id)
+        if active is None:
+            return
+        run = getattr(active, "isolated_run", None)
+        if run is not None:
+            logger.warning(
+                "Timeout hard cap reached for task %s — killing isolated worker (pid %s). "
+                "This turn will be force-ended and NOT recovered.",
+                task_id,
+                getattr(run, "pid", "?"),
+            )
+            run.kill()
+            return
+        if not active.execution_task.done():
+            logger.warning(
+                "Timeout hard cap reached for task %s — cancelling in-process handler "
+                "(isolation off; best-effort).",
+                task_id,
+            )
+            active.renewal_cancel.set()
+            active.execution_task.cancel()
 
     async def _execute_task(
         self,
@@ -1745,6 +1943,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 timeout_seconds=timeout_seconds,
                 cancel_event=ctx.cancel,
                 ctx=ctx,
+                task_id=task_id,
                 remaining_seconds=remaining,
             )
         )
@@ -1818,6 +2017,357 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             ctx.cancel.set()
         return remaining
 
+    # ==================================================================
+    # Hard execution cap — process-isolated handler execution
+    # ==================================================================
+
+    async def _run_handler(
+        self,
+        fn: Callable[..., Awaitable[Any]],
+        ctx: "TaskContext[Any]",
+        task_id: str,
+        opts: TaskOptions,
+    ) -> Any:
+        """Run the user handler, optionally in an isolated child process.
+
+        When isolation is off (default) this is exactly ``await fn(ctx)``.
+        When on, the handler runs in a child process the timeout watchdog can
+        force-kill; a kill surfaces as ``asyncio.CancelledError`` so the
+        existing end-of-turn finalization (delete / suspend / drain) applies.
+
+        :param fn: The task handler.
+        :param ctx: The task context (main-process copy).
+        :param task_id: The task id.
+        :param opts: The task options.
+        :return: The handler's return value (or suspend / exit sentinel).
+        """
+        if not _isolation_enabled():
+            return await fn(ctx)
+
+        # §13.6 — reuse a per-chain persistent worker for MULTI-TURN chains
+        # when enabled: import once/chain instead of once/turn. One-shot tasks
+        # (single turn) gain nothing from reuse and keep the per-turn path.
+        if _worker_reuse_enabled() and getattr(opts, "_is_multi_turn", False):
+            return await self._run_handler_reused(fn, ctx, task_id, opts)
+
+        from ._isolation import (  # pylint: disable=import-outside-toplevel
+            IsolatedRun,
+            WorkerCrash,
+            _WorkerKilled,
+            start_forked,
+            start_isolated,
+        )
+
+        # Fork backend (Unix) vs spawn backend — same IsolatedRun, different
+        # transport. Selected live per-turn.
+        _start = start_forked if _worker_fork_enabled() else start_isolated
+
+        snapshot = self._build_worker_snapshot(fn, ctx, opts)
+        bridge = self._build_isolation_bridge(ctx, task_id)
+
+        max_worker_attempts = 2  # Gap 4: bounded local re-invoke on crash.
+        for worker_attempt in range(max_worker_attempts):
+            run: IsolatedRun = await _start(snapshot, bridge)
+            active = self._active_tasks.get(task_id)
+            if active is not None:
+                active.isolated_run = run
+            # Bridge main-process cancel/shutdown → child.
+            cancel_bridge = asyncio.create_task(self._bridge_cancel_to_worker(ctx, run))
+            try:
+                result = await run.outcome()
+                return result
+            except _WorkerKilled:
+                # Intentional timeout hard-cap kill (§5.2). Surface as
+                # CancelledError so the execute loop's existing end-of-turn
+                # finalization applies: one-shot -> delete; multi-turn ->
+                # transition + _try_drain_steering (queued input drains to the
+                # next turn, else the chain suspends). Verified by
+                # test_isolation_multiturn.py.
+                raise asyncio.CancelledError()
+            except WorkerCrash:
+                if worker_attempt + 1 >= max_worker_attempts:
+                    logger.warning(
+                        "isolated worker for task %s crashed %d times; failing the turn",
+                        task_id,
+                        worker_attempt + 1,
+                    )
+                    raise
+                logger.warning(
+                    "isolated worker for task %s crashed (attempt %d); re-launching",
+                    task_id,
+                    worker_attempt + 1,
+                )
+                # Re-enter as a recovered turn on the retry.
+                snapshot["entry_mode"] = "recovered"
+                continue
+            finally:
+                cancel_bridge.cancel()
+                if active is not None:
+                    active.isolated_run = None
+
+    async def _run_handler_reused(
+        self,
+        fn: Callable[..., Awaitable[Any]],
+        ctx: "TaskContext[Any]",
+        task_id: str,
+        opts: TaskOptions,
+    ) -> Any:
+        """Run one turn on the chain's persistent worker (§13.6 reuse path).
+
+        Mirrors the per-turn isolated path but reuses a warm worker keyed by
+        ``task_id`` across the chain's turns. A hard-cap kill or crash discards
+        the worker (so the next turn spawns a fresh one) and, for a kill,
+        surfaces as ``asyncio.CancelledError`` so the existing end-of-turn
+        finalization (drain / suspend) applies exactly as in the per-turn path.
+
+        :param fn: The task handler.
+        :param ctx: The task context (main-process copy).
+        :param task_id: The task id (worker registry key).
+        :param opts: The task options.
+        :return: The handler's return value (or suspend / exit sentinel).
+        """
+        from ._isolation import (  # pylint: disable=import-outside-toplevel
+            WorkerCrash,
+            _WorkerKilled,
+        )
+
+        snapshot = self._build_worker_snapshot(fn, ctx, opts)
+        bridge = self._build_isolation_bridge(ctx, task_id)
+
+        max_worker_attempts = 2  # bounded local re-invoke on crash.
+        for worker_attempt in range(max_worker_attempts):
+            worker = await self._get_or_start_worker(task_id)
+            active = self._active_tasks.get(task_id)
+            if active is not None:
+                active.isolated_run = worker  # hard-cap watchdog kills this
+            cancel_bridge = asyncio.create_task(self._bridge_cancel_to_worker(ctx, worker))
+            try:
+                result = await worker.run_turn(snapshot, bridge)
+                return result
+            except _WorkerKilled:
+                # Timeout hard-cap kill — discard the (dead) worker so the next
+                # turn re-spawns, then surface as CancelledError for the
+                # existing drain/suspend finalization.
+                self._discard_worker(task_id)
+                raise asyncio.CancelledError()
+            except WorkerCrash:
+                self._discard_worker(task_id)
+                if worker_attempt + 1 >= max_worker_attempts:
+                    logger.warning(
+                        "reused worker for task %s crashed %d times; failing the turn",
+                        task_id,
+                        worker_attempt + 1,
+                    )
+                    raise
+                logger.warning(
+                    "reused worker for task %s crashed (attempt %d); re-launching",
+                    task_id,
+                    worker_attempt + 1,
+                )
+                snapshot["entry_mode"] = "recovered"
+                continue
+            finally:
+                cancel_bridge.cancel()
+                if active is not None:
+                    active.isolated_run = None
+
+    async def _get_or_start_worker(self, task_id: str) -> Any:
+        """Return the chain's warm persistent worker, spawning one if needed.
+
+        :param task_id: The worker registry key.
+        :return: A live ``PersistentWorker``.
+        """
+        worker = self._reuse_workers.get(task_id)
+        if worker is not None and getattr(worker, "alive", False):
+            return worker
+        if worker is not None:  # stale/dead entry
+            self._reuse_workers.pop(task_id, None)
+
+        from ._isolation import (  # pylint: disable=import-outside-toplevel
+            start_forked_worker,
+            start_persistent_worker,
+        )
+
+        # Fork backend (Unix) vs spawn backend — same PersistentWorker, different
+        # transport.
+        worker = await (start_forked_worker() if _worker_fork_enabled() else start_persistent_worker())
+        self._reuse_workers[task_id] = worker
+        logger.info(
+            "started persistent reuse worker (pid %s) for task %s",
+            getattr(worker, "pid", "?"),
+            task_id,
+        )
+        self._ensure_worker_reaper()
+        return worker
+
+    def _discard_worker(self, task_id: str) -> None:
+        """Kill (idempotent) and deregister the chain's persistent worker.
+
+        :param task_id: The worker registry key.
+        """
+        worker = self._reuse_workers.pop(task_id, None)
+        if worker is None:
+            return
+        try:
+            worker.kill()
+        except Exception:  # pylint: disable=broad-except
+            logger.debug("error killing discarded worker for task %s", task_id, exc_info=True)
+
+    def _ensure_worker_reaper(self) -> None:
+        """Start the idle-TTL reaper loop if not already running."""
+        if self._worker_reaper_task is None or self._worker_reaper_task.done():
+            self._worker_reaper_task = asyncio.create_task(self._worker_reaper_loop())
+
+    async def _worker_reaper_loop(self) -> None:
+        """Evict per-chain workers idle beyond the TTL (§13.6 warm-across-suspend).
+
+        A worker parked between turns (chain suspended) is killed + deregistered
+        once idle for ``AGENTSERVER_TASK_WORKER_IDLE_TTL_SECONDS`` so long or
+        indefinite parks release their ~100-300MB footprint. A worker actively
+        running a turn (``in_flight``) is never evicted. TTL <= 0 disables
+        eviction. Exits when shutdown is signalled or no workers remain.
+        """
+        while not self._shutdown_event.is_set():
+            ttl = _resolve_worker_idle_ttl()
+            poll = 30.0 if ttl <= 0 else max(5.0, min(ttl, 60.0))
+            try:
+                await asyncio.wait_for(self._shutdown_event.wait(), timeout=poll)
+                return  # shutdown
+            except asyncio.TimeoutError:
+                pass
+            except asyncio.CancelledError:
+                return
+            if not self._reuse_workers:
+                # Nothing to reap — let the loop exit; it is re-armed on the
+                # next _get_or_start_worker.
+                return
+            ttl = _resolve_worker_idle_ttl()
+            now = asyncio.get_running_loop().time()
+            self._reap_idle_workers(now, ttl)
+
+    def _reap_idle_workers(self, now: float, ttl: float) -> int:
+        """Evict dead + idle-beyond-TTL workers. Returns the count evicted.
+
+        Separated from the reaper loop so it can be driven deterministically in
+        tests. ``in_flight`` workers are never evicted; ``ttl <= 0`` disables
+        idle eviction (dead workers are still reaped).
+
+        :param now: Current event-loop monotonic time.
+        :param ttl: Idle time-to-live in seconds.
+        :return: Number of workers evicted.
+        """
+        evicted = 0
+        for tid, worker in list(self._reuse_workers.items()):
+            try:
+                if not getattr(worker, "alive", True):
+                    self._reuse_workers.pop(tid, None)
+                    continue
+                if ttl <= 0 or getattr(worker, "in_flight", False):
+                    continue
+                idle = worker.idle_seconds(now)
+                if idle >= ttl:
+                    logger.info(
+                        "idle-TTL evicting reuse worker (pid %s) for task %s "
+                        "(idle %.0fs >= %.0fs)",
+                        getattr(worker, "pid", "?"),
+                        tid,
+                        idle,
+                        ttl,
+                    )
+                    self._reuse_workers.pop(tid, None)
+                    worker.kill()
+                    evicted += 1
+            except Exception:  # pylint: disable=broad-except
+                logger.warning("worker reaper error for task %s", tid, exc_info=True)
+        return evicted
+
+    def _build_worker_snapshot(
+        self, fn: Callable[..., Awaitable[Any]], ctx: "TaskContext[Any]", opts: TaskOptions
+    ) -> dict:
+        """Build the pickle-free ctx snapshot handed to the worker at fork."""
+        return {
+            "handler_module": getattr(fn, "__module__", ""),
+            "handler_name": opts.name,
+            "task_id": ctx.task_id,
+            "input_id": ctx.input_id,
+            "session_id": getattr(ctx, "_session_id", "") or "",
+            "input": ctx.input,
+            "entry_mode": ctx.entry_mode,
+            "is_steered_turn": ctx.is_steered_turn,
+            "retry_attempt": ctx.retry_attempt,
+            "recovery_count": ctx.recovery_count,
+            # Default-namespace metadata seed (named namespaces are proxied via
+            # flush RPCs and ride the terminal snapshot).
+            "metadata": dict(ctx.metadata),
+        }
+
+    def _build_isolation_bridge(self, ctx: "TaskContext[Any]", task_id: str) -> Any:
+        """Build the main-process callbacks the worker proxies back to."""
+        from ._isolation import IsolationBridge  # pylint: disable=import-outside-toplevel
+        from ..streaming import streams  # pylint: disable=import-outside-toplevel
+        from ..streaming import EventStreamNotFoundError  # pylint: disable=import-outside-toplevel
+
+        flush_cb = self._make_metadata_flush(task_id)
+
+        async def apply_flush(namespace: Optional[str], data: dict) -> None:
+            # Keep main's ctx.metadata in sync so the end-of-turn _flush_all is
+            # consistent, then persist to the store.
+            _apply_namespace(ctx.metadata, namespace, data)
+            await flush_cb(namespace, data)
+
+        async def stream_emit(stream_id: str, payload: Any, close: bool) -> None:
+            stream = await streams.get_or_create(stream_id)
+            await stream.emit(payload, close=close)
+
+        async def stream_close(stream_id: str) -> None:
+            try:
+                stream = await streams.get(stream_id)
+            except EventStreamNotFoundError:
+                return
+            await stream.close()
+
+        async def stream_last_cursor(stream_id: str) -> Optional[int]:
+            try:
+                stream = await streams.get(stream_id)
+            except EventStreamNotFoundError:
+                return None
+            return await stream.last_cursor()
+
+        def get_pending_count() -> int:
+            return self._make_pending_count_provider(task_id)()
+
+        def apply_final_metadata(snapshot: dict) -> None:
+            for ns_key, data in snapshot.items():
+                ns = None if ns_key == "__default__" else ns_key
+                _apply_namespace(ctx.metadata, ns, data)
+
+        return IsolationBridge(
+            apply_flush=apply_flush,
+            stream_emit=stream_emit,
+            stream_close=stream_close,
+            stream_last_cursor=stream_last_cursor,
+            get_pending_count=get_pending_count,
+            apply_final_metadata=apply_final_metadata,
+        )
+
+    async def _bridge_cancel_to_worker(self, ctx: "TaskContext[Any]", run: Any) -> None:
+        """Forward main-process cancel/shutdown to the isolated worker."""
+        async def fwd_cancel() -> None:
+            await ctx.cancel.wait()
+            await run.signal_cancel(
+                timeout_exceeded=bool(getattr(ctx, "timeout_exceeded", False)),
+                cancel_requested=bool(getattr(ctx, "cancel_requested", False)),
+            )
+
+        async def fwd_shutdown() -> None:
+            await ctx.shutdown.wait()
+            await run.signal_shutdown()
+
+        try:
+            await asyncio.gather(fwd_cancel(), fwd_shutdown())
+        except asyncio.CancelledError:
+            pass
+
     async def _execute_task_loop(  # pylint: disable=too-many-statements,too-many-branches,too-many-nested-blocks,unused-argument,too-many-locals
         self,
         *,
@@ -1870,7 +2420,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     )
                 )
                 try:
-                    result = await fn(ctx)
+                    result = await self._run_handler(fn, ctx, task_id, opts)
                 finally:
                     reset_request_context(request_context_token)
 
@@ -2373,6 +2923,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             # turn-start boundary — write a fresh _turn_started_at so the
             # respawned watchdog computes a full per-turn budget.
             payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
+            # Clear the hard-cap marker atomically with the new turn-start stamp.
+            payload[_TIMEOUT_CANCELLED_AT_KEY] = None
             payload["steering"] = steering
             # SOT §11/§20: the framework does not write payload["output"];
             # no clear is needed at the drain transition.
@@ -3041,6 +3593,12 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     # Look up stored opts for resumed-task configuration.
                     fn_name = (task_info.source or {}).get("name", "")
                     opts = self._resume_opts.get(fn_name)
+                    # Hard execution cap (Spec 037 #8): a turn that already
+                    # entered timeout cancellation must NOT be re-run. Finalize
+                    # it terminally so the nanny stops recovering it.
+                    if self._turn_timed_out(task_info, opts):
+                        await self._finalize_timed_out_recovery(task_info, opts)
+                        continue
                     await self._start_existing_task(
                         fn=fn,
                         fn_name=task_info.agent_name,
@@ -3055,6 +3613,68 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                         task_info.id,
                         exc_info=True,
                     )
+
+    def _turn_timed_out(self, task_info: TaskInfo, opts: "TaskOptions | None") -> bool:
+        """Detect whether the current turn already entered timeout cancellation.
+
+        Primary signal: the persisted ``timeout_cancelled_at`` marker, correlated
+        with ``turn_started_at`` (marker >= turn-start, so a stale marker from a
+        prior turn is ignored). Backstop (marker missing due to a crash between
+        the cooperative cancel and the marker PATCH): the derived deadline
+        ``now >= turn_started_at + timeout``.
+
+        :param task_info: The stale task record under recovery.
+        :param opts: The registered options (for the timeout budget).
+        :return: True iff the turn already timed out.
+        """
+        payload = task_info.payload or {}
+        started = _parse_turn_started_at(payload.get(_TURN_STARTED_AT_KEY))
+        marker = payload.get(_TIMEOUT_CANCELLED_AT_KEY)
+        if marker:
+            marker_ts = _parse_turn_started_at(marker)
+            if marker_ts is not None and (started is None or marker_ts >= started - 1.0):
+                return True
+        if started is not None:
+            import time  # pylint: disable=import-outside-toplevel
+
+            timeout_s = _resolve_effective_timeout(opts.timeout if opts else None).total_seconds()
+            if time.time() >= started + timeout_s:
+                return True
+        return False
+
+    async def _finalize_timed_out_recovery(self, task_info: TaskInfo, opts: "TaskOptions | None") -> None:
+        """Finalize a timed-out turn on recovery instead of re-running it.
+
+        One-shot / ephemeral → delete; multi-turn → suspend (both move the record
+        out of ``in_progress`` so the nanny stops recovering it).
+
+        :param task_info: The stale task record.
+        :param opts: The registered options.
+        """
+        task_id = task_info.id
+        is_multi_turn = bool(getattr(opts, "_is_multi_turn", False)) if opts else False
+        ephemeral = bool(getattr(opts, "ephemeral", True)) if opts else True
+        logger.warning(
+            "Recovery: task %s already exceeded its per-turn timeout hard cap; "
+            "finalizing (%s) without re-running the turn.",
+            task_id,
+            "suspend" if is_multi_turn else "delete",
+        )
+        try:
+            if is_multi_turn:
+                await self._provider_update_locked(
+                    task_id,
+                    TaskPatchRequest(
+                        status="suspended",
+                        lease_owner=self._lease_owner,
+                        lease_instance_id=self._instance_id,
+                        lease_duration_seconds=0,
+                    ),
+                )
+            else:
+                await self._provider.delete(task_id, force=True)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning("Recovery finalize failed for timed-out task %s", task_id, exc_info=True)
 
     def _find_resume_callback(self, task_info: TaskInfo) -> Callable[..., Any] | None:
         """Find a registered resume callback for a task.
