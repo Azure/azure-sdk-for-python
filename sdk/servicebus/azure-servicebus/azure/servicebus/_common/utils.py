@@ -37,6 +37,8 @@ from .constants import (
     DEAD_LETTER_QUEUE_SUFFIX,
     TRANSFER_DEAD_LETTER_QUEUE_SUFFIX,
     USER_AGENT_PREFIX,
+    DEFAULT_SERVER_TIMEOUT_MS,
+    SERVER_TIMEOUT_BUFFER_MS,
 )
 from ..amqp import AmqpAnnotatedMessage
 
@@ -87,6 +89,22 @@ def utc_from_timestamp(timestamp: float) -> datetime.datetime:
 
 def utc_now():
     return datetime.datetime.now(timezone.utc)
+
+
+def get_server_timeout_ms(timeout: Optional[float]) -> int:
+    """Return the server-timeout for a management operation, in milliseconds.
+
+    This is a service-side bound, not a client-side one. It clamps at zero, since under
+    a second of remaining time there is no room for the service to answer first.
+
+    :param float or None timeout: The caller's remaining timeout in seconds, or None.
+    :rtype: int
+    :returns: The remaining time less the buffer, or the default if no timeout was given.
+    """
+    if timeout is None:
+        return DEFAULT_SERVER_TIMEOUT_MS
+    remaining_ms = int(timeout * 1000) - SERVER_TIMEOUT_BUFFER_MS
+    return max(remaining_ms, 0)
 
 
 def build_uri(address, entity):
