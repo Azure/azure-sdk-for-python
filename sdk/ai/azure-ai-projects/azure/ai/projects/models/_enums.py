@@ -20,6 +20,8 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """EXTERNAL_AGENTS_V1_PREVIEW."""
     DRAFT_AGENTS_V1_PREVIEW = "DraftAgents=V1Preview"
     """DRAFT_AGENTS_V1_PREVIEW."""
+    VOICE_AGENTS_V1_PREVIEW = "VoiceAgents=V1Preview"
+    """VOICE_AGENTS_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -80,6 +82,8 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP."""
     INVOCATIONS = "invocations"
     """INVOCATIONS."""
+    VOICE = "voice"
+    """VOICE."""
     INVOCATIONS_WS = "invocations_ws"
     """WebSocket-based protocol for hosted voice and real-time streaming agents."""
 
@@ -106,6 +110,8 @@ class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WORKFLOW."""
     EXTERNAL = "external"
     """EXTERNAL."""
+    VOICE = "voice"
+    """VOICE."""
 
 
 class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -121,6 +127,15 @@ class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AGENT_VERSION_DELETED."""
     AGENT_CONTAINER = "agent.container"
     """AGENT_CONTAINER."""
+
+
+class AgentOptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminator values for the dataset input union."""
+
+    INLINE = "inline"
+    """Inline dataset — items are provided directly in the request body."""
+    REFERENCE = "reference"
+    """Reference to a registered Foundry dataset by name and version."""
 
 
 class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -151,6 +166,17 @@ class AgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Agent endpoint accepts requests. This is the default state on creation."""
     DISABLED = "disabled"
     """Agent endpoint rejects all requests."""
+
+
+class AgentStateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the source of an agent's operational state. Empty when the state is not derived from
+    a specific source.
+    """
+
+    AGENT_INSTANCE_IDENTITY = "agent_instance_identity"
+    """The state is derived from the agent's instance identity."""
+    AGENT_BLUEPRINT = "agent_blueprint"
+    """The state is derived from the agent's blueprint."""
 
 
 class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -254,6 +280,15 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Query type ``vector_semantic_hybrid``."""
 
 
+class CallableToolAllowedCaller(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CallableToolAllowedCaller."""
+
+    DIRECT = "direct"
+    """DIRECT."""
+    PROGRAMMATIC = "programmatic"
+    """PROGRAMMATIC."""
+
+
 class CodeDependencyResolution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """How package dependencies are resolved at deployment time for a code-based hosted agent."""
 
@@ -333,6 +368,15 @@ class ContainerSkillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SKILL_REFERENCE."""
     INLINE = "inline"
     """INLINE."""
+
+
+class CreateTranscriptionResponseJsonUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CreateTranscriptionResponseJsonUsageType."""
+
+    TOKENS = "tokens"
+    """TOKENS."""
+    DURATION = "duration"
+    """DURATION."""
 
 
 class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -799,15 +843,6 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been canceled by the user."""
 
 
-class OptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Discriminator values for the dataset input union."""
-
-    INLINE = "inline"
-    """Inline dataset — items are provided directly in the request body."""
-    REFERENCE = "reference"
-    """Reference to a registered Foundry dataset by name and version."""
-
-
 class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of PageOrder."""
 
@@ -836,6 +871,230 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AUTO."""
     DEFAULT_2024_11_15 = "default-2024-11-15"
     """DEFAULT_2024_11_15."""
+
+
+class RealtimeAudioFormatsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeAudioFormatsType."""
+
+    AUDIO_PCM = "audio/pcm"
+    """AUDIO_PCM."""
+    AUDIO_PCMU = "audio/pcmu"
+    """AUDIO_PCMU."""
+    AUDIO_PCMA = "audio/pcma"
+    """AUDIO_PCMA."""
+
+
+class RealtimeClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeClientEventType."""
+
+    CONVERSATION_ITEM_CREATE = "conversation.item.create"
+    """CONVERSATION_ITEM_CREATE."""
+    CONVERSATION_ITEM_DELETE = "conversation.item.delete"
+    """CONVERSATION_ITEM_DELETE."""
+    CONVERSATION_ITEM_RETRIEVE = "conversation.item.retrieve"
+    """CONVERSATION_ITEM_RETRIEVE."""
+    CONVERSATION_ITEM_TRUNCATE = "conversation.item.truncate"
+    """CONVERSATION_ITEM_TRUNCATE."""
+    INPUT_AUDIO_BUFFER_APPEND = "input_audio_buffer.append"
+    """INPUT_AUDIO_BUFFER_APPEND."""
+    INPUT_AUDIO_BUFFER_CLEAR = "input_audio_buffer.clear"
+    """INPUT_AUDIO_BUFFER_CLEAR."""
+    OUTPUT_AUDIO_BUFFER_CLEAR = "output_audio_buffer.clear"
+    """OUTPUT_AUDIO_BUFFER_CLEAR."""
+    INPUT_AUDIO_BUFFER_COMMIT = "input_audio_buffer.commit"
+    """INPUT_AUDIO_BUFFER_COMMIT."""
+    RESPONSE_CANCEL = "response.cancel"
+    """RESPONSE_CANCEL."""
+    RESPONSE_CREATE = "response.create"
+    """RESPONSE_CREATE."""
+    SESSION_UPDATE = "session.update"
+    """SESSION_UPDATE."""
+
+
+class RealtimeConversationItemMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeConversationItemMessageType."""
+
+    SYSTEM = "system"
+    """SYSTEM."""
+    USER = "user"
+    """USER."""
+    ASSISTANT = "assistant"
+    """ASSISTANT."""
+
+
+class RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeConversationItemType."""
+
+    FUNCTION_CALL = "function_call"
+    """FUNCTION_CALL."""
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    """FUNCTION_CALL_OUTPUT."""
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    """MCP_APPROVAL_RESPONSE."""
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    """MCP_LIST_TOOLS."""
+    MCP_CALL = "mcp_call"
+    """MCP_CALL."""
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    """MCP_APPROVAL_REQUEST."""
+
+
+class RealtimeMcpErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeMcpErrorType."""
+
+    PROTOCOL_ERROR = "protocol_error"
+    """PROTOCOL_ERROR."""
+    TOOL_EXECUTION_ERROR = "tool_execution_error"
+    """TOOL_EXECUTION_ERROR."""
+    HTTP_ERROR = "http_error"
+    """HTTP_ERROR."""
+
+
+class RealtimeReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Constrains effort on reasoning for reasoning-capable Realtime models such as
+    ``gpt-realtime-2``.
+    """
+
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+
+
+class RealtimeServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeServerEventType."""
+
+    CONVERSATION_CREATED = "conversation.created"
+    """CONVERSATION_CREATED."""
+    CONVERSATION_ITEM_CREATED = "conversation.item.created"
+    """CONVERSATION_ITEM_CREATED."""
+    CONVERSATION_ITEM_DELETED = "conversation.item.deleted"
+    """CONVERSATION_ITEM_DELETED."""
+    CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED = "conversation.item.input_audio_transcription.completed"
+    """CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED."""
+    CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA = "conversation.item.input_audio_transcription.delta"
+    """CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA."""
+    CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED = "conversation.item.input_audio_transcription.failed"
+    """CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED."""
+    CONVERSATION_ITEM_RETRIEVED = "conversation.item.retrieved"
+    """CONVERSATION_ITEM_RETRIEVED."""
+    CONVERSATION_ITEM_TRUNCATED = "conversation.item.truncated"
+    """CONVERSATION_ITEM_TRUNCATED."""
+    ERROR = "error"
+    """ERROR."""
+    INPUT_AUDIO_BUFFER_CLEARED = "input_audio_buffer.cleared"
+    """INPUT_AUDIO_BUFFER_CLEARED."""
+    INPUT_AUDIO_BUFFER_COMMITTED = "input_audio_buffer.committed"
+    """INPUT_AUDIO_BUFFER_COMMITTED."""
+    INPUT_AUDIO_BUFFER_DTMF_EVENT_RECEIVED = "input_audio_buffer.dtmf_event_received"
+    """INPUT_AUDIO_BUFFER_DTMF_EVENT_RECEIVED."""
+    INPUT_AUDIO_BUFFER_SPEECH_STARTED = "input_audio_buffer.speech_started"
+    """INPUT_AUDIO_BUFFER_SPEECH_STARTED."""
+    INPUT_AUDIO_BUFFER_SPEECH_STOPPED = "input_audio_buffer.speech_stopped"
+    """INPUT_AUDIO_BUFFER_SPEECH_STOPPED."""
+    RATE_LIMITS_UPDATED = "rate_limits.updated"
+    """RATE_LIMITS_UPDATED."""
+    RESPONSE_OUTPUT_AUDIO_DELTA = "response.output_audio.delta"
+    """RESPONSE_OUTPUT_AUDIO_DELTA."""
+    RESPONSE_OUTPUT_AUDIO_DONE = "response.output_audio.done"
+    """RESPONSE_OUTPUT_AUDIO_DONE."""
+    RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA = "response.output_audio_transcript.delta"
+    """RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA."""
+    RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE = "response.output_audio_transcript.done"
+    """RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE."""
+    RESPONSE_CONTENT_PART_ADDED = "response.content_part.added"
+    """RESPONSE_CONTENT_PART_ADDED."""
+    RESPONSE_CONTENT_PART_DONE = "response.content_part.done"
+    """RESPONSE_CONTENT_PART_DONE."""
+    RESPONSE_CREATED = "response.created"
+    """RESPONSE_CREATED."""
+    RESPONSE_DONE = "response.done"
+    """RESPONSE_DONE."""
+    RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
+    """RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA."""
+    RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
+    """RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE."""
+    RESPONSE_OUTPUT_ITEM_ADDED = "response.output_item.added"
+    """RESPONSE_OUTPUT_ITEM_ADDED."""
+    RESPONSE_OUTPUT_ITEM_DONE = "response.output_item.done"
+    """RESPONSE_OUTPUT_ITEM_DONE."""
+    RESPONSE_OUTPUT_TEXT_DELTA = "response.output_text.delta"
+    """RESPONSE_OUTPUT_TEXT_DELTA."""
+    RESPONSE_OUTPUT_TEXT_DONE = "response.output_text.done"
+    """RESPONSE_OUTPUT_TEXT_DONE."""
+    SESSION_CREATED = "session.created"
+    """SESSION_CREATED."""
+    SESSION_UPDATED = "session.updated"
+    """SESSION_UPDATED."""
+    OUTPUT_AUDIO_BUFFER_STARTED = "output_audio_buffer.started"
+    """OUTPUT_AUDIO_BUFFER_STARTED."""
+    OUTPUT_AUDIO_BUFFER_STOPPED = "output_audio_buffer.stopped"
+    """OUTPUT_AUDIO_BUFFER_STOPPED."""
+    OUTPUT_AUDIO_BUFFER_CLEARED = "output_audio_buffer.cleared"
+    """OUTPUT_AUDIO_BUFFER_CLEARED."""
+    CONVERSATION_ITEM_ADDED = "conversation.item.added"
+    """CONVERSATION_ITEM_ADDED."""
+    CONVERSATION_ITEM_DONE = "conversation.item.done"
+    """CONVERSATION_ITEM_DONE."""
+    INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED = "input_audio_buffer.timeout_triggered"
+    """INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED."""
+    CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT = "conversation.item.input_audio_transcription.segment"
+    """CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT."""
+    MCP_LIST_TOOLS_IN_PROGRESS = "mcp_list_tools.in_progress"
+    """MCP_LIST_TOOLS_IN_PROGRESS."""
+    MCP_LIST_TOOLS_COMPLETED = "mcp_list_tools.completed"
+    """MCP_LIST_TOOLS_COMPLETED."""
+    MCP_LIST_TOOLS_FAILED = "mcp_list_tools.failed"
+    """MCP_LIST_TOOLS_FAILED."""
+    RESPONSE_MCP_CALL_ARGUMENTS_DELTA = "response.mcp_call_arguments.delta"
+    """RESPONSE_MCP_CALL_ARGUMENTS_DELTA."""
+    RESPONSE_MCP_CALL_ARGUMENTS_DONE = "response.mcp_call_arguments.done"
+    """RESPONSE_MCP_CALL_ARGUMENTS_DONE."""
+    RESPONSE_MCP_CALL_IN_PROGRESS = "response.mcp_call.in_progress"
+    """RESPONSE_MCP_CALL_IN_PROGRESS."""
+    RESPONSE_MCP_CALL_COMPLETED = "response.mcp_call.completed"
+    """RESPONSE_MCP_CALL_COMPLETED."""
+    RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
+    """RESPONSE_MCP_CALL_FAILED."""
+
+
+class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Constrains effort on reasoning for reasoning models. Currently supported values are ``none``,
+    ``minimal``, ``low``, ``medium``, ``high``, ``xhigh``, and ``max``. Reducing reasoning effort
+    can result in faster responses and fewer tokens used on reasoning in a response. Not all
+    reasoning models support every value. See the `reasoning guide
+    <https://platform.openai.com/docs/guides/reasoning>`_ for model-specific support.
+    """
+
+    NONE = "none"
+    """NONE."""
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+    MAX = "max"
+    """MAX."""
+
+
+class ReasoningModeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ReasoningModeEnum."""
+
+    STANDARD = "standard"
+    """STANDARD."""
+    PRO = "pro"
+    """PRO."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1135,6 +1394,17 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TOOLBOX_SEARCH_PREVIEW."""
 
 
+class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tool choice mode."""
+
+    NONE = "none"
+    """NONE."""
+    AUTO = "auto"
+    """AUTO."""
+    REQUIRED = "required"
+    """REQUIRED."""
+
+
 class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ToolChoiceParamType."""
 
@@ -1146,6 +1416,8 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP."""
     CUSTOM = "custom"
     """CUSTOM."""
+    PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"
+    """PROGRAMMATIC_TOOL_CALLING."""
     APPLY_PATCH = "apply_patch"
     """APPLY_PATCH."""
     SHELL = "shell"
@@ -1194,6 +1466,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP."""
     CODE_INTERPRETER = "code_interpreter"
     """CODE_INTERPRETER."""
+    PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"
+    """PROGRAMMATIC_TOOL_CALLING."""
     IMAGE_GENERATION = "image_generation"
     """IMAGE_GENERATION."""
     LOCAL_SHELL = "local_shell"
@@ -1278,3 +1552,285 @@ class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FIXED_RATIO = "FixedRatio"
     """FIXED_RATIO."""
+
+
+class VoiceAgentAnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An animation output produced by a voice-agent session."""
+
+    BLENDSHAPES = "blendshapes"
+    """BLENDSHAPES."""
+    VISEME_ID = "viseme_id"
+    """VISEME_ID."""
+
+
+class VoiceAgentEchoCancellationReferenceSource(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The source of reference audio used for echo cancellation."""
+
+    SERVER = "server"
+    """SERVER."""
+    CLIENT = "client"
+    """CLIENT."""
+
+
+class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A condition that may trigger an interim response."""
+
+    LATENCY = "latency"
+    """LATENCY."""
+    TOOL = "tool"
+    """TOOL."""
+
+
+class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Additional fields that a voice-agent session may include in service outputs."""
+
+    INPUT_AUDIO_TRANSCRIPTION_LOGPROBS = "item.input_audio_transcription.logprobs"
+    """INPUT_AUDIO_TRANSCRIPTION_LOGPROBS."""
+    INPUT_AUDIO_TRANSCRIPTION_PHRASES = "item.input_audio_transcription.phrases"
+    """INPUT_AUDIO_TRANSCRIPTION_PHRASES."""
+    FILE_SEARCH_CALL_RESULTS = "file_search_call.results"
+    """FILE_SEARCH_CALL_RESULTS."""
+
+
+class VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """When a tool invocation creates a follow-up response. Additional values may be added over time."""
+
+    SILENT = "silent"
+    """Do not create a follow-up response after the service-executed tool invocation completes."""
+    WHEN_IDLE = "when_idle"
+    """Create a follow-up response when the conversation is idle."""
+    INTERRUPT = "interrupt"
+    """Interrupt the active response and create a follow-up response."""
+    SKIP_IF_BUSY = "skip_if_busy"
+    """Create a follow-up response only when no response is active."""
+
+
+class VoiceAgentWebSocketSubprotocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The WebSocket subprotocol supported by a voice-agent connection."""
+
+    REALTIME = "realtime"
+    """REALTIME."""
+
+
+class VoiceAudioCodec(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An audio codec. Additional values may be added over time."""
+
+    PCM16 = "pcm16"
+    """16-bit pulse-code modulation."""
+    PCMU = "pcmu"
+    """G.711 mu-law."""
+    PCMA = "pcma"
+    """G.711 A-law."""
+
+
+class VoiceAudioContainerFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An audio container format. Additional values may be added over time."""
+
+    WAV = "wav"
+    """Waveform Audio File Format."""
+
+
+class VoiceAudioFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The audio format type. Values follow the OpenAI Realtime wire schema and are exempt from the
+    snake_case enum-value rule.
+    """
+
+    PCM = "audio/pcm"
+    """16-bit PCM."""
+    PCMU = "audio/pcmu"
+    """G.711 mu-law (telephony)."""
+    PCMA = "audio/pcma"
+    """G.711 A-law (telephony)."""
+
+
+class VoiceAudioRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A voice-audio participant role. Additional values may be added over time."""
+
+    USER = "user"
+    """Audio produced by the user."""
+    AGENT = "agent"
+    """Audio produced by the agent."""
+
+
+class VoiceAudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An output-audio timestamp kind supported by a voice agent."""
+
+    WORD = "word"
+    """Word-level timestamps."""
+
+
+class VoiceAvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport used to deliver the avatar video stream."""
+
+    WEBRTC = "webrtc"
+    """WEBRTC."""
+    WEBSOCKET = "websocket"
+    """WEBSOCKET."""
+    WEBSOCKET_BINARY = "websocket-binary"
+    """Binary WebSocket transport."""
+
+
+class VoiceAvatarType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The avatar type."""
+
+    VIDEO_AVATAR = "video_avatar"
+    """VIDEO_AVATAR."""
+    PHOTO_AVATAR = "photo_avatar"
+    """PHOTO_AVATAR."""
+
+
+class VoiceConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a persisted voice conversation item."""
+
+    MESSAGE = "message"
+    """A message item."""
+    FUNCTION_CALL = "function_call"
+    """A function-call request item."""
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    """A function-call output item."""
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    """An MCP list-tools item."""
+    MCP_CALL = "mcp_call"
+    """An MCP call item."""
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    """An MCP approval request item."""
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    """An MCP approval response item."""
+
+
+class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle status of a persisted voice conversation:
+
+    * `in_progress`: the live session is active, or post-session persistence finalization is
+    pending.
+    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
+    max-duration `1001`
+    close, or a client or network disconnect that the service can still finalize.
+    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
+    finalization.
+    """
+
+    IN_PROGRESS = "in_progress"
+    """The live session is active, or post-session persistence finalization is still pending."""
+    COMPLETED = "completed"
+    """Persistence finalization succeeded. This includes normal or client-initiated close, the
+    ``end_conversation`` system tool, a max-duration ``1001`` close, and client or network
+    disconnects that the service can still finalize."""
+    FAILED = "failed"
+    """A terminal service, bridge, storage, or unrecoverable transport failure prevented persistence
+    finalization."""
+
+
+class VoiceEndOfUtteranceDetectionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The semantic end-of-utterance detection model."""
+
+    SEMANTIC_DETECTION_V1 = "semantic_detection_v1"
+    """The default semantic detection model."""
+    SEMANTIC_DETECTION_V1_EN = "semantic_detection_v1_en"
+    """The English-optimized semantic detection model."""
+    SEMANTIC_DETECTION_V1_MULTILINGUAL = "semantic_detection_v1_multilingual"
+    """The multilingual semantic detection model."""
+    SMART_END_OF_TURN_DETECTION = "smart_end_of_turn_detection"
+    """The smart end-of-turn detection model."""
+
+
+class VoiceEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The sensitivity threshold for semantic end-of-utterance detection."""
+
+    LOW = "low"
+    """The low sensitivity threshold."""
+    MEDIUM = "medium"
+    """The medium sensitivity threshold."""
+    HIGH = "high"
+    """The high sensitivity threshold."""
+    DEFAULT = "default"
+    """The service-selected sensitivity threshold."""
+
+
+class VoiceInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The input-audio transcription model. Mirrors the transcription models supported by the managed
+    voice backend, covering the OpenAI Realtime transcription models plus the Azure and MAI models.
+    Additional values may be added over time.
+    """
+
+    WHISPER1 = "whisper-1"
+    """OpenAI Whisper."""
+    GPT_REALTIME_WHISPER = "gpt-realtime-whisper"
+    """OpenAI GPT Realtime Whisper."""
+    GPT4_O_TRANSCRIBE = "gpt-4o-transcribe"
+    """OpenAI GPT-4o transcribe."""
+    GPT4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
+    """OpenAI GPT-4o mini transcribe."""
+    GPT4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
+    """OpenAI GPT-4o transcribe with speaker diarization."""
+    GPT_TRANSCRIBE = "gpt-transcribe"
+    """OpenAI GPT Transcribe."""
+    GPT_LIVE_TRANSCRIBE = "gpt-live-transcribe"
+    """OpenAI GPT Live Transcribe."""
+    MAI_TRANSCRIBE = "mai-transcribe"
+    """MAI transcription."""
+    AZURE_SPEECH = "azure-speech"
+    """Azure AI Speech to text."""
+
+
+class VoiceModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How the model backing a voice agent is served. This is independent of the architecture
+    (realtime or cascaded), which the service derives from the selected model.
+    """
+
+    MANAGED = "managed"
+    """The service hosts and manages the named model, for example ``gpt-realtime``."""
+    SELF_DEPLOYED = "self_deployed"
+    """The service uses the customer's own Foundry deployment named by ``model``."""
+
+
+class VoiceNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The input audio noise reduction mode."""
+
+    NEAR_FIELD = "near_field"
+    """NEAR_FIELD."""
+    FAR_FIELD = "far_field"
+    """FAR_FIELD."""
+    AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
+    """Azure deep noise suppression."""
+
+
+class VoiceOutputModality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An output modality the agent may produce. ``animation`` and ``avatar`` are used when an avatar
+    is configured.
+    """
+
+    TEXT = "text"
+    """TEXT."""
+    AUDIO = "audio"
+    """AUDIO."""
+    ANIMATION = "animation"
+    """ANIMATION."""
+    AVATAR = "avatar"
+    """AVATAR."""
+
+
+class VoiceSystemToolName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A service-managed voice-session control action. Known values are stable; additional values may
+    be added over time.
+    """
+
+    END_CONVERSATION = "end_conversation"
+    """Ends the active conversation."""
+
+
+class VoiceTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The turn-detection strategy. Additional values may be added over time."""
+
+    SERVER_VAD = "server_vad"
+    """Server-side voice activity detection."""
+    SEMANTIC_VAD = "semantic_vad"
+    """Semantic voice activity detection."""
+    AZURE_SEMANTIC_VAD = "azure_semantic_vad"
+    """Azure semantic voice activity detection."""
+    AZURE_SEMANTIC_VAD_EN = "azure_semantic_vad_en"
+    """English-optimized Azure semantic voice activity detection."""
+    AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"
+    """Multilingual Azure semantic voice activity detection."""

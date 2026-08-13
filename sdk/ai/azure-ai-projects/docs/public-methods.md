@@ -4,9 +4,9 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 141 unique public methods:
+There are a total of 154 unique public methods:
 - 5 stable methods on the client
-- 55 stable methods on top-level sub-clients
+- 68 stable methods on top-level sub-clients
 - 81 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
@@ -14,6 +14,7 @@ There are a total of 141 unique public methods:
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
 | `agents` | AgentsOperations | 23 |
+| `agent_endpoint_conversations` | AgentEndpointConversationsOperations | 12 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 9 |
 | `deployments` | DeploymentsOperations | 2 |
@@ -21,6 +22,7 @@ There are a total of 141 unique public methods:
 | `indexes` | IndexesOperations | 5 |
 | `telemetry` | TelemetryOperations | 1 |
 | `toolboxes` | ToolboxesOperations | 8 |
+| `voice_agent_web_socket` | VoiceAgentWebSocketOperations | 1 |
 
 ### Nested sub-clients (beta operations)
 
@@ -80,6 +82,19 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .agents.update_details
 .agents.upload_session_file
 
+.agent_endpoint_conversations.delete_agent_conversation
+.agent_endpoint_conversations.get_agent_conversation
+.agent_endpoint_conversations.get_agent_conversation_audio
+.agent_endpoint_conversations.get_agent_conversation_audio_content
+.agent_endpoint_conversations.get_agent_conversation_item
+.agent_endpoint_conversations.get_agent_conversation_item_audio
+.agent_endpoint_conversations.get_agent_conversation_item_audio_content
+.agent_endpoint_conversations.get_agent_conversation_response
+.agent_endpoint_conversations.list_agent_conversation_items
+.agent_endpoint_conversations.list_agent_conversation_response_items
+.agent_endpoint_conversations.list_agent_conversation_responses
+.agent_endpoint_conversations.list_agent_conversations
+
 .connections.get*
 .connections.get_default*
 .connections.list
@@ -118,6 +133,8 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .toolboxes.list
 .toolboxes.list_versions
 .toolboxes.update
+
+.voice_agent_web_socket.connect_voice_agent
 ```
 
 ## Beta methods on nested sub-clients

@@ -45,7 +45,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "schedules": "Schedules=V1Preview",
     "skills": "Skills=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,AgentsOptimization=V2Preview",
 }
 
 # Methods on .beta sub-clients that are NOT simple one-HTTP-call wrappers and
@@ -83,7 +83,7 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     #   The test id is derived automatically from method_name.
     pytest.param(
         "agents.create_version",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,AgentsOptimization=V2Preview",
     ),
     pytest.param(
         "evaluation_rules.create_or_update",

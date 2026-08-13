@@ -6,9 +6,45 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import Literal, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from . import models as _models
 Filters = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
 RoutineRunStatus = str
+VoiceAgentToolChoice = Union[str, "_models.ToolChoiceOptions", "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"]
+VoiceAgentTurnDetection = Union[
+    "_models.VoiceServerVadTurnDetection",
+    "_models.VoiceAgentSemanticVadTurnDetection",
+    "_models.VoiceAzureSemanticVadTurnDetection",
+    "_models.VoiceAzureSemanticVadEnTurnDetection",
+    "_models.VoiceAzureSemanticVadMultilingualTurnDetection",
+]
+VoiceAgentMaxOutputTokens = Union[int, Literal["inf"]]
+VoiceAgentInterimResponse = Union[
+    "_models.VoiceAgentStaticInterimResponseConfig", "_models.VoiceAgentLlmInterimResponseConfig"
+]
+VoiceAgentRequestConversationItem = Union[
+    "_models.RealtimeConversationItemMessageSystem",
+    "_models.RealtimeConversationItemMessageUser",
+    "_models.RealtimeConversationItemMessageAssistant",
+    "_models.RealtimeConversationItemFunctionCall",
+    "_models.RealtimeConversationItemFunctionCallOutput",
+]
+VoiceAgentCreateConversationItem = Union[
+    "_unions.VoiceAgentRequestConversationItem", "_models.RealtimeMCPApprovalResponse"
+]
+VoiceAgentResponseMessageItem = Union[
+    "_models.RealtimeConversationItemMessageSystem",
+    "_models.RealtimeConversationItemMessageUser",
+    "_models.RealtimeConversationItemMessageAssistant",
+]
+VoiceAgentResponseItem = Union[
+    "_unions.VoiceAgentResponseMessageItem",
+    "_models.VoiceFunctionCallItem",
+    "_models.VoiceFunctionCallOutputItem",
+    "_models.VoiceMcpListToolsItem",
+    "_models.VoiceMcpCallItem",
+    "_models.VoiceMcpApprovalRequestItem",
+    "_models.VoiceMcpApprovalResponseItem",
+]

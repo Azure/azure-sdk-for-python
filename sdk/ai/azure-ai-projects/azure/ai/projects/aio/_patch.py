@@ -28,6 +28,14 @@ from .._patch import (
 )
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
+from ._realtime import (
+    AsyncRealtime,
+    AsyncRealtimeConnection,
+    AsyncRealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 
 _OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
 logger = logging.getLogger(__name__)
@@ -120,6 +128,18 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
+        self._realtime: Optional[AsyncRealtime] = None
+
+    @property
+    def realtime(self) -> AsyncRealtime:
+        """Realtime streaming entry point for voice agents.
+
+        :return: The realtime namespace, exposing ``connect(...)``.
+        :rtype: ~azure.ai.projects.aio.AsyncRealtime
+        """
+        if self._realtime is None:
+            self._realtime = AsyncRealtime(self)
+        return self._realtime
 
     def _get_openai_api_key(self, kwargs: dict):
         """Resolve the API key for the AsyncOpenAI client.
@@ -346,7 +366,15 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
             _openai_transport_logger.debug("Body: [Content exists]")
 
 
-__all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "AIProjectClient",
+    "AsyncRealtime",
+    "AsyncRealtimeConnection",
+    "AsyncRealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

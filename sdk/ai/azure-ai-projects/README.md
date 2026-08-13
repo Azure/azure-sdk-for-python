@@ -191,6 +191,7 @@ The table below lists the operation groups supported by the client library, with
 | Sessions | [Manage hosted sessions](https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-sessions?pivots=python) | `samples/hosted_agents/` |
 | Skills (preview) | | `samples/skills/` |
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
+| Voice agents (preview) | [Use the GPT Realtime API for speech and audio](https://learn.microsoft.com/azure/foundry/openai/how-to/realtime-audio) | `samples/agents/voice/` |
 
 
 ## Client-side tracing
