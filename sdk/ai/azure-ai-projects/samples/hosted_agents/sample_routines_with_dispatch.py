@@ -6,15 +6,15 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create a Routine with a manual (custom)
-    trigger and fire it on demand via `dispatch(...)`, then record the
+    This sample demonstrates how to create a Routine with a timer scheduled
+    far in the future, fire it early via `dispatch(...)`, then record the
     resulting run by polling `list_runs(...)` using the synchronous
     AIProjectClient.
 
     The sample uploads the basic hosted-agent code from `assets/basic-agent/`
     as a temporary hosted-agent version and routes the configured hosted agent
-    name to that version. Because the trigger is a `CustomRoutineTrigger`, the
-    routine never fires on its own; the sample explicitly invokes it with
+    name to that version. The timer is scheduled beyond the sample's polling
+    window, and the sample explicitly invokes the routine early with
     `project_client.beta.routines.dispatch(...)` passing an
     `InvokeAgentResponsesApiDispatchPayload` carrying the input sent to the
     agent. The sample then polls the run history until a terminal phase is
@@ -40,6 +40,7 @@ USAGE:
        `MyHostedAgent`.
 """
 
+import datetime
 import json
 import os
 import time
@@ -53,13 +54,13 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     CodeConfiguration,
     CodeDependencyResolution,
-    CustomRoutineTrigger,
     HostedAgentDefinition,
     InvokeAgentResponsesApiDispatchPayload,
     InvokeAgentResponsesApiRoutineAction,
     ProtocolVersionRecord,
     RoutineRun,
     RoutineRunPhase,
+    TimerRoutineTrigger,
 )
 
 from hosted_agents_util import create_version_from_code, select_basic_agent_code_zip
@@ -106,46 +107,36 @@ with (
     except ResourceNotFoundError:
         pass
 
+    fire_at = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
     created = project_client.beta.routines.create_or_update(
         routine_name,
-        description="Routine used by the dispatch sample.",
+        description="Long-timer routine dispatched before its scheduled fire time.",
         enabled=True,
-        triggers={
-            "manual": CustomRoutineTrigger(
-                provider="sample-provider",
-                event_name="sample-event",
-                parameters={},
-            ),
-        },
+        triggers={"once": TimerRoutineTrigger(at=fire_at)},
         action=InvokeAgentResponsesApiRoutineAction(agent_name=agent_name),
     )
-    print(f"Created routine: {created.name} enabled={created.enabled}")
+    print(f"Created routine: {created.name} enabled={created.enabled} fire_at={fire_at.isoformat()}")
 
     dispatch_result = project_client.beta.routines.dispatch(
         routine_name,
         payload=InvokeAgentResponsesApiDispatchPayload(
-            input="Say hello from a manually dispatched routine.",
+            input="Say hello from a timer routine dispatched before its scheduled fire time.",
         ),
     )
     print(f"Dispatched routine: dispatch_id={dispatch_result.dispatch_id} task_id={dispatch_result.task_id}")
 
-    seen_phases: dict[str, RoutineRunPhase] = {}
     final_run: RoutineRun | None = None
-
     deadline = time.monotonic() + 180
     while time.monotonic() < deadline:
-        runs = list(project_client.beta.routines.list_runs(routine_name, limit=20, order="desc"))
-        for run in runs:
-            if seen_phases.get(run.id) == run.phase:
-                continue
-            seen_phases[run.id] = run.phase  # type: ignore[assignment]
-            print(
-                f"  - run_id={run.id} phase={run.phase} status={run.status} "
-                f"trigger_type={run.trigger_type} triggered_at={run.triggered_at} ended_at={run.ended_at}"
-            )
-            if str(run.status).lower() == "finished":
-                final_run = run
-
+        final_run = next(
+            (
+                run
+                for run in project_client.beta.routines.list_runs(routine_name, limit=20, order="desc")
+                if run.dispatch_id == dispatch_result.dispatch_id
+                and run.phase in (RoutineRunPhase.COMPLETED, RoutineRunPhase.FAILED)
+            ),
+            None,
+        )
         if final_run is not None:
             break
         time.sleep(5)
@@ -153,9 +144,13 @@ with (
     if final_run:
         print("Final run:")
         print(json.dumps(final_run.as_dict(), indent=2, default=str))
-        # Note: retrieving the response body produced by a routine-dispatched
-        # run via `openai_client.responses.retrieve(final_run.response_id)` is
-        # not yet supported by the service for this scenario.
+        if final_run.triggered_at is not None:
+            scheduled_local = fire_at.astimezone()
+            triggered_local = final_run.triggered_at.astimezone()
+            print(
+                f"Routine was scheduled to trigger around {scheduled_local:%H:%M:%S}, "
+                f"but dispatch caused it to trigger at {triggered_local:%H:%M:%S}."
+            )
     else:
         print("Dispatch did not produce a terminal run within the deadline.")
 
