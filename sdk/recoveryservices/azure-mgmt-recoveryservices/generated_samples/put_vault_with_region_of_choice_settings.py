@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservices import RecoveryServicesClient
     pip install azure-identity
     pip install azure-mgmt-recoveryservices
 # USAGE
-    python check_name_availability_available.py
+    python put_vault_with_region_of_choice_settings.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,19 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.recovery_services.check_name_availability(
-        resource_group_name="resGroupFoo",
-        location="westus",
-        input={"name": "swaggerExample", "type": "Microsoft.RecoveryServices/Vaults"},
-    )
+    response = client.vaults.begin_create_or_update(
+        resource_group_name="Default-RecoveryServices-ResourceGroup",
+        vault_name="swaggerExample",
+        vault={
+            "identity": {"type": "SystemAssigned"},
+            "location": "West US",
+            "properties": {"publicNetworkAccess": "Enabled", "regionOfChoiceSettings": {"status": "Enabled"}},
+            "sku": {"name": "Standard"},
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/CheckNameAvailability_Available.json
+# x-ms-original-file: 2026-07-01/PUTVault_WithRegionOfChoiceSettings.json
 if __name__ == "__main__":
     main()
