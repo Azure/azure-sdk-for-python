@@ -382,6 +382,22 @@ invokes it once as each connection handler unwinds, and applications must keep
 their signaling idempotent. The SDK does not retain, join, or guarantee
 completion of application-owned tasks.
 
+For the Voice WebSocket relay, shutdown cancellation remains cancellation while
+the SDK is awaiting WebSocket accept or receive, even if the ASGI transport
+returns normally or translates the cancellation into a standard exception. This
+guarantee requires the transport operation to eventually settle after receiving
+cancellation; a transport that suppresses cancellation and never returns is
+outside the contract.
+
+After repeated cancellation requests, the Voice endpoint is guaranteed to remain
+cancelled. The exact nested `asyncio.CancelledError` instance or message selected
+from a transport-defined exception graph is unspecified.
+
+Voice callback cancellation is cooperative. A callback that catches
+`asyncio.CancelledError` must re-raise it after its own cleanup. If application
+code catches cancellation and returns normally, recovery is outside the SDK
+contract; the SDK does not forcibly terminate or retain that callback.
+
 For full-duplex streaming, the agent creates and owns a generation task, returns
 from `on_user_message`, and cancels that task from `on_barge_in`,
 `on_response_cancelled`, `on_response_timeout`, or

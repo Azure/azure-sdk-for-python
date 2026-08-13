@@ -235,6 +235,12 @@ async def _await_with_cancellation_guard(
     return result
 
 
+async def _receive_voice_transport_message(websocket: WebSocket) -> MutableMapping[str, Any]:
+    message = await _session_transport._run_transport_operation(websocket.receive())  # pylint: disable=protected-access
+    await _raise_pending_cancellation()
+    return message
+
+
 @experimental
 class VoiceAgentServerHost(InvocationAgentServerHost):
     """Invocations host with typed Voice event decorators.
@@ -394,19 +400,19 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         self,
         websocket: WebSocket,
     ) -> Exception | None:
-        cancellation_requests = _task_cancellation_requests()
         try:
-            await websocket.accept(
-                headers=[
-                    (
-                        SERVER_VERSION.encode("latin-1"),
-                        self._build_server_version().encode("latin-1"),  # pylint: disable=protected-access
-                    )
-                ]
+            await _session_transport._run_transport_operation(  # pylint: disable=protected-access
+                websocket.accept(
+                    headers=[
+                        (
+                            SERVER_VERSION.encode("latin-1"),
+                            self._build_server_version().encode("latin-1"),  # pylint: disable=protected-access
+                        )
+                    ]
+                )
             )
-            await _raise_pending_or_consumed_cancellation(cancellation_requests)
+            await _raise_pending_cancellation()
         except Exception as exc:  # pylint: disable=broad-exception-caught
-            _raise_wrapped_cancellation(exc, cancellation_requests)
             return exc
         return None
 
@@ -796,7 +802,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         session = bound_session or Session._create(websocket)  # pylint: disable=protected-access
         try:
             while True:
-                raw_message = await _await_with_cancellation_guard(websocket.receive())
+                raw_message = await _receive_voice_transport_message(websocket)
                 raw_type = raw_message.get("type")
                 if raw_type == "websocket.disconnect":
                     code = int(raw_message.get("code") or 1000)

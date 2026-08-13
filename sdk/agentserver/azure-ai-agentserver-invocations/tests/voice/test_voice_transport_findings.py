@@ -85,6 +85,10 @@ def _live_voice_send_tasks():
     return [task for task in asyncio.all_tasks() if task.get_name() == "voice_websocket_send" and not task.done()]
 
 
+def _live_voice_transport_tasks():
+    return [task for task in asyncio.all_tasks() if task.get_name() == "voice_websocket_transport" and not task.done()]
+
+
 async def _raise_callback_local_cancellation(source):
     if source == "wait_for":
         await asyncio.wait_for(asyncio.Future(), timeout=0)
@@ -736,7 +740,8 @@ async def test_voice_close_deadline_covers_blocked_application_send(monkeypatch)
 
 
 @pytest.mark.asyncio
-async def test_voice_accept_local_timeout_is_not_connection_cancellation():
+async def test_voice_accept_local_timeout_is_not_connection_cancellation(monkeypatch):
+    monkeypatch.setattr(voice_host_module, "_task_cancellation_requests", lambda: None)
     app = VoiceAgentServerHost(configure_observability=None)
     close_events = []
     sent_messages = []
@@ -1188,7 +1193,8 @@ async def test_voice_recovers_cancellation_wrapped_by_handler():
 
 
 @pytest.mark.asyncio
-async def test_voice_recovers_cancellation_wrapped_during_accept():
+async def test_voice_recovers_cancellation_wrapped_during_accept_without_task_counter(monkeypatch):
+    monkeypatch.setattr(voice_host_module, "_task_cancellation_requests", lambda: None)
     app = VoiceAgentServerHost(configure_observability=None)
     accept_started = asyncio.Event()
     captured_cancellations = []
@@ -1219,20 +1225,280 @@ async def test_voice_recovers_cancellation_wrapped_during_accept():
     await asyncio.wait_for(accept_started.wait(), timeout=1)
     endpoint_task.cancel("accept-wrapper-cancel")
 
-    if _tracks_task_cancellation_requests():
-        with pytest.raises(asyncio.CancelledError) as raised:
-            await asyncio.wait_for(endpoint_task, timeout=1)
-        assert len(captured_cancellations) == 1
-        assert raised.value is captured_cancellations[0]
-        assert raised.value.args == ("accept-wrapper-cancel",)
-        assert [message["type"] for message in sent_messages] == ["websocket.accept"]
-        assert close_events == [(1011, "cancelled")]
-    else:
+    with pytest.raises(asyncio.CancelledError) as raised:
         await asyncio.wait_for(endpoint_task, timeout=1)
-        assert len(captured_cancellations) == 1
-        assert not endpoint_task.cancelled()
-        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
-        assert close_events == [(1011, "accept_failed")]
+    assert len(captured_cancellations) == 1
+    assert captured_cancellations[0].args == ("accept-wrapper-cancel",)
+    assert raised.value.args == (("accept-wrapper-cancel",) if sys.version_info >= (3, 11) else ())
+    if sys.version_info >= (3, 11):
+        assert raised.value is captured_cancellations[0]
+    assert endpoint_task.cancelled()
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+    assert close_events == [(1011, "cancelled")]
+    assert _live_voice_transport_tasks() == []
+
+
+@pytest.mark.asyncio
+async def test_voice_recovers_cancellation_wrapped_during_receive_without_task_counter(monkeypatch):
+    monkeypatch.setattr(voice_host_module, "_task_cancellation_requests", lambda: None)
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [{"type": "websocket.connect"}]
+    receive_started = asyncio.Event()
+    captured_cancellations = []
+    wrapped_errors = []
+    close_events = []
+    sent_messages = []
+
+    async def receive():
+        if inbound_events:
+            return inbound_events.pop(0)
+        receive_started.set()
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError as cancellation:
+            captured_cancellations.append(cancellation)
+        error = OSError("receive wrapped cancellation")
+        wrapped_errors.append(error)
+        raise error
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    await asyncio.wait_for(receive_started.wait(), timeout=1)
+    endpoint_task.cancel("receive-wrapper-cancel")
+
+    with pytest.raises(asyncio.CancelledError) as raised:
+        await asyncio.wait_for(endpoint_task, timeout=1)
+    assert len(captured_cancellations) == 1
+    assert captured_cancellations[0].args == ("receive-wrapper-cancel",)
+    assert wrapped_errors[0].__cause__ is None
+    assert wrapped_errors[0].__context__ is None
+    assert raised.value.args == (("receive-wrapper-cancel",) if sys.version_info >= (3, 11) else ())
+    assert endpoint_task.cancelled()
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+    assert close_events == [(1011, "cancelled")]
+    assert Session._current(websocket) is None  # pylint: disable=protected-access
+    assert _live_voice_transport_tasks() == []
+
+
+@pytest.mark.asyncio
+async def test_transport_operation_construction_failure_closes_coroutine_and_allows_retry(monkeypatch):
+    create_task = session_module.asyncio.create_task
+    close_coroutine = session_module._close_coroutine  # pylint: disable=protected-access
+    closed_coroutines = []
+    attempts = 0
+
+    def fail_once(coroutine, *, name=None):
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise RuntimeError("transport task construction failed")
+        return create_task(coroutine, name=name)
+
+    def track_close(coroutine):
+        closed_coroutines.append(coroutine)
+        close_coroutine(coroutine)
+
+    async def operation(result):
+        return result
+
+    monkeypatch.setattr(session_module.asyncio, "create_task", fail_once)
+    monkeypatch.setattr(session_module, "_close_coroutine", track_close)
+
+    with pytest.raises(RuntimeError, match="transport task construction failed"):
+        await session_module._run_transport_operation(operation("first"))  # pylint: disable=protected-access
+
+    assert len(closed_coroutines) == 1
+    assert (
+        await session_module._run_transport_operation(operation("retry")) == "retry"
+    )  # pylint: disable=protected-access
+    assert _live_voice_transport_tasks() == []
+
+
+@pytest.mark.asyncio
+async def test_transport_operation_repeated_cancellation_drains_to_latest_owner():
+    operation_started = asyncio.Event()
+    first_cancellation_caught = asyncio.Event()
+    captured_cancellations = []
+    wrappers = []
+
+    async def operation():
+        operation_started.set()
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError as first_cancellation:
+            captured_cancellations.append(first_cancellation)
+            first_cancellation_caught.set()
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError as second_cancellation:
+            captured_cancellations.append(second_cancellation)
+            wrapper = OSError("transport wrapped terminal cancellation")
+            wrappers.append(wrapper)
+            raise wrapper from second_cancellation
+
+    owner = asyncio.create_task(
+        session_module._run_transport_operation(operation())  # pylint: disable=protected-access
+    )
+    await asyncio.wait_for(operation_started.wait(), timeout=1)
+    owner.cancel("first-cancel")
+    await asyncio.wait_for(first_cancellation_caught.wait(), timeout=1)
+    owner.cancel("terminal-cancel")
+
+    with pytest.raises(asyncio.CancelledError) as raised:
+        await asyncio.wait_for(owner, timeout=1)
+
+    assert [cancellation.args for cancellation in captured_cancellations] == [
+        ("first-cancel",),
+        ("terminal-cancel",),
+    ]
+    assert raised.value.args == (("terminal-cancel",) if sys.version_info >= (3, 11) else ())
+    assert wrappers[0].__cause__ is captured_cancellations[-1]
+    assert owner.cancelled()
+    assert _live_voice_transport_tasks() == []
+
+
+@pytest.mark.asyncio
+async def test_transport_operation_repeated_cancellation_ignores_stale_explicit_cause():
+    operation_started = asyncio.Event()
+    first_cancellation_caught = asyncio.Event()
+    captured_cancellations = []
+    wrappers = []
+
+    async def operation():
+        operation_started.set()
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError as first_cancellation:
+            captured_cancellations.append(first_cancellation)
+            first_cancellation_caught.set()
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError as latest_cancellation:
+            captured_cancellations.append(latest_cancellation)
+            wrapper = OSError("transport selected stale cancellation")
+            wrappers.append(wrapper)
+            raise wrapper from captured_cancellations[0]
+
+    owner = asyncio.create_task(
+        session_module._run_transport_operation(operation())  # pylint: disable=protected-access
+    )
+    await asyncio.wait_for(operation_started.wait(), timeout=1)
+    owner.cancel("first-cancel")
+    await asyncio.wait_for(first_cancellation_caught.wait(), timeout=1)
+    owner.cancel("latest-cancel")
+
+    with pytest.raises(asyncio.CancelledError) as raised:
+        await asyncio.wait_for(owner, timeout=1)
+
+    assert [cancellation.args for cancellation in captured_cancellations] == [
+        ("first-cancel",),
+        ("latest-cancel",),
+    ]
+    assert wrappers[0].__cause__ is captured_cancellations[0]
+    assert wrappers[0].__context__ is captured_cancellations[1]
+    assert raised.value.args == (("latest-cancel",) if sys.version_info >= (3, 11) else ())
+    assert owner.cancelled()
+    assert _live_voice_transport_tasks() == []
+
+
+@pytest.mark.asyncio
+async def test_transport_operation_late_owner_cancellation_supersedes_completed_child_cancellation(monkeypatch):
+    operation_started = asyncio.Event()
+    transfer_ready = asyncio.Event()
+    captured_cancellations = []
+    wrappers = []
+    pending_transfer = []
+    transfer_result = session_module._transfer_transport_result  # pylint: disable=protected-access
+
+    def hold_transfer(operation, waiter):
+        pending_transfer.append((operation, waiter))
+        transfer_ready.set()
+
+    async def operation():
+        operation_started.set()
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError as cancellation:
+            captured_cancellations.append(cancellation)
+            wrapper = OSError("transport wrapped first cancellation")
+            wrappers.append(wrapper)
+            raise wrapper from cancellation
+
+    monkeypatch.setattr(session_module, "_transfer_transport_result", hold_transfer)
+    owner = asyncio.create_task(
+        session_module._run_transport_operation(operation())  # pylint: disable=protected-access
+    )
+    await asyncio.wait_for(operation_started.wait(), timeout=1)
+    owner.cancel("first-cancel")
+    await asyncio.wait_for(transfer_ready.wait(), timeout=1)
+    assert len(pending_transfer) == 1
+    operation_task, waiter = pending_transfer[0]
+    assert operation_task.done()
+    assert not owner.done()
+
+    owner.cancel("latest-cancel")
+    transfer_result(operation_task, waiter)
+
+    with pytest.raises(asyncio.CancelledError) as raised:
+        await asyncio.wait_for(owner, timeout=1)
+
+    assert captured_cancellations[0].args == ("first-cancel",)
+    assert raised.value.args == (("latest-cancel",) if sys.version_info >= (3, 11) else ())
+    assert wrappers[0].__cause__ is captured_cancellations[0]
+    assert owner.cancelled()
+    assert _live_voice_transport_tasks() == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("cancel_phase", ["before-transfer", "after-transfer"])
+async def test_transport_operation_cancellation_at_result_transfer_boundary(monkeypatch, cancel_phase):
+    transfer_ready = asyncio.Event()
+    pending_transfer = []
+    transfer_result = session_module._transfer_transport_result  # pylint: disable=protected-access
+
+    def hold_transfer(operation, waiter):
+        pending_transfer.append((operation, waiter))
+        transfer_ready.set()
+
+    async def operation():
+        return "transport-result"
+
+    monkeypatch.setattr(session_module, "_transfer_transport_result", hold_transfer)
+    owner = asyncio.create_task(
+        session_module._run_transport_operation(operation())  # pylint: disable=protected-access
+    )
+    await asyncio.wait_for(transfer_ready.wait(), timeout=1)
+    assert len(pending_transfer) == 1
+    operation_task, waiter = pending_transfer[0]
+    assert operation_task.done()
+    assert not owner.done()
+
+    if cancel_phase == "before-transfer":
+        owner.cancel("before-transfer-cancel")
+        await asyncio.sleep(0)
+        assert not owner.done()
+        transfer_result(operation_task, waiter)
+        expected_message = "before-transfer-cancel"
+    else:
+        transfer_result(operation_task, waiter)
+        owner.cancel("after-transfer-cancel")
+        expected_message = "after-transfer-cancel"
+
+    with pytest.raises(asyncio.CancelledError) as raised:
+        await asyncio.wait_for(owner, timeout=1)
+
+    assert raised.value.args == ((expected_message,) if sys.version_info >= (3, 11) else ())
+    assert owner.cancelled()
+    assert _live_voice_transport_tasks() == []
 
 
 @pytest.mark.asyncio
@@ -1275,20 +1541,13 @@ async def test_voice_accept_cannot_consume_owner_cancellation():
     await asyncio.wait_for(accept_started.wait(), timeout=1)
     endpoint_task.cancel("accept-consumed-owner-cancel")
 
-    if _tracks_task_cancellation_requests():
-        with pytest.raises(asyncio.CancelledError) as raised:
-            await asyncio.wait_for(endpoint_task, timeout=1)
-        assert raised.value.args == ()
-        assert endpoint_task.cancelled()
-        assert terminating_sessions == []
-        assert close_events == [(1011, "cancelled")]
-        assert [message["type"] for message in sent_messages] == ["websocket.accept"]
-    else:
+    with pytest.raises(asyncio.CancelledError) as raised:
         await asyncio.wait_for(endpoint_task, timeout=1)
-        assert not endpoint_task.cancelled()
-        assert len(terminating_sessions) == 1
-        assert close_events == [(1002, None)]
-        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+    assert raised.value.args == (("accept-consumed-owner-cancel",) if sys.version_info >= (3, 11) else ())
+    assert endpoint_task.cancelled()
+    assert terminating_sessions == []
+    assert close_events == [(1011, "cancelled")]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
     assert len(consumed_cancellations) == 1
     assert consumed_cancellations[0].args == ("accept-consumed-owner-cancel",)
     assert Session._current(websocket) is None  # pylint: disable=protected-access
@@ -1332,18 +1591,12 @@ async def test_voice_receive_cannot_consume_owner_cancellation():
     await asyncio.wait_for(receive_started.wait(), timeout=1)
     endpoint_task.cancel("receive-consumed-owner-cancel")
 
-    if _tracks_task_cancellation_requests():
-        with pytest.raises(asyncio.CancelledError) as raised:
-            await asyncio.wait_for(endpoint_task, timeout=1)
-        assert raised.value.args == ()
-        assert endpoint_task.cancelled()
-        assert close_events == [(1011, "cancelled")]
-        assert [message["type"] for message in sent_messages] == ["websocket.accept"]
-    else:
+    with pytest.raises(asyncio.CancelledError) as raised:
         await asyncio.wait_for(endpoint_task, timeout=1)
-        assert not endpoint_task.cancelled()
-        assert close_events == [(1002, None)]
-        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+    assert raised.value.args == (("receive-consumed-owner-cancel",) if sys.version_info >= (3, 11) else ())
+    assert endpoint_task.cancelled()
+    assert close_events == [(1011, "cancelled")]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
     assert len(consumed_cancellations) == 1
     assert consumed_cancellations[0].args == ("receive-consumed-owner-cancel",)
     assert len(terminating_sessions) == 1
@@ -1351,7 +1604,8 @@ async def test_voice_receive_cannot_consume_owner_cancellation():
 
 
 @pytest.mark.asyncio
-async def test_voice_event_callback_cannot_consume_owner_cancellation():
+async def test_python310_application_callback_may_suppress_owner_cancellation(monkeypatch):
+    monkeypatch.setattr(voice_host_module, "_task_cancellation_requests", lambda: None)
     app = VoiceAgentServerHost(configure_observability=None)
     callback_started = asyncio.Event()
     consumed_cancellations = []
@@ -1393,18 +1647,10 @@ async def test_voice_event_callback_cannot_consume_owner_cancellation():
     await asyncio.wait_for(callback_started.wait(), timeout=1)
     endpoint_task.cancel("event-consumed-owner-cancel")
 
-    if _tracks_task_cancellation_requests():
-        with pytest.raises(asyncio.CancelledError) as raised:
-            await asyncio.wait_for(endpoint_task, timeout=1)
-        assert raised.value.args == ()
-        assert endpoint_task.cancelled()
-        assert close_events == [(1011, "cancelled")]
-        assert [message["type"] for message in sent_messages] == ["websocket.accept"]
-    else:
-        await asyncio.wait_for(endpoint_task, timeout=1)
-        assert not endpoint_task.cancelled()
-        assert close_events == [(1002, None)]
-        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+    await asyncio.wait_for(endpoint_task, timeout=1)
+    assert not endpoint_task.cancelled()
+    assert close_events == [(1002, None)]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
     assert len(consumed_cancellations) == 1
     assert consumed_cancellations[0].args == ("event-consumed-owner-cancel",)
     assert len(terminating_sessions) == 1

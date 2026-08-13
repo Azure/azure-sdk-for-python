@@ -10,7 +10,7 @@ import contextvars
 import sys
 from collections.abc import Coroutine, MutableMapping
 from threading import Lock
-from typing import Any
+from typing import Any, TypeVar, cast
 
 from starlette.types import Send
 from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
@@ -30,17 +30,22 @@ _CLOSE_ATTEMPT_RESERVATIONS = 0
 _CLOSE_ATTEMPT_LOCK = Lock()
 
 
-class _SendCancellationState:
-    __slots__ = ("cancellation",)
+_TransportResultT = TypeVar("_TransportResultT")
+
+
+class _OperationCancellationState:
+    __slots__ = ("cancellation", "cancellation_requests", "operation_cancel_requested")
 
     def __init__(self) -> None:
         self.cancellation: asyncio.CancelledError | None = None
+        self.cancellation_requests = 0
+        self.operation_cancel_requested = False
 
 
-class _SendCancellationWaiter(asyncio.Future):
+class _OperationCancellationWaiter(asyncio.Future):
     __slots__ = ("operation", "state")
 
-    def __init__(self, operation: asyncio.Task[BaseException | None], state: _SendCancellationState) -> None:
+    def __init__(self, operation: asyncio.Task[Any], state: _OperationCancellationState) -> None:
         super().__init__()
         self.operation = operation
         self.state = state
@@ -49,7 +54,8 @@ class _SendCancellationWaiter(asyncio.Future):
         if self.done():
             return False
         self.state.cancellation = asyncio.CancelledError(msg) if msg is not None else asyncio.CancelledError()
-        self.operation.cancel(msg)
+        self.state.cancellation_requests += 1
+        self.state.operation_cancel_requested = self.operation.cancel(msg)
         return True
 
 
@@ -122,7 +128,7 @@ def _raise_task_cancellation(
     raise cancellation from error
 
 
-def _transfer_send_result(operation: asyncio.Task[BaseException | None], waiter: _SendCancellationWaiter) -> None:
+def _transfer_send_result(operation: asyncio.Task[BaseException | None], waiter: _OperationCancellationWaiter) -> None:
     if waiter.done():
         if not operation.cancelled():
             operation.exception()
@@ -141,14 +147,14 @@ def _transfer_send_result(operation: asyncio.Task[BaseException | None], waiter:
 
 async def _run_send_operation(
     operation_coroutine: Coroutine[Any, Any, BaseException | None],
-    state: _SendCancellationState,
+    state: _OperationCancellationState,
 ) -> None:
     try:
         operation = asyncio.create_task(operation_coroutine, name="voice_websocket_send")
     except BaseException:  # pylint: disable=broad-exception-caught
         _close_coroutine(operation_coroutine)
         raise
-    waiter = _SendCancellationWaiter(operation, state)
+    waiter = _OperationCancellationWaiter(operation, state)
     operation.add_done_callback(lambda completed: _transfer_send_result(completed, waiter))
     outcome = await waiter
     if isinstance(outcome, BaseException):
@@ -165,6 +171,56 @@ async def _run_send_operation(
         raise cancellation from error
     if state.cancellation is not None:
         raise state.cancellation
+
+
+def _transfer_transport_result(operation: asyncio.Task[Any], waiter: _OperationCancellationWaiter) -> None:
+    if waiter.done():
+        if not operation.cancelled():
+            operation.exception()
+        return
+    if operation.cancelled():
+        try:
+            operation.result()
+        except asyncio.CancelledError as cancellation:
+            waiter.set_result((None, cancellation))
+        return
+    error = operation.exception()
+    waiter.set_result((None, error) if error is not None else (operation.result(), None))
+
+
+async def _run_transport_operation(
+    operation_coroutine: Coroutine[Any, Any, _TransportResultT],
+) -> _TransportResultT:
+    """Run one SDK-owned transport await without losing owner cancellation.
+
+    The transport must eventually settle after cancellation. A single delivered
+    cancellation preserves its nested identity when available. After repeated
+    owner cancellation, the latest saved owner request wins; exact cancellation
+    identity from a transport-defined exception graph is unspecified. This helper
+    is not used for application callbacks, whose cancellation is cooperative.
+    """
+    state = _OperationCancellationState()
+    try:
+        operation = asyncio.create_task(operation_coroutine, name="voice_websocket_transport")
+    except BaseException:  # pylint: disable=broad-exception-caught
+        _close_coroutine(operation_coroutine)
+        raise
+    waiter = _OperationCancellationWaiter(operation, state)
+    operation.add_done_callback(lambda completed: _transfer_transport_result(completed, waiter))
+    result, error = cast(tuple[Any, BaseException | None], await waiter)
+    if state.cancellation is not None:
+        if error is None:
+            raise state.cancellation
+        nested_cancellation = _find_cancellation(error)
+        if state.cancellation_requests == 1 and state.operation_cancel_requested and nested_cancellation is not None:
+            if nested_cancellation is not error:
+                _unlink_exception(error, nested_cancellation)
+                raise nested_cancellation from error
+            raise error
+        raise state.cancellation from error
+    if error is not None:
+        raise error
+    return cast(_TransportResultT, result)
 
 
 async def _run_close_attempt(
@@ -318,7 +374,7 @@ class Session:
         """
         self._ensure_writable()
         frame = encode_outbound_message(message)
-        cancellation_state = _SendCancellationState()
+        cancellation_state = _OperationCancellationState()
 
         async def send_frame() -> BaseException | None:
             try:
