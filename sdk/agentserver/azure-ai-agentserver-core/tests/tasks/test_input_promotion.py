@@ -253,7 +253,7 @@ async def test_recovery_surfaces_promoted_input_as_ctx_input(manager_local: Task
             lease_owner=manager_local._lease_owner,
             lease_instance_id="prior-instance-that-died",
             lease_duration_seconds=60,
-            payload={"input": ref, "metadata": {}, "schema_version": "1"},
+            payload={"input": ref, "schema_version": "1"},
             attachments={_FUNCTION_INPUT_KEY: big},
             tags={"task_name": "t-recovery-capture"},
             source={"name": "t-recovery-capture", "type": "agentserver.task"},

@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -19,18 +19,26 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import RecommenderMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import Operations, SpotPlacementScoresOperations
+from .operations import Operations, SkuMixPlacementScoresOperations, SpotPlacementScoresOperations
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class RecommenderMgmtClient:
+class RecommenderMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Compute Recommender Resource Provider Client.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.computerecommender.operations.Operations
+    :ivar sku_mix_placement_scores: SkuMixPlacementScoresOperations operations
+    :vartype sku_mix_placement_scores:
+     azure.mgmt.computerecommender.operations.SkuMixPlacementScoresOperations
     :ivar spot_placement_scores: SpotPlacementScoresOperations operations
     :vartype spot_placement_scores:
      azure.mgmt.computerecommender.operations.SpotPlacementScoresOperations
@@ -43,8 +51,10 @@ class RecommenderMgmtClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-06-05".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-05-05-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
@@ -96,6 +106,9 @@ class RecommenderMgmtClient:
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.sku_mix_placement_scores = SkuMixPlacementScoresOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.spot_placement_scores = SpotPlacementScoresOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

@@ -129,7 +129,7 @@ with (
 
         start_time = seed_start - timedelta(minutes=5)
 
-        job = None
+        job_result = None
         for attempt in range(1, MAX_JOB_ATTEMPTS + 1):
             end_time = datetime.now(tz=timezone.utc)
             print(
@@ -138,7 +138,8 @@ with (
                 f"window: {start_time.isoformat()} .. {end_time.isoformat()})."
             )
             try:
-                job = project_client.beta.datasets.begin_create_generation_job(
+                print("Begin creating a dataset generation job.")
+                poller = project_client.beta.datasets.begin_create_generation_job(
                     job=DataGenerationJob(
                         inputs=DataGenerationJobInputs(
                             name=f"traces-eval-{run_id}-a{attempt}",
@@ -157,8 +158,19 @@ with (
                         ),
                     ),
                     polling_interval=POLL_INTERVAL_SECONDS,
-                ).result()
-                print(f"Data generation job succeeded.")
+                )
+
+                # Optional: While SDK is polling, periodically print the job status until the job is complete
+                print("Periodically check job status:")
+                while not poller.done():
+                    print(f"\tstatus=`{poller.status()}`")
+                    time.sleep(POLL_INTERVAL_SECONDS)
+
+                # Since done() is true, result() returns the final deserialized job result without
+                # waiting further. It also propagates any LRO polling exception.
+                job_result = poller.result()
+                print(f"Final LRO status: `{poller.status()}`.")
+                print(f"Data generation result: {job_result}")
                 break
             except Exception as e:  # pylint: disable=broad-except
                 if attempt == MAX_JOB_ATTEMPTS:
@@ -167,9 +179,9 @@ with (
                 time.sleep(RETRY_WAIT_SECONDS)
 
         # 3. Resolve the generated dataset.
-        if job is None:
+        if job_result is None:
             raise RuntimeError("The data generation job did not return a result.")
-        outputs = job.outputs or []
+        outputs = job_result.outputs or []
         dataset_output = next((o for o in outputs if isinstance(o, DatasetDataGenerationJobOutput)), None)
         if dataset_output is None or not dataset_output.name or not dataset_output.version:
             raise RuntimeError("The data generation job did not produce a dataset output.")
@@ -179,8 +191,8 @@ with (
             f"Generated dataset: name=`{created_dataset.name}` "
             f"version=`{created_dataset.version}` id=`{created_dataset.id}`"
         )
-        if job.generated_samples is not None:
-            print(f"Generated samples: {job.generated_samples}")
+        if job_result.generated_samples is not None:
+            print(f"Generated samples: {job_result.generated_samples}")
 
     finally:
         # Best-effort cleanup, outputs -> producers (dataset, job, conversations, agent).

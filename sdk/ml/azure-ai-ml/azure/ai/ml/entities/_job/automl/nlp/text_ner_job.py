@@ -39,15 +39,15 @@ if TYPE_CHECKING:
 class TextNerJob(AutoMLNLPJob):
     """Configuration for AutoML Text NER Job.
 
-    :param training_data: Training data to be used for training, defaults to None
-    :type training_data: Optional[~azure.ai.ml.Input]
-    :param validation_data: Validation data to be used for evaluating the trained model,
+    :keyword training_data: Training data to be used for training, defaults to None
+    :paramtype training_data: Optional[~azure.ai.ml.Input]
+    :keyword validation_data: Validation data to be used for evaluating the trained model,
         defaults to None
-    :type validation_data: Optional[~azure.ai.ml.Input]
-    :param primary_metric: The primary metric to be displayed, defaults to None
-    :type primary_metric: Optional[str]
-    :param log_verbosity: Log verbosity level, defaults to None
-    :type log_verbosity: Optional[str]
+    :paramtype validation_data: Optional[~azure.ai.ml.Input]
+    :keyword primary_metric: The primary metric to be displayed, defaults to None
+    :paramtype primary_metric: Optional[str]
+    :keyword log_verbosity: Log verbosity level, defaults to None
+    :paramtype log_verbosity: Optional[str]
 
     .. admonition:: Example:
 

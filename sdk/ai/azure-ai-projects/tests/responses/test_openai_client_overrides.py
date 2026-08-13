@@ -179,25 +179,34 @@ class TestApiKeyBranches:
 
 
 class TestHttpClientBranches:
-    def test_http_client_is_none_by_default(self):
-        """Branch: no override + console logging off -> http_client is None."""
-        client = make_sync_client(console_logging=False)
-        mock_cls, _ = mock_openai()
-        with patch(SYNC_OPENAI_PATCH, mock_cls), patch(SYNC_TOKEN_PROVIDER_PATCH, return_value="tok"):
-            client.get_openai_client()
-        for c in mock_cls.call_args_list:
-            assert c.kwargs["http_client"] is None
-
-    def test_console_logging_creates_logging_transport(self):
-        """Branch: no override + _console_logging_enabled=True -> httpx.Client with logging transport."""
-        client = make_sync_client(console_logging=True)
+    def test_logging_disabled_still_creates_logging_transport(self):
+        """Branch: no override + logging disabled -> OpenAI default sync client with reduced logging transport."""
+        client = make_sync_client(console_logging=False, logging_enable=False)
         mock_cls, _ = mock_openai()
         with (
             patch(SYNC_OPENAI_PATCH, mock_cls),
             patch(SYNC_TOKEN_PROVIDER_PATCH, return_value="tok"),
-            patch("azure.ai.projects._patch.httpx") as mock_httpx,
-            patch("azure.ai.projects._patch._OpenAILoggingTransport"),
+            patch("azure.ai.projects._patch.DefaultHttpxClient") as mock_default_http_client,
+            patch("azure.ai.projects._patch._OpenAILoggingTransport") as mock_transport,
         ):
-            mock_httpx.Client.return_value = object()
+            mock_transport.return_value = object()
+            mock_default_http_client.return_value = object()
             client.get_openai_client()
-        mock_httpx.Client.assert_called_once()
+        mock_default_http_client.assert_called_once_with(transport=mock_transport.return_value)
+        mock_transport.assert_called_once_with(logging_enabled=False)
+
+    def test_logging_enable_creates_logging_transport_without_console_logging(self):
+        """Branch: constructor logging_enable=True -> OpenAI default sync client with logging transport."""
+        client = make_sync_client(console_logging=False, logging_enable=True)
+        mock_cls, _ = mock_openai()
+        with (
+            patch(SYNC_OPENAI_PATCH, mock_cls),
+            patch(SYNC_TOKEN_PROVIDER_PATCH, return_value="tok"),
+            patch("azure.ai.projects._patch.DefaultHttpxClient") as mock_default_http_client,
+            patch("azure.ai.projects._patch._OpenAILoggingTransport") as mock_transport,
+        ):
+            mock_transport.return_value = object()
+            mock_default_http_client.return_value = object()
+            client.get_openai_client()
+        mock_default_http_client.assert_called_once_with(transport=mock_transport.return_value)
+        mock_transport.assert_called_once_with(logging_enabled=True)
