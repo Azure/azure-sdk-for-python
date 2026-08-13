@@ -223,7 +223,6 @@ class MLClient:
         workspace_location = None
         workspace_id = None
         registry_reference = kwargs.pop("registry_reference", None)
-        workspace_reference = kwargs.pop("workspace_reference", None)
         if registry_name or registry_reference:
             # get the workspace location here if workspace_reference is provided
             self._ws_operation_scope = OperationScope(
@@ -231,6 +230,7 @@ class MLClient:
                 str(resource_group_name),
                 workspace_name,
             )
+            workspace_reference = kwargs.pop("workspace_reference", None)
             if workspace_reference or registry_reference:
                 ws_ops = WorkspaceOperations(
                     OperationScope(str(subscription_id), str(resource_group_name), workspace_reference),

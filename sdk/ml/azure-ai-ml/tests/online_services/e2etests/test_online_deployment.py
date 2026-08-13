@@ -4,6 +4,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 from pathlib import Path
 from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint, load_model
+from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model, CodeConfiguration, Environment
 
 
@@ -52,16 +53,18 @@ class TestOnlineDeployment(AzureRecordedTestCase):
 
     def test_online_deployment_create_when_registry_assets(
         self,
-        sdkv2_registry_client: MLClient,
-        client: MLClient,
+        registry_backed_client: MLClient,
+        e2e_ws_scope: OperationScope,
         randstr: Callable[[], str],
         rand_online_name: Callable[[], str],
         rand_online_deployment_name: Callable[[], str],
     ) -> None:
+        assert registry_backed_client.resource_group_name != e2e_ws_scope.resource_group_name
+
         # create a model in registry
         model_name = randstr("test-registry-model")
         model = Model(name=model_name, path="./tests/test_configs/deployments/model-1/model")
-        model = sdkv2_registry_client.models.create_or_update(model)
+        model = registry_backed_client.models.create_or_update(model)
         assert model.name == model_name
 
         # create a endpoint
@@ -69,7 +72,7 @@ class TestOnlineDeployment(AzureRecordedTestCase):
         endpoint = load_online_endpoint(endpoint_yaml)
         endpoint_name = rand_online_name("endpoint_name")
         endpoint.name = endpoint_name
-        endpoint = client.online_endpoints.begin_create_or_update(endpoint).result()
+        endpoint = registry_backed_client.online_endpoints.begin_create_or_update(endpoint).result()
         assert endpoint.name == endpoint_name
 
         # create a deployment
@@ -80,23 +83,23 @@ class TestOnlineDeployment(AzureRecordedTestCase):
         deployment.model = model
 
         try:
-            client.online_deployments.begin_create_or_update(deployment).result()
-            dep = client.online_deployments.get(name=deployment.name, endpoint_name=endpoint.name)
+            registry_backed_client.online_deployments.begin_create_or_update(deployment).result()
+            dep = registry_backed_client.online_deployments.get(name=deployment.name, endpoint_name=endpoint.name)
             assert dep.name == deployment.name
 
-            deps = client.online_deployments.list(endpoint_name=endpoint.name)
+            deps = registry_backed_client.online_deployments.list(endpoint_name=endpoint.name)
             assert len(list(deps)) > 0
 
             endpoint.traffic = {deployment.name: 100}
-            client.online_endpoints.begin_create_or_update(endpoint).result()
-            endpoint_updated = client.online_endpoints.get(endpoint.name)
+            registry_backed_client.online_endpoints.begin_create_or_update(endpoint).result()
+            endpoint_updated = registry_backed_client.online_endpoints.get(endpoint.name)
             assert endpoint_updated.traffic[deployment.name] == 100
-            client.online_endpoints.invoke(
+            registry_backed_client.online_endpoints.invoke(
                 endpoint_name=endpoint.name,
                 request_file="tests/test_configs/deployments/model-1/sample-request.json",
             )
         finally:
-            client.online_endpoints.begin_delete(name=endpoint.name)
+            registry_backed_client.online_endpoints.begin_delete(name=endpoint.name)
 
     def test_online_deployment_update(
         self, client: MLClient, rand_online_name: Callable[[], str], rand_online_deployment_name: Callable[[], str]

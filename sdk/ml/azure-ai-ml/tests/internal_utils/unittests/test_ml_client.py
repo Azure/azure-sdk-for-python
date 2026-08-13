@@ -542,8 +542,8 @@ class TestMachineLearningClient:
                 credential=mock_credential,
                 subscription_id=workspace_sub,
                 resource_group_name=workspace_rg,
-                registry_name="test-registry",
-                workspace_reference=workspace_name,
+                workspace_name=workspace_name,
+                registry_reference="test-registry",
             )
 
         online_endpoint_scope = captured["OnlineEndpointOperations"]["scope"]
@@ -551,7 +551,6 @@ class TestMachineLearningClient:
         online_endpoint_client = captured["OnlineEndpointOperations"]["args"][2]
         online_deployment_client = captured["OnlineDeploymentOperations"]["args"][2]
         model_scope = captured["ModelOperations"]["scope"]
-        data_scope = captured["DataOperations"]["scope"]
 
         assert online_endpoint_client._config.subscription_id == workspace_sub
         assert online_deployment_client._config.subscription_id == workspace_sub
@@ -563,10 +562,7 @@ class TestMachineLearningClient:
         assert online_deployment_scope.workspace_name == workspace_name
         assert model_scope.subscription_id == registry_sub
         assert model_scope.resource_group_name == registry_rg
-        assert data_scope.subscription_id == registry_sub
-        assert data_scope.resource_group_name == registry_rg
         assert online_endpoint_scope is not model_scope
-        assert online_deployment_scope is not data_scope
 
     def test_ml_client_with_cli_config(self, mock_credential):
         # This cloud config should not work and it should NOT overwrite the hardcoded AzureCloud

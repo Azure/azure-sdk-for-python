@@ -486,6 +486,20 @@ def sdkv2_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCreden
 
 
 @pytest.fixture
+def registry_backed_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """Return a registry-backed client whose online operations target the test workspace."""
+    return MLClient(
+        credential=auth,
+        subscription_id=e2e_ws_scope.subscription_id,
+        resource_group_name=e2e_ws_scope.resource_group_name,
+        workspace_name=e2e_ws_scope.workspace_name,
+        registry_reference="sdkv2-testFeed",
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        cloud="AzureCloud",
+    )
+
+
+@pytest.fixture
 def only_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
     """return a machine learning client using default e2e testing workspace"""
     return MLClient(
