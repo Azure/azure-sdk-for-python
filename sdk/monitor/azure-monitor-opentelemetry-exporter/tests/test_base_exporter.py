@@ -23,6 +23,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
 )
 from azure.monitor.opentelemetry.exporter._utils import _get_retry_delay_from_headers
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
+from azure.monitor.opentelemetry.exporter._constants import DropCode
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _STATSBEAT_STATE,
@@ -1379,6 +1380,7 @@ class TestBaseExporter(unittest.TestCase):
         persist each half as a separate blob so they are retried at a smaller size."""
         exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
         custom_envelopes_to_export = [
             TelemetryItem(name="Test1", time=datetime.now()),
             TelemetryItem(name="Test2", time=datetime.now()),
@@ -1402,7 +1404,8 @@ class TestBaseExporter(unittest.TestCase):
         exporter.storage.put.assert_not_called()
 
     def test_transmission_413_storage_disabled_dropped(self):
-        """A 413 with storage disabled cannot be persisted and should be dropped."""
+        """A 413 with storage disabled cannot be persisted and should be dropped with the
+        CLIENT_STORAGE_DISABLED reason, consistent with other retryable codes."""
         exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = None
         custom_envelopes_to_export = [
@@ -1410,8 +1413,17 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test2", time=datetime.now()),
         ]
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
-            result = exporter._transmit(custom_envelopes_to_export)
+            with mock.patch.object(exporter, "_should_collect_customer_sdkstats", return_value=True):
+                with mock.patch(
+                    "azure.monitor.opentelemetry.exporter.export._base.track_dropped_items"
+                ) as mock_track_dropped:
+                    result = exporter._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        # The batch is dropped with the storage-disabled reason, matching every other
+        # retryable failure when offline storage is turned off.
+        mock_track_dropped.assert_called_once_with(
+            custom_envelopes_to_export, DropCode.CLIENT_STORAGE_DISABLED
+        )
 
     def test_transmission_413_persists_and_retries(self):
         """End-to-end with real on-disk storage: a 413 persists the split halves to
@@ -1447,13 +1459,18 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(len(remaining), 0)
 
     def test_transmission_413_sub_batch_persist_failure_drops_that_batch_only(self):
-        """If persisting one split sub-batch fails during a 413, that sub-batch is dropped
-        (with a warning) while the remaining sub-batches are still attempted and persisted."""
+        """storage.put reports failure by return value (not by raising). If persisting one
+        split sub-batch fails during a 413, that sub-batch is dropped (with a warning) while
+        the remaining sub-batches are still attempted and persisted."""
         exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = mock.Mock()
-        # First sub-batch persist raises, second succeeds -> both are attempted (the failure
-        # must not abort the loop) and only the failed sub-batch is dropped.
-        exporter.storage.put.side_effect = [OSError("disk full"), None]
+        # First sub-batch persist reports a failure result, second succeeds -> both are
+        # attempted (a failing sub-batch must not abort the loop) and only the failed one
+        # is dropped rather than counted as a pending retry.
+        exporter.storage.put.side_effect = [
+            StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED,
+            StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
+        ]
         custom_envelopes_to_export = [
             TelemetryItem(name="Test1", time=datetime.now()),
             TelemetryItem(name="Test2", time=datetime.now()),
@@ -1462,7 +1479,7 @@ class TestBaseExporter(unittest.TestCase):
         ]
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
             with self.assertLogs(
-                "azure.monitor.opentelemetry.exporter.export._base", level="WARNING"
+                "azure.monitor.opentelemetry.exporter.export._base", level="DEBUG"
             ) as cm:
                 result = exporter._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)

@@ -53,7 +53,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 from azure.monitor.opentelemetry.exporter._connection_string_parser import (
     ConnectionStringParser,
 )
-from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage, StorageExportResult
 from azure.monitor.opentelemetry.exporter._configuration._state import (
     get_configuration_manager,
 )
@@ -334,7 +334,17 @@ class BaseExporter:
         self, envelopes: List[TelemetryItem], response_error: HttpResponseError
     ) -> ExportResult:
         """Handle a 413 (Payload Too Large) response by splitting and persisting for retry."""
-        if len(envelopes) <= 1 or not self.storage:
+        if not self.storage:
+            if not self._is_stats_exporter():
+                logger.debug(
+                    "Payload too large but offline storage is disabled; dropping %d envelope(s): %s.",
+                    len(envelopes),
+                    response_error.message,
+                )
+                if self._should_collect_customer_sdkstats():
+                    track_dropped_items(envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+            return ExportResult.FAILED_NOT_RETRYABLE
+        if len(envelopes) <= 1:
             if not self._is_stats_exporter():
                 logger.warning(
                     "Payload too large and cannot be split further; dropping %d envelope(s): %s.",
@@ -346,23 +356,19 @@ class BaseExporter:
             return ExportResult.FAILED_NOT_RETRYABLE
 
         for sub_batch in _split_oversized_batch(envelopes):
-            try:
-                self.storage.put([x.as_dict() for x in sub_batch])
-            except Exception:  # pylint: disable=broad-except
-                # Persisting a split sub-batch failed (e.g. disk full or a serialization
-                # error). Drop just this sub-batch rather than aborting the whole split so the
-                # remaining sub-batches still get a chance to be persisted and retried.
+            result_from_storage_put = self.storage.put([x.as_dict() for x in sub_batch])
+            if result_from_storage_put == StorageExportResult.LOCAL_FILE_BLOB_SUCCESS:
+                if self._should_collect_customer_sdkstats():
+                    track_retry_items(sub_batch, response_error)
+            else:
                 if not self._is_stats_exporter():
-                    logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    logger.debug(
                         "Failed to persist a split sub-batch of %d envelope(s) after a 413; "
                         "these envelopes are dropped.",
                         len(sub_batch),
                     )
-                    if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
-                        track_dropped_items(sub_batch, response_error.status_code)
-                continue
-            if self._should_collect_customer_sdkstats():
-                track_retry_items(sub_batch, response_error)
+                    if self._should_collect_customer_sdkstats():
+                        track_dropped_items_from_storage(result_from_storage_put, sub_batch)
         return ExportResult.FAILED_NOT_RETRYABLE
 
     # pylint: disable=too-many-branches
@@ -894,8 +900,8 @@ def _split_oversized_batch(envelopes: List[TelemetryItem]) -> List[List[Telemetr
     current_size = 2  # account for the enclosing "[" and "]" of the JSON array
     for envelope in envelopes:
         envelope_size = _get_envelope_serialized_size(envelope)
-        # Every element after the first is preceded by a "," separator inside the JSON array.
-        separator_size = 1 if current else 0
+        # Default json.dumps (used by the transport) separates array elements with ", " (2 bytes).
+        separator_size = 2 if current else 0
         if current and current_size + separator_size + envelope_size > _MAX_INGESTION_PAYLOAD_SIZE_BYTES:
             chunks.append(current)
             current = []
