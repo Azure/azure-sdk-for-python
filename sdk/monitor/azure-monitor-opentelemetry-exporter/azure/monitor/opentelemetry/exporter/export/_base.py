@@ -333,7 +333,15 @@ class BaseExporter:
     def _handle_payload_too_large(
         self, envelopes: List[TelemetryItem], response_error: HttpResponseError
     ) -> ExportResult:
-        """Handle a 413 (Payload Too Large) response by splitting and persisting for retry."""
+        """Handle a 413 (Payload Too Large) response by splitting and persisting for retry.
+
+        :param envelopes: The telemetry envelopes that were rejected as too large.
+        :type envelopes: list[~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem]
+        :param response_error: The error returned for the oversized request.
+        :type response_error: ~azure.core.exceptions.HttpResponseError
+        :return: The export result for the oversized batch.
+        :rtype: ~azure.monitor.opentelemetry.exporter.export._base.ExportResult
+        """
         if not self.storage:
             if not self._is_stats_exporter():
                 logger.debug(
@@ -508,8 +516,7 @@ class BaseExporter:
                                 # logging the full envelope to aid debugging.
                                 if (
                                     dropped_envelope is not None
-                                    and _get_envelope_serialized_size(dropped_envelope)
-                                    > _MAX_INGESTION_ITEM_SIZE_BYTES
+                                    and _get_envelope_serialized_size(dropped_envelope) > _MAX_INGESTION_ITEM_SIZE_BYTES
                                 ):
                                     logger.error(
                                         "Data drop %s: %s. Envelope of type %s exceeds the per-item "
@@ -885,7 +892,13 @@ class BaseExporter:
 
 
 def _get_envelope_serialized_size(envelope: TelemetryItem) -> int:
-    """Return the serialized wire size (in bytes) of a single envelope on the wire."""
+    """Return the serialized wire size (in bytes) of a single envelope on the wire.
+
+    :param envelope: The telemetry envelope to measure.
+    :type envelope: ~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem
+    :return: The serialized size of the envelope in bytes.
+    :rtype: int
+    """
     try:
         serialized = json.dumps(envelope, cls=SdkJSONEncoder, exclude_readonly=True)
         return len(serialized.encode("utf-8"))
@@ -894,7 +907,13 @@ def _get_envelope_serialized_size(envelope: TelemetryItem) -> int:
 
 
 def _split_oversized_batch(envelopes: List[TelemetryItem]) -> List[List[TelemetryItem]]:
-    """Split an oversized batch into sub-batches that each fit under the ingestion size limit."""
+    """Split an oversized batch into sub-batches that each fit under the ingestion size limit.
+
+    :param envelopes: The oversized batch of telemetry envelopes to split.
+    :type envelopes: list[~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem]
+    :return: A list of sub-batches, each expected to fit under the ingestion size limit.
+    :rtype: list[list[~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem]]
+    """
     chunks: List[List[TelemetryItem]] = []
     current: List[TelemetryItem] = []
     current_size = 2  # account for the enclosing "[" and "]" of the JSON array
