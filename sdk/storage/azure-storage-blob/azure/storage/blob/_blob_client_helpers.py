@@ -159,10 +159,9 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     headers = kwargs.pop("headers", {})
     headers.update(add_metadata_headers(metadata))
     _add_lease_id(kwargs, get_lease_id(kwargs.pop("lease", None)))
-    mod_conditions = get_modify_conditions(kwargs)
+    kwargs.update(get_modify_conditions(kwargs))
     kwargs.update(get_cpk_scope_info(kwargs))
 
-    kwargs.update(mod_conditions)
     if content_settings:
         kwargs["blob_cache_control"] = content_settings.cache_control
         kwargs["blob_content_type"] = content_settings.content_type
