@@ -70,6 +70,9 @@ azure-core = { path = "../../core/azure-core" }
 azure-identity = { path = "../../identity/azure-identity" }
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
 
+[tool.azure-sdk-conda]
+in_bundle = false
+
 [tool.azure-sdk-build]
 verifytypes = false
 latestdependency = false

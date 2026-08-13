@@ -65,6 +65,9 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 [tool.setuptools.package-data]
 "azure.ai.agentserver.invocations" = ["py.typed"]
 
+[tool.azure-sdk-conda]
+in_bundle = false
+
 [tool.azure-sdk-build]
 analyze_python_version = "3.11"
 breaking = false
