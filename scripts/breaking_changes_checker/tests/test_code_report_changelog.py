@@ -414,6 +414,19 @@ def test_compare_code_reports_for_azure_mgmt_apimanagement_apistub():
     )
 
 
+def test_uninstall_package_uses_active_python_environment():
+    from breaking_changes_checker import detect_breaking_changes
+
+    with mock.patch.object(detect_breaking_changes.subprocess, "run") as run:
+        detect_breaking_changes._uninstall_package("azure-mgmt-network", "/tmp/azure-mgmt-network")
+
+    run.assert_called_once_with(
+        [sys.executable, "-m", "pip", "uninstall", "-y", "azure-mgmt-network"],
+        cwd="/tmp/azure-mgmt-network",
+        check=False,
+    )
+
+
 def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local():
     """``--use-apistub`` without ``-s`` must diff local source against the previous PyPI release.
 
@@ -434,6 +447,8 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
     checker.breaking_changes = []
 
     with mock.patch("pypi_tools.pypi.PyPIClient", return_value=pypi_client) as pypi_client_cls, mock.patch.object(
+        detect_breaking_changes, "_uninstall_package"
+    ) as uninstall_package, mock.patch.object(
         detect_breaking_changes, "build_report_from_apistub", return_value={}
     ) as build_report, mock.patch.object(
         detect_breaking_changes, "compare_report_dicts", return_value=checker
@@ -453,6 +468,18 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
         )
 
     assert build_report.call_count == 2, "Expected separate apistub reports for current and stable"
+    assert uninstall_package.call_count == 2, "Expected cleanup before both apistub reports"
+    uninstall_package.assert_has_calls(
+        [
+            mock.call("azure-mgmt-network", "/tmp/azure-mgmt-network"),
+            mock.call("azure-mgmt-network", "/tmp/azure-mgmt-network"),
+        ]
+    )
+
+    # Generate the released snapshot first and local source last. Clearing the
+    # package before both calls makes repeated runs deterministic while leaving
+    # the local package installed for downstream generation steps.
+    assert [call.kwargs["label"] for call in build_report.call_args_list] == ["stable", "current"]
 
     # The resolver must force the public PyPI backend: in CI PIP_INDEX_URL points
     # at the curated Azure Artifacts feed, which is not a full mirror of PyPI.
