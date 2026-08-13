@@ -512,10 +512,9 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         assert "Decryption failed." in str(e.value)
 
     def test_decrypt_dotnet_v2_1_nonce_encoding(self):
-        # Regression test for cross-SDK interoperability. Blobs produced by the .NET
-        # Storage SDK encode each region's GCM nonce as a one-based counter written
-        # little-endian into the final 8 nonce bytes, whereas Python/Java use a zero-based
-        # big-endian counter. Python must still decrypt these .NET-produced V2.1 blobs while
+        # Regression test for cross-SDK interoperability. The .NET Storage SDK encodes each
+        # region's GCM nonce as a one-based counter written little-endian into the final 8
+        # nonce bytes. Python must still decrypt these .NET-produced V2.1 blobs while
         # continuing to detect reordered regions.
         kek = KeyWrapper("key1")
         cek = os.urandom(32)
@@ -563,6 +562,69 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         assert decrypted == plaintext
 
         # Reordering the .NET-produced regions must still be detected.
+        reordered = encrypted_regions[0] + encrypted_regions[2] + encrypted_regions[1]
+        with pytest.raises(ValueError):
+            decrypt_blob(
+                require_encryption=True,
+                key_encryption_key=kek,
+                key_resolver=None,
+                content=reordered,
+                start_offset=0,
+                end_offset=len(plaintext),
+                response_headers=headers,
+            )
+
+    def test_decrypt_java_v2_nonce_encoding(self):
+        # Regression test for cross-SDK interoperability. The Java Storage SDK encodes each
+        # region's GCM nonce as a zero-based counter written big-endian into the leading 8
+        # nonce bytes (ByteBuffer.allocate(12).putLong(index)), which differs from Python's
+        # full-width big-endian counter. Python must still decrypt Java-produced V2 blobs
+        # while continuing to detect reordered regions.
+        kek = KeyWrapper("key1")
+        cek = os.urandom(32)
+
+        region_data_length = 32
+        num_regions = 3
+        plaintext_regions = [bytes([i]) * region_data_length for i in range(num_regions)]
+
+        def java_nonce(region_index):
+            # Zero-based counter, big-endian, in the leading 8 bytes; trailing bytes zeroed.
+            return region_index.to_bytes(8, "big") + b"\x00" * (_GCM_NONCE_LENGTH - 8)
+
+        aesgcm = AESGCM(cek)
+        encrypted_regions = [
+            java_nonce(i) + aesgcm.encrypt(java_nonce(i), region, None)
+            for i, region in enumerate(plaintext_regions)
+        ]
+
+        # Wrap the CEK the way the V2 protocol requires (version prefix padded to 8 bytes).
+        wrapped_cek = kek.wrap_key(b"2.0".ljust(8, b"\x00") + cek)
+        encryption_data = {
+            "WrappedContentKey": {
+                "KeyId": kek.get_kid(),
+                "EncryptedKey": base64.b64encode(wrapped_cek).decode(),
+                "Algorithm": kek.get_key_wrap_algorithm(),
+            },
+            "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm": "AES_GCM_256"},
+            "EncryptedRegionInfo": {"DataLength": region_data_length, "NonceLength": _GCM_NONCE_LENGTH},
+            "KeyWrappingMetadata": {"EncryptionLibrary": "Java"},
+        }
+        headers = {"x-ms-meta-encryptiondata": dumps(encryption_data)}
+        plaintext = b"".join(plaintext_regions)
+
+        # Act / Assert -- the Java nonce encoding is accepted and the content round-trips.
+        decrypted = decrypt_blob(
+            require_encryption=True,
+            key_encryption_key=kek,
+            key_resolver=None,
+            content=b"".join(encrypted_regions),
+            start_offset=0,
+            end_offset=len(plaintext),
+            response_headers=headers,
+        )
+        assert decrypted == plaintext
+
+        # Reordering the Java-produced regions must still be detected.
         reordered = encrypted_regions[0] + encrypted_regions[2] + encrypted_regions[1]
         with pytest.raises(ValueError):
             decrypt_blob(

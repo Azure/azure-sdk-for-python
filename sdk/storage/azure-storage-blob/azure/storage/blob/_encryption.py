@@ -906,11 +906,15 @@ def _region_nonce_candidates(region_index: int, nonce_length: int) -> List[bytes
     """
     Returns the valid nonce encodings for the encryption region at the given zero-based index.
 
-    The per-region nonce is a counter of the region's position, but SDKs encode it
+    The per-region nonce is a counter of the region's position, but each SDK encodes it
     differently, so all supported encodings must be accepted for interoperability:
-    Python/Java use a zero-based big-endian counter; .NET uses a one-based little-endian
-    counter in the trailing 8 bytes. Each encoding is a bijection of the index, so accepting all
-    of them does not weaken reordering detection.
+
+    * Python: zero-based counter, big-endian across the whole nonce (value in trailing bytes).
+    * Java: zero-based counter, big-endian in the leading 8 bytes, trailing bytes zeroed.
+    * .NET: one-based counter, little-endian in the trailing 8 bytes, leading bytes zeroed.
+
+    Each encoding is a bijection of the index, so accepting all of them does not weaken
+    reordering detection.
 
     :param int region_index: The zero-based index of the region within the blob.
     :param int nonce_length: The length of the nonce in bytes.
@@ -919,12 +923,15 @@ def _region_nonce_candidates(region_index: int, nonce_length: int) -> List[bytes
     """
     candidates = [region_index.to_bytes(nonce_length, "big")]
 
-    # .NET: one-based little-endian counter in the trailing 8 bytes, zero-padded.
-    dotnet_counter_length = 8
-    if nonce_length >= dotnet_counter_length:
+    counter_length = 8
+    if nonce_length >= counter_length:
+        # Java
         candidates.append(
-            b"\x00" * (nonce_length - dotnet_counter_length)
-            + (region_index + 1).to_bytes(dotnet_counter_length, "little")
+            region_index.to_bytes(counter_length, "big") + b"\x00" * (nonce_length - counter_length)
+        )
+        # .NET
+        candidates.append(
+            b"\x00" * (nonce_length - counter_length) + (region_index + 1).to_bytes(counter_length, "little")
         )
 
     return candidates
@@ -1061,7 +1068,9 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
 
         # Bypass nonce validation via an environment variable for data-recovery scenarios
         # where regions were reordered. Not recommended: it can allow tampered data through.
-        validate_nonce = not os.environ.get("AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS")
+        validate_nonce = os.environ.get(
+            "AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS", ""
+        ).strip().lower() not in ("true", "1")
 
         decrypted_content = bytearray()
         while offset < total_size:
