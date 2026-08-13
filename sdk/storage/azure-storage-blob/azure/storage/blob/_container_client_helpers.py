@@ -45,7 +45,7 @@ def _format_url(container_name: Union[bytes, str], hostname: str, scheme: str, q
 
 # This code is a copy from _generated.
 # Once Autorest is able to provide request preparation this code should be removed.
-def _generate_delete_blobs_subrequest_options(
+def _generate_delete_blobs_subrequest_options(  # pylint: disable=protected-access
     client: AzureBlobStorage,
     snapshot: Optional[str] = None,
     version_id: Optional[str] = None,

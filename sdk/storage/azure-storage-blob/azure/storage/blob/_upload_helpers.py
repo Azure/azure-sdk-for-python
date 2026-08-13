@@ -248,7 +248,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
             raise
 
 
-def upload_page_blob(
+def upload_page_blob(  # pylint: disable=too-many-locals
     client: "PageBlobOperations",
     overwrite: bool,
     encryption_options: Dict[str, Any],
