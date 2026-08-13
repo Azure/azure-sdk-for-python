@@ -52,6 +52,11 @@ _ERROR_OBJECT_INVALID = "{0} does not define a complete interface. Value of {1} 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     "The require_encryption flag is set, but encryption is not supported for this method."
 )
+_ERROR_ENCRYPTION_METADATA_MISMATCH = (
+    "The encryption metadata in the download response does not match the encryption metadata "
+    "retrieved at the start of the download. The blob's encryption metadata may have been modified "
+    "while the download was in progress."
+)
 
 
 class KeyEncryptionKey(Protocol):
@@ -928,6 +933,8 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     try:
         encryption_data = _dict_to_encryption_data(loads(response_headers["x-ms-meta-encryptiondata"]))
     except Exception as exc:  # pylint: disable=broad-except
+        if expected_encryption_data is not None:
+            raise ValueError(_ERROR_ENCRYPTION_METADATA_MISMATCH) from exc
         if require_encryption:
             raise ValueError(
                 "Encryption required, but received data does not contain appropriate metadata."
@@ -938,11 +945,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
 
     # Validate that the encryption metadata has not changed since the start of the download.
     if expected_encryption_data is not None and not expected_encryption_data.matches(encryption_data):
-        raise ValueError(
-            "The encryption metadata in the download response does not match the encryption metadata "
-            "retrieved at the start of the download. The blob's encryption metadata may have been modified "
-            "while the download was in progress."
-        )
+        raise ValueError(_ERROR_ENCRYPTION_METADATA_MISMATCH)
 
     algorithm = encryption_data.encryption_agent.encryption_algorithm
     if algorithm not in (_EncryptionAlgorithm.AES_CBC_256, _EncryptionAlgorithm.AES_GCM_256):
