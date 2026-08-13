@@ -68,8 +68,8 @@ _CallbackT = TypeVar("_CallbackT", bound=Callable[..., Awaitable[None]])
 _VoiceCallback = Callable[[Session, Any], Awaitable[None]]
 logger = logging.getLogger("azure.ai.agentserver")
 _VOICE_AUTHORITY_ROUTE = object()
-_VOICE_CLOSE_CODE = "azure.ai.agentserver.invocations.voice.close_code"
-_VOICE_DISCONNECT_EVENT = "azure.ai.agentserver.invocations.voice.disconnect_event"
+_VOICE_CLOSE_CODE = _session_transport._VOICE_CLOSE_CODE_SCOPE_KEY  # pylint: disable=protected-access
+_VOICE_DISCONNECT_EVENT = _session_transport._VOICE_DISCONNECT_EVENT_SCOPE_KEY  # pylint: disable=protected-access
 _VOICE_TERMINATION_DEADLINE = "azure.ai.agentserver.invocations.voice.termination_deadline"
 _VOICE_ROUTE_CONFLICT = "VoiceAgentServerHost cannot own /invocations_ws because the route is already registered"
 
@@ -168,11 +168,11 @@ def _raise_voice_disconnect(websocket: WebSocket, code: int, reason: str) -> NoR
     raise WebSocketDisconnect(code=code, reason=reason)
 
 
-def _raise_wrapped_cancellation(error: BaseException) -> None:
-    cancellation = _session_transport._find_cancellation(error)  # pylint: disable=protected-access
-    if cancellation is not None and cancellation is not error:
-        _session_transport._unlink_exception(error, cancellation)  # pylint: disable=protected-access
-        raise cancellation from error
+def _raise_wrapped_cancellation(
+    error: BaseException,
+    cancellation_requests: int | None,
+) -> None:
+    _session_transport._raise_task_cancellation(error, cancellation_requests)  # pylint: disable=protected-access
 
 
 def _begin_voice_termination(websocket: WebSocket, session: Session) -> float:
@@ -351,7 +351,11 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                 trace_token.var.reset(trace_token)
         return accept_error, voice_session, close_code, handler_exc, pending_error
 
-    async def _accept_voice_websocket(self, websocket: WebSocket) -> Exception | None:
+    async def _accept_voice_websocket(
+        self,
+        websocket: WebSocket,
+    ) -> Exception | None:
+        cancellation_requests = _session_transport._task_cancellation_requests()  # pylint: disable=protected-access
         try:
             await websocket.accept(
                 headers=[
@@ -362,7 +366,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                 ]
             )
         except Exception as exc:  # pylint: disable=broad-exception-caught
-            _raise_wrapped_cancellation(exc)
+            _raise_wrapped_cancellation(exc, cancellation_requests)
             return exc
         return None
 
@@ -375,12 +379,13 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         close_code = InvocationsWSConstants.CLOSE_NORMAL
         handler_exc: BaseException | None = None
         pending_error: BaseException | None = None
+        cancellation_requests = _session_transport._task_cancellation_requests()  # pylint: disable=protected-access
         try:
             close_code, handler_exc = await self._invoke_user_handler(websocket, session_id)
             await _raise_pending_cancellation()
             close_code = _selected_voice_close_code(websocket, close_code)
         except BaseException as exc:  # pylint: disable=broad-exception-caught
-            _raise_wrapped_cancellation(exc)
+            _raise_wrapped_cancellation(exc, cancellation_requests)
             close_code = _selected_voice_close_code(websocket, InvocationsWSConstants.CLOSE_INTERNAL_ERROR)
             handler_exc = exc
             pending_error = exc
@@ -510,14 +515,15 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         ws_fn = self._ws_fn
         if ws_fn is None:
             raise RuntimeError("_invoke_user_handler called with no registered ws_handler")
+        cancellation_requests = _session_transport._task_cancellation_requests()  # pylint: disable=protected-access
         try:
             await ws_fn(websocket)
             return InvocationsWSConstants.CLOSE_NORMAL, None
         except WebSocketDisconnect as exc:
-            _raise_wrapped_cancellation(exc)
+            _raise_wrapped_cancellation(exc, cancellation_requests)
             return int(exc.code) if exc.code else InvocationsWSConstants.CLOSE_NORMAL, None
         except Exception as exc:  # pylint: disable=broad-exception-caught
-            _raise_wrapped_cancellation(exc)
+            _raise_wrapped_cancellation(exc, cancellation_requests)
             return InvocationsWSConstants.CLOSE_INTERNAL_ERROR, exc
 
     def _emit_voice_close_event(
@@ -717,15 +723,16 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         callback = self._voice_callbacks.get("disconnect")
         if callback is None or event is None:
             return None
+        cancellation_requests = _session_transport._task_cancellation_requests()  # pylint: disable=protected-access
         try:
             await callback(session, event)
         except asyncio.CancelledError:
             raise
         except Exception as exc:  # pylint: disable=broad-exception-caught
-            _raise_wrapped_cancellation(exc)
+            _raise_wrapped_cancellation(exc, cancellation_requests)
             return exc
         except BaseException as exc:  # pylint: disable=broad-exception-caught
-            _raise_wrapped_cancellation(exc)
+            _raise_wrapped_cancellation(exc, cancellation_requests)
             return exc
         return None
 
@@ -742,7 +749,10 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     reason = raw_reason if isinstance(raw_reason, str) else None
                     _select_voice_close_code(websocket, code)
                     _begin_voice_termination(websocket, session)
-                    websocket.scope[_VOICE_DISCONNECT_EVENT] = SessionDisconnected(code=code, reason=reason)
+                    websocket.scope.setdefault(
+                        _VOICE_DISCONNECT_EVENT,
+                        SessionDisconnected(code=code, reason=reason),
+                    )
                     raise WebSocketDisconnect(
                         code=code,
                         reason=reason,

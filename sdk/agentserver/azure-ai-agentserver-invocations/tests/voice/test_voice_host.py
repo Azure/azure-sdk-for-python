@@ -408,4 +408,5 @@ def test_voice_source_has_no_lifecycle_owners():
         "_reconnect",
     ):
         assert forbidden not in source
-    assert source.count("asyncio.create_task") == 1
+    assert source.count("asyncio.create_task") == 2
+    assert source.count('name="voice_websocket_send"') == 1

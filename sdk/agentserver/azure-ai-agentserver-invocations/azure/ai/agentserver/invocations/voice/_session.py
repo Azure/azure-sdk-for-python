@@ -7,24 +7,50 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextvars
+import sys
 from collections.abc import Coroutine, MutableMapping
 from threading import Lock
 from typing import Any
 
 from starlette.types import Send
-from starlette.websockets import WebSocket, WebSocketState
+from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import experimental
 
 from ._codec import encode_outbound_message
-from ._models import OutboundVoiceMessage
+from ._models import OutboundVoiceMessage, SessionDisconnected
 
 _VOICE_SESSION_SCOPE_KEY = "azure.ai.agentserver.invocations.voice.session"
+_VOICE_CLOSE_CODE_SCOPE_KEY = "azure.ai.agentserver.invocations.voice.close_code"
+_VOICE_DISCONNECT_EVENT_SCOPE_KEY = "azure.ai.agentserver.invocations.voice.disconnect_event"
 CLOSE_TIMEOUT_SECONDS = 5.0
 _MAX_CLOSE_ATTEMPTS = 256
 _CLOSE_ATTEMPTS: set[asyncio.Task[None]] = set()
 _CLOSE_ATTEMPT_RESERVATIONS = 0
 _CLOSE_ATTEMPT_LOCK = Lock()
+
+
+class _SendCancellationState:
+    __slots__ = ("cancellation",)
+
+    def __init__(self) -> None:
+        self.cancellation: asyncio.CancelledError | None = None
+
+
+class _SendCancellationWaiter(asyncio.Future):
+    __slots__ = ("operation", "state")
+
+    def __init__(self, operation: asyncio.Task[BaseException | None], state: _SendCancellationState) -> None:
+        super().__init__()
+        self.operation = operation
+        self.state = state
+
+    def cancel(self, msg: object | None = None) -> bool:
+        if self.done():
+            return False
+        self.state.cancellation = asyncio.CancelledError(msg) if msg is not None else asyncio.CancelledError()
+        self.operation.cancel(msg)
+        return True
 
 
 def _close_coroutine(coroutine: Coroutine[Any, Any, Any]) -> None:
@@ -66,6 +92,79 @@ def _unlink_exception(error: BaseException, target: BaseException) -> None:
             current.__context__ = None
         elif context is not None:
             pending.append(context)
+
+
+def _task_cancellation_requests() -> int | None:
+    if sys.version_info < (3, 11):
+        return None
+    try:
+        task = asyncio.current_task()
+    except RuntimeError:
+        return None
+    cancelling = getattr(task, "cancelling", None)
+    return int(cancelling()) if callable(cancelling) else None
+
+
+def _raise_task_cancellation(
+    error: BaseException,
+    cancellation_requests: int | None,
+) -> None:
+    cancellation = _find_cancellation(error)
+    if cancellation is None or cancellation is error:
+        return
+    current_requests = _task_cancellation_requests()
+    task_cancelled = (
+        cancellation_requests is not None and current_requests is not None and current_requests > cancellation_requests
+    )
+    if not task_cancelled:
+        return
+    _unlink_exception(error, cancellation)
+    raise cancellation from error
+
+
+def _transfer_send_result(operation: asyncio.Task[BaseException | None], waiter: _SendCancellationWaiter) -> None:
+    if waiter.done():
+        if not operation.cancelled():
+            operation.exception()
+        return
+    if operation.cancelled():
+        cancellation = waiter.state.cancellation
+        if cancellation is None:
+            try:
+                operation.result()
+            except asyncio.CancelledError as operation_cancellation:
+                cancellation = operation_cancellation
+        waiter.set_result(cancellation)
+        return
+    waiter.set_result(operation.result())
+
+
+async def _run_send_operation(
+    operation_coroutine: Coroutine[Any, Any, BaseException | None],
+    state: _SendCancellationState,
+) -> None:
+    try:
+        operation = asyncio.create_task(operation_coroutine, name="voice_websocket_send")
+    except BaseException:  # pylint: disable=broad-exception-caught
+        _close_coroutine(operation_coroutine)
+        raise
+    waiter = _SendCancellationWaiter(operation, state)
+    operation.add_done_callback(lambda completed: _transfer_send_result(completed, waiter))
+    outcome = await waiter
+    if isinstance(outcome, BaseException):
+        error = outcome
+        cancellation = state.cancellation
+        if cancellation is None:
+            raise error
+        nested_cancellation = _find_cancellation(error)
+        if nested_cancellation is not None:
+            if nested_cancellation is not error:
+                _unlink_exception(error, nested_cancellation)
+                raise nested_cancellation from error
+            raise error
+        raise cancellation from error
+    if state.cancellation is not None:
+        raise state.cancellation
 
 
 async def _run_close_attempt(
@@ -184,14 +283,7 @@ class Session:
         done, _ = await asyncio.wait((attempt,), timeout=remaining)
         if not done:
             raise TimeoutError("Voice WebSocket close deadline elapsed")
-        try:
-            attempt.result()
-        except BaseException as exc:  # pylint: disable=broad-exception-caught
-            cancellation = _find_cancellation(exc)
-            if cancellation is not None and cancellation is not exc:
-                _unlink_exception(exc, cancellation)
-                raise cancellation from exc
-            raise
+        attempt.result()
 
     async def _close(
         self,
@@ -224,6 +316,30 @@ class Session:
         """
         self._ensure_writable()
         frame = encode_outbound_message(message)
-        async with self._send_lock:
-            self._ensure_writable()
-            await self._websocket.send_text(frame)
+        cancellation_state = _SendCancellationState()
+
+        async def send_frame() -> BaseException | None:
+            try:
+                async with self._send_lock:
+                    self._ensure_writable()
+                    try:
+                        await self._websocket.send_text(frame)
+                    except WebSocketDisconnect as error:
+                        if cancellation_state.cancellation is None or _find_cancellation(error) is None:
+                            self._begin_termination()
+                            scope = getattr(self._websocket, "scope", None)
+                            if isinstance(scope, MutableMapping):
+                                raw_reason = getattr(error, "reason", None)
+                                reason = raw_reason if isinstance(raw_reason, str) and raw_reason else None
+                                code = int(error.code or 1006)
+                                scope.setdefault(_VOICE_CLOSE_CODE_SCOPE_KEY, code)
+                                scope.setdefault(
+                                    _VOICE_DISCONNECT_EVENT_SCOPE_KEY,
+                                    SessionDisconnected(code=code, reason=reason),
+                                )
+                        return error
+            except BaseException as error:  # pylint: disable=broad-exception-caught
+                return error
+            return None
+
+        await _run_send_operation(send_frame(), cancellation_state)

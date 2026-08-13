@@ -5,10 +5,11 @@
 
 import asyncio
 import json
+import sys
 import threading
 
 import pytest
-from starlette.websockets import WebSocketState
+from starlette.websockets import WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.invocations.voice import EndCall, Session, SessionReady
 from azure.ai.agentserver.invocations.voice import _session as session_module
@@ -117,7 +118,7 @@ async def test_session_close_cancellation_does_not_wait_for_blocked_send():
         with pytest.raises(asyncio.CancelledError) as raised:
             await asyncio.wait_for(close_task, timeout=1)
 
-        assert raised.value.args == ("queued-close-cancel",)
+        assert raised.value.args == (("queued-close-cancel",) if sys.version_info >= (3, 11) else ())
         assert websocket.closes == []
         with pytest.raises(RuntimeError, match="terminating"):
             await session.send(EndCall(reason="too late"))
@@ -165,7 +166,7 @@ async def test_session_queued_cancellation_skips_transport_close():
 
 
 @pytest.mark.asyncio
-async def test_session_close_finds_cancellation_in_context_beside_independent_cause():
+async def test_session_close_does_not_infer_cancellation_from_exception_graph():
     websocket = _BlockingWebSocket()
     cancellation = asyncio.CancelledError("transport cancellation")
     close_error = OSError("transport wrapped cancellation")
@@ -174,13 +175,12 @@ async def test_session_close_finds_cancellation_in_context_beside_independent_ca
     websocket.close_error = close_error
     session = Session._create(websocket)  # pylint: disable=protected-access
 
-    with pytest.raises(asyncio.CancelledError) as raised:
+    with pytest.raises(OSError) as raised:
         await session._close(1002, "protocol error")  # pylint: disable=protected-access
 
-    assert raised.value is cancellation
-    assert raised.value.__cause__ is close_error
+    assert raised.value is close_error
     assert close_error.__cause__ is not None
-    assert close_error.__context__ is None
+    assert close_error.__context__ is cancellation
 
 
 def test_find_cancellation_prefers_explicit_cause_branch():
@@ -191,6 +191,90 @@ def test_find_cancellation_prefers_explicit_cause_branch():
     wrapper.__context__ = context_cancellation
 
     assert session_module._find_cancellation(wrapper) is cause_cancellation  # pylint: disable=protected-access
+
+
+def test_untracked_generic_wrapper_does_not_become_task_cancellation():
+    cancellation = asyncio.CancelledError("inner cancellation")
+    wrapper = RuntimeError("callback wrapper")
+    wrapper.__cause__ = cancellation
+
+    session_module._raise_task_cancellation(wrapper, None)  # pylint: disable=protected-access
+
+    assert wrapper.__cause__ is cancellation
+
+
+@pytest.mark.asyncio
+async def test_send_operation_closes_coroutine_when_task_construction_fails(monkeypatch):
+    websocket = _BlockingWebSocket()
+    session = Session._create(websocket)  # pylint: disable=protected-access
+    closed_coroutines = []
+    close_coroutine = session_module._close_coroutine  # pylint: disable=protected-access
+
+    def track_close(coroutine):
+        closed_coroutines.append(coroutine)
+        close_coroutine(coroutine)
+
+    def fail_create_task(_coroutine, *, name=None):
+        del name
+        raise RuntimeError("send task construction failed")
+
+    monkeypatch.setattr(session_module, "_close_coroutine", track_close)
+    monkeypatch.setattr(session_module.asyncio, "create_task", fail_create_task)
+
+    with pytest.raises(RuntimeError, match="send task construction failed"):
+        await session.send(SessionReady())
+
+    assert len(closed_coroutines) == 1
+    assert websocket.frames == []
+
+
+@pytest.mark.asyncio
+async def test_send_cancellation_before_transport_operation_starts():
+    websocket = _BlockingWebSocket()
+    session = Session._create(websocket)  # pylint: disable=protected-access
+
+    send_task = asyncio.create_task(session.send(SessionReady()))
+    send_task.cancel("pre-start-cancel")
+
+    with pytest.raises(asyncio.CancelledError) as raised:
+        await asyncio.wait_for(send_task, timeout=1)
+
+    assert raised.value.args == (("pre-start-cancel",) if sys.version_info >= (3, 11) else ())
+    assert send_task.cancelled()
+    assert websocket.frames == []
+    assert [task for task in asyncio.all_tasks() if task.get_name() == "voice_websocket_send"] == []
+
+
+@pytest.mark.asyncio
+async def test_send_side_peer_loss_closes_gate_before_queued_writer_enters_transport():
+    class PeerLossWebSocket:
+        def __init__(self):
+            self.application_state = WebSocketState.CONNECTED
+            self.scope = {}
+            self.send_started = asyncio.Event()
+            self.release_send = asyncio.Event()
+            self.frames = []
+
+        async def send_text(self, frame):
+            self.frames.append(json.loads(frame))
+            self.send_started.set()
+            await self.release_send.wait()
+            raise WebSocketDisconnect(code=1006)
+
+    websocket = PeerLossWebSocket()
+    session = Session._create(websocket)  # pylint: disable=protected-access
+    first_send = asyncio.create_task(session.send(SessionReady()))
+    await websocket.send_started.wait()
+    second_send = asyncio.create_task(session.send(EndCall(reason="queued")))
+    await asyncio.sleep(0)
+
+    websocket.release_send.set()
+    first_result, second_result = await asyncio.gather(first_send, second_send, return_exceptions=True)
+
+    assert isinstance(first_result, WebSocketDisconnect)
+    assert isinstance(second_result, RuntimeError)
+    assert str(second_result) == "Voice Session is terminating"
+    assert [frame["type"] for frame in websocket.frames] == ["session.ready"]
 
 
 @pytest.mark.asyncio
