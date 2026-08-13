@@ -1,0 +1,9 @@
+include *.md
+include LICENSE
+include azure/clientgenerator/core/apiversion/clientapiversions/py.typed
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include azure/__init__.py
+include azure/clientgenerator/__init__.py
+include azure/clientgenerator/core/__init__.py
+include azure/clientgenerator/core/apiversion/__init__.py

@@ -109,6 +109,8 @@ class ArmResourceIdentifierResourceProperties(TypedDict, total=False):
     :vartype armIdWithTypeAndScope: str
     :ivar armIdWithAllScopes: An ARM resource identifier with all scopes. Required.
     :vartype armIdWithAllScopes: str
+    :ivar armIdWithGroupScope: An ARM resource identifier with group scopes. Required.
+    :vartype armIdWithGroupScope: str
     """
 
     provisioningState: Required[Union[str, "ResourceProvisioningState"]]
@@ -122,6 +124,8 @@ class ArmResourceIdentifierResourceProperties(TypedDict, total=False):
     """An ARM resource identifier with type and scopes. Required."""
     armIdWithAllScopes: Required[str]
     """An ARM resource identifier with all scopes. Required."""
+    armIdWithGroupScope: Required[str]
+    """An ARM resource identifier with group scopes. Required."""
 
 
 class ConfidentialResource(TrackedResource):

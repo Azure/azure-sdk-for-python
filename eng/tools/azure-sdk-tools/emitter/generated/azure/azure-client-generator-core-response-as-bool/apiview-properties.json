@@ -6,5 +6,5 @@
         "specs.azure.clientgenerator.core.responseasbool.operations.HeadAsBooleanOperations.not_exists": "_Specs_.Azure.ClientGenerator.Core.ResponseAsBool.HeadAsBoolean.notExists",
         "specs.azure.clientgenerator.core.responseasbool.aio.operations.HeadAsBooleanOperations.not_exists": "_Specs_.Azure.ClientGenerator.Core.ResponseAsBool.HeadAsBoolean.notExists"
     },
-    "CrossLanguageVersion": "57f7b0b65ebf"
+    "CrossLanguageVersion": "1cb529b84fcd"
 }

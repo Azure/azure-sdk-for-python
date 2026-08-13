@@ -1,0 +1,8 @@
+{
+    "CrossLanguagePackageId": "Azure.ClientGenerator.Core.ApiVersion.ClientApiVersions",
+    "CrossLanguageDefinitionId": {
+        "azure.clientgenerator.core.apiversion.clientapiversions.ClientApiVersionsClient.send_api_version": "Azure.ClientGenerator.Core.ApiVersion.ClientApiVersions.sendApiVersion",
+        "azure.clientgenerator.core.apiversion.clientapiversions.aio.ClientApiVersionsClient.send_api_version": "Azure.ClientGenerator.Core.ApiVersion.ClientApiVersions.sendApiVersion"
+    },
+    "CrossLanguageVersion": "7c2bf9b649d6"
+}

@@ -42,6 +42,7 @@ class TestCommonPropertiesArmResourceIdentifiersOperationsAsync(AzureMgmtRecorde
                 "name": "str",
                 "properties": {
                     "armIdWithAllScopes": "str",
+                    "armIdWithGroupScope": "str",
                     "armIdWithType": "str",
                     "armIdWithTypeAndScope": "str",
                     "provisioningState": "str",

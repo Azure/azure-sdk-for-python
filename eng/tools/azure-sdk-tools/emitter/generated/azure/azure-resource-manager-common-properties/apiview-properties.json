@@ -37,5 +37,5 @@
         "azure.resourcemanager.commonproperties.operations.ArmResourceIdentifiersOperations.create_or_replace": "Azure.ResourceManager.CommonProperties.ArmResourceIdentifiers.createOrReplace",
         "azure.resourcemanager.commonproperties.aio.operations.ArmResourceIdentifiersOperations.create_or_replace": "Azure.ResourceManager.CommonProperties.ArmResourceIdentifiers.createOrReplace"
     },
-    "CrossLanguageVersion": "f9b539c8f6ce"
+    "CrossLanguageVersion": "bae671abe1fb"
 }

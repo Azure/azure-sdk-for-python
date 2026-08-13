@@ -20,55 +20,6 @@ class InputModel(TypedDict, total=False):
     """Required."""
 
 
-class NamespaceModel(TypedDict, total=False):
-    """NamespaceModel.
-
-    :ivar name: Required.
-    :vartype name: str
-    """
-
-    name: Required[str]
-    """Required."""
-
-
-class NestedNamespaceModel(TypedDict, total=False):
-    """NestedNamespaceModel.
-
-    :ivar value: Required.
-    :vartype value: str
-    """
-
-    value: Required[str]
-    """Required."""
-
-
-class OrphanModel(TypedDict, total=False):
-    """Not used anywhere, but access is override to public so still need to be generated and exported
-    with serialization.
-
-    :ivar name: Required.
-    :vartype name: str
-    :ivar desc: Required.
-    :vartype desc: str
-    """
-
-    name: Required[str]
-    """Required."""
-    desc: Required[str]
-    """Required."""
-
-
-class OutputModel(TypedDict, total=False):
-    """Usage additive to roundtrip.
-
-    :ivar name: Required.
-    :vartype name: str
-    """
-
-    name: Required[str]
-    """Required."""
-
-
 class ResultModel(TypedDict, total=False):
     """ResultModel.
 

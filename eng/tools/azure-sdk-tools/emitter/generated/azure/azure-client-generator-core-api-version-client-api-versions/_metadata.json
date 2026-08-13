@@ -1,0 +1,6 @@
+{
+  "apiVersion": "2024-01-01",
+  "apiVersions": {
+    "Azure.ClientGenerator.Core.ApiVersion.ClientApiVersions": "2024-01-01"
+  }
+}

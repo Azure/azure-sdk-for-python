@@ -241,6 +241,8 @@ class ArmResourceIdentifierResourceProperties(_Model):  # pylint: disable=docstr
     :vartype arm_id_with_type_and_scope: str
     :ivar arm_id_with_all_scopes: An ARM resource identifier with all scopes. Required.
     :vartype arm_id_with_all_scopes: str
+    :ivar arm_id_with_group_scope: An ARM resource identifier with group scopes. Required.
+    :vartype arm_id_with_group_scope: str
     """
 
     provisioning_state: Union[str, "_models.ResourceProvisioningState"] = rest_field(
@@ -260,6 +262,10 @@ class ArmResourceIdentifierResourceProperties(_Model):  # pylint: disable=docstr
         name="armIdWithAllScopes", visibility=["read", "create", "update", "delete", "query"]
     )
     """An ARM resource identifier with all scopes. Required."""
+    arm_id_with_group_scope: str = rest_field(
+        name="armIdWithGroupScope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An ARM resource identifier with group scopes. Required."""
 
     @overload
     def __init__(
@@ -269,6 +275,7 @@ class ArmResourceIdentifierResourceProperties(_Model):  # pylint: disable=docstr
         arm_id_with_type: str,
         arm_id_with_type_and_scope: str,
         arm_id_with_all_scopes: str,
+        arm_id_with_group_scope: str,
     ) -> None: ...
 
     @overload
