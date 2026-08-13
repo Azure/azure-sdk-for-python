@@ -123,11 +123,15 @@ class apistub(Check):
                     ],
                     cwd=staging_directory,
                     check=True,
+                    additional_environment_settings={"PIP_EXTRA_INDEX_URL": ""},
                 )
                 break
             except CalledProcessError as error:
                 if index_url == PYPI_INDEX_URL:
-                    logger.error(f"Failed to download {package_name}=={version} from both package indexes.")
+                    error_details = error.stderr or error.stdout or str(error)
+                    logger.error(
+                        f"Failed to download {package_name}=={version} from both package indexes: {error_details}"
+                    )
                     raise
                 logger.warning(f"Failed to download from the Azure SDK feed: {error}. Retrying from public PyPI.")
         found_whl = find_whl(staging_directory, package_name, version)

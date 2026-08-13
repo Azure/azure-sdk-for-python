@@ -500,6 +500,7 @@ class TestRunOutputDirectory:
             "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
             in cmds
         )
+        assert run_venv_command.call_args.kwargs["additional_environment_settings"] == {"PIP_EXTRA_INDEX_URL": ""}
         assert result == os.path.join(staging, "azure_core-1.0.0-py3-none-any.whl")
 
     @patch("azpysdk.apistub.find_whl", return_value="azure_core-1.0.0-py3-none-any.whl")
@@ -512,12 +513,15 @@ class TestRunOutputDirectory:
 
         assert run.call_count == 2
         assert "--index-url=https://pypi.org/simple/" in run.call_args_list[1].args[1]
+        assert all(
+            call.kwargs["additional_environment_settings"] == {"PIP_EXTRA_INDEX_URL": ""} for call in run.call_args_list
+        )
         assert result == os.path.join(str(tmp_path), "azure_core-1.0.0-py3-none-any.whl")
 
-    def test_download_pypi_wheel_reports_both_index_failures(self, tmp_path):
+    def test_download_pypi_wheel_reports_both_index_failures(self, tmp_path, caplog):
         """download_pypi_wheel should propagate the public PyPI failure after both indexes fail."""
         stub = apistub()
-        public_pypi_error = CalledProcessError(2, "pip")
+        public_pypi_error = CalledProcessError(2, "pip", stderr="public PyPI unavailable")
 
         with patch.object(
             stub, "run_venv_command", side_effect=[CalledProcessError(1, "pip"), public_pypi_error]
@@ -527,6 +531,7 @@ class TestRunOutputDirectory:
 
         assert run.call_count == 2
         assert exc_info.value is public_pypi_error
+        assert "public PyPI unavailable" in caplog.text
 
     @patch("azpysdk.apistub.find_whl", return_value=None)
     def test_download_pypi_wheel_raises_when_no_wheel(self, _find_whl, tmp_path):
