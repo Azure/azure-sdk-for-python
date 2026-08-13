@@ -21,7 +21,6 @@ from azure.storage.blob import (
     ContainerClient,
     generate_blob_sas,
 )
-from azure.storage.blob._list_blobs_helper import _parse_arrow_response
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
