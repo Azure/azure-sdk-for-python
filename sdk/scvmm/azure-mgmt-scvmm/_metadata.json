@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2025-03-13",
+  "apiVersions": {
+    "Microsoft.ScVmm": "2025-03-13"
+  },
+  "commit": "aedbe3cd3521b92b9e15de1a532d5e4d81eddf90",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/scvmm/ScVmm.Management",
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.35.1"
+}

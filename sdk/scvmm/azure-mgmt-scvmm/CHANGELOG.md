@@ -1,5 +1,44 @@
 # Release History
 
+## 2.0.0 (2026-08-13)
+
+### Features Added
+
+  - Client `ScVmmMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ScVmmMgmtClient` added method `send_request`
+  - Model `CloudCapacity` added property `storage_gb`
+  - Model `GuestAgentProperties` added property `private_link_scope_resource_id`
+  - Model `OsProfileForVmInstance` added property `admin_username`
+  - Model `OsProfileForVmInstance` added property `domain_name`
+  - Model `OsProfileForVmInstance` added property `domain_password`
+  - Model `OsProfileForVmInstance` added property `domain_username`
+  - Model `OsProfileForVmInstance` added property `product_key`
+  - Model `OsProfileForVmInstance` added property `run_once_commands`
+  - Model `OsProfileForVmInstance` added property `timezone`
+  - Model `OsProfileForVmInstance` added property `workgroup`
+  - Model `VirtualMachineInventoryItem` added property `generation`
+  - Added model `ExtensionResource`
+
+### Breaking Changes
+
+  - Deleted or renamed model `AvailabilitySetListResult`
+  - Deleted or renamed model `CloudListResult`
+  - Deleted or renamed model `GuestAgentListResult`
+  - Deleted or renamed model `InventoryItemListResult`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `VirtualMachineInstanceListResult`
+  - Deleted or renamed model `VirtualMachineTemplateListResult`
+  - Deleted or renamed model `VirtualNetworkListResult`
+  - Deleted or renamed model `VmInstanceHybridIdentityMetadataListResult`
+  - Deleted or renamed model `VmmServerListResult`
+  - Method `AvailabilitySetsOperations.begin_delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+  - Method `CloudsOperations.begin_delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineInstancesOperations.begin_delete` changed its parameter `delete_from_host` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineInstancesOperations.begin_delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineTemplatesOperations.begin_delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualNetworksOperations.begin_delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+  - Method `VmmServersOperations.begin_delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+
 ## 1.0.0 (2024-06-20)
 
 ### Features Added
