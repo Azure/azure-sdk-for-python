@@ -115,6 +115,7 @@ class apistub(Check):
                 "--only-binary=:all:",
                 "-d",
                 staging_directory,
+                "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
             ],
             cwd=staging_directory,
             check=True,
