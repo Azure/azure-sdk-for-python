@@ -56,6 +56,42 @@ _CREDENTIAL_FIELD = re.compile(
     r"client_(?:assertion|secret)|private_key|connection_string|sas(?:_token|_url)?|account_key|"
     r"subscription_key|shared_access_(?:key|signature))(?:_|$)"
 )
+_COMPACT_CREDENTIAL_FIELDS = frozenset(
+    {
+        "accesskey",
+        "accesstoken",
+        "accountkey",
+        "apikey",
+        "apitoken",
+        "authorization",
+        "authorizationheader",
+        "authtoken",
+        "azurepwd",
+        "azuresas",
+        "bearertoken",
+        "clientassertion",
+        "clientsecret",
+        "connectionstring",
+        "credential",
+        "credentials",
+        "idtoken",
+        "password",
+        "passwd",
+        "privatekey",
+        "pwd",
+        "refreshtoken",
+        "sas",
+        "sastoken",
+        "sasurl",
+        "secret",
+        "secretvalue",
+        "sharedaccesskey",
+        "sharedaccesssignature",
+        "subscriptionkey",
+    }
+)
+_COMPACT_CREDENTIAL_SUFFIXES = _COMPACT_CREDENTIAL_FIELDS - {"azurepwd", "azuresas", "pwd", "sas"}
+_COMPACT_CREDENTIAL_MARKERS = _COMPACT_CREDENTIAL_SUFFIXES - {"secret"}
 _VOICE_TYPE_ALIASES = {"azure-platform": "azure-standard", "custom": "azure-custom"}
 _VOICE_TYPES = {
     "openai",
@@ -65,6 +101,20 @@ _VOICE_TYPES = {
     "avatar-voice-sync",
     "azure-realtime-native",
 }
+_VOICE_STRING_FIELDS = frozenset({"endpoint_id", "model", "name"})
+_VOICE_NON_EMPTY_STRING_FIELDS = frozenset({"endpoint_id", "name"})
+_VOICE_NULLABLE_STRING_FIELDS = frozenset(
+    {
+        "custom_lexicon_url",
+        "custom_text_normalization_url",
+        "locale",
+        "multi_talker_speaker_name",
+        "pitch",
+        "rate",
+        "style",
+        "volume",
+    }
+)
 _RFC3339 = re.compile(
     r"^(?P<date>[0-9]{4}-[0-9]{2}-[0-9]{2})T(?P<time>(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])"
     r"(?:\.[0-9]{1,9})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$"
@@ -599,16 +649,50 @@ def _normalize_voice(value: Mapping[str, Any] | None) -> dict[str, Any] | None:
         raise TypeError("voice must be a non-empty mapping")
     materialized = cast(dict[str, Any], _thaw_json(value))
     _validate_json_tree(materialized)
-    voice_type = materialized.get("type")
-    if "type" not in materialized:
-        return materialized
-    if not isinstance(voice_type, str):
-        raise TypeError("voice.type must be a string")
-    voice_type = _VOICE_TYPE_ALIASES.get(voice_type, voice_type)
-    if voice_type not in _VOICE_TYPES:
-        raise ValueError("voice.type is not a supported Voice Live variant")
-    materialized["type"] = voice_type
+    if "type" in materialized:
+        voice_type = materialized["type"]
+        if not isinstance(voice_type, str):
+            raise TypeError("voice.type must be a string")
+        voice_type = _VOICE_TYPE_ALIASES.get(voice_type, voice_type)
+        if voice_type not in _VOICE_TYPES:
+            raise ValueError("voice.type is not a supported Voice Live variant")
+        materialized["type"] = voice_type
+
+    for field_name in _VOICE_STRING_FIELDS:
+        if field_name in materialized:
+            _validate_string_value(
+                materialized[field_name],
+                f"voice.{field_name}",
+                non_empty=field_name in _VOICE_NON_EMPTY_STRING_FIELDS,
+            )
+
+    for field_name in _VOICE_NULLABLE_STRING_FIELDS:
+        field_value = materialized.get(field_name)
+        if field_value is not None:
+            if not isinstance(field_value, str):
+                raise TypeError(f"voice.{field_name} must be a string or null")
+            _validate_string_value(field_value, f"voice.{field_name}")
+
+    temperature = materialized.get("temperature")
+    if temperature is not None:
+        if isinstance(temperature, bool) or not isinstance(temperature, (int, float)):
+            raise TypeError("voice.temperature must be a number or null")
+        if not 0.0 <= temperature <= 1.0:
+            raise ValueError("voice.temperature must be between 0.0 and 1.0")
+
+    prefer_locales = materialized.get("prefer_locales")
+    if prefer_locales is not None:
+        if not isinstance(prefer_locales, list) or any(not isinstance(locale, str) for locale in prefer_locales):
+            raise TypeError("voice.prefer_locales must be an array of strings or null")
+        for locale in prefer_locales:
+            _validate_string_value(locale, "voice.prefer_locales")
     return materialized
+
+
+def _normalize_field_name(value: Any) -> str:
+    key_text = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", str(value))
+    key_text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", key_text).casefold()
+    return re.sub(r"[^a-z0-9]+", "_", key_text).strip("_")
 
 
 def _reject_caller_credentials(value: Mapping[str, Any]) -> None:
@@ -617,9 +701,14 @@ def _reject_caller_credentials(value: Mapping[str, Any]) -> None:
         current = pending.pop()
         if isinstance(current, Mapping):
             for key, item in current.items():
-                key_text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", str(key)).casefold()
-                normalized_key = re.sub(r"[^a-z0-9]+", "_", key_text).strip("_")
-                if _CREDENTIAL_FIELD.search(normalized_key):
+                normalized_key = _normalize_field_name(key)
+                compact_key = normalized_key.replace("_", "")
+                if (
+                    _CREDENTIAL_FIELD.search(normalized_key)
+                    or compact_key in _COMPACT_CREDENTIAL_FIELDS
+                    or any(compact_key.endswith(suffix) for suffix in _COMPACT_CREDENTIAL_SUFFIXES)
+                    or any(marker in compact_key for marker in _COMPACT_CREDENTIAL_MARKERS)
+                ):
                     raise VoiceProtocolError("session.start caller must not contain credentials")
                 pending.append(item)
         elif isinstance(current, Sequence) and not isinstance(current, (str, bytes, bytearray)):

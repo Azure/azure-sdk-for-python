@@ -109,6 +109,25 @@ def test_session_start_caller_is_deeply_read_only():
         {"future_context": {"secretValue": "customer-secret"}},
         {"future_context": {"authorizationHeader": "Bearer customer-secret"}},
         {"future_context": {"sas_url": "https://example.test/?sig=customer-secret"}},
+        {"future_context": {"APIKey": "customer-secret"}},
+        {"future_context": {"APIKEY": "customer-secret"}},
+        {"future_context": {"SASUrl": "https://example.test/?sig=customer-secret"}},
+        {"future_context": {"SASURL": "https://example.test/?sig=customer-secret"}},
+        {"future_context": {"ClientSecret": "customer-secret"}},
+        {"future_context": {"CLIENTSECRET": "customer-secret"}},
+        {"future_context": {"AUTHORIZATIONHEADER": "Bearer customer-secret"}},
+        {"future_context": {"AZUREAPIKEY": "customer-secret"}},
+        {"future_context": {"PROXYAUTHORIZATION": "Bearer customer-secret"}},
+        {"future_context": {"XAPITOKEN": "customer-secret"}},
+        {"future_context": {"SERVICECLIENTSECRET": "customer-secret"}},
+        {"future_context": {"PROXYSECRET": "customer-secret"}},
+        {"future_context": {"AZURESAS": "customer-secret"}},
+        {"future_context": {"AZUREPWD": "customer-secret"}},
+        {"future_context": {"password_count": 1}},
+        {"future_context": {"password-count": 1}},
+        {"future_context": {"passwordCount": 1}},
+        {"future_context": {"PasswordCount": 1}},
+        {"future_context": {"PASSWORDCOUNT": 1}},
     ],
 )
 def test_session_start_rejects_credential_bearing_caller_context(caller):
@@ -131,12 +150,34 @@ def test_session_start_preserves_safe_open_caller_context():
             protocol_version="1.0",
             reconnect=False,
             response_timeouts={"first_output_ms": 1, "idle_ms": 2, "max_duration_ms": 3},
-            caller={"future_context": {"token_count": 7, "secretary_name": "Ada"}},
+            caller={
+                "future_context": {
+                    "token_count": 7,
+                    "secretary_name": "Ada",
+                    "SECRETARYNAME": "Grace",
+                    "apiVersion": "2026-08-13",
+                    "APIStatus": "available",
+                    "KANSAS": "Wichita",
+                    "sessionId": "session-1",
+                    "sasquatch": True,
+                }
+            },
         )
     )
 
     assert event is not None
-    assert event.caller == {"future_context": {"token_count": 7, "secretary_name": "Ada"}}
+    assert event.caller == {
+        "future_context": {
+            "token_count": 7,
+            "secretary_name": "Ada",
+            "SECRETARYNAME": "Grace",
+            "apiVersion": "2026-08-13",
+            "APIStatus": "available",
+            "KANSAS": "Wichita",
+            "sessionId": "session-1",
+            "sasquatch": True,
+        }
+    }
 
 
 def test_session_start_rejects_invalid_unicode_in_caller_key():
@@ -303,6 +344,231 @@ def test_outbound_voice_rejects_invalid_configuration(voice):
 
     with pytest.raises((TypeError, ValueError)):
         encode_outbound_message(event)
+
+
+@pytest.mark.parametrize(
+    ("voice", "error_type", "message"),
+    [
+        pytest.param({"name": None}, TypeError, "voice.name must be a string", id="name-null"),
+        pytest.param({"name": 42}, TypeError, "voice.name must be a string", id="name-type"),
+        pytest.param({"name": ""}, ValueError, "voice.name must be non-empty", id="name-empty"),
+        pytest.param(
+            {"endpoint_id": None},
+            TypeError,
+            "voice.endpoint_id must be a string",
+            id="endpoint-null",
+        ),
+        pytest.param(
+            {"endpoint_id": 123},
+            TypeError,
+            "voice.endpoint_id must be a string",
+            id="endpoint-type",
+        ),
+        pytest.param(
+            {"endpoint_id": ""},
+            ValueError,
+            "voice.endpoint_id must be non-empty",
+            id="endpoint-empty",
+        ),
+        pytest.param({"model": None}, TypeError, "voice.model must be a string", id="model-null"),
+        pytest.param({"model": []}, TypeError, "voice.model must be a string", id="model-type"),
+        pytest.param(
+            {"temperature": True},
+            TypeError,
+            "voice.temperature must be a number or null",
+            id="temperature-bool",
+        ),
+        pytest.param(
+            {"temperature": "0.5"},
+            TypeError,
+            "voice.temperature must be a number or null",
+            id="temperature-type",
+        ),
+        pytest.param(
+            {"temperature": float("nan")},
+            VoiceProtocolError,
+            "Voice frame contains a non-finite number",
+            id="temperature-nan",
+        ),
+        pytest.param(
+            {"temperature": float("inf")},
+            VoiceProtocolError,
+            "Voice frame contains a non-finite number",
+            id="temperature-positive-inf",
+        ),
+        pytest.param(
+            {"temperature": float("-inf")},
+            VoiceProtocolError,
+            "Voice frame contains a non-finite number",
+            id="temperature-negative-inf",
+        ),
+        pytest.param(
+            {"temperature": -0.01},
+            ValueError,
+            "voice.temperature must be between 0.0 and 1.0",
+            id="temperature-low",
+        ),
+        pytest.param(
+            {"temperature": 1.01},
+            ValueError,
+            "voice.temperature must be between 0.0 and 1.0",
+            id="temperature-high",
+        ),
+        pytest.param(
+            {"locale": 1},
+            TypeError,
+            "voice.locale must be a string or null",
+            id="locale-type",
+        ),
+        pytest.param(
+            {"style": False},
+            TypeError,
+            "voice.style must be a string or null",
+            id="style-type",
+        ),
+        pytest.param(
+            {"pitch": []},
+            TypeError,
+            "voice.pitch must be a string or null",
+            id="pitch-type",
+        ),
+        pytest.param(
+            {"rate": {}},
+            TypeError,
+            "voice.rate must be a string or null",
+            id="rate-type",
+        ),
+        pytest.param(
+            {"volume": 1.0},
+            TypeError,
+            "voice.volume must be a string or null",
+            id="volume-type",
+        ),
+        pytest.param(
+            {"custom_lexicon_url": 1},
+            TypeError,
+            "voice.custom_lexicon_url must be a string or null",
+            id="lexicon-type",
+        ),
+        pytest.param(
+            {"custom_text_normalization_url": []},
+            TypeError,
+            "voice.custom_text_normalization_url must be a string or null",
+            id="normalization-type",
+        ),
+        pytest.param(
+            {"multi_talker_speaker_name": 1},
+            TypeError,
+            "voice.multi_talker_speaker_name must be a string or null",
+            id="speaker-type",
+        ),
+        pytest.param(
+            {"prefer_locales": "en-US"},
+            TypeError,
+            "voice.prefer_locales must be an array of strings or null",
+            id="locales-type",
+        ),
+        pytest.param(
+            {"prefer_locales": ["en-US", 1]},
+            TypeError,
+            "voice.prefer_locales must be an array of strings or null",
+            id="locale-item-type",
+        ),
+    ],
+)
+def test_outbound_voice_rejects_invalid_known_field(voice, error_type, message):
+    event = ResponseOutputTextDone(response_id="r_1", item_id="it_1", text="hello", voice=voice)
+
+    with pytest.raises(error_type, match=message):
+        encode_outbound_message(event)
+
+
+@pytest.mark.parametrize("temperature", [0, 0.0, 0.5, 1, 1.0, None])
+def test_outbound_voice_accepts_temperature_boundaries(temperature):
+    event = ResponseOutputTextDone(
+        response_id="r_1",
+        item_id="it_1",
+        text="hello",
+        voice={"temperature": temperature},
+    )
+
+    assert json.loads(encode_outbound_message(event))["voice"] == {"temperature": temperature}
+
+
+def test_outbound_voice_accepts_empty_model_as_string_field_shape():
+    event = ResponseOutputTextDone(
+        response_id="r_1",
+        item_id="it_1",
+        text="hello",
+        voice={"model": ""},
+    )
+
+    assert json.loads(encode_outbound_message(event))["voice"] == {"model": ""}
+
+
+@pytest.mark.parametrize(
+    ("alias", "normalized"),
+    [("azure-platform", "azure-standard"), ("custom", "azure-custom")],
+)
+def test_outbound_voice_writes_alias_normalization_to_wire(alias, normalized):
+    event = ResponseOutputTextDone(
+        response_id="r_1",
+        item_id="it_1",
+        text="hello",
+        voice={"type": alias},
+    )
+
+    assert json.loads(encode_outbound_message(event))["voice"] == {"type": normalized}
+    assert event.voice == {"type": alias}
+
+
+def test_outbound_voice_validation_failure_is_repeatable_and_does_not_mutate_model():
+    event = ResponseOutputTextDone(
+        response_id="r_1",
+        item_id="it_1",
+        text="hello",
+        voice={
+            "type": "azure-platform",
+            "temperature": 2.0,
+            "prefer_locales": ["en-US"],
+        },
+    )
+
+    for _ in range(2):
+        with pytest.raises(ValueError, match="voice.temperature must be between 0.0 and 1.0"):
+            encode_outbound_message(event)
+        assert event.voice == {
+            "type": "azure-platform",
+            "temperature": 2.0,
+            "prefer_locales": ("en-US",),
+        }
+
+
+def test_outbound_voice_accepts_all_known_fields_and_preserves_unknown_fields():
+    voice = {
+        "type": "azure-platform",
+        "name": "en-US-Ava",
+        "endpoint_id": "endpoint-1",
+        "model": "model-1",
+        "temperature": 0.5,
+        "locale": None,
+        "style": "chat",
+        "pitch": None,
+        "rate": "+10%",
+        "volume": None,
+        "custom_lexicon_url": "https://example.test/lexicon.xml",
+        "custom_text_normalization_url": None,
+        "prefer_locales": ["en-US", "fr-FR"],
+        "multi_talker_speaker_name": None,
+        "future_field": {"nested": [1, True, None]},
+    }
+    event = ResponseOutputTextDone(response_id="r_1", item_id="it_1", text="hello", voice=voice)
+
+    encoded = json.loads(encode_outbound_message(event))["voice"]
+
+    assert encoded == {**voice, "type": "azure-standard"}
+    assert event.voice["type"] == "azure-platform"
+    assert event.voice["prefer_locales"] == ("en-US", "fr-FR")
 
 
 @pytest.mark.parametrize("mutable_leaf", [bytearray(b"secret"), {"mutable-set"}])
