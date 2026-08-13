@@ -28,6 +28,7 @@ from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _GCM_NONCE_LENGTH,
     _GCM_TAG_LENGTH,
+    _region_nonce_encodings,
     _validate_and_unwrap_cek,
     decrypt_blob,
 )
@@ -634,6 +635,53 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
                 content=reordered,
                 start_offset=0,
                 end_offset=len(plaintext),
+                response_headers=headers,
+            )
+
+    def test_decrypt_rejects_mixed_nonce_encodings(self):
+        # Regression test: the supported SDK nonce encodings share a value space, so accepting
+        # them independently per region would weaken reorder detection. For example Java's
+        # nonce for region 1 is identical to .NET's nonce for region 16,777,215, so a Java
+        # region could be moved to that position and still pass a per-region union check.
+        # decrypt_blob must instead select a single encoding and enforce it consistently.
+        encodings = _region_nonce_encodings(_GCM_NONCE_LENGTH)
+        # Document the overlap that motivates single-encoding enforcement.
+        assert encodings["java"](1) == encodings["dotnet"](16_777_215)
+
+        kek = KeyWrapper("key1")
+        cek = os.urandom(32)
+        region_data_length = 32
+        aesgcm = AESGCM(cek)
+
+        # Region 0 uses the Java/Python encoding (all zeros); region 1 uses the .NET encoding.
+        # A per-region union check would accept both; single-encoding enforcement rejects the mix.
+        region0_nonce = encodings["java"](0)
+        region1_nonce = encodings["dotnet"](1)
+        region0 = region0_nonce + aesgcm.encrypt(region0_nonce, b"\x00" * region_data_length, None)
+        region1 = region1_nonce + aesgcm.encrypt(region1_nonce, b"\x11" * region_data_length, None)
+
+        wrapped_cek = kek.wrap_key(b"2.0".ljust(8, b"\x00") + cek)
+        encryption_data = {
+            "WrappedContentKey": {
+                "KeyId": kek.get_kid(),
+                "EncryptedKey": base64.b64encode(wrapped_cek).decode(),
+                "Algorithm": kek.get_key_wrap_algorithm(),
+            },
+            "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm": "AES_GCM_256"},
+            "EncryptedRegionInfo": {"DataLength": region_data_length, "NonceLength": _GCM_NONCE_LENGTH},
+            "KeyWrappingMetadata": {"EncryptionLibrary": "Mixed"},
+        }
+        headers = {"x-ms-meta-encryptiondata": dumps(encryption_data)}
+
+        # Act / Assert -- the mixed encoding is rejected rather than silently accepted.
+        with pytest.raises(ValueError):
+            decrypt_blob(
+                require_encryption=True,
+                key_encryption_key=kek,
+                key_resolver=None,
+                content=region0 + region1,
+                start_offset=0,
+                end_offset=2 * region_data_length,
                 response_headers=headers,
             )
 
