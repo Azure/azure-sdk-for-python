@@ -291,6 +291,89 @@ def test_voice_upgrade_binds_context_and_returns_server_header(monkeypatch):
     assert (platform_context.call_id, platform_context.user_id, platform_context.session_id) == (None, None, None)
 
 
+@pytest.mark.asyncio
+async def test_voice_cleanup_callbacks_and_diagnostics_keep_connection_context(monkeypatch):
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "cleanup-session")
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.disconnect", "code": 1001},
+    ]
+    expected_trace_id = "11111111111111111111111111111111"
+    observations = []
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(_message):
+        return None
+
+    websocket = _websocket_with_headers(
+        [
+            (b"x-agent-foundry-call-id", b"cleanup-call"),
+            (b"x-agent-user-id", b"cleanup-user"),
+            (b"x-request-id", b"cleanup-request"),
+            (b"traceparent", f"00-{expected_trace_id}-2222222222222222-01".encode()),
+        ]
+    )
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+
+    def observe(stage, session=None):
+        platform_context = get_request_context()
+        span_context = trace.get_current_span().get_span_context()
+        observations.append(
+            (
+                stage,
+                platform_context.call_id,
+                platform_context.user_id,
+                platform_context.session_id,
+                baggage.get_baggage("x_request_id"),
+                f"{span_context.trace_id:032x}",
+            )
+        )
+        if session is not None:
+            assert Session._current(websocket) is None  # pylint: disable=protected-access
+
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        observe("terminating", session)
+
+    @app.on_disconnect
+    async def on_disconnect(session, _event):
+        observe("disconnect", session)
+
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, _code, _duration_ms, *, error_code=None: observe("telemetry")
+    )
+
+    baseline_platform_context = get_request_context()
+    baseline_trace_id = trace.get_current_span().get_span_context().trace_id
+    baseline_request_id = baggage.get_baggage("x_request_id")
+
+    await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
+
+    assert observations == [
+        ("terminating", "cleanup-call", "cleanup-user", "cleanup-session", "cleanup-request", expected_trace_id),
+        ("disconnect", "cleanup-call", "cleanup-user", "cleanup-session", "cleanup-request", expected_trace_id),
+        ("telemetry", "cleanup-call", "cleanup-user", "cleanup-session", "cleanup-request", expected_trace_id),
+    ]
+    platform_context = get_request_context()
+    assert (
+        platform_context.call_id,
+        platform_context.user_id,
+        platform_context.session_id,
+        trace.get_current_span().get_span_context().trace_id,
+        baggage.get_baggage("x_request_id"),
+    ) == (
+        baseline_platform_context.call_id,
+        baseline_platform_context.user_id,
+        baseline_platform_context.session_id,
+        baseline_trace_id,
+        baseline_request_id,
+    )
+
+
 def test_voice_upgrade_preserves_repeated_w3c_headers():
     expected_trace_id = "11111111111111111111111111111111"
     websocket = _websocket_with_headers(
@@ -679,6 +762,71 @@ async def test_voice_accept_local_timeout_is_not_connection_cancellation():
     assert not endpoint_task.cancelled()
     assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
     assert close_events == [(1011, "accept_failed")]
+
+
+@pytest.mark.asyncio
+async def test_voice_accept_direct_cancellation_emits_one_diagnostic_without_cleanup_or_close_io():
+    app = VoiceAgentServerHost(configure_observability=None)
+    accept_started = asyncio.Event()
+    close_events = []
+    terminating_sessions = []
+    disconnects = []
+    sent_messages = []
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
+
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        terminating_sessions.append(session)
+
+    @app.on_disconnect
+    async def on_disconnect(_session, event):
+        disconnects.append(event)
+
+    async def receive():
+        return {"type": "websocket.connect"}
+
+    async def send(message):
+        sent_messages.append(message)
+        if message["type"] == "websocket.accept":
+            accept_started.set()
+            await asyncio.Future()
+
+    websocket = _websocket_with_headers(
+        [
+            (b"x-agent-foundry-call-id", b"accept-call"),
+            (b"traceparent", b"00-11111111111111111111111111111111-2222222222222222-01"),
+        ]
+    )
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+
+    def emit_close_event(_session_id, code, _duration_ms, *, error_code=None):
+        close_events.append(
+            (
+                code,
+                error_code,
+                get_request_context().call_id,
+                f"{trace.get_current_span().get_span_context().trace_id:032x}",
+            )
+        )
+
+    app._emit_close_event = emit_close_event  # type: ignore[method-assign]  # pylint: disable=protected-access
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    await asyncio.wait_for(accept_started.wait(), timeout=1)
+    endpoint_task.cancel("accept-direct-cancel")
+
+    with pytest.raises(asyncio.CancelledError) as raised:
+        await asyncio.wait_for(endpoint_task, timeout=1)
+
+    assert raised.value.args == (("accept-direct-cancel",) if sys.version_info >= (3, 11) else ())
+    assert close_events == [(1011, "cancelled", "accept-call", "11111111111111111111111111111111")]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+    assert terminating_sessions == []
+    assert disconnects == []
+    assert Session._current(websocket) is None  # pylint: disable=protected-access
+    assert set(session_module._CLOSE_ATTEMPTS) == baseline_attempts  # pylint: disable=protected-access
+    assert get_request_context().call_id is None
 
 
 @pytest.mark.asyncio
@@ -1078,13 +1226,189 @@ async def test_voice_recovers_cancellation_wrapped_during_accept():
         assert raised.value is captured_cancellations[0]
         assert raised.value.args == ("accept-wrapper-cancel",)
         assert [message["type"] for message in sent_messages] == ["websocket.accept"]
-        assert close_events == []
+        assert close_events == [(1011, "cancelled")]
     else:
         await asyncio.wait_for(endpoint_task, timeout=1)
         assert len(captured_cancellations) == 1
         assert not endpoint_task.cancelled()
         assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
         assert close_events == [(1011, "accept_failed")]
+
+
+@pytest.mark.asyncio
+async def test_voice_accept_cannot_consume_owner_cancellation():
+    app = VoiceAgentServerHost(configure_observability=None)
+    accept_started = asyncio.Event()
+    consumed_cancellations = []
+    terminating_sessions = []
+    close_events = []
+    sent_messages = []
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.receive", "text": "not-json"},
+    ]
+
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        terminating_sessions.append(session)
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+        if message["type"] == "websocket.accept":
+            accept_started.set()
+            try:
+                await asyncio.Future()
+            except asyncio.CancelledError as cancellation:
+                consumed_cancellations.append(cancellation)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    await asyncio.wait_for(accept_started.wait(), timeout=1)
+    endpoint_task.cancel("accept-consumed-owner-cancel")
+
+    if _tracks_task_cancellation_requests():
+        with pytest.raises(asyncio.CancelledError) as raised:
+            await asyncio.wait_for(endpoint_task, timeout=1)
+        assert raised.value.args == ()
+        assert endpoint_task.cancelled()
+        assert terminating_sessions == []
+        assert close_events == [(1011, "cancelled")]
+        assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+    else:
+        await asyncio.wait_for(endpoint_task, timeout=1)
+        assert not endpoint_task.cancelled()
+        assert len(terminating_sessions) == 1
+        assert close_events == [(1002, None)]
+        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+    assert len(consumed_cancellations) == 1
+    assert consumed_cancellations[0].args == ("accept-consumed-owner-cancel",)
+    assert Session._current(websocket) is None  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_voice_receive_cannot_consume_owner_cancellation():
+    app = VoiceAgentServerHost(configure_observability=None)
+    receive_started = asyncio.Event()
+    consumed_cancellations = []
+    terminating_sessions = []
+    close_events = []
+    sent_messages = []
+    inbound_events = [{"type": "websocket.connect"}]
+
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        terminating_sessions.append(session)
+
+    async def receive():
+        if inbound_events:
+            return inbound_events.pop(0)
+        receive_started.set()
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError as cancellation:
+            consumed_cancellations.append(cancellation)
+            return {"type": "websocket.receive", "text": "not-json"}
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    await asyncio.wait_for(receive_started.wait(), timeout=1)
+    endpoint_task.cancel("receive-consumed-owner-cancel")
+
+    if _tracks_task_cancellation_requests():
+        with pytest.raises(asyncio.CancelledError) as raised:
+            await asyncio.wait_for(endpoint_task, timeout=1)
+        assert raised.value.args == ()
+        assert endpoint_task.cancelled()
+        assert close_events == [(1011, "cancelled")]
+        assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+    else:
+        await asyncio.wait_for(endpoint_task, timeout=1)
+        assert not endpoint_task.cancelled()
+        assert close_events == [(1002, None)]
+        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+    assert len(consumed_cancellations) == 1
+    assert consumed_cancellations[0].args == ("receive-consumed-owner-cancel",)
+    assert len(terminating_sessions) == 1
+    assert Session._current(websocket) is None  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_voice_event_callback_cannot_consume_owner_cancellation():
+    app = VoiceAgentServerHost(configure_observability=None)
+    callback_started = asyncio.Event()
+    consumed_cancellations = []
+    terminating_sessions = []
+    close_events = []
+    sent_messages = []
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.receive", "text": json.dumps(_session_start_frame())},
+        {"type": "websocket.receive", "text": "not-json"},
+    ]
+
+    @app.on_session_start
+    async def on_session_start(_session, _event):
+        callback_started.set()
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError as cancellation:
+            consumed_cancellations.append(cancellation)
+
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        terminating_sessions.append(session)
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    await asyncio.wait_for(callback_started.wait(), timeout=1)
+    endpoint_task.cancel("event-consumed-owner-cancel")
+
+    if _tracks_task_cancellation_requests():
+        with pytest.raises(asyncio.CancelledError) as raised:
+            await asyncio.wait_for(endpoint_task, timeout=1)
+        assert raised.value.args == ()
+        assert endpoint_task.cancelled()
+        assert close_events == [(1011, "cancelled")]
+        assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+    else:
+        await asyncio.wait_for(endpoint_task, timeout=1)
+        assert not endpoint_task.cancelled()
+        assert close_events == [(1002, None)]
+        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+    assert len(consumed_cancellations) == 1
+    assert consumed_cancellations[0].args == ("event-consumed-owner-cancel",)
+    assert len(terminating_sessions) == 1
+    assert Session._current(websocket) is None  # pylint: disable=protected-access
 
 
 @pytest.mark.asyncio
@@ -1652,3 +1976,282 @@ async def test_voice_disconnect_callback_failure_preserves_peer_close_code():
     assert close_events == [(1001, "internal_error")]
     close_messages = [message for message in sent_messages if message["type"] == "websocket.close"]
     assert close_messages == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("terminal_source", ["peer", "protocol", "accept_failure"])
+@pytest.mark.parametrize("termination_error_kind", ["exception", "cancellation"])
+async def test_voice_termination_callback_failure_is_internal_error(
+    terminal_source,
+    termination_error_kind,
+):
+    app = VoiceAgentServerHost(configure_observability=None)
+    if terminal_source == "peer":
+        inbound_events = [
+            {"type": "websocket.connect"},
+            {"type": "websocket.disconnect", "code": 1001},
+        ]
+        expected_code = 1001
+        expected_message_types = ["websocket.accept"]
+    elif terminal_source == "protocol":
+        inbound_events = [
+            {"type": "websocket.connect"},
+            {"type": "websocket.receive", "text": "not-json"},
+        ]
+        expected_code = 1002
+        expected_message_types = ["websocket.accept", "websocket.close"]
+    else:
+        inbound_events = [{"type": "websocket.connect"}]
+        expected_code = 1011
+        expected_message_types = ["websocket.accept", "websocket.close"]
+
+    terminating_sessions = []
+    disconnects = []
+    close_events = []
+    sent_messages = []
+
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        terminating_sessions.append(session)
+        if termination_error_kind == "cancellation":
+            raise asyncio.CancelledError("termination hook cancellation")
+        raise RuntimeError("termination hook failed")
+
+    @app.on_disconnect
+    async def on_disconnect(_session, event):
+        disconnects.append(event.code)
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+        if terminal_source == "accept_failure" and message["type"] == "websocket.accept":
+            raise OSError("accept failed after commit")
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    await asyncio.wait_for(endpoint_task, timeout=1)
+
+    assert not endpoint_task.cancelled()
+    assert len(terminating_sessions) == 1
+    assert disconnects == ([1001] if terminal_source == "peer" else [])
+    assert [message["type"] for message in sent_messages] == expected_message_types
+    assert close_events == [(expected_code, "internal_error")]
+
+
+@pytest.mark.asyncio
+async def test_voice_termination_failure_wins_classification_during_endpoint_cancellation():
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.receive", "text": "not-json"},
+    ]
+    termination_contexts = []
+    close_events = []
+    sent_messages = []
+    endpoint_task = None
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
+
+    @app.on_connection_terminating
+    def on_connection_terminating(_session):
+        termination_contexts.append(get_request_context().call_id)
+        assert endpoint_task is asyncio.current_task()
+        endpoint_task.cancel("cleanup-cancel")
+        raise RuntimeError("termination hook failed")
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([(b"x-agent-foundry-call-id", b"cleanup-cancel-call")])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append(
+            (code, error_code, get_request_context().call_id)
+        )
+    )
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    try:
+        with pytest.raises(asyncio.CancelledError) as raised:
+            await asyncio.wait_for(endpoint_task, timeout=1)
+    finally:
+        await _finish_close_attempts(baseline_attempts)
+
+    assert raised.value.args == (("cleanup-cancel",) if sys.version_info >= (3, 11) else ())
+    assert termination_contexts == ["cleanup-cancel-call"]
+    assert close_events == [(1002, "internal_error", "cleanup-cancel-call")]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+    assert get_request_context().call_id is None
+
+
+@pytest.mark.asyncio
+async def test_voice_both_cleanup_hook_failures_preserve_peer_code():
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.disconnect", "code": 1001},
+    ]
+    close_events = []
+    sent_messages = []
+
+    @app.on_connection_terminating
+    def on_connection_terminating(_session):
+        raise RuntimeError("termination hook failed")
+
+    @app.on_disconnect
+    async def on_disconnect(_session, _event):
+        raise RuntimeError("disconnect hook failed")
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
+
+    assert close_events == [(1001, "internal_error")]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+
+
+@pytest.mark.asyncio
+async def test_voice_direct_disconnect_hook_cancellation_is_internal_error():
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.disconnect", "code": 1001},
+    ]
+    close_events = []
+    sent_messages = []
+
+    @app.on_disconnect
+    async def on_disconnect(_session, _event):
+        raise asyncio.CancelledError("hook-local cancellation")
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    await asyncio.wait_for(endpoint_task, timeout=1)
+
+    assert not endpoint_task.cancelled()
+    assert close_events == [(1001, "internal_error")]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+
+
+@pytest.mark.asyncio
+async def test_voice_disconnect_callback_self_cancellation_is_diagnosed():
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.disconnect", "code": 1001},
+    ]
+    close_events = []
+    sent_messages = []
+
+    @app.on_disconnect
+    async def on_disconnect(_session, _event):
+        asyncio.current_task().cancel("disconnect-self-cancel")
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    with pytest.raises(asyncio.CancelledError) as raised:
+        await asyncio.wait_for(endpoint_task, timeout=1)
+
+    assert raised.value.args == (("disconnect-self-cancel",) if sys.version_info >= (3, 11) else ())
+    assert endpoint_task.cancelled()
+    assert close_events == [(1001, "cancelled")]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+
+
+@pytest.mark.asyncio
+async def test_voice_disconnect_callback_cannot_consume_owner_cancellation():
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.disconnect", "code": 1001},
+    ]
+    callback_started = asyncio.Event()
+    consumed_cancellations = []
+    close_events = []
+    sent_messages = []
+
+    @app.on_disconnect
+    async def on_disconnect(_session, _event):
+        callback_started.set()
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError as cancellation:
+            consumed_cancellations.append(cancellation)
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    await asyncio.wait_for(callback_started.wait(), timeout=1)
+    endpoint_task.cancel("consumed-owner-cancel")
+
+    if _tracks_task_cancellation_requests():
+        with pytest.raises(asyncio.CancelledError) as raised:
+            await asyncio.wait_for(endpoint_task, timeout=1)
+        assert len(consumed_cancellations) == 1
+        assert consumed_cancellations[0].args == ("consumed-owner-cancel",)
+        assert raised.value.args == ()
+        assert endpoint_task.cancelled()
+        assert close_events == [(1001, "cancelled")]
+    else:
+        await asyncio.wait_for(endpoint_task, timeout=1)
+        assert len(consumed_cancellations) == 1
+        assert not endpoint_task.cancelled()
+        assert close_events == [(1001, None)]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
