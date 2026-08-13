@@ -13,9 +13,11 @@ the AMQP link itself failed. Matches the .NET, Java and Go SDKs.
 
 from unittest.mock import MagicMock
 
+import struct
+
 import pytest
 
-from azure.servicebus._common.constants import REQUEST_RESPONSE_TIMEOUT
+from azure.servicebus._common.constants import MAX_SERVER_TIMEOUT_MS, REQUEST_RESPONSE_TIMEOUT
 from azure.servicebus._common.utils import get_server_timeout_ms
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 
@@ -45,6 +47,16 @@ class TestServerTimeoutMillis:
         assert REQUEST_RESPONSE_TIMEOUT == b"com.microsoft:server-timeout"
         encoded = PyamqpTransport.AMQP_UINT_VALUE(get_server_timeout_ms(None))
         assert encoded == {"TYPE": "UINT", "VALUE": 60000}
+
+    @pytest.mark.parametrize("remaining_seconds", [4294968, 5_000_000, 1e12, float("inf")])
+    def test_capped_at_the_amqp_uint_maximum(self, remaining_seconds):
+        # `timeout` is only bounded at zero, so a large value would overflow the uint encoder.
+        result = get_server_timeout_ms(remaining_seconds)
+        assert result <= MAX_SERVER_TIMEOUT_MS
+        struct.pack(">I", result)  # raises if it does not fit
+
+    def test_just_below_the_cap_is_not_clamped(self):
+        assert get_server_timeout_ms(4294967) == 4294966000
 
 
 class TestManagementRequestSetsServerTimeout:

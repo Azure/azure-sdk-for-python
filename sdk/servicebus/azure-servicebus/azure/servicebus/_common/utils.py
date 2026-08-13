@@ -39,6 +39,7 @@ from .constants import (
     USER_AGENT_PREFIX,
     DEFAULT_SERVER_TIMEOUT_MS,
     SERVER_TIMEOUT_BUFFER_MS,
+    MAX_SERVER_TIMEOUT_MS,
 )
 from ..amqp import AmqpAnnotatedMessage
 
@@ -95,7 +96,8 @@ def get_server_timeout_ms(timeout: Optional[float]) -> int:
     """Return the server-timeout for a management operation, in milliseconds.
 
     This is a service-side bound, not a client-side one. It clamps at zero, since under
-    a second of remaining time there is no room for the service to answer first.
+    a second of remaining time there is no room for the service to answer first, and at
+    the AMQP uint maximum, since the value is encoded as one.
 
     :param float or None timeout: The caller's remaining timeout in seconds, or None.
     :rtype: int
@@ -103,8 +105,9 @@ def get_server_timeout_ms(timeout: Optional[float]) -> int:
     """
     if timeout is None:
         return DEFAULT_SERVER_TIMEOUT_MS
-    remaining_ms = int(timeout * 1000) - SERVER_TIMEOUT_BUFFER_MS
-    return max(remaining_ms, 0)
+    capped = min(timeout, MAX_SERVER_TIMEOUT_MS / 1000)
+    remaining_ms = int(capped * 1000) - SERVER_TIMEOUT_BUFFER_MS
+    return min(max(remaining_ms, 0), MAX_SERVER_TIMEOUT_MS)
 
 
 def build_uri(address, entity):
