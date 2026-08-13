@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-  - Regular release
+  - First GA
 
 ## 1.0.0b1 (2026-06-12)
 
