@@ -943,7 +943,7 @@ class Model(_MyMutableMapping):
                         if deser:
                             result[rest_name] = deser(attr_val)
                         else:
-                            result[rest_name] = attr_val
+                            result[rest_name] = _deserialize(rf_type, attr_val)
                 elif kind == 2:  # unwrapped array
                     items = element.findall(items_name)  # pyright: ignore
                     if len(items) > 0:
@@ -960,7 +960,7 @@ class Model(_MyMutableMapping):
                         if deser:
                             result[rest_name] = deser(element.text)
                         else:
-                            result[rest_name] = element.text
+                            result[rest_name] = _deserialize(rf_type, element.text)
         else:
             model_meta = getattr(self, "_xml", {})
             for rf in self._attr_to_rest_field.values():

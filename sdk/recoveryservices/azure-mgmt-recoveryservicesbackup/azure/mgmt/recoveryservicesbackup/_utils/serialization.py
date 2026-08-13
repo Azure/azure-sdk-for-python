@@ -1129,6 +1129,10 @@ class Serializer:  # pylint: disable=too-many-public-methods
         """
         if isinstance(attr, str):
             attr = isodate.parse_duration(attr)
+        if isinstance(attr, isodate.Duration):
+            raise SerializationError(
+                "Numeric duration formats do not support ISO 8601 durations containing years or months."
+            )
         value = attr.total_seconds() * scale if isinstance(attr, datetime.timedelta) else attr
         return int(value) if as_int else float(value)
 
@@ -1497,11 +1501,12 @@ class Deserializer:
             if target_obj == "int":
                 return int(response_data)
             if target_obj == "bool":
-                if response_data in ("true", "1", "True"):
+                normalized = response_data.strip().lower()
+                if normalized in ("true", "1"):
                     return True
-                if response_data in ("false", "0", "False"):
+                if normalized in ("false", "0"):
                     return False
-                return bool(response_data)
+                raise DeserializationError("Cannot deserialize {!r} to bool.".format(response_data))
             if target_obj == "rfc-1123":
                 return Deserializer.deserialize_rfc(response_data)
             if target_obj == "bytearray":
