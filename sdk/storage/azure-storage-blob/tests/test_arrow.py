@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -11,7 +11,17 @@ import pytest
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.storage.blob import BlobPrefix, BlobProperties, BlobServiceClient, BlobType, ContainerClient
+from azure.storage.blob import (
+    BlobClient,
+    BlobPrefix,
+    BlobProperties,
+    BlobSasPermissions,
+    BlobServiceClient,
+    BlobType,
+    ContainerClient,
+    generate_blob_sas,
+)
+from azure.storage.blob._list_blobs_helper import _parse_arrow_response
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -189,6 +199,17 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
         assert blob.deleted
         assert blob.deleted_time is not None
         assert blob.remaining_retention_days is not None
+
+    def _wait_for_async_copy(self, blob_client) -> BlobProperties:
+        count = 0
+        props = blob_client.get_blob_properties()
+        while props.copy.status == "pending":
+            count += 1
+            if count > 15:
+                pytest.fail("Timed out waiting for async copy to complete.")
+            self.sleep(6)
+            props = blob_client.get_blob_properties()
+        return props
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -522,6 +543,50 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
 
         # The first blob has every property populated so we can assert the XML was fully deserialized.
         self.verify_all_fields(first_page[0])
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_arrow_list_blobs_populates_copy_destination_snapshot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        token_credential = self.get_credential(BlobServiceClient)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        container = self.bsc.create_container(self.get_resource_name("utcontainerarrow"))
+
+        try:
+            source_blob = container.get_blob_client("source_page_blob")
+            source_blob.create_page_blob(size=1024)
+            source_blob.upload_page(b"a" * 512, offset=0, length=512)
+            source_snapshot = source_blob.create_snapshot()
+
+            expiry = datetime.utcnow() + timedelta(hours=1)
+            user_delegation_key = self.bsc.get_user_delegation_key(datetime.utcnow(), expiry)
+            snapshot_blob = BlobClient.from_blob_url(source_blob.url, credential=token_credential, snapshot=source_snapshot)
+            sas_token = self.generate_sas(
+                generate_blob_sas,
+                snapshot_blob.account_name,
+                snapshot_blob.container_name,
+                snapshot_blob.blob_name,
+                snapshot=snapshot_blob.snapshot,
+                permission=BlobSasPermissions(read=True),
+                expiry=expiry,
+                user_delegation_key=user_delegation_key,
+            )
+            source_sas_url = BlobClient.from_blob_url(snapshot_blob.url, credential=sas_token).url
+
+            dest_blob = container.get_blob_client("dest_incremental_copy")
+            dest_blob.start_copy_from_url(source_sas_url, incremental_copy=True)
+            expected = self._wait_for_async_copy(dest_blob).copy.destination_snapshot
+            assert expected is not None  # the copy must have produced a destination snapshot
+
+            dest = next(
+                blob
+                for blob in container.list_blobs(response_format="arrow", include=["copy"])
+                if blob.name == "dest_incremental_copy"
+            )
+            assert dest.copy.destination_snapshot == expected
+        finally:
+            container.delete_container()
 
     @BlobPreparer()
     @recorded_by_proxy
