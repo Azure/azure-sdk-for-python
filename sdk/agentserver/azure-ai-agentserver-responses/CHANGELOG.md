@@ -1,15 +1,10 @@
 # Release History
 
-## 2.1.0b2 (Unreleased)
+## 2.1.0b1 (2026-08-13)
 
 ### Bugs Fixed
 
-- Fixed `InMemoryResponseProvider` and `FileResponseProvider` `get_history_item_ids`
-  truncating from the wrong end of the history list. When `limit` is smaller than
-  the resolved history, the providers now keep the newest item IDs instead of the
-  oldest. (#48514)
-
-## 2.1.0b1 (2026-08-11)
+- `get_history_item_ids` on the in-memory and file stores now keeps the newest item IDs when applying `limit`. (#48514)
 
 ### Breaking Changes
 
