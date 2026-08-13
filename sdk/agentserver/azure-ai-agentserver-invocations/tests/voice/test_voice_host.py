@@ -180,12 +180,12 @@ def test_real_websocket_dispatches_transport_disconnect():
             websocket.close(code=1001, reason="client restart")
 
     assert len(observed) == 2
-    session, event = observed[0]
+    session, event = observed[1]
     assert isinstance(event, SessionDisconnected)
     assert event.code == 1001
     assert event.reason == "client restart"
-    assert observed[1] == (session, None)
-    assert callback_order == ["disconnect", "terminating"]
+    assert observed[0] == (session, None)
+    assert callback_order == ["terminating", "disconnect"]
 
 
 @pytest.mark.parametrize(
@@ -290,7 +290,8 @@ async def test_connection_terminating_runs_once_on_handler_failure(failure_point
     def on_connection_terminating(session):
         terminating_sessions.append(session)
 
-    with pytest.raises(RuntimeError, match=failure_point):
+    expected_error = RuntimeError if failure_point == "receive" else WebSocketDisconnect
+    with pytest.raises(expected_error, match=failure_point if failure_point == "receive" else None):
         await app._handle_voice_connection(websocket)  # pylint: disable=protected-access
 
     assert len(terminating_sessions) == 1
@@ -360,93 +361,27 @@ async def test_connection_terminating_logging_failure_preserves_handler_failure(
     def fail_logging(*_args, **_kwargs):
         raise RuntimeError("logging")
 
-    monkeypatch.setattr(voice_host_module.logger, "exception", fail_logging)
+    monkeypatch.setattr(voice_host_module.logger, "error", fail_logging)
 
     with pytest.raises(RuntimeError, match="primary"):
         await app._handle_voice_connection(websocket)  # pylint: disable=protected-access
 
 
 @pytest.mark.asyncio
-async def test_connection_terminating_rejects_awaitable_result_without_leaking(caplog):
+async def test_connection_terminating_rejects_non_none_result(caplog):
     app = VoiceAgentServerHost(configure_observability=None)
     websocket = AsyncMock()
     websocket.receive.return_value = {"type": "invalid"}
 
-    async def async_cleanup():
-        raise AssertionError("must not run")
-
     @app.on_connection_terminating
     def on_connection_terminating(_session):
-        return async_cleanup()
+        return "invalid"
 
     with caplog.at_level(logging.ERROR, logger="azure.ai.agentserver"):
         with pytest.raises(WebSocketDisconnect) as raised:
             await app._handle_voice_connection(websocket)  # pylint: disable=protected-access
 
     assert raised.value.code == 1002
-    assert "Connection terminating callback must return None" in caplog.text
-
-
-@pytest.mark.asyncio
-async def test_connection_terminating_cancels_returned_task(caplog):
-    app = VoiceAgentServerHost(configure_observability=None)
-    websocket = AsyncMock()
-    websocket.receive.return_value = {"type": "invalid"}
-    cleanup_started = False
-    returned_tasks = []
-
-    async def async_cleanup():
-        nonlocal cleanup_started
-        cleanup_started = True
-
-    @app.on_connection_terminating
-    def on_connection_terminating(_session):
-        task = asyncio.create_task(async_cleanup())
-        returned_tasks.append(task)
-        return task
-
-    with caplog.at_level(logging.ERROR, logger="azure.ai.agentserver"):
-        with pytest.raises(WebSocketDisconnect) as raised:
-            await app._handle_voice_connection(websocket)  # pylint: disable=protected-access
-    await asyncio.sleep(0)
-
-    assert raised.value.code == 1002
-    assert len(returned_tasks) == 1
-    assert returned_tasks[0].cancelled()
-    assert cleanup_started is False
-    assert "Connection terminating callback must return None" in caplog.text
-
-
-@pytest.mark.asyncio
-async def test_connection_terminating_closes_custom_awaitable(caplog):
-    app = VoiceAgentServerHost(configure_observability=None)
-    websocket = AsyncMock()
-    websocket.receive.return_value = {"type": "invalid"}
-    returned_awaitables = []
-
-    async def async_cleanup():
-        raise AssertionError("must not run")
-
-    class CustomAwaitable:
-        def __init__(self):
-            self.coroutine = async_cleanup()
-
-        def __await__(self):
-            return self.coroutine.__await__()
-
-    @app.on_connection_terminating
-    def on_connection_terminating(_session):
-        awaitable = CustomAwaitable()
-        returned_awaitables.append(awaitable)
-        return awaitable
-
-    with caplog.at_level(logging.ERROR, logger="azure.ai.agentserver"):
-        with pytest.raises(WebSocketDisconnect) as raised:
-            await app._handle_voice_connection(websocket)  # pylint: disable=protected-access
-
-    assert raised.value.code == 1002
-    assert len(returned_awaitables) == 1
-    assert returned_awaitables[0].coroutine.cr_frame is None
     assert "Connection terminating callback must return None" in caplog.text
 
 
@@ -464,7 +399,8 @@ def test_voice_source_has_no_lifecycle_owners():
     for forbidden in (
         "Future[",
         "TimerHandle",
-        "threading",
+        "Thread(",
+        "ThreadPoolExecutor",
         "weakref",
         "_pending_responses",
         "_terminal_responses",

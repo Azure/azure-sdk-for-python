@@ -290,9 +290,9 @@ def _parse_session_start(payload: Mapping[str, Any], common: Mapping[str, str]) 
     reconnect = payload.get("reconnect")
     if not isinstance(reconnect, bool):
         raise VoiceProtocolError("session.start reconnect must be a boolean")
-    greeting = _optional_string(payload, "greeting")
-    if reconnect and greeting is not None:
+    if reconnect and "greeting" in payload:
         raise VoiceProtocolError("session.start greeting must be absent on reconnect")
+    greeting = _optional_string(payload, "greeting")
     no_input_timeout_ms = (
         _positive_integer(payload, "no_input_timeout_ms") if "no_input_timeout_ms" in payload else None
     )
@@ -477,8 +477,7 @@ def _required_string(payload: Mapping[str, Any], name: str, *, non_empty: bool =
 
 
 def _optional_string(payload: Mapping[str, Any], name: str) -> str | None:
-    value = payload.get(name)
-    if value is None:
+    if name not in payload:
         return None
     return _required_string(payload, name)
 

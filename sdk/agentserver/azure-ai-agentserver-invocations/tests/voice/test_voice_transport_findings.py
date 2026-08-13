@@ -8,6 +8,7 @@ import json
 import logging
 
 import pytest
+import opentelemetry.propagate as otel_propagate
 from opentelemetry import baggage, trace
 from starlette.applications import Starlette
 from starlette.routing import Host, Mount, WebSocketRoute
@@ -16,6 +17,7 @@ from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from azure.ai.agentserver.core import get_request_context
 from azure.ai.agentserver.invocations.voice import Session, SessionReady, VoiceAgentServerHost
+from azure.ai.agentserver.invocations.voice import _session as session_module
 from azure.ai.agentserver.invocations.voice import _voice_host as voice_host_module
 from azure.ai.agentserver.invocations.voice._codec import MAX_FRAME_BYTES
 
@@ -70,6 +72,14 @@ def _websocket_with_headers(headers: list[tuple[bytes, bytes]]) -> WebSocket:
     )
 
 
+async def _finish_close_attempts(baseline):
+    outstanding = set(session_module._CLOSE_ATTEMPTS) - baseline  # pylint: disable=protected-access
+    if outstanding:
+        await asyncio.wait_for(asyncio.gather(*outstanding, return_exceptions=True), timeout=1)
+    await asyncio.sleep(0)
+    assert set(session_module._CLOSE_ATTEMPTS) == baseline  # pylint: disable=protected-access
+
+
 def test_voice_route_rejects_same_scope_exact_conflict():
     async def conflicting_endpoint(websocket: WebSocket) -> None:
         await websocket.accept()
@@ -93,6 +103,41 @@ def test_voice_route_precedes_same_scope_catch_all():
         routes=[WebSocketRoute("/{path:path}", catch_all)],
         configure_observability=None,
     )
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        selected.append("voice")
+        await session.send(SessionReady())
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        websocket.send_json(_session_start_frame())
+        assert websocket.receive_json()["type"] == "session.ready"
+
+    assert selected == ["voice"]
+
+
+def test_voice_route_rejects_late_same_scope_exact_conflict():
+    async def conflicting_endpoint(websocket: WebSocket) -> None:
+        await websocket.accept()
+
+    app = VoiceAgentServerHost(configure_observability=None)
+    app.routes.insert(0, WebSocketRoute("/invocations_ws", conflicting_endpoint))
+
+    with pytest.raises(RuntimeError, match="route is already registered"):
+        with TestClient(app).websocket_connect("/invocations_ws"):
+            pass
+
+
+def test_voice_route_precedes_late_same_scope_catch_all():
+    selected = []
+
+    async def catch_all(websocket: WebSocket) -> None:
+        selected.append("catch_all")
+        await websocket.accept()
+        await websocket.send_text("catch_all")
+
+    app = VoiceAgentServerHost(configure_observability=None)
+    app.routes.insert(0, WebSocketRoute("/{path:path}", catch_all))
 
     @app.on_session_start
     async def on_session_start(session, _event):
@@ -145,6 +190,32 @@ def test_voice_route_tracks_live_authority_add_remove_and_reorder():
     app.routes.insert(1, first)
     with TestClient(app).websocket_connect("/invocations_ws") as websocket:
         assert websocket.receive_text() == "first"
+
+
+def test_voice_route_preserves_live_matching_and_nonmatching_host_authority():
+    async def authority_endpoint(websocket: WebSocket) -> None:
+        await websocket.accept()
+        await websocket.send_text("authority")
+
+    app = VoiceAgentServerHost(configure_observability=None)
+    app.routes.insert(
+        0,
+        Host(
+            "tenant.example",
+            app=Starlette(routes=[WebSocketRoute("/invocations_ws", authority_endpoint)]),
+        ),
+    )
+
+    with TestClient(app).websocket_connect("/invocations_ws", headers={"host": "tenant.example"}) as websocket:
+        assert websocket.receive_text() == "authority"
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        await session.send(SessionReady())
+
+    with TestClient(app).websocket_connect("/invocations_ws", headers={"host": "other.example"}) as websocket:
+        websocket.send_json(_session_start_frame())
+        assert websocket.receive_json()["type"] == "session.ready"
 
 
 def test_voice_upgrade_binds_context_and_returns_server_header(monkeypatch):
@@ -231,6 +302,38 @@ def test_voice_upgrade_rejects_duplicate_traceparent():
     assert trace.get_current_span(context).get_span_context().trace_id == 0
 
 
+def test_voice_upgrade_ignores_context_extraction_failure(monkeypatch):
+    def fail_extract(*_args, **_kwargs):
+        raise RuntimeError("context extraction failed")
+
+    monkeypatch.setattr(otel_propagate, "extract", fail_extract)
+    app = VoiceAgentServerHost(configure_observability=None)
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        await session.send(SessionReady())
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        websocket.send_json(_session_start_frame())
+        assert websocket.receive_json()["type"] == "session.ready"
+
+
+def test_voice_upgrade_ignores_context_attachment_failure(monkeypatch):
+    def fail_attach(_context):
+        raise RuntimeError("context attachment failed")
+
+    monkeypatch.setattr(voice_host_module._otel_context, "attach", fail_attach)
+    app = VoiceAgentServerHost(configure_observability=None)
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        await session.send(SessionReady())
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        websocket.send_json(_session_start_frame())
+        assert websocket.receive_json()["type"] == "session.ready"
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("inbound", "expected_code"),
@@ -244,6 +347,7 @@ async def test_voice_selected_close_survives_cancellation_during_send(inbound, e
     app = VoiceAgentServerHost(configure_observability=None)
     inbound_events = [{"type": "websocket.connect"}, inbound]
     close_started = asyncio.Event()
+    close_release = asyncio.Event()
     close_events = []
     sent_messages = []
 
@@ -256,7 +360,7 @@ async def test_voice_selected_close_survives_cancellation_during_send(inbound, e
         sent_messages.append(message)
         if message["type"] == "websocket.close":
             close_started.set()
-            await asyncio.Future()
+            await close_release.wait()
 
     websocket = _websocket_with_headers([])
     websocket._receive = receive  # pylint: disable=protected-access
@@ -264,21 +368,25 @@ async def test_voice_selected_close_survives_cancellation_during_send(inbound, e
     app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
         lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
     )
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
 
     task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
     try:
         await asyncio.wait_for(close_started.wait(), timeout=1)
         task.cancel()
         with pytest.raises(asyncio.CancelledError):
-            await task
+            await asyncio.wait_for(task, timeout=1)
     finally:
+        close_release.set()
         if not task.done():
             task.cancel()
             await asyncio.gather(task, return_exceptions=True)
+        await _finish_close_attempts(baseline_attempts)
 
     wire_closes = [message for message in sent_messages if message["type"] == "websocket.close"]
     assert [message["code"] for message in wire_closes] == [expected_code]
-    assert close_events == [(expected_code, None)]
+    assert close_events == [(expected_code, "cancelled")]
+    assert set(session_module._CLOSE_ATTEMPTS) == baseline_attempts  # pylint: disable=protected-access
 
 
 @pytest.mark.asyncio
@@ -310,11 +418,211 @@ async def test_voice_selected_close_survives_transport_failure(expected_code):
         lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
     )
 
-    await app._ws_endpoint(websocket)  # pylint: disable=protected-access
+    await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
 
     wire_closes = [message for message in sent_messages if message["type"] == "websocket.close"]
     assert [message["code"] for message in wire_closes] == [expected_code]
     assert close_events == [(expected_code, None)]
+
+
+@pytest.mark.asyncio
+async def test_voice_stalled_close_releases_endpoint_session_and_context(monkeypatch):
+    monkeypatch.setattr(session_module, "CLOSE_TIMEOUT_SECONDS", 0.01)
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.receive", "text": "not-json"},
+    ]
+    close_started = asyncio.Event()
+    close_release = asyncio.Event()
+    close_cancelled = False
+    close_contexts = []
+    close_session_bindings = []
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        if message["type"] != "websocket.close":
+            return
+        close_contexts.append(get_request_context().session_id)
+        close_session_bindings.append(Session._current(websocket))  # pylint: disable=protected-access
+        close_started.set()
+        try:
+            await close_release.wait()
+        except asyncio.CancelledError:
+            nonlocal close_cancelled
+            close_cancelled = True
+            raise
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    try:
+        await asyncio.wait_for(close_started.wait(), timeout=1)
+        await asyncio.wait_for(endpoint_task, timeout=1)
+
+        outstanding = set(session_module._CLOSE_ATTEMPTS) - baseline_attempts  # pylint: disable=protected-access
+        assert len(outstanding) == 1
+        assert not next(iter(outstanding)).done()
+        assert Session._current(websocket) is None  # pylint: disable=protected-access
+        assert close_contexts == [None]
+        assert close_session_bindings == [None]
+        assert close_cancelled is False
+    finally:
+        close_release.set()
+        if not endpoint_task.done():
+            endpoint_task.cancel()
+            await asyncio.gather(endpoint_task, return_exceptions=True)
+        await _finish_close_attempts(baseline_attempts)
+
+    assert set(session_module._CLOSE_ATTEMPTS) == baseline_attempts  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_voice_accept_unknown_commit_fails_closed():
+    app = VoiceAgentServerHost(configure_observability=None)
+    sent_messages = []
+    close_events = []
+
+    async def receive():
+        return {"type": "websocket.connect"}
+
+    async def send(message):
+        sent_messages.append(message)
+        if message["type"] == "websocket.accept":
+            raise OSError("accept failed after commit")
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
+
+    assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+    assert sent_messages[-1]["code"] == 1011
+    assert close_events == [(1011, "accept_failed")]
+    assert Session._current(websocket) is None  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_voice_peer_disconnect_closes_write_gate_before_callback():
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.disconnect", "code": 1001},
+    ]
+    late_send_errors = []
+    sent_messages = []
+
+    @app.on_disconnect
+    async def on_disconnect(session, _event):
+        with pytest.raises(RuntimeError, match="terminating") as raised:
+            await session.send(SessionReady())
+        late_send_errors.append(raised.value)
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+
+    await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
+
+    assert len(late_send_errors) == 1
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+
+
+@pytest.mark.asyncio
+async def test_voice_abnormal_disconnect_code_is_observed_but_never_sent():
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.disconnect", "code": 1006},
+    ]
+    observed_codes = []
+    close_events = []
+    sent_messages = []
+
+    @app.on_disconnect
+    async def on_disconnect(_session, event):
+        observed_codes.append(event.code)
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
+
+    assert observed_codes == [1006]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+    assert close_events == [(1006, None)]
+
+
+@pytest.mark.asyncio
+async def test_voice_close_deadline_covers_blocked_application_send(monkeypatch):
+    monkeypatch.setattr(session_module, "CLOSE_TIMEOUT_SECONDS", 0.01)
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.receive", "text": json.dumps(_session_start_frame())},
+        {"type": "websocket.receive", "text": "not-json"},
+    ]
+    send_started = asyncio.Event()
+    send_release = asyncio.Event()
+    send_tasks = []
+    retained_sessions = []
+    sent_messages = []
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        retained_sessions.append(session)
+        send_tasks.append(asyncio.create_task(session.send(SessionReady())))
+        await send_started.wait()
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+        if message["type"] == "websocket.send":
+            send_started.set()
+            await send_release.wait()
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+
+    try:
+        await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
+        assert Session._current(websocket) is None  # pylint: disable=protected-access
+        with pytest.raises(RuntimeError, match="terminating"):
+            await retained_sessions[0].send(SessionReady())
+        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.send"]
+    finally:
+        send_release.set()
+        await asyncio.gather(*send_tasks, return_exceptions=True)
+        await _finish_close_attempts(baseline_attempts)
 
 
 @pytest.mark.asyncio
@@ -346,7 +654,7 @@ async def test_voice_handler_cancellation_does_not_start_new_close_io():
         await asyncio.wait_for(handler_waiting.wait(), timeout=1)
         task.cancel("shutdown")
         with pytest.raises(asyncio.CancelledError) as raised:
-            await task
+            await asyncio.wait_for(task, timeout=1)
     finally:
         if not task.done():
             task.cancel()
@@ -386,7 +694,7 @@ async def test_voice_preserves_explicit_handler_cancellation_identity():
     )
 
     with pytest.raises(asyncio.CancelledError) as raised:
-        await app._ws_endpoint(websocket)  # pylint: disable=protected-access
+        await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
 
     assert raised.value is cancellation
     assert close_events == [(1011, "cancelled")]
@@ -421,7 +729,7 @@ async def test_voice_materializes_callback_self_cancellation_before_finalization
     )
 
     with pytest.raises(asyncio.CancelledError) as raised:
-        await app._ws_endpoint(websocket)  # pylint: disable=protected-access
+        await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
 
     assert raised.value.args == ("callback-self-cancel",)
     assert close_events == [(1011, "cancelled")]
@@ -429,47 +737,80 @@ async def test_voice_materializes_callback_self_cancellation_before_finalization
 
 
 @pytest.mark.asyncio
-async def test_voice_recovers_cancellation_converted_to_transport_error():
+async def test_voice_recovers_cancellation_wrapped_by_handler():
     app = VoiceAgentServerHost(configure_observability=None)
     inbound_events = [
         {"type": "websocket.connect"},
-        {"type": "websocket.receive", "text": "not-json"},
+        {"type": "websocket.receive", "text": json.dumps(_session_start_frame())},
     ]
-    close_started = asyncio.Event()
-    close_events = []
+    callback_started = asyncio.Event()
+    captured_cancellations = []
+    sent_messages = []
+
+    @app.on_session_start
+    async def on_session_start(_session, _event):
+        callback_started.set()
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError as exc:
+            captured_cancellations.append(exc)
+            raise RuntimeError("handler wrapped cancellation") from exc
 
     async def receive():
         return inbound_events.pop(0)
 
     async def send(message):
-        if message["type"] == "websocket.close":
-            close_started.set()
-            try:
-                await asyncio.Future()
-            except asyncio.CancelledError as exc:
-                raise OSError("transport converted cancellation") from exc
+        sent_messages.append(message)
 
     websocket = _websocket_with_headers([])
     websocket._receive = receive  # pylint: disable=protected-access
     websocket._send = send  # pylint: disable=protected-access
-    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
-        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
-    )
 
-    task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
-    await asyncio.wait_for(close_started.wait(), timeout=1)
-    task.cancel("during-close")
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    await asyncio.wait_for(callback_started.wait(), timeout=1)
+    endpoint_task.cancel("shutdown-identity")
+
     with pytest.raises(asyncio.CancelledError) as raised:
-        await task
+        await asyncio.wait_for(endpoint_task, timeout=1)
 
-    assert raised.value.args == ("during-close",)
-    transport_wrapper = raised.value.__cause__
-    assert isinstance(transport_wrapper, WebSocketDisconnect)
-    transport_error = transport_wrapper.__context__
-    assert isinstance(transport_error, OSError)
-    assert transport_error.__cause__ is None
-    assert transport_error.__context__ is None
-    assert close_events == [(1002, None)]
+    assert len(captured_cancellations) == 1
+    assert raised.value is captured_cancellations[0]
+    assert raised.value.args == ("shutdown-identity",)
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+
+
+@pytest.mark.asyncio
+async def test_voice_recovers_cancellation_wrapped_during_accept():
+    app = VoiceAgentServerHost(configure_observability=None)
+    accept_started = asyncio.Event()
+    captured_cancellations = []
+
+    async def receive():
+        return {"type": "websocket.connect"}
+
+    async def send(message):
+        if message["type"] == "websocket.accept":
+            accept_started.set()
+            try:
+                await asyncio.Future()
+            except asyncio.CancelledError as exc:
+                captured_cancellations.append(exc)
+                raise OSError("accept wrapped cancellation") from exc
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    await asyncio.wait_for(accept_started.wait(), timeout=1)
+    endpoint_task.cancel("accept-wrapper-cancel")
+
+    with pytest.raises(asyncio.CancelledError) as raised:
+        await asyncio.wait_for(endpoint_task, timeout=1)
+
+    assert len(captured_cancellations) == 1
+    assert raised.value is captured_cancellations[0]
+    assert raised.value.args == ("accept-wrapper-cancel",)
 
 
 @pytest.mark.asyncio
@@ -501,7 +842,7 @@ async def test_voice_telemetry_failure_does_not_prevent_internal_error_close(tel
 
     app._emit_close_event = fail_telemetry  # type: ignore[method-assign]  # pylint: disable=protected-access
 
-    await app._ws_endpoint(websocket)  # pylint: disable=protected-access
+    await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
 
     close_messages = [message for message in sent_messages if message["type"] == "websocket.close"]
     assert [message["code"] for message in close_messages] == [1011]
@@ -557,14 +898,15 @@ async def test_voice_logging_failure_preserves_callback_outcome(callback_kind, l
     voice_host_module.logger.setLevel(logging.ERROR)
     voice_host_module.logger.addHandler(handler)
     try:
-        await app._ws_endpoint(websocket)  # pylint: disable=protected-access
+        await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
     finally:
         voice_host_module.logger.removeHandler(handler)
         voice_host_module.logger.setLevel(old_level)
 
     assert close_events == [(expected_code, "internal_error")]
     close_messages = [message for message in sent_messages if message["type"] == "websocket.close"]
-    assert [message["code"] for message in close_messages] == [expected_code]
+    expected_wire_codes = [expected_code] if callback_kind == "event" else []
+    assert [message["code"] for message in close_messages] == expected_wire_codes
 
 
 @pytest.mark.asyncio
@@ -583,6 +925,7 @@ async def test_voice_cleanup_precedes_close_serialized_behind_application_send()
     generation_tasks = []
     active_writes = 0
     maximum_active_writes = 0
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
 
     @app.on_session_start
     async def on_session_start(session, _event):
@@ -624,13 +967,17 @@ async def test_voice_cleanup_precedes_close_serialized_behind_application_send()
 
         release_send.set()
         await asyncio.wait_for(endpoint_task, timeout=1)
-        await asyncio.gather(*generation_tasks)
+        await asyncio.wait_for(asyncio.gather(*generation_tasks), timeout=1)
     finally:
         release_send.set()
         if not endpoint_task.done():
             endpoint_task.cancel()
-            await asyncio.gather(endpoint_task, return_exceptions=True)
-        await asyncio.gather(*generation_tasks, return_exceptions=True)
+            await asyncio.wait_for(asyncio.gather(endpoint_task, return_exceptions=True), timeout=1)
+        for generation_task in generation_tasks:
+            if not generation_task.done():
+                generation_task.cancel()
+        await asyncio.wait_for(asyncio.gather(*generation_tasks, return_exceptions=True), timeout=1)
+        await _finish_close_attempts(baseline_attempts)
 
     assert maximum_active_writes == 1
     assert [message["type"] for message in sent_messages] == [
@@ -639,6 +986,65 @@ async def test_voice_cleanup_precedes_close_serialized_behind_application_send()
         "websocket.close",
     ]
     assert sent_messages[-1]["code"] == 1002
+
+
+@pytest.mark.asyncio
+async def test_voice_cleanup_marks_session_terminal_before_cancelling_application_work():
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.receive", "text": json.dumps(_session_start_frame())},
+        {"type": "websocket.receive", "text": "not-json"},
+    ]
+    generation_started = asyncio.Event()
+    generation_tasks = []
+    late_send_errors = []
+    sent_messages = []
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
+
+    async def generation(session):
+        generation_started.set()
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError:
+            try:
+                await session.send(SessionReady())
+            except RuntimeError as exc:
+                late_send_errors.append(exc)
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        generation_tasks.append(asyncio.create_task(generation(session)))
+        await generation_started.wait()
+
+    @app.on_connection_terminating
+    def on_connection_terminating(_session):
+        for task in generation_tasks:
+            task.cancel()
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+
+    try:
+        await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
+        await asyncio.wait_for(asyncio.gather(*generation_tasks), timeout=1)
+    finally:
+        for generation_task in generation_tasks:
+            if not generation_task.done():
+                generation_task.cancel()
+        await asyncio.wait_for(asyncio.gather(*generation_tasks, return_exceptions=True), timeout=1)
+        await _finish_close_attempts(baseline_attempts)
+
+    assert len(late_send_errors) == 1
+    assert str(late_send_errors[0]) == "Voice Session is terminating"
+    assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
 
 
 @pytest.mark.asyncio
@@ -656,6 +1062,7 @@ async def test_voice_endpoint_cancellation_does_not_wait_for_blocked_application
     sent_messages = []
     generation_tasks = []
     retained_sessions = []
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
 
     @app.on_session_start
     async def on_session_start(session, _event):
@@ -704,6 +1111,7 @@ async def test_voice_endpoint_cancellation_does_not_wait_for_blocked_application
             endpoint_task.cancel()
             await asyncio.gather(endpoint_task, return_exceptions=True)
         await asyncio.gather(*generation_tasks, return_exceptions=True)
+        await _finish_close_attempts(baseline_attempts)
 
 
 @pytest.mark.asyncio
@@ -733,8 +1141,8 @@ async def test_voice_disconnect_callback_failure_preserves_peer_close_code():
         lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
     )
 
-    await app._ws_endpoint(websocket)  # pylint: disable=protected-access
+    await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
 
     assert close_events == [(1001, "internal_error")]
     close_messages = [message for message in sent_messages if message["type"] == "websocket.close"]
-    assert [message["code"] for message in close_messages] == [1001]
+    assert close_messages == []

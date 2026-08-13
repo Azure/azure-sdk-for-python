@@ -152,6 +152,33 @@ def test_session_start_rejects_invalid_unicode_in_caller_key():
         )
 
 
+@pytest.mark.parametrize("reconnect", [False, True])
+def test_session_start_rejects_explicit_null_greeting(reconnect):
+    with pytest.raises(VoiceProtocolError, match="greeting"):
+        decode_inbound_message(
+            _frame(
+                "session.start",
+                protocol_version="1.0",
+                reconnect=reconnect,
+                greeting=None,
+                response_timeouts={"first_output_ms": 1, "idle_ms": 2, "max_duration_ms": 3},
+            )
+        )
+
+
+def test_session_start_reconnect_rejects_present_greeting():
+    with pytest.raises(VoiceProtocolError, match="must be absent on reconnect"):
+        decode_inbound_message(
+            _frame(
+                "session.start",
+                protocol_version="1.0",
+                reconnect=True,
+                greeting="welcome back",
+                response_timeouts={"first_output_ms": 1, "idle_ms": 2, "max_duration_ms": 3},
+            )
+        )
+
+
 def test_selected_registry_is_exactly_ten_each_direction():
     inbound = InboundVoiceMessage.__args__
     outbound = OutboundVoiceMessage.__args__

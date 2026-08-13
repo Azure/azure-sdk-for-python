@@ -6,9 +6,12 @@
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import contextvars
 from collections.abc import Coroutine, MutableMapping
-from typing import Any, cast
+from threading import Lock
+from typing import Any
 
+from starlette.types import Send
 from starlette.websockets import WebSocket, WebSocketState
 
 from azure.ai.agentserver.core import experimental
@@ -17,6 +20,11 @@ from ._codec import encode_outbound_message
 from ._models import OutboundVoiceMessage
 
 _VOICE_SESSION_SCOPE_KEY = "azure.ai.agentserver.invocations.voice.session"
+CLOSE_TIMEOUT_SECONDS = 5.0
+_MAX_CLOSE_ATTEMPTS = 256
+_CLOSE_ATTEMPTS: set[asyncio.Task[None]] = set()
+_CLOSE_ATTEMPT_RESERVATIONS = 0
+_CLOSE_ATTEMPT_LOCK = Lock()
 
 
 def _close_coroutine(coroutine: Coroutine[Any, Any, Any]) -> None:
@@ -24,13 +32,19 @@ def _close_coroutine(coroutine: Coroutine[Any, Any, Any]) -> None:
 
 
 def _find_cancellation(error: BaseException) -> asyncio.CancelledError | None:
-    current: BaseException | None = error
+    pending = [error]
     seen: set[int] = set()
-    while current is not None and id(current) not in seen:
+    while pending:
+        current = pending.pop()
+        if id(current) in seen:
+            continue
+        seen.add(id(current))
         if isinstance(current, asyncio.CancelledError):
             return current
-        seen.add(id(current))
-        current = current.__cause__ or current.__context__
+        if current.__context__ is not None:
+            pending.append(current.__context__)
+        if current.__cause__ is not None:
+            pending.append(current.__cause__)
     return None
 
 
@@ -52,6 +66,57 @@ def _unlink_exception(error: BaseException, target: BaseException) -> None:
             current.__context__ = None
         elif context is not None:
             pending.append(context)
+
+
+async def _run_close_attempt(
+    send_lock: asyncio.Lock,
+    send: Send,
+    message: dict[str, Any],
+) -> None:
+    async with send_lock:
+        await send(message)
+
+
+def _observe_close_attempt(task: asyncio.Task[None]) -> None:
+    with _CLOSE_ATTEMPT_LOCK:
+        _CLOSE_ATTEMPTS.discard(task)
+    if task.cancelled():
+        return
+    task.exception()
+
+
+def _start_close_attempt(
+    send_lock: asyncio.Lock,
+    websocket: WebSocket,
+    code: int,
+    reason: str,
+) -> asyncio.Task[None] | None:
+    global _CLOSE_ATTEMPT_RESERVATIONS  # pylint: disable=global-statement
+    send = websocket._send  # pylint: disable=protected-access
+    message = {"type": "websocket.close", "code": code, "reason": reason}
+    with _CLOSE_ATTEMPT_LOCK:
+        if websocket.application_state == WebSocketState.DISCONNECTED:
+            return None
+        if len(_CLOSE_ATTEMPTS) + _CLOSE_ATTEMPT_RESERVATIONS >= _MAX_CLOSE_ATTEMPTS:
+            raise RuntimeError("Voice WebSocket close attempt limit reached")
+        _CLOSE_ATTEMPT_RESERVATIONS += 1
+        websocket.application_state = WebSocketState.DISCONNECTED
+    close_coroutine = _run_close_attempt(send_lock, send, message)
+    try:
+        task = contextvars.Context().run(asyncio.create_task, close_coroutine, name="voice_websocket_close")
+    except BaseException as creation_error:  # pylint: disable=broad-exception-caught
+        with _CLOSE_ATTEMPT_LOCK:
+            _CLOSE_ATTEMPT_RESERVATIONS -= 1
+        try:
+            _close_coroutine(close_coroutine)
+        except BaseException:  # pylint: disable=broad-exception-caught
+            pass
+        raise creation_error
+    with _CLOSE_ATTEMPT_LOCK:
+        _CLOSE_ATTEMPT_RESERVATIONS -= 1
+        _CLOSE_ATTEMPTS.add(task)
+    task.add_done_callback(_observe_close_attempt, context=contextvars.Context())
+    return task
 
 
 @experimental
@@ -103,61 +168,46 @@ class Session:
         if isinstance(scope, MutableMapping) and scope.get(_VOICE_SESSION_SCOPE_KEY) is session:
             del scope[_VOICE_SESSION_SCOPE_KEY]
 
+    def _begin_termination(self) -> None:
+        self._terminal = True
+
+    def _start_close(self, code: int, reason: str) -> asyncio.Task[None] | None:
+        self._begin_termination()
+        return _start_close_attempt(self._send_lock, self._websocket, code, reason)
+
+    @staticmethod
+    async def _wait_close(attempt: asyncio.Task[None] | None, deadline: float) -> None:
+        if attempt is None:
+            return
+        loop = asyncio.get_running_loop()
+        remaining = max(0.0, deadline - loop.time())
+        done, _ = await asyncio.wait((attempt,), timeout=remaining)
+        if not done:
+            raise TimeoutError("Voice WebSocket close deadline elapsed")
+        try:
+            attempt.result()
+        except BaseException as exc:  # pylint: disable=broad-exception-caught
+            cancellation = _find_cancellation(exc)
+            if cancellation is not None and cancellation is not exc:
+                _unlink_exception(exc, cancellation)
+                raise cancellation from exc
+            raise
+
     async def _close(
         self,
         code: int,
         reason: str,
-        prior_cancellation: asyncio.CancelledError | None = None,
+        deadline: float | None = None,
     ) -> None:
-        self._terminal = True
-        if prior_cancellation is not None:
-            raise prior_cancellation
-        acquire_coroutine = cast(Coroutine[Any, Any, bool], self._send_lock.acquire())
-        try:
-            acquire_task = asyncio.create_task(acquire_coroutine, name="voice_session_close_lock")
-        except BaseException:  # pylint: disable=broad-exception-caught
-            _close_coroutine(acquire_coroutine)
-            raise
-
-        cancellation: asyncio.CancelledError | None = None
-        cancelled_acquire_for_outer = False
-        while not acquire_task.done():
-            try:
-                await asyncio.shield(acquire_task)
-            except asyncio.CancelledError as exc:
-                if acquire_task.done():
-                    if not acquire_task.cancelled() and cancellation is None:
-                        cancellation = exc
-                    break
-                if cancellation is None:
-                    cancellation = exc
-                cancelled_acquire_for_outer = True
-                acquire_task.cancel()
-
-        acquired = False
-        close_error: BaseException | None = None
-        try:
-            acquire_task.result()
-            acquired = True
-            if cancellation is None and self._websocket.application_state != WebSocketState.DISCONNECTED:
-                await self._websocket.close(code=code, reason=reason)
-        except asyncio.CancelledError as exc:
-            if not cancelled_acquire_for_outer or cancellation is None:
-                cancellation = exc
-        except BaseException as exc:  # pylint: disable=broad-exception-caught
-            close_error = exc
-            if cancellation is None:
-                cancellation = _find_cancellation(exc)
-        finally:
-            if acquired:
-                self._send_lock.release()
-        if cancellation is not None:
-            if close_error is not None:
-                _unlink_exception(close_error, cancellation)
-                raise cancellation from close_error
-            raise cancellation
-        if close_error is not None:
-            raise close_error
+        self._begin_termination()
+        loop = asyncio.get_running_loop()
+        if deadline is None:
+            deadline = loop.time() + CLOSE_TIMEOUT_SECONDS
+        remaining = deadline - loop.time()
+        if remaining <= 0:
+            raise TimeoutError("Voice WebSocket close deadline elapsed")
+        attempt = self._start_close(code, reason)
+        await self._wait_close(attempt, deadline)
 
     def _ensure_writable(self) -> None:
         if self._terminal:
