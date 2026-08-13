@@ -222,9 +222,15 @@ async def _raise_pending_or_consumed_cancellation(cancellation_requests: int | N
         raise asyncio.CancelledError()
 
 
-async def _await_with_cancellation_guard(awaitable: Awaitable[_AwaitedT]) -> _AwaitedT:
+async def _await_with_cancellation_guard(
+    awaitable: Awaitable[_AwaitedT],
+    *,
+    on_success: Callable[[], object] | None = None,
+) -> _AwaitedT:
     cancellation_requests = _task_cancellation_requests()
     result = await awaitable
+    if on_success is not None:
+        on_success()
     await _raise_pending_or_consumed_cancellation(cancellation_requests)
     return result
 
@@ -825,7 +831,16 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     continue
                 callback = self._voice_callbacks.get(event.type)
                 if callback is not None:
-                    await _await_with_cancellation_guard(callback(session, cast(InboundVoiceMessage, event)))
+                    await _await_with_cancellation_guard(
+                        callback(session, cast(InboundVoiceMessage, event)),
+                        on_success=(
+                            (lambda: _begin_voice_termination(websocket, session))
+                            if isinstance(event, SessionEnd)
+                            else None
+                        ),
+                    )
+                if isinstance(event, SessionEnd):
+                    return
         finally:
             _begin_voice_termination(websocket, session)
             if bound_session is None:

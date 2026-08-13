@@ -194,7 +194,8 @@ def _start_close_attempt(
     send = websocket._send  # pylint: disable=protected-access
     message = {"type": "websocket.close", "code": code, "reason": reason}
     with _CLOSE_ATTEMPT_LOCK:
-        if websocket.application_state == WebSocketState.DISCONNECTED:
+        application_state = websocket.application_state
+        if application_state == WebSocketState.DISCONNECTED:
             return None
         if len(_CLOSE_ATTEMPTS) + _CLOSE_ATTEMPT_RESERVATIONS >= _MAX_CLOSE_ATTEMPTS:
             raise RuntimeError("Voice WebSocket close attempt limit reached")
@@ -206,6 +207,7 @@ def _start_close_attempt(
     except BaseException as creation_error:  # pylint: disable=broad-exception-caught
         with _CLOSE_ATTEMPT_LOCK:
             _CLOSE_ATTEMPT_RESERVATIONS -= 1
+            websocket.application_state = application_state
         try:
             _close_coroutine(close_coroutine)
         except BaseException:  # pylint: disable=broad-exception-caught

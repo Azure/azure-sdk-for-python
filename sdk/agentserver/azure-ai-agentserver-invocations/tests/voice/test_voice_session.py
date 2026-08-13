@@ -311,24 +311,57 @@ async def test_session_close_recomputes_deadline_after_attempt_start(monkeypatch
     assert observed_timeouts == [1.0]
 
 
-def test_close_attempt_reservation_rolls_back_when_task_construction_fails(monkeypatch):
+@pytest.mark.asyncio
+async def test_close_attempt_rolls_back_when_task_construction_fails_and_can_retry(monkeypatch):
     baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
+    create_task = asyncio.create_task
+    create_attempts = 0
+    closed_coroutines = []
+    close_coroutine = session_module._close_coroutine  # pylint: disable=protected-access
 
-    def fail_create_task(_coroutine, *, name=None):
-        del name
-        raise RuntimeError("task construction failed")
+    def track_close(coroutine):
+        closed_coroutines.append(coroutine)
+        close_coroutine(coroutine)
 
-    monkeypatch.setattr(session_module.asyncio, "create_task", fail_create_task)
+    def fail_first_create_task(coroutine, *, name=None):
+        nonlocal create_attempts
+        create_attempts += 1
+        if create_attempts == 1:
+            raise RuntimeError("task construction failed")
+        return create_task(coroutine, name=name)
+
+    monkeypatch.setattr(session_module.asyncio, "create_task", fail_first_create_task)
+    monkeypatch.setattr(session_module, "_close_coroutine", track_close)
+    websocket = _BlockingWebSocket()
 
     with pytest.raises(RuntimeError, match="task construction failed"):
         session_module._start_close_attempt(  # pylint: disable=protected-access
             asyncio.Lock(),
-            _BlockingWebSocket(),
+            websocket,
             1002,
             "failed close",
         )
 
     assert set(session_module._CLOSE_ATTEMPTS) == baseline_attempts  # pylint: disable=protected-access
+    assert session_module._CLOSE_ATTEMPT_RESERVATIONS == 0  # pylint: disable=protected-access
+    assert websocket.application_state == WebSocketState.CONNECTED
+    assert websocket.closes == []
+    assert len(closed_coroutines) == 1
+    assert closed_coroutines[0].cr_frame is None
+
+    retry = session_module._start_close_attempt(  # pylint: disable=protected-access
+        asyncio.Lock(),
+        websocket,
+        1002,
+        "retry close",
+    )
+
+    assert retry is not None
+    await _finish_close_attempts(baseline_attempts)
+    assert create_attempts == 2
+    assert websocket.application_state == WebSocketState.DISCONNECTED
+    assert websocket.closes == [(1002, "retry close")]
+    assert len(closed_coroutines) == 1
     assert session_module._CLOSE_ATTEMPT_RESERVATIONS == 0  # pylint: disable=protected-access
 
 
