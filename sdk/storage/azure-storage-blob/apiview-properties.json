@@ -217,5 +217,5 @@
         "azure.storage.blob.operations.PageBlobOperations.copy_incremental": "Storage.Blob.PageBlob.copyIncremental",
         "azure.storage.blob.aio.operations.PageBlobOperations.copy_incremental": "Storage.Blob.PageBlob.copyIncremental"
     },
-    "CrossLanguageVersion": "dbc6a102b97c"
+    "CrossLanguageVersion": "339d619155f8"
 }

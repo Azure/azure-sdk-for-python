@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Callable, Iterator, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union, overload
 
 from azure.core import MatchConditions, PipelineClient
 from azure.core.exceptions import (
@@ -2161,7 +2161,7 @@ def build_append_blob_append_block_request(  # pylint: disable=too-many-locals
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=appendblock"
@@ -2172,7 +2172,8 @@ def build_append_blob_append_block_request(  # pylint: disable=too-many-locals
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
     if transactional_content_md5 is not None:
         _headers["Content-MD5"] = _SERIALIZER.header(
@@ -2418,8 +2419,8 @@ def build_block_blob_upload_request(  # pylint: disable=too-many-locals,too-many
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = ""
@@ -2430,7 +2431,8 @@ def build_block_blob_upload_request(  # pylint: disable=too-many-locals,too-many
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     if metadata is not None:
         _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
     if transactional_content_md5 is not None:
@@ -2681,7 +2683,7 @@ def build_block_blob_stage_block_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=block"
@@ -2693,7 +2695,8 @@ def build_block_blob_stage_block_request(
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
     if transactional_content_md5 is not None:
         _headers["Content-MD5"] = _SERIALIZER.header(
@@ -3171,8 +3174,8 @@ def build_page_blob_upload_pages_request(  # pylint: disable=too-many-locals
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=page"
@@ -3183,7 +3186,8 @@ def build_page_blob_upload_pages_request(  # pylint: disable=too-many-locals
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
     if transactional_content_md5 is not None:
         _headers["Content-MD5"] = _SERIALIZER.header(
@@ -3714,7 +3718,7 @@ def build_page_blob_copy_incremental_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ServiceOperations:
+class ServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4419,7 +4423,7 @@ class ServiceOperations:
         return deserialized  # type: ignore
 
 
-class ContainerOperations:
+class ContainerOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6346,7 +6350,7 @@ class ContainerOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class BlobOperations:  # pylint: disable=too-many-public-methods
+class BlobOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9181,7 +9185,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class AppendBlobOperations:
+class AppendBlobOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9390,12 +9394,13 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def append_block(  # pylint: disable=inconsistent-return-statements,too-many-locals
+    @overload
+    def append_block(
         self,
         body: bytes,
         *,
         content_length: int,
+        content_type: str = "application/octet-stream",
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytes] = None,
         transactional_content_crc64: Optional[bytes] = None,
@@ -9419,6 +9424,195 @@ class AppendBlobOperations:
 
         :param body: The body of the request. Required.
         :type body: bytes
+        :keyword content_length: The length of the request. Required.
+        :paramtype content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
+        :paramtype transactional_content_md5: bytes
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
+        :paramtype transactional_content_crc64: bytes
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword max_size: The max length of the blob. If the operation would cause the blob to exceed
+         that limit or if the blob size is already greater than the value specified, the request will
+         fail with MaxBlobSizeConditionNotMet. Default value is None.
+        :paramtype max_size: int
+        :keyword append_position: A byte offset where the operation will only succeed if the append
+         position is equal. If not, the request will fail with AppendPositionConditionNotMet. Default
+         value is None.
+        :paramtype append_position: int
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
+        :paramtype encryption_scope: str
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
+        :paramtype if_tags: str
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def append_block(
+        self,
+        body: IO[bytes],
+        *,
+        content_length: int,
+        content_type: str = "application/octet-stream",
+        timeout: Optional[int] = None,
+        transactional_content_md5: Optional[bytes] = None,
+        transactional_content_crc64: Optional[bytes] = None,
+        lease_id: Optional[str] = None,
+        max_size: Optional[int] = None,
+        append_position: Optional[int] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """Uploads a new block of data to the end of an append blob.
+
+        :param body: The body of the request. Required.
+        :type body: IO[bytes]
+        :keyword content_length: The length of the request. Required.
+        :paramtype content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
+        :paramtype transactional_content_md5: bytes
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
+        :paramtype transactional_content_crc64: bytes
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword max_size: The max length of the blob. If the operation would cause the blob to exceed
+         that limit or if the blob size is already greater than the value specified, the request will
+         fail with MaxBlobSizeConditionNotMet. Default value is None.
+        :paramtype max_size: int
+        :keyword append_position: A byte offset where the operation will only succeed if the append
+         position is equal. If not, the request will fail with AppendPositionConditionNotMet. Default
+         value is None.
+        :paramtype append_position: int
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
+        :paramtype encryption_scope: str
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
+        :paramtype if_tags: str
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def append_block(  # pylint: disable=inconsistent-return-statements,too-many-locals
+        self,
+        body: Union[bytes, IO[bytes]],
+        *,
+        content_length: int,
+        timeout: Optional[int] = None,
+        transactional_content_md5: Optional[bytes] = None,
+        transactional_content_crc64: Optional[bytes] = None,
+        lease_id: Optional[str] = None,
+        max_size: Optional[int] = None,
+        append_position: Optional[int] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """Uploads a new block of data to the end of an append blob.
+
+        :param body: The body of the request. Is either a bytes type or a IO[bytes] type. Required.
+        :type body: bytes or IO[bytes]
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
@@ -9497,9 +9691,10 @@ class AppendBlobOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = body
 
         _request = build_append_blob_append_block_request(
@@ -9926,7 +10121,7 @@ class AppendBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class BlockBlobOperations:
+class BlockBlobOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9943,12 +10138,13 @@ class BlockBlobOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def upload(  # pylint: disable=inconsistent-return-statements,too-many-locals
+    @overload
+    def upload(  # pylint: disable=too-many-locals
         self,
         body: bytes,
         *,
         content_length: int,
+        content_type: str = "application/octet-stream",
         metadata: Optional[dict[str, str]] = None,
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytes] = None,
@@ -9983,6 +10179,269 @@ class BlockBlobOperations:
 
         :param body: The body of the request. Required.
         :type body: bytes
+        :keyword content_length: The length of the request. Required.
+        :paramtype content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword metadata: The metadata headers. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
+        :paramtype transactional_content_md5: bytes
+        :keyword blob_content_type: Specifies the blob's Content-Type. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_type: str
+        :keyword blob_content_encoding: Specifies the blob's Content-Encoding. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_encoding: str
+        :keyword blob_content_language: Specifies the blob's Content-Language. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_language: str
+        :keyword blob_content_md5: The MD5 hash of the blob content that is stored as a property on the
+         blob. Note: This hash is not validated. Default value is None.
+        :paramtype blob_content_md5: bytes
+        :keyword blob_cache_control: Specifies the blob's Cache-Control. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_cache_control: str
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword blob_content_disposition: Specifies the blob's Content-Disposition. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_disposition: str
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
+        :paramtype encryption_scope: str
+        :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
+        :paramtype tier: str or ~azure.storage.blob.models.AccessTier
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
+        :paramtype if_tags: str
+        :keyword blob_tags_string: The blob tags. Default value is None.
+        :paramtype blob_tags_string: str
+        :keyword immutability_policy_expiry: The date-time that indicates the time at which the blob
+         immutability policy will expire. Default value is None.
+        :paramtype immutability_policy_expiry: ~datetime.datetime
+        :keyword immutability_policy_mode: Indicates the immutability policy mode of the blob. Known
+         values are: "mutable", "locked", and "unlocked". Default value is None.
+        :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
+        :keyword legal_hold: Indicates whether the blob has a legal hold. Default value is None.
+        :paramtype legal_hold: bool
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
+        :paramtype transactional_content_crc64: bytes
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upload(  # pylint: disable=too-many-locals
+        self,
+        body: IO[bytes],
+        *,
+        content_length: int,
+        content_type: str = "application/octet-stream",
+        metadata: Optional[dict[str, str]] = None,
+        timeout: Optional[int] = None,
+        transactional_content_md5: Optional[bytes] = None,
+        blob_content_type: Optional[str] = None,
+        blob_content_encoding: Optional[str] = None,
+        blob_content_language: Optional[str] = None,
+        blob_content_md5: Optional[bytes] = None,
+        blob_cache_control: Optional[str] = None,
+        lease_id: Optional[str] = None,
+        blob_content_disposition: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        tier: Optional[Union[str, _models.AccessTier]] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        blob_tags_string: Optional[str] = None,
+        immutability_policy_expiry: Optional[datetime.datetime] = None,
+        immutability_policy_mode: Optional[Union[str, _models.ImmutabilityPolicyMode]] = None,
+        legal_hold: Optional[bool] = None,
+        transactional_content_crc64: Optional[bytes] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """Uploads the content to the specified block blob. If the blob already exists, the data and any
+        existing metadata will be overwritten.
+
+        :param body: The body of the request. Required.
+        :type body: IO[bytes]
+        :keyword content_length: The length of the request. Required.
+        :paramtype content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword metadata: The metadata headers. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
+        :paramtype transactional_content_md5: bytes
+        :keyword blob_content_type: Specifies the blob's Content-Type. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_type: str
+        :keyword blob_content_encoding: Specifies the blob's Content-Encoding. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_encoding: str
+        :keyword blob_content_language: Specifies the blob's Content-Language. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_language: str
+        :keyword blob_content_md5: The MD5 hash of the blob content that is stored as a property on the
+         blob. Note: This hash is not validated. Default value is None.
+        :paramtype blob_content_md5: bytes
+        :keyword blob_cache_control: Specifies the blob's Cache-Control. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_cache_control: str
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword blob_content_disposition: Specifies the blob's Content-Disposition. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_disposition: str
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
+        :paramtype encryption_scope: str
+        :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
+        :paramtype tier: str or ~azure.storage.blob.models.AccessTier
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
+        :paramtype if_tags: str
+        :keyword blob_tags_string: The blob tags. Default value is None.
+        :paramtype blob_tags_string: str
+        :keyword immutability_policy_expiry: The date-time that indicates the time at which the blob
+         immutability policy will expire. Default value is None.
+        :paramtype immutability_policy_expiry: ~datetime.datetime
+        :keyword immutability_policy_mode: Indicates the immutability policy mode of the blob. Known
+         values are: "mutable", "locked", and "unlocked". Default value is None.
+        :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
+        :keyword legal_hold: Indicates whether the blob has a legal hold. Default value is None.
+        :paramtype legal_hold: bool
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
+        :paramtype transactional_content_crc64: bytes
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def upload(  # pylint: disable=inconsistent-return-statements,too-many-locals
+        self,
+        body: Union[bytes, IO[bytes]],
+        *,
+        content_length: int,
+        metadata: Optional[dict[str, str]] = None,
+        timeout: Optional[int] = None,
+        transactional_content_md5: Optional[bytes] = None,
+        blob_content_type: Optional[str] = None,
+        blob_content_encoding: Optional[str] = None,
+        blob_content_language: Optional[str] = None,
+        blob_content_md5: Optional[bytes] = None,
+        blob_cache_control: Optional[str] = None,
+        lease_id: Optional[str] = None,
+        blob_content_disposition: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        tier: Optional[Union[str, _models.AccessTier]] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        blob_tags_string: Optional[str] = None,
+        immutability_policy_expiry: Optional[datetime.datetime] = None,
+        immutability_policy_mode: Optional[Union[str, _models.ImmutabilityPolicyMode]] = None,
+        legal_hold: Optional[bool] = None,
+        transactional_content_crc64: Optional[bytes] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """Uploads the content to the specified block blob. If the blob already exists, the data and any
+        existing metadata will be overwritten.
+
+        :param body: The body of the request. Is either a bytes type or a IO[bytes] type. Required.
+        :type body: bytes or IO[bytes]
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
         :keyword metadata: The metadata headers. Default value is None.
@@ -10088,9 +10547,10 @@ class BlockBlobOperations:
         _params = kwargs.pop("params", {}) or {}
 
         blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = body
 
         _request = build_block_blob_upload_request(
@@ -10122,8 +10582,8 @@ class BlockBlobOperations:
             structured_content_length=structured_content_length,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             blob_type=blob_type,
+            content_type=content_type,
             version=self._config.version,
             content=_content,
             headers=_headers,
@@ -10450,10 +10910,152 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
+    @overload
+    def stage_block(
+        self,
+        body: bytes,
+        *,
+        block_id: str,
+        content_length: int,
+        content_type: str = "application/octet-stream",
+        transactional_content_md5: Optional[bytes] = None,
+        transactional_content_crc64: Optional[bytes] = None,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Creates a new block of data to be committed as part of a blob.
+
+        :param body: The body of the request. Required.
+        :type body: bytes
+        :keyword block_id: A Base64 value that identifies the block. Prior to encoding, the string must
+         be less than or equal to 64 bytes in size. For a given blob, the length of the value specified
+         for the blockid parameter must be the same size for each block. Required.
+        :paramtype block_id: str
+        :keyword content_length: The length of the request. Required.
+        :paramtype content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
+        :paramtype transactional_content_md5: bytes
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
+        :paramtype transactional_content_crc64: bytes
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
+        :paramtype encryption_scope: str
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def stage_block(
+        self,
+        body: IO[bytes],
+        *,
+        block_id: str,
+        content_length: int,
+        content_type: str = "application/octet-stream",
+        transactional_content_md5: Optional[bytes] = None,
+        transactional_content_crc64: Optional[bytes] = None,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Creates a new block of data to be committed as part of a blob.
+
+        :param body: The body of the request. Required.
+        :type body: IO[bytes]
+        :keyword block_id: A Base64 value that identifies the block. Prior to encoding, the string must
+         be less than or equal to 64 bytes in size. For a given blob, the length of the value specified
+         for the blockid parameter must be the same size for each block. Required.
+        :paramtype block_id: str
+        :keyword content_length: The length of the request. Required.
+        :paramtype content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
+        :paramtype transactional_content_md5: bytes
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
+        :paramtype transactional_content_crc64: bytes
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
+        :paramtype encryption_scope: str
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
     def stage_block(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
-        body: bytes,
+        body: Union[bytes, IO[bytes]],
         *,
         block_id: str,
         content_length: int,
@@ -10471,8 +11073,8 @@ class BlockBlobOperations:
     ) -> None:
         """Creates a new block of data to be committed as part of a blob.
 
-        :param body: The body of the request. Required.
-        :type body: bytes
+        :param body: The body of the request. Is either a bytes type or a IO[bytes] type. Required.
+        :type body: bytes or IO[bytes]
         :keyword block_id: A Base64 value that identifies the block. Prior to encoding, the string must
          be less than or equal to 64 bytes in size. For a given blob, the length of the value specified
          for the blockid parameter must be the same size for each block. Required.
@@ -10527,9 +11129,10 @@ class BlockBlobOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = body
 
         _request = build_block_blob_stage_block_request(
@@ -11300,7 +11903,7 @@ class BlockBlobOperations:
         return deserialized  # type: ignore
 
 
-class PageBlobOperations:
+class PageBlobOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11524,10 +12127,210 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
+    @overload
+    def upload_pages(
+        self,
+        body: bytes,
+        *,
+        content_length: int,
+        range: str,
+        content_type: str = "application/octet-stream",
+        transactional_content_md5: Optional[bytes] = None,
+        transactional_content_crc64: Optional[bytes] = None,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        if_sequence_number_less_than_or_equal_to: Optional[int] = None,
+        if_sequence_number_less_than: Optional[int] = None,
+        if_sequence_number_equal_to: Optional[int] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """Writes a range of pages to the specified page blob.
+
+        :param body: The body of the request. Required.
+        :type body: bytes
+        :keyword content_length: The length of the request. Required.
+        :paramtype content_length: int
+        :keyword range: Specifies the range of the blob to operate on. Required.
+        :paramtype range: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
+        :paramtype transactional_content_md5: bytes
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
+        :paramtype transactional_content_crc64: bytes
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
+        :paramtype encryption_scope: str
+        :keyword if_sequence_number_less_than_or_equal_to: Specify this value to operate only on a blob
+         if it has a sequence number less than or equal to the specified. Default value is None.
+        :paramtype if_sequence_number_less_than_or_equal_to: int
+        :keyword if_sequence_number_less_than: Specify this value to operate only on a blob if it has a
+         sequence number less than the specified. Default value is None.
+        :paramtype if_sequence_number_less_than: int
+        :keyword if_sequence_number_equal_to: Specify this value to operate only on a blob if it has
+         the specified sequence number. Default value is None.
+        :paramtype if_sequence_number_equal_to: int
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
+        :paramtype if_tags: str
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upload_pages(
+        self,
+        body: IO[bytes],
+        *,
+        content_length: int,
+        range: str,
+        content_type: str = "application/octet-stream",
+        transactional_content_md5: Optional[bytes] = None,
+        transactional_content_crc64: Optional[bytes] = None,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        if_sequence_number_less_than_or_equal_to: Optional[int] = None,
+        if_sequence_number_less_than: Optional[int] = None,
+        if_sequence_number_equal_to: Optional[int] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """Writes a range of pages to the specified page blob.
+
+        :param body: The body of the request. Required.
+        :type body: IO[bytes]
+        :keyword content_length: The length of the request. Required.
+        :paramtype content_length: int
+        :keyword range: Specifies the range of the blob to operate on. Required.
+        :paramtype range: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
+        :paramtype transactional_content_md5: bytes
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
+        :paramtype transactional_content_crc64: bytes
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
+        :paramtype encryption_scope: str
+        :keyword if_sequence_number_less_than_or_equal_to: Specify this value to operate only on a blob
+         if it has a sequence number less than or equal to the specified. Default value is None.
+        :paramtype if_sequence_number_less_than_or_equal_to: int
+        :keyword if_sequence_number_less_than: Specify this value to operate only on a blob if it has a
+         sequence number less than the specified. Default value is None.
+        :paramtype if_sequence_number_less_than: int
+        :keyword if_sequence_number_equal_to: Specify this value to operate only on a blob if it has
+         the specified sequence number. Default value is None.
+        :paramtype if_sequence_number_equal_to: int
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
+        :paramtype if_tags: str
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
     def upload_pages(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
-        body: bytes,
+        body: Union[bytes, IO[bytes]],
         *,
         content_length: int,
         range: str,
@@ -11553,8 +12356,8 @@ class PageBlobOperations:
     ) -> None:
         """Writes a range of pages to the specified page blob.
 
-        :param body: The body of the request. Required.
-        :type body: bytes
+        :param body: The body of the request. Is either a bytes type or a IO[bytes] type. Required.
+        :type body: bytes or IO[bytes]
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
         :keyword range: Specifies the range of the blob to operate on. Required.
@@ -11637,9 +12440,10 @@ class PageBlobOperations:
         _params = kwargs.pop("params", {}) or {}
 
         page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = body
 
         _request = build_page_blob_upload_pages_request(
@@ -11663,8 +12467,8 @@ class PageBlobOperations:
             structured_content_length=structured_content_length,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             page_write=page_write,
+            content_type=content_type,
             version=self._config.version,
             content=_content,
             headers=_headers,

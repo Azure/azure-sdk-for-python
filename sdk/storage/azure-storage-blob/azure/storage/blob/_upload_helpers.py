@@ -40,6 +40,7 @@ if TYPE_CHECKING:
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
 
+
 def _convert_mod_error(error):
     message = error.message.replace(
         "The condition specified using HTTP conditional header(s) is not met.", "The specified blob already exists."

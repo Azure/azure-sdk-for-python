@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class BlobClient:  # pylint: disable=client-accepts-api-version-keyword
+class BlobClient:  # pylint: disable=client-accepts-api-version-keyword,docstring-keyword-should-match-keyword-only
     """BlobClient.
 
     :ivar service: ServiceOperations operations

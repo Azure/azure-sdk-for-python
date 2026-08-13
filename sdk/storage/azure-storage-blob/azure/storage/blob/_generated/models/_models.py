@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessPolicy(_Model):
+class AccessPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an access policy.
 
     :ivar start: The date-time the policy is active.
@@ -96,7 +96,7 @@ class AccessPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArrowConfiguration(_Model):
+class ArrowConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the Apache Arrow configuration.
 
     :ivar schema: The Apache Arrow schema. Required.
@@ -129,7 +129,7 @@ class ArrowConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArrowField(_Model):
+class ArrowField(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an Apache Arrow field.
 
     :ivar type: The arrow field type. Required.
@@ -190,7 +190,7 @@ class ArrowField(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobHierarchyList(_Model):
+class BlobHierarchyList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an array of blobs.
 
     :ivar blob_items: The blob items. Required.
@@ -233,7 +233,7 @@ class BlobHierarchyList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobItemInternal(_Model):
+class BlobItemInternal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a blob.
 
     :ivar name: The name of the blob. Required.
@@ -349,7 +349,7 @@ class BlobItemInternal(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobMetadata(_Model):
+class BlobMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The blob metadata.
 
     :ivar encrypted: Whether the blob metadata is encrypted.
@@ -383,7 +383,7 @@ class BlobMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobName(_Model):
+class BlobName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a blob name.
 
     :ivar encoded: Whether the blob name is encoded.
@@ -426,7 +426,7 @@ class BlobName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobPrefix(_Model):
+class BlobPrefix(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a blob prefix.
 
     :ivar name: The blob name. Required.
@@ -459,7 +459,7 @@ class BlobPrefix(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobProperties(_Model):
+class BlobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a blob.
 
     :ivar creation_time: The date-time the blob was created.
@@ -922,7 +922,7 @@ class BlobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobTag(_Model):
+class BlobTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A key-value pair associated with a blob.
 
     :ivar key: The key of the tag. Required.
@@ -965,7 +965,7 @@ class BlobTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobTags(_Model):
+class BlobTags(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of blob tags.
 
     :ivar blob_tag_set: A list of blob tags. Required.
@@ -999,7 +999,7 @@ class BlobTags(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Block(_Model):
+class Block(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a single block in a block blob.
 
     :ivar name: The base64 encoded block ID. Required.
@@ -1042,7 +1042,7 @@ class Block(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlockList(_Model):
+class BlockList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the committed and uncommitted blocks in a block blob.
 
     :ivar committed_blocks: The list of committed blocks.
@@ -1085,7 +1085,7 @@ class BlockList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlockLookupList(_Model):
+class BlockLookupList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The block lookup list.
 
     :ivar committed: The committed blocks.
@@ -1137,7 +1137,7 @@ class BlockLookupList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClearRange(_Model):
+class ClearRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A clear range.
 
     :ivar start: The start of the byte range. Required.
@@ -1180,7 +1180,7 @@ class ClearRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerItem(_Model):
+class ContainerItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a container.
 
     :ivar name: The name of the container. Required.
@@ -1248,7 +1248,7 @@ class ContainerItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerProperties(_Model):
+class ContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a container.
 
     :ivar last_modified: The date-time that the container was last modified. Required.
@@ -1410,7 +1410,7 @@ class ContainerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CorsRule(_Model):
+class CorsRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Cross-Origin Resource Sharing (CORS) rule.
 
     :ivar allowed_origins: The allowed origins. Required.
@@ -1485,7 +1485,7 @@ class CorsRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DelimitedTextConfiguration(_Model):
+class DelimitedTextConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the delimited text configuration.
 
     :ivar column_separator: The string used to separate columns.
@@ -1560,7 +1560,7 @@ class DelimitedTextConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Error(_Model):
+class Error(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The error response.
 
     This defines the wire format only. Language SDKs wrap this in idiomatic error types.
@@ -1713,7 +1713,7 @@ class Error(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FilterBlobItem(_Model):
+class FilterBlobItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The filtered blob item.
 
     :ivar name: The name of the blob. Required.
@@ -1785,7 +1785,7 @@ class FilterBlobItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FilterBlobSegment(_Model):
+class FilterBlobSegment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of the Find Blobs by Tags API.
 
     :ivar service_endpoint: The service endpoint. Required.
@@ -1851,7 +1851,7 @@ class FilterBlobSegment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GeoReplication(_Model):
+class GeoReplication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Geo-replication information for the secondary storage service.
 
     :ivar status: The status of the secondary location. Required. Known values are: "live",
@@ -1902,7 +1902,7 @@ class GeoReplication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JsonTextConfiguration(_Model):
+class JsonTextConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the JSON text configuration.
 
     :ivar record_separator: The string used to separate records.
@@ -1937,7 +1937,7 @@ class JsonTextConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyInfo(_Model):
+class KeyInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Key information.
 
     :ivar start: The date-time the key is active. Required.
@@ -1990,7 +1990,7 @@ class KeyInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListBlobsHierarchicalResponse(_Model):
+class ListBlobsHierarchicalResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of the List Blobs Hierarchical API.
 
     :ivar service_endpoint: The service endpoint. Required.
@@ -2096,7 +2096,7 @@ class ListBlobsHierarchicalResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListBlobsResponse(_Model):
+class ListBlobsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of the List Blobs API.
 
     :ivar service_endpoint: The service endpoint. Required.
@@ -2193,7 +2193,7 @@ class ListBlobsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListContainersSegmentResponse(_Model):
+class ListContainersSegmentResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of the List Containers API.
 
     :ivar service_endpoint: The service endpoint. Required.
@@ -2280,7 +2280,7 @@ class ListContainersSegmentResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Logging(_Model):
+class Logging(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Analytics logging settings.
 
     :ivar version: The version of the logging properties. Required.
@@ -2350,7 +2350,7 @@ class Logging(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Metrics(_Model):
+class Metrics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The metrics properties.
 
     :ivar version: The version of the metrics properties.
@@ -2418,7 +2418,7 @@ class ObjectReplicationMetadata(_Model):
     _xml = {"attribute": False, "name": "OrMetadata", "text": False, "unwrapped": False}
 
 
-class PageList(_Model):
+class PageList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of the Get Pages API.
 
     :ivar page_range: The page ranges.
@@ -2474,7 +2474,7 @@ class PageList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PageRange(_Model):
+class PageRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A page range.
 
     :ivar start: The start of the byte range. Required.
@@ -2523,7 +2523,7 @@ class ParquetConfiguration(_Model):
     _xml = {"attribute": False, "name": "ParquetConfiguration", "text": False, "unwrapped": False}
 
 
-class QueryFormat(_Model):
+class QueryFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The query format settings.
 
     :ivar type: The query type. Required. Known values are: "delimited", "json", "arrow", and
@@ -2596,7 +2596,7 @@ class QueryFormat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryRequest(_Model):
+class QueryRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Groups the set of query request settings.
 
     :ivar query_type: Required. The type of the provided query expression. Required. "SQL"
@@ -2659,7 +2659,7 @@ class QueryRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuerySerialization(_Model):
+class QuerySerialization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The query serialization settings.
 
     :ivar format: The query format. Required.
@@ -2692,7 +2692,7 @@ class QuerySerialization(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetentionPolicy(_Model):
+class RetentionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The retention policy.
 
     :ivar enabled: Whether the policy is enabled. Required.
@@ -2745,7 +2745,7 @@ class RetentionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignedIdentifier(_Model):
+class SignedIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A signed identifier.
 
     :ivar id: The unique ID for the signed identifier. Required.
@@ -2788,7 +2788,7 @@ class SignedIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignedIdentifiers(_Model):
+class SignedIdentifiers(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of signed identifiers.
 
     :ivar items_property: The list of signed identifiers. Required.
@@ -2829,7 +2829,7 @@ class SignedIdentifiers(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticWebsite(_Model):
+class StaticWebsite(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties that enable an account to host a static website.
 
     :ivar enabled: Indicates whether this account is hosting a static website. Required.
@@ -2893,7 +2893,7 @@ class StaticWebsite(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageServiceProperties(_Model):
+class StorageServiceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The blob service properties.
 
     :ivar logging: The logging properties.
@@ -2980,7 +2980,7 @@ class StorageServiceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageServiceStats(_Model):
+class StorageServiceStats(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Stats for the storage service.
 
     :ivar geo_replication: The geo-replication stats.
@@ -3014,7 +3014,7 @@ class StorageServiceStats(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubmitBatchRequest(_Model):
+class SubmitBatchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SubmitBatchRequest.
 
     :ivar body: Required.
@@ -3044,7 +3044,7 @@ class SubmitBatchRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserDelegationKey(_Model):
+class UserDelegationKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A user delegation key.
 
     :ivar signed_oid: The Entra ID object ID in GUID format. Required.
