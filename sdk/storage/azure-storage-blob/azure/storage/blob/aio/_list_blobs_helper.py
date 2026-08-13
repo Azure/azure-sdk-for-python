@@ -12,7 +12,13 @@ from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 
 from .._deserialize import get_blob_properties_from_generated_code, load_many_xml_nodes, load_xml_int, load_xml_string
-from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
+from .._generated.models import (
+    BlobItemInternal,
+    BlobPrefix as GenBlobPrefix,
+    ListBlobsHierarchicalResponse,
+    ListBlobsResponse,
+)
+from .._generated._utils.model_base import _deserialize_xml
 from .._list_blobs_helper import _ARROW_CONTENT_TYPE, _parse_arrow_response
 from .._models import BlobProperties
 from .._shared.models import DictMixin
@@ -86,11 +92,8 @@ class BlobPropertiesPaged(AsyncPageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.container = self._response.container_name
-        # TypeSpec hierarchical listing uses `hierarchical_list`; earlier generated shapes used `segment`.
-        items_source = getattr(self._response, "hierarchical_list", None) or getattr(self._response, "segment", None)
-        items_source = items_source or self._response
-        blob_items = getattr(items_source, "blob_items", None) or []
-        self.current_page = [self._build_item(item) for item in blob_items]
+        items_source = getattr(self._response, "hierarchical_list", None) or self._response
+        self.current_page = [self._build_item(item) for item in (getattr(items_source, "blob_items", None) or [])]
 
         return self._response.next_marker or None, self.current_page
 
@@ -224,8 +227,7 @@ class BlobPrefixPaged(BlobPropertiesPaged):
 
     async def _extract_data_cb(self, get_next_return):
         continuation_token, _ = await super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
-        items_source = getattr(self._response, "hierarchical_list", None) or getattr(self._response, "segment", None)
-        items_source = items_source or self._response
+        items_source = self._response.hierarchical_list
         self.current_page = (getattr(items_source, "blob_prefixes", None) or []) + (
             getattr(items_source, "blob_items", None) or []
         )
@@ -254,7 +256,7 @@ class BlobPrefixPaged(BlobPropertiesPaged):
 class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
     """An async PageIterator that deserializes Apache Arrow IPC responses from list-blobs operations."""
 
-    _xml_response_type = "ListBlobsFlatSegmentResponse"
+    _xml_response_type = ListBlobsResponse
 
     def __init__(self, *args, deserializer=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -276,7 +278,7 @@ class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
             read_result = pipeline_response.http_response.read()
             if inspect.isawaitable(read_result):
                 await read_result
-        xml_response = self._deserializer(self._xml_response_type, pipeline_response.http_response)
+        xml_response = _deserialize_xml(self._xml_response_type, pipeline_response.http_response.text())
         self._arrow_response = None
         return location_mode, xml_response
 
@@ -319,7 +321,7 @@ class ArrowBlobNamesPaged(ArrowBlobPropertiesPaged):
 class ArrowBlobPrefixPaged(ArrowBlobPropertiesPaged):
     """Arrow-backed AsyncPageIterator for walk_blobs."""
 
-    _xml_response_type = "ListBlobsHierarchySegmentResponse"
+    _xml_response_type = ListBlobsHierarchicalResponse
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -336,7 +338,10 @@ class ArrowBlobPrefixPaged(ArrowBlobPropertiesPaged):
         # XML fallback: reuse the base to populate the response, then preserve the
         # hierarchy's virtual directories (BlobPrefix) alongside the blobs.
         next_marker, _ = await super()._extract_data_cb(get_next_return)
-        self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
+        items_source = self._response.hierarchical_list
+        self.current_page = (getattr(items_source, "blob_prefixes", None) or []) + (
+            getattr(items_source, "blob_items", None) or []
+        )
         self.current_page = [self._build_item(item) for item in self.current_page]
         self.delimiter = self._response.delimiter
         return next_marker, self.current_page
