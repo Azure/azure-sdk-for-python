@@ -60,8 +60,6 @@ def _generate_delete_blobs_subrequest_options(
     if_tags: Optional[str] = None,
     **kwargs,
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    # pylint: disable=protected-access
-
     # ``get_modify_conditions`` emits azure.core-style ``etag``/``match_condition``
     # rather than ``if_match``/``if_none_match``. Translate them here so the batch
     # sub-request still sends the conditional header instead of silently dropping it.

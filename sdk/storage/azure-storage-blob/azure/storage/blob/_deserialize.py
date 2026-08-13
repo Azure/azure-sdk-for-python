@@ -191,7 +191,7 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     blob.snapshot = generated.snapshot
     blob.is_append_blob_sealed = generated.properties.is_sealed
     blob.metadata = (  # type: ignore [assignment]
-        {k: v for k, v in generated.metadata.items() if k != "Encrypted"} if generated.metadata else {}
+        {k: v for k, v in generated.metadata.items() if k != "encrypted"} if generated.metadata else {}
     )
     blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
     blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
