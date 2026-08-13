@@ -1,10 +1,8 @@
 # Release History
 
-## 1.0.0 (2026-08-12)
+## 1.0.0 (2026-08-13)
 
-### Other Changes
-
-  - First GA
+tool can't generate changelog for this release, please update manually.
 
 ## 1.0.0b1 (2026-06-12)
 
