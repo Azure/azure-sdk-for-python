@@ -924,15 +924,12 @@ def _region_nonce_candidates(region_index: int, nonce_length: int) -> List[bytes
     candidates = [region_index.to_bytes(nonce_length, "big")]
 
     counter_length = 8
-    if nonce_length >= counter_length:
-        # Java
-        candidates.append(
-            region_index.to_bytes(counter_length, "big") + b"\x00" * (nonce_length - counter_length)
-        )
-        # .NET
-        candidates.append(
-            b"\x00" * (nonce_length - counter_length) + (region_index + 1).to_bytes(counter_length, "little")
-        )
+    # Java
+    candidates.append(region_index.to_bytes(counter_length, "big") + b"\x00" * (nonce_length - counter_length))
+    # .NET
+    candidates.append(
+        b"\x00" * (nonce_length - counter_length) + (region_index + 1).to_bytes(counter_length, "little")
+    )
 
     return candidates
 
