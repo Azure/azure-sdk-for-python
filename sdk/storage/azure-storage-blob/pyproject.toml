@@ -44,6 +44,9 @@ dynamic = [
 aio = [
   "azure-core[aio]>=1.38.3",
 ]
+ext-checksums = [
+   "azure-storage-extensions>=0.1.0,<1.0.0",
+]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python"
