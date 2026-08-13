@@ -77,22 +77,20 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
     try:
         # Stage block generated operation does not accept access conditions.
         # upload and commit_block_list do accept those, so strip them before staging blocks.
-        access_condition_kwargs = {
-            "if_modified_since": kwargs.pop("if_modified_since", None),
-            "if_unmodified_since": kwargs.pop("if_unmodified_since", None),
-            "match_condition": kwargs.pop("match_condition", None),
-            "etag": kwargs.pop("etag", None),
-            "if_tags": kwargs.pop("if_tags", None),
-        }
-        access_condition_kwargs = {k: v for k, v in access_condition_kwargs.items() if v is not None}
-        if_modified_since = access_condition_kwargs.get("if_modified_since")
-        if_unmodified_since = access_condition_kwargs.get("if_unmodified_since")
-        match_condition = access_condition_kwargs.get("match_condition")
-        etag = access_condition_kwargs.get("etag")
-        if_tags = access_condition_kwargs.get("if_tags")
-        if not overwrite and not _any_conditions(access_condition_kwargs):
+        if_modified_since = kwargs.pop("if_modified_since", None)
+        if_unmodified_since = kwargs.pop("if_unmodified_since", None)
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if_tags = kwargs.pop("if_tags", None)
+        has_access_conditions = any(
+            (
+                if_modified_since,
+                if_unmodified_since,
+                match_condition not in (None, MatchConditions.Unconditionally),
+            )
+        )
+        if not overwrite and not has_access_conditions:
             match_condition = MatchConditions.IfMissing
-            access_condition_kwargs["match_condition"] = match_condition
         adjusted_count = length
         if (encryption_options.get("key") is not None) and (adjusted_count is not None):
             adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options["version"])
