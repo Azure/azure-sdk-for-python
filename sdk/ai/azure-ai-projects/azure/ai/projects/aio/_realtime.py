@@ -541,6 +541,18 @@ class AsyncRealtimeConnection:  # pylint: disable=too-many-instance-attributes
     async def __aexit__(self, *exc_details: Any) -> None:
         await self.close()
 
+    def __repr__(self) -> str:
+        state = "closed" if self.closed else "open"
+        return f"<AsyncRealtimeConnection [{state}]>"
+
+    @property
+    def closed(self) -> bool:
+        """Whether the underlying WebSocket connection has been closed.
+
+        :rtype: bool
+        """
+        return self._connection.closed
+
     def __aiter__(self) -> AsyncIterator[ServerEvent]:
         return self._iter()
 
@@ -592,8 +604,16 @@ class AsyncRealtimeConnection:  # pylint: disable=too-many-instance-attributes
 
         :param event: A strongly-typed client event, a ready-made mapping, or a raw JSON string.
         :type event: ~azure.ai.projects.aio.ClientEvent or str
+        :raises ValueError: If ``event`` is a ``str`` that is not valid JSON.
         """
-        payload = event if isinstance(event, str) else json.dumps(event, cls=SdkJSONEncoder)
+        if isinstance(event, str):
+            try:
+                json.loads(event)
+            except ValueError as exc:
+                raise ValueError(f"'event' is not valid JSON: {exc}") from exc
+            payload = event
+        else:
+            payload = json.dumps(event, cls=SdkJSONEncoder)
         await self._connection.send_str(payload)
 
     async def close(self, *, code: int = 1000, reason: str = "") -> None:
@@ -655,6 +675,10 @@ class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attri
 
         :return: The live realtime connection.
         :rtype: ~azure.ai.projects.aio.AsyncRealtimeConnection
+        :raises RuntimeError: If ``aiohttp`` is not installed.
+        :raises ValueError: If the computed or supplied WebSocket URL does not use ``wss://``.
+        :raises ConnectionError: If the WebSocket upgrade handshake fails (for example, a
+         network error, DNS failure, or a non-101 response from the service).
         """
         try:
             import aiohttp  # pylint: disable=import-outside-toplevel
@@ -693,9 +717,14 @@ class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attri
             connection = await session.ws_connect(
                 url, headers=headers, params=params, **self._kwargs
             )
-        except BaseException:
+        except BaseException as exc:
             await session.close()
-            raise
+            if isinstance(exc, (ValueError, RuntimeError)):
+                raise
+            raise ConnectionError(
+                f"Failed to open the realtime WebSocket connection to voice agent "
+                f"'{self._agent_name}' at '{url}': {exc}"
+            ) from exc
         self._connection = AsyncRealtimeConnection(
             cast("ClientWebSocketResponse", connection), session
         )
