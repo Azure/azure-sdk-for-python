@@ -50,8 +50,8 @@
   - Added enum `VirtualMachineDiskDelayAction`
   - Added enum `VirtualMachineDiskNetworkAccessPolicy`
   - Added model `VirtualMachineDiskProperties`
-  - Model `VirtualMachineExtensionImagesOperations` added parameter `expand` in method `list_versions`
-  - Model `VirtualMachineScaleSetsOperations` added method `begin_migrate_vm_availability_zone`
+  - Operation group `VirtualMachineExtensionImagesOperations` added parameter `expand` in method `list_versions`
+  - Operation group `VirtualMachineScaleSetsOperations` added method `begin_migrate_vm_availability_zone`
   - Added operation group `VirtualMachineDiagnosticRunCommandsOperations`
   - Added operation group `VirtualMachineScaleSetVMDiagnosticRunCommandsOperations`
 
