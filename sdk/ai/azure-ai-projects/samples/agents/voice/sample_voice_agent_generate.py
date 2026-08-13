@@ -38,7 +38,7 @@ with (
 ):
     agent = project_client.agents.generate_agent(kind="voice")
     print(f"Generated voice agent: {agent.name}")
-    print(f"Instructions:\n{agent.versions.latest.definition.instructions}")  # type: ignore[union-attr]
+    print(f"Instructions:\n{agent.versions.latest.definition.instructions}")  # type: ignore[attr-defined]
 
     project_client.agents.delete(agent_name=agent.name)
     print(f"Deleted voice agent: {agent.name}")

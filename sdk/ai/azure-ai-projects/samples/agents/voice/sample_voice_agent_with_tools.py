@@ -93,7 +93,7 @@ _example_mcp_tool = VoiceAgentMcpTool(
     server_label="my-mcp-server",
     server_url="https://example.com/mcp",
     require_approval="never",
-)
+)  # type: ignore[call-overload]
 
 # A toolbox tool references a versioned Foundry toolbox you have created. It is
 # constructed here for illustration; attach it only if the toolbox exists.
@@ -122,7 +122,7 @@ definition = VoiceAgentDefinition(
     output_modalities=[VoiceOutputModality.AUDIO],
     # Attach the self-contained tools. `_example_mcp_tool` and `_example_toolbox_tool`
     # reference external resources you must own, so they are left out here.
-    tools=[get_weather, end_call],
+    tools=[get_weather, end_call],  # type: ignore[list-item]
     store=True,
 )
 
@@ -135,7 +135,7 @@ with (
         print(f"Created voice agent '{agent_name}' (model_type={model_type}, model={model})")
 
         agent_version = project_client.agents.get_version(agent_name=agent_name, agent_version=created_version.version)
-        tools = agent_version.definition.tools or []  # type: ignore[union-attr]
+        tools = agent_version.definition.tools or []  # type: ignore[attr-defined]
         print(f"Configured {len(tools)} tool(s):")
         for tool in tools:
             # Tools belong to an open union, so on read they surface as mappings

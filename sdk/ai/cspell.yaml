@@ -80,6 +80,8 @@ words:
   - openai
   - openmpi
   - oupfoo
+  - pcma
+  - pcmu
   - pipelinerunid
   - PRIFINS
   - prompty

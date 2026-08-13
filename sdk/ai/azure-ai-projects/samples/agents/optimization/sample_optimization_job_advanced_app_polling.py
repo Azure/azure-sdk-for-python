@@ -41,12 +41,12 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     JobStatus,
-    OptimizationAgentIdentifier as AgentIdentifier,
-    OptimizationEvaluatorRef as EvaluatorRef,
-    OptimizationJob,
-    OptimizationJobInputs,
-    OptimizationOptions,
-    OptimizationReferenceDatasetInput as ReferenceDatasetInput,
+    OptimizedAgentIdentifier as AgentIdentifier,
+    AgentOptimizationEvaluatorRef as EvaluatorRef,
+    AgentOptimizationJob,
+    AgentOptimizationJobInputs,
+    AgentOptimizationOptions,
+    AgentOptimizationReferenceDatasetInput as ReferenceDatasetInput,
 )
 
 load_dotenv()
@@ -71,23 +71,23 @@ with (
     # 1. Create an optimization job without SDK polling.
     # ------------------------------------------------------------------
     print("Creating optimization job...")
-    created_jobs: list[OptimizationJob] = []
+    created_jobs: list[AgentOptimizationJob] = []
 
     def raw_response_hook(response):
         # Since `polling=False` is set below, it is guaranteed that `raw_response_hook` will be
-        # invoked once on the initial "201 Created" response, and `response` is of type `OptimizationJob`.
+        # invoked once on the initial "201 Created" response, and `response` is of type `AgentOptimizationJob`.
         response.http_response.read()
-        created_jobs.append(OptimizationJob(response.http_response.json()))
+        created_jobs.append(AgentOptimizationJob(response.http_response.json()))
 
-    job = OptimizationJob(
-        inputs=OptimizationJobInputs(
+    job = AgentOptimizationJob(
+        inputs=AgentOptimizationJobInputs(
             agent=AgentIdentifier(agent_name=agent_name),
             train_dataset=ReferenceDatasetInput(
                 name=dataset_name,
                 version=dataset_version,
             ),
             evaluators=[EvaluatorRef(name=evaluator_name)],
-            options=OptimizationOptions(
+            options=AgentOptimizationOptions(
                 max_candidates=3,
                 eval_model=eval_model,
                 optimization_model=optimization_model,

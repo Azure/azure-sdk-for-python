@@ -41,12 +41,12 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    OptimizationAgentIdentifier as AgentIdentifier,
-    OptimizationEvaluatorRef as EvaluatorRef,
-    OptimizationJob,
-    OptimizationJobInputs,
-    OptimizationOptions,
-    OptimizationReferenceDatasetInput as ReferenceDatasetInput,
+    OptimizedAgentIdentifier as AgentIdentifier,
+    AgentOptimizationEvaluatorRef as EvaluatorRef,
+    AgentOptimizationJob,
+    AgentOptimizationJobInputs,
+    AgentOptimizationOptions,
+    AgentOptimizationReferenceDatasetInput as ReferenceDatasetInput,
 )
 
 load_dotenv()
@@ -68,15 +68,15 @@ with (
     # ------------------------------------------------------------------
     # 1. Create an optimization job and observe the SDK-managed poller.
     # ------------------------------------------------------------------
-    job = OptimizationJob(
-        inputs=OptimizationJobInputs(
+    job = AgentOptimizationJob(
+        inputs=AgentOptimizationJobInputs(
             agent=AgentIdentifier(agent_name=agent_name),
             train_dataset=ReferenceDatasetInput(
                 name=dataset_name,
                 version=dataset_version,
             ),
             evaluators=[EvaluatorRef(name=evaluator_name)],
-            options=OptimizationOptions(
+            options=AgentOptimizationOptions(
                 max_candidates=3,
                 eval_model=eval_model,
                 optimization_model=optimization_model,

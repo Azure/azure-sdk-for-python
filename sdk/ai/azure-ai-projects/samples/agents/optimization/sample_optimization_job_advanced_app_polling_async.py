@@ -41,12 +41,12 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     JobStatus,
-    OptimizationAgentIdentifier as AgentIdentifier,
-    OptimizationEvaluatorRef as EvaluatorRef,
-    OptimizationJob,
-    OptimizationJobInputs,
-    OptimizationOptions,
-    OptimizationReferenceDatasetInput as ReferenceDatasetInput,
+    OptimizedAgentIdentifier as AgentIdentifier,
+    AgentOptimizationEvaluatorRef as EvaluatorRef,
+    AgentOptimizationJob,
+    AgentOptimizationJobInputs,
+    AgentOptimizationOptions,
+    AgentOptimizationReferenceDatasetInput as ReferenceDatasetInput,
 )
 
 load_dotenv()
@@ -81,15 +81,15 @@ async def main() -> None:
             # and parse the body afterwards, when read() has already been awaited.
             pipeline_responses.append(response)
 
-        job = OptimizationJob(
-            inputs=OptimizationJobInputs(
+        job = AgentOptimizationJob(
+            inputs=AgentOptimizationJobInputs(
                 agent=AgentIdentifier(agent_name=agent_name),
                 train_dataset=ReferenceDatasetInput(
                     name=dataset_name,
                     version=dataset_version,
                 ),
                 evaluators=[EvaluatorRef(name=evaluator_name)],
-                options=OptimizationOptions(
+                options=AgentOptimizationOptions(
                     max_candidates=3,
                     eval_model=eval_model,
                     optimization_model=optimization_model,
@@ -106,7 +106,7 @@ async def main() -> None:
         # to a poller, and then awaiting `poller.result()`.
         if not pipeline_responses:
             raise RuntimeError("The create operation did not return an optimization job.")
-        job = OptimizationJob(pipeline_responses[0].http_response.json())
+        job = AgentOptimizationJob(pipeline_responses[0].http_response.json())
         print(f"Created job: id={job.id}, status={job.status}")
 
         # ------------------------------------------------------------------

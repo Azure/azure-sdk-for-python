@@ -33,7 +33,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         :attr:`agents` attribute.
     """
 
-    @overload
+    @overload  # type: ignore[override]
     async def create_version(
         self,
         agent_name: str,
@@ -135,7 +135,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         """
 
     @distributed_trace_async
-    async def create_version(
+    async def create_version(  # type: ignore[override]
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -193,9 +193,9 @@ class AgentsOperations(GeneratedAgentsOperations):
                 kwargs["headers"] = headers
 
         try:
-            return await super().create_version(
+            return await super().create_version(  # type: ignore[misc]
                 agent_name,
-                body,
+                body,  # type: ignore[arg-type]
                 definition=definition,
                 metadata=metadata,
                 description=description,

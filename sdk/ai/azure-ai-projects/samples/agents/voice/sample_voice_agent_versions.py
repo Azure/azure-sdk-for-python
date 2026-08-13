@@ -84,7 +84,7 @@ with (
 
         # Read a single version back.
         fetched = project_client.agents.get_version(agent_name=agent_name, agent_version=new_version.version)
-        print(f"Fetched version {fetched.version}: {fetched.definition.instructions}")  # type: ignore[union-attr]
+        print(f"Fetched version {fetched.version}: {fetched.definition.instructions}")  # type: ignore[attr-defined]
     finally:
         project_client.agents.delete(agent_name=agent_name)
         print(f"Deleted agent: {agent_name}")

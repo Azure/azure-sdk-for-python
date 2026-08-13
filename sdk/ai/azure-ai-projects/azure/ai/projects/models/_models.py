@@ -23731,13 +23731,14 @@ class VoiceAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-shoul
 
     * `openai`: `voice` and `speed`.
     * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
-    `custom_lexicon_url`,
-    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+      `custom_lexicon_url`,
+      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
     * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
-    `personal_voice_model`; the voice name is derived from the avatar.
+      `personal_voice_model`; the voice name is derived from the avatar.
     * `azure-realtime-native`: `voice` and `speed`.
+
     `format` and `output_audio_timestamp_types` apply to every voice type.
 
     :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
