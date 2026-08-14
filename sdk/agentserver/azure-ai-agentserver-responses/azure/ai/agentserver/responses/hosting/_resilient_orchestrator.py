@@ -1246,7 +1246,17 @@ class ResilientResponseOrchestrator:
         # auto-queues against an in-flight chain and returns a TaskRun
         # whose ``is_queued`` is True (the public-surface detection signal).
         # See the queued-vs-fresh check below.
-        task_run = await picked_primitive.start(**start_kwargs)
+        try:
+            task_run = await picked_primitive.start(**start_kwargs)
+        except BaseException:
+            # If the primitive never started (e.g. ``TaskManagerNotInitialized``
+            # when resilient tasks are disabled, or any start failure), the
+            # resilient task body — whose ``finally`` normally evicts the
+            # out-of-band refs — never runs. Drop the cache entry here so we do
+            # not permanently retain the record/context/parsed-request/cancel
+            # event for a response that fell back to in-process execution.
+            _RUNTIME_REFS.pop(response_id, None)
+            raise
         # Store the task run reference on the record for observability
         record.resilient_task_run = task_run  # type: ignore[attr-defined]
 

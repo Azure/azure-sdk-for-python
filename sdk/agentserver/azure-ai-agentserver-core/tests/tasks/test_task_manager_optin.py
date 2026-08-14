@@ -228,3 +228,33 @@ class TestLifespanManagerAndRecovery:
             assert len(_fake_task_manager.instances) == 0
             with pytest.raises(TaskManagerNotInitialized):
                 get_task_manager()
+
+    @pytest.mark.asyncio
+    async def test_switch_on_startup_failure_fails_lifespan(
+        self, _clean_state, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """When resilient tasks are ENABLED but manager startup fails, the
+        lifespan must fail fast (fail-fast at boot) rather than start a server
+        that would silently run store=true work non-durably."""
+        from azure.ai.agentserver.core import AgentServerHost
+
+        class _FailingManager:
+            def __init__(self, **kwargs) -> None:
+                pass
+
+            async def startup(self) -> None:
+                raise RuntimeError("simulated boot failure")
+
+            async def shutdown(self) -> None:
+                pass
+
+        monkeypatch.setattr(
+            "azure.ai.agentserver.core.tasks._manager.TaskManager",
+            _FailingManager,
+        )
+        set_resilient_tasks_enabled(True)
+
+        app = AgentServerHost()
+        with pytest.raises(RuntimeError, match="simulated boot failure"):
+            async with app.router.lifespan_context(app):
+                pass

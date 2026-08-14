@@ -329,24 +329,25 @@ class AgentServerHost(Starlette):
             # an app that wants durable tasks / recovery must set the switch.
             task_manager = None
             if _resilient_tasks_enabled():
-                try:
-                    from .tasks._manager import (  # pylint: disable=import-outside-toplevel
-                        TaskManager,
-                        set_task_manager,
-                    )
+                # Resilient tasks were explicitly enabled. Construct the manager
+                # and run startup recovery. If EITHER fails, durability was
+                # explicitly requested, so fail the lifespan (fail-fast at boot)
+                # rather than start a server that would silently run store=true
+                # work non-durably. This guarantees that in a running deployment
+                # "enabled" always implies a live manager.
+                from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                    TaskManager,
+                    set_task_manager,
+                )
 
-                    task_manager = TaskManager(
-                        config=cfg,
-                        shutdown_event=asyncio.Event(),
-                        shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
-                    )
-                    set_task_manager(task_manager)
-                    await task_manager.startup()
-                    logger.info("TaskManager initialized with startup recovery")
-                except ImportError:
-                    pass  # resilient module not available
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Failed to initialize TaskManager", exc_info=True)
+                task_manager = TaskManager(
+                    config=cfg,
+                    shutdown_event=asyncio.Event(),
+                    shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
+                )
+                set_task_manager(task_manager)
+                await task_manager.startup()
+                logger.info("TaskManager initialized with startup recovery")
             else:
                 logger.info(
                     "TaskManager NOT initialized (resilient tasks disabled; enable via "

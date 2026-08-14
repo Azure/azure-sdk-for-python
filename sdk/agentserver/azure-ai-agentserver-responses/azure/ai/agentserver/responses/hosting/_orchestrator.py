@@ -3908,16 +3908,16 @@ class _ResponseOrchestrator:
 
         Two outcomes when the resilient start cannot proceed:
 
-        - **No task subsystem installed** (the start raises
-          :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized`).
-          This happens whenever resilient tasks were not enabled for the host
-          (the durable subsystem is opt-in via ``set_resilient_tasks_enabled`` /
-          ``resilient_background``), or in an in-process test client whose
-          lifespan never ran. The signal is **swallowed** and the handler runs
-          in-process via ``fallback_runner`` — there is no manager to recover
-          through, so this is the legitimate non-durable path, NOT a failure.
-          The response still executes and persists (GET works); it is simply not
-          crash-recoverable. This applies regardless of hosted vs local.
+        - **No manager installed** — the start raises
+          :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized`.
+          Because ``AgentServerHost`` fails the lifespan when resilient tasks are
+          ENABLED but construction/startup fails, a missing manager in a running
+          deployment means resilient tasks are DISABLED (opt-out) — durability
+          was not requested (this also covers in-process test clients whose
+          lifespan never ran). The signal is **swallowed** and the handler runs
+          in-process via ``fallback_runner`` — the response still executes and
+          persists (GET works); it is simply not crash-recoverable. NOT a
+          failure.
         - **Subsystem present but the start fails**: fail immediately. The
           exception is tagged as a platform infrastructure error and re-raised
           (no silent degradation to a non-durable task — that would hide a real
@@ -3928,7 +3928,7 @@ class _ResponseOrchestrator:
         :param record: The mutable execution record.
         :type record: ResponseExecution
         :param fallback_runner: The shielded runner coroutine function to run
-            in-process when no task subsystem is installed.
+            in-process when resilient tasks are disabled.
         :type fallback_runner: Any
         :keyword disposition: One of ``"re-invoke"`` (Row 1: resilient_bg+bg+store
             — task body re-runs handler on recovery) or ``"mark-failed"``
@@ -3940,7 +3940,7 @@ class _ResponseOrchestrator:
         :raises Exception: If the task subsystem is present and the resilient
             start fails (e.g. the task-store write is rejected). The exception is
             tagged with ``PLATFORM_ERROR_TAG`` so the endpoint surfaces
-            ``x-platform-error-source: platform``. A *missing* subsystem
+            ``x-platform-error-source: platform``. A missing subsystem
             (``TaskManagerNotInitialized``) is NOT raised — it is swallowed and
             handled via the in-process fallback (see above).
         """
@@ -3992,19 +3992,19 @@ class _ResponseOrchestrator:
             # surfaces HTTP 409 `conversation_fork_not_supported`.
             raise
         except TaskManagerNotInitialized:
-            # No resilient-task subsystem is installed in this process — the
-            # host did not enable resilient tasks
-            # (``set_resilient_tasks_enabled``), so recovery/durability is
-            # opt-out here. SWALLOW the signal and run the handler in-process:
-            # the response still executes and persists to the store (so GET
-            # works), it simply is not crash-recoverable. This is the deliberate
-            # non-durable path for a host that opted out of resilient tasks —
-            # NOT a failure. (When a manager IS present the start above succeeds
-            # and we use the resilient task with full recovery.)
+            # No manager is installed. Because ``AgentServerHost`` fails the
+            # lifespan when resilient tasks are ENABLED but construction/startup
+            # fails, a missing manager in a running deployment means resilient
+            # tasks are simply DISABLED (opt-out) — recovery/durability was not
+            # requested. (It also covers in-process test clients whose lifespan
+            # never ran.) SWALLOW and run the handler in-process: the response
+            # still executes and persists (GET works), it is simply not
+            # crash-recoverable. This is the deliberate non-durable path, NOT a
+            # failure.
             logger.info(
                 "Resilient task subsystem not enabled for response %s; running handler "
                 "in-process (non-durable). Enable via set_resilient_tasks_enabled(True) "
-                "for crash recovery.",
+                "(or resilient_background) for crash recovery.",
                 ctx.response_id,
             )
             record.execution_task = asyncio.create_task(fallback_runner())
