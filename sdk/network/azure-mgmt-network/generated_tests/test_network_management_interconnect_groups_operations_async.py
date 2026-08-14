@@ -25,7 +25,7 @@ class TestNetworkManagementInterconnectGroupsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.interconnect_groups.get(
             resource_group_name=resource_group.name,
             interconnect_group_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestNetworkManagementInterconnectGroupsOperationsAsync(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestNetworkManagementInterconnectGroupsOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             interconnect_group_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestNetworkManagementInterconnectGroupsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.interconnect_groups.delete(
             resource_group_name=resource_group.name,
             interconnect_group_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -100,7 +100,7 @@ class TestNetworkManagementInterconnectGroupsOperationsAsync(AzureMgmtRecordedTe
     async def test_interconnect_groups_list(self, resource_group):
         response = self.client.interconnect_groups.list(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -110,7 +110,7 @@ class TestNetworkManagementInterconnectGroupsOperationsAsync(AzureMgmtRecordedTe
     @recorded_by_proxy_async
     async def test_interconnect_groups_list_all(self, resource_group):
         response = self.client.interconnect_groups.list_all(
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -123,7 +123,7 @@ class TestNetworkManagementInterconnectGroupsOperationsAsync(AzureMgmtRecordedTe
             await self.client.interconnect_groups.begin_get_node_availability(
                 resource_group_name=resource_group.name,
                 interconnect_group_name="str",
-                api_version="2025-07-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
