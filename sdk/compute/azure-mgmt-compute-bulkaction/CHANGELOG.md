@@ -26,16 +26,16 @@
   - Added enum `ScheduledActionsProvisioningState`
   - Added enum `ScheduledActionsResourceOperationType`
   - Added model `ScheduledActionsRetryPolicy`
-  - Model `BulkCreateCustomOperations` added method `virtual_machines_get_operation_status`
+  - Operation group `BulkCreateCustomOperations` added method `virtual_machines_get_operation_status`
 
 ### Breaking Changes
 
-  - Deleted or renamed model `RecurringScheduledActionsDeadlineType`
-  - Deleted or renamed model `RecurringScheduledActionsExecutionParameters`
-  - Deleted or renamed model `RecurringScheduledActionsProvisioningState`
-  - Deleted or renamed model `RecurringScheduledActionsResourceOperationType`
-  - Deleted or renamed model `RecurringScheduledActionsRetryPolicy`
-  - Deleted or renamed model `ResourceProvisioningState`
+  - Renamed enum `RecurringScheduledActionsDeadlineType` to `ScheduledActionsDeadlineType`
+  - Renamed model `RecurringScheduledActionsExecutionParameters` to `ScheduledActionsExecutionParameters`
+  - Renamed enum `RecurringScheduledActionsProvisioningState` to `ScheduledActionsProvisioningState`
+  - Renamed enum `RecurringScheduledActionsResourceOperationType` to `ScheduledActionsResourceOperationType`
+  - Renamed model `RecurringScheduledActionsRetryPolicy` to `ScheduledActionsRetryPolicy`
+  - Renamed enum `ResourceProvisioningState` to `OccurrenceResourceProvisioningState`
 
 ## 1.0.0b2 (2026-07-22)
 
