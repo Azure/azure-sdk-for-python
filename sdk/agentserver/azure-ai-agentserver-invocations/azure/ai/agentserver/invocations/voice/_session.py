@@ -193,6 +193,11 @@ async def _run_transport_operation(
 ) -> _TransportResultT:
     """Run one SDK-owned transport await without losing owner cancellation.
 
+    :param operation_coroutine: SDK-owned transport coroutine to execute.
+    :type operation_coroutine: Coroutine[Any, Any, _TransportResultT]
+    :return: The result produced by the transport coroutine.
+    :rtype: _TransportResultT
+
     The transport must eventually settle after cancellation. A single delivered
     cancellation preserves its nested identity when available. After repeated
     owner cancellation, the latest saved owner request wins; exact cancellation
