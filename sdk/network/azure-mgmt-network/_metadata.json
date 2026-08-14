@@ -1,11 +1,11 @@
 {
   "apiVersions": {
     "Microsoft.Compute": "2018-10-01",
-    "Microsoft.Network": "2025-07-01"
+    "Microsoft.Network": "2025-09-01"
   },
-  "commit": "f26746d404d4f24f3a85820aec9d78a10a708a39",
+  "commit": "bd92126f09e7e3caa74f10fa1c944d1e451813ac",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/network/resource-manager/Microsoft.Network/Network",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.33.0"
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }
