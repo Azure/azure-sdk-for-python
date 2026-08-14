@@ -32,7 +32,7 @@ from azure.ai.agentserver.core.tasks import (
     resilient_tasks_enabled,
     set_resilient_tasks_enabled,
 )
-from azure.ai.agentserver.core.tasks._manager import get_task_manager
+from azure.ai.agentserver.core.tasks._manager import get_task_manager, set_task_manager
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as _ro
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
@@ -49,7 +49,6 @@ def _switch_off() -> Any:
     production opt-out path is genuinely exercised, then restore afterwards.
     """
     from azure.ai.agentserver.core.tasks import _manager as _mgr_mod  # pylint: disable=import-outside-toplevel
-    from azure.ai.agentserver.core.tasks._manager import set_task_manager  # pylint: disable=import-outside-toplevel
 
     saved_flag = resilient_tasks_enabled()
     saved_mgr = _mgr_mod._manager  # noqa: SLF001  # pylint: disable=protected-access
@@ -163,18 +162,23 @@ class TestNoTaskManagerStillRunsHandler:
 
 
 class TestNoTaskManagerSwallowsAndRunsInProcess:
-    """Recovery is opt-in: with the switch OFF, the ASGI lifespan installs NO
-    TaskManager, so ``store=true`` work is NOT failed as a platform error — the
-    outer catch swallows ``TaskManagerNotInitialized`` and runs the handler
-    in-process (non-durable). The response still executes AND persists (GET
-    works). Enabling durability is the operator's explicit choice via
-    ``set_resilient_tasks_enabled(True)`` / ``resilient_background``."""
+    """Recovery is opt-in: when no ``TaskManager`` is installed, ``store=true``
+    work is NOT failed as a platform error — the responses outer catch swallows
+    ``TaskManagerNotInitialized`` and runs the handler in-process (non-durable).
+    The response still executes AND persists (GET works).
+
+    These tests exercise the responses **swallow** behavior specifically. The
+    no-manager condition is forced deterministically via ``set_task_manager(None)``
+    inside the running lifespan so the test does not depend on process-global
+    state left by other tests, nor on which core build performs (or skips) the
+    manager construction — that gating is covered by the core opt-in tests."""
 
     def test_switch_off_no_manager_installed_and_response_completes(self, _switch_off: Any) -> None:
-        # Enter the lifespan with the switch explicitly OFF so this exercises the
-        # real production opt-out path (not the bare no-lifespan test client).
         with _build_client() as client:
-            # Lifespan ran but installed NO manager (switch off).
+            # Force the switch-off condition deterministically: whatever the
+            # lifespan installed, ensure no manager is present so the responses
+            # swallow path is the one under test.
+            set_task_manager(None)
             with pytest.raises(TaskManagerNotInitialized):
                 get_task_manager()
 
@@ -203,6 +207,8 @@ class TestNoTaskManagerSwallowsAndRunsInProcess:
 
     def test_switch_off_no_manager_streaming_runs_in_process(self, _switch_off: Any) -> None:
         with _build_client() as client:
+            # Force the switch-off condition deterministically (see above).
+            set_task_manager(None)
             with pytest.raises(TaskManagerNotInitialized):
                 get_task_manager()
 
