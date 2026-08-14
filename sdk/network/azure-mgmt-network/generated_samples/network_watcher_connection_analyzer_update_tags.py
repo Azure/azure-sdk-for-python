@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.recoveryservicesbackup import RecoveryServicesBackupClient
+from azure.mgmt.network import NetworkManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-recoveryservicesbackup
+    pip install azure-mgmt-network
 # USAGE
-    python protection_policies_get_sap_hana_db_instance.py
+    python network_watcher_connection_analyzer_update_tags.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,19 +25,20 @@ from azure.mgmt.recoveryservicesbackup import RecoveryServicesBackupClient
 
 
 def main():
-    client = RecoveryServicesBackupClient(
+    client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.protection_policies.get(
-        vault_name="HanaTestRsVault",
-        resource_group_name="SwaggerTestRg",
-        policy_name="testHanaSnapshotV2Policy1",
+    response = client.network_watchers.connection_analyzers_update_tags(
+        resource_group_name="connectionAnalyzerRG",
+        network_watcher_name="nw1",
+        connection_analyzer_name="ca1",
+        body={"tags": {"tag1": "value1", "tag2": "value2"}},
     )
     print(response)
 
 
-# x-ms-original-file: 2026-01-31-preview/AzureWorkload/ProtectionPolicies_Get_SapHanaDBInstance.json
+# x-ms-original-file: 2025-09-01/NetworkWatcherConnectionAnalyzerUpdateTags.json
 if __name__ == "__main__":
     main()
