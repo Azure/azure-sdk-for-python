@@ -33,7 +33,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
@@ -73,10 +73,9 @@ from .._configuration import AzureAppConfigurationClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 
 
-class FeatureFlagClientOperations:
+class FeatureFlagClientOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1790,7 +1789,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     async def _put_key_value(
         self,
         key: str,
-        entity: Optional[JSON] = None,
+        entity: Optional[_types.KeyValue] = None,
         *,
         content_type: str,
         label: Optional[str] = None,
@@ -1817,7 +1816,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     async def _put_key_value(
         self,
         key: str,
-        entity: Optional[Union[_models.KeyValue, JSON, IO[bytes]]] = None,
+        entity: Optional[Union[_models.KeyValue, _types.KeyValue, IO[bytes]]] = None,
         *,
         label: Optional[str] = None,
         sync_token: Optional[str] = None,
@@ -1831,9 +1830,10 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
 
         :param key: The key of the key-value to create. Required.
         :type key: str
-        :param entity: The key-value to create. Is one of the following types: KeyValue, JSON,
-         IO[bytes] Default value is None.
-        :type entity: ~azure.appconfiguration._generated.models.KeyValue or JSON or IO[bytes]
+        :param entity: The key-value to create. Is either a KeyValue type or a IO[bytes] type. Default
+         value is None.
+        :type entity: ~azure.appconfiguration._generated.models.KeyValue or
+         ~azure.appconfiguration._generated.types.KeyValue or IO[bytes]
         :keyword label: The label of the key-value to create. Default value is None.
         :paramtype label: str
         :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
@@ -2509,7 +2509,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     async def _create_snapshot_initial(
         self,
         name: str,
-        entity: Union[_models.Snapshot, JSON, IO[bytes]],
+        entity: Union[_models.Snapshot, _types.Snapshot, IO[bytes]],
         *,
         sync_token: Optional[str] = None,
         **kwargs: Any
@@ -2609,7 +2609,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
 
     @overload
     async def begin_create_snapshot(
-        self, name: str, entity: JSON, *, content_type: str, sync_token: Optional[str] = None, **kwargs: Any
+        self, name: str, entity: _types.Snapshot, *, content_type: str, sync_token: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
@@ -2618,7 +2618,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
         :param name: The name of the key-value snapshot to create. Required.
         :type name: str
         :param entity: The key-value snapshot to create. Required.
-        :type entity: JSON
+        :type entity: ~azure.appconfiguration._generated.types.Snapshot
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Required.
         :paramtype content_type: str
@@ -2660,7 +2660,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     async def begin_create_snapshot(
         self,
         name: str,
-        entity: Union[_models.Snapshot, JSON, IO[bytes]],
+        entity: Union[_models.Snapshot, _types.Snapshot, IO[bytes]],
         *,
         sync_token: Optional[str] = None,
         **kwargs: Any
@@ -2671,9 +2671,10 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
 
         :param name: The name of the key-value snapshot to create. Required.
         :type name: str
-        :param entity: The key-value snapshot to create. Is one of the following types: Snapshot, JSON,
-         IO[bytes] Required.
-        :type entity: ~azure.appconfiguration._generated.models.Snapshot or JSON or IO[bytes]
+        :param entity: The key-value snapshot to create. Is either a Snapshot type or a IO[bytes] type.
+         Required.
+        :type entity: ~azure.appconfiguration._generated.models.Snapshot or
+         ~azure.appconfiguration._generated.types.Snapshot or IO[bytes]
         :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
          None.
         :paramtype sync_token: str
@@ -2760,7 +2761,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     async def _update_snapshot(
         self,
         name: str,
-        entity: JSON,
+        entity: _types.SnapshotUpdateParameters,
         *,
         content_type: str,
         sync_token: Optional[str] = None,
@@ -2785,7 +2786,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     async def _update_snapshot(
         self,
         name: str,
-        entity: Union[_models.SnapshotUpdateParameters, JSON, IO[bytes]],
+        entity: Union[_models.SnapshotUpdateParameters, _types.SnapshotUpdateParameters, IO[bytes]],
         *,
         sync_token: Optional[str] = None,
         etag: Optional[str] = None,
@@ -2798,10 +2799,10 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
 
         :param name: The name of the key-value snapshot to update. Required.
         :type name: str
-        :param entity: The parameters used to update the snapshot. Is one of the following types:
-         SnapshotUpdateParameters, JSON, IO[bytes] Required.
-        :type entity: ~azure.appconfiguration._generated.models.SnapshotUpdateParameters or JSON or
-         IO[bytes]
+        :param entity: The parameters used to update the snapshot. Is either a SnapshotUpdateParameters
+         type or a IO[bytes] type. Required.
+        :type entity: ~azure.appconfiguration._generated.models.SnapshotUpdateParameters or
+         ~azure.appconfiguration._generated.types.SnapshotUpdateParameters or IO[bytes]
         :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
          None.
         :paramtype sync_token: str

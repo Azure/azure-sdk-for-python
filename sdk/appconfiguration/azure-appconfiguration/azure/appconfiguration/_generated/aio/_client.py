@@ -28,7 +28,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureAppConfigurationClient(_AzureAppConfigurationClientOperationsMixin):
+class AzureAppConfigurationClient(
+    _AzureAppConfigurationClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure App Configuration REST API.
 
     :ivar feature_flag_client: FeatureFlagClientOperations operations

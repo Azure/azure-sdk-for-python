@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Error(_Model):
+class Error(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure App Configuration error object.
 
     :ivar type: The type of the error.
@@ -66,7 +66,7 @@ class Error(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureFlag(_Model):
+class FeatureFlag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A feature flag.
 
     :ivar name: The name of the feature flag. Required.
@@ -148,7 +148,7 @@ class FeatureFlag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureFlagAllocation(_Model):
+class FeatureFlagAllocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines how to allocate variants based on context.
 
     :ivar default_when_disabled: The default variant to use when disabled.
@@ -207,7 +207,7 @@ class FeatureFlagAllocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureFlagConditions(_Model):
+class FeatureFlagConditions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The conditions that must be met for the feature flag to be enabled.
 
     :ivar requirement_type: The requirement type for the conditions. Known values are: "Any" and
@@ -245,7 +245,7 @@ class FeatureFlagConditions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureFlagFilter(_Model):
+class FeatureFlagFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Feature Flag Filter object.
 
     :ivar name: The name of the filter. Required.
@@ -278,7 +278,7 @@ class FeatureFlagFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureFlagTelemetryConfiguration(_Model):
+class FeatureFlagTelemetryConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Feature Flag Telemetry object.
 
     :ivar enabled: The enabled state of the telemetry. Required.
@@ -311,7 +311,7 @@ class FeatureFlagTelemetryConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureFlagVariantDefinition(_Model):
+class FeatureFlagVariantDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Feature Flag Variants object.
 
     :ivar name: The name of the variant. Required.
@@ -358,7 +358,7 @@ class FeatureFlagVariantDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupAllocation(_Model):
+class GroupAllocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Feature Flag GroupAllocation object.
 
     :ivar variant: The variant to allocate these percentiles to. Required.
@@ -403,7 +403,7 @@ class Key(_Model):
     """The name of the key. Required."""
 
 
-class KeyValue(_Model):
+class KeyValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A key-value pair representing application settings.
 
     :ivar key: The key of the key-value. Required.
@@ -472,7 +472,7 @@ class KeyValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyValueFilter(_Model):
+class KeyValueFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enables filtering of key-values. Syntax reference:
     `https://aka.ms/azconfig/docs/restapisnapshots
     <https://aka.ms/azconfig/docs/restapisnapshots>`_.
@@ -512,7 +512,7 @@ class KeyValueFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Label(_Model):
+class Label(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Labels are used to group key-values.
 
     :ivar name: The name of the label.
@@ -540,7 +540,7 @@ class Label(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDetails(_Model):
+class OperationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of a long running operation.
 
     :ivar id: The unique id of the operation. Required.
@@ -583,7 +583,7 @@ class OperationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PercentileAllocation(_Model):
+class PercentileAllocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Feature Flag PercentileAllocation object.
 
     :ivar variant: The variant to allocate these percentiles to. Required.
@@ -621,7 +621,7 @@ class PercentileAllocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Snapshot(_Model):
+class Snapshot(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A snapshot is a named, immutable subset of an App Configuration store's key-values.
 
     :ivar name: The name of the snapshot. Required.
@@ -712,7 +712,7 @@ class Snapshot(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SnapshotUpdateParameters(_Model):
+class SnapshotUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters used to update a snapshot.
 
     :ivar status: The desired status of the snapshot. Known values are: "provisioning", "ready",
@@ -744,7 +744,7 @@ class SnapshotUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAllocation(_Model):
+class UserAllocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Feature Flag UserAllocation object.
 
     :ivar variant: The variant to allocate these percentiles to. Required.
