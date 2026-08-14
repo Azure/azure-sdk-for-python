@@ -530,8 +530,7 @@ class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
     """A PageIterator that deserializes Apache Arrow IPC responses from list-blobs operations."""
 
     # The response type used to deserialize an XML fallback response.
-    _xml_response_type = ListBlobsResponse
-
+    _xml_response_type = ListBlobsHierarchicalResponse
     def __init__(self, *args: Any, deserializer: Any = None, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self._deserializer = deserializer

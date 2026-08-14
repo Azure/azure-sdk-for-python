@@ -256,7 +256,7 @@ class BlobPrefixPaged(BlobPropertiesPaged):
 class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
     """An async PageIterator that deserializes Apache Arrow IPC responses from list-blobs operations."""
 
-    _xml_response_type = ListBlobsResponse
+    _xml_response_type = ListBlobsHierarchicalResponse
 
     def __init__(self, *args, deserializer=None, **kwargs):
         super().__init__(*args, **kwargs)
