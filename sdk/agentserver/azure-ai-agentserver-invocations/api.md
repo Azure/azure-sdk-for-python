@@ -586,14 +586,16 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
+                self, 
+                *, 
+                caller: Mapping[str, Any] | None = ..., 
+                greeting: str | None = ..., 
                 id: str, 
-                ts: str, 
+                no_input_timeout_ms: int | None = ..., 
                 protocol_version: str, 
                 reconnect: bool, 
                 response_timeouts: ResponseTimeouts, 
-                greeting: str | None = None, 
-                no_input_timeout_ms: int | None = None, 
-                caller: Mapping = None
+                ts: str
             ) -> None: ...
 
         def __setattr__() -> None: ...
@@ -679,6 +681,13 @@ namespace azure.ai.agentserver.invocations.voice
     class azure.ai.agentserver.invocations.voice.VoiceAgentServerHost(InvocationAgentServerHost):
         property routes: list[BaseRoute]    # Read-only
         property ws_ping_interval: float    # Read-only
+
+        async def __call__(
+                self, 
+                scope: Scope, 
+                receive: Receive, 
+                send: Send
+            ) -> None: ...
 
         def __init__(
                 self, 
