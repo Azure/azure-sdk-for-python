@@ -725,16 +725,31 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if not future.done():
             future.set_exception(TaskCancelled())
 
-    async def startup(self) -> None:
-        """Initialize the manager and recover stale tasks.
+    async def startup(self, *, run_initial_scan: bool = True) -> None:
+        """Initialize the manager and (optionally) recover stale tasks.
 
         Called by ``AgentServerHost`` during lifespan startup.
+
+        :keyword run_initial_scan: When True (default), run the blocking
+            cold-start recovery scan (Layer 1) before returning — this
+            preserves the historical contract relied on by direct callers
+            and the recovery test-suite, which assert the initial reclaim
+            has already happened once ``startup()`` awaits. When False, the
+            blocking scan is skipped so server boot is not gated on a
+            task-store ``list()`` + credential-token acquisition; recovery
+            is still provided by the periodic background loop (Layer 2,
+            always started here) and by request-time inline reclaim
+            (Layer 3). The hosted lifespan passes ``False`` unless resilient
+            tasks were explicitly enabled, so a plain host boots fast while
+            keeping Layers 2 and 3 available.
+        :paramtype run_initial_scan: bool
         """
         logger.info(
-            "TaskManager starting (owner=%s, instance=%s, hosted=%s)",
+            "TaskManager starting (owner=%s, instance=%s, hosted=%s, initial_scan=%s)",
             self._lease_owner,
             self._instance_id,
             self._config.is_hosted,
+            run_initial_scan,
         )
         # Pick up descriptors registered at import time (for recovery)
         from ._decorator import (  # pylint: disable=import-outside-toplevel
@@ -745,7 +760,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             self._resume_callbacks[fn_name] = fn
             self._resume_opts[fn_name] = opts
 
-        await self._recover_stale_tasks()
+        #   Layer 1: blocking cold-start recovery scan. Gated so it is
+        # skipped when recovery was not explicitly enabled — the periodic
+        # loop (Layer 2) below still covers reclaim in the background.
+        if run_initial_scan:
+            await self._recover_stale_tasks()
 
         #   Layer 2: start the periodic recovery task.
         # Reads _PERIODIC_RECOVERY_INTERVAL_SECONDS at spawn time;

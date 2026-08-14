@@ -69,8 +69,9 @@ class _FakeTaskManager:
         self.shutdown_called = False
         _FakeTaskManager.instances.append(self)
 
-    async def startup(self) -> None:
+    async def startup(self, *, run_initial_scan: bool = True) -> None:
         self.startup_called = True
+        self.run_initial_scan = run_initial_scan
 
     async def shutdown(self) -> None:
         self.shutdown_called = True
@@ -163,8 +164,10 @@ class TestLifespanManagerAndRecovery:
 
     @pytest.mark.asyncio
     async def test_task_declared_runs_recovery_without_switch(self, _clean_state, _fake_task_manager) -> None:
-        """A declared task alone runs recovery (backward compatible — an
-        existing ``@task`` app gets recovery without calling the switch)."""
+        """A declared task alone starts the manager's recovery machinery, but
+        WITHOUT the switch the blocking cold-start scan (Layer 1) is skipped —
+        recovery falls to the background loop (Layer 2) + inline reclaim
+        (Layer 3). ``startup()`` is still invoked (spawns Layer 2)."""
         from azure.ai.agentserver.core import AgentServerHost
 
         _declare_task()
@@ -174,11 +177,14 @@ class TestLifespanManagerAndRecovery:
             pass
         assert len(_fake_task_manager.instances) == 1
         assert _fake_task_manager.instances[0].startup_called is True
+        # Switch off -> Layer 1 skipped.
+        assert _fake_task_manager.instances[0].run_initial_scan is False
 
     @pytest.mark.asyncio
     async def test_switch_alone_runs_recovery_without_task(self, _clean_state, _fake_task_manager) -> None:
-        """The switch alone runs recovery (force-enable) — starting the
-        periodic recovery loop so a task declared later is picked up."""
+        """The switch alone runs recovery (force-enable) — the blocking
+        cold-start scan (Layer 1) runs and the periodic recovery loop starts
+        so a task declared later is picked up."""
         from azure.ai.agentserver.core import AgentServerHost
 
         set_resilient_tasks_enabled(True)
@@ -187,6 +193,8 @@ class TestLifespanManagerAndRecovery:
             pass
         assert len(_fake_task_manager.instances) == 1
         assert _fake_task_manager.instances[0].startup_called is True
+        # Switch on -> Layer 1 runs.
+        assert _fake_task_manager.instances[0].run_initial_scan is True
 
     @pytest.mark.asyncio
     async def test_switch_and_task_runs_recovery(
@@ -206,6 +214,7 @@ class TestLifespanManagerAndRecovery:
         assert len(_fake_task_manager.instances) == 1
         mgr = _fake_task_manager.instances[0]
         assert mgr.startup_called is True
+        assert mgr.run_initial_scan is True
         assert mgr.shutdown_called is True
         assert any("TaskManager initialized with startup recovery" in r.message for r in caplog.records)
 

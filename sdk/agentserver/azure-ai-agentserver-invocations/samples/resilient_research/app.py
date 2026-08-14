@@ -77,6 +77,7 @@ from azure.ai.agentserver.core.streaming import (
     EventStreamNotFoundError,
     streams,
 )
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
@@ -100,6 +101,13 @@ logger = logging.getLogger(__name__)
 streams.use_file_backed_replay(cursor_fn=lambda ev: ev["sequence_number"])
 
 app = InvocationAgentServerHost()
+
+# Explicitly opt into the resilient-task startup recovery scan. Declaring a
+# ``@multi_turn_task`` makes the framework recovery-capable, but the eager
+# boot-time reclaim of tasks orphaned by a prior crash is gated on this switch
+# (background + request-time recovery still run without it). Enabling it here
+# means a fresh process reclaims in-flight sessions at startup.
+set_resilient_tasks_enabled(True)
 
 
 # --- SSE rendering ---------------------------------------------------------
