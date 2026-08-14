@@ -305,6 +305,7 @@
         "azure.mgmt.netapp.models.RegionStorageToNetworkProximity": "Microsoft.NetApp.RegionStorageToNetworkProximity",
         "azure.mgmt.netapp.models.KeyVaultStatus": "Microsoft.NetApp.KeyVaultStatus",
         "azure.mgmt.netapp.models.MultiAdStatus": "Microsoft.NetApp.MultiAdStatus",
+        "azure.mgmt.netapp.models.SecureLdapType": "Microsoft.NetApp.SecureLdapType",
         "azure.mgmt.netapp.models.BindAuthenticationLevel": "Microsoft.NetApp.BindAuthenticationLevel",
         "azure.mgmt.netapp.models.QosType": "Microsoft.NetApp.QosType",
         "azure.mgmt.netapp.models.EncryptionType": "Microsoft.NetApp.EncryptionType",
@@ -663,5 +664,5 @@
         "azure.mgmt.netapp.operations.NetAppResourceUsagesOperations.get": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.get",
         "azure.mgmt.netapp.aio.operations.NetAppResourceUsagesOperations.get": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.get"
     },
-    "CrossLanguageVersion": "350e558187f3"
+    "CrossLanguageVersion": "281057c63986"
 }
