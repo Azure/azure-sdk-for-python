@@ -6,11 +6,11 @@ namespace azure.ai.agentserver.invocations
         property ws_ping_interval: float    # Read-only
 
         def __init__(
-                self,
-                *,
-                asyncapi_spec_json: Optional[dict[str, Any]] = ...,
-                asyncapi_spec_yaml: Optional[str] = ...,
-                openapi_spec: Optional[dict[str, Any]] = ...,
+                self, 
+                *, 
+                asyncapi_spec_json: Optional[dict[str, Any]] = ..., 
+                asyncapi_spec_yaml: Optional[str] = ..., 
+                openapi_spec: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -61,11 +61,11 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                code: str,
-                message: str,
-                response_id: str | None = None,
+                id: str = ..., 
+                ts: str = ..., 
+                code: str, 
+                message: str, 
+                response_id: str | None = None, 
                 item_id: str | None = None
             ) -> None: ...
 
@@ -91,10 +91,10 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                response_id: str,
-                heard_text: str,
+                id: str, 
+                ts: str, 
+                response_id: str, 
+                heard_text: str, 
                 item_id: str | None = None
             ) -> None: ...
 
@@ -119,9 +119,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                reason: str,
+                id: str = ..., 
+                ts: str = ..., 
+                reason: str, 
                 mode: EndCallMode = ...
             ) -> None: ...
 
@@ -170,8 +170,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
+                id: str, 
+                ts: str, 
                 response_id: str
             ) -> None: ...
 
@@ -196,9 +196,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                response_id: str,
+                id: str = ..., 
+                ts: str = ..., 
+                response_id: str, 
                 reason: str | None = None
             ) -> None: ...
 
@@ -224,10 +224,10 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                response_id: str,
-                heard_text: str,
+                id: str, 
+                ts: str, 
+                response_id: str, 
+                heard_text: str, 
                 item_id: str | None = None
             ) -> None: ...
 
@@ -254,11 +254,11 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                response_id: str,
-                in_reply_to: tuple = None,
-                admission_timeout_ms: int | None = None,
+                id: str = ..., 
+                ts: str = ..., 
+                response_id: str, 
+                in_reply_to: tuple = None, 
+                admission_timeout_ms: int | None = None, 
                 supersede_key: str | None = None
             ) -> None: ...
 
@@ -282,8 +282,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
+                id: str = ..., 
+                ts: str = ..., 
                 response_id: str
             ) -> None: ...
 
@@ -308,9 +308,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                response_id: str,
+                id: str, 
+                ts: str, 
+                response_id: str, 
                 reason: str
             ) -> None: ...
 
@@ -335,9 +335,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                in_reply_to: tuple,
+                id: str = ..., 
+                ts: str = ..., 
+                in_reply_to: tuple, 
                 reason: str | None = None
             ) -> None: ...
 
@@ -364,11 +364,11 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                response_id: str,
-                item_id: str,
-                delta: str,
+                id: str = ..., 
+                ts: str = ..., 
+                response_id: str, 
+                item_id: str, 
+                delta: str, 
                 voice: Mapping = None
             ) -> None: ...
 
@@ -397,11 +397,11 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                response_id: str,
-                item_id: str,
-                text: str,
+                id: str = ..., 
+                ts: str = ..., 
+                response_id: str, 
+                item_id: str, 
+                text: str, 
                 voice: Mapping = None
             ) -> None: ...
 
@@ -429,10 +429,10 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                stage: str,
-                response_id: str | None = None,
+                id: str, 
+                ts: str, 
+                stage: str, 
+                response_id: str | None = None, 
                 item_ids: tuple = None
             ) -> None: ...
 
@@ -455,8 +455,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                first_output_ms: int,
-                idle_ms: int,
+                first_output_ms: int, 
+                idle_ms: int, 
                 max_duration_ms: int
             ) -> None: ...
 
@@ -507,8 +507,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
+                id: str, 
+                ts: str, 
                 reason: str
             ) -> None: ...
 
@@ -554,10 +554,10 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                code: str,
-                retriable: bool,
+                id: str = ..., 
+                ts: str = ..., 
+                code: str, 
+                retriable: bool, 
                 message: str | None = None
             ) -> None: ...
 
@@ -586,13 +586,13 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                protocol_version: str,
-                reconnect: bool,
-                response_timeouts: ResponseTimeouts,
-                greeting: str | None = None,
-                no_input_timeout_ms: int | None = None,
+                id: str, 
+                ts: str, 
+                protocol_version: str, 
+                reconnect: bool, 
+                response_timeouts: ResponseTimeouts, 
+                greeting: str | None = None, 
+                no_input_timeout_ms: int | None = None, 
                 caller: Mapping = None
             ) -> None: ...
 
@@ -617,9 +617,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                item_id: str,
+                id: str, 
+                ts: str, 
+                item_id: str, 
                 content: tuple
             ) -> None: ...
 
@@ -644,9 +644,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                item_id: str,
+                id: str, 
+                ts: str, 
+                item_id: str, 
                 count: int
             ) -> None: ...
 
@@ -681,11 +681,11 @@ namespace azure.ai.agentserver.invocations.voice
         property ws_ping_interval: float    # Read-only
 
         def __init__(
-                self,
-                *,
-                asyncapi_spec_json: dict[str, Any] | None = ...,
-                asyncapi_spec_yaml: str | None = ...,
-                openapi_spec: dict[str, Any] | None = ...,
+                self, 
+                *, 
+                asyncapi_spec_json: dict[str, Any] | None = ..., 
+                asyncapi_spec_yaml: str | None = ..., 
+                openapi_spec: dict[str, Any] | None = ..., 
                 **kwargs: Any
             ) -> None: ...
 

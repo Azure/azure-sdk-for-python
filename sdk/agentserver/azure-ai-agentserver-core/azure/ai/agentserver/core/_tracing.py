@@ -493,18 +493,23 @@ class TraceContextMiddleware:
             for k, v in raw_headers
         }
 
-        # Use the global propagator to extract trace context + baggage
-        from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
-        ctx = extract(carrier=headers)
+        try:
+            # Use the global propagator to extract trace context + baggage
+            from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+            ctx = extract(carrier=headers)
 
-        # Add x-request-id as baggage for downstream propagation
-        x_request_id = headers.get("x-request-id")
-        if x_request_id:
-            ctx = _otel_baggage.set_baggage(
-                "x_request_id", x_request_id, context=ctx,
-            )
+            # Add x-request-id as baggage for downstream propagation
+            x_request_id = headers.get("x-request-id")
+            if x_request_id:
+                ctx = _otel_baggage.set_baggage(
+                    "x_request_id", x_request_id, context=ctx,
+                )
 
-        token = _otel_context.attach(ctx)
+            token = _otel_context.attach(ctx)
+        except BaseException:  # pylint: disable=broad-exception-caught
+            await self.app(scope, receive, send)
+            return
+
         try:
             await self.app(scope, receive, send)
         finally:
