@@ -32,6 +32,7 @@ from openai.types.graders.string_check_grader_param import StringCheckGraderPara
 from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
 from ._client import AIProjectClient as AIProjectClientGenerated
+from ._realtime import AsyncRealtime, AsyncRealtimeConnection, AsyncRealtimeConnectionManager
 from .operations import TelemetryOperations
 from ..models import (
     AzureAIBenchmarkPreviewEvalRunDataSource,
@@ -102,17 +103,10 @@ class AsyncOpenAI(AsyncOpenAIClient):
 class AIProjectClient(AIProjectClientGenerated):
     telemetry: TelemetryOperations
     @property
-    def realtime(self) -> Any: ...
+    def realtime(self) -> AsyncRealtime: ...
     def get_openai_client(
         self, agent_name: Optional[str] = None, **kwargs: Any  # pylint: disable=unused-argument
     ) -> AsyncOpenAI: ...
-
-class AsyncRealtime:
-    def __init__(self, client: Any) -> None: ...
-    def connect(self, *, agent_name: str, **kwargs: Any) -> Any: ...
-
-class AsyncRealtimeConnection: ...
-class AsyncRealtimeConnectionManager: ...
 
 class _OpenAILoggingTransport:
     def __init__(self, *, logging_enabled: bool) -> None: ...

@@ -25031,7 +25031,9 @@ class VoiceResponse(OmitPropertiesRealtimeResponse):  # pylint: disable=docstrin
     :vartype completed_at: ~datetime.datetime
     """
 
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    id: str = rest_field(  # type: ignore[reportIncompatibleVariableOverride]
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The unique id of the response. Required."""
     output: Optional[list["_models.VoiceConversationItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -25040,7 +25042,9 @@ class VoiceResponse(OmitPropertiesRealtimeResponse):  # pylint: disable=docstrin
      response (GET .../responses/{response_id}) or use the paged response-items route (GET
      .../responses/{response_id}/items) for its output items. Each item's ``response_id`` also links
      it back to this response in the conversation-level items list."""
-    conversation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    conversation_id: str = rest_field(  # type: ignore[reportIncompatibleVariableOverride]
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The id of the conversation this response belongs to. Required."""
     audio: Optional["_models.VoiceResponseAudio"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
