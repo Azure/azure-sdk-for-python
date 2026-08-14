@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import datetime
+import math
 import reprlib
 import uuid
 from collections.abc import Mapping, Sequence
@@ -110,16 +111,23 @@ def _voice_model_repr(self: Any) -> str:
     return f"{rendered[:_MAX_MODEL_REPR_LENGTH - 4]}...)"
 
 
-def _freeze_json(value: Any) -> Any:
+def _freeze_json(value: Any, name: str, *, require_finite_numbers: bool = False) -> Any:
     if isinstance(value, Mapping):
         if any(not isinstance(key, str) for key in value):
-            raise TypeError("voice keys must be strings")
-        return MappingProxyType({key: _freeze_json(item) for key, item in value.items()})
+            raise TypeError(f"{name} keys must be strings")
+        return MappingProxyType(
+            {
+                key: _freeze_json(item, name, require_finite_numbers=require_finite_numbers)
+                for key, item in value.items()
+            }
+        )
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        return tuple(_freeze_json(item) for item in value)
+        return tuple(_freeze_json(item, name, require_finite_numbers=require_finite_numbers) for item in value)
+    if require_finite_numbers and isinstance(value, float) and not math.isfinite(value):
+        raise TypeError(f"{name} must contain only finite numbers")
     if value is None or isinstance(value, (str, bool, int, float)):
         return value
-    raise TypeError("voice must contain only JSON-compatible values")
+    raise TypeError(f"{name} must contain only JSON-compatible values")
 
 
 def _document_dataclass_defaults(*model_types: type[Any]) -> None:
@@ -240,6 +248,30 @@ class SessionStart(_InboundMessage):
     greeting: str | None = None
     no_input_timeout_ms: int | None = None
     caller: Mapping[str, Any] | None = None
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        ts: str,
+        protocol_version: str,
+        reconnect: bool,
+        response_timeouts: ResponseTimeouts,
+        greeting: str | None = None,
+        no_input_timeout_ms: int | None = None,
+        caller: Mapping[str, Any] | None = None,
+    ) -> None:
+        if caller is not None:
+            if not isinstance(caller, Mapping):
+                raise TypeError("caller must be a mapping")
+            caller = _freeze_json(caller, "caller", require_finite_numbers=True)
+        _InboundMessage.__init__(self, id=id, ts=ts)
+        object.__setattr__(self, "protocol_version", protocol_version)
+        object.__setattr__(self, "reconnect", reconnect)
+        object.__setattr__(self, "response_timeouts", response_timeouts)
+        object.__setattr__(self, "greeting", greeting)
+        object.__setattr__(self, "no_input_timeout_ms", no_input_timeout_ms)
+        object.__setattr__(self, "caller", caller)
 
 
 @experimental
@@ -553,7 +585,7 @@ class ResponseOutputTextDelta(_OutboundMessage):
 
     def __post_init__(self) -> None:
         if self.voice is not None:
-            object.__setattr__(self, "voice", _freeze_json(self.voice))
+            object.__setattr__(self, "voice", _freeze_json(self.voice, "voice"))
 
 
 @experimental
@@ -583,7 +615,7 @@ class ResponseOutputTextDone(_OutboundMessage):
 
     def __post_init__(self) -> None:
         if self.voice is not None:
-            object.__setattr__(self, "voice", _freeze_json(self.voice))
+            object.__setattr__(self, "voice", _freeze_json(self.voice, "voice"))
 
 
 @experimental

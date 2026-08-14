@@ -95,6 +95,124 @@ def test_session_start_caller_is_deeply_read_only():
     assert custom_parameters["campaign"] == ("renewal",)
 
 
+def test_direct_session_start_caller_is_deeply_immutable():
+    caller = {"custom_parameters": {"campaign": ["renewal"]}}
+    event = SessionStart(
+        id="m_1",
+        ts="2026-08-12T00:00:00Z",
+        protocol_version="1.0",
+        reconnect=False,
+        response_timeouts=ResponseTimeouts(first_output_ms=1, idle_ms=2, max_duration_ms=3),
+        caller=caller,
+    )
+
+    caller["custom_parameters"]["campaign"].append("changed")
+    caller["custom_parameters"]["new_field"] = "changed"
+
+    assert isinstance(event.caller, MappingProxyType)
+    custom_parameters = event.caller["custom_parameters"]
+    assert isinstance(custom_parameters, MappingProxyType)
+    assert custom_parameters == {"campaign": ("renewal",)}
+    with pytest.raises(TypeError):
+        custom_parameters["campaign"] = ("changed",)
+
+
+def test_direct_session_start_copies_pre_frozen_caller_mapping():
+    source = {"custom_parameters": {"campaign": ("renewal",)}}
+    caller = MappingProxyType(source)
+    event = SessionStart(
+        id="m_1",
+        ts="2026-08-12T00:00:00Z",
+        protocol_version="1.0",
+        reconnect=False,
+        response_timeouts=ResponseTimeouts(first_output_ms=1, idle_ms=2, max_duration_ms=3),
+        caller=caller,
+    )
+
+    source["custom_parameters"]["campaign"] = ("changed",)
+
+    assert event.caller == {"custom_parameters": {"campaign": ("renewal",)}}
+    assert event.caller is not caller
+
+
+def test_direct_session_start_accepts_absent_caller():
+    event = SessionStart(
+        id="m_1",
+        ts="2026-08-12T00:00:00Z",
+        protocol_version="1.0",
+        reconnect=False,
+        response_timeouts=ResponseTimeouts(first_output_ms=1, idle_ms=2, max_duration_ms=3),
+    )
+
+    assert event.caller is None
+
+
+@pytest.mark.parametrize("caller", [["value"], "value", 1, True])
+def test_direct_session_start_rejects_non_mapping_caller(caller):
+    with pytest.raises(TypeError, match="caller must be a mapping"):
+        SessionStart(
+            id="m_1",
+            ts="2026-08-12T00:00:00Z",
+            protocol_version="1.0",
+            reconnect=False,
+            response_timeouts=ResponseTimeouts(first_output_ms=1, idle_ms=2, max_duration_ms=3),
+            caller=caller,
+        )
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf")])
+def test_direct_session_start_rejects_non_finite_caller_number(value):
+    with pytest.raises(TypeError, match="caller must contain only finite numbers"):
+        SessionStart(
+            id="m_1",
+            ts="2026-08-12T00:00:00Z",
+            protocol_version="1.0",
+            reconnect=False,
+            response_timeouts=ResponseTimeouts(first_output_ms=1, idle_ms=2, max_duration_ms=3),
+            caller={"custom_parameters": {"values": [value]}},
+        )
+
+    event = SessionStart(
+        id="m_1",
+        ts="2026-08-12T00:00:00Z",
+        protocol_version="1.0",
+        reconnect=False,
+        response_timeouts=ResponseTimeouts(first_output_ms=1, idle_ms=2, max_duration_ms=3),
+        caller={"custom_parameters": {"values": [1.5]}},
+    )
+    assert event.caller == {"custom_parameters": {"values": (1.5,)}}
+
+
+@pytest.mark.parametrize("value", [-1.5, 0.0, 1.5])
+def test_direct_session_start_accepts_finite_caller_number(value):
+    event = SessionStart(
+        id="m_1",
+        ts="2026-08-12T00:00:00Z",
+        protocol_version="1.0",
+        reconnect=False,
+        response_timeouts=ResponseTimeouts(first_output_ms=1, idle_ms=2, max_duration_ms=3),
+        caller={"value": value},
+    )
+
+    assert event.caller == {"value": value}
+
+
+def test_direct_session_start_caller_freeze_failure_allows_retry():
+    fields = {
+        "id": "m_1",
+        "ts": "2026-08-12T00:00:00Z",
+        "protocol_version": "1.0",
+        "reconnect": False,
+        "response_timeouts": ResponseTimeouts(first_output_ms=1, idle_ms=2, max_duration_ms=3),
+    }
+
+    with pytest.raises(TypeError, match="caller must contain only JSON-compatible values"):
+        SessionStart(**fields, caller={"custom_parameters": {"invalid"}})
+
+    event = SessionStart(**fields, caller={"custom_parameters": {"campaign": ["renewal"]}})
+    assert event.caller == {"custom_parameters": {"campaign": ("renewal",)}}
+
+
 @pytest.mark.parametrize(
     "caller",
     [
