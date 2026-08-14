@@ -1,0 +1,6 @@
+{
+  "apiVersion": "2023-12-01-preview",
+  "apiVersions": {
+    "Azure.ResourceManager.ServiceGroupExtension": "2023-12-01-preview"
+  }
+}

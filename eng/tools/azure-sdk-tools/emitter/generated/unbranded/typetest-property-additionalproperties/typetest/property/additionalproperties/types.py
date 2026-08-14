@@ -404,53 +404,5 @@ class SpreadStringRecord(TypedDict, total=False):
     """The name property. Required."""
 
 
-class WidgetData0(TypedDict, total=False):
-    """WidgetData0.
-
-    :ivar kind: Required. Default value is "kind0".
-    :vartype kind: Literal["kind0"]
-    :ivar fooProp: Required.
-    :vartype fooProp: str
-    """
-
-    kind: Required[Literal["kind0"]]
-    """Required. Default value is \"kind0\"."""
-    fooProp: Required[str]
-    """Required."""
-
-
-class WidgetData1(TypedDict, total=False):
-    """WidgetData1.
-
-    :ivar kind: Required. Default value is "kind1".
-    :vartype kind: Literal["kind1"]
-    :ivar start: Required.
-    :vartype start: str
-    :ivar end:
-    :vartype end: str
-    """
-
-    kind: Required[Literal["kind1"]]
-    """Required. Default value is \"kind1\"."""
-    start: Required[str]
-    """Required."""
-    end: str
-
-
-class WidgetData2(TypedDict, total=False):
-    """WidgetData2.
-
-    :ivar kind: Required. Default value is "kind1".
-    :vartype kind: Literal["kind1"]
-    :ivar start: Required.
-    :vartype start: str
-    """
-
-    kind: Required[Literal["kind1"]]
-    """Required. Default value is \"kind1\"."""
-    start: Required[str]
-    """Required."""
-
-
 ExtendsUnknownAdditionalPropertiesDiscriminated = Union[ExtendsUnknownAdditionalPropertiesDiscriminatedDerived]
 IsUnknownAdditionalPropertiesDiscriminated = Union[IsUnknownAdditionalPropertiesDiscriminatedDerived]

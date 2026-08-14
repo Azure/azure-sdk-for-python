@@ -1,0 +1,26 @@
+{
+    "CrossLanguagePackageId": "Azure.ResourceManager.ServiceGroupExtension",
+    "CrossLanguageDefinitionId": {
+        "azure.resourcemanager.servicegroupextension.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.resourcemanager.servicegroupextension.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.resourcemanager.servicegroupextension.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.resourcemanager.servicegroupextension.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.resourcemanager.servicegroupextension.models.ExtensionResource": "Azure.ResourceManager.CommonTypes.ExtensionResource",
+        "azure.resourcemanager.servicegroupextension.models.ServiceGroupExtensionResource": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResource",
+        "azure.resourcemanager.servicegroupextension.models.ServiceGroupExtensionResourceProperties": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResourceProperties",
+        "azure.resourcemanager.servicegroupextension.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.resourcemanager.servicegroupextension.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.resourcemanager.servicegroupextension.models.ProvisioningState": "Azure.ResourceManager.ServiceGroupExtension.ProvisioningState",
+        "azure.resourcemanager.servicegroupextension.operations.ServiceGroupExtensionResourcesOperations.get": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResources.get",
+        "azure.resourcemanager.servicegroupextension.aio.operations.ServiceGroupExtensionResourcesOperations.get": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResources.get",
+        "azure.resourcemanager.servicegroupextension.operations.ServiceGroupExtensionResourcesOperations.begin_create_or_update": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResources.createOrUpdate",
+        "azure.resourcemanager.servicegroupextension.aio.operations.ServiceGroupExtensionResourcesOperations.begin_create_or_update": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResources.createOrUpdate",
+        "azure.resourcemanager.servicegroupextension.operations.ServiceGroupExtensionResourcesOperations.update": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResources.update",
+        "azure.resourcemanager.servicegroupextension.aio.operations.ServiceGroupExtensionResourcesOperations.update": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResources.update",
+        "azure.resourcemanager.servicegroupextension.operations.ServiceGroupExtensionResourcesOperations.delete": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResources.delete",
+        "azure.resourcemanager.servicegroupextension.aio.operations.ServiceGroupExtensionResourcesOperations.delete": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResources.delete",
+        "azure.resourcemanager.servicegroupextension.operations.ServiceGroupExtensionResourcesOperations.list_by_service_group": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResources.listByServiceGroup",
+        "azure.resourcemanager.servicegroupextension.aio.operations.ServiceGroupExtensionResourcesOperations.list_by_service_group": "Azure.ResourceManager.ServiceGroupExtension.ServiceGroupExtensionResources.listByServiceGroup"
+    },
+    "CrossLanguageVersion": "bc21ff3dece7"
+}

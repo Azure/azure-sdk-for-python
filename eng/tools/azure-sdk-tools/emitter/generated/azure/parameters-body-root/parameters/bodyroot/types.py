@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing_extensions import Required, TypedDict
+from typing_extensions import TypedDict
 
 
 class BodyRootModel(TypedDict, total=False):
@@ -23,14 +23,3 @@ class BodyRootModel(TypedDict, total=False):
     category: str
     linkType: str
     wasSuccessful: bool
-
-
-class NestedParameterBody(TypedDict, total=False):
-    """NestedParameterBody.
-
-    :ivar bodyRootParameters: Required.
-    :vartype bodyRootParameters: "BodyRootModel"
-    """
-
-    bodyRootParameters: Required["BodyRootModel"]
-    """Required."""
