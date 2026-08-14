@@ -175,6 +175,51 @@ def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None
         )
 
 
+def _log_startup_configuration(
+    resolved_provider: "ResponseProviderProtocol", runtime_options: ResponsesServerOptions
+) -> None:
+    """Log the responses startup configuration and durability mode.
+
+    Emitted once at host construction. The resilience line reflects the final
+    resolved state (the resilient orchestrator auto-enables the switch when
+    ``resilient_background`` is set). When durability is disabled we log a
+    WARNING so operators are not surprised that a ``store=true`` response killed
+    mid-flight by an ungraceful crash stays ``in_progress`` on a later GET (no
+    crash recovery) — matching a plain stateless server.
+
+    :param resolved_provider: The resolved response persistence provider.
+    :type resolved_provider: ResponseProviderProtocol
+    :param runtime_options: The responses server options.
+    :type runtime_options: ResponsesServerOptions
+    """
+    logger.info(
+        "Responses protocol: storage_provider=%s, default_model=%s, "
+        "default_fetch_history_count=%s, shutdown_grace_period=%ss",
+        type(resolved_provider).__name__,
+        runtime_options.default_model or "(not set)",
+        runtime_options.default_fetch_history_count,
+        runtime_options.shutdown_grace_period_seconds,
+    )
+
+    from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
+        resilient_tasks_enabled,
+    )
+
+    if resilient_tasks_enabled():
+        logger.info(
+            "Responses resilience: ENABLED - store=true responses run inside durable "
+            "tasks with crash recovery (in-flight responses are recovered/marked failed "
+            "on restart)."
+        )
+    else:
+        logger.warning(
+            "Responses resilience: DISABLED - store=true responses run in-process and are "
+            "NOT durable across an ungraceful crash: a response in-flight when the process "
+            "is hard-killed stays in_progress on a later GET (no mark-failed/recovery). "
+            "Enable durability via resilient_background, or set_resilient_tasks_enabled(True)."
+        )
+
+
 def _validate_handler_signature(fn: Any) -> None:
     """Reject sync handlers and 2-arg signatures.
 
@@ -486,42 +531,8 @@ class ResponsesAgentServerHost(AgentServerHost):
         # Stash endpoint reference for request_shutdown() access.
         self._endpoint = endpoint
 
-        # --- Responses startup configuration logging ---
-        logger.info(
-            "Responses protocol: storage_provider=%s, default_model=%s, "
-            "default_fetch_history_count=%s, shutdown_grace_period=%ss",
-            type(resolved_provider).__name__,
-            runtime_options.default_model or "(not set)",
-            runtime_options.default_fetch_history_count,
-            runtime_options.shutdown_grace_period_seconds,
-        )
-
-        # Announce whether the durable-response subsystem is active. The
-        # resilient orchestrator (constructed above) auto-enables the switch
-        # when ``resilient_background`` / ``steerable_conversations`` is set, so
-        # this reflects the final resolved state. When disabled we emit a
-        # one-time startup WARNING so operators are not surprised that a
-        # ``store=true`` response killed mid-flight by an ungraceful crash stays
-        # ``in_progress`` (there is no crash recovery) — matching a plain
-        # stateless server.
-        from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
-            resilient_tasks_enabled,
-        )
-
-        if resilient_tasks_enabled():
-            logger.info(
-                "Responses resilience: ENABLED - store=true responses run inside durable "
-                "tasks with crash recovery (in-flight responses are recovered/marked failed "
-                "on restart)."
-            )
-        else:
-            logger.warning(
-                "Responses resilience: DISABLED - store=true responses run in-process and are "
-                "NOT durable across an ungraceful crash: a response in-flight when the process "
-                "is hard-killed stays in_progress on a later GET (no mark-failed/recovery). "
-                "Enable durability via resilient_background / steerable_conversations, or "
-                "set_resilient_tasks_enabled(True)."
-            )
+        # --- Responses startup configuration + durability-mode logging ---
+        _log_startup_configuration(resolved_provider, runtime_options)
 
     # ------------------------------------------------------------------
     # Shutdown notification
