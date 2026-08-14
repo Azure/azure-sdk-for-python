@@ -17,11 +17,13 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.appconfiguration import (
     FeatureFlag,
     FeatureFlagConditions,
-    FeatureFlagFilter,
+    FeatureFilter,
     FeatureFlagVariantDefinition,
     FeatureFlagAllocation,
     FeatureFlagTelemetryConfiguration,
     PercentileAllocation,
+    RequirementType,
+    StatusOverride,
     UserAllocation,
     GroupAllocation,
 )
@@ -241,12 +243,10 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
             enabled=True,
             description="A feature flag gated by client filters",
             conditions=FeatureFlagConditions(
-                requirement_type="All",
-                client_filters=[
-                    FeatureFlagFilter(
-                        name="Microsoft.TimeWindow", parameters={"Start": "Mon, 01 Jan 2024 00:00:00 GMT"}
-                    ),
-                    FeatureFlagFilter(name="Microsoft.Percentage", parameters={"Value": 50}),
+                requirement_type=RequirementType.ALL,
+                filters=[
+                    FeatureFilter(name="Microsoft.TimeWindow", parameters={"Start": "Mon, 01 Jan 2024 00:00:00 GMT"}),
+                    FeatureFilter(name="Microsoft.Percentage", parameters={"Value": 50}),
                 ],
             ),
         )
@@ -257,9 +257,9 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
         assert retrieved.description == "A feature flag gated by client filters"
         assert retrieved.conditions is not None
         assert retrieved.conditions.requirement_type == "All"
-        assert retrieved.conditions.client_filters is not None
-        assert len(retrieved.conditions.client_filters) == 2
-        filter_names = {f.name for f in retrieved.conditions.client_filters}
+        assert retrieved.conditions.filters is not None
+        assert len(retrieved.conditions.filters) == 2
+        filter_names = {f.name for f in retrieved.conditions.filters}
         assert "Microsoft.TimeWindow" in filter_names
         assert "Microsoft.Percentage" in filter_names
 
@@ -276,8 +276,8 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
             name="test_feature_variants",
             enabled=True,
             variants=[
-                FeatureFlagVariantDefinition(name="On", value="true", status_override="Enabled"),
-                FeatureFlagVariantDefinition(name="Off", value="false", status_override="Disabled"),
+                FeatureFlagVariantDefinition(name="On", value="true", status_override=StatusOverride.ENABLED),
+                FeatureFlagVariantDefinition(name="Off", value="false", status_override=StatusOverride.DISABLED),
             ],
             allocation=FeatureFlagAllocation(
                 default_when_enabled="On",
@@ -355,15 +355,15 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
             label="prod",
             description="A fully populated feature flag",
             conditions=FeatureFlagConditions(
-                requirement_type="Any",
-                client_filters=[
+                requirement_type=RequirementType.ANY,
+                filters=[
                     # Filter parameters are string-valued per the API spec (Record<string>).
-                    FeatureFlagFilter(name="Microsoft.Targeting", parameters={"Audience": "all-users"}),
+                    FeatureFilter(name="Microsoft.Targeting", parameters={"Audience": "all-users"}),
                 ],
             ),
             variants=[
                 FeatureFlagVariantDefinition(
-                    name="Large", value="large", content_type="text/plain", status_override="Enabled"
+                    name="Large", value="large", content_type="text/plain", status_override=StatusOverride.ENABLED
                 ),
                 FeatureFlagVariantDefinition(name="Small", value="small"),
             ],
@@ -388,8 +388,8 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
         assert retrieved.description == "A fully populated feature flag"
         assert retrieved.conditions is not None
         assert retrieved.conditions.requirement_type == "Any"
-        assert retrieved.conditions.client_filters is not None
-        assert retrieved.conditions.client_filters[0].name == "Microsoft.Targeting"
+        assert retrieved.conditions.filters is not None
+        assert retrieved.conditions.filters[0].name == "Microsoft.Targeting"
         assert retrieved.variants is not None
         assert len(retrieved.variants) == 2
         assert retrieved.variants[0].content_type == "text/plain"

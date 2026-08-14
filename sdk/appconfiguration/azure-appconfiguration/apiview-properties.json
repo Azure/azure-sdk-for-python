@@ -5,7 +5,7 @@
         "azure.appconfiguration.models.FeatureFlag": "AzureAppConfiguration.FeatureFlag",
         "azure.appconfiguration.models.FeatureFlagAllocation": "AzureAppConfiguration.FeatureFlagAllocation",
         "azure.appconfiguration.models.FeatureFlagConditions": "AzureAppConfiguration.FeatureFlagConditions",
-        "azure.appconfiguration.models.FeatureFlagFilter": "AzureAppConfiguration.FeatureFlagFilter",
+        "azure.appconfiguration.models.FeatureFilter": "AzureAppConfiguration.FeatureFilter",
         "azure.appconfiguration.models.FeatureFlagTelemetryConfiguration": "AzureAppConfiguration.FeatureFlagTelemetryConfiguration",
         "azure.appconfiguration.models.FeatureFlagVariantDefinition": "AzureAppConfiguration.FeatureFlagVariantDefinition",
         "azure.appconfiguration.models.GroupAllocation": "AzureAppConfiguration.GroupAllocation",

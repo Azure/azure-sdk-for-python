@@ -28,6 +28,8 @@ from ._generated.models import (
     FeatureFlagVariantDefinition as _GeneratedFeatureFlagVariantDefinition,
     GroupAllocation as _GeneratedGroupAllocation,
     PercentileAllocation as _GeneratedPercentileAllocation,
+    RequirementType,
+    StatusOverride,
     UserAllocation as _GeneratedUserAllocation,
 )
 from ._generated._utils.model_base import _deserialize
@@ -468,7 +470,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         )
 
 
-class FeatureFlagFilter(Model):
+class FeatureFilter(Model):
     """A filter that conditionally enables or disables a feature flag.
 
     :ivar name: The name of the filter. Required.
@@ -499,7 +501,7 @@ class FeatureFlagFilter(Model):
         self.parameters = parameters
 
     @classmethod
-    def _from_generated(cls, generated: _GeneratedFeatureFlagFilter) -> "FeatureFlagFilter":
+    def _from_generated(cls, generated: _GeneratedFeatureFlagFilter) -> "FeatureFilter":
         return cls(name=generated.name, parameters=generated.parameters)
 
     def _to_generated(self) -> _GeneratedFeatureFlagFilter:
@@ -511,47 +513,45 @@ class FeatureFlagConditions(Model):
 
     :ivar requirement_type: The requirement type for the conditions. Known values are: "Any" and
      "All".
-    :vartype requirement_type: str or None
-    :ivar client_filters: The filters that will conditionally enable or disable the flag.
-    :vartype client_filters: list[~azure.appconfiguration.FeatureFlagFilter] or None
+    :vartype requirement_type: str or ~azure.appconfiguration.RequirementType or None
+    :ivar filters: The filters that will conditionally enable or disable the flag.
+    :vartype filters: list[~azure.appconfiguration.FeatureFilter] or None
     """
 
-    requirement_type: Optional[str]
+    requirement_type: Optional[Union[str, RequirementType]]
     """The requirement type for the conditions. Known values are: "Any" and "All"."""
-    client_filters: Optional[List[FeatureFlagFilter]]
+    filters: Optional[List[FeatureFilter]]
     """The filters that will conditionally enable or disable the flag."""
 
     _attribute_map = {
-        "requirement_type": {"key": "requirement_type", "type": "str"},
-        "client_filters": {"key": "filters", "type": "[FeatureFlagFilter]"},
+        "requirement_type": {"key": "requirement_type", "type": "RequirementType"},
+        "filters": {"key": "filters", "type": "[FeatureFilter]"},
     }
 
     def __init__(
         self,
         *,
-        requirement_type: Optional[str] = None,
-        client_filters: Optional[List[FeatureFlagFilter]] = None,
+        requirement_type: Optional[Union[str, RequirementType]] = None,
+        filters: Optional[List[FeatureFilter]] = None,
     ) -> None:
         """
         :keyword requirement_type: The requirement type for the conditions. Known values are: "Any"
          and "All".
-        :paramtype requirement_type: str or None
-        :keyword client_filters: The filters that will conditionally enable or disable the flag.
-        :paramtype client_filters: list[~azure.appconfiguration.FeatureFlagFilter] or None
+        :paramtype requirement_type: str or ~azure.appconfiguration.RequirementType or None
+        :keyword filters: The filters that will conditionally enable or disable the flag.
+        :paramtype filters: list[~azure.appconfiguration.FeatureFilter] or None
         """
         super().__init__()
         self.requirement_type = requirement_type
-        self.client_filters = client_filters
+        self.filters = filters
 
     @classmethod
     def _from_generated(cls, generated: _GeneratedFeatureFlagConditions) -> "FeatureFlagConditions":
         # pylint:disable=protected-access
         return cls(
             requirement_type=generated.requirement_type,
-            client_filters=(
-                [FeatureFlagFilter._from_generated(f) for f in generated.filters]
-                if generated.filters is not None
-                else None
+            filters=(
+                [FeatureFilter._from_generated(f) for f in generated.filters] if generated.filters is not None else None
             ),
         )
 
@@ -559,7 +559,7 @@ class FeatureFlagConditions(Model):
         # pylint:disable=protected-access
         return _GeneratedFeatureFlagConditions(
             requirement_type=self.requirement_type,
-            filters=([f._to_generated() for f in self.client_filters] if self.client_filters is not None else None),
+            filters=([f._to_generated() for f in self.filters] if self.filters is not None else None),
         )
 
 
@@ -574,7 +574,7 @@ class FeatureFlagVariantDefinition(Model):
     :vartype content_type: str or None
     :ivar status_override: Determines if the variant should override the status of the flag. Known
      values are: "None", "Enabled", and "Disabled".
-    :vartype status_override: str or None
+    :vartype status_override: str or ~azure.appconfiguration.StatusOverride or None
     """
 
     name: str
@@ -583,14 +583,14 @@ class FeatureFlagVariantDefinition(Model):
     """The value of the variant."""
     content_type: Optional[str]
     """The content type of the value stored within the key-value."""
-    status_override: Optional[str]
+    status_override: Optional[Union[str, StatusOverride]]
     """Determines if the variant should override the status of the flag."""
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
         "value": {"key": "value", "type": "str"},
         "content_type": {"key": "content_type", "type": "str"},
-        "status_override": {"key": "status_override", "type": "str"},
+        "status_override": {"key": "status_override", "type": "StatusOverride"},
     }
 
     def __init__(
@@ -599,7 +599,7 @@ class FeatureFlagVariantDefinition(Model):
         name: str,
         value: Optional[str] = None,
         content_type: Optional[str] = None,
-        status_override: Optional[str] = None,
+        status_override: Optional[Union[str, StatusOverride]] = None,
     ) -> None:
         """
         :keyword name: The name of the variant. Required.
@@ -610,7 +610,7 @@ class FeatureFlagVariantDefinition(Model):
         :paramtype content_type: str or None
         :keyword status_override: Determines if the variant should override the status of the flag.
          Known values are: "None", "Enabled", and "Disabled".
-        :paramtype status_override: str or None
+        :paramtype status_override: str or ~azure.appconfiguration.StatusOverride or None
         """
         super().__init__()
         self.name = name

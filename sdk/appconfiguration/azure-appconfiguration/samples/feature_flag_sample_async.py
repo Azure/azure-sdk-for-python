@@ -27,7 +27,9 @@ from azure.appconfiguration.aio import FeatureFlagClient
 from azure.appconfiguration import (
     FeatureFlag,
     FeatureFlagConditions,
-    FeatureFlagFilter,
+    FeatureFilter,
+    RequirementType,
+    StatusOverride,
     FeatureFlagVariantDefinition,
     FeatureFlagAllocation,
     FeatureFlagTelemetryConfiguration,
@@ -65,15 +67,15 @@ async def main():
         description="A feature flag using every part of the model",
         # Conditions gate the feature with client filters.
         conditions=FeatureFlagConditions(
-            requirement_type="All",
-            client_filters=[
-                FeatureFlagFilter(name="Microsoft.TimeWindow", parameters={"Start": "Mon, 01 Jan 2024 00:00:00 GMT"}),
-                FeatureFlagFilter(name="Microsoft.Percentage", parameters={"Value": "50"}),
+            requirement_type=RequirementType.ALL,
+            filters=[
+                FeatureFilter(name="Microsoft.TimeWindow", parameters={"Start": "Mon, 01 Jan 2024 00:00:00 GMT"}),
+                FeatureFilter(name="Microsoft.Percentage", parameters={"Value": "50"}),
             ],
         ),
         # Variants describe the possible values the feature can resolve to.
         variants=[
-            FeatureFlagVariantDefinition(name="Large", value="large", status_override="Enabled"),
+            FeatureFlagVariantDefinition(name="Large", value="large", status_override=StatusOverride.ENABLED),
             FeatureFlagVariantDefinition(name="Small", value="small"),
         ],
         # Allocation controls how users/groups/percentiles map to variants.

@@ -17,11 +17,13 @@ from azure.appconfiguration import (
     AzureAppConfigurationClient,
     FeatureFlag,
     FeatureFlagConditions,
-    FeatureFlagFilter,
+    FeatureFilter,
     FeatureFlagVariantDefinition,
     FeatureFlagAllocation,
     FeatureFlagTelemetryConfiguration,
     PercentileAllocation,
+    RequirementType,
+    StatusOverride,
     UserAllocation,
     GroupAllocation,
 )
@@ -46,8 +48,8 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
 
     def test_feature_flag_models_serialize_nested_values(self):
         conditions = FeatureFlagConditions(
-            requirement_type="All",
-            client_filters=[FeatureFlagFilter(name="Microsoft.Percentage", parameters={"Value": "50"})],
+            requirement_type=RequirementType.ALL,
+            filters=[FeatureFilter(name="Microsoft.Percentage", parameters={"Value": "50"})],
         )
         feature_flag = FeatureFlag(
             name="serialized_feature",
@@ -63,7 +65,7 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
         )
 
         as_dict = feature_flag.as_dict()
-        assert as_dict["conditions"]["client_filters"][0] == {
+        assert as_dict["conditions"]["filters"][0] == {
             "name": "Microsoft.Percentage",
             "parameters": {"Value": "50"},
         }
@@ -72,7 +74,7 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
         serialized = feature_flag.serialize()
         assert serialized["conditions"]["filters"][0]["name"] == "Microsoft.Percentage"
         assert serialized["allocation"]["percentile"][0]["from"] == 0
-        assert conditions.as_dict()["client_filters"][0]["name"] == "Microsoft.Percentage"
+        assert conditions.as_dict()["filters"][0]["name"] == "Microsoft.Percentage"
 
     @AppConfigPreparer()
     @recorded_by_proxy
@@ -266,12 +268,10 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
             enabled=True,
             description="A feature flag gated by client filters",
             conditions=FeatureFlagConditions(
-                requirement_type="All",
-                client_filters=[
-                    FeatureFlagFilter(
-                        name="Microsoft.TimeWindow", parameters={"Start": "Mon, 01 Jan 2024 00:00:00 GMT"}
-                    ),
-                    FeatureFlagFilter(name="Microsoft.Percentage", parameters={"Value": 50}),
+                requirement_type=RequirementType.ALL,
+                filters=[
+                    FeatureFilter(name="Microsoft.TimeWindow", parameters={"Start": "Mon, 01 Jan 2024 00:00:00 GMT"}),
+                    FeatureFilter(name="Microsoft.Percentage", parameters={"Value": 50}),
                 ],
             ),
         )
@@ -282,9 +282,9 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
         assert retrieved.description == "A feature flag gated by client filters"
         assert retrieved.conditions is not None
         assert retrieved.conditions.requirement_type == "All"
-        assert retrieved.conditions.client_filters is not None
-        assert len(retrieved.conditions.client_filters) == 2
-        filter_names = {f.name for f in retrieved.conditions.client_filters}
+        assert retrieved.conditions.filters is not None
+        assert len(retrieved.conditions.filters) == 2
+        filter_names = {f.name for f in retrieved.conditions.filters}
         assert "Microsoft.TimeWindow" in filter_names
         assert "Microsoft.Percentage" in filter_names
 
@@ -300,8 +300,8 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
             name="test_feature_variants",
             enabled=True,
             variants=[
-                FeatureFlagVariantDefinition(name="On", value="true", status_override="Enabled"),
-                FeatureFlagVariantDefinition(name="Off", value="false", status_override="Disabled"),
+                FeatureFlagVariantDefinition(name="On", value="true", status_override=StatusOverride.ENABLED),
+                FeatureFlagVariantDefinition(name="Off", value="false", status_override=StatusOverride.DISABLED),
             ],
             allocation=FeatureFlagAllocation(
                 default_when_enabled="On",
@@ -377,15 +377,15 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
             label="prod",
             description="A fully populated feature flag",
             conditions=FeatureFlagConditions(
-                requirement_type="Any",
-                client_filters=[
+                requirement_type=RequirementType.ANY,
+                filters=[
                     # Filter parameters are string-valued per the API spec (Record<string>).
-                    FeatureFlagFilter(name="Microsoft.Targeting", parameters={"Audience": "all-users"}),
+                    FeatureFilter(name="Microsoft.Targeting", parameters={"Audience": "all-users"}),
                 ],
             ),
             variants=[
                 FeatureFlagVariantDefinition(
-                    name="Large", value="large", content_type="text/plain", status_override="Enabled"
+                    name="Large", value="large", content_type="text/plain", status_override=StatusOverride.ENABLED
                 ),
                 FeatureFlagVariantDefinition(name="Small", value="small"),
             ],
@@ -410,8 +410,8 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
         assert retrieved.description == "A fully populated feature flag"
         assert retrieved.conditions is not None
         assert retrieved.conditions.requirement_type == "Any"
-        assert retrieved.conditions.client_filters is not None
-        assert retrieved.conditions.client_filters[0].name == "Microsoft.Targeting"
+        assert retrieved.conditions.filters is not None
+        assert retrieved.conditions.filters[0].name == "Microsoft.Targeting"
         assert retrieved.variants is not None
         assert len(retrieved.variants) == 2
         assert retrieved.variants[0].content_type == "text/plain"
