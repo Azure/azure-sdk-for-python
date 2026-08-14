@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2022-09-01/CloudEndpoints_PostBackup.json
+# x-ms-original-file: 2025-12-01/CloudEndpoints_PostBackup.json
 if __name__ == "__main__":
     main()

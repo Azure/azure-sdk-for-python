@@ -15,7 +15,7 @@ from azure.mgmt.storagesync import StorageSyncMgmtClient
     pip install azure-identity
     pip install azure-mgmt-storagesync
 # USAGE
-    python registered_servers_delete.py
+    python cloud_endpoints_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,16 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.registered_servers.begin_delete(
-        resource_group_name="SampleResourceGroup_1",
-        storage_sync_service_name="SampleStorageSyncService_1",
-        server_id="41166691-ab03-43e9-ab3e-0330eda162ac",
+    response = client.cloud_endpoints.begin_update(
+        resource_group_name="rgstoragesync",
+        storage_sync_service_name="llg",
+        sync_group_name="wwuoouzucgvfrsvjfgsobajg",
+        cloud_endpoint_name="mjpalurfyrwkmqeygi",
+        properties={"properties": {"changeEnumerationIntervalDays": 14}},
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-12-01/RegisteredServers_Delete.json
+# x-ms-original-file: 2025-12-01/CloudEndpoints_Update.json
 if __name__ == "__main__":
     main()
