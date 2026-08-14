@@ -26,16 +26,16 @@ class DoWhile(LoopNode):
     a job-level do while loop can be implemented. It will be initialized when calling dsl.do_while or when loading the
     pipeline yml containing do_while node. Please do not manually initialize this class.
 
-    :param body: Pipeline job for the do-while loop body.
-    :type body: ~azure.ai.ml.entities._builders.pipeline.Pipeline
-    :param condition: Boolean type control output of body as do-while loop condition.
-    :type condition: ~azure.ai.ml.entities.Output
-    :param mapping: Output-Input mapping for each round of the do-while loop.
+    :keyword body: Pipeline job for the do-while loop body.
+    :paramtype body: ~azure.ai.ml.entities._builders.pipeline.Pipeline
+    :keyword condition: Boolean type control output of body as do-while loop condition.
+    :paramtype condition: ~azure.ai.ml.entities.Output
+    :keyword mapping: Output-Input mapping for each round of the do-while loop.
         Key is the last round output of the body. Value is the input port for the current body.
-    :type mapping: dict[Union[str, ~azure.ai.ml.entities.Output],
+    :paramtype mapping: dict[Union[str, ~azure.ai.ml.entities.Output],
         Union[str, ~azure.ai.ml.entities.Input, list]]
-    :param limits: Limits in running the do-while node.
-    :type limits: Union[dict, ~azure.ai.ml.entities._job.job_limits.DoWhileJobLimits]
+    :keyword limits: Limits in running the do-while node.
+    :paramtype limits: Union[dict, ~azure.ai.ml.entities._job.job_limits.DoWhileJobLimits]
     :raises ValidationError: If the initialization parameters are not of valid types.
     """
 

@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Breaking Changes
+
+- Removed the `POST /api/messages` route alias. Inbound activities are served only at `POST /activity/messages`, which is the endpoint the Foundry platform routes to. Callers that posted to `/api/messages` must use `/activity/messages`.
+
 ## 1.0.0b2 (2026-07-28)
 
 ### Other Changes

@@ -9,7 +9,6 @@ __version__ = VERSION
 from . import _data_url as data_url
 from ._options import ResponsesServerOptions
 from ._response_context import (
-    ConversationChainMetadataNamespace,
     ExitForRecoverySignal,
     PlatformContext,
     ResponseContext,
@@ -17,9 +16,6 @@ from ._response_context import (
 )
 from .hosting._routing import ResponsesAgentServerHost
 from .models import CreateResponse, ResponseObject
-from .models._helpers import (
-    get_input_expanded,
-)
 from .store._base import ResponseProviderProtocol
 from .store._file import FileResponseStore
 from .store._foundry_errors import (
@@ -37,7 +33,6 @@ from .streaming._text_response import TextResponse
 __all__ = [
     "__version__",
     "data_url",  # pylint: disable=naming-mismatch
-    "ConversationChainMetadataNamespace",
     "ExitForRecoverySignal",
     "ResponseExitForRecovery",
     "ResponsesAgentServerHost",
@@ -57,5 +52,4 @@ __all__ = [
     "TextResponse",
     "CreateResponse",
     "ResponseObject",
-    "get_input_expanded",
 ]
