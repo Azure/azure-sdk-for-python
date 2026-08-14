@@ -17,15 +17,9 @@
   - Added model `CapacityRecommendationPlacementScore`
   - Added model `CapacityRecommendationSize`
   - Added enum `CapacityRecommendationStatus`
-  - Added enum `OccurrenceResourceProvisioningState`
   - Added enum `PartialFulfillmentMode`
   - Added model `PartialFulfillmentPolicy`
   - Added enum `PartialFulfillmentReason`
-  - Added enum `ScheduledActionsDeadlineType`
-  - Added model `ScheduledActionsExecutionParameters`
-  - Added enum `ScheduledActionsProvisioningState`
-  - Added enum `ScheduledActionsResourceOperationType`
-  - Added model `ScheduledActionsRetryPolicy`
   - Operation group `BulkCreateCustomOperations` added method `virtual_machines_get_operation_status`
 
 ### Breaking Changes
