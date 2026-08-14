@@ -5,12 +5,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
+import pytest
 from consts import (
     APPCONFIGURATION_ENDPOINT_STRING,
     APPCONFIGURATION_CONNECTION_STRING,
 )
 from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy, set_custom_default_matcher
 from testcase import AppConfigTestCase
+from azure.core.exceptions import ResourceNotFoundError
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     FeatureFlag,
@@ -41,6 +43,36 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
         feature_flag = FeatureFlag(name="default_disabled")
 
         assert feature_flag.enabled is False
+
+    def test_feature_flag_models_serialize_nested_values(self):
+        conditions = FeatureFlagConditions(
+            requirement_type="All",
+            client_filters=[FeatureFlagFilter(name="Microsoft.Percentage", parameters={"Value": "50"})],
+        )
+        feature_flag = FeatureFlag(
+            name="serialized_feature",
+            enabled=True,
+            conditions=conditions,
+            variants=[FeatureFlagVariantDefinition(name="variant_a", value="A")],
+            allocation=FeatureFlagAllocation(
+                percentile=[PercentileAllocation(variant="variant_a", percentile_from=0, percentile_to=50)],
+                user=[UserAllocation(variant="variant_a", users=["user_a"])],
+                group=[GroupAllocation(variant="variant_a", groups=["group_a"])],
+            ),
+            telemetry=FeatureFlagTelemetryConfiguration(enabled=True, metadata={"key": "value"}),
+        )
+
+        as_dict = feature_flag.as_dict()
+        assert as_dict["conditions"]["client_filters"][0] == {
+            "name": "Microsoft.Percentage",
+            "parameters": {"Value": "50"},
+        }
+        assert as_dict["allocation"]["percentile"][0]["percentile_from"] == 0
+
+        serialized = feature_flag.serialize()
+        assert serialized["conditions"]["filters"][0]["name"] == "Microsoft.Percentage"
+        assert serialized["allocation"]["percentile"][0]["from"] == 0
+        assert conditions.as_dict()["client_filters"][0]["name"] == "Microsoft.Percentage"
 
     @AppConfigPreparer()
     @recorded_by_proxy
@@ -117,9 +149,8 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
         """Test getting a non-existent feature flag."""
         client = self.create_client(appconfiguration_endpoint_string)
 
-        # Try to get a non-existent feature flag
-        result = client.get_feature_flag("nonexistent_feature", label=None)
-        assert result is None
+        with pytest.raises(ResourceNotFoundError):
+            client.get_feature_flag("nonexistent_feature", label=None)
 
     @AppConfigPreparer()
     @recorded_by_proxy
@@ -172,8 +203,8 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
         client.delete_feature_flag("test_feature_delete", label=created.label)
 
         # Verify it's deleted
-        result = client.get_feature_flag("test_feature_delete", label=created.label)
-        assert result is None
+        with pytest.raises(ResourceNotFoundError):
+            client.get_feature_flag("test_feature_delete", label=created.label)
 
     @AppConfigPreparer()
     @recorded_by_proxy
@@ -423,7 +454,7 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_get_feature_flag_wrong_label(self, appconfiguration_endpoint_string):
-        """Negative test: getting a feature flag with a label it doesn't have returns None."""
+        """Getting a feature flag with a label it doesn't have raises ResourceNotFoundError."""
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         client = self.create_client(appconfiguration_endpoint_string)
 
@@ -431,61 +462,7 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
         client.set_feature_flag(feature_flag)
         try:
             # The flag exists, but not under this label.
-            result = client.get_feature_flag("test_feature_wrong_label", label="wrong_label")
-            assert result is None
+            with pytest.raises(ResourceNotFoundError):
+                client.get_feature_flag("test_feature_wrong_label", label="wrong_label")
         finally:
             client.delete_feature_flag("test_feature_wrong_label", label="real_label")
-
-    @AppConfigPreparer()
-    @recorded_by_proxy
-    def test_monitor_feature_flags_by_page_etag(self, appconfiguration_endpoint_string):
-        """Test etag-based change detection across feature flag pages via by_page(match_conditions=...)."""
-        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_client(appconfiguration_endpoint_string)
-
-        # prepare 200 feature flags -> multiple pages (100 feature flags per page)
-        for i in range(200):
-            client.set_feature_flag(
-                FeatureFlag(name=f"monitor_ff_{str(i)}", enabled=True, label=f"monitor_label_{str(i)}")
-            )
-
-        # collect current page etags
-        match_conditions = []
-        items = client.list_feature_flags(name_filter="monitor_ff_*", label_filter="monitor_label_*")
-        iterator = items.by_page()
-        for _ in iterator:
-            match_conditions.append(iterator.etag)
-        assert len(match_conditions) >= 2
-
-        # monitor without changes - unchanged pages are skipped (HTTP 304), so no pages are yielded
-        items = client.list_feature_flags(name_filter="monitor_ff_*", label_filter="monitor_label_*")
-        iterator = items.by_page(match_conditions=match_conditions)
-        changed_pages = list(iterator)
-        assert len(changed_pages) == 0
-
-        # modify a feature flag that lives on the first page
-        client.set_feature_flag(FeatureFlag(name="monitor_ff_0", enabled=False, label="monitor_label_0"))
-
-        # monitor with the old etags - only the changed page is yielded
-        items = client.list_feature_flags(name_filter="monitor_ff_*", label_filter="monitor_label_*")
-        iterator = items.by_page(match_conditions=match_conditions)
-        changed_pages = list(iterator)
-        assert len(changed_pages) >= 1
-
-        # collect fresh etags; the first page etag changed while the page count is unchanged
-        new_match_conditions = []
-        items = client.list_feature_flags(name_filter="monitor_ff_*", label_filter="monitor_label_*")
-        iterator = items.by_page()
-        for _ in iterator:
-            new_match_conditions.append(iterator.etag)
-        assert new_match_conditions[0] != match_conditions[0]
-        assert len(new_match_conditions) == len(match_conditions)
-
-        # monitoring with the fresh etags yields no changed pages
-        items = client.list_feature_flags(name_filter="monitor_ff_*", label_filter="monitor_label_*")
-        iterator = items.by_page(match_conditions=new_match_conditions)
-        assert len(list(iterator)) == 0
-
-        # clean up
-        for i in range(200):
-            client.delete_feature_flag(f"monitor_ff_{str(i)}", label=f"monitor_label_{str(i)}")

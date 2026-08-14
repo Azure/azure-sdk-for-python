@@ -14,7 +14,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import ResourceNotFoundError, ResourceNotModifiedError
+from azure.core.exceptions import ResourceNotModifiedError
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from ._sync_token_async import AsyncSyncTokenPolicy
 from .._azure_appconfiguration_error import ResourceReadOnlyError
@@ -233,7 +233,7 @@ class FeatureFlagClient:
         :type match_condition: ~azure.core.MatchConditions
         :keyword accept_datetime: Retrieve the FeatureFlag that existed at this datetime.
         :paramtype accept_datetime: ~datetime.datetime or str or None
-        :return: The FeatureFlag if found; None otherwise.
+        :return: The FeatureFlag if found, or None if it has not been modified.
         :rtype: ~azure.appconfiguration.FeatureFlag or None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -256,7 +256,7 @@ class FeatureFlagClient:
                 **kwargs,
             )
             return FeatureFlag._from_generated(generated_feature_flag)
-        except (ResourceNotFoundError, ResourceNotModifiedError):
+        except ResourceNotModifiedError:
             return None
 
     @distributed_trace_async

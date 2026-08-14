@@ -12,7 +12,7 @@ from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import ResourceNotFoundError, ResourceNotModifiedError
+from azure.core.exceptions import ResourceNotModifiedError
 from azure.core.rest import HttpRequest, HttpResponse
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
@@ -247,7 +247,7 @@ class FeatureFlagClient:
                 **kwargs,
             )
             return FeatureFlag._from_generated(generated_feature_flag)
-        except (ResourceNotFoundError, ResourceNotModifiedError):
+        except ResourceNotModifiedError:
             return None
 
     @distributed_trace

@@ -468,7 +468,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         )
 
 
-class FeatureFlagFilter:
+class FeatureFlagFilter(Model):
     """A filter that conditionally enables or disables a feature flag.
 
     :ivar name: The name of the filter. Required.
@@ -482,6 +482,11 @@ class FeatureFlagFilter:
     parameters: Optional[Dict[str, str]]
     """The parameters used by the filter."""
 
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{str}"},
+    }
+
     def __init__(self, *, name: str, parameters: Optional[Dict[str, str]] = None) -> None:
         """
         :keyword name: The name of the filter. Required.
@@ -489,6 +494,7 @@ class FeatureFlagFilter:
         :keyword parameters: The parameters used by the filter.
         :paramtype parameters: dict[str, str] or None
         """
+        super().__init__()
         self.name = name
         self.parameters = parameters
 
@@ -500,7 +506,7 @@ class FeatureFlagFilter:
         return _GeneratedFeatureFlagFilter(name=self.name, parameters=self.parameters)
 
 
-class FeatureFlagConditions:
+class FeatureFlagConditions(Model):
     """The conditions that must be met for a feature flag to be enabled.
 
     :ivar requirement_type: The requirement type for the conditions. Known values are: "Any" and
@@ -515,6 +521,11 @@ class FeatureFlagConditions:
     client_filters: Optional[List[FeatureFlagFilter]]
     """The filters that will conditionally enable or disable the flag."""
 
+    _attribute_map = {
+        "requirement_type": {"key": "requirement_type", "type": "str"},
+        "client_filters": {"key": "filters", "type": "[FeatureFlagFilter]"},
+    }
+
     def __init__(
         self,
         *,
@@ -528,6 +539,7 @@ class FeatureFlagConditions:
         :keyword client_filters: The filters that will conditionally enable or disable the flag.
         :paramtype client_filters: list[~azure.appconfiguration.FeatureFlagFilter] or None
         """
+        super().__init__()
         self.requirement_type = requirement_type
         self.client_filters = client_filters
 
@@ -551,7 +563,7 @@ class FeatureFlagConditions:
         )
 
 
-class FeatureFlagVariantDefinition:
+class FeatureFlagVariantDefinition(Model):
     """A variant of a feature flag.
 
     :ivar name: The name of the variant. Required.
@@ -574,6 +586,13 @@ class FeatureFlagVariantDefinition:
     status_override: Optional[str]
     """Determines if the variant should override the status of the flag."""
 
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "content_type": {"key": "content_type", "type": "str"},
+        "status_override": {"key": "status_override", "type": "str"},
+    }
+
     def __init__(
         self,
         *,
@@ -593,6 +612,7 @@ class FeatureFlagVariantDefinition:
          Known values are: "None", "Enabled", and "Disabled".
         :paramtype status_override: str or None
         """
+        super().__init__()
         self.name = name
         self.value = value
         self.content_type = content_type
@@ -616,7 +636,7 @@ class FeatureFlagVariantDefinition:
         )
 
 
-class PercentileAllocation:
+class PercentileAllocation(Model):
     """Allocates a percentile range of users to a variant.
 
     :ivar variant: The variant to allocate these percentiles to. Required.
@@ -634,6 +654,12 @@ class PercentileAllocation:
     percentile_to: float
     """The upper bounds for this percentile allocation. Required."""
 
+    _attribute_map = {
+        "variant": {"key": "variant", "type": "str"},
+        "percentile_from": {"key": "from", "type": "float"},
+        "percentile_to": {"key": "to", "type": "float"},
+    }
+
     def __init__(self, *, variant: str, percentile_from: float, percentile_to: float) -> None:
         """
         :keyword variant: The variant to allocate these percentiles to. Required.
@@ -643,6 +669,7 @@ class PercentileAllocation:
         :keyword percentile_to: The upper bounds for this percentile allocation. Required.
         :paramtype percentile_to: float
         """
+        super().__init__()
         self.variant = variant
         self.percentile_from = percentile_from
         self.percentile_to = percentile_to
@@ -663,7 +690,7 @@ class PercentileAllocation:
         )
 
 
-class UserAllocation:
+class UserAllocation(Model):
     """Allocates specific users to a variant.
 
     :ivar variant: The variant to allocate these users to. Required.
@@ -677,6 +704,11 @@ class UserAllocation:
     users: List[str]
     """The users to get this variant. Required."""
 
+    _attribute_map = {
+        "variant": {"key": "variant", "type": "str"},
+        "users": {"key": "users", "type": "[str]"},
+    }
+
     def __init__(self, *, variant: str, users: List[str]) -> None:
         """
         :keyword variant: The variant to allocate these users to. Required.
@@ -684,6 +716,7 @@ class UserAllocation:
         :keyword users: The users to get this variant. Required.
         :paramtype users: list[str]
         """
+        super().__init__()
         self.variant = variant
         self.users = users
 
@@ -695,7 +728,7 @@ class UserAllocation:
         return _GeneratedUserAllocation(variant=self.variant, users=self.users)
 
 
-class GroupAllocation:
+class GroupAllocation(Model):
     """Allocates specific groups to a variant.
 
     :ivar variant: The variant to allocate these groups to. Required.
@@ -709,6 +742,11 @@ class GroupAllocation:
     groups: List[str]
     """The groups to get this variant. Required."""
 
+    _attribute_map = {
+        "variant": {"key": "variant", "type": "str"},
+        "groups": {"key": "groups", "type": "[str]"},
+    }
+
     def __init__(self, *, variant: str, groups: List[str]) -> None:
         """
         :keyword variant: The variant to allocate these groups to. Required.
@@ -716,6 +754,7 @@ class GroupAllocation:
         :keyword groups: The groups to get this variant. Required.
         :paramtype groups: list[str]
         """
+        super().__init__()
         self.variant = variant
         self.groups = groups
 
@@ -727,7 +766,7 @@ class GroupAllocation:
         return _GeneratedGroupAllocation(variant=self.variant, groups=self.groups)
 
 
-class FeatureFlagAllocation:
+class FeatureFlagAllocation(Model):
     """Defines how to allocate variants based on context.
 
     :ivar default_when_disabled: The default variant to use when disabled.
@@ -757,6 +796,15 @@ class FeatureFlagAllocation:
     seed: Optional[str]
     """The seed used for random allocation."""
 
+    _attribute_map = {
+        "default_when_disabled": {"key": "default_when_disabled", "type": "str"},
+        "default_when_enabled": {"key": "default_when_enabled", "type": "str"},
+        "percentile": {"key": "percentile", "type": "[PercentileAllocation]"},
+        "user": {"key": "user", "type": "[UserAllocation]"},
+        "group": {"key": "group", "type": "[GroupAllocation]"},
+        "seed": {"key": "seed", "type": "str"},
+    }
+
     def __init__(
         self,
         *,
@@ -781,6 +829,7 @@ class FeatureFlagAllocation:
         :keyword seed: The seed used for random allocation.
         :paramtype seed: str or None
         """
+        super().__init__()
         self.default_when_disabled = default_when_disabled
         self.default_when_enabled = default_when_enabled
         self.percentile = percentile
@@ -818,7 +867,7 @@ class FeatureFlagAllocation:
         )
 
 
-class FeatureFlagTelemetryConfiguration:
+class FeatureFlagTelemetryConfiguration(Model):
     """The telemetry configuration of a feature flag.
 
     :ivar enabled: The enabled state of the telemetry. Required.
@@ -832,6 +881,11 @@ class FeatureFlagTelemetryConfiguration:
     metadata: Optional[Dict[str, str]]
     """The metadata to include on outbound telemetry."""
 
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+        "metadata": {"key": "metadata", "type": "{str}"},
+    }
+
     def __init__(self, *, enabled: bool, metadata: Optional[Dict[str, str]] = None) -> None:
         """
         :keyword enabled: The enabled state of the telemetry. Required.
@@ -839,6 +893,7 @@ class FeatureFlagTelemetryConfiguration:
         :keyword metadata: The metadata to include on outbound telemetry.
         :paramtype metadata: dict[str, str] or None
         """
+        super().__init__()
         self.enabled = enabled
         self.metadata = metadata
 
@@ -887,10 +942,10 @@ class FeatureFlag(Model):  # pylint: disable=too-many-instance-attributes
         "enabled": {"key": "enabled", "type": "bool"},
         "label": {"key": "label", "type": "str"},
         "description": {"key": "description", "type": "str"},
-        "conditions": {"key": "conditions", "type": "object"},
-        "variants": {"key": "variants", "type": "[object]"},
-        "allocation": {"key": "allocation", "type": "object"},
-        "telemetry": {"key": "telemetry", "type": "object"},
+        "conditions": {"key": "conditions", "type": "FeatureFlagConditions"},
+        "variants": {"key": "variants", "type": "[FeatureFlagVariantDefinition]"},
+        "allocation": {"key": "allocation", "type": "FeatureFlagAllocation"},
+        "telemetry": {"key": "telemetry", "type": "FeatureFlagTelemetryConfiguration"},
         "tags": {"key": "tags", "type": "{str}"},
         "last_modified": {"key": "last_modified", "type": "iso-8601"},
         "etag": {"key": "etag", "type": "str"},
