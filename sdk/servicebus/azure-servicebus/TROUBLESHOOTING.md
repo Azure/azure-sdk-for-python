@@ -283,19 +283,14 @@ with receiver:
 
 ### Messages are redelivered even though settlement succeeded
 
-By default, settlements (`complete_message`, `abandon_message`, `defer_message`, `dead_letter_message`) are
-sent pre-settled on the pure-Python AMQP transport: the call returns as soon as the frame is written, without
-waiting for the service to confirm the outcome. A settlement the service did not apply is therefore
-indistinguishable from one that succeeded, and the only symptom is the message reappearing when its lock
-expires, with an increased `delivery_count`.
-
-Construct the receiver with `await_settlement_outcome=True` to wait for the service to confirm each
-settlement and raise when it is rejected (for example with `MessageLockLostError`):
+Settlements (`complete_message`, `abandon_message`, `defer_message`, `dead_letter_message`) wait for the
+service to confirm the outcome and raise when it is rejected, so a settlement the service did not apply
+surfaces as an exception rather than as an unexplained redelivery:
 
 ```python
 from azure.servicebus.exceptions import MessageLockLostError
 
-receiver = client.get_queue_receiver(queue_name=QUEUE_NAME, await_settlement_outcome=True)
+receiver = client.get_queue_receiver(queue_name=QUEUE_NAME)
 with receiver:
     for message in receiver.receive_messages(max_message_count=10):
         try:
@@ -305,20 +300,21 @@ with receiver:
             pass
 ```
 
-This turns a silent redelivery into an exception you can act on, and distinguishes the two causes: a
-rejection means the lock was already lost at settle time (see
+This also distinguishes the two causes: a rejection means the lock was already lost at settle time (see
 [Message and session lock issues](#message-and-session-lock-issues) and `AutoLockRenewer`), while a
-settlement that succeeds and *still* redelivers points elsewhere.
+settlement that is confirmed and *still* redelivers points elsewhere.
 
-Because it adds a service round trip per settlement, settling one message at a time becomes slow at volume.
-On the async client, settle concurrently:
+Confirming costs one service round trip per settlement, so settling one message at a time is slow at
+volume. On the async client, settle concurrently:
 
 ```python
 await asyncio.gather(*(receiver.complete_message(m) for m in messages))
 ```
 
-The option applies to `PEEK_LOCK` mode only and is supported on the default pyamqp transport (not
-`uamqp_transport=True`, which cannot observe settlement outcomes).
+If you need the previous pre-settled behavior, it is no longer configurable — the other Service Bus SDKs
+await the disposition unconditionally and this now matches them. Outcomes cannot be observed in
+`RECEIVE_AND_DELETE` mode (the service settles on delivery) or with `uamqp_transport=True`, where
+settlements remain pre-settled.
 
 ### Message size issues
 

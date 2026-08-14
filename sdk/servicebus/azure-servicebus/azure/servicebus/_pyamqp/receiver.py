@@ -49,8 +49,12 @@ def check_disposition_outcome(
         except (IndexError, KeyError, TypeError):
             error_info = None
     if error_info:
-        # 0 is error condition, 1 is error description, 2 is error info.
-        raise MessageException(condition=error_info[0], description=error_info[1], info=error_info[2])
+        # 0 is the condition; description and info are optional and may be omitted by the peer.
+        raise MessageException(
+            condition=error_info[0],
+            description=error_info[1] if len(error_info) > 1 else None,
+            info=error_info[2] if len(error_info) > 2 else None,
+        )
     if outcome and expected in outcome:
         return
     raise MessageException(
@@ -262,7 +266,9 @@ class ReceiverLink(Link):
         """Send a disposition frame for one or more received deliveries.
 
         With ``await_outcome=True`` the disposition is sent unsettled and this call blocks until
-        the remote endpoint reports a terminal outcome, raising if that outcome is not `accepted`.
+        the remote endpoint reports a terminal outcome, raising unless that outcome matches the one
+        requested (the service echoes what it applied: `modified` for abandon/defer, `rejected` for
+        dead-letter). A `rejected` outcome carrying an error always raises.
         This requires the link to have been attached with
         ``rcv_settle_mode=ReceiverSettleMode.Second``.
 
@@ -311,7 +317,7 @@ class ReceiverLink(Link):
             self._outgoing_disposition(
                 first_delivery_id, last_delivery_id, delivery_tag, settled, delivery_state, batchable
             )
-        except Exception:
+        except BaseException:  # pylint: disable=broad-except
             for delivery_id in delivery_ids:
                 self._pending_dispositions.pop(delivery_id, None)
             raise

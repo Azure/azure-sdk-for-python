@@ -11,7 +11,8 @@ These tests assert the three things the fix must guarantee:
 1. a settlement the service rejects raises,
 2. a settlement the service never confirms is reported as unconfirmed (so the caller can
    re-settle authoritatively) rather than as success,
-3. the default behavior is unchanged for callers who do not opt in.
+3. modes that cannot observe an outcome (RECEIVE_AND_DELETE, uamqp) keep the fire-and-forget
+   behavior.
 """
 import itertools
 import threading
@@ -183,7 +184,7 @@ def test_outcome_name_maps_delivery_state_to_the_echoed_key():
 
 
 def test_default_settlement_stays_pre_settled_and_never_waits():
-    """Callers who do not opt in keep the existing fire-and-forget behavior exactly."""
+    """Opting out keeps the fire-and-forget behavior exactly."""
     link = build_sync_link()
     link.send_disposition(first_delivery_id=DELIVERY_ID, delivery_tag=DELIVERY_TAG, settled=True)
 
@@ -277,6 +278,31 @@ def test_unsettled_disposition_carrying_an_outcome_does_not_confirm():
     assert link._session._connection.listen_calls == 2
 
 
+def test_rejection_without_optional_error_fields_still_raises_the_condition():
+    """AMQP error composites require only the condition.
+
+    Indexing the optional description/info blindly raised IndexError, which masked the very
+    condition (e.g. message-lock-lost) the caller needs to see.
+    """
+    with pytest.raises(MessageException) as exc_info:
+        check_disposition_outcome(DELIVERY_ID, {"rejected": [[b"com.microsoft:message-lock-lost"]]})
+    assert exc_info.value.condition == b"com.microsoft:message-lock-lost"
+
+
+def test_cancellation_during_send_does_not_leak_pending_state():
+    """`asyncio.CancelledError` is a BaseException, so `except Exception` would skip the cleanup.
+
+    A leaked registration would make a later disposition frame resolve an operation that no
+    longer exists -- and concurrent settlement via `asyncio.gather` makes cancellation likely.
+    """
+    link = build_sync_link()
+    link._outgoing_disposition = MagicMock(side_effect=KeyboardInterrupt)
+
+    with pytest.raises(KeyboardInterrupt):
+        settle(link, outcome_timeout=5)
+    assert link._pending_dispositions == {}
+
+
 def test_huge_advertised_range_costs_only_the_pending_deliveries():
     """`first`/`last` are peer-controlled 32-bit values.
 
@@ -325,6 +351,9 @@ async def test_async_awaited_settlement_returns_once_accepted():
     await settle_async(link)
 
     assert link._session.outgoing_frames[0].settled is False
+    # The load-bearing assertion: the default path passes wait=False and never listens, so
+    # without this the test would still pass if the awaited branch did nothing.
+    assert link._session._connection.listen_calls == 1
     assert not link._pending_dispositions
 
 
@@ -355,12 +384,12 @@ async def test_async_awaited_settlement_reports_unconfirmed_when_no_outcome_arri
 # ---------------------------------------------------------------------------
 
 
-def _receiver(await_settlement_outcome, is_async=False):
+def _receiver(confirms, is_async=False):
     cls = ServiceBusReceiverAsync if is_async else ServiceBusReceiver
     r = cls.__new__(cls)
     r._handler = MagicMock(name="handler")
     r._session = None
-    r._await_settlement_outcome = await_settlement_outcome
+    r._await_settlement_outcome = confirms
     r._config = MagicMock(name="config")
     r._config.timeout = 60
     r._shutdown = threading.Event()
@@ -389,54 +418,49 @@ def _received_message(deferred=False):
     return message
 
 
-@pytest.mark.parametrize("opted_in", [True, False])
-def test_sync_receiver_forwards_the_option_and_timeout(opted_in):
-    """The receiver-level option is what turns on outcome observation at the transport."""
-    receiver = _receiver(opted_in)
+@pytest.mark.parametrize("confirms", [True, False])
+def test_sync_receiver_forwards_confirmation_and_timeout(confirms):
+    """The receiver-level decision is what turns on outcome observation at the transport."""
+    receiver = _receiver(confirms)
     receiver._settle_message(_received_message(), MESSAGE_COMPLETE)
 
     _, kwargs = receiver._amqp_transport.settle_message_via_receiver_link.call_args
-    assert kwargs["await_outcome"] is opted_in
+    assert kwargs["await_outcome"] is confirms
     assert kwargs["outcome_timeout"] == 60
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("opted_in", [True, False])
-async def test_async_receiver_forwards_the_option_and_timeout(opted_in):
-    """The async receiver plumbs the option through identically."""
-    receiver = _receiver(opted_in, is_async=True)
+@pytest.mark.parametrize("confirms", [True, False])
+async def test_async_receiver_forwards_confirmation_and_timeout(confirms):
+    """The async receiver plumbs the decision through identically."""
+    receiver = _receiver(confirms, is_async=True)
     await receiver._settle_message(_received_message(), MESSAGE_COMPLETE)
 
     _, kwargs = receiver._amqp_transport.settle_message_via_receiver_link_async.call_args
-    assert kwargs["await_outcome"] is opted_in
+    assert kwargs["await_outcome"] is confirms
     assert kwargs["outcome_timeout"] == 60
 
 
-@pytest.mark.parametrize("kwargs, expected", [({}, False), ({"await_settlement_outcome": True}, True)])
-def test_option_is_off_unless_explicitly_enabled(kwargs, expected):
-    """Existing applications keep today's behavior; one keyword covers all four settle operations."""
+def test_peek_lock_on_pyamqp_confirms_settlements():
+    """Confirming is unconditional wherever it can be honoured -- there is no knob to disable it."""
     with ServiceBusClient.from_connection_string(CONN_STR) as client:
-        receiver = client.get_queue_receiver(queue_name="q", **kwargs)
-        assert receiver._await_settlement_outcome is expected
+        assert client.get_queue_receiver(queue_name="q")._await_settlement_outcome is True
 
 
-def test_option_is_rejected_in_receive_and_delete_mode():
-    """RECEIVE_AND_DELETE messages are settled by the service on delivery -- there is no outcome."""
+def test_receive_and_delete_does_not_confirm():
+    """The service settles these on delivery, so there is no outcome to wait for."""
     with ServiceBusClient.from_connection_string(CONN_STR) as client:
-        with pytest.raises(ValueError):
-            client.get_queue_receiver(
-                queue_name="q",
-                receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
-                await_settlement_outcome=True,
-            )
+        receiver = client.get_queue_receiver(
+            queue_name="q", receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE
+        )
+        assert receiver._await_settlement_outcome is False
 
 
-def test_non_pyamqp_transport_is_rejected_at_construction():
-    """The guard must fire while building the receiver, not at settle time.
+def test_uamqp_transport_does_not_confirm():
+    """uamqp cannot observe outcomes, so it must not be driven down the awaited path.
 
-    The transport raises NotImplementedError, which subclasses RuntimeError and would be
-    swallowed by the management-link fallback -- silently settling instead of failing loudly.
-    Exercised through a stand-in transport so the guard stays covered where uamqp is absent.
+    Exercised through a stand-in transport so this stays covered where uamqp is not installed;
+    the pyamqp case is already covered via the real client in the first test above.
     """
     receiver = ServiceBusReceiver.__new__(ServiceBusReceiver)
     receiver._entity_name = "q"
@@ -446,22 +470,8 @@ def test_non_pyamqp_transport_is_rejected_at_construction():
     receiver._amqp_transport.KIND = "uamqp"
     receiver._amqp_transport.TIMEOUT_FACTOR = 1
 
-    with pytest.raises(ValueError, match="uamqp"):
-        receiver._populate_attributes(queue_name="q", await_settlement_outcome=True)
-
-
-def test_pyamqp_transport_accepts_the_option():
-    """The same construction path succeeds on the supported transport."""
-    receiver = ServiceBusReceiver.__new__(ServiceBusReceiver)
-    receiver._entity_name = "q"
-    receiver.fully_qualified_namespace = "ns.servicebus.windows.net"
-    receiver._config = MagicMock(name="config")
-    receiver._amqp_transport = MagicMock(name="transport")
-    receiver._amqp_transport.KIND = "pyamqp"
-    receiver._amqp_transport.TIMEOUT_FACTOR = 1
-
-    receiver._populate_attributes(queue_name="q", await_settlement_outcome=True)
-    assert receiver._await_settlement_outcome is True
+    receiver._populate_attributes(queue_name="q")
+    assert receiver._await_settlement_outcome is False
 
 
 def test_uamqp_transport_settle_call_still_refuses():
@@ -491,7 +501,7 @@ def _receive_client(is_async=False):
 
 @pytest.mark.parametrize("await_outcome, expected_settled", [(True, False), (False, True)])
 def test_settle_messages_chooses_pre_settled_based_on_the_option(await_outcome, expected_settled):
-    """The opt-in is what makes the disposition unsettled -- which is what lets the service reply.
+    """Awaiting the outcome is what makes the disposition unsettled -- which lets the service reply.
 
     Sending ``settled=True`` terminates the exchange, so the service never reports an outcome.
     """

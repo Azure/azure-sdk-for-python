@@ -206,7 +206,9 @@ class ReceiverLink(Link):
         """Send a disposition frame for one or more received deliveries.
 
         With ``await_outcome=True`` the disposition is sent unsettled and this call waits until
-        the remote endpoint reports a terminal outcome, raising if that outcome is not `accepted`.
+        the remote endpoint reports a terminal outcome, raising unless that outcome matches the one
+        requested (the service echoes what it applied: `modified` for abandon/defer, `rejected` for
+        dead-letter). A `rejected` outcome carrying an error always raises.
         This requires the link to have been attached with
         ``rcv_settle_mode=ReceiverSettleMode.Second``.
 
@@ -255,7 +257,7 @@ class ReceiverLink(Link):
             await self._outgoing_disposition(
                 first_delivery_id, last_delivery_id, delivery_tag, settled, delivery_state, batchable
             )
-        except Exception:
+        except BaseException:  # pylint: disable=broad-except
             for delivery_id in delivery_ids:
                 self._pending_dispositions.pop(delivery_id, None)
             raise

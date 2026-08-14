@@ -372,7 +372,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional[AutoLockRenewer] = None,
         prefetch_count: int = 0,
-        await_settlement_outcome: bool = False,
         **kwargs: Any,
     ) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific queue.
@@ -422,11 +421,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
          wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
          and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
          a larger than default value may need to be passed in.
-        :keyword bool await_settlement_outcome: Whether settlement operations should wait for the
-         service to confirm the outcome and raise if the settlement was not applied. The default is
-         `False`, in which case a settlement the service does not process cannot be distinguished
-         from a successful one. Only valid in `PEEK_LOCK` mode and only supported on the default
-         pyamqp transport.
         :returns: The ServiceBusReceiver for the queue.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
@@ -480,7 +474,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             max_wait_time=max_wait_time,
             auto_lock_renewer=auto_lock_renewer,
             prefetch_count=prefetch_count,
-            await_settlement_outcome=await_settlement_outcome,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
             ssl_context=self._ssl_context,
@@ -569,7 +562,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional[AutoLockRenewer] = None,
         prefetch_count: int = 0,
-        await_settlement_outcome: bool = False,
         **kwargs: Any,
     ) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific subscription under the topic.
@@ -621,11 +613,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
          wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
          and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
          a larger than default value may need to be passed in.
-        :keyword bool await_settlement_outcome: Whether settlement operations should wait for the
-         service to confirm the outcome and raise if the settlement was not applied. The default is
-         `False`, in which case a settlement the service does not process cannot be distinguished
-         from a successful one. Only valid in `PEEK_LOCK` mode and only supported on the default
-         pyamqp transport.
         :returns: A subscription receiver.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
@@ -677,7 +664,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
-                await_settlement_outcome=await_settlement_outcome,
                 custom_endpoint_address=self._custom_endpoint_address,
                 connection_verify=self._connection_verify,
                 ssl_context=self._ssl_context,
@@ -710,7 +696,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
-                await_settlement_outcome=await_settlement_outcome,
                 custom_endpoint_address=self._custom_endpoint_address,
                 connection_verify=self._connection_verify,
                 ssl_context=self._ssl_context,

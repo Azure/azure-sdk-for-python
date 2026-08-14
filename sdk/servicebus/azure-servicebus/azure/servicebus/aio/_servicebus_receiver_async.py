@@ -142,15 +142,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
      wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
      and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
      a larger than default value may need to be passed in.
-    :keyword bool await_settlement_outcome: Whether settlement operations (`complete_message`,
-     `abandon_message`, `defer_message` and `dead_letter_message`) should wait for the service to
-     confirm the outcome and raise if the settlement was not applied. The default is `False`, in
-     which case settlements are sent pre-settled and a settlement the service does not process
-     cannot be distinguished from a successful one, surfacing instead as the message being
-     redelivered at lock expiry. Enabling this adds a service round trip per settlement, so
-     settling many messages one at a time becomes slow; settle them concurrently instead, for
-     example `await asyncio.gather(*(receiver.complete_message(m) for m in messages))`. Only
-     valid in `PEEK_LOCK` mode and only supported on the default pyamqp transport.
     """
 
     def __init__(
@@ -165,7 +156,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional["AutoLockRenewer"] = None,
         prefetch_count: int = 0,
-        await_settlement_outcome: bool = False,
         **kwargs: Any,
     ) -> None:
         self._session_id = None
@@ -182,7 +172,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
-                await_settlement_outcome=await_settlement_outcome,
                 **kwargs,
             )
         else:
@@ -206,7 +195,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
-                await_settlement_outcome=await_settlement_outcome,
                 **kwargs,
             )
 
@@ -218,7 +206,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             max_wait_time=max_wait_time,
             auto_lock_renewer=auto_lock_renewer,
             prefetch_count=prefetch_count,
-            await_settlement_outcome=await_settlement_outcome,
             **kwargs,
         )
         self._session = None if self._session_id is None else ServiceBusSession(cast(str, self._session_id), self)
@@ -305,11 +292,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
          Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
-        :keyword bool await_settlement_outcome: Whether settlement operations should wait for the
-         service to confirm the outcome and raise if the settlement was not applied. The default is
-         `False`, in which case a settlement the service does not process cannot be distinguished
-         from a successful one. Only valid in `PEEK_LOCK` mode and only supported on the default
-         pyamqp transport.
         :returns: The ServiceBusReceiver.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
@@ -454,8 +436,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
         # The following condition check is a hot fix for settling a message received for non-session queue after
         # lock expiration.
-        # Settlements are pre-settled by default, so success cannot be verified (uamqp never can:
-        # https://github.com/Azure/azure-uamqp-c/issues/274). Opt in with await_settlement_outcome=True.
+        # Settlement success cannot be verified where the outcome is not awaited -- uamqp never can
+        # (https://github.com/Azure/azure-uamqp-c/issues/274).
         if not self._session and message._lock_expired:
             raise MessageLockLostError(
                 message="The lock on the message lock has expired.",

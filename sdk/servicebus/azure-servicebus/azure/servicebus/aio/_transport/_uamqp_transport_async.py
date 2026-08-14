@@ -299,7 +299,7 @@ try:
             if await_outcome:
                 # uamqp cannot observe outcomes; fail loudly rather than return a false success.
                 raise NotImplementedError(
-                    "await_settlement_outcome is not supported by the uamqp transport. "
+                    "Awaiting the settlement outcome is not supported by the uamqp transport. "
                     "Use the default pyamqp transport to enable it."
                 )
             await get_running_loop().run_in_executor(
