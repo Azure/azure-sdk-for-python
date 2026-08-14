@@ -58,6 +58,9 @@ def upload_data_chunks(
         # Access conditions do not work with parallelism
         kwargs.pop("etag", None)
         kwargs.pop("match_condition", None)
+        kwargs.pop("if_modified_since", None)
+        kwargs.pop("if_unmodified_since", None)
+        kwargs.pop("if_tags", None)
 
     uploader = uploader_class(
         service=service,
@@ -99,6 +102,9 @@ def upload_substream_blocks(
         # Access conditions do not work with parallelism
         kwargs.pop("etag", None)
         kwargs.pop("match_condition", None)
+        kwargs.pop("if_modified_since", None)
+        kwargs.pop("if_unmodified_since", None)
+        kwargs.pop("if_tags", None)
     uploader = uploader_class(
         service=service,
         total_size=total_size,
