@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservicesbackup import RecoveryServicesBackupClient
     pip install azure-identity
     pip install azure-mgmt-recoveryservicesbackup
 # USAGE
-    python recovery_points_update.py
+    python configure_source_scan.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,18 +30,16 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.recovery_points.update(
-        resource_group_name="hanasnapshottesting",
-        vault_name="HanaSnapshotTest",
+    client.configure_source_scan.begin_execute(
+        resource_group_name="SwaggerTestRg",
+        vault_name="NetSDKTestRsVault",
         fabric_name="Azure",
-        container_name="VMAppContainer;compute;hanasnapshottesting;hana-eacan-2",
-        protected_item_name="SAPHanaDatabase;hye;hye",
-        recovery_point_id="2265668074516978193",
-        parameters={"properties": {"recoveryPointProperties": {"expiryTime": "2025-01-02T00:00:00.0000000Z"}}},
-    )
-    print(response)
+        container_name="IaasVMContainer;iaasvmcontainerv2;netsdktestrg;netvmtestv2vm1",
+        protected_item_name="VM;iaasvmcontainerv2;netsdktestrg;netvmtestv2vm1",
+        body={"sourceScanAction": "Enable"},
+    ).result()
 
 
-# x-ms-original-file: 2026-01-31-preview/Common/RecoveryPoints_Update.json
+# x-ms-original-file: 2026-07-01/AzureIaasVm/ConfigureSourceScan.json
 if __name__ == "__main__":
     main()
