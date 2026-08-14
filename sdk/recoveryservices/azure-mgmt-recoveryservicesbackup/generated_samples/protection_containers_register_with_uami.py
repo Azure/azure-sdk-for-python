@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.recoveryservicesbackup import RecoveryServicesBackupClient
     pip install azure-identity
     pip install azure-mgmt-recoveryservicesbackup
 # USAGE
-    python protection_policies_get_sap_hana_db_instance.py
+    python protection_containers_register_with_uami.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +31,29 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.protection_policies.get(
-        vault_name="HanaTestRsVault",
+    response = client.protection_containers.begin_register(
+        vault_name="swaggertestvault",
         resource_group_name="SwaggerTestRg",
-        policy_name="testHanaSnapshotV2Policy1",
-    )
+        fabric_name="Azure",
+        container_name="StorageContainer;Storage;SwaggerTestRg;swaggertestsa",
+        parameters={
+            "properties": {
+                "accessType": "IdentityBased",
+                "acquireStorageAccountLock": "Acquire",
+                "backupManagementType": "AzureStorage",
+                "containerType": "StorageContainer",
+                "friendlyName": "swaggertestsa",
+                "identityInfo": {
+                    "isSystemAssignedIdentity": False,
+                    "managedIdentityResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/SwaggerTestRg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/swaggertestuami",
+                },
+                "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/SwaggerTestRg/providers/Microsoft.Storage/storageAccounts/swaggertestsa",
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-01-31-preview/AzureWorkload/ProtectionPolicies_Get_SapHanaDBInstance.json
+# x-ms-original-file: 2026-07-01/AzureStorage/ProtectionContainers_Register_WithUAMI.json
 if __name__ == "__main__":
     main()
