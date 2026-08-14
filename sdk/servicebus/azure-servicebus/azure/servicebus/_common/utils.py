@@ -106,8 +106,7 @@ def get_server_timeout_ms(timeout: Optional[float]) -> int:
     if timeout is None:
         return DEFAULT_SERVER_TIMEOUT_MS
     capped = min(timeout, MAX_SERVER_TIMEOUT_MS / 1000)
-    remaining_ms = int(capped * 1000) - SERVER_TIMEOUT_BUFFER_MS
-    return min(max(remaining_ms, 0), MAX_SERVER_TIMEOUT_MS)
+    return max(int(capped * 1000) - SERVER_TIMEOUT_BUFFER_MS, 0)
 
 
 def build_uri(address, entity):

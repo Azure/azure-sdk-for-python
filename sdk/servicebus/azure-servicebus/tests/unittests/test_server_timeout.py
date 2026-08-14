@@ -17,9 +17,16 @@ import struct
 
 import pytest
 
-from azure.servicebus._common.constants import MAX_SERVER_TIMEOUT_MS, REQUEST_RESPONSE_TIMEOUT
+from azure.servicebus._common import mgmt_handlers
+from azure.servicebus._common.constants import (
+    ERROR_CODE_TIMEOUT,
+    MAX_SERVER_TIMEOUT_MS,
+    MGMT_RESPONSE_MESSAGE_ERROR_CONDITION,
+    REQUEST_RESPONSE_TIMEOUT,
+)
 from azure.servicebus._common.utils import get_server_timeout_ms
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
+from azure.servicebus.exceptions import OperationTimeoutError
 
 
 class TestServerTimeoutMillis:
@@ -87,8 +94,7 @@ class TestManagementRequestSetsServerTimeout:
         return handler, captured
 
     def test_default_sent_when_caller_gave_no_timeout(self):
-        # The gap this closes: without a caller timeout the service previously received no bound at
-        # all.
+        # The gap this closes: previously no bound was sent at all.
         handler, captured = self._make_handler()
         handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=None)
         assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 60000}
@@ -110,8 +116,7 @@ class TestManagementRequestSetsServerTimeout:
         assert REQUEST_RESPONSE_TIMEOUT in captured
 
     def test_sent_on_calls_without_an_associated_link(self):
-        # Operations such as list_sessions pass `keep_alive_associated_link=False` and start from an
-        # empty property map; they must still be bounded.
+        # list_sessions passes keep_alive_associated_link=False, starting from an empty map.
         handler, captured = self._make_handler()
         handler._mgmt_request_response(
             b"op",
@@ -121,6 +126,86 @@ class TestManagementRequestSetsServerTimeout:
             timeout=None,
         )
         assert captured == {REQUEST_RESPONSE_TIMEOUT: {"TYPE": "UINT", "VALUE": 60000}}
+
+
+class TestServiceTimeoutResponse:
+    """The response half: the service's answer must surface as a retryable
+    `OperationTimeoutError`, which rests on `com.microsoft:timeout` in `errorCondition`."""
+
+    @staticmethod
+    def _response(condition):
+        message = MagicMock()
+        message.application_properties = {MGMT_RESPONSE_MESSAGE_ERROR_CONDITION: condition}
+        return message
+
+    def test_timeout_condition_raises_retryable_operation_timeout_error(self):
+        with pytest.raises(OperationTimeoutError) as exc_info:
+            mgmt_handlers.default(408, self._response(ERROR_CODE_TIMEOUT), "The operation timed out.", PyamqpTransport)
+
+        assert exc_info.value._retryable is True
+
+    def test_success_returns_the_value_untouched(self):
+        message = self._response(None)
+        message.value = {"ok": True}
+        assert mgmt_handlers.default(200, message, None, PyamqpTransport) == {"ok": True}
+
+    def test_uamqp_maps_the_same_condition(self):
+        uamqp_transport = pytest.importorskip(
+            "azure.servicebus._transport._uamqp_transport", reason="uamqp not installed"
+        )
+        with pytest.raises(OperationTimeoutError):
+            mgmt_handlers.default(
+                408,
+                self._response(ERROR_CODE_TIMEOUT),
+                "The operation timed out.",
+                uamqp_transport.UamqpTransport,
+            )
+
+
+class TestUamqpValueType:
+    """uamqp is the one place the value type changes: pyamqp uses a plain dict, uamqp an `AMQPuInt`."""
+
+    def test_transport_supplied_type_is_what_reaches_the_message(self):
+
+        from azure.servicebus._base_handler import BaseHandler
+
+        sentinel = object()
+        captured = {}
+
+        def fake_create_mgmt_msg(message, application_properties, config, reply_to, **kwargs):
+            captured.update(application_properties)
+            return MagicMock()
+
+        handler = BaseHandler.__new__(BaseHandler)
+        handler._amqp_transport = MagicMock()
+        handler._amqp_transport.create_mgmt_msg = fake_create_mgmt_msg
+        handler._amqp_transport.AMQP_UINT_VALUE = lambda ms: sentinel
+        handler._amqp_transport.get_handler_link_name = lambda h: "link-1"
+        handler._amqp_transport.mgmt_client_request = lambda *args, **kwargs: "response"
+        handler._amqp_transport.TIMEOUT_ERROR = TimeoutError
+        handler._open = lambda: None
+        handler._handler = MagicMock()
+        handler._config = MagicMock(encoding="UTF-8")
+        handler._mgmt_target = "queue/$management"
+
+        handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=None)
+        assert captured[REQUEST_RESPONSE_TIMEOUT] is sentinel
+
+    def test_real_uamqp_type_encodes_in_application_properties(self):
+        uamqp = pytest.importorskip("uamqp", reason="uamqp not installed")
+        from azure.servicebus._transport._uamqp_transport import UamqpTransport
+
+        value = UamqpTransport.AMQP_UINT_VALUE(get_server_timeout_ms(None))
+        assert isinstance(value, uamqp.types.AMQPuInt)
+
+        message = UamqpTransport.create_mgmt_msg(
+            message={"operation": "peek"},
+            application_properties={REQUEST_RESPONSE_TIMEOUT: value},
+            config=MagicMock(encoding="UTF-8"),
+            reply_to="queue/$management",
+        )
+
+        assert message.encode_message()
 
 
 class TestAsyncParity:

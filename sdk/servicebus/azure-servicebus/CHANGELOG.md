@@ -6,7 +6,6 @@
 
 - Added `ServiceBusReceivedMessage.from_bytes()` classmethod to construct a `ServiceBusReceivedMessage` from raw AMQP payload bytes without requiring the deprecated `uamqp` library. ([#43979](https://github.com/Azure/azure-sdk-for-python/issues/43979))
 - Added `ServiceBusClient.list_queue_sessions()` and `ServiceBusClient.list_subscription_sessions()` (sync and async) to list session IDs for entities with active messages, with optional filtering by session-state update timestamp. The methods return an `ItemPaged[str]` (`AsyncItemPaged[str]` on the async client) so callers can iterate every session transparently or page with `by_page()`. Implements the `com.microsoft:get-message-sessions` management operation. ([#46575](https://github.com/Azure/azure-sdk-for-python/pull/46575))
-- Management operations (peek, deferred receive, message settlement over the management link, lock renewal, session state, session listing, schedule/cancel) now send `com.microsoft:server-timeout`: the caller's remaining time less one second, or 60 seconds when none was given. Previously no bound was sent, so a stalled service held the call until the AMQP link failed; it now raises a retryable `OperationTimeoutError`, so a persistently stalled service surfaces after roughly four minutes at default retry settings. Matches the .NET, Java and Go SDKs.
 
 ### Bugs Fixed
 
@@ -23,6 +22,7 @@
 ### Other Changes
 
 - When using the async `AmqpOverWebsocket` transport on Python 3.10 or later, `aiohttp>=3.14.0` is now recommended. Earlier `aiohttp` versions have a WebSocket heartbeat bug ([aio-libs/aiohttp#12030](https://github.com/aio-libs/aiohttp/pull/12030)) that can cause the connection to be dropped during long message processing, surfacing as a `SocketError` ("Cannot write to closing transport"). Python 3.9 users must upgrade Python to install an `aiohttp` release containing this fix. ([#44028](https://github.com/Azure/azure-sdk-for-python/issues/44028))
+- Management operations (peek, deferred receive, message settlement over the management link, lock renewal, session state, session listing, schedule/cancel) now send `com.microsoft:server-timeout`: the caller's remaining time less one second, or 60 seconds when none was given. Previously no bound was sent, so a stalled service held the call until the AMQP link failed; it now raises a retryable `OperationTimeoutError`, so a persistently stalled service surfaces after roughly four minutes at default retry settings. Matches the .NET, Java and Go SDKs.
 
 ## 7.14.3 (2025-11-11)
 
