@@ -32,9 +32,10 @@
         "azure.mgmt.consumption.models.HighCasedErrorResponse": "Microsoft.Consumption.HighCasedErrorResponse",
         "azure.mgmt.consumption.models.LegacyChargeSummary": "Microsoft.Consumption.LegacyChargeSummary",
         "azure.mgmt.consumption.models.LegacyChargeSummaryProperties": "Microsoft.Consumption.LegacyChargeSummaryProperties",
+        "azure.mgmt.consumption.models.LegacyReservationRecommendationProperties": "Microsoft.Consumption.LegacyReservationRecommendationProperties",
+        "azure.mgmt.consumption.models.LegacyManagementGroupScopeReservationRecommendationProperties": "Microsoft.Consumption.LegacyManagementGroupScopeReservationRecommendationProperties",
         "azure.mgmt.consumption.models.ReservationRecommendation": "Microsoft.Consumption.ReservationRecommendation",
         "azure.mgmt.consumption.models.LegacyReservationRecommendation": "Microsoft.Consumption.LegacyReservationRecommendation",
-        "azure.mgmt.consumption.models.LegacyReservationRecommendationProperties": "Microsoft.Consumption.LegacyReservationRecommendationProperties",
         "azure.mgmt.consumption.models.LegacyReservationTransactionProperties": "Microsoft.Consumption.LegacyReservationTransactionProperties",
         "azure.mgmt.consumption.models.LegacySharedScopeReservationRecommendationProperties": "Microsoft.Consumption.LegacySharedScopeReservationRecommendationProperties",
         "azure.mgmt.consumption.models.LegacySingleScopeReservationRecommendationProperties": "Microsoft.Consumption.LegacySingleScopeReservationRecommendationProperties",
@@ -51,8 +52,9 @@
         "azure.mgmt.consumption.models.MeterDetailsResponse": "Microsoft.Consumption.MeterDetailsResponse",
         "azure.mgmt.consumption.models.ModernChargeSummary": "Microsoft.Consumption.ModernChargeSummary",
         "azure.mgmt.consumption.models.ModernChargeSummaryProperties": "Microsoft.Consumption.ModernChargeSummaryProperties",
-        "azure.mgmt.consumption.models.ModernReservationRecommendation": "Microsoft.Consumption.ModernReservationRecommendation",
         "azure.mgmt.consumption.models.ModernReservationRecommendationProperties": "Microsoft.Consumption.ModernReservationRecommendationProperties",
+        "azure.mgmt.consumption.models.ModernManagementGroupScopeReservationRecommendationProperties": "Microsoft.Consumption.ModernManagementGroupScopeReservationRecommendationProperties",
+        "azure.mgmt.consumption.models.ModernReservationRecommendation": "Microsoft.Consumption.ModernReservationRecommendation",
         "azure.mgmt.consumption.models.ModernReservationTransaction": "Microsoft.Consumption.ModernReservationTransaction",
         "azure.mgmt.consumption.models.ModernReservationTransactionProperties": "Microsoft.Consumption.ModernReservationTransactionProperties",
         "azure.mgmt.consumption.models.ModernSharedScopeReservationRecommendationProperties": "Microsoft.Consumption.ModernSharedScopeReservationRecommendationProperties",
@@ -72,6 +74,7 @@
         "azure.mgmt.consumption.models.ReservationDetailProperties": "Microsoft.Consumption.ReservationDetailProperties",
         "azure.mgmt.consumption.models.ReservationRecommendationDetailsCalculatedSavingsProperties": "Microsoft.Consumption.ReservationRecommendationDetailsCalculatedSavingsProperties",
         "azure.mgmt.consumption.models.ReservationRecommendationDetailsModel": "Microsoft.Consumption.ReservationRecommendationDetailsModel",
+        "azure.mgmt.consumption.models.ReservationRecommendationDetailsProjectedUsageProperties": "Microsoft.Consumption.ReservationRecommendationDetailsProjectedUsageProperties",
         "azure.mgmt.consumption.models.ReservationRecommendationDetailsProperties": "Microsoft.Consumption.ReservationRecommendationDetailsProperties",
         "azure.mgmt.consumption.models.ReservationRecommendationDetailsResourceProperties": "Microsoft.Consumption.ReservationRecommendationDetailsResourceProperties",
         "azure.mgmt.consumption.models.ReservationRecommendationDetailsSavingsProperties": "Microsoft.Consumption.ReservationRecommendationDetailsSavingsProperties",
@@ -172,5 +175,5 @@
         "azure.mgmt.consumption.operations.LotsOperations.list_by_customer": "Microsoft.Consumption.LotsOperationGroup.listByCustomer",
         "azure.mgmt.consumption.aio.operations.LotsOperations.list_by_customer": "Microsoft.Consumption.LotsOperationGroup.listByCustomer"
     },
-    "CrossLanguageVersion": "6d59b39f8eeb"
+    "CrossLanguageVersion": "041c8626feff"
 }

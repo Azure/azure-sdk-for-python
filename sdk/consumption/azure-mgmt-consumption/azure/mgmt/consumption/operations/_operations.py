@@ -37,6 +37,7 @@ from .. import models as _models, types as _types
 from .._configuration import ConsumptionManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -50,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -77,7 +78,7 @@ def build_price_sheet_get_by_billing_period_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -115,7 +116,7 @@ def build_price_sheet_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -147,7 +148,7 @@ def build_price_sheet_download_by_billing_account_period_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -172,7 +173,7 @@ def build_budgets_get_request(scope: str, budget_name: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -198,7 +199,7 @@ def build_budgets_create_or_update_request(scope: str, budget_name: str, **kwarg
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -224,7 +225,7 @@ def build_budgets_create_or_update_request(scope: str, budget_name: str, **kwarg
 def build_budgets_delete_request(scope: str, budget_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/{scope}/providers/Microsoft.Consumption/budgets/{budgetName}"
     path_format_arguments = {
@@ -244,7 +245,7 @@ def build_budgets_list_request(scope: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -268,7 +269,7 @@ def build_credits_get_request(billing_account_id: str, billing_profile_id: str, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -302,7 +303,7 @@ def build_usage_details_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -343,7 +344,7 @@ def build_marketplaces_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -373,7 +374,7 @@ def build_tags_get_request(scope: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -405,7 +406,7 @@ def build_charges_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -439,7 +440,7 @@ def build_balances_get_by_billing_account_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -465,7 +466,7 @@ def build_balances_get_for_billing_period_by_billing_account_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -492,7 +493,7 @@ def build_reservations_summaries_list_by_reservation_order_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -526,7 +527,7 @@ def build_reservations_summaries_list_by_reservation_order_and_reservation_reque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -564,7 +565,7 @@ def build_reservations_summaries_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -601,7 +602,7 @@ def build_reservations_details_list_by_reservation_order_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -628,7 +629,7 @@ def build_reservations_details_list_by_reservation_order_and_reservation_request
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -663,7 +664,7 @@ def build_reservations_details_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -699,7 +700,7 @@ def build_reservation_recommendations_list_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -730,12 +731,13 @@ def build_reservation_recommendation_details_get_request(  # pylint: disable=nam
     look_back_period: Union[str, _models.LookBackPeriod],
     product: str,
     filter: Optional[str] = None,
+    management_group_id: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -755,6 +757,8 @@ def build_reservation_recommendation_details_get_request(  # pylint: disable=nam
     _params["product"] = _SERIALIZER.query("product", product, "str")
     if filter is not None:
         _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if management_group_id is not None:
+        _params["managementGroupId"] = _SERIALIZER.query("management_group_id", management_group_id, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -773,7 +777,7 @@ def build_reservation_transactions_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -807,7 +811,7 @@ def build_reservation_transactions_list_by_billing_profile_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -836,7 +840,7 @@ def build_aggregated_cost_get_by_management_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -864,7 +868,7 @@ def build_aggregated_cost_get_for_billing_period_by_management_group_request(  #
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -891,7 +895,7 @@ def build_events_list_by_billing_profile_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -920,7 +924,7 @@ def build_events_list_by_billing_account_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -948,7 +952,7 @@ def build_lots_list_by_billing_profile_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -975,7 +979,7 @@ def build_lots_list_by_billing_account_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1003,7 +1007,7 @@ def build_lots_list_by_customer_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1026,7 +1030,7 @@ def build_lots_list_by_customer_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1138,7 +1142,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class PriceSheetOperations:
+class PriceSheetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1451,7 +1455,7 @@ class PriceSheetOperations:
         )
 
 
-class BudgetsOperations:
+class BudgetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1861,7 +1865,7 @@ class BudgetsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CreditsOperations:
+class CreditsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1951,7 +1955,7 @@ class CreditsOperations:
         return deserialized  # type: ignore
 
 
-class UsageDetailsOperations:
+class UsageDetailsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2111,7 +2115,7 @@ class UsageDetailsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MarketplacesOperations:
+class MarketplacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2251,7 +2255,7 @@ class MarketplacesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TagsOperations:
+class TagsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2338,7 +2342,7 @@ class TagsOperations:
         return deserialized  # type: ignore
 
 
-class ChargesOperations:
+class ChargesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2450,7 +2454,7 @@ class ChargesOperations:
         return deserialized  # type: ignore
 
 
-class BalancesOperations:
+class BalancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2607,7 +2611,7 @@ class BalancesOperations:
         return deserialized  # type: ignore
 
 
-class ReservationsSummariesOperations:
+class ReservationsSummariesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2986,7 +2990,7 @@ class ReservationsSummariesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReservationsDetailsOperations:
+class ReservationsDetailsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3353,7 +3357,7 @@ class ReservationsDetailsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReservationRecommendationsOperations:
+class ReservationRecommendationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3480,7 +3484,7 @@ class ReservationRecommendationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-long
+class ReservationRecommendationDetailsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3500,6 +3504,10 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-06-01": ["management_group_id"]},
+        api_versions_list=["2024-08-01", "2026-06-01"],
+    )
     def get(
         self,
         resource_scope: str,
@@ -3510,6 +3518,7 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
         look_back_period: Union[str, _models.LookBackPeriod],
         product: str,
         filter: Optional[str] = None,
+        management_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.ReservationRecommendationDetailsModel]:
         """Details of a reservation recommendation for what-if analysis of reserved instances.
@@ -3521,7 +3530,8 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
          for billingProfile scope. Required.
         :type resource_scope: str
-        :keyword scope: Scope of the reservation. Known values are: "Single" and "Shared". Required.
+        :keyword scope: Scope of the reservation. Known values are: "Single", "Shared", and
+         "ManagementGroup". Required.
         :paramtype scope: str or ~azure.mgmt.consumption.models.Scope
         :keyword region: Used to select the region the recommendation should be generated for.
          Required.
@@ -3540,6 +3550,9 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
          properties/subscriptionId can be specified for billing account and billing profile paths.
          Default value is None.
         :paramtype filter: str
+        :keyword management_group_id: Specify the management group ID. Required when recommendation
+         scope is 'ManagementGroup'. Default value is None.
+        :paramtype management_group_id: str
         :return: ReservationRecommendationDetailsModel or None. The
          ReservationRecommendationDetailsModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.consumption.models.ReservationRecommendationDetailsModel or None
@@ -3566,6 +3579,7 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
             look_back_period=look_back_period,
             product=product,
             filter=filter,
+            management_group_id=management_group_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3609,7 +3623,7 @@ class ReservationRecommendationDetailsOperations:  # pylint: disable=name-too-lo
         return deserialized  # type: ignore
 
 
-class ReservationTransactionsOperations:
+class ReservationTransactionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3868,7 +3882,7 @@ class ReservationTransactionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AggregatedCostOperations:
+class AggregatedCostOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4033,7 +4047,7 @@ class AggregatedCostOperations:
         return deserialized  # type: ignore
 
 
-class EventsOperations:
+class EventsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4264,7 +4278,7 @@ class EventsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class LotsOperations:
+class LotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
