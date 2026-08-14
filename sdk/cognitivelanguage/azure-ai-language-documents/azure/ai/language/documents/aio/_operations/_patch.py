@@ -119,6 +119,12 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
     async def begin_submit_job(  # type: ignore[override]
         self,
         body: Union[_models.AnalyzeDocumentsJob, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        polling: Union[bool, AsyncPollingMethod[AsyncItemPaged[_models.Tasks]]] = True,
+        polling_interval: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        cls: ClsType[AsyncItemPaged[_models.Tasks]] = None,
         **kwargs: Any
     ) -> AnalyzeDocumentsAsyncLROPoller[AsyncItemPaged[_models.Tasks]]:
         """Submit a collection of text documents for analysis.
@@ -149,13 +155,11 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        polling: Union[bool, AsyncPollingMethod[AsyncItemPaged[_models.Tasks]]] = kwargs.pop("polling", True)
+        content_type = _headers.pop("Content-Type", content_type)
         if polling is False:
             raise ValueError("polling=False is not supported for this long-running operation.")
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        cls: ClsType[AsyncItemPaged[_models.Tasks]] = kwargs.pop("cls", None)
+        lro_delay = polling_interval if polling_interval is not None else self._config.polling_interval
+        cont_token = continuation_token
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -242,7 +246,16 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
         return lro
 
     @distributed_trace_async
-    async def begin_cancel_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_cancel_job(
+        self,
+        job_id: str,
+        *,
+        polling: Union[bool, AsyncPollingMethod] = True,
+        polling_interval: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        cls: ClsType[None] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
         """Cancel a long-running Text Analysis job.
 
         :param job_id: The job ID to cancel. Required.
@@ -261,10 +274,8 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)
+        lro_delay = polling_interval if polling_interval is not None else self._config.polling_interval
+        cont_token = continuation_token
 
         def get_long_running_output(pipeline_response):
             if cls:
