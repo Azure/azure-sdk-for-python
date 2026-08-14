@@ -204,9 +204,7 @@ def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Dict[str, Any]:
         if isinstance(encryption_scope, dict):
             return {
                 "default_encryption_scope": encryption_scope["default_encryption_scope"],
-                "prevent_encryption_scope_override": encryption_scope.get(
-                    "prevent_encryption_scope_override"
-                ),
+                "prevent_encryption_scope_override": encryption_scope.get("prevent_encryption_scope_override"),
             }
         raise TypeError("Container encryption scope must be dict or type ContainerEncryptionScope.")
     return {}
