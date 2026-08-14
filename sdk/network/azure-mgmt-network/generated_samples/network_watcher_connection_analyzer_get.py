@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.recoveryservicesbackup import RecoveryServicesBackupClient
+from azure.mgmt.network import NetworkManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-recoveryservicesbackup
+    pip install azure-mgmt-network
 # USAGE
-    python recovery_points_update.py
+    python network_watcher_connection_analyzer_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,23 +25,19 @@ from azure.mgmt.recoveryservicesbackup import RecoveryServicesBackupClient
 
 
 def main():
-    client = RecoveryServicesBackupClient(
+    client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.recovery_points.update(
-        resource_group_name="hanasnapshottesting",
-        vault_name="HanaSnapshotTest",
-        fabric_name="Azure",
-        container_name="VMAppContainer;compute;hanasnapshottesting;hana-eacan-2",
-        protected_item_name="SAPHanaDatabase;hye;hye",
-        recovery_point_id="2265668074516978193",
-        parameters={"properties": {"recoveryPointProperties": {"expiryTime": "2025-01-02T00:00:00.0000000Z"}}},
+    response = client.network_watchers.connection_analyzers_get(
+        resource_group_name="connectionAnalyzerRG",
+        network_watcher_name="nw1",
+        connection_analyzer_name="ca1",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-01-31-preview/Common/RecoveryPoints_Update.json
+# x-ms-original-file: 2025-09-01/NetworkWatcherConnectionAnalyzerGet.json
 if __name__ == "__main__":
     main()
