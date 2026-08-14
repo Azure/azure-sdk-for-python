@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0b2 (Unreleased)
+
+### Bugs Fixed
+
+- Restored JSON-string encoding for response-level `internal_metadata` so resilient response checkpoints round-trip through Foundry storage.
+
 ## 2.1.0b1 (2026-08-07)
 
 ### Breaking Changes
