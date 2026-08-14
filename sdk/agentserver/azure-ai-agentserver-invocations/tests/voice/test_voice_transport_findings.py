@@ -1986,6 +1986,101 @@ async def test_voice_logging_failure_preserves_callback_outcome(callback_kind, l
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("peer_loss", "close_failure"),
+    [(True, False), (False, False), (True, True)],
+    ids=["peer-loss", "successful-send-negative-control", "peer-loss-close-failure"],
+)
+async def test_voice_teardown_observes_in_flight_send_outcome_before_disconnect_dispatch(peer_loss, close_failure):
+    app = VoiceAgentServerHost(configure_observability=None)
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.receive", "text": json.dumps(_session_start_frame())},
+        {"type": "websocket.receive", "text": "not-json"},
+    ]
+    send_started = asyncio.Event()
+    release_send = asyncio.Event()
+    retained_sessions = []
+    send_tasks = []
+    termination_calls = []
+    disconnects = []
+    close_events = []
+    sent_messages = []
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        retained_sessions.append(session)
+        send_tasks.append(asyncio.create_task(session.send(SessionReady())))
+        await asyncio.wait_for(send_started.wait(), timeout=1)
+
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        termination_calls.append(session)
+        release_send.set()
+
+    @app.on_disconnect
+    async def on_disconnect(session, event):
+        disconnects.append((session, event.code, event.reason))
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+        if message["type"] == "websocket.send":
+            send_started.set()
+            await release_send.wait()
+            if peer_loss:
+                raise OSError("peer transport closed during teardown")
+        elif message["type"] == "websocket.close" and close_failure:
+            raise OSError("close transport failed after peer loss")
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    endpoint_task = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    try:
+        await asyncio.wait_for(endpoint_task, timeout=1)
+        send_results = await asyncio.wait_for(asyncio.gather(*send_tasks, return_exceptions=True), timeout=1)
+
+        assert termination_calls == retained_sessions
+        if peer_loss:
+            assert len(send_results) == 1
+            assert isinstance(send_results[0], WebSocketDisconnect)
+            assert send_results[0].code == 1006
+            assert disconnects == [(retained_sessions[0], 1006, None)]
+        else:
+            assert send_results == [None]
+            assert disconnects == []
+
+        disconnect_key = session_module._VOICE_DISCONNECT_EVENT_SCOPE_KEY  # pylint: disable=protected-access
+        assert disconnect_key not in websocket.scope
+        assert [message["type"] for message in sent_messages] == [
+            "websocket.accept",
+            "websocket.send",
+            "websocket.close",
+        ]
+        assert sent_messages[-1]["code"] == 1002
+        assert close_events == [(1002, None)]
+        assert Session._current(websocket) is None  # pylint: disable=protected-access
+        with pytest.raises(RuntimeError, match="terminating"):
+            await retained_sessions[0].send(SessionReady())
+        assert _live_voice_send_tasks() == []
+    finally:
+        release_send.set()
+        if not endpoint_task.done():
+            endpoint_task.cancel()
+            await asyncio.gather(endpoint_task, return_exceptions=True)
+        await asyncio.gather(*send_tasks, return_exceptions=True)
+        await _finish_close_attempts(baseline_attempts)
+
+
+@pytest.mark.asyncio
 async def test_voice_cleanup_precedes_close_serialized_behind_application_send():
     app = VoiceAgentServerHost(configure_observability=None)
     inbound_events = [

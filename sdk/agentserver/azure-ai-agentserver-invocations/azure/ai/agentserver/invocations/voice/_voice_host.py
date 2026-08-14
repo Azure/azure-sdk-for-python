@@ -203,6 +203,14 @@ def _selected_voice_termination_deadline(websocket: WebSocket) -> float:
     return asyncio.get_running_loop().time() + _session_transport.CLOSE_TIMEOUT_SECONDS
 
 
+def _peek_voice_disconnect_event(websocket: WebSocket) -> SessionDisconnected | None:
+    scope = getattr(websocket, "scope", None)
+    if not isinstance(scope, MutableMapping):
+        return None
+    event = scope.get(_VOICE_DISCONNECT_EVENT)
+    return event if isinstance(event, SessionDisconnected) else None
+
+
 def _take_voice_disconnect_event(websocket: WebSocket) -> SessionDisconnected | None:
     scope = getattr(websocket, "scope", None)
     if not isinstance(scope, MutableMapping):
@@ -455,7 +463,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
     ) -> None:
         deadline = _selected_voice_termination_deadline(websocket)
         cancellation = handler_exc if isinstance(handler_exc, asyncio.CancelledError) else None
-        disconnect_event = _take_voice_disconnect_event(websocket)
+        disconnect_event = _peek_voice_disconnect_event(websocket)
         close_attempt: asyncio.Task[None] | None = None
         close_error: Exception | None = None
         if error_code_override is not None:
@@ -477,16 +485,17 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         disconnect_error: BaseException | None = None
         try:
             await _raise_pending_cancellation()
-            disconnect_error = await self._notify_peer_disconnect(
-                voice_session,
-                disconnect_event,
-            )
-            await _raise_pending_cancellation()
             if close_attempt is not None:
                 try:
                     await voice_session._wait_close(close_attempt, deadline)  # pylint: disable=protected-access
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     close_error = exc
+            disconnect_event = _take_voice_disconnect_event(websocket)
+            disconnect_error = await self._notify_peer_disconnect(
+                voice_session,
+                disconnect_event,
+            )
+            await _raise_pending_cancellation()
         except asyncio.CancelledError:
             error_code = "cancelled"
             raise
