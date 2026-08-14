@@ -373,6 +373,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :return: The workspace location
         :rtype: str
         """
+        if self._operation_scope._workspace_location:
+            return self._operation_scope._workspace_location
         return str(
             self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
         )
