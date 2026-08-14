@@ -30,7 +30,7 @@ from .._encryption import (
     adjust_blob_size_for_encryption,
     decrypt_blob,
     is_encryption_v2,
-    parse_encryption_data
+    parse_encryption_data,
 )
 
 if TYPE_CHECKING:
@@ -44,7 +44,13 @@ if TYPE_CHECKING:
 T = TypeVar('T', bytes, str)
 
 
-async def process_content(data: Any, start_offset: int, end_offset: int, encryption: Dict[str, Any]) -> bytes:
+async def process_content(
+    data: Any,
+    start_offset: int,
+    end_offset: int,
+    encryption: Dict[str, Any],
+    expected_encryption_data: Optional["_EncryptionData"],
+) -> bytes:
     if data is None:
         raise ValueError("Response cannot be None.")
     if hasattr(data.response, "is_stream_consumed") and data.response.is_stream_consumed:
@@ -60,7 +66,8 @@ async def process_content(data: Any, start_offset: int, end_offset: int, encrypt
                 content,
                 start_offset,
                 end_offset,
-                data.response.headers
+                data.response.headers,
+                expected_encryption_data,
             )
         except Exception as error:
             raise HttpResponseError(
@@ -143,7 +150,9 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                     process_storage_error(error)
 
                 try:
-                    chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
+                    chunk_data = await process_content(
+                        response, offset[0], offset[1], self.encryption_options, self.encryption_data
+                    )
                     retry_active = False
                 except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
                     retry_total -= 1
@@ -430,7 +439,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                         response,
                         self._initial_offset[0],
                         self._initial_offset[1],
-                        self._encryption_options
+                        self._encryption_options,
+                        self._encryption_data,
                     )
                 retry_active = False
             except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:

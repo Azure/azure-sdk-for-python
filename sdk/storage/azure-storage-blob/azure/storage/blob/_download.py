@@ -60,7 +60,13 @@ def process_range_and_offset(
     return (start_range, end_range), (start_offset, end_offset)
 
 
-def process_content(data: Any, start_offset: int, end_offset: int, encryption: Dict[str, Any]) -> bytes:
+def process_content(
+    data: Any,
+    start_offset: int,
+    end_offset: int,
+    encryption: Dict[str, Any],
+    expected_encryption_data: Optional["_EncryptionData"],
+) -> bytes:
     if data is None:
         raise ValueError("Response cannot be None.")
 
@@ -76,6 +82,7 @@ def process_content(data: Any, start_offset: int, end_offset: int, encryption: D
                 start_offset,
                 end_offset,
                 data.response.headers,
+                expected_encryption_data,
             )
         except Exception as error:
             raise HttpResponseError(message="Decryption failed.", response=data.response, error=error) from error
@@ -234,7 +241,9 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                     process_storage_error(error)
 
                 try:
-                    chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
+                    chunk_data = process_content(
+                        response, offset[0], offset[1], self.encryption_options, self.encryption_data
+                    )
                     retry_active = False
                 except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
                     retry_total -= 1
@@ -520,7 +529,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                         response,
                         self._initial_offset[0],
                         self._initial_offset[1],
-                        self._encryption_options
+                        self._encryption_options,
+                        self._encryption_data,
                     )
                 retry_active = False
             except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
