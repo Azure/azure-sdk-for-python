@@ -150,15 +150,16 @@ class TestServiceTimeoutResponse:
         assert mgmt_handlers.default(200, message, None, PyamqpTransport) == {"ok": True}
 
     def test_uamqp_maps_the_same_condition(self):
-        uamqp_transport = pytest.importorskip(
-            "azure.servicebus._transport._uamqp_transport", reason="uamqp not installed"
-        )
+        # Skip on uamqp itself: the transport module imports without it, but UamqpTransport is not defined.
+        pytest.importorskip("uamqp", reason="uamqp not installed")
+        from azure.servicebus._transport._uamqp_transport import UamqpTransport
+
         with pytest.raises(OperationTimeoutError):
             mgmt_handlers.default(
                 408,
                 self._response(ERROR_CODE_TIMEOUT),
                 "The operation timed out.",
-                uamqp_transport.UamqpTransport,
+                UamqpTransport,
             )
 
 
