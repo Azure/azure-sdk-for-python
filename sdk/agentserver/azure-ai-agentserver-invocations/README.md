@@ -4,6 +4,7 @@ The `azure-ai-agentserver-invocations` package provides the invocation protocol 
 
 - **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`, `GET /invocations/docs/asyncapi.{json,yaml}`.
 - **WebSocket** (`invocations_ws` protocol) — full-duplex streaming at `/invocations_ws`, registered with `@app.ws_handler`.
+- **Voice Live Bridge** — an experimental typed event relay in the `azure.ai.agentserver.invocations.voice` submodule, layered on `invocations_ws`.
 
 ## Getting started
 
@@ -309,6 +310,102 @@ The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`.
 
 [starlette-ws]: https://www.starlette.io/websockets/
 
+## Typed Voice Live Bridge submodule (preview)
+
+`VoiceAgentServerHost` provides typed `on_<event>` decorators over the existing
+`invocations_ws` transport. Each callback receives an immutable event and a
+send-only `Session`:
+
+```python
+from azure.ai.agentserver.invocations.voice import (
+    ResponseCreated,
+    ResponseDone,
+    ResponseOutputTextDone,
+    Session,
+    SessionReady,
+    SessionRejected,
+    SessionStart,
+    UserMessage,
+    VoiceAgentServerHost,
+    new_item_id,
+    new_response_id,
+)
+
+app = VoiceAgentServerHost()
+
+
+@app.on_session_start
+async def on_session_start(session: Session, event: SessionStart) -> None:
+    if event.protocol_version != "1.0":
+        await session.send(
+            SessionRejected(code="protocol_mismatch", retriable=False)
+        )
+        return
+    # Restore durable application state here when event.reconnect is true.
+    await session.send(SessionReady())
+
+
+@app.on_user_message
+async def on_user_message(session: Session, event: UserMessage) -> None:
+    response_id = new_response_id()
+    item_id = new_item_id()
+    await session.send(
+        ResponseCreated(response_id=response_id, in_reply_to=(event.item_id,))
+    )
+    await session.send(
+        ResponseOutputTextDone(
+            response_id=response_id,
+            item_id=item_id,
+            text="Hello from the hosted text agent.",
+        )
+    )
+    await session.send(ResponseDone(response_id=response_id))
+```
+
+The submodule is deliberately a thin typed event relay. It decodes one inbound frame,
+dispatches the corresponding callback, encodes explicit outbound messages, and
+serializes concurrent WebSocket writes. It does **not** own pending responses,
+terminal arbitration, timeout/cancel operations, generation tasks, history, or
+reconnect state.
+
+When the peer or proxy closes the WebSocket, `@app.on_disconnect` receives a
+local `SessionDisconnected` event. This callback represents only the observed
+peer disconnect.
+
+`@app.on_connection_terminating` is the common cleanup signal for every
+in-process exit from the connection handler, including peer disconnect, local
+protocol close, callback failure, transport failure, and task cancellation. It
+is synchronous so applications can promptly call `Task.cancel()` or set their
+own stop signals without making WebSocket teardown wait for asynchronous
+cleanup. The callback must be non-blocking and must not send frames. The SDK
+invokes it once as each connection handler unwinds, and applications must keep
+their signaling idempotent. The SDK does not retain, join, or guarantee
+completion of application-owned tasks.
+
+For the Voice WebSocket relay, shutdown cancellation remains cancellation while
+the SDK is awaiting WebSocket accept or receive, even if the ASGI transport
+returns normally or translates the cancellation into a standard exception. This
+guarantee requires the transport operation to eventually settle after receiving
+cancellation; a transport that suppresses cancellation and never returns is
+outside the contract.
+
+After repeated cancellation requests, the Voice endpoint is guaranteed to remain
+cancelled. The exact nested `asyncio.CancelledError` instance or message selected
+from a transport-defined exception graph is unspecified.
+
+Voice callback cancellation is cooperative. A callback that catches
+`asyncio.CancelledError` must re-raise it after its own cleanup. If application
+code catches cancellation and returns normally, recovery is outside the SDK
+contract; the SDK does not forcibly terminate or retain that callback.
+
+For full-duplex streaming, the agent creates and owns a generation task, returns
+from `on_user_message`, and cancels that task from `on_barge_in`,
+`on_response_cancelled`, `on_response_timeout`, or
+`on_connection_terminating`. Each task remains responsible for its own
+asynchronous resource cleanup. See the complete
+[`basic_voice_agent`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/basic_voice_agent)
+sample.
+
 ### Reference: configuration
 
 | Environment variable | Default | Description |
@@ -340,6 +437,7 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 | [async_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/async_invoke_agent/) | Long-running operations with polling and cancellation |
 | [ws_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_invoke_agent/) | Combined `POST /invocations` (HTTP) and `/invocations_ws` (WebSocket) host |
 | [ws_bidirectional_streaming_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_bidirectional_streaming_agent/) | Full-duplex `/invocations_ws` agent: concurrent token streams + mid-flight cancel (relies on the SDK's WS protocol Ping/Pong keep-alive, not application-level heartbeats) |
+| [basic_voice_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/basic_voice_agent/) | Typed Voice Live Bridge callbacks with developer-owned full-duplex streaming and cancellation |
 
 ## Contributing
 
