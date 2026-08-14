@@ -486,17 +486,27 @@ def sdkv2_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCreden
 
 
 @pytest.fixture
-def registry_backed_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+def registry_backed_client(
+    e2e_ws_scope: OperationScope, auth: ClientSecretCredential, sdkv2_registry_client: MLClient
+) -> MLClient:
     """Return a registry-backed client whose online operations target the test workspace."""
-    return MLClient(
-        credential=auth,
-        subscription_id=e2e_ws_scope.subscription_id,
-        resource_group_name=e2e_ws_scope.resource_group_name,
-        workspace_name=e2e_ws_scope.workspace_name,
-        registry_reference="sdkv2-testFeed",
-        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
-        cloud="AzureCloud",
+    registry_clients = (
+        sdkv2_registry_client._service_client_10_2021_dataplanepreview,
+        sdkv2_registry_client.resource_group_name,
+        sdkv2_registry_client.subscription_id,
+        sdkv2_registry_client._service_client_model_dataplane,
+        sdkv2_registry_client._service_client_registry_arm,
     )
+    with patch("azure.ai.ml._ml_client.get_registry_client", return_value=registry_clients):
+        return MLClient(
+            credential=auth,
+            subscription_id=e2e_ws_scope.subscription_id,
+            resource_group_name=e2e_ws_scope.resource_group_name,
+            workspace_name=e2e_ws_scope.workspace_name,
+            registry_reference="sdkv2-testFeed",
+            logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+            cloud="AzureCloud",
+        )
 
 
 @pytest.fixture
