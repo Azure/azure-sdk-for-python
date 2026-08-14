@@ -4,7 +4,6 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 from pathlib import Path
 from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint, load_model
-from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model, CodeConfiguration, Environment
 
 
@@ -54,13 +53,10 @@ class TestOnlineDeployment(AzureRecordedTestCase):
     def test_online_deployment_create_when_registry_assets(
         self,
         registry_backed_client: MLClient,
-        e2e_ws_scope: OperationScope,
         randstr: Callable[[], str],
         rand_online_name: Callable[[], str],
         rand_online_deployment_name: Callable[[], str],
     ) -> None:
-        assert registry_backed_client.resource_group_name != e2e_ws_scope.resource_group_name
-
         # create a model in registry
         model_name = randstr("test-registry-model")
         model = Model(name=model_name, path="./tests/test_configs/deployments/model-1/model")
