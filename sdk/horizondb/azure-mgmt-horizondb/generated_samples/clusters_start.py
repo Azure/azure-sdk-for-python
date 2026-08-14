@@ -15,7 +15,7 @@ from azure.mgmt.horizondb import HorizonDBMgmtClient
     pip install azure-identity
     pip install azure-mgmt-horizondb
 # USAGE
-    python private_endpoint_connections_update.py
+    python clusters_start.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,21 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.horizon_db_private_endpoint_connections.begin_update(
+    client.horizon_db_clusters.begin_start(
         resource_group_name="exampleresourcegroup",
-        private_endpoint_connection_name="exampleprivateendpointconnection.1fa229cd-bf3f-47f0-8c49-afb36723997e",
-        properties={
-            "properties": {
-                "privateLinkServiceConnectionState": {
-                    "description": "Approved by `johndoe@contoso.com <mailto:johndoe@contoso.com>`_",
-                    "status": "Approved",
-                }
-            }
-        },
+        cluster_name="examplecluster",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2026-01-20-preview/PrivateEndpointConnections_Update.json
+# x-ms-original-file: 2026-05-01-preview/Clusters_Start.json
 if __name__ == "__main__":
     main()
