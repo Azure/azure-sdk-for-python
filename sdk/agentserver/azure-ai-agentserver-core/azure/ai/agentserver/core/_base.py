@@ -346,7 +346,22 @@ class AgentServerHost(Starlette):
                     shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
                 )
                 set_task_manager(task_manager)
-                await task_manager.startup()
+                try:
+                    await task_manager.startup()
+                except BaseException:
+                    # ``set_task_manager`` above already installed the manager
+                    # globally, but startup failed and the lifespan will now
+                    # abort before the shutdown block runs. Best-effort tear the
+                    # partially-started manager down and clear the singleton so a
+                    # failed/half-initialized manager is not left visible through
+                    # ``get_task_manager()``; then re-raise to fail the lifespan.
+                    try:
+                        await task_manager.shutdown()
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.warning("Error shutting down TaskManager after startup failure", exc_info=True)
+                    set_task_manager(None)
+                    task_manager = None
+                    raise
                 logger.info("TaskManager initialized with startup recovery")
             else:
                 logger.info(
