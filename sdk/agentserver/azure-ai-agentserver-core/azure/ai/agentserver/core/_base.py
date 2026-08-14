@@ -356,8 +356,26 @@ class AgentServerHost(Starlette):
                 set_task_manager(task_manager)
 
                 if _resilient_tasks_enabled() or _has_registered_tasks():
-                    await task_manager.startup()
-                    logger.info("TaskManager initialized with startup recovery")
+                    # The blocking cold-start recovery scan (Layer 1) runs only
+                    # when recovery was explicitly enabled. When a task subsystem
+                    # is present but the switch is off (e.g. a plain responses
+                    # host whose protocol registers internal primitives, or a
+                    # developer @task app that did not force-enable), Layer 1 is
+                    # skipped so boot is not gated on a task-store list() +
+                    # credential-token acquisition. Recovery is still provided by
+                    # the periodic background loop (Layer 2) and request-time
+                    # inline reclaim (Layer 3).
+                    _run_initial_scan = _resilient_tasks_enabled()
+                    await task_manager.startup(run_initial_scan=_run_initial_scan)
+                    if _run_initial_scan:
+                        logger.info("TaskManager initialized with startup recovery")
+                    else:
+                        logger.info(
+                            "TaskManager initialized (initial scan skipped; background recovery active; "
+                            "enabled=%s, tasks_declared=%s)",
+                            _resilient_tasks_enabled(),
+                            _has_registered_tasks(),
+                        )
                 else:
                     logger.info(
                         "TaskManager initialized (recovery deferred; enabled=%s, tasks_declared=%s)",
