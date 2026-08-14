@@ -190,6 +190,7 @@
   - Deleted or renamed model `ProtectionPolicyQueryObject`
   - Deleted or renamed model `RestorePointQueryType`
   - Deleted or renamed model `Type`
+  - Renamed method `ProtectedItemsOperations.create_or_update` to `begin_create_or_update`
   - Method `BackupEnginesOperations.get` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `BackupEnginesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `BackupJobsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
@@ -200,7 +201,6 @@
   - Method `BackupResourceVaultConfigsOperations.update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
   - Method `BackupUsageSummariesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `BackupWorkloadItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `ProtectedItemsOperations.create_or_update`
   - Method `ProtectionPoliciesOperations.create_or_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
   - Method `RestoresOperations.begin_trigger` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
   - Method `SecurityPINsOperations.get` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
