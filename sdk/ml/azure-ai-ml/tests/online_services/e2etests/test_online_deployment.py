@@ -52,6 +52,7 @@ class TestOnlineDeployment(AzureRecordedTestCase):
 
     def test_online_deployment_create_when_registry_assets(
         self,
+        sdkv2_registry_client: MLClient,
         registry_backed_client: MLClient,
         randstr: Callable[[], str],
         rand_online_name: Callable[[], str],
@@ -60,7 +61,7 @@ class TestOnlineDeployment(AzureRecordedTestCase):
         # create a model in registry
         model_name = randstr("test-registry-model")
         model = Model(name=model_name, path="./tests/test_configs/deployments/model-1/model")
-        model = registry_backed_client.models.create_or_update(model)
+        model = sdkv2_registry_client.models.create_or_update(model)
         assert model.name == model_name
 
         # create a endpoint
