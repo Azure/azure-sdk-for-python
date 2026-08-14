@@ -19,4 +19,4 @@ extends:
       ${{ if not(contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
         MatrixFilters:
           - PythonVersion=3.10
-          - CoverageArg=""
+          - CoverageArg=^$
