@@ -28,6 +28,7 @@ from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _GCM_NONCE_LENGTH,
     _GCM_TAG_LENGTH,
+    _GCMRegionNonceValidator,
     _region_nonce_encodings,
     _validate_and_unwrap_cek,
     decrypt_blob,
@@ -511,179 +512,6 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
             blob.download_blob().readall()
 
         assert "Decryption failed." in str(e.value)
-
-    def test_decrypt_dotnet_v2_1_nonce_encoding(self):
-        # Regression test for cross-SDK interoperability. The .NET Storage SDK encodes each
-        # region's GCM nonce as a one-based counter written little-endian into the final 8
-        # nonce bytes. Python must still decrypt these .NET-produced V2.1 blobs while
-        # continuing to detect reordered regions.
-        kek = KeyWrapper("key1")
-        cek = os.urandom(32)
-
-        region_data_length = 32
-        num_regions = 3
-        plaintext_regions = [bytes([i]) * region_data_length for i in range(num_regions)]
-
-        def dotnet_nonce(region_index):
-            # 4 zero bytes + one-based counter, little-endian, 8 bytes -- see .NET
-            # GcmAuthenticatedCryptographicTransform.GetNewNonce().
-            return b"\x00\x00\x00\x00" + (region_index + 1).to_bytes(8, "little")
-
-        aesgcm = AESGCM(cek)
-        encrypted_regions = [
-            dotnet_nonce(i) + aesgcm.encrypt(dotnet_nonce(i), region, None)
-            for i, region in enumerate(plaintext_regions)
-        ]
-
-        # Wrap the CEK the way the V2 protocol requires (version prefix padded to 8 bytes).
-        wrapped_cek = kek.wrap_key(b"2.1".ljust(8, b"\x00") + cek)
-        encryption_data = {
-            "WrappedContentKey": {
-                "KeyId": kek.get_kid(),
-                "EncryptedKey": base64.b64encode(wrapped_cek).decode(),
-                "Algorithm": kek.get_key_wrap_algorithm(),
-            },
-            "EncryptionAgent": {"Protocol": "2.1", "EncryptionAlgorithm": "AES_GCM_256"},
-            "EncryptedRegionInfo": {"DataLength": region_data_length, "NonceLength": _GCM_NONCE_LENGTH},
-            "KeyWrappingMetadata": {"EncryptionLibrary": "Dotnet"},
-        }
-        headers = {"x-ms-meta-encryptiondata": dumps(encryption_data)}
-        plaintext = b"".join(plaintext_regions)
-
-        # Act / Assert -- the .NET nonce encoding is accepted and the content round-trips.
-        decrypted = decrypt_blob(
-            require_encryption=True,
-            key_encryption_key=kek,
-            key_resolver=None,
-            content=b"".join(encrypted_regions),
-            start_offset=0,
-            end_offset=len(plaintext),
-            response_headers=headers,
-        )
-        assert decrypted == plaintext
-
-        # Reordering the .NET-produced regions must still be detected.
-        reordered = encrypted_regions[0] + encrypted_regions[2] + encrypted_regions[1]
-        with pytest.raises(ValueError):
-            decrypt_blob(
-                require_encryption=True,
-                key_encryption_key=kek,
-                key_resolver=None,
-                content=reordered,
-                start_offset=0,
-                end_offset=len(plaintext),
-                response_headers=headers,
-            )
-
-    def test_decrypt_java_v2_nonce_encoding(self):
-        # Regression test for cross-SDK interoperability. The Java Storage SDK encodes each
-        # region's GCM nonce as a zero-based counter written big-endian into the leading 8
-        # nonce bytes (ByteBuffer.allocate(12).putLong(index)), which differs from Python's
-        # full-width big-endian counter. Python must still decrypt Java-produced V2 blobs
-        # while continuing to detect reordered regions.
-        kek = KeyWrapper("key1")
-        cek = os.urandom(32)
-
-        region_data_length = 32
-        num_regions = 3
-        plaintext_regions = [bytes([i]) * region_data_length for i in range(num_regions)]
-
-        def java_nonce(region_index):
-            # Zero-based counter, big-endian, in the leading 8 bytes; trailing bytes zeroed.
-            return region_index.to_bytes(8, "big") + b"\x00" * (_GCM_NONCE_LENGTH - 8)
-
-        aesgcm = AESGCM(cek)
-        encrypted_regions = [
-            java_nonce(i) + aesgcm.encrypt(java_nonce(i), region, None)
-            for i, region in enumerate(plaintext_regions)
-        ]
-
-        # Wrap the CEK the way the V2 protocol requires (version prefix padded to 8 bytes).
-        wrapped_cek = kek.wrap_key(b"2.0".ljust(8, b"\x00") + cek)
-        encryption_data = {
-            "WrappedContentKey": {
-                "KeyId": kek.get_kid(),
-                "EncryptedKey": base64.b64encode(wrapped_cek).decode(),
-                "Algorithm": kek.get_key_wrap_algorithm(),
-            },
-            "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm": "AES_GCM_256"},
-            "EncryptedRegionInfo": {"DataLength": region_data_length, "NonceLength": _GCM_NONCE_LENGTH},
-            "KeyWrappingMetadata": {"EncryptionLibrary": "Java"},
-        }
-        headers = {"x-ms-meta-encryptiondata": dumps(encryption_data)}
-        plaintext = b"".join(plaintext_regions)
-
-        # Act / Assert -- the Java nonce encoding is accepted and the content round-trips.
-        decrypted = decrypt_blob(
-            require_encryption=True,
-            key_encryption_key=kek,
-            key_resolver=None,
-            content=b"".join(encrypted_regions),
-            start_offset=0,
-            end_offset=len(plaintext),
-            response_headers=headers,
-        )
-        assert decrypted == plaintext
-
-        # Reordering the Java-produced regions must still be detected.
-        reordered = encrypted_regions[0] + encrypted_regions[2] + encrypted_regions[1]
-        with pytest.raises(ValueError):
-            decrypt_blob(
-                require_encryption=True,
-                key_encryption_key=kek,
-                key_resolver=None,
-                content=reordered,
-                start_offset=0,
-                end_offset=len(plaintext),
-                response_headers=headers,
-            )
-
-    def test_decrypt_rejects_mixed_nonce_encodings(self):
-        # Regression test: the supported SDK nonce encodings share a value space, so accepting
-        # them independently per region would weaken reorder detection. For example Java's
-        # nonce for region 1 is identical to .NET's nonce for region 16,777,215, so a Java
-        # region could be moved to that position and still pass a per-region union check.
-        # decrypt_blob must instead select a single encoding and enforce it consistently.
-        encodings = _region_nonce_encodings(_GCM_NONCE_LENGTH)
-        # Document the overlap that motivates single-encoding enforcement.
-        assert encodings["java"](1) == encodings["dotnet"](16_777_215)
-
-        kek = KeyWrapper("key1")
-        cek = os.urandom(32)
-        region_data_length = 32
-        aesgcm = AESGCM(cek)
-
-        # Region 0 uses the Java/Python encoding (all zeros); region 1 uses the .NET encoding.
-        # A per-region union check would accept both; single-encoding enforcement rejects the mix.
-        region0_nonce = encodings["java"](0)
-        region1_nonce = encodings["dotnet"](1)
-        region0 = region0_nonce + aesgcm.encrypt(region0_nonce, b"\x00" * region_data_length, None)
-        region1 = region1_nonce + aesgcm.encrypt(region1_nonce, b"\x11" * region_data_length, None)
-
-        wrapped_cek = kek.wrap_key(b"2.0".ljust(8, b"\x00") + cek)
-        encryption_data = {
-            "WrappedContentKey": {
-                "KeyId": kek.get_kid(),
-                "EncryptedKey": base64.b64encode(wrapped_cek).decode(),
-                "Algorithm": kek.get_key_wrap_algorithm(),
-            },
-            "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm": "AES_GCM_256"},
-            "EncryptedRegionInfo": {"DataLength": region_data_length, "NonceLength": _GCM_NONCE_LENGTH},
-            "KeyWrappingMetadata": {"EncryptionLibrary": "Mixed"},
-        }
-        headers = {"x-ms-meta-encryptiondata": dumps(encryption_data)}
-
-        # Act / Assert -- the mixed encoding is rejected rather than silently accepted.
-        with pytest.raises(ValueError):
-            decrypt_blob(
-                require_encryption=True,
-                key_encryption_key=kek,
-                key_resolver=None,
-                content=region0 + region1,
-                start_offset=0,
-                end_offset=2 * region_data_length,
-                response_headers=headers,
-            )
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1520,3 +1348,169 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent)
         blob.download_blob(raw_request_hook=assert_user_agent).readall()
+
+
+class TestGCMRegionNonceValidation:
+    REGION_DATA_LENGTH = 32
+
+    @staticmethod
+    def _encryption_headers(kek, cek, protocol, library, data_length=REGION_DATA_LENGTH):
+        # Wrap the CEK the way the V2 protocol requires (version prefix padded to 8 bytes).
+        wrapped_cek = kek.wrap_key(protocol.encode().ljust(8, b"\x00") + cek)
+        encryption_data = {
+            "WrappedContentKey": {
+                "KeyId": kek.get_kid(),
+                "EncryptedKey": base64.b64encode(wrapped_cek).decode(),
+                "Algorithm": kek.get_key_wrap_algorithm(),
+            },
+            "EncryptionAgent": {"Protocol": protocol, "EncryptionAlgorithm": "AES_GCM_256"},
+            "EncryptedRegionInfo": {"DataLength": data_length, "NonceLength": _GCM_NONCE_LENGTH},
+            "KeyWrappingMetadata": {"EncryptionLibrary": library},
+        }
+        return {"x-ms-meta-encryptiondata": dumps(encryption_data)}
+
+    @staticmethod
+    def _encrypt_regions(cek, nonce_for_region, plaintext_regions):
+        aesgcm = AESGCM(cek)
+        return [
+            nonce_for_region(i) + aesgcm.encrypt(nonce_for_region(i), region, None)
+            for i, region in enumerate(plaintext_regions)
+        ]
+
+    @staticmethod
+    def _decrypt(kek, headers, content, end_offset, nonce_validator):
+        return decrypt_blob(
+            require_encryption=True,
+            key_encryption_key=kek,
+            key_resolver=None,
+            content=content,
+            start_offset=0,
+            end_offset=end_offset,
+            response_headers=headers,
+            nonce_validator=nonce_validator,
+        )
+
+    def test_decrypt_dotnet_v2_1_nonce_encoding(self):
+        # Regression test for cross-SDK interoperability. The .NET Storage SDK encodes each
+        # region's GCM nonce as a one-based counter written little-endian into the final 8
+        # nonce bytes. Python must still decrypt these .NET-produced V2.1 blobs while
+        # continuing to detect reordered regions.
+        kek = KeyWrapper("key1")
+        cek = os.urandom(32)
+        num_regions = 3
+        plaintext_regions = [bytes([i]) * self.REGION_DATA_LENGTH for i in range(num_regions)]
+
+        def dotnet_nonce(region_index):
+            # 4 zero bytes + one-based counter, little-endian, 8 bytes -- see .NET
+            # GcmAuthenticatedCryptographicTransform.GetNewNonce().
+            return b"\x00\x00\x00\x00" + (region_index + 1).to_bytes(8, "little")
+
+        encrypted_regions = self._encrypt_regions(cek, dotnet_nonce, plaintext_regions)
+        headers = self._encryption_headers(kek, cek, "2.1", "Dotnet")
+        plaintext = b"".join(plaintext_regions)
+
+        # Act / Assert -- the .NET nonce encoding is accepted and the content round-trips.
+        decrypted = self._decrypt(kek, headers, b"".join(encrypted_regions), len(plaintext), _GCMRegionNonceValidator())
+        assert decrypted == plaintext
+
+        # Reordering the .NET-produced regions must still be detected.
+        reordered = encrypted_regions[0] + encrypted_regions[2] + encrypted_regions[1]
+        with pytest.raises(ValueError):
+            self._decrypt(kek, headers, reordered, len(plaintext), _GCMRegionNonceValidator())
+
+    def test_decrypt_java_v2_nonce_encoding(self):
+        # Regression test for cross-SDK interoperability. The Java Storage SDK encodes each
+        # region's GCM nonce as a zero-based counter written big-endian into the leading 8
+        # nonce bytes (ByteBuffer.allocate(12).putLong(index)), which differs from Python's
+        # full-width big-endian counter. Python must still decrypt Java-produced V2 blobs
+        # while continuing to detect reordered regions.
+        kek = KeyWrapper("key1")
+        cek = os.urandom(32)
+        num_regions = 3
+        plaintext_regions = [bytes([i]) * self.REGION_DATA_LENGTH for i in range(num_regions)]
+
+        def java_nonce(region_index):
+            # Zero-based counter, big-endian, in the leading 8 bytes; trailing bytes zeroed.
+            return region_index.to_bytes(8, "big") + b"\x00" * (_GCM_NONCE_LENGTH - 8)
+
+        encrypted_regions = self._encrypt_regions(cek, java_nonce, plaintext_regions)
+        headers = self._encryption_headers(kek, cek, "2.0", "Java")
+        plaintext = b"".join(plaintext_regions)
+
+        # Act / Assert -- the Java nonce encoding is accepted and the content round-trips.
+        decrypted = self._decrypt(kek, headers, b"".join(encrypted_regions), len(plaintext), _GCMRegionNonceValidator())
+        assert decrypted == plaintext
+
+        # Reordering the Java-produced regions must still be detected.
+        reordered = encrypted_regions[0] + encrypted_regions[2] + encrypted_regions[1]
+        with pytest.raises(ValueError):
+            self._decrypt(kek, headers, reordered, len(plaintext), _GCMRegionNonceValidator())
+
+    def test_decrypt_rejects_mixed_nonce_encodings(self):
+        # Regression test: the supported SDK nonce encodings share a value space, so accepting
+        # them independently per region would weaken reorder detection. For example Java's
+        # nonce for region 1 is identical to .NET's nonce for region 16,777,215, so a Java
+        # region could be moved to that position and still pass a per-region union check.
+        # decrypt_blob must instead select a single encoding and enforce it consistently.
+        encodings = _region_nonce_encodings(_GCM_NONCE_LENGTH)
+        # Document the overlap that motivates single-encoding enforcement.
+        assert encodings["java"](1) == encodings["dotnet"](16_777_215)
+
+        kek = KeyWrapper("key1")
+        cek = os.urandom(32)
+        aesgcm = AESGCM(cek)
+
+        # Region 0 uses the Java/Python encoding (all zeros); region 1 uses the .NET encoding.
+        # A per-region union check would accept both; single-encoding enforcement rejects the mix.
+        region0_nonce = encodings["java"](0)
+        region1_nonce = encodings["dotnet"](1)
+        region0 = region0_nonce + aesgcm.encrypt(region0_nonce, b"\x00" * self.REGION_DATA_LENGTH, None)
+        region1 = region1_nonce + aesgcm.encrypt(region1_nonce, b"\x11" * self.REGION_DATA_LENGTH, None)
+        headers = self._encryption_headers(kek, cek, "2.0", "Mixed")
+
+        # Act / Assert -- the mixed encoding is rejected rather than silently accepted.
+        with pytest.raises(ValueError):
+            self._decrypt(kek, headers, region0 + region1, 2 * self.REGION_DATA_LENGTH, _GCMRegionNonceValidator())
+
+    def test_nonce_validator_enforces_single_encoding_across_chunks(self):
+        # decrypt_blob runs once per download chunk, so a shared validator must intersect the
+        # candidate encodings across chunks; otherwise the encoding could change at a chunk
+        # boundary and, at a collision, let a relocated region pass.
+        encodings = _region_nonce_encodings(_GCM_NONCE_LENGTH)
+        # The collision that makes per-chunk validation unsound: Java region 1 == .NET region 16,777,215.
+        assert encodings["java"](1) == encodings["dotnet"](16_777_215)
+
+        validator = _GCMRegionNonceValidator()
+        # First chunk: two Java regions resolve the encoding to Java.
+        validator.validate_region(0, encodings["java"](0), _GCM_NONCE_LENGTH)
+        validator.validate_region(1, encodings["java"](1), _GCM_NONCE_LENGTH)
+
+        # Later chunk: a region relocated to the colliding .NET index carries Java's region-1
+        # nonce. Its only consistent encoding is .NET, which conflicts with the resolved Java
+        # encoding, so the shared validator rejects it.
+        with pytest.raises(ValueError):
+            validator.validate_region(16_777_215, encodings["java"](1), _GCM_NONCE_LENGTH)
+
+    def test_env_var_bypasses_nonce_validation(self):
+        # The AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS escape hatch disables nonce
+        # validation for data-recovery scenarios. With it set, a mix of nonce encodings that
+        # would normally be rejected must decrypt, and no validator is required.
+        encodings = _region_nonce_encodings(_GCM_NONCE_LENGTH)
+        kek = KeyWrapper("key1")
+        cek = os.urandom(32)
+        aesgcm = AESGCM(cek)
+
+        # Two regions using incompatible encodings (Java for region 0, .NET for region 1).
+        region0_plaintext = b"\x00" * self.REGION_DATA_LENGTH
+        region1_plaintext = b"\x11" * self.REGION_DATA_LENGTH
+        region0_nonce = encodings["java"](0)
+        region1_nonce = encodings["dotnet"](1)
+        region0 = region0_nonce + aesgcm.encrypt(region0_nonce, region0_plaintext, None)
+        region1 = region1_nonce + aesgcm.encrypt(region1_nonce, region1_plaintext, None)
+        headers = self._encryption_headers(kek, cek, "2.0", "Mixed")
+        plaintext = region0_plaintext + region1_plaintext
+
+        # Act / Assert -- with the bypass set, decryption succeeds without a validator.
+        with mock.patch.dict(os.environ, {"AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS": "true"}):
+            decrypted = self._decrypt(kek, headers, region0 + region1, 2 * self.REGION_DATA_LENGTH, nonce_validator=None)
+        assert decrypted == plaintext

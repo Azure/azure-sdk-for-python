@@ -8,6 +8,7 @@
 import math
 import os
 import sys
+import threading
 import warnings
 from collections import OrderedDict
 from io import BytesIO
@@ -57,6 +58,8 @@ _ERROR_ENCRYPTION_METADATA_MISMATCH = (
     "retrieved at the start of the download. The blob's encryption metadata may have been modified "
     "while the download was in progress."
 )
+
+_ERROR_INVALID_ENCRYPTION_METADATA = "The encryption metadata is not valid and may have been modified."
 
 
 class KeyEncryptionKey(Protocol):
@@ -713,7 +716,7 @@ def _validate_and_unwrap_cek(
         version_2_bytes = encryption_data.encryption_agent.protocol.encode().ljust(8, b"\0")
         cek_version_bytes = content_encryption_key[: len(version_2_bytes)]
         if cek_version_bytes != version_2_bytes:
-            raise ValueError("The encryption metadata is not valid and may have been modified.")
+            raise ValueError(_ERROR_INVALID_ENCRYPTION_METADATA)
 
         # Remove version from the start of the cek.
         content_encryption_key = content_encryption_key[len(version_2_bytes) :]
@@ -934,6 +937,48 @@ def _region_nonce_encodings(nonce_length: int) -> Dict[str, Callable[[int], byte
     return encodings
 
 
+class _GCMRegionNonceValidator:
+    """
+    Enforces that every region across a whole download uses a single nonce encoding.
+
+    ``decrypt_blob`` runs once per HTTP chunk, so the candidate encodings are shared and
+    intersected across all chunks (including concurrent ones) rather than reset per call.
+    Otherwise the encoding could change at a chunk boundary and, at an encoding collision,
+    let a relocated region pass validation.
+    """
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._candidates: Optional[Dict[str, Callable[[int], bytes]]] = None
+        # Set once the candidates collapse to a single encoding; read lock-free thereafter.
+        self._encoding: Optional[Callable[[int], bytes]] = None
+
+    def validate_region(self, region_index: int, nonce: bytes, nonce_length: int) -> None:
+        """
+        Narrows the shared candidate encodings to those consistent with this region.
+
+        :param int region_index: The zero-based index of the region within the blob.
+        :param bytes nonce: The nonce read from the region.
+        :param int nonce_length: The length of the nonce in bytes.
+        """
+        encoding = self._encoding
+        if encoding is not None:
+            if encoding(region_index) != nonce:
+                raise ValueError(_ERROR_INVALID_ENCRYPTION_METADATA)
+            return
+
+        with self._lock:
+            if self._candidates is None:
+                self._candidates = _region_nonce_encodings(nonce_length)
+            self._candidates = {
+                name: encode for name, encode in self._candidates.items() if encode(region_index) == nonce
+            }
+            if not self._candidates:
+                raise ValueError(_ERROR_INVALID_ENCRYPTION_METADATA)
+            if len(self._candidates) == 1:
+                self._encoding = next(iter(self._candidates.values()))
+
+
 def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     require_encryption: bool,
     key_encryption_key: Optional[KeyEncryptionKey],
@@ -943,6 +988,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     end_offset: int,
     response_headers: Dict[str, Any],
     expected_encryption_data: Optional[_EncryptionData] = None,
+    nonce_validator: Optional["_GCMRegionNonceValidator"] = None,
 ) -> bytes:
     """
     Decrypts the given blob contents and returns only the requested range.
@@ -972,8 +1018,10 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         'x-ms-meta-encryptiondata' header if the blob was encrypted.
     :param Optional[_EncryptionData] expected_encryption_data:
         The encryption data retrieved at the start of the download. If provided, the encryption
-        metadata on this response is validated against it to detect the blob's encryption metadata
         being modified (tampered with) partway through a download.
+    :param Optional[_GCMRegionNonceValidator] nonce_validator:
+        Shared state used to enforce a single V2 nonce encoding across every chunk of a
+        AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS environment variable.
     :return: The decrypted blob content.
     :rtype: bytes
     """
@@ -1069,7 +1117,9 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
             "AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS", ""
         ).strip().lower() not in ("true", "1")
 
-        candidate_encodings = _region_nonce_encodings(nonce_length)
+        # A validator is required to enforce a single nonce encoding across the whole download.
+        if validate_nonce and nonce_validator is None:
+            raise ValueError("A nonce validator is required to decrypt Encryption V2 content.")
 
         decrypted_content = bytearray()
         while offset < total_size:
@@ -1080,16 +1130,9 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
             # First bytes are the nonce
             nonce = encrypted_region[:nonce_length]
             # Validate the nonce matches the expected counter for this region under a single
-            # consistent encoding. A mismatch (empty candidate set) indicates the regions were
-            # reordered or tampered with.
-            if validate_nonce:
-                candidate_encodings = {
-                    name: encode
-                    for name, encode in candidate_encodings.items()
-                    if encode(nonce_counter) == nonce
-                }
-                if not candidate_encodings:
-                    raise ValueError("The encryption metadata is not valid and may have been modified.")
+            # consistent encoding. A mismatch indicates the regions were reordered or tampered with.
+            if nonce_validator is not None and validate_nonce:
+                nonce_validator.validate_region(nonce_counter, nonce, nonce_length)
             ciphertext_with_tag = encrypted_region[nonce_length:]
 
             aesgcm = AESGCM(content_encryption_key)
