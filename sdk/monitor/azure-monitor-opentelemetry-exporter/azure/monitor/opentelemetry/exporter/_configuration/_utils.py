@@ -218,7 +218,13 @@ class _OverrideRule:
 
     @classmethod
     def from_dict(cls, data: Any) -> Optional["_OverrideRule"]:
-        """Parse an override rule and separate its result value from profile conditions."""
+        """Parse an override rule and separate its result value from profile conditions.
+
+        :param data: Raw override rule data.
+        :type data: Any
+        :return: The parsed override rule, or None if the data is invalid.
+        :rtype: Optional[_OverrideRule]
+        """
         if not isinstance(data, dict):
             return None
 
@@ -242,7 +248,13 @@ class _FeatureConfig:
 
     @classmethod
     def parse(cls, data: Any) -> Optional["_FeatureConfig"]:
-        """Parse a feature configuration from its JSON string."""
+        """Parse a feature configuration from its JSON string.
+
+        :param data: JSON-encoded or in-memory feature configuration.
+        :type data: Any
+        :return: The parsed feature configuration, or None if the data is invalid.
+        :rtype: Optional[_FeatureConfig]
+        """
         if isinstance(data, str):
             try:
                 data = json.loads(data)
@@ -324,10 +336,7 @@ def evaluate_feature(
     - If NO rules match, the default state is returned
     """
     # Validate inputs - return None for invalid inputs
-    if not feature_key or not isinstance(settings, dict):
-        return None
-
-    if feature_key not in settings:
+    if not feature_key or not isinstance(settings, dict) or feature_key not in settings:
         return None
 
     # Feature setting values are JSON strings containing their default and override rules.
@@ -336,10 +345,6 @@ def evaluate_feature(
         return None
 
     default_value = _normalize_setting_value(feature_config.default, value_type)
-
-    # If no override conditions, return the default value.
-    if not feature_config.overrides:
-        return default_value
 
     # Check override conditions - if ANY override rule matches completely, apply its value.
     for override_rule in feature_config.overrides:
@@ -352,14 +357,22 @@ def evaluate_feature(
             # complement of the default.
             if isinstance(default_value, bool):
                 return not default_value
-            return default_value
+            break
 
     # No override rules matched - return the default value.
     return default_value
 
 
 def _normalize_setting_value(value: Any, value_type: Optional[Callable[[str], T]] = None) -> Any:
-    """Convert a setting with the requested type or normalize legacy feature-state strings."""
+    """Convert a setting with the requested type or normalize legacy feature-state strings.
+
+    :param value: Raw setting value.
+    :type value: Any
+    :param value_type: Optional converter to apply to the string value.
+    :type value_type: Optional[Callable[[str], T]]
+    :return: The converted or normalized value, or None if conversion fails.
+    :rtype: Any
+    """
     if value_type is not None:
         if not isinstance(value, str):
             return None
