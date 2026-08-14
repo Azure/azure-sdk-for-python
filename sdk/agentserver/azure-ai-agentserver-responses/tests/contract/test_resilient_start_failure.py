@@ -1,16 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Contract tests: a resilient task-start failure must FAIL the request.
+"""Contract tests: resilient task-start behavior.
 
-When the resilient-task subsystem IS installed (hosted) but starting the
-task-backed background execution fails, the server must NOT silently degrade
-to a non-durable, connection-scoped ``asyncio.create_task`` (which loses crash
-recovery while looking healthy). Instead it must fail immediately and surface
-the failure as a *platform* error source — exactly like a Foundry storage
-failure.
+Two distinct cases with DIFFERENT contracts:
 
-The legitimate "no task subsystem at all" case (e.g. a test client without a
-TaskManager) must STILL run the handler in-process — that is not a failure.
+1. The resilient-task subsystem IS installed but starting the task-backed
+   execution *fails* (the start call raises): the server must NOT silently
+   degrade to a non-durable ``asyncio.create_task`` — it must fail immediately
+   and surface a *platform* error source (like a Foundry storage failure). A
+   real durability failure must not hide behind a healthy-looking response.
+
+2. No task subsystem is installed at all (the host did not enable resilient
+   tasks via ``set_resilient_tasks_enabled``): this is the deliberate opt-out
+   path. ``TaskManagerNotInitialized`` is SWALLOWED and the handler runs
+   in-process — the response still executes and persists (GET works), it is
+   simply not crash-recoverable. This applies regardless of hosted vs local.
 """
 
 from __future__ import annotations
@@ -24,7 +28,6 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.core._platform_headers import ERROR_DETAIL, ERROR_SOURCE
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
-from azure.ai.agentserver.responses.hosting import _orchestrator as _orch
 from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as _ro
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
@@ -114,12 +117,12 @@ class TestTaskStartFailureSurfacesPlatform:
 
 
 class TestNoTaskManagerStillRunsHandler:
-    """Regression: no task subsystem (non-hosted) → handler runs in-process."""
+    """No task subsystem (opt-out) → handler runs in-process (non-durable)."""
 
     def test_no_manager_background_runs_handler_ok(self) -> None:
         # Plain TestClient (no `with` → no lifespan → no TaskManager installed)
-        # and non-hosted (FOUNDRY_HOSTING_ENVIRONMENT unset) → legitimate
-        # in-process fallback, NOT a failure.
+        # → the outer catch swallows TaskManagerNotInitialized and runs the
+        # handler in-process. Legitimate opt-out path, NOT a failure.
         client = _build_client()
         resp = client.post(
             "/responses",
@@ -129,36 +132,30 @@ class TestNoTaskManagerStillRunsHandler:
         assert ERROR_SOURCE not in resp.headers
 
 
-class TestHostedNoTaskManagerFailsLoudly:
-    """Hosted + no manager → durability is mandatory → fail as platform error.
+class TestNoTaskManagerSwallowsAndRunsInProcess:
+    """Recovery is opt-in: with no TaskManager installed, ``store=true`` work is
+    NOT failed as a platform error — the outer catch swallows
+    ``TaskManagerNotInitialized`` and runs the handler in-process (non-durable).
+    This holds regardless of hosted vs local; enabling durability is the
+    operator's explicit choice via ``set_resilient_tasks_enabled(True)``."""
 
-    In a hosted deployment the resilient-task subsystem is auto-initialized
-    with no opt-out, so its absence is a platform-infrastructure failure — the
-    server must NOT silently degrade a ``store=true`` response to a non-durable
-    in-process run.
-    """
-
-    def test_hosted_no_manager_background_fails_platform_500(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        # Simulate hosted at the gate (no real env change → no Foundry store
-        # auto-activation) while the bare TestClient has no manager installed.
-        monkeypatch.setattr(_orch, "_is_hosted_environment", lambda: True)
+    def test_no_manager_background_runs_in_process(self) -> None:
         client = _build_client()
         resp = client.post(
             "/responses",
             json={"model": "test", "input": "hi", "stream": False, "store": True, "background": True},
         )
-        assert resp.status_code == 500, resp.text
-        assert resp.headers.get(ERROR_SOURCE) == "platform"
-        assert ERROR_DETAIL in resp.headers
-        assert "in_progress" not in resp.text
+        assert resp.status_code == 200, resp.text
+        # Swallowed, not surfaced as a platform error.
+        assert ERROR_SOURCE not in resp.headers
 
-    def test_hosted_no_manager_streaming_emits_error_event(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setattr(_orch, "_is_hosted_environment", lambda: True)
+    def test_no_manager_streaming_runs_in_process(self) -> None:
         client = _build_client()
         resp = client.post(
             "/responses",
             json={"model": "test", "input": "hi", "stream": True, "store": True, "background": True},
         )
         types = [e["type"] for e in _collect_sse_events(resp.text)]
-        assert "error" in types, f"expected a standalone error event, got: {types}"
-        assert "response.completed" not in types, f"must not complete, got: {types}"
+        # In-process fallback runs the handler to completion; no error surface.
+        assert "error" not in types, f"must not surface an error on opt-out, got: {types}"
+        assert "response.completed" in types, f"expected completion, got: {types}"

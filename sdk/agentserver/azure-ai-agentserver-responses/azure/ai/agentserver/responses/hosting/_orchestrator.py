@@ -73,23 +73,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger("azure.ai.agentserver")
 
 
-def _is_hosted_environment() -> bool:
-    """Return whether the agent is running in a Foundry-hosted container.
-
-    Uses the canonical :class:`~azure.ai.agentserver.core.AgentConfig` derivation
-    (the same public API ``_routing`` already uses for Foundry auto-activation).
-    In a hosted deployment the resilient-task subsystem is auto-initialized with
-    no opt-out, so a missing TaskManager is a platform-infrastructure failure
-    rather than a reason to silently run a response non-durably.
-
-    :return: ``True`` if running in a Foundry-hosted environment.
-    :rtype: bool
-    """
-    from azure.ai.agentserver.core import AgentConfig  # pylint: disable=import-outside-toplevel
-
-    return AgentConfig.from_env().is_hosted
-
-
 _STORAGE_ERROR_MESSAGE = (
     "An internal error occurred while storing the response. "
     "Subsequent retrieval is not guaranteed. Please retry the request."
@@ -4004,27 +3987,22 @@ class _ResponseOrchestrator:
             # `previous_response_id`. Propagate so the endpoint layer
             # surfaces HTTP 409 `conversation_fork_not_supported`.
             raise
-        except TaskManagerNotInitialized as exc:
-            # No resilient-task subsystem is installed in this process.
-            if _is_hosted_environment():
-                # Hosted deployments auto-initialize the subsystem with no
-                # opt-out, so its absence means initialization failed at boot
-                # (e.g. a misconfigured backend or a missing dependency).
-                # Durability is mandatory in production — fail loudly as a
-                # platform error rather than silently degrading a store=true
-                # response to a non-durable, connection-scoped task.
-                logger.error(
-                    "Resilient task subsystem missing in hosted environment for response %s; failing the request",
-                    ctx.response_id,
-                )
-                setattr(exc, PLATFORM_ERROR_TAG, True)
-                await self._runtime_state.delete(ctx.response_id)
-                raise
-            # Non-hosted (local dev, or unit/contract tests whose ASGI lifespan
-            # never ran). Nothing to recover — run the handler in-process. This
-            # is the legitimate non-durable path, NOT a failure. (When a manager
-            # IS present — hosted, or a local file-provider deployment — the
-            # start above succeeds and we use the resilient task.)
+        except TaskManagerNotInitialized:
+            # No resilient-task subsystem is installed in this process — the
+            # host did not enable resilient tasks
+            # (``set_resilient_tasks_enabled``), so recovery/durability is
+            # opt-out here. SWALLOW the signal and run the handler in-process:
+            # the response still executes and persists to the store (so GET
+            # works), it simply is not crash-recoverable. This is the deliberate
+            # non-durable path for a host that opted out of resilient tasks —
+            # NOT a failure. (When a manager IS present the start above succeeds
+            # and we use the resilient task with full recovery.)
+            logger.info(
+                "Resilient task subsystem not enabled for response %s; running handler "
+                "in-process (non-durable). Enable via set_resilient_tasks_enabled(True) "
+                "for crash recovery.",
+                ctx.response_id,
+            )
             record.execution_task = asyncio.create_task(fallback_runner())
         except Exception as exc:  # pylint: disable=broad-exception-caught
             # The resilient-task subsystem IS present but starting the task

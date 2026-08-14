@@ -311,63 +311,50 @@ class AgentServerHost(Starlette):
 
             # --- Resilient task manager initialization ---
             #
-            # The TaskManager is CONSTRUCTED unconditionally (whenever the
-            # resilient tasks module is importable). Construction is cheap and
-            # makes NO task-store calls — it only builds in-memory state (an
-            # idle provider client, empty routing tables, a lease-owner string).
-            # This keeps ``get_task_manager()`` working so a ``@task``-based app
-            # can run tasks without hitting ``TaskManagerNotInitialized``,
-            # while paying zero network cost until a task is actually used.
+            # The resilient ``TaskManager`` is CONSTRUCTED ONLY when resilient
+            # tasks were explicitly enabled via
+            # ``set_resilient_tasks_enabled(True)``. Recovery (and the durable
+            # task subsystem as a whole) is strictly opt-in: a host that does
+            # not set the switch pays nothing — no manager, no provider client,
+            # no task-store call, no recovery loop.
             #
-            # The network-backed startup RECOVERY SCAN (a blocking hosted
-            # task-store ``list()`` plus ``DefaultAzureCredential`` token
-            # acquisition, which would otherwise gate server readiness) — and
-            # the periodic recovery loop it spawns — run when EITHER holds:
-            #   (1) at least one durable task was declared (``@task`` /
-            #       ``@multi_turn_task``, tracked in ``_REGISTERED_DESCRIPTORS``)
-            #       — an app that uses tasks gets recovery automatically, OR
-            #   (2) resilient tasks were explicitly enabled via
-            #       ``set_resilient_tasks_enabled(True)`` — a force-enable that
-            #       starts the recovery loop even before any task is declared,
-            #       so a task declared later is picked up by the loop.
-            # A plain server that neither declares a task nor sets the switch
-            # (e.g. an invocations-only host) makes no task-store call at
-            # startup.
-            #
-            # NOTE (deferred): if the switch is OFF and no task is declared at
-            # startup, the recovery loop is not started, so a task declared
-            # LATER in that lifetime will run but its prior-crash orphans are
-            # not scanned until the next restart. Fully closing that requires a
-            # lazy manager-start on first late registration; tracked as future
-            # work (the manager cannot be made fully async, only lazily
-            # started).
+            # When the switch is OFF the manager is NOT installed, so
+            # ``get_task_manager()`` raises ``TaskManagerNotInitialized``.
+            # Callers that route through the manager (e.g. the responses
+            # protocol's ``store=true`` path) are expected to SWALLOW that
+            # signal and degrade to non-durable, in-process execution — the
+            # response still runs and persists, it simply is not crash-
+            # recoverable. Declaring a durable task (``@task`` /
+            # ``@multi_turn_task``) does NOT implicitly turn the subsystem on;
+            # an app that wants durable tasks / recovery must set the switch.
             task_manager = None
-            try:
-                from .tasks._manager import (  # pylint: disable=import-outside-toplevel
-                    TaskManager,
-                    set_task_manager,
-                )
+            if _resilient_tasks_enabled():
+                try:
+                    from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                        TaskManager,
+                        set_task_manager,
+                    )
 
-                task_manager = TaskManager(
-                    config=cfg,
-                    shutdown_event=asyncio.Event(),
-                    shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
-                )
-                set_task_manager(task_manager)
-
-                if _resilient_tasks_enabled() or _has_registered_tasks():
+                    task_manager = TaskManager(
+                        config=cfg,
+                        shutdown_event=asyncio.Event(),
+                        shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
+                    )
+                    set_task_manager(task_manager)
                     await task_manager.startup()
                     logger.info("TaskManager initialized with startup recovery")
-                else:
-                    logger.info(
-                        "TaskManager initialized (recovery deferred; enabled=%s, tasks_declared=%s)",
-                        _resilient_tasks_enabled(),
-                        _has_registered_tasks(),
-                    )
-            except ImportError:
-                pass  # resilient module not available
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to initialize TaskManager", exc_info=True)
+                except ImportError:
+                    pass  # resilient module not available
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to initialize TaskManager", exc_info=True)
+            else:
+                logger.info(
+                    "TaskManager NOT initialized (resilient tasks disabled; enable via "
+                    "set_resilient_tasks_enabled(True)). Durable tasks and crash recovery "
+                    "are inactive; store=true work degrades to non-durable execution. "
+                    "tasks_declared=%s",
+                    _has_registered_tasks(),
+                )
 
             yield
 

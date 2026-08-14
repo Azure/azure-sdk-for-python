@@ -427,6 +427,23 @@ class ResilientResponseOrchestrator:
         # function and does not need this reference.
         self._parent_orchestrator = parent_orchestrator
 
+        # Opting into resilience implies the durable task subsystem must be
+        # constructed (and recovery enabled) for this deployment. The subsystem
+        # is gated SOLELY on the process-global switch (``AgentServerHost``
+        # constructs the ``TaskManager`` only when it is set), so translate the
+        # explicit resilience opt-in — ``resilient_background`` /
+        # ``steerable_conversations`` — into that switch here, at host
+        # construction time (before the ASGI lifespan runs). A plain host that
+        # sets neither leaves the switch off: no TaskManager is constructed and
+        # ``store=true`` work degrades to non-durable in-process execution
+        # (``_start_resilient_background`` swallows ``TaskManagerNotInitialized``).
+        if options.resilient_background or options.steerable_conversations:
+            from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
+                set_resilient_tasks_enabled,
+            )
+
+            set_resilient_tasks_enabled(True)
+
         # Spec 023 — per-request primitive dispatch (SOT §6.6).
         # Two task primitives are registered per deployment; ``_pick_primitive``
         # selects per request based on (conversation_id, previous_response_id,
