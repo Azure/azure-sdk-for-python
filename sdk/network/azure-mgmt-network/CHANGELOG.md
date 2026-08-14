@@ -97,8 +97,6 @@
   - Operation group `NetworkWatchersOperations` added method `connection_analyzers_get`
   - Operation group `NetworkWatchersOperations` added method `connection_analyzers_list`
   - Operation group `NetworkWatchersOperations` added method `connection_analyzers_update_tags`
-  - Operation group `ServiceGatewaysOperations` added method `update_address_locations`
-  - Operation group `ServiceGatewaysOperations` added method `update_services`
   - Operation group `VirtualNetworkGatewaysOperations` added method `begin_get_effective_routes`
   - Operation group `VirtualNetworksOperations` added method `begin_move_ip_configurations`
   - Added operation group `AddressPrefixSetsOperations`
@@ -108,8 +106,8 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed method `ServiceGatewaysOperations.begin_update_address_locations`
-  - Deleted or renamed method `ServiceGatewaysOperations.begin_update_services`
+  - Renamed method `ServiceGatewaysOperations.begin_update_address_locations` to `update_address_locations`
+  - Renamed method `ServiceGatewaysOperations.begin_update_services` to `update_services`
 
 ## 31.0.1 (2026-07-02)
 
