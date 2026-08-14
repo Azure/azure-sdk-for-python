@@ -2,10 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
+import asyncio
 import os
 from threading import Event, Thread
 from unittest import mock
 
+import pytest
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
@@ -21,6 +23,7 @@ from azure.ai.agentserver.core._config import (
 from azure.ai.agentserver.core._tracing import (
     _BaggageLogRecordProcessor,
     _FoundryEnrichmentSpanProcessor,
+    TraceContextMiddleware,
 )
 
 
@@ -39,6 +42,42 @@ class _CollectorExporter(SpanExporter):
 
     def force_flush(self, timeout_millis=30000):
         return True
+
+
+def test_trace_context_middleware_preserves_repeated_baggage_headers() -> None:
+    captured_baggage = {}
+
+    async def app(_scope, _receive, _send):
+        captured_baggage.update(_otel_baggage.get_all())
+
+    scope = {
+        "type": "websocket",
+        "headers": [
+            (b"Baggage", b"caller.first=one"),
+            (b"baggage", b"caller.second=two"),
+        ],
+    }
+
+    asyncio.run(TraceContextMiddleware(app)(scope, None, None))
+
+    assert captured_baggage == {
+        "caller.first": "one",
+        "caller.second": "two",
+    }
+
+
+def test_trace_context_middleware_propagates_process_control_exceptions() -> None:
+    async def app(_scope, _receive, _send):
+        raise AssertionError("downstream app should not run")
+
+    scope = {"type": "websocket", "headers": []}
+    middleware = TraceContextMiddleware(app)
+
+    with mock.patch("opentelemetry.propagate.extract", side_effect=SystemExit):
+        with pytest.raises(SystemExit):
+            asyncio.run(middleware(scope, None, None))
+
+
 # ------------------------------------------------------------------ #
 # Tracing enabled / disabled
 # ------------------------------------------------------------------ #

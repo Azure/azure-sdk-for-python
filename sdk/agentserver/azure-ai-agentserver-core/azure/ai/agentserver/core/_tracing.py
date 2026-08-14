@@ -486,12 +486,17 @@ class TraceContextMiddleware:
             await self.app(scope, receive, send)
             return
 
-        # Build a simple dict of headers for the propagators
+        # Preserve split W3C list headers while retaining the existing
+        # last-value behavior for single-value headers.
         raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
-        headers = {
-            k.decode("latin-1"): v.decode("latin-1")
-            for k, v in raw_headers
-        }
+        headers: dict[str, str] = {}
+        for raw_name, raw_value in raw_headers:
+            name = raw_name.decode("latin-1").lower()
+            value = raw_value.decode("latin-1")
+            if name in headers and name in ("baggage", "tracestate"):
+                headers[name] = f"{headers[name]},{value}"
+            else:
+                headers[name] = value
 
         try:
             # Use the global propagator to extract trace context + baggage
@@ -506,7 +511,7 @@ class TraceContextMiddleware:
                 )
 
             token = _otel_context.attach(ctx)
-        except BaseException:  # pylint: disable=broad-exception-caught
+        except Exception:  # pylint: disable=broad-exception-caught
             await self.app(scope, receive, send)
             return
 
