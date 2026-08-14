@@ -86,21 +86,21 @@
   - Added enum `ResiliencyLevel`
   - Added model `ServiceGatewayActionOkResponseBody`
   - Added model `StorageAccountSettings`
-  - Model `FirewallPoliciesOperations` added parameter `afc_managed_sync` in method `begin_create_or_update`
-  - Model `NetworkVirtualAppliancesOperations` added method `begin_abort_migration`
-  - Model `NetworkVirtualAppliancesOperations` added method `begin_commit_migration`
-  - Model `NetworkVirtualAppliancesOperations` added method `begin_execute_migration`
-  - Model `NetworkVirtualAppliancesOperations` added method `begin_prepare_migration`
-  - Model `NetworkWatchersOperations` added method `begin_connection_analyzers_create`
-  - Model `NetworkWatchersOperations` added method `begin_connection_analyzers_delete`
-  - Model `NetworkWatchersOperations` added method `begin_connection_analyzers_query`
-  - Model `NetworkWatchersOperations` added method `connection_analyzers_get`
-  - Model `NetworkWatchersOperations` added method `connection_analyzers_list`
-  - Model `NetworkWatchersOperations` added method `connection_analyzers_update_tags`
-  - Model `ServiceGatewaysOperations` added method `update_address_locations`
-  - Model `ServiceGatewaysOperations` added method `update_services`
-  - Model `VirtualNetworkGatewaysOperations` added method `begin_get_effective_routes`
-  - Model `VirtualNetworksOperations` added method `begin_move_ip_configurations`
+  - Operation group `FirewallPoliciesOperations` added parameter `afc_managed_sync` in method `begin_create_or_update`
+  - Operation group `NetworkVirtualAppliancesOperations` added method `begin_abort_migration`
+  - Operation group `NetworkVirtualAppliancesOperations` added method `begin_commit_migration`
+  - Operation group `NetworkVirtualAppliancesOperations` added method `begin_execute_migration`
+  - Operation group `NetworkVirtualAppliancesOperations` added method `begin_prepare_migration`
+  - Operation group `NetworkWatchersOperations` added method `begin_connection_analyzers_create`
+  - Operation group `NetworkWatchersOperations` added method `begin_connection_analyzers_delete`
+  - Operation group `NetworkWatchersOperations` added method `begin_connection_analyzers_query`
+  - Operation group `NetworkWatchersOperations` added method `connection_analyzers_get`
+  - Operation group `NetworkWatchersOperations` added method `connection_analyzers_list`
+  - Operation group `NetworkWatchersOperations` added method `connection_analyzers_update_tags`
+  - Operation group `ServiceGatewaysOperations` added method `update_address_locations`
+  - Operation group `ServiceGatewaysOperations` added method `update_services`
+  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_get_effective_routes`
+  - Operation group `VirtualNetworksOperations` added method `begin_move_ip_configurations`
   - Added operation group `AddressPrefixSetsOperations`
   - Added operation group `ExpressRouteLagsOperations`
   - Added operation group `FirewallPolicyKubeSelectorGroupsOperations`
