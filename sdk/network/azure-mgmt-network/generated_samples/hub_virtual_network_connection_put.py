@@ -38,6 +38,7 @@ def main():
         hub_virtual_network_connection_parameters={
             "properties": {
                 "enableInternetSecurity": False,
+                "enableOnlyIpv6Peering": "Disabled",
                 "remoteVirtualNetwork": {
                     "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/SpokeVnet1"
                 },
@@ -81,6 +82,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/HubVirtualNetworkConnectionPut.json
+# x-ms-original-file: 2025-09-01/HubVirtualNetworkConnectionPut.json
 if __name__ == "__main__":
     main()
