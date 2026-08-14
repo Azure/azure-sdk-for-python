@@ -40,18 +40,26 @@ from azure.ai.agentserver.responses.streaming._event_stream import ResponseEvent
 
 @pytest.fixture()
 def _switch_off() -> Any:
-    """Ensure the process-global resilient-tasks switch is OFF for the test.
+    """Ensure the process-global resilient-tasks state is OFF for the test.
 
-    The switch is process-global and other tests may have flipped it on (e.g.
-    by constructing a ``resilient_background=True`` host). Reset it to False so
-    the switch-off host path is genuinely exercised, and restore afterwards.
+    Both the enable switch and the ``TaskManager`` singleton are process-global
+    and other tests in a shared pytest process may have flipped the switch on or
+    installed a manager (e.g. by constructing a ``resilient_background=True``
+    host). Snapshot, reset both to the switch-off / no-manager state so the
+    production opt-out path is genuinely exercised, then restore afterwards.
     """
-    saved = resilient_tasks_enabled()
+    from azure.ai.agentserver.core.tasks import _manager as _mgr_mod  # pylint: disable=import-outside-toplevel
+    from azure.ai.agentserver.core.tasks._manager import set_task_manager  # pylint: disable=import-outside-toplevel
+
+    saved_flag = resilient_tasks_enabled()
+    saved_mgr = _mgr_mod._manager  # noqa: SLF001  # pylint: disable=protected-access
     set_resilient_tasks_enabled(False)
+    set_task_manager(None)
     try:
         yield
     finally:
-        set_resilient_tasks_enabled(saved)
+        set_task_manager(saved_mgr)
+        set_resilient_tasks_enabled(saved_flag)
 
 
 async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> AsyncIterator[Any]:
