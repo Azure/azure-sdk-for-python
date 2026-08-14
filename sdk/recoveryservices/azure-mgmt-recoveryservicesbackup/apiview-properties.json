@@ -535,5 +535,5 @@
         "azure.mgmt.recoveryservicesbackup.RecoveryServicesBackupClient.begin_move_recovery_point": "Microsoft.RecoveryServices.RecoveryPoints.moveRecoveryPoint",
         "azure.mgmt.recoveryservicesbackup.aio.RecoveryServicesBackupClient.begin_move_recovery_point": "Microsoft.RecoveryServices.RecoveryPoints.moveRecoveryPoint"
     },
-    "CrossLanguageVersion": "f6fd2c7aef1a"
+    "CrossLanguageVersion": "8dd02bdc849d"
 }
