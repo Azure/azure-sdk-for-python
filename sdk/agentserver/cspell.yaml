@@ -58,6 +58,7 @@ words:
   - hdrs
   - hypercorn
   - idless
+  - idtoken
   - impls
   - injectively
   - inmemory
@@ -110,6 +111,7 @@ words:
   - unstarted
   - valeriepham
   - Vnext
+  - xapitoken
   - xhigh
 ignorePaths:
   - sdk/agentserver/azure-ai-agentserver-activity/**/*.csv
