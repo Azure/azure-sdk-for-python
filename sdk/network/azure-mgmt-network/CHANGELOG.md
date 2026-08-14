@@ -1,5 +1,116 @@
 # Release History
 
+## 32.0.0 (2026-08-14)
+
+### Features Added
+
+  - Client `NetworkManagementClient` added operation group `address_prefix_sets`
+  - Client `NetworkManagementClient` added operation group `express_route_lags`
+  - Client `NetworkManagementClient` added operation group `firewall_policy_kube_selector_groups`
+  - Client `NetworkManagementClient` added operation group `first_party_service_tags`
+  - Model `ApplicationGatewayGlobalConfiguration` added property `disable_default_server_header_in_response`
+  - Model `ApplicationRule` added property `source_kube_selector_groups`
+  - Model `ExpressRouteCircuitPropertiesFormat` added property `activation_key`
+  - Model `ExpressRouteCircuitPropertiesFormat` added property `partner_account_id`
+  - Model `ExpressRouteCircuitPropertiesFormat` added property `resiliency_level`
+  - Enum `ExpressRouteCircuitSkuTier` added member `MULTI_CLOUD`
+  - Model `FirewallPolicyPropertiesFormat` added property `afc_managed`
+  - Model `FirewallPolicyPropertiesFormat` added property `kube_selector_groups`
+  - Model `FrontendIPConfigurationPropertiesFormat` added property `enable_connection_tracking`
+  - Model `HubVirtualNetworkConnectionProperties` added property `enable_only_ipv6_peering`
+  - Model `IpTag` added property `first_party_service_tag_id`
+  - Model `LoadBalancerPropertiesFormat` added property `mode`
+  - Enum `LoadBalancerSkuName` added member `SERVICE`
+  - Model `NetworkRule` added property `source_kube_selector_groups`
+  - Model `NetworkVirtualAppliancePropertiesFormat` added property `address_family`
+  - Model `NetworkVirtualAppliancePropertiesFormat` added property `address_prefix_v6`
+  - Model `NetworkVirtualAppliancePropertiesFormat` added property `migration_status`
+  - Model `NetworkVirtualAppliancePropertiesFormat` added property `private_ip_address_v6`
+  - Model `PublicIPAddressPropertiesFormat` added property `upgraded_to_v2`
+  - Model `PublicIPPrefixPropertiesFormat` added property `upgraded_to_v2`
+  - Enum `ServiceProviderProvisioningState` added member `DE_PROVISIONED`
+  - Model `VirtualApplianceNicProperties` added property `private_ip_address_v6`
+  - Model `VirtualApplianceNicProperties` added property `public_ip_address_v6`
+  - Model `VirtualHubProperties` added property `address_prefix_v6`
+  - Model `VirtualHubProperties` added property `virtual_router_ips_v6`
+  - Added model `AddressPrefixSet`
+  - Added model `AddressPrefixSetPropertiesFormat`
+  - Added model `ConnectionAnalyzer`
+  - Added model `ConnectionAnalyzerEndpoint`
+  - Added enum `ConnectionAnalyzerEndpointType`
+  - Added model `ConnectionAnalyzerProperties`
+  - Added model `ConnectionAnalyzerQueryStatusResult`
+  - Added enum `ConnectionAnalyzerStatus`
+  - Added model `ConnectivityCheckSettings`
+  - Added enum `DiagnosticOperation`
+  - Added model `DiagnosticOperationResult`
+  - Added model `DiagnosticOperationsSettings`
+  - Added enum `EnableOnlyIpv6PeeringState`
+  - Added model `ExpressRouteDiagnosticsSettings`
+  - Added model `ExpressRouteLag`
+  - Added enum `ExpressRouteLagBillingType`
+  - Added enum `ExpressRouteLagEncapsulation`
+  - Added enum `ExpressRouteLagLacpTimer`
+  - Added model `ExpressRouteLagLink`
+  - Added model `ExpressRouteLagLinkPropertiesFormat`
+  - Added model `ExpressRouteLagMember`
+  - Added model `ExpressRouteLagMemberPropertiesFormat`
+  - Added model `ExpressRouteLagPropertiesFormat`
+  - Added model `ExpressRouteLagUpdateTagsOrIdentityRequest`
+  - Added model `FirewallPolicyKubeSelectorGroup`
+  - Added model `FirewallPolicyKubeSelectorGroupProperties`
+  - Added model `FirstPartyServiceTag`
+  - Added model `FirstPartyServiceTagPropertiesFormat`
+  - Added model `GatewayEffectiveRoute`
+  - Added model `GatewayEffectiveRouteListResult`
+  - Added enum `GatewayEffectiveRouteNextHopType`
+  - Added model `GenerateExpressRouteLagsLOARequest`
+  - Added model `GenerateExpressRouteLagsLOAResult`
+  - Added model `KubeLabelSelector`
+  - Added model `LabelSelectorExpression`
+  - Added enum `LabelSelectorOperator`
+  - Added enum `LoadBalancerMode`
+  - Added enum `MigrationType`
+  - Added model `MoveIpConfigurationItem`
+  - Added model `MoveIpConfigurationResourceReference`
+  - Added model `MoveIpConfigurationsRequest`
+  - Added model `NetworkVirtualApplianceCommitMigrationProperties`
+  - Added model `NetworkVirtualApplianceCommitMigrationRequest`
+  - Added model `NetworkVirtualApplianceExecuteMigrationProperties`
+  - Added model `NetworkVirtualApplianceExecuteMigrationRequest`
+  - Added model `NetworkVirtualApplianceMigrationStatus`
+  - Added model `NetworkVirtualAppliancePrepareMigrationProperties`
+  - Added model `NetworkVirtualAppliancePrepareMigrationRequest`
+  - Added model `OutputSettings`
+  - Added model `ProtocolSettings`
+  - Added enum `ResiliencyLevel`
+  - Added model `ServiceGatewayActionOkResponseBody`
+  - Added model `StorageAccountSettings`
+  - Model `FirewallPoliciesOperations` added parameter `afc_managed_sync` in method `begin_create_or_update`
+  - Model `NetworkVirtualAppliancesOperations` added method `begin_abort_migration`
+  - Model `NetworkVirtualAppliancesOperations` added method `begin_commit_migration`
+  - Model `NetworkVirtualAppliancesOperations` added method `begin_execute_migration`
+  - Model `NetworkVirtualAppliancesOperations` added method `begin_prepare_migration`
+  - Model `NetworkWatchersOperations` added method `begin_connection_analyzers_create`
+  - Model `NetworkWatchersOperations` added method `begin_connection_analyzers_delete`
+  - Model `NetworkWatchersOperations` added method `begin_connection_analyzers_query`
+  - Model `NetworkWatchersOperations` added method `connection_analyzers_get`
+  - Model `NetworkWatchersOperations` added method `connection_analyzers_list`
+  - Model `NetworkWatchersOperations` added method `connection_analyzers_update_tags`
+  - Model `ServiceGatewaysOperations` added method `update_address_locations`
+  - Model `ServiceGatewaysOperations` added method `update_services`
+  - Model `VirtualNetworkGatewaysOperations` added method `begin_get_effective_routes`
+  - Model `VirtualNetworksOperations` added method `begin_move_ip_configurations`
+  - Added operation group `AddressPrefixSetsOperations`
+  - Added operation group `ExpressRouteLagsOperations`
+  - Added operation group `FirewallPolicyKubeSelectorGroupsOperations`
+  - Added operation group `FirstPartyServiceTagsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed method `ServiceGatewaysOperations.begin_update_address_locations`
+  - Deleted or renamed method `ServiceGatewaysOperations.begin_update_services`
+
 ## 31.0.1 (2026-07-02)
 
 ### Other Changes
@@ -557,596 +668,4 @@
   - Deleted or renamed enum value `FirewallPolicyIntrusionDetectionProfileType.BASIC`
   - Deleted or renamed enum value `FirewallPolicyIntrusionDetectionProfileType.STANDARD`
 
-## 30.1.0 (2025-11-19)
-
-### Features Added
-
-  - Added operation PublicIPAddressesOperations.begin_disassociate_cloud_service_reserved_public_ip
-  - Added operation PublicIPAddressesOperations.begin_reserve_cloud_service_public_ip_address
-  - Model ApplicationGateway has a new parameter entra_jwt_validation_configs
-  - Model ApplicationGatewayBackendSettings has a new parameter enable_l4_client_ip_preservation
-  - Model ApplicationGatewayClientAuthConfiguration has a new parameter verify_client_auth_mode
-  - Model ApplicationGatewayOnDemandProbe has a new parameter enable_probe_proxy_protocol_header
-  - Model ApplicationGatewayProbe has a new parameter enable_probe_proxy_protocol_header
-  - Model ApplicationGatewayRequestRoutingRule has a new parameter entra_jwt_validation_config
-  - Model DdosCustomPolicy has a new parameter detection_rules
-  - Model DdosCustomPolicy has a new parameter front_end_ip_configuration
-  - Model FlowLog has a new parameter record_types
-  - Model FlowLogInformation has a new parameter record_types
-  - Model LoadBalancer has a new parameter scope
-  - Model NetworkManagerRoutingConfiguration has a new parameter route_table_usage_mode
-  - Model PrivateEndpoint has a new parameter ip_version_type
-  - Model PrivateLinkService has a new parameter access_mode
-  - Model VirtualNetworkGatewayConnection has a new parameter authentication_type
-  - Model VirtualNetworkGatewayConnection has a new parameter certificate_authentication
-
-## 30.0.0 (2025-10-24)
-
-### Features Added
-
-  - Added operation AzureFirewallsOperations.begin_packet_capture_operation
-  - Added operation VirtualNetworkGatewaysOperations.list_radius_secrets
-  - Added operation VpnServerConfigurationsOperations.list_radius_secrets
-  - Added operation group NetworkSecurityPerimeterServiceTagsOperations
-  - Model ApplicationGatewayBackendHttpSettings has a new parameter dedicated_backend_connection
-  - Model ApplicationGatewayBackendHttpSettings has a new parameter sni_name
-  - Model ApplicationGatewayBackendHttpSettings has a new parameter validate_cert_chain_and_expiry
-  - Model ApplicationGatewayBackendHttpSettings has a new parameter validate_sni
-  - Model AzureFirewall has a new parameter extended_location
-  - Model FirewallPacketCaptureParameters has a new parameter operation
-  - Model NetworkVirtualAppliance has a new parameter nva_interface_configurations
-  - Model NetworkVirtualAppliance has a new parameter private_ip_address
-
-### Breaking Changes
-
-  - Removed operation group NetworkManagementClientOperationsMixin
-
-## 29.0.0 (2025-05-22)
-
-### Features Added
-
-  - Added operation NetworkVirtualAppliancesOperations.begin_get_boot_diagnostic_logs
-  - Added operation NetworkVirtualAppliancesOperations.begin_reimage
-  - Added operation VirtualNetworkGatewaysOperations.begin_get_resiliency_information
-  - Added operation VirtualNetworkGatewaysOperations.begin_get_routes_information
-  - Added operation VirtualNetworkGatewaysOperations.begin_invoke_abort_migration
-  - Added operation VirtualNetworkGatewaysOperations.begin_invoke_commit_migration
-  - Added operation VirtualNetworkGatewaysOperations.begin_invoke_execute_migration
-  - Added operation VirtualNetworkGatewaysOperations.begin_invoke_prepare_migration
-  - Added operation group NetworkSecurityPerimeterAccessRulesOperations
-  - Added operation group NetworkSecurityPerimeterAssociableResourceTypesOperations
-  - Added operation group NetworkSecurityPerimeterAssociationsOperations
-  - Added operation group NetworkSecurityPerimeterLinkReferencesOperations
-  - Added operation group NetworkSecurityPerimeterLinksOperations
-  - Added operation group NetworkSecurityPerimeterLoggingConfigurationsOperations
-  - Added operation group NetworkSecurityPerimeterOperationStatusesOperations
-  - Added operation group NetworkSecurityPerimeterProfilesOperations
-  - Added operation group NetworkSecurityPerimetersOperations
-  - Model ActiveConnectivityConfiguration has a new parameter connectivity_capabilities
-  - Model ConnectivityConfiguration has a new parameter connectivity_capabilities
-  - Model EffectiveConnectivityConfiguration has a new parameter connectivity_capabilities
-  - Model ExpressRouteCircuitPeeringConfig has a new parameter advertised_public_prefix_info
-  - Model IpamPool has a new parameter etag
-  - Model LoadBalancingRule has a new parameter enable_connection_tracking
-  - Model ManagedRuleSet has a new parameter computed_disabled_rules
-  - Model NatGateway has a new parameter public_ip_addresses_v6
-  - Model NatGateway has a new parameter public_ip_prefixes_v6
-  - Model NatGateway has a new parameter source_virtual_network
-  - Model VerifierWorkspace has a new parameter etag
-  - Model VirtualNetwork has a new parameter default_public_nat_gateway
-  - Model VirtualNetworkGateway has a new parameter enable_high_bandwidth_vpn_gateway
-  - Model VirtualNetworkGateway has a new parameter virtual_network_gateway_migration_status
-  - Model VirtualNetworkGatewayConnection has a new parameter tunnel_properties
-  - Operation IpamPoolsOperations.begin_create has a new optional parameter if_match
-  - Operation IpamPoolsOperations.begin_delete has a new optional parameter if_match
-  - Operation IpamPoolsOperations.update has a new optional parameter if_match
-  - Operation VerifierWorkspacesOperations.begin_delete has a new optional parameter if_match
-  - Operation VerifierWorkspacesOperations.create has a new optional parameter if_match
-  - Operation VerifierWorkspacesOperations.update has a new optional parameter if_match
-
-### Breaking Changes
-
-  - Removed operation ConnectionMonitorsOperations.begin_query
-  - Removed operation ConnectionMonitorsOperations.begin_start
-
-## 28.1.0 (2024-12-20)
-
-### Features Added
-
-  - Client `NetworkManagementClient` added operation group `ipam_pools`
-  - Client `NetworkManagementClient` added operation group `static_cidrs`
-  - Client `NetworkManagementClient` added operation group `reachability_analysis_intents`
-  - Client `NetworkManagementClient` added operation group `reachability_analysis_runs`
-  - Client `NetworkManagementClient` added operation group `verifier_workspaces`
-  - Enum `AddressPrefixType` added member `NETWORK_GROUP`
-  - Model `AddressSpace` added property `ipam_pool_prefix_allocations`
-  - Model `BastionHost` added property `enable_private_only_bastion`
-  - Enum `FirewallPolicyIDPSSignatureDirection` added member `FIVE`
-  - Model `NetworkInterface` added property `default_outbound_connectivity_enabled`
-  - Enum `ProvisioningState` added member `CANCELED`
-  - Enum `ProvisioningState` added member `CREATING`
-  - Model `SecurityAdminConfiguration` added property `network_group_address_space_aggregation_option`
-  - Model `Subnet` added property `ipam_pool_prefix_allocations`
-  - Added enum `AddressSpaceAggregationOption`
-  - Added model `CommonErrorAdditionalInfo`
-  - Added model `CommonErrorDetail`
-  - Added model `CommonErrorResponse`
-  - Added model `CommonProxyResource`
-  - Added model `CommonResource`
-  - Added model `CommonTrackedResource`
-  - Added model `ExpressRouteFailoverCircuitResourceDetails`
-  - Added model `ExpressRouteFailoverConnectionResourceDetails`
-  - Added model `ExpressRouteFailoverRedundantRoute`
-  - Added model `ExpressRouteFailoverSingleTestDetails`
-  - Added model `ExpressRouteFailoverStopApiParameters`
-  - Added model `ExpressRouteFailoverTestDetails`
-  - Added model `FailoverConnectionDetails`
-  - Added enum `FailoverConnectionStatus`
-  - Added enum `FailoverTestStatus`
-  - Added enum `FailoverTestStatusForSingleTest`
-  - Added enum `FailoverTestType`
-  - Added model `IPTraffic`
-  - Added model `IntentContent`
-  - Added enum `IpType`
-  - Added model `IpamPool`
-  - Added model `IpamPoolList`
-  - Added model `IpamPoolPrefixAllocation`
-  - Added model `IpamPoolProperties`
-  - Added model `IpamPoolUpdate`
-  - Added model `IpamPoolUpdateProperties`
-  - Added model `LoadBalancerHealthPerRule`
-  - Added model `LoadBalancerHealthPerRulePerBackendAddress`
-  - Added enum `NetworkProtocol`
-  - Added model `PoolAssociation`
-  - Added model `PoolAssociationList`
-  - Added model `PoolUsage`
-  - Added model `ReachabilityAnalysisIntent`
-  - Added model `ReachabilityAnalysisIntentListResult`
-  - Added model `ReachabilityAnalysisIntentProperties`
-  - Added model `ReachabilityAnalysisRun`
-  - Added model `ReachabilityAnalysisRunListResult`
-  - Added model `ReachabilityAnalysisRunProperties`
-  - Added model `ResourceBasics`
-  - Added model `StaticCidr`
-  - Added model `StaticCidrList`
-  - Added model `StaticCidrProperties`
-  - Added model `VerifierWorkspace`
-  - Added model `VerifierWorkspaceListResult`
-  - Added model `VerifierWorkspaceProperties`
-  - Added model `VerifierWorkspaceUpdate`
-  - Added model `VerifierWorkspaceUpdateProperties`
-  - Operation group `LoadBalancerLoadBalancingRulesOperations` added method `begin_health`
-  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_get_failover_all_test_details`
-  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_get_failover_single_test_details`
-  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_start_express_route_site_failover_simulation`
-  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_stop_express_route_site_failover_simulation`
-  - Added operation group `IpamPoolsOperations`
-  - Added operation group `ReachabilityAnalysisIntentsOperations`
-  - Added operation group `ReachabilityAnalysisRunsOperations`
-  - Added operation group `StaticCidrsOperations`
-  - Added operation group `VerifierWorkspacesOperations`
-
-## 28.0.0 (2024-11-01)
-
-### Breaking Changes
-
-- This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
-
-## 27.0.0 (2024-09-22)
-
-### Features Added
-
-  - Added operation SecurityUserConfigurationsOperations.begin_delete
-  - Added operation VpnLinkConnectionsOperations.begin_set_or_init_default_shared_key
-  - Added operation VpnLinkConnectionsOperations.get_all_shared_keys
-  - Added operation VpnLinkConnectionsOperations.get_default_shared_key
-  - Added operation VpnLinkConnectionsOperations.list_default_shared_key
-  - Added operation group NetworkManagerRoutingConfigurationsOperations
-  - Added operation group RoutingRuleCollectionsOperations
-  - Added operation group RoutingRulesOperations
-  - Added operation group SecurityUserRuleCollectionsOperations
-  - Added operation group SecurityUserRulesOperations
-  - Model ApplicationGatewayFirewallRule has a new parameter sensitivity
-  - Model AzureFirewall has a new parameter autoscale_configuration
-  - Model ConfigurationGroup has a new parameter member_type
-  - Model ConnectionSharedKeyResult has a new parameter id
-  - Model ConnectionSharedKeyResult has a new parameter name
-  - Model ConnectionSharedKeyResult has a new parameter properties
-  - Model ConnectionSharedKeyResult has a new parameter type
-  - Model FlowLog has a new parameter enabled_filtering_criteria
-  - Model FlowLogInformation has a new parameter enabled_filtering_criteria
-  - Model ManagedRuleOverride has a new parameter sensitivity
-  - Model ManagedRulesDefinition has a new parameter exceptions
-  - Model NetworkGroup has a new parameter member_type
-  - Model PrivateLinkService has a new parameter destination_ip_address
-  - Model VirtualNetwork has a new parameter private_endpoint_v_net_policies
-  - Model VirtualNetworkGateway has a new parameter resiliency_model
-  - Model WebApplicationFirewallPolicy has a new parameter application_gateway_for_containers
-
-### Breaking Changes
-
-  - Model ConnectionSharedKeyResult no longer has parameter value
-
-## 26.0.0 (2024-07-21)
-
-### Features Added
-
-  - Added operation InboundSecurityRuleOperations.get
-  - Model BastionHost has a new parameter enable_session_recording
-  - Model ExpressRouteCircuitAuthorization has a new parameter connection_resource_uri
-  - Model FlowLog has a new parameter identity
-  - Model FlowLogInformation has a new parameter identity
-  - Model Probe has a new parameter no_healthy_backends_behavior
-  - Model ServiceEndpointPropertiesFormat has a new parameter network_identifier
-  - Model VirtualNetworkGateway has a new parameter identity
-  - Operation ExpressRouteCrossConnectionsOperations.list has a new optional parameter filter
-
-### Breaking Changes
-
-  - Model FirewallPacketCaptureParameters no longer has parameter id
-
-## 25.4.0 (2024-05-27)
-
-### Features Added
-
-  - Added operation NetworkVirtualAppliancesOperations.begin_restart
-  - Added operation group FirewallPolicyDeploymentsOperations
-  - Added operation group FirewallPolicyDraftsOperations
-  - Added operation group FirewallPolicyRuleCollectionGroupDraftsOperations
-  - Model ApplicationGatewayHeaderConfiguration has a new parameter header_value_matcher
-  - Model ApplicationGatewaySku has a new parameter family
-  - Model ConnectionMonitorEndpoint has a new parameter location_details
-  - Model ConnectionMonitorEndpoint has a new parameter subscription_id
-  - Model ExpressRouteCircuit has a new parameter enable_direct_port_rate_limit
-  - Model InboundSecurityRule has a new parameter rule_type
-  - Model InboundSecurityRules has a new parameter applies_on
-  - Model InboundSecurityRules has a new parameter destination_port_ranges
-  - Model InboundSecurityRules has a new parameter name
-  - Model NetworkInterfaceIPConfiguration has a new parameter private_ip_address_prefix_length
-  - Model NetworkVirtualAppliance has a new parameter network_profile
-  - Model PacketCapture has a new parameter capture_settings
-  - Model PacketCapture has a new parameter continuous_capture
-  - Model PacketCaptureParameters has a new parameter capture_settings
-  - Model PacketCaptureParameters has a new parameter continuous_capture
-  - Model PacketCaptureResult has a new parameter capture_settings
-  - Model PacketCaptureResult has a new parameter continuous_capture
-  - Model PacketCaptureResultProperties has a new parameter capture_settings
-  - Model PacketCaptureResultProperties has a new parameter continuous_capture
-  - Model PacketCaptureStorageLocation has a new parameter local_path
-  - Model PolicySettings has a new parameter js_challenge_cookie_expiration_in_mins
-  - Model Subnet has a new parameter sharing_scope
-  - Model VirtualApplianceNicProperties has a new parameter nic_type
-  - Model VirtualNetworkPeering has a new parameter enable_only_i_pv6_peering
-  - Model VirtualNetworkPeering has a new parameter local_address_space
-  - Model VirtualNetworkPeering has a new parameter local_subnet_names
-  - Model VirtualNetworkPeering has a new parameter local_virtual_network_address_space
-  - Model VirtualNetworkPeering has a new parameter peer_complete_vnets
-  - Model VirtualNetworkPeering has a new parameter remote_subnet_names
-  - Model VpnSiteLinkConnection has a new parameter dpd_timeout_seconds
-
-## 25.3.0 (2024-02-22)
-
-### Features Added
-
-  - Model BastionHost has a new parameter zones
-
-## 25.2.0 (2023-12-18)
-
-### Features Added
-
-  - Added operation NetworkManagementClientOperationsMixin.begin_delete_bastion_shareable_link_by_token
-  - Added operation NetworkSecurityPerimetersOperations.patch
-  - Model ApplicationGatewayListener has a new parameter host_names
-  - Model FirewallPolicyIntrusionDetection has a new parameter profile
-  - Model NetworkVirtualAppliance has a new parameter internet_ingress_public_ips
-
-## 25.1.0 (2023-09-15)
-
-### Features Added
-
-  - Model BastionHost has a new parameter network_acls
-  - Model BastionHost has a new parameter virtual_network
-  - Model FirewallPolicy has a new parameter size
-  - Model FirewallPolicyRuleCollectionGroup has a new parameter size
-  - Model Subnet has a new parameter default_outbound_access
-  - Model VirtualNetworkGateway has a new parameter auto_scale_configuration
-
-## 25.0.0 (2023-08-18)
-
-### Features Added
-
-  - Added operation LoadBalancersOperations.migrate_to_ip_based
-  - Model BackendAddressPool has a new parameter sync_mode
-
-### Breaking Changes
-
-  - Removed operation group NspLinkReconcileOperations
-  - Removed operation group NspLinkReferenceReconcileOperations
-
-## 24.0.0 (2023-07-21)
-
-### Breaking Changes
-
-  - Removed `HTTP_STATUS499` from enum `ApplicationGatewayCustomErrorStatusCode`
-
-### Features Added
-
-  - Added enum `AdminState`
-  - Model ActiveConnectivityConfiguration has a new parameter resource_guid
-  - Model ActiveDefaultSecurityAdminRule has a new parameter resource_guid
-  - Model ActiveSecurityAdminRule has a new parameter resource_guid
-  - Model AdminRule has a new parameter resource_guid
-  - Model AdminRuleCollection has a new parameter resource_guid
-  - Model ApplicationGateway has a new parameter default_predefined_ssl_policy
-  - Model ConfigurationGroup has a new parameter resource_guid
-  - Model ConnectivityConfiguration has a new parameter resource_guid
-  - Model DefaultAdminRule has a new parameter resource_guid
-  - Model EffectiveConnectivityConfiguration has a new parameter resource_guid
-  - Model EffectiveDefaultSecurityAdminRule has a new parameter resource_guid
-  - Model EffectiveSecurityAdminRule has a new parameter resource_guid
-  - Model NetworkGroup has a new parameter resource_guid
-  - Model NetworkManager has a new parameter resource_guid
-  - Model SecurityAdminConfiguration has a new parameter resource_guid
-  - Model VirtualNetworkGateway has a new parameter admin_state
-
-## 23.1.0 (2023-05-20)
-
-### Features Added
-
-  - Added operation AzureFirewallsOperations.begin_packet_capture
-  - Added operation group NetworkVirtualApplianceConnectionsOperations
-  - Model ApplicationRule has a new parameter http_headers_to_insert
-  - Model BastionHost has a new parameter enable_kerberos
-  - Model NetworkInterface has a new parameter auxiliary_sku
-  - Model NetworkVirtualAppliance has a new parameter additional_nics
-  - Model NetworkVirtualAppliance has a new parameter virtual_appliance_connections
-  - Model PolicySettings has a new parameter file_upload_enforcement
-  - Model PolicySettings has a new parameter log_scrubbing
-  - Model PolicySettings has a new parameter request_body_enforcement
-  - Model PolicySettings has a new parameter request_body_inspect_limit_in_kb
-  - Model PrivateEndpointConnection has a new parameter private_endpoint_location
-  - Model PublicIPAddressDnsSettings has a new parameter domain_name_label_scope
-  - Model VirtualApplianceNicProperties has a new parameter instance_name
-  - Model WebApplicationFirewallCustomRule has a new parameter group_by_user_session
-  - Model WebApplicationFirewallCustomRule has a new parameter rate_limit_duration
-  - Model WebApplicationFirewallCustomRule has a new parameter rate_limit_threshold
-
-## 23.0.1 (2023-04-26)
-
-### Bugs Fixed
-
-  - Fix calling failure for those operations which could be called by client directly #30057
-
-## 23.0.0 (2023-03-29)
-
-### Other Changes
-
-  - Initial stable release with our new combined multiapi package. Package size is now 5% of what it used to be.
-
-### Breaking Changes
-
-  - All query and header parameters are now keyword-only
-  - Removed api version subfolders. This means you can no longer access any `azure.mgmt.network.v20xx_xx_xx` modules.
-  - Removed `.models` method from `NetworkManagementClient`. Instead, import models from `azure.mgmt.network.models`.
-
-## 22.3.0 (2023-03-20)
-
-### Features Added
-
-  - Model ExpressRouteCircuit has a new parameter authorization_status
-  - Model NspAccessRule has a new parameter email_addresses
-  - Model NspAccessRule has a new parameter phone_numbers
-  - Model NspLink has a new parameter remote_perimeter_location
-  - Model NspLinkReference has a new parameter remote_perimeter_location
-  - Model VirtualNetwork has a new parameter flow_logs
-  - Model WebApplicationFirewallCustomRule has a new parameter state
-  - Operation VpnGatewaysOperations.begin_reset has a new optional parameter ip_configuration_id
-
-## 23.0.0b2 (2023-02-20)
-
-### Other Changes
-
-  - Continued package size improvements. The whole package is now 5% of the latest stable release
-
-### Breaking Changes
-
-  - Removed api version subfolders. This means you can no longer access any `azure.mgmt.network.v20xx_xx_xx` modules
-  - Removed `.models` method from `NetworkManagementClient`
-
-## 23.0.0b1 (2022-12-19)
-
-### Other Changes
-
-  - Preview package with the same multiapi support but much reduced package size.
-
-### Breaking Changes
-
-  - All query and header parameters are now keyword-only
-  - Can not individually access each API version's client and operations
-
-## 22.2.0 (2022-12-15)
-
-### Features Added
-
-  - Model BackendAddressPool has a new parameter virtual_network
-  - Model NetworkVirtualAppliance has a new parameter delegation
-  - Model NetworkVirtualAppliance has a new parameter deployment_type
-  - Model NetworkVirtualAppliance has a new parameter partner_managed_resource
-  - Model PolicySettings has a new parameter custom_block_response_body
-  - Model PolicySettings has a new parameter custom_block_response_status_code
-
-## 22.1.0 (2022-10-24)
-
-### Features Added
-
-  - Added operation group NspLinkReconcileOperations
-  - Added operation group NspLinkReferenceReconcileOperations
-  - Added operation group NspLinkReferencesOperations
-  - Added operation group NspLinksOperations
-
-## 22.0.0 (2022-10-12)
-
-### Features Added
-
-  - Added operation PublicIPAddressesOperations.begin_ddos_protection_status
-  - Added operation VirtualHubsOperations.begin_get_inbound_routes
-  - Added operation VirtualHubsOperations.begin_get_outbound_routes
-  - Added operation VirtualNetworksOperations.begin_list_ddos_protection_status
-  - Added operation group ApplicationGatewayWafDynamicManifestsDefaultOperations
-  - Added operation group ApplicationGatewayWafDynamicManifestsOperations
-  - Added operation group NspAssociationReconcileOperations
-  - Added operation group RouteMapsOperations
-  - Added operation group VipSwapOperations
-  - Model ApplicationGatewayClientAuthConfiguration has a new parameter verify_client_revocation
-  - Model ApplicationGatewayFirewallRule has a new parameter action
-  - Model ApplicationGatewayFirewallRule has a new parameter rule_id_string
-  - Model ApplicationGatewayFirewallRule has a new parameter state
-  - Model ApplicationGatewayFirewallRuleSet has a new parameter tiers
-  - Model CustomIpPrefix has a new parameter asn
-  - Model CustomIpPrefix has a new parameter express_route_advertise
-  - Model CustomIpPrefix has a new parameter geo
-  - Model CustomIpPrefix has a new parameter prefix_type
-  - Model DdosProtectionPlan has a new parameter public_ip_addresses
-  - Model DdosSettings has a new parameter ddos_protection_plan
-  - Model DdosSettings has a new parameter protection_mode
-  - Model ExpressRouteConnection has a new parameter enable_private_link_fast_path
-  - Model ExpressRouteGateway has a new parameter allow_non_virtual_wan_traffic
-  - Model ExpressRouteLink has a new parameter colo_location
-  - Model ExpressRoutePort has a new parameter billing_type
-  - Model ManagedRuleOverride has a new parameter action
-  - Model NetworkInterface has a new parameter disable_tcp_state_tracking
-  - Model NspProfile has a new parameter diagnostic_settings_version
-  - Model Probe has a new parameter probe_threshold
-  - Model RoutingConfiguration has a new parameter inbound_route_map
-  - Model RoutingConfiguration has a new parameter outbound_route_map
-  - Model VirtualHub has a new parameter route_maps
-  - Model VirtualNetworkGateway has a new parameter allow_remote_vnet_traffic
-  - Model VirtualNetworkGateway has a new parameter allow_virtual_wan_traffic
-  - Model VirtualNetworkGateway has a new parameter virtual_network_gateway_policy_groups
-  - Model VirtualNetworkGatewayConnection has a new parameter enable_private_link_fast_path
-  - Model VirtualNetworkGatewayConnectionListEntity has a new parameter enable_private_link_fast_path
-  - Model VnetRoute has a new parameter static_routes_config
-  - Model VpnClientConfiguration has a new parameter vng_client_connection_configurations
-
-### Breaking Changes
-
-  - Model DdosCustomPolicy no longer has parameter protocol_custom_settings
-  - Model DdosCustomPolicy no longer has parameter public_ip_addresses
-  - Model DdosSettings no longer has parameter ddos_custom_policy
-  - Model DdosSettings no longer has parameter protected_ip
-  - Model DdosSettings no longer has parameter protection_coverage
-  - Operation NetworkManagementClientOperationsMixin.list_active_connectivity_configurations has a new parameter top
-  - Operation NetworkManagementClientOperationsMixin.list_active_security_admin_rules has a new parameter top
-  - Operation NetworkManagementClientOperationsMixin.list_network_manager_effective_connectivity_configurations has a new parameter top
-  - Operation NetworkManagementClientOperationsMixin.list_network_manager_effective_security_admin_rules has a new parameter top
-  - Operation NetworkManagerDeploymentStatusOperations.list has a new parameter top
-  - Removed operation NetworkSecurityPerimetersOperations.check_members
-  - Removed operation NetworkSecurityPerimetersOperations.query
-  - Removed operation group NspAssociationsProxyOperations
-
-## 21.0.1 (2022-08-17)
-
-### Bugs Fixed
-
-  - Add `__version__` to `__init__.py` for package
-
-## 21.0.0 (2022-08-05)
-
-**Features**
-
-  - Added operation AdminRuleCollectionsOperations.begin_delete
-  - Added operation AdminRulesOperations.begin_delete
-  - Added operation AzureFirewallsOperations.begin_list_learned_prefixes
-  - Added operation ConnectivityConfigurationsOperations.begin_delete
-  - Added operation NetworkGroupsOperations.begin_delete
-  - Added operation NetworkManagementClientOperationsMixin.express_route_provider_port
-  - Added operation NetworkManagementClientOperationsMixin.list_active_connectivity_configurations
-  - Added operation NetworkManagementClientOperationsMixin.list_active_security_admin_rules
-  - Added operation NetworkManagementClientOperationsMixin.list_network_manager_effective_connectivity_configurations
-  - Added operation NetworkManagementClientOperationsMixin.list_network_manager_effective_security_admin_rules
-  - Added operation NetworkManagerCommitsOperations.begin_post
-  - Added operation NetworkManagersOperations.begin_delete
-  - Added operation NetworkManagersOperations.patch
-  - Added operation NetworkSecurityPerimetersOperations.check_members
-  - Added operation NetworkSecurityPerimetersOperations.query
-  - Added operation SecurityAdminConfigurationsOperations.begin_delete
-  - Added operation group ExpressRouteProviderPortsLocationOperations
-  - Added operation group ManagementGroupNetworkManagerConnectionsOperations
-  - Added operation group NspAccessRulesReconcileOperations
-  - Added operation group NspAssociationsProxyOperations
-  - Added operation group ScopeConnectionsOperations
-  - Added operation group StaticMembersOperations
-  - Added operation group SubscriptionNetworkManagerConnectionsOperations
-  - Model ApplicationGatewayRoutingRule has a new parameter priority
-  - Model CustomIpPrefix has a new parameter no_internet_advertise
-  - Model FirewallPolicy has a new parameter explicit_proxy
-  - Model FirewallPolicySNAT has a new parameter auto_learn_private_ranges
-  - Model NetworkManagerPropertiesNetworkManagerScopes has a new parameter cross_tenant_scopes
-  - Model NetworkSecurityGroup has a new parameter flush_connection
-  - Model NetworkSecurityPerimeter has a new parameter perimeter_guid
-  - Model PacketCapture has a new parameter scope
-  - Model PacketCapture has a new parameter target_type
-  - Model PacketCaptureParameters has a new parameter scope
-  - Model PacketCaptureParameters has a new parameter target_type
-  - Model PacketCaptureResult has a new parameter scope
-  - Model PacketCaptureResult has a new parameter target_type
-  - Model PacketCaptureResultProperties has a new parameter scope
-  - Model PacketCaptureResultProperties has a new parameter target_type
-  - Model VirtualHub has a new parameter virtual_router_auto_scale_configuration
-
-**Breaking changes**
-
-  - Model ActiveBaseSecurityAdminRule no longer has parameter configuration_display_name
-  - Model ActiveBaseSecurityAdminRule no longer has parameter rule_collection_display_name
-  - Model ActiveConnectivityConfiguration no longer has parameter display_name
-  - Model ActiveDefaultSecurityAdminRule no longer has parameter configuration_display_name
-  - Model ActiveDefaultSecurityAdminRule no longer has parameter display_name
-  - Model ActiveDefaultSecurityAdminRule no longer has parameter rule_collection_display_name
-  - Model ActiveSecurityAdminRule no longer has parameter configuration_display_name
-  - Model ActiveSecurityAdminRule no longer has parameter display_name
-  - Model ActiveSecurityAdminRule no longer has parameter rule_collection_display_name
-  - Model AdminRule no longer has parameter display_name
-  - Model ConfigurationGroup no longer has parameter conditional_membership
-  - Model ConfigurationGroup no longer has parameter display_name
-  - Model ConfigurationGroup no longer has parameter group_members
-  - Model ConfigurationGroup no longer has parameter member_type
-  - Model ConnectivityConfiguration no longer has parameter display_name
-  - Model DefaultAdminRule no longer has parameter display_name
-  - Model EffectiveBaseSecurityAdminRule no longer has parameter configuration_display_name
-  - Model EffectiveBaseSecurityAdminRule no longer has parameter rule_collection_display_name
-  - Model EffectiveConnectivityConfiguration no longer has parameter display_name
-  - Model EffectiveDefaultSecurityAdminRule no longer has parameter configuration_display_name
-  - Model EffectiveDefaultSecurityAdminRule no longer has parameter display_name
-  - Model EffectiveDefaultSecurityAdminRule no longer has parameter rule_collection_display_name
-  - Model EffectiveSecurityAdminRule no longer has parameter configuration_display_name
-  - Model EffectiveSecurityAdminRule no longer has parameter display_name
-  - Model EffectiveSecurityAdminRule no longer has parameter rule_collection_display_name
-  - Model FirewallPolicy no longer has parameter explicit_proxy_settings
-  - Model NetworkGroup no longer has parameter conditional_membership
-  - Model NetworkGroup no longer has parameter display_name
-  - Model NetworkGroup no longer has parameter group_members
-  - Model NetworkGroup no longer has parameter member_type
-  - Model NetworkManager no longer has parameter display_name
-  - Model NetworkSecurityPerimeter no longer has parameter description
-  - Model NetworkSecurityPerimeter no longer has parameter display_name
-  - Model NetworkSecurityPerimeter no longer has parameter etag
-  - Model NspProfile no longer has parameter enabled_log_categories
-  - Parameter commit_type of model NetworkManagerCommit is now required
-  - Parameter group_connectivity of model ConnectivityGroupItem is now required
-  - Parameter network_group_id of model ConnectivityGroupItem is now required
-  - Parameter network_group_id of model NetworkManagerSecurityGroupItem is now required
-  - Parameter target_locations of model NetworkManagerCommit is now required
-  - Removed operation AdminRuleCollectionsOperations.delete
-  - Removed operation AdminRulesOperations.delete
-  - Removed operation ConnectivityConfigurationsOperations.delete
-  - Removed operation NetworkGroupsOperations.delete
-  - Removed operation NetworkManagerCommitsOperations.post
-  - Removed operation NetworkManagersOperations.delete
-  - Removed operation NetworkManagersOperations.patch_tags
-  - Removed operation SecurityAdminConfigurationsOperations.delete
-
-## 20.0.0 (2022-05-10)
-
-### Other Changes
-
-  - Removed changelog entries prior to version 20.0.0 to reduce file size. See https://pypi.org/project/azure-mgmt-network/20.0.0/ for the older history.
+> Changelog entries prior to 30.2.0 were removed to reduce file size. See https://pypi.org/project/azure-mgmt-network/30.2.0/ for the older history.
