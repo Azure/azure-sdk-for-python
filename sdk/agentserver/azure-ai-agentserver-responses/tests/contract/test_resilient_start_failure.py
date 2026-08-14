@@ -27,9 +27,31 @@ import pytest
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.core._platform_headers import ERROR_DETAIL, ERROR_SOURCE
+from azure.ai.agentserver.core.tasks import (
+    TaskManagerNotInitialized,
+    resilient_tasks_enabled,
+    set_resilient_tasks_enabled,
+)
+from azure.ai.agentserver.core.tasks._manager import get_task_manager
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as _ro
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+
+
+@pytest.fixture()
+def _switch_off() -> Any:
+    """Ensure the process-global resilient-tasks switch is OFF for the test.
+
+    The switch is process-global and other tests may have flipped it on (e.g.
+    by constructing a ``resilient_background=True`` host). Reset it to False so
+    the switch-off host path is genuinely exercised, and restore afterwards.
+    """
+    saved = resilient_tasks_enabled()
+    set_resilient_tasks_enabled(False)
+    try:
+        yield
+    finally:
+        set_resilient_tasks_enabled(saved)
 
 
 async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> AsyncIterator[Any]:
@@ -133,29 +155,54 @@ class TestNoTaskManagerStillRunsHandler:
 
 
 class TestNoTaskManagerSwallowsAndRunsInProcess:
-    """Recovery is opt-in: with no TaskManager installed, ``store=true`` work is
-    NOT failed as a platform error — the outer catch swallows
-    ``TaskManagerNotInitialized`` and runs the handler in-process (non-durable).
-    This holds regardless of hosted vs local; enabling durability is the
-    operator's explicit choice via ``set_resilient_tasks_enabled(True)``."""
+    """Recovery is opt-in: with the switch OFF, the ASGI lifespan installs NO
+    TaskManager, so ``store=true`` work is NOT failed as a platform error — the
+    outer catch swallows ``TaskManagerNotInitialized`` and runs the handler
+    in-process (non-durable). The response still executes AND persists (GET
+    works). Enabling durability is the operator's explicit choice via
+    ``set_resilient_tasks_enabled(True)`` / ``resilient_background``."""
 
-    def test_no_manager_background_runs_in_process(self) -> None:
-        client = _build_client()
-        resp = client.post(
-            "/responses",
-            json={"model": "test", "input": "hi", "stream": False, "store": True, "background": True},
-        )
-        assert resp.status_code == 200, resp.text
-        # Swallowed, not surfaced as a platform error.
-        assert ERROR_SOURCE not in resp.headers
+    def test_switch_off_no_manager_installed_and_response_completes(self, _switch_off: Any) -> None:
+        # Enter the lifespan with the switch explicitly OFF so this exercises the
+        # real production opt-out path (not the bare no-lifespan test client).
+        with _build_client() as client:
+            # Lifespan ran but installed NO manager (switch off).
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
 
-    def test_no_manager_streaming_runs_in_process(self) -> None:
-        client = _build_client()
-        resp = client.post(
-            "/responses",
-            json={"model": "test", "input": "hi", "stream": True, "store": True, "background": True},
-        )
-        types = [e["type"] for e in _collect_sse_events(resp.text)]
-        # In-process fallback runs the handler to completion; no error surface.
-        assert "error" not in types, f"must not surface an error on opt-out, got: {types}"
-        assert "response.completed" in types, f"expected completion, got: {types}"
+            resp = client.post(
+                "/responses",
+                json={"model": "test", "input": "hi", "stream": False, "store": True, "background": True},
+            )
+            assert resp.status_code == 200, resp.text
+            # Swallowed → not a platform error.
+            assert ERROR_SOURCE not in resp.headers
+            response_id = resp.json()["id"]
+
+            # The in-process fallback runs AND persists: GET reaches a terminal.
+            import time
+
+            deadline = time.monotonic() + 10.0
+            status = None
+            while time.monotonic() < deadline:
+                got = client.get(f"/responses/{response_id}")
+                if got.status_code == 200:
+                    status = got.json().get("status")
+                    if status in ("completed", "failed", "cancelled"):
+                        break
+                time.sleep(0.05)
+            assert status == "completed", f"expected completed via in-process fallback, got {status}"
+
+    def test_switch_off_no_manager_streaming_runs_in_process(self, _switch_off: Any) -> None:
+        with _build_client() as client:
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
+
+            resp = client.post(
+                "/responses",
+                json={"model": "test", "input": "hi", "stream": True, "store": True, "background": True},
+            )
+            types = [e["type"] for e in _collect_sse_events(resp.text)]
+            # In-process fallback runs the handler to completion; no error surface.
+            assert "error" not in types, f"must not surface an error on opt-out, got: {types}"
+            assert "response.completed" in types, f"expected completion, got: {types}"

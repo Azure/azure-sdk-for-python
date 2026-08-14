@@ -37,7 +37,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.core.storage import FoundryStateStore
-from azure.ai.agentserver.core.tasks import TaskConflictError, set_resilient_tasks_enabled
+from azure.ai.agentserver.core.tasks import TaskConflictError
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
@@ -46,13 +46,6 @@ except ImportError:  # allows `python app.py` from inside this directory
     from agent import invocation_state_store_name, session_workflow
 
 app = InvocationAgentServerHost()
-
-# Recovery is opt-in and gated solely on this switch. Declaring a
-# ``@multi_turn_task`` makes the framework recovery-capable, but the durable
-# task subsystem (and its crash recovery) is only active when explicitly
-# enabled. Enable it here so a fresh process reclaims in-flight sessions at
-# startup.
-set_resilient_tasks_enabled(True)
 
 
 @app.invoke_handler

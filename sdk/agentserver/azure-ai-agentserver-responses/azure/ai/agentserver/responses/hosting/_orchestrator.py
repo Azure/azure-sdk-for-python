@@ -3909,12 +3909,15 @@ class _ResponseOrchestrator:
         Two outcomes when the resilient start cannot proceed:
 
         - **No task subsystem installed** (the start raises
-          :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized` —
-          e.g. an in-process test client whose lifespan never ran). When NOT
-          hosted, run the handler in-process via ``fallback_runner`` — there is
-          nothing to recover, so this is the legitimate non-durable path, NOT a
-          failure. When hosted, the subsystem is auto-initialized with no
-          opt-out, so its absence is a platform failure and is re-raised tagged.
+          :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized`).
+          This happens whenever resilient tasks were not enabled for the host
+          (the durable subsystem is opt-in via ``set_resilient_tasks_enabled`` /
+          ``resilient_background``), or in an in-process test client whose
+          lifespan never ran. The signal is **swallowed** and the handler runs
+          in-process via ``fallback_runner`` — there is no manager to recover
+          through, so this is the legitimate non-durable path, NOT a failure.
+          The response still executes and persists (GET works); it is simply not
+          crash-recoverable. This applies regardless of hosted vs local.
         - **Subsystem present but the start fails**: fail immediately. The
           exception is tagged as a platform infrastructure error and re-raised
           (no silent degradation to a non-durable task — that would hide a real
@@ -3934,11 +3937,12 @@ class _ResponseOrchestrator:
             recovery). Stamped into task framework metadata so recovery dispatch
             can route without re-deriving the gate from request params.
         :paramtype disposition: str
-        :raises Exception: If durability is required but unavailable — either the
-            task subsystem is present and the resilient start fails, or the
-            deployment is hosted and the subsystem is missing. The exception is
+        :raises Exception: If the task subsystem is present and the resilient
+            start fails (e.g. the task-store write is rejected). The exception is
             tagged with ``PLATFORM_ERROR_TAG`` so the endpoint surfaces
-            ``x-platform-error-source: platform``.
+            ``x-platform-error-source: platform``. A *missing* subsystem
+            (``TaskManagerNotInitialized``) is NOT raised — it is swallowed and
+            handled via the in-process fallback (see above).
         """
         from ._resilient_orchestrator import (
             ResilientResponseOrchestrator,
