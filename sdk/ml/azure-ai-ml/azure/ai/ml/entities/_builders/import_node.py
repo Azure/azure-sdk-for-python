@@ -8,8 +8,8 @@ from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
+from azure.ai.ml._restclient.arm_ml_service.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase as JobBaseData
 from azure.ai.ml._schema.job.import_job import ImportJobSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import ComponentSource, NodeType
@@ -35,12 +35,12 @@ class Import(BaseNode):
     You should not instantiate this class directly. Instead, you should
     create from a builder function.
 
-    :param component: Id or instance of the import component/job to be run for the step.
-    :type component: ~azure.ai.ml.entities._component.import_component.ImportComponent
-    :param inputs: Input parameters to the import.
-    :type inputs: Dict[str, str]
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
+    :keyword component: Id or instance of the import component/job to be run for the step.
+    :paramtype component: ~azure.ai.ml.entities._component.import_component.ImportComponent
+    :keyword inputs: Input parameters to the import.
+    :paramtype inputs: Dict[str, str]
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :paramtype outputs: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
     :param name: Name of the import.
     :type name: str
     :param description: Description of the import.

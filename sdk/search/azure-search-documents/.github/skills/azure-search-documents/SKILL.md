@@ -15,6 +15,7 @@ Use these sidecars for guidance that is required for release-ready changes but d
 
 - Release tracks, branch-dependent API surface, and CHANGELOG rules: `references/release.md`
 - Test commands, live recording workflow, and test authoring rules: `references/testing.md`
+- Sample authoring workflow, `.http` contract parity, and live-run setup: `references/samples.md`
 
 ## Environment setup
 

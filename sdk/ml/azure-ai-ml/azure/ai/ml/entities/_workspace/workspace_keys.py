@@ -4,18 +4,18 @@
 
 from typing import List, Optional
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ListWorkspaceKeysResult
+from azure.ai.ml._restclient.arm_ml_service.models import ListWorkspaceKeysResult
 
 
 class ContainerRegistryCredential:
     """Key for ACR associated with given workspace.
 
-    :param location:  Location of the ACR
-    :type location: str
-    :param username: Username of the ACR
-    :type username: str
-    :param passwords: Passwords to access the ACR
-    :type passwords: List[str]
+    :keyword location:  Location of the ACR
+    :paramtype location: str
+    :keyword username: Username of the ACR
+    :paramtype username: str
+    :keyword passwords: Passwords to access the ACR
+    :paramtype passwords: List[str]
     """
 
     def __init__(
@@ -29,10 +29,10 @@ class ContainerRegistryCredential:
 class NotebookAccessKeys:
     """Key for notebook resource associated with given workspace.
 
-    :param primary_access_key:  Primary access key of notebook resource
-    :type primary_access_key: str
-    :param secondary_access_key: Secondary access key of notebook resource
-    :type secondary_access_key: str
+    :keyword primary_access_key:  Primary access key of notebook resource
+    :paramtype primary_access_key: str
+    :keyword secondary_access_key: Secondary access key of notebook resource
+    :paramtype secondary_access_key: str
     """
 
     def __init__(self, *, primary_access_key: Optional[str] = None, secondary_access_key: Optional[str] = None):
@@ -43,16 +43,16 @@ class NotebookAccessKeys:
 class WorkspaceKeys:
     """Workspace Keys.
 
-    :param user_storage_key: Key for storage account associated with given workspace
-    :type user_storage_key: str
-    :param user_storage_resource_id: Resource id of storage account associated with given workspace
-    :type user_storage_resource_id: str
-    :param app_insights_instrumentation_key: Key for app insights associated with given workspace
-    :type app_insights_instrumentation_key: str
-    :param container_registry_credentials: Key for ACR associated with given workspace
-    :type container_registry_credentials: ContainerRegistryCredential
-    :param notebook_access_keys: Key for notebook resource associated with given workspace
-    :type notebook_access_keys: NotebookAccessKeys
+    :keyword user_storage_key: Key for storage account associated with given workspace
+    :paramtype user_storage_key: str
+    :keyword user_storage_resource_id: Resource id of storage account associated with given workspace
+    :paramtype user_storage_resource_id: str
+    :keyword app_insights_instrumentation_key: Key for app insights associated with given workspace
+    :paramtype app_insights_instrumentation_key: str
+    :keyword container_registry_credentials: Key for ACR associated with given workspace
+    :paramtype container_registry_credentials: ContainerRegistryCredential
+    :keyword notebook_access_keys: Key for notebook resource associated with given workspace
+    :paramtype notebook_access_keys: NotebookAccessKeys
     """
 
     def __init__(

@@ -15,9 +15,8 @@ from typing import Any, Dict, Iterable, List, Optional, TextIO, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, list_logs_in_datastore
 from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
-from azure.ai.ml._restclient.v2022_02_01_preview.models import DataType
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelType
+from azure.ai.ml._restclient.arm_ml_service.models import DataType
+from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
 from azure.ai.ml._restclient.arm_ml_service.models import JobBase
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import create_requests_pipeline_with_retry, download_text_from_url
@@ -194,7 +193,7 @@ def stream_logs_until_completion(
     :param raise_exception_on_failed_job: Should this method fail if job fails
     :type raise_exception_on_failed_job: Boolean
     :keyword requests_pipeline: The HTTP pipeline to use for requests.
-    :type requests_pipeline: ~azure.ai.ml._utils._http_utils.HttpPipeline
+    :paramtype requests_pipeline: ~azure.ai.ml._utils._http_utils.HttpPipeline
     :return:
     :rtype: None
     """
@@ -503,7 +502,7 @@ def get_job_output_uris_from_dataplane(
     model_ids = [
         run_outputs[output_name].asset_id
         for output_name in output_names
-        if run_outputs[output_name].type in [o.value for o in ModelType]
+        if run_outputs[output_name].type in ["CustomModel", "MLFlowModel", "TritonModel"]
     ]
 
     output_name_to_dataset_uri = {}

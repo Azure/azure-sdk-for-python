@@ -231,9 +231,12 @@ echo "  └───────────────────────
 echo ""
 echo "  Required for sample_update_defaults.py (one-time model config):"
 echo "  ┌─────────────────────────────────────────────────────────────────┐"
-echo "  │ GPT_4_1_DEPLOYMENT              - Your GPT-4.1 deployment name │"
-echo "  │ GPT_4_1_MINI_DEPLOYMENT         - Your GPT-4.1-mini deployment │"
-echo "  │ TEXT_EMBEDDING_3_LARGE_DEPLOYMENT - Your embedding deployment  │"
+echo "  │ CU_COMPLETION_MODEL                 - Completion model name     │"
+echo "  │ CU_COMPLETION_MODEL_MINI            - Mini model name           │"
+echo "  │ CU_EMBEDDING_MODEL                  - Embedding model name      │"
+echo "  │ CU_COMPLETION_MODEL_DEPLOYMENT      - Completion deployment     │"
+echo "  │ CU_COMPLETION_MINI_DEPLOYMENT       - Mini deployment           │"
+echo "  │ CU_EMBEDDING_DEPLOYMENT             - Embedding deployment      │"
 echo "  └─────────────────────────────────────────────────────────────────┘"
 echo ""
 
@@ -259,14 +262,27 @@ if [[ "$configure_now" =~ ^[Yy]$ ]]; then
         echo "  ⚠ Skipped CONTENTUNDERSTANDING_ENDPOINT (required - please set manually)"
     fi
     
-    # CONTENTUNDERSTANDING_KEY
-    read -r -p "Enter CONTENTUNDERSTANDING_KEY (press Enter to use DefaultAzureCredential): " api_key || api_key=""
+    # CONTENTUNDERSTANDING_KEY (hidden input prevents the secret from appearing in terminal history)
+    read -r -s -p "Enter CONTENTUNDERSTANDING_KEY (press Enter to use DefaultAzureCredential): " api_key || api_key=""
+    printf '\n'
     if [ -n "$api_key" ]; then
         "${SED_INPLACE[@]}" "s|CONTENTUNDERSTANDING_KEY=.*|CONTENTUNDERSTANDING_KEY=$api_key|" .env
         echo "  ✓ Set CONTENTUNDERSTANDING_KEY"
     else
         echo "  ℹ Using DefaultAzureCredential - make sure to run 'az login'"
     fi
+
+    read -r -p "Enter CU_COMPLETION_MODEL (default: gpt-5.2): " completion_model || completion_model=""
+    completion_model="${completion_model:-gpt-5.2}"
+    "${SED_INPLACE[@]}" "s|CU_COMPLETION_MODEL=.*|CU_COMPLETION_MODEL=$completion_model|" .env
+
+    read -r -p "Enter CU_COMPLETION_MODEL_MINI (default: $completion_model): " mini_completion_model || mini_completion_model=""
+    mini_completion_model="${mini_completion_model:-$completion_model}"
+    "${SED_INPLACE[@]}" "s|CU_COMPLETION_MODEL_MINI=.*|CU_COMPLETION_MODEL_MINI=$mini_completion_model|" .env
+
+    read -r -p "Enter CU_EMBEDDING_MODEL (default: text-embedding-3-large): " embedding_model || embedding_model=""
+    embedding_model="${embedding_model:-text-embedding-3-large}"
+    "${SED_INPLACE[@]}" "s|CU_EMBEDDING_MODEL=.*|CU_EMBEDDING_MODEL=$embedding_model|" .env
 
     # Probe existing model defaults on the Foundry resource before prompting.
     # Exit codes from the probe:
@@ -275,9 +291,9 @@ if [[ "$configure_now" =~ ^[Yy]$ ]]; then
     #   2  NONE      - no defaults configured
     #   3  AUTH      - 401/403 authentication error
     #   1  OTHER     - any other error (DNS, SDK, etc.)
-    gpt41=""
-    gpt41mini=""
-    embedding=""
+    completion_deployment=""
+    mini_completion_deployment=""
+    embedding_deployment=""
     probe_rc=1
     probe_out=""
     if [ -n "$endpoint" ]; then
@@ -289,6 +305,9 @@ if [[ "$configure_now" =~ ^[Yy]$ ]]; then
         probe_out="$(
             CONTENTUNDERSTANDING_ENDPOINT="$endpoint" \
             CONTENTUNDERSTANDING_KEY="$api_key" \
+            CU_COMPLETION_MODEL="$completion_model" \
+            CU_COMPLETION_MODEL_MINI="$mini_completion_model" \
+            CU_EMBEDDING_MODEL="$embedding_model" \
             python - <<'PY' 2>/dev/null
 import os, sys
 try:
@@ -311,9 +330,13 @@ except HttpResponseError as e:
     sys.exit(3 if e.status_code in (401, 403) else 1)
 except Exception:
     sys.exit(1)
-keys = ["gpt-4.1", "gpt-4.1-mini", "text-embedding-3-large"]
+keys = [
+    os.environ["CU_COMPLETION_MODEL"],
+    os.environ["CU_COMPLETION_MODEL_MINI"],
+    os.environ["CU_EMBEDDING_MODEL"],
+]
 vals = [d.get(k, "") for k in keys]
-print(";".join(f"{k}={v}" for k, v in zip(keys, vals)))
+print(";".join(f"{label}={value}" for label, value in zip(("completion", "mini", "embedding"), vals)))
 sys.exit(0 if all(vals) else (2 if not any(vals) else 10))
 PY
         )"
@@ -322,22 +345,22 @@ PY
 
         # Parse probe output (K=V;K=V;K=V) when useful
         if [ "$probe_rc" = "0" ] || [ "$probe_rc" = "10" ]; then
-            gpt41="$(    echo "$probe_out" | tr ';' '\n' | sed -n 's/^gpt-4\.1=//p' | head -n1)"
-            gpt41mini="$(echo "$probe_out" | tr ';' '\n' | sed -n 's/^gpt-4\.1-mini=//p' | head -n1)"
-            embedding="$( echo "$probe_out" | tr ';' '\n' | sed -n 's/^text-embedding-3-large=//p' | head -n1)"
+            completion_deployment="$(     echo "$probe_out" | tr ';' '\n' | sed -n 's/^completion=//p' | head -n1)"
+            mini_completion_deployment="$(echo "$probe_out" | tr ';' '\n' | sed -n 's/^mini=//p' | head -n1)"
+            embedding_deployment="$(      echo "$probe_out" | tr ';' '\n' | sed -n 's/^embedding=//p' | head -n1)"
         fi
 
         case "$probe_rc" in
             0)
                 echo "  ✓ Detected existing defaults:"
-                echo "      gpt-4.1                = $gpt41"
-                echo "      gpt-4.1-mini           = $gpt41mini"
-                echo "      text-embedding-3-large = $embedding"
+                echo "      $completion_model = $completion_deployment"
+                echo "      $mini_completion_model = $mini_completion_deployment"
+                echo "      $embedding_model = $embedding_deployment"
                 read -r -p "  Use these detected values? (Y/n): " use_detected || use_detected="y"
                 if [[ ! "$use_detected" =~ ^[Nn]$ ]]; then
                     skip_update_defaults=1
                 else
-                    gpt41=""; gpt41mini=""; embedding=""
+                    completion_deployment=""; mini_completion_deployment=""; embedding_deployment=""
                 fi
                 ;;
             10)
@@ -360,32 +383,32 @@ PY
     echo ""
     echo "  Model deployment configuration (for sample_update_defaults.py):"
 
-    # GPT_4_1_DEPLOYMENT
-    if [ -z "$gpt41" ]; then
-        read -r -p "Enter GPT_4_1_DEPLOYMENT (default: gpt-4.1): " gpt41 || gpt41=""
-        gpt41="${gpt41:-gpt-4.1}"
+    # CU_COMPLETION_MODEL_DEPLOYMENT
+    if [ -z "$completion_deployment" ]; then
+        read -r -p "Enter CU_COMPLETION_MODEL_DEPLOYMENT (default: $completion_model): " completion_deployment || completion_deployment=""
+        completion_deployment="${completion_deployment:-$completion_model}"
     else
-        echo "  ✓ Using detected GPT_4_1_DEPLOYMENT=$gpt41"
+        echo "  ✓ Using detected CU_COMPLETION_MODEL_DEPLOYMENT=$completion_deployment"
     fi
-    "${SED_INPLACE[@]}" "s|GPT_4_1_DEPLOYMENT=.*|GPT_4_1_DEPLOYMENT=$gpt41|" .env
+    "${SED_INPLACE[@]}" "s|CU_COMPLETION_MODEL_DEPLOYMENT=.*|CU_COMPLETION_MODEL_DEPLOYMENT=$completion_deployment|" .env
 
-    # GPT_4_1_MINI_DEPLOYMENT
-    if [ -z "$gpt41mini" ]; then
-        read -r -p "Enter GPT_4_1_MINI_DEPLOYMENT (default: gpt-4.1-mini): " gpt41mini || gpt41mini="" gpt41mini
-        gpt41mini="${gpt41mini:-gpt-4.1-mini}"
+    # CU_COMPLETION_MINI_DEPLOYMENT
+    if [ -z "$mini_completion_deployment" ]; then
+        read -r -p "Enter CU_COMPLETION_MINI_DEPLOYMENT (default: $completion_deployment): " mini_completion_deployment || mini_completion_deployment=""
+        mini_completion_deployment="${mini_completion_deployment:-$completion_deployment}"
     else
-        echo "  ✓ Using detected GPT_4_1_MINI_DEPLOYMENT=$gpt41mini"
+        echo "  ✓ Using detected CU_COMPLETION_MINI_DEPLOYMENT=$mini_completion_deployment"
     fi
-    "${SED_INPLACE[@]}" "s|GPT_4_1_MINI_DEPLOYMENT=.*|GPT_4_1_MINI_DEPLOYMENT=$gpt41mini|" .env
+    "${SED_INPLACE[@]}" "s|CU_COMPLETION_MINI_DEPLOYMENT=.*|CU_COMPLETION_MINI_DEPLOYMENT=$mini_completion_deployment|" .env
 
-    # TEXT_EMBEDDING_3_LARGE_DEPLOYMENT
-    if [ -z "$embedding" ]; then
-        read -r -p "Enter TEXT_EMBEDDING_3_LARGE_DEPLOYMENT (default: text-embedding-3-large): " embedding || embedding=""
-        embedding="${embedding:-text-embedding-3-large}"
+    # CU_EMBEDDING_DEPLOYMENT
+    if [ -z "$embedding_deployment" ]; then
+        read -r -p "Enter CU_EMBEDDING_DEPLOYMENT (default: $embedding_model): " embedding_deployment || embedding_deployment=""
+        embedding_deployment="${embedding_deployment:-$embedding_model}"
     else
-        echo "  ✓ Using detected TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=$embedding"
+        echo "  ✓ Using detected CU_EMBEDDING_DEPLOYMENT=$embedding_deployment"
     fi
-    "${SED_INPLACE[@]}" "s|TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=.*|TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=$embedding|" .env
+    "${SED_INPLACE[@]}" "s|CU_EMBEDDING_DEPLOYMENT=.*|CU_EMBEDDING_DEPLOYMENT=$embedding_deployment|" .env
 
     echo ""
     echo "  ✓ Environment variables configured"

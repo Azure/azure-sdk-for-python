@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access, too-many-instance-attributes, too-many-statements, too-many-lines
+# pylint: disable=protected-access, too-many-instance-attributes, too-many-statements, too-many-lines, reimported
 import json
 import os.path
 from os import PathLike
@@ -23,15 +23,17 @@ from azure.ai.ml._azure_environments import (
     _resource_to_scopes,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient022023Preview
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import SdkJSONEncoder
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
+from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import UserIdentity
+from azure.ai.ml._restclient.arm_ml_service.models import UserIdentity as UserIdentityArm
 from azure.ai.ml._restclient.dataset_dataplane import DatasetDataplaneClient as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import RunHistoryClient as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import JobType as RestJobType_20241001Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -137,6 +139,33 @@ if TYPE_CHECKING:
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
+# JobType.FINE_TUNING was @removed at api-version 2025-12-01 in the TypeSpec, so the shared
+# arm_ml_service JobType enum (generated at 2025-12-01) no longer exposes a FINE_TUNING member.
+# The value is still valid on the 2024-10-01-preview wire (FineTuningJob.job_type == "FineTuning"),
+# so compare against the literal wire value for routing. Remove once arm_ml_service is regenerated
+# with api-version "all".
+_FINE_TUNING_JOB_TYPE = "FineTuning"
+
+
+def _strip_none_values(obj: Any) -> None:
+    """Recursively remove keys whose value is ``None`` from a JSON-like structure in place.
+
+    The arm_ml_service hybrid models serialize present-but-``None`` fields as explicit JSON
+    ``null``, whereas the msrest clients they replaced omitted such fields entirely. Stripping
+    ``None`` values reproduces the msrest wire so re-PUT bodies remain byte-identical.
+
+    :param obj: A JSON-like structure (``dict``/``list``) to prune in place.
+    :type obj: Any
+    """
+    if isinstance(obj, dict):
+        for key in [k for k, v in obj.items() if v is None]:
+            del obj[key]
+        for value in obj.values():
+            _strip_none_values(value)
+    elif isinstance(obj, list):
+        for item in obj:
+            _strip_none_values(item)
+
 
 class JobOperations(_ScopeDependentOperations):
     """Initiates an instance of JobOperations
@@ -149,7 +178,7 @@ class JobOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client_02_2023_preview: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
-    :type service_client_02_2023_preview: ~azure.ai.ml._restclient.v2023_02_01_preview.AzureMachineLearningWorkspaces
+    :type service_client_02_2023_preview: ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param credential: Credential to use for authentication.
@@ -183,7 +212,7 @@ class JobOperations(_ScopeDependentOperations):
         self._credential = credential
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
-        self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
+        self.service_client_01_2024_preview_arm = kwargs.pop("service_client_01_2024_preview_arm", None)
         self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
         self.service_client_01_2025_preview = kwargs.pop("service_client_01_2025_preview", None)
         self._kwargs = kwargs
@@ -306,15 +335,23 @@ class JobOperations(_ScopeDependentOperations):
             parent_job = self.get(parent_job_name)
             return self._runs_operations.get_run_children(parent_job.name, max_results=max_results)
 
+        # The shared arm_ml_service ``jobs.list`` has no ``scheduled``/``schedule_id`` query params (they are
+        # only modeled on the 2024-01-01-preview wire and are never set by the SDK itself). Forward them as raw
+        # query params when a caller passes them so the wire stays identical to the old v2024_01 client.
+        extra_params: Dict[str, str] = {}
+        if schedule_defined is not None:
+            extra_params["scheduled"] = str(schedule_defined).lower()
+        if scheduled_job_name is not None:
+            extra_params["scheduleId"] = scheduled_job_name
+
         return cast(
             Iterable[Job],
-            self.service_client_01_2024_preview.jobs.list(
+            self.service_client_01_2024_preview_arm.jobs.list(
                 self._operation_scope.resource_group_name,
                 self._workspace_name,
                 cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
                 list_view_type=list_view_type,
-                scheduled=schedule_defined,
-                schedule_id=scheduled_job_name,
+                params=extra_params,
                 **self._kwargs,
                 **kwargs,
             ),
@@ -451,6 +488,26 @@ class JobOperations(_ScopeDependentOperations):
             )
             results.append(result)
         return results
+
+    @distributed_trace
+    @monitor_with_activity(ops_logger, "Job.Delete", ActivityType.PUBLICAPI)
+    def begin_delete(self, name: str, **kwargs: Any) -> LROPoller[None]:
+        """Deletes a job.
+
+        :param name: The name of the job.
+        :type name: str
+        :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
+        :raises azure.core.exceptions.HttpResponseError: Raised for other service-side errors.
+        :return: A poller to track the operation status.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        """
+        return self._operation_2023_02_preview.begin_delete(
+            id=name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            **self._kwargs,
+            **kwargs,
+        )
 
     def _try_get_compute_arm_id(self, compute: Union[Compute, str]) -> Optional[Union[Compute, str]]:
         # pylint: disable=too-many-return-statements
@@ -599,7 +656,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(
+    def create_or_update(  # pylint: disable=too-many-branches
         self,
         job: Job,
         *,
@@ -668,6 +725,67 @@ class JobOperations(_ScopeDependentOperations):
         if experiment_name is not None:
             job.experiment_name = experiment_name
 
+        # ---------------- TEMPORARY HOTFIX (metadata-only shortcut) ----------------
+        # Root bug: for a Job fetched via jobs.get(name) then mutated and passed to
+        # create_or_update, the serialize + MFE PUT round-trip fails for AutoML,
+        # Command, Pipeline, Sweep, Spark (each with a different serializer /
+        # comparator error). Until MFE + per-jobType serializers are fixed upstream,
+        # detect the "fetched job with only metadata changes" case and route through
+        # the RunHistory PATCH endpoint (same call used by ML Studio's portal for
+        # inline edits, and by the new jobs.update() API added alongside this fix).
+        #
+        # Shortcut is taken only when:
+        #   * the incoming job carries an ARM resource id (=> it was fetched, not
+        #     freshly created), AND
+        #   * the caller is not trying to change compute or experiment_name (these
+        #     are not supported by the shortcut and were rejected by MFE anyway).
+        # Any failure inside the shortcut falls through to the original path so
+        # brand-new job creation behavior is preserved bit-for-bit.
+        if getattr(job, "id", None) and getattr(job, "name", None) and compute is None and experiment_name is None:
+            job_name: str = cast(str, job.name)
+            patch_succeeded = False
+            try:
+                job_object = self._get_job(job_name)
+                if job_object.properties.job_type == RestJobType.PIPELINE:
+                    job_object = self._get_job_2401(job_name)
+                if _is_pipeline_child_job(job_object):
+                    raise PipelineChildJobError(job_id=job_object.id)
+
+                from azure.ai.ml._restclient.runhistory.models import CreateRun
+
+                self._runs_operations._operation.add_or_modify_by_experiment_name(
+                    subscription_id=self._operation_scope.subscription_id,
+                    resource_group_name=self._operation_scope.resource_group_name,
+                    workspace_name=self._workspace_name,
+                    experiment_name=job_object.properties.experiment_name,
+                    run_id=job_name,
+                    body=CreateRun(
+                        display_name=getattr(job, "display_name", None),
+                        description=getattr(job, "description", None),
+                        tags=getattr(job, "tags", None),
+                        properties=getattr(job, "properties", None),
+                    ),
+                )
+                patch_succeeded = True
+            except PipelineChildJobError:
+                raise
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Only failures BEFORE and INCLUDING the RunHistory PATCH are swallowed
+                # (job not found, transient RunHistory error, etc.) so we can fall
+                # through to the original code path without regressing creation.
+                pass
+
+            if patch_succeeded:
+                # PATCH already persisted the metadata change server-side. Any failure
+                # in the refresh/resolve below must surface directly — falling back to
+                # the original MFE PUT path would re-execute the very round-trip this
+                # hotfix exists to avoid and would surface a misleading error.
+                refreshed = self._get_job(job_name)
+                if refreshed.properties.job_type == RestJobType.PIPELINE:
+                    refreshed = self._get_job_2401(job_name)
+                return self._resolve_azureml_id(Job._from_rest_object(refreshed))
+        # ------------------ END TEMPORARY HOTFIX --------------------------------
+
         if job.compute == LOCAL_COMPUTE_TARGET:
             job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"  # type: ignore
 
@@ -706,7 +824,7 @@ class JobOperations(_ScopeDependentOperations):
         # set headers with user aml token if job is a pipeline or has a user identity setting
         if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
             hasattr(rest_job_resource.properties, "identity")
-            and (isinstance(rest_job_resource.properties.identity, UserIdentity))
+            and (isinstance(rest_job_resource.properties.identity, (UserIdentity, UserIdentityArm)))
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
@@ -741,35 +859,51 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self._create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
+            result = self._create_or_update_with_different_version_api(
+                rest_job_resource=job_object, strip_none_body=True, **kwargs
+            )
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
-    def _create_or_update_with_different_version_api(self, rest_job_resource: JobBase, **kwargs: Any) -> JobBase:
+    def _create_or_update_with_different_version_api(
+        self, rest_job_resource: JobBase, strip_none_body: bool = False, **kwargs: Any
+    ) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
-        if rest_job_resource.properties.job_type == RestJobType_20241001Preview.FINE_TUNING:
+        if rest_job_resource.properties.job_type == _FINE_TUNING_JOB_TYPE:
             service_client_operation = self.service_client_10_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
-            service_client_operation = self.service_client_01_2024_preview.jobs
+            service_client_operation = self.service_client_01_2024_preview_arm.jobs
         if rest_job_resource.properties.job_type == RestJobType.AUTO_ML:
-            service_client_operation = self.service_client_01_2024_preview.jobs
+            service_client_operation = self.service_client_01_2024_preview_arm.jobs
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
-            service_client_operation = self.service_client_01_2024_preview.jobs
+            service_client_operation = self.service_client_01_2024_preview_arm.jobs
         if rest_job_resource.properties.job_type == RestJobType.COMMAND:
             service_client_operation = self.service_client_01_2025_preview.jobs
+
+        # ``body`` is normally the arm model, which the client serializes on send.
+        # For round-tripped bodies (the local-run re-submit that re-PUTs a previously
+        # fetched, fully-resolved job) the migrated arm SdkJSONEncoder emits
+        # present-but-None fields as explicit JSON ``null`` whereas the msrest client
+        # it replaced omitted them. In that case only, pre-serialize and drop None
+        # values so the wire stays byte-identical. The fresh-create path keeps passing
+        # the model unchanged (it may contain unresolved entities not yet wire-ready).
+        body: Any = rest_job_resource
+        if strip_none_body:
+            body = json.loads(json.dumps(rest_job_resource, cls=SdkJSONEncoder, exclude_readonly=True))
+            _strip_none_values(body)
 
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            body=rest_job_resource,
+            body=body,
             **kwargs,
         )
 
         return result
 
     def _create_or_update_with_latest_version_api(self, rest_job_resource: JobBase, **kwargs: Any) -> JobBase:
-        service_client_operation = self.service_client_01_2024_preview.jobs
+        service_client_operation = self.service_client_01_2024_preview_arm.jobs
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
             resource_group_name=self._operation_scope.resource_group_name,
@@ -786,8 +920,34 @@ class JobOperations(_ScopeDependentOperations):
             job_object = self._get_job_2401(name)
         if _is_pipeline_child_job(job_object):
             raise PipelineChildJobError(job_id=job_object.id)
-        job_object.properties.is_archived = is_archived
 
+        # ---------------- TEMPORARY HOTFIX (archive/restore shortcut) ----------------
+        # The legacy _create_or_update_with_different_version_api PUT round-trip fails
+        # on AutoML, Command, Sweep, and Spark jobs for the same serializer/comparator
+        # reasons as create_or_update (see the shortcut in create_or_update above).
+        # RunHistory's "hidden" flag is the same server-side field surfaced by MFE as
+        # properties.isArchived (verified via probe_runhistory_hidden.py), so we can
+        # PATCH it directly - which is what ML Studio's portal does for the Archive
+        # button. Any failure falls through to the original path so behavior is
+        # preserved for Pipeline (which already works via _get_job_2401).
+        try:
+            from azure.ai.ml._restclient.runhistory.models import CreateRun
+
+            self._runs_operations._operation.add_or_modify_by_experiment_name(
+                subscription_id=self._operation_scope.subscription_id,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                experiment_name=job_object.properties.experiment_name,
+                run_id=name,
+                body=CreateRun(hidden=is_archived),
+            )
+            return
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Fall through to the original code path on any RunHistory error.
+            pass
+        # ------------------ END TEMPORARY HOTFIX --------------------------------
+
+        job_object.properties.is_archived = is_archived
         self._create_or_update_with_different_version_api(rest_job_resource=job_object)
 
     @distributed_trace
@@ -831,6 +991,71 @@ class JobOperations(_ScopeDependentOperations):
         """
 
         self._archive_or_restore(name=name, is_archived=False)
+
+    @distributed_trace
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Update", ActivityType.PUBLICAPI)
+    def update(
+        self,
+        name: str,
+        *,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, str]] = None,
+    ) -> Job:
+        """Partially updates the display_name, description, tags or properties of an existing job.
+
+        This routes through the RunHistory PATCH endpoint that Azure ML Studio's portal uses
+        for inline edits, which works uniformly for all job types (AutoML, Command, Pipeline,
+        Sweep, Spark, Parallel) and merges tags/properties rather than replacing them.
+
+        :param name: The name of the job to update.
+        :type name: str
+        :keyword display_name: New display name for the job. If None, leaves the current value unchanged.
+        :paramtype display_name: Optional[str]
+        :keyword description: New description for the job. If None, leaves the current value unchanged.
+        :paramtype description: Optional[str]
+        :keyword tags: Tags to merge into the job's existing tags.
+        :paramtype tags: Optional[Dict[str, str]]
+        :keyword properties: Properties to merge into the job's existing properties.
+        :paramtype properties: Optional[Dict[str, str]]
+        :raises ~azure.ai.ml.exceptions.UserErrorException: Raised if no updatable field is supplied.
+        :raises ~azure.ai.ml.exceptions.PipelineChildJobError: Raised if the target job is a pipeline child job.
+        :return: The refreshed Job entity.
+        :rtype: ~azure.ai.ml.entities.Job
+        """
+        if display_name is None and description is None and tags is None and properties is None:
+            raise UserErrorException(
+                "jobs.update() requires at least one of "
+                "display_name, description, tags or properties to be specified."
+            )
+
+        job_object = self._get_job(name)
+        if job_object.properties.job_type == RestJobType.PIPELINE:
+            job_object = self._get_job_2401(name)
+        if _is_pipeline_child_job(job_object):
+            raise PipelineChildJobError(job_id=job_object.id)
+
+        from azure.ai.ml._restclient.runhistory.models import CreateRun
+
+        self._runs_operations._operation.add_or_modify_by_experiment_name(
+            subscription_id=self._operation_scope.subscription_id,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            experiment_name=job_object.properties.experiment_name,
+            run_id=name,
+            body=CreateRun(
+                display_name=display_name,
+                description=description,
+                tags=tags,
+                properties=properties,
+            ),
+        )
+
+        refreshed = self._get_job(name)
+        if refreshed.properties.job_type == RestJobType.PIPELINE:
+            refreshed = self._get_job_2401(name)
+        return self._resolve_azureml_id(Job._from_rest_object(refreshed))
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "Job.Stream", ActivityType.PUBLICAPI)
@@ -1077,7 +1302,7 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        job = self.service_client_01_2024_preview.jobs.get(
+        job = self.service_client_01_2024_preview_arm.jobs.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -1088,7 +1313,7 @@ class JobOperations(_ScopeDependentOperations):
             hasattr(job, "properties")
             and job.properties
             and hasattr(job.properties, "job_type")
-            and job.properties.job_type == RestJobType_20241001Preview.FINE_TUNING
+            and job.properties.job_type == _FINE_TUNING_JOB_TYPE
         ):
             return self.service_client_10_2024_preview.jobs.get(
                 id=name,
@@ -1101,8 +1326,8 @@ class JobOperations(_ScopeDependentOperations):
 
     # Upgrade api from 2023-04-01-preview to 2024-01-01-preview for pipeline job
     # We can remove this function once `_get_job` function has also been upgraded to the same version with pipeline
-    def _get_job_2401(self, name: str) -> JobBase_2401:
-        service_client_operation = self.service_client_01_2024_preview.jobs
+    def _get_job_2401(self, name: str) -> JobBase:
+        service_client_operation = self.service_client_01_2024_preview_arm.jobs
         return service_client_operation.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,

@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2025-08-01-preview",
+  "apiVersion": "2026-02-01-preview",
   "apiVersions": {
-    "Microsoft.Cache": "2025-08-01-preview"
+    "Microsoft.Cache": "2026-02-01-preview"
   },
-  "commit": "9912461f6b25b49d4a178674166dbf0b92ddf8ca",
+  "commit": "431d4eb07f6f8df89fe15de70c2b24f8993fb101",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise",
-  "emitterVersion": "0.61.1"
+  "emitterVersion": "0.63.1",
+  "httpClientPythonVersion": "^0.31.1"
 }

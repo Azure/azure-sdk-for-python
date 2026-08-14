@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.get(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -156,6 +156,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                 "name": "str",
                                                 "properties": {
                                                     "ddosSettings": {
+                                                        "ddosCustomPolicy": {"id": "str"},
                                                         "ddosProtectionPlan": {"id": "str"},
                                                         "protectionMode": "str",
                                                     },
@@ -169,7 +170,13 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                     "idleTimeoutInMinutes": 0,
                                                     "ipAddress": "str",
                                                     "ipConfiguration": ...,
-                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                    "ipTags": [
+                                                        {
+                                                            "firstPartyServiceTagId": "str",
+                                                            "ipTagType": "str",
+                                                            "tag": "str",
+                                                        }
+                                                    ],
                                                     "linkedPublicIPAddress": ...,
                                                     "migrationPhase": "str",
                                                     "natGateway": {
@@ -179,6 +186,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                         "name": "str",
                                                         "properties": {
                                                             "idleTimeoutInMinutes": 0,
+                                                            "nat64": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -200,6 +208,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                     "publicIPPrefix": {"id": "str"},
                                                     "resourceGuid": "str",
                                                     "servicePublicIPAddress": ...,
+                                                    "upgradedToV2": bool,
                                                 },
                                                 "sku": {"name": "str", "tier": "str"},
                                                 "tags": {"str": "str"},
@@ -467,6 +476,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -491,7 +501,13 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                 "subnet": ...,
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -501,6 +517,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -522,6 +539,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -541,6 +559,12 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -565,6 +589,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -593,6 +620,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -606,6 +634,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -643,6 +672,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -709,6 +739,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "billingSku": "str",
                                                             "customDnsConfigs": [
                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                             ],
@@ -806,6 +837,10 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"}
+                                                                        },
+                                                                        "enableConnectionTracking": bool,
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -826,6 +861,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -851,7 +887,11 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -862,6 +902,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -893,6 +934,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -938,6 +980,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -1040,6 +1083,10 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -1060,6 +1107,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1088,6 +1138,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -1101,6 +1152,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -1136,6 +1188,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -1307,6 +1360,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1335,6 +1391,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -1348,6 +1405,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -1383,6 +1441,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -1496,6 +1555,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                     "type": "str",
                                                 }
                                             ],
+                                            "billingSku": "str",
                                             "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                             "customNetworkInterfaceName": "str",
                                             "ipConfigurations": [
@@ -1689,6 +1749,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -1714,7 +1775,11 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -1725,6 +1790,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -1754,6 +1820,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -1773,6 +1840,12 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -1803,6 +1876,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -1831,6 +1907,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -1844,6 +1921,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -1895,6 +1973,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2138,6 +2217,10 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -2158,6 +2241,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -2186,6 +2272,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -2199,6 +2286,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -2232,6 +2320,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -2291,6 +2380,12 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -2315,6 +2410,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2343,6 +2441,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -2356,6 +2455,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -2393,6 +2493,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -2566,6 +2667,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2594,6 +2698,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -2607,6 +2712,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -2644,6 +2750,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -2727,6 +2834,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                     "name": "str",
                                     "properties": {
                                         "disableBgpRoutePropagation": bool,
+                                        "disablePeeringRoute": "str",
                                         "provisioningState": "str",
                                         "resourceGuid": "str",
                                         "routes": [
@@ -2738,6 +2846,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                     "nextHopType": "str",
                                                     "addressPrefix": "str",
                                                     "hasBgpOverride": bool,
+                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                     "nextHopIpAddress": "str",
                                                     "provisioningState": "str",
                                                 },
@@ -2810,6 +2919,12 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                             "type": "str",
                         }
                     ],
+                    "summarizedGatewayPrefixes": {
+                        "addressPrefixes": ["str"],
+                        "ipamPoolPrefixAllocations": [
+                            {"allocatedAddressPrefixes": ["str"], "numberOfIpAddresses": "str", "pool": {"id": "str"}}
+                        ],
+                    },
                     "virtualNetworkPeerings": [
                         {
                             "etag": "str",
@@ -2880,7 +2995,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2893,7 +3008,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -2905,7 +3020,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.begin_delete(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2916,7 +3031,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
     def test_virtual_networks_list(self, resource_group):
         response = self.client.virtual_networks.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2926,7 +3041,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_virtual_networks_list_all(self, resource_group):
         response = self.client.virtual_networks.list_all(
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2939,7 +3054,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             ip_address="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -2951,7 +3066,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.list_usage(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2963,8 +3078,25 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.begin_list_ddos_protection_status(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_networks_begin_move_ip_configurations(self, resource_group):
+        response = self.client.virtual_networks.begin_move_ip_configurations(
+            resource_group_name=resource_group.name,
+            virtual_network_name="str",
+            body={
+                "moveIpConfigurationItems": [
+                    {"sourceIpConfiguration": {"id": "str"}, "targetIpConfiguration": {"id": "str"}}
+                ]
+            },
+            api_version="2025-09-01",
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

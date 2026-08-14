@@ -19,10 +19,9 @@ from typing import Any, Iterable
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
-from azure.ai.agentserver.responses.models._generated import OutputItem, ResponseObject
+from azure.ai.agentserver.responses.models import OutputItem, ResponseObject
 from azure.ai.agentserver.responses.store._base import (
     ResponseProviderProtocol,
-    ResponseStreamProviderProtocol,
 )
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
@@ -49,18 +48,18 @@ class _ResponseOnlyProvider:
         input_items: Iterable[OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
-        isolation: Any = None,
+        context: Any = None,
     ) -> None:
-        await self._inner.create_response(response, input_items, history_item_ids, isolation=isolation)
+        await self._inner.create_response(response, input_items, history_item_ids, context=context)
 
-    async def get_response(self, response_id: str, *, isolation: Any = None) -> ResponseObject:
-        return await self._inner.get_response(response_id, isolation=isolation)
+    async def get_response(self, response_id: str, *, context: Any = None) -> ResponseObject:
+        return await self._inner.get_response(response_id, context=context)
 
-    async def update_response(self, response: ResponseObject, *, isolation: Any = None) -> None:
-        await self._inner.update_response(response, isolation=isolation)
+    async def update_response(self, response: ResponseObject, *, context: Any = None) -> None:
+        await self._inner.update_response(response, context=context)
 
-    async def delete_response(self, response_id: str, *, isolation: Any = None) -> None:
-        await self._inner.delete_response(response_id, isolation=isolation)
+    async def delete_response(self, response_id: str, *, context: Any = None) -> None:
+        await self._inner.delete_response(response_id, context=context)
 
     async def get_input_items(
         self,
@@ -70,7 +69,7 @@ class _ResponseOnlyProvider:
         after: str | None = None,
         before: str | None = None,
         *,
-        isolation: Any = None,
+        context: Any = None,
     ) -> list[OutputItem]:
         return await self._inner.get_input_items(
             response_id,
@@ -78,16 +77,16 @@ class _ResponseOnlyProvider:
             ascending,
             after,
             before,
-            isolation=isolation,
+            context=context,
         )
 
     async def get_items(
         self,
         item_ids: Iterable[str],
         *,
-        isolation: Any = None,
+        context: Any = None,
     ) -> list[OutputItem | None]:
-        return await self._inner.get_items(item_ids, isolation=isolation)
+        return await self._inner.get_items(item_ids, context=context)
 
     async def get_history_item_ids(
         self,
@@ -95,13 +94,13 @@ class _ResponseOnlyProvider:
         conversation_id: str | None,
         limit: int,
         *,
-        isolation: Any = None,
+        context: Any = None,
     ) -> list[str]:
         return await self._inner.get_history_item_ids(
             previous_response_id,
             conversation_id,
             limit,
-            isolation=isolation,
+            context=context,
         )
 
 
@@ -113,16 +112,15 @@ class _ResponseOnlyProvider:
 def _build_client(handler: Any) -> TestClient:
     """Build a TestClient whose store only implements ResponseProviderProtocol."""
     provider = _ResponseOnlyProvider()
-    # Sanity: confirm the facade is NOT a stream provider
+    # Sanity: confirm the facade satisfies ``ResponseProviderProtocol``
     assert isinstance(provider, ResponseProviderProtocol)
-    assert not isinstance(provider, ResponseStreamProviderProtocol)
 
     app = ResponsesAgentServerHost(store=provider)
     app.response_handler(handler)
     return TestClient(app)
 
 
-def _handler(request: Any, context: Any, cancel: Any) -> Any:
+async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Handler that emits created + completed."""
 
     async def _events():

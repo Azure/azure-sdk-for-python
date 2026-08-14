@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.service_gateways.begin_update_services(
+    response = client.service_gateways.update_services(
         resource_group_name="rg1",
         service_gateway_name="sg",
         parameters={
@@ -58,9 +58,10 @@ def main():
                 },
             ],
         },
-    ).result()
+    )
+    print(response)
 
 
-# x-ms-original-file: 2025-05-01/ServiceGatewayUpdateServicesRequest.json
+# x-ms-original-file: 2025-09-01/ServiceGatewayUpdateServicesRequest.json
 if __name__ == "__main__":
     main()

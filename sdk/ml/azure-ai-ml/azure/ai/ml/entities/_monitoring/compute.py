@@ -3,17 +3,17 @@
 # ---------------------------------------------------------
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_06_01_preview.models import AmlTokenComputeIdentity, MonitorServerlessSparkCompute
+from azure.ai.ml._restclient.arm_ml_service.models import AmlTokenComputeIdentity, MonitorServerlessSparkCompute
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 class ServerlessSparkCompute:
     """Serverless Spark compute.
 
-    :param runtime_version: The runtime version of the compute.
-    :type runtime_version: str
-    :param instance_type: The instance type of the compute.
-    :type instance_type: str
+    :keyword runtime_version: The runtime version of the compute.
+    :paramtype runtime_version: str
+    :keyword instance_type: The instance type of the compute.
+    :paramtype instance_type: str
     """
 
     def __init__(

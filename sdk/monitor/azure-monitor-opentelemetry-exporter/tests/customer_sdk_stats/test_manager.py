@@ -106,6 +106,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
             connection_string=connection_string,
             is_customer_sdkstats=True,
             credential=self.mock_credential,
+            disable_offline_storage=False,
         )
         mock_metric_reader.assert_called_once()
         mock_meter_provider.assert_called_once()
@@ -137,7 +138,9 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider")
-    def test_initialize_with_credential(self, mock_meter_provider, mock_metric_reader, mock_exporter):
+    def test_initialize_with_credential(  # pylint: disable=unused-argument
+        self, mock_meter_provider, mock_metric_reader, mock_exporter
+    ):
         """Test that credential is passed through to the exporter during initialization."""
         mock_meter = Mock()
         mock_meter_provider_instance = Mock()
@@ -155,12 +158,15 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
             connection_string=connection_string,
             is_customer_sdkstats=True,
             credential=mock_credential,
+            disable_offline_storage=False,
         )
 
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider")
-    def test_initialize_without_credential(self, mock_meter_provider, mock_metric_reader, mock_exporter):
+    def test_initialize_without_credential(  # pylint: disable=unused-argument
+        self, mock_meter_provider, mock_metric_reader, mock_exporter
+    ):
         """Test that credential is not passed to the exporter when not provided."""
         mock_meter = Mock()
         mock_meter_provider_instance = Mock()
@@ -175,6 +181,30 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
         mock_exporter.assert_called_once_with(
             connection_string=connection_string,
             is_customer_sdkstats=True,
+            disable_offline_storage=False,
+        )
+
+    @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider")
+    def test_initialize_honors_disable_offline_storage(  # pylint: disable=unused-argument
+        self, mock_meter_provider, mock_metric_reader, mock_exporter
+    ):
+        """Customer sdkstats shares the user's storage directory, so it honors the user's opt-out."""
+        mock_meter = Mock()
+        mock_meter_provider_instance = Mock()
+        mock_meter_provider_instance.get_meter.return_value = mock_meter
+        mock_meter_provider.return_value = mock_meter_provider_instance
+
+        connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+
+        result = self.manager.initialize(connection_string, disable_offline_storage=True)
+
+        self.assertTrue(result)
+        mock_exporter.assert_called_once_with(
+            connection_string=connection_string,
+            is_customer_sdkstats=True,
+            disable_offline_storage=True,
         )
 
     def test_initialize_multiple_calls(self):
@@ -528,6 +558,120 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
             # Test with client exception and no message
             reason = self.manager._get_retry_reason(RetryCode.CLIENT_EXCEPTION)
             self.assertEqual(reason, "Client exception")
+
+    # Old dimension keys that must no longer be emitted by any callback. Guards
+    # against accidental regressions to the pre-camelCase contract.
+    _DEPRECATED_DIMENSION_KEYS = {
+        "compute_type",
+        "compute.type",
+        "telemetry_type",
+        "telemetry_success",
+        "drop.code",
+        "drop.reason",
+        "retry.code",
+        "retry.reason",
+    }
+
+    def _initialize_manager(self):
+        connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+        self.manager.initialize(connection_string)
+
+    def test_item_success_callback_emits_camel_case_keys(self):
+        """_item_success_callback must emit camelCase dimension keys."""
+        with patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter"), patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader"
+        ), patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider"
+        ) as mock_meter_provider:
+            mock_meter_provider_instance = Mock()
+            mock_meter_provider_instance.get_meter.return_value = Mock()
+            mock_meter_provider.return_value = mock_meter_provider_instance
+
+            self._initialize_manager()
+            self.manager.count_successful_items(5, _REQUEST)
+
+            observations = list(self.manager._item_success_callback(None))
+            self.assertEqual(len(observations), 1)
+            attributes = observations[0].attributes
+
+            self.assertIn("computeType", attributes)
+            self.assertIn("telemetryType", attributes)
+            self.assertEqual(attributes["telemetryType"], _REQUEST)
+            for deprecated_key in self._DEPRECATED_DIMENSION_KEYS:
+                self.assertNotIn(deprecated_key, attributes)
+
+    def test_item_drop_callback_emits_camel_case_keys(self):
+        """_item_drop_callback must emit camelCase dimension keys."""
+        with patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter"), patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader"
+        ), patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider"
+        ) as mock_meter_provider:
+            mock_meter_provider_instance = Mock()
+            mock_meter_provider_instance.get_meter.return_value = Mock()
+            mock_meter_provider.return_value = mock_meter_provider_instance
+
+            self._initialize_manager()
+            self.manager.count_dropped_items(3, _REQUEST, 404, True)
+
+            observations = list(self.manager._item_drop_callback(None))
+            self.assertEqual(len(observations), 1)
+            attributes = observations[0].attributes
+
+            for expected_key in ("computeType", "telemetryType", "dropCode", "dropReason", "telemetrySuccess"):
+                self.assertIn(expected_key, attributes)
+            self.assertEqual(attributes["dropCode"], 404)
+            self.assertEqual(attributes["telemetryType"], _REQUEST)
+            self.assertEqual(attributes["telemetrySuccess"], True)
+            for deprecated_key in self._DEPRECATED_DIMENSION_KEYS:
+                self.assertNotIn(deprecated_key, attributes)
+
+    def test_item_drop_callback_omits_telemetry_success_for_non_request_dependency(self):
+        """telemetrySuccess must only be emitted for REQUEST/DEPENDENCY telemetry types."""
+        with patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter"), patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader"
+        ), patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider"
+        ) as mock_meter_provider:
+            mock_meter_provider_instance = Mock()
+            mock_meter_provider_instance.get_meter.return_value = Mock()
+            mock_meter_provider.return_value = mock_meter_provider_instance
+
+            self._initialize_manager()
+            self.manager.count_dropped_items(1, _CUSTOM_EVENT, DropCode.CLIENT_EXCEPTION, True, "Custom error")
+
+            observations = list(self.manager._item_drop_callback(None))
+            self.assertEqual(len(observations), 1)
+            attributes = observations[0].attributes
+
+            self.assertNotIn("telemetrySuccess", attributes)
+            for deprecated_key in self._DEPRECATED_DIMENSION_KEYS:
+                self.assertNotIn(deprecated_key, attributes)
+
+    def test_item_retry_callback_emits_camel_case_keys(self):
+        """_item_retry_callback must emit camelCase dimension keys."""
+        with patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter"), patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader"
+        ), patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider"
+        ) as mock_meter_provider:
+            mock_meter_provider_instance = Mock()
+            mock_meter_provider_instance.get_meter.return_value = Mock()
+            mock_meter_provider.return_value = mock_meter_provider_instance
+
+            self._initialize_manager()
+            self.manager.count_retry_items(2, _DEPENDENCY, 500, "Server error")
+
+            observations = list(self.manager._item_retry_callback(None))
+            self.assertEqual(len(observations), 1)
+            attributes = observations[0].attributes
+
+            for expected_key in ("computeType", "telemetryType", "retryCode", "retryReason"):
+                self.assertIn(expected_key, attributes)
+            self.assertEqual(attributes["retryCode"], 500)
+            self.assertEqual(attributes["telemetryType"], _DEPENDENCY)
+            for deprecated_key in self._DEPRECATED_DIMENSION_KEYS:
+                self.assertNotIn(deprecated_key, attributes)
 
 
 if __name__ == "__main__":

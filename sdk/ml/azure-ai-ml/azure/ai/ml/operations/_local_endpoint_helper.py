@@ -121,7 +121,14 @@ class _LocalEndpointHelper(object):
         endpoint_stubs = self._endpoint_stub.list()
         # Iterate through all cached endpoint files
         for endpoint_file in endpoint_stubs:
-            endpoint_json = json.loads(endpoint_file.read_text())
+            try:
+                contents = endpoint_file.read_text()
+                if not contents.strip():
+                    continue
+                endpoint_json = json.loads(contents)
+            except (json.JSONDecodeError, OSError):
+                # Skip files being written concurrently or otherwise unreadable
+                continue
             container = self._docker_client.get_endpoint_container(
                 endpoint_name=endpoint_json.get("name"), include_stopped=True
             )

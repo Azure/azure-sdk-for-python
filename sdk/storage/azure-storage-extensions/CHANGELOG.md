@@ -1,5 +1,10 @@
 # Release History
 
-## 0.1.0 (Unreleased)
+## 0.2.0 (Unreleased)
 
-Initial release.
+### Features Added
+
+## 0.1.0 (2026-07-28)
+
+### Features Added
+- Initial release.

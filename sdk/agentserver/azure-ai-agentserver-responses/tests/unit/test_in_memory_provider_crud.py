@@ -4,17 +4,19 @@
 
 Covers create, read, update, delete of response envelopes,
 output item storage, history resolution via previous_response_id
-and conversation_id, and defensive-copy isolation.
+and conversation_id, and defensive-copy platform context.
 """
 
 from __future__ import annotations
 
 import asyncio
-from typing import Any
+from datetime import datetime, timedelta, timezone
+from typing import Any, cast
 
 import pytest
 
-from azure.ai.agentserver.responses.models import _generated as generated_models
+from azure.ai.agentserver.responses.models import ResponseObject
+from azure.ai.agentserver.responses.models.runtime import StreamEventRecord
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
 # ---------------------------------------------------------------------------
@@ -28,7 +30,7 @@ def _response(
     status: str = "completed",
     output: list[dict[str, Any]] | None = None,
     conversation_id: str | None = None,
-) -> generated_models.ResponseObject:
+) -> ResponseObject:
     payload: dict[str, Any] = {
         "id": response_id,
         "object": "response",
@@ -38,7 +40,7 @@ def _response(
     }
     if conversation_id is not None:
         payload["conversation"] = {"id": conversation_id}
-    return generated_models.ResponseObject(payload)
+    return cast(ResponseObject, payload)
 
 
 def _input_item(item_id: str, text: str) -> dict[str, Any]:
@@ -70,15 +72,18 @@ def test_create__stores_response_envelope() -> None:
     asyncio.run(provider.create_response(_response("resp_1"), None, None))
 
     result = asyncio.run(provider.get_response("resp_1"))
-    assert str(getattr(result, "id")) == "resp_1"
+    assert result["id"] == "resp_1"
 
 
-def test_create__duplicate_raises_value_error() -> None:
+def test_create__duplicate_raises_response_already_exists() -> None:
+    from azure.ai.agentserver.responses.store import ResponseAlreadyExistsError
+
     provider = InMemoryResponseProvider()
     asyncio.run(provider.create_response(_response("resp_dup"), None, None))
 
-    with pytest.raises(ValueError, match="already exists"):
+    with pytest.raises(ResponseAlreadyExistsError) as exc_info:
         asyncio.run(provider.create_response(_response("resp_dup"), None, None))
+    assert exc_info.value.response_id == "resp_dup"
 
 
 def test_create__stores_input_items_in_item_store() -> None:
@@ -115,7 +120,7 @@ def test_create__returns_defensive_copy() -> None:
     r1["status"] = "failed"
 
     r2 = asyncio.run(provider.get_response("resp_copy"))
-    assert str(getattr(r2, "status")) == "completed"
+    assert r2["status"] == "completed"
 
 
 # ===========================================================================
@@ -144,6 +149,31 @@ def test_get_items__missing_ids_return_none() -> None:
     assert result == [None]
 
 
+def test_append_stream_event__stores_replay_record() -> None:
+    provider = InMemoryResponseProvider()
+    future_saved_at = datetime.now(timezone.utc) + timedelta(days=365)
+    asyncio.run(
+        provider.create_response(
+            _response("resp_stream"),
+            None,
+            None,
+        )
+    )
+    event = StreamEventRecord(
+        sequence_number=0,
+        event_type="response.created",
+        payload={"type": "response.created", "sequence_number": 0},
+        emitted_at=future_saved_at,
+    )
+
+    appended = asyncio.run(provider.append_stream_event("resp_stream", event))
+    stored = asyncio.run(provider.get_replay_events("resp_stream"))
+
+    assert appended is True
+    assert stored is not None
+    assert stored[0].emitted_at == future_saved_at
+
+
 # ===========================================================================
 # Update
 # ===========================================================================
@@ -157,7 +187,7 @@ def test_update__replaces_envelope() -> None:
     asyncio.run(provider.update_response(updated))
 
     result = asyncio.run(provider.get_response("resp_upd"))
-    assert str(getattr(result, "status")) == "completed"
+    assert result["status"] == "completed"
 
 
 def test_update__stores_new_output_items() -> None:

@@ -10,9 +10,7 @@ import requests  # pylint: disable=networking-import-outside-azure-core-transpor
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
-    _ONE_SETTINGS_CHANGE_VERSION_KEY,
 )
-
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +24,7 @@ class _ConfigurationProfile:
     version: str = ""
     component: str = ""
     region: str = ""
+    ikey: str = ""
 
     @classmethod
     def fill(cls, **kwargs) -> None:
@@ -42,19 +41,20 @@ class _ConfigurationProfile:
             cls.attach = kwargs["attach"]
         if "region" in kwargs and cls.region == "":
             cls.region = kwargs["region"]
+        if "ikey" in kwargs and cls.ikey == "":
+            cls.ikey = kwargs["ikey"]
 
 
 class OneSettingsResponse:
     """Response object containing OneSettings API response data.
 
     This class encapsulates the parsed response from a OneSettings API call,
-    including configuration settings, version information, error indicators and metadata.
+    including configuration settings, error indicators and metadata.
 
     Attributes:
         etag (Optional[str]): ETag header value for caching and conditional requests
-        refresh_interval (int): Interval in seconds for the next configuration refresh
+        refresh_interval_s (int): Interval in seconds for the next configuration refresh
         settings (Dict[str, str]): Dictionary of configuration key-value pairs
-        version (Optional[int]): Configuration version number for change tracking
         status_code (int): HTTP status code from the response
         has_exception (bool): True if the request resulted in a transient error (network error, timeout, etc.)
     """
@@ -62,9 +62,8 @@ class OneSettingsResponse:
     def __init__(
         self,
         etag: Optional[str] = None,
-        refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
+        refresh_interval_s: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
         settings: Optional[Dict[str, str]] = None,
-        version: Optional[int] = None,
         status_code: int = 200,
         has_exception: bool = False,
     ):
@@ -72,23 +71,20 @@ class OneSettingsResponse:
 
         Args:
             etag (Optional[str], optional): ETag header value for caching. Defaults to None.
-            refresh_interval (int, optional): Refresh interval in seconds.
+            refresh_interval_s (int, optional): Refresh interval in seconds.
                 Defaults to _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS.
             settings (Optional[Dict[str, str]], optional): Configuration settings dictionary.
                 Defaults to empty dict if None.
-            version (Optional[int], optional): Configuration version number. Defaults to None.
             status_code (int, optional): HTTP status code. Defaults to 200.
             has_exception (bool, optional): Indicates if request failed with a transient error. Defaults to False.
         """
         self.etag = etag
-        self.refresh_interval = refresh_interval
+        self.refresh_interval_s = refresh_interval_s
         self.settings = settings or {}
-        self.version = version
         self.status_code = status_code
         self.has_exception = has_exception
 
 
-# pylint: disable=do-not-log-exceptions-if-not-debug
 def make_onesettings_request(
     url: str, query_dict: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None
 ) -> OneSettingsResponse:
@@ -120,21 +116,24 @@ def make_onesettings_request(
     headers = headers or {}
 
     try:
+        # requests honors standard proxy environment variables (HTTP_PROXY/HTTPS_PROXY/NO_PROXY)
+        # automatically, so no explicit proxy configuration is needed here.
         result = requests.get(url, params=query_dict, headers=headers, timeout=10)
-        result.raise_for_status()  # Raises an exception for 4XX/5XX responses
-
+        # Do NOT call raise_for_status(): HTTP error codes (4xx/5xx) are handled by the parser so
+        # the real status_code is preserved. This lets callers distinguish retryable errors
+        # (see _RETRYABLE_STATUS_CODES) from non-retryable client errors (400/404/414). Only genuine
+        # network/timeout failures below are surfaced as has_exception=True (transient).
         return _parse_onesettings_response(result)
     except requests.exceptions.Timeout as ex:
-        logger.warning("OneSettings request timed out: %s", str(ex))
+        logger.debug("OneSettings request timed out: %s", str(ex))
         return OneSettingsResponse(has_exception=True)
     except requests.exceptions.RequestException as ex:
-        logger.warning("Failed to fetch configuration from OneSettings: %s", str(ex))
-        return OneSettingsResponse(has_exception=True)
-    except json.JSONDecodeError as ex:
-        logger.warning("Failed to parse OneSettings response: %s", str(ex))
+        logger.debug("Failed to fetch configuration from OneSettings: %s", str(ex))
         return OneSettingsResponse(has_exception=True)
     except Exception as ex:  # pylint: disable=broad-exception-caught
-        logger.warning("Unexpected error while fetching configuration: %s", str(ex))
+        # _parse_onesettings_response already swallows JSON/decode errors internally, so nothing
+        # here raises json.JSONDecodeError; this catch-all covers any other unexpected failure.
+        logger.debug("Unexpected error while fetching configuration: %s", str(ex))
         return OneSettingsResponse(has_exception=True)
 
 
@@ -143,13 +142,13 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
 
     This function processes the OneSettings API response and extracts:
     - HTTP headers (ETag, refresh interval)
-    - Response body (configuration settings, version)
+    - Response body (configuration settings)
     - Status code handling (200, 304, 4xx, 5xx)
 
     The parser handles different HTTP status codes appropriately:
-    - 200: New configuration data available, parse settings and version
+    - 200: New configuration data available, parse settings
     - 304: Not modified, configuration unchanged (empty settings)
-    - 400/404/414/500: Various error conditions, logged with warnings
+    - 400/404/414/500: Various error conditions, logged at debug
 
     :param response: HTTP response object from the requests library containing
         the OneSettings API response with headers, status code, and content.
@@ -157,32 +156,30 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
 
     :return: Structured response object containing:
         - etag: ETag header value for conditional requests
-        - refresh_interval: Next refresh interval from headers
+        - refresh_interval_s: Next refresh interval from headers
         - settings: Configuration key-value pairs (empty for 304/errors)
-        - version: Configuration version number for change tracking
         - status_code: HTTP status code of the response
     :rtype: OneSettingsResponse
     Note:
-        This function logs warnings for various error conditions but does not
-        raise exceptions, always returning a valid OneSettingsResponse object.
+        This function logs various error conditions at debug level (config fetching is internal)
+        but does not raise exceptions, always returning a valid OneSettingsResponse object.
     """
     etag = None
-    refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
+    refresh_interval_s = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
     settings: Dict[str, str] = {}
     status_code = response.status_code
-    version = None
 
     # Extract headers
     if response.headers:
         etag = response.headers.get("ETag")
         refresh_interval_header = response.headers.get("x-ms-onesetinterval")
         try:
-            # Note: OneSettings refresh interval is in minutes, convert to seconds
+            # Note: OneSettings refresh interval returned is in minutes, convert to seconds
             if refresh_interval_header:
-                refresh_interval = int(refresh_interval_header) * 60
+                refresh_interval_s = int(refresh_interval_header) * 60
         except (ValueError, TypeError):
-            logger.warning("Invalid refresh interval format: %s", refresh_interval_header)
-            refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
+            logger.debug("Invalid refresh interval format: %s", refresh_interval_header)
+            refresh_interval_s = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
 
     # Handle different status codes
     if status_code == 304:
@@ -195,22 +192,18 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
                 decoded_string = response.content.decode("utf-8")
                 config = json.loads(decoded_string)
                 settings = config.get("settings", {})
-                if settings and settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY) is not None:
-                    version = int(settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY))  # type: ignore
             except (UnicodeDecodeError, json.JSONDecodeError) as ex:
-                logger.warning("Failed to decode OneSettings response content: %s", str(ex))
-            except ValueError as ex:
-                logger.warning("Failed to parse OneSettings change version: %s", str(ex))
+                logger.debug("Failed to decode OneSettings response content: %s", str(ex))
     elif status_code == 400:
-        logger.warning("Bad request to OneSettings: %s", response.content)
+        logger.debug("Bad request to OneSettings: %s", response.content)
     elif status_code == 404:
-        logger.warning("OneSettings configuration not found: %s", response.content)
+        logger.debug("OneSettings configuration not found: %s", response.content)
     elif status_code == 414:
-        logger.warning("OneSettings request URI too long: %s", response.content)
+        logger.debug("OneSettings request URI too long: %s", response.content)
     elif status_code == 500:
-        logger.warning("Internal server error from OneSettings: %s", response.content)
+        logger.debug("Internal server error from OneSettings: %s", response.content)
 
-    return OneSettingsResponse(etag, refresh_interval, settings, version, status_code)
+    return OneSettingsResponse(etag, refresh_interval_s, settings, status_code)
 
 
 # mypy: disable-error-code="no-any-return"
@@ -229,48 +222,34 @@ def evaluate_feature(feature_key: str, settings: Dict[str, Any]) -> Optional[boo
 
     Example settings structure:
     {
-        "live_metrics": {
+        "FEATURE_LIVE_METRICS": {
             "default": "disabled",  # Feature is disabled by default
             "override": [
-                {"os": "w"},  # Enable on Windows (any version)
-                {"os": "l", "ver": {"min": "1.0.0b20"}},  # Enable on Linux with version >= 1.0.0b20
-                {"component": "ext", "rp": "f"}  # Enable if component is exporter AND rp is functions
+                {"os": "windows"},  # Enable on Windows (any version)
+                # Enable on Linux at exact version 1.0.0b21 with the distro component
+                {"os": "linux", "ver": "1.0.0b21", "component": "dst"},
+                {"ikey": "12345678-1234-1234-1234-123456789abc"},  # Enable for a specific instrumentation key
+                {"component": "dst"}  # Enable if component is distro
             ]
         },
-        "sampling": {
+        "FEATURE_SDK_STATS": {
             "default": "enabled",  # Feature is enabled by default
             "override": [
-                {"os": ["w", "l"]},  # Disable on Windows OR Linux
-                {"ver": {"max": "1.0.0"}},  # Disable on versions <= 1.0.0
-                # Disable if attach is integratedauto/manual AND region is eastus
-                {"attach": ["i", "m"], "region": "eastus"}
-            ]
-        },
-        "profiling": {
-            "default": "disabled",
-            "override": [
-                {"os": "w", "ver": {"min": "2.0.0", "max": "3.0.0"}},  # Enable on Windows with version 2.0.0-3.0.0
-                # Enable if component is exporter AND rp is functions/appsvc AND region is westus/eastus
-                {"component": "ext", "rp": ["f", "a"], "region": ["westus", "eastus"]}
-            ]
-        },
-        "debug_logging": {
-            "default": "enabled",
-            "override": [
-                {"ver": "1.0.0b1"},  # Disable on exact version 1.0.0b1
-                # Disable on Linux with distro component, manual attach, and AKS runtime
-                {"os": "l", "component": "dst", "attach": "m", "rp": "k"}
+                {"os": "linux"},  # Disable on Linux
+                # Disable on Linux at exact version 1.0.0b20 with the exporter component
+                {"os": "linux", "ver": "1.0.0b20", "component": "ext"}
             ]
         }
     }
 
-    Available condition fields:
-    - os: Operating system ("w"=windows, "l"=linux, "d"=darwin, "u"=unknown, etc.) - supports single value or list
-    - ver: Version constraints - supports exact string match or dict with "min"/"max" keys
-    - component: Component type ("ext"=exporter, "dst"=distro) - exact string match
-    - rp: Runtime platform ("u"=unknown, "f"=functions, "a"=appsvc, "k"=aks) - supports single value or list
-    - region: Host region ("westus", "eastus", etc.) - supports single value or list
-    - attach: Attachment type ("m"=manual, "i"=integratedauto) - supports single value or list
+    Available condition fields (each override rule is a single-value exact match per field):
+    - os: Operating system ("windows", "linux", "darwin", "unknown")
+    - ver: Exact version string match (e.g. "1.0.0b21"); when present, "component" is also required
+    - rp: Resource provider ("appsvc", "fn", "aks", "unknown")
+    - ikey: Instrumentation key (GUID format, case-insensitive)
+    - component: Component type ("dst"=distro, "ext"=exporter, "mot"=msft distro)
+    - attach: Attach type ("manual", "integratedauto")
+    - region: Azure region (e.g. "eastus", "westeurope")
 
     Override logic:
     - Each item in the override list is an independent rule
@@ -289,7 +268,11 @@ def evaluate_feature(feature_key: str, settings: Dict[str, Any]) -> Optional[boo
     if not isinstance(feature_config, dict):
         return None
 
-    default_state = feature_config.get("default", "disabled").lower() == "enabled"
+    # Coerce the raw value with str() before .lower(): the OneSettings payload is only JSON-decoded,
+    # so a malformed "default" (e.g. a JSON boolean true instead of the string "enabled") would
+    # otherwise raise AttributeError here. str() keeps a well-formed string unchanged while making a
+    # non-string safely fall through to the default-disabled state instead of crashing the caller.
+    default_state = str(feature_config.get("default", "disabled")).lower() == "enabled"
     override_list = feature_config.get("override", [])
 
     # If no override conditions, return default state
@@ -312,6 +295,11 @@ def _matches_override_rule(override_rule: Dict[str, Any]) -> bool:
 
     All conditions within a single override rule must match for the rule to apply.
 
+    A version ("ver") condition is only honored when the rule also carries a "component"
+    condition (per the OneSettings schema, "ver" requires "component"). A rule that specifies
+    "ver" without "component" is treated as non-matching. Because "component" is a regular
+    condition, it is still matched against the current profile like any other field.
+
     :param override_rule: Dictionary of conditions that must all be true
     :type override_rule: Dict[str, Any]
     :return: True if all conditions in the rule match, False otherwise
@@ -319,6 +307,10 @@ def _matches_override_rule(override_rule: Dict[str, Any]) -> bool:
     """
     # Validate input
     if not override_rule:
+        return False
+
+    # A "ver" condition requires a "component" condition to be present in the same rule.
+    if "ver" in override_rule and "component" not in override_rule:
         return False
 
     # All conditions in this rule must match
@@ -349,32 +341,11 @@ def _matches_condition(condition_key: str, condition_value: Any) -> bool:
         return False
 
     if condition_key == "os":
-        # OS condition - check if current OS is in the list
-        if isinstance(condition_value, list):
-            return profile.os.lower() in [str(os).lower() for os in condition_value]
+        # OS condition - exact match (case-insensitive)
         return profile.os.lower() == str(condition_value).lower()
 
     if condition_key == "ver":
-        # Version condition - support min/max version checks
-        if isinstance(condition_value, dict):
-            current_version = profile.version
-            if not current_version:
-                return False
-
-            # Check minimum version
-            if "min" in condition_value:
-                min_version = condition_value["min"]
-                if not _compare_versions(current_version, str(min_version), ">="):
-                    return False
-
-            # Check maximum version
-            if "max" in condition_value:
-                max_version = condition_value["max"]
-                if not _compare_versions(current_version, str(max_version), "<="):
-                    return False
-
-            return True
-        # Exact version match
+        # Version condition - exact match
         return profile.version == str(condition_value)
 
     if condition_key == "component":
@@ -382,96 +353,23 @@ def _matches_condition(condition_key: str, condition_value: Any) -> bool:
         return profile.component == str(condition_value)
 
     if condition_key == "rp":
-        # Runtime platform condition - check if current RP is in the list
-        if isinstance(condition_value, list):
-            return profile.rp in [str(rp) for rp in condition_value]
+        # Resource provider condition - exact match
         return profile.rp == str(condition_value)
 
     if condition_key == "region":
-        # Region condition - check if current region is in the list
-        if isinstance(condition_value, list):
-            return profile.region in [str(region) for region in condition_value]
+        # Region condition - exact match
         return profile.region == str(condition_value)
 
     if condition_key == "attach":
-        # Attach type condition - check if current attach type is in the list
-        if isinstance(condition_value, list):
-            return profile.attach in [str(attach) for attach in condition_value]
+        # Attach type condition - exact match
         return profile.attach == str(condition_value)
+
+    if condition_key == "ikey":
+        # Instrumentation key condition - exact match, case-insensitive (GUIDs are hex)
+        return profile.ikey.lower() == str(condition_value).lower()
 
     # Unknown condition key
     return False
-
-
-def _compare_versions(version1: str, version2: str, operator: str) -> bool:
-    """Compare two version strings using the specified operator.
-
-    Handles standard semantic versioning with beta versions (e.g., "1.0.0b28").
-
-    :param version1: First version string (e.g., "2.9.1", "1.0.0b28")
-    :type version1: str
-    :param version2: Second version string (e.g., "2.9.0", "1.0.0b20")
-    :type version2: str
-    :param operator: Comparison operator (">=", "<=", "==", ">", "<")
-    :type operator: str
-    :return: True if the comparison is satisfied, False otherwise
-    :rtype: bool
-    """
-    try:
-        # Parse version strings into comparable tuples
-        v1_parts = _parse_version_with_beta(version1)
-        v2_parts = _parse_version_with_beta(version2)
-
-        # Compare tuples
-        if operator == ">=":
-            return v1_parts >= v2_parts
-        if operator == "<=":
-            return v1_parts <= v2_parts
-        if operator == "==":
-            return v1_parts == v2_parts
-        if operator == ">":
-            return v1_parts > v2_parts
-        if operator == "<":
-            return v1_parts < v2_parts
-        return False
-    except (ValueError, AttributeError):
-        # If version parsing fails, fall back to string comparison
-        if operator == ">=":
-            return version1 >= version2
-        if operator == "<=":
-            return version1 <= version2
-        if operator == "==":
-            return version1 == version2
-        if operator == ">":
-            return version1 > version2
-        if operator == "<":
-            return version1 < version2
-        return False
-
-
-def _parse_version_with_beta(version: str) -> tuple:
-    """Parse a version string that may contain beta suffix into a comparable tuple.
-
-    Examples:
-    - "1.0.0" -> (1, 0, 0, float('inf'))  # Release version sorts after beta
-    - "1.0.0b28" -> (1, 0, 0, 28)        # Beta version with number
-    - "2.1.5b1" -> (2, 1, 5, 1)          # Beta version with number
-
-    :param version: Version string to parse
-    :type version: str
-    :return: Tuple representing version for comparison
-    :rtype: tuple
-    """
-    # Check if version contains beta suffix
-    if "b" in version:
-        # Split on 'b' to separate base version and beta number
-        base_version, beta_part = version.split("b", 1)
-        base_parts = [int(x) for x in base_version.split(".")]
-        beta_number = int(beta_part) if beta_part.isdigit() else 0
-        return tuple(base_parts + [beta_number])
-    # Release version - use infinity for beta part so it sorts after beta versions
-    base_parts = [int(x) for x in version.split(".")]
-    return tuple(base_parts + [float("inf")])
 
 
 # cSpell:enable

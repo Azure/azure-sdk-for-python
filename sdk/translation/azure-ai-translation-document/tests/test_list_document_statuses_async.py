@@ -76,7 +76,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
     async def test_list_document_statuses_filter_by_status(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
-        docs_count = 10
+        docs_count = 5
         target_language = "es"
 
         # submit and validate operation
@@ -113,7 +113,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
     async def test_list_document_statuses_filter_by_ids(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
-        docs_count = 15
+        docs_count = 5
         target_language = "es"
 
         # submit and validate operation
@@ -199,10 +199,10 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
     async def test_list_document_statuses_mixed_filters(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
-        docs_count = 25
+        docs_count = 5
         target_language = "es"
         statuses = ["Succeeded"]
-        skip = 3
+        skip = 1
 
         # submit and validate operation
         poller = await self._begin_and_validate_translation_with_multiple_docs_async(

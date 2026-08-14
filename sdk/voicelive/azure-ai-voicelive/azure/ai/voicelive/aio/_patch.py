@@ -672,7 +672,7 @@ class _VoiceLiveConnectionManager(
         *,
         credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         endpoint: str,
-        api_version: str = "2026-06-01-preview",
+        api_version: str = "2026-07-15",
         model: Optional[str] = None,
         agent_config: Optional[Mapping[str, str]] = None,
         extra_query: Mapping[str, Any],
@@ -875,7 +875,7 @@ def connect(
     *,
     credential: Union[AzureKeyCredential, AsyncTokenCredential],
     endpoint: str,
-    api_version: str = "2026-06-01-preview",
+    api_version: str = "2026-07-15",
     model: Optional[str] = None,
     query: Optional[Mapping[str, Any]] = None,
     headers: Optional[Mapping[str, Any]] = None,
@@ -889,7 +889,7 @@ def connect(
     *,
     credential: Union[AzureKeyCredential, AsyncTokenCredential],
     endpoint: str,
-    api_version: str = "2026-06-01-preview",
+    api_version: str = "2026-07-15",
     model: Optional[str] = None,
     agent_name: str,
     project_name: str,
@@ -908,7 +908,7 @@ def connect(
     *,
     credential: Union[AzureKeyCredential, AsyncTokenCredential],
     endpoint: str,
-    api_version: str = "2026-06-01-preview",
+    api_version: str = "2026-07-15",
     model: Optional[str] = None,
     agent_name: Optional[str] = None,
     project_name: Optional[str] = None,
@@ -938,7 +938,7 @@ def connect(
     :paramtype credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AsyncTokenCredential
     :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
     :paramtype endpoint: str
-    :keyword api_version: The API version to use. Defaults to ``"2026-06-01-preview"``.
+    :keyword api_version: The API version to use. Defaults to ``"2026-07-15"``.
     :paramtype api_version: str
     :keyword model: Model identifier to use for the session.
      In most scenarios, this parameter is required.

@@ -14,6 +14,7 @@ Invalid environment variable values raise ``ValueError`` immediately so
 misconfiguration is surfaced at startup rather than silently masked.
 """
 import os
+from pathlib import Path
 from typing import Optional
 
 from typing_extensions import Self
@@ -23,6 +24,7 @@ from typing_extensions import Self
 # ======================================================================
 
 _ENV_FOUNDRY_AGENT_NAME = "FOUNDRY_AGENT_NAME"
+_ENV_FOUNDRY_AGENT_ID = "FOUNDRY_AGENT_ID"
 _ENV_FOUNDRY_AGENT_VERSION = "FOUNDRY_AGENT_VERSION"
 _ENV_FOUNDRY_AGENT_INSTANCE_CLIENT_ID = "FOUNDRY_AGENT_INSTANCE_CLIENT_ID"
 _ENV_FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID = "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID"
@@ -60,6 +62,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
     :param agent_name: Agent name from ``FOUNDRY_AGENT_NAME``.
     :param agent_version: Agent version from ``FOUNDRY_AGENT_VERSION``.
     :param agent_id: Combined identifier (``"name:version"`` or ``"name"`` or ``""``).
+    :param agent_guid: Agent stable identifier (GUID) from ``FOUNDRY_AGENT_ID``.
     :param is_hosted: Whether the agent is running in a Foundry-hosted container environment,
         derived from ``FOUNDRY_HOSTING_ENVIRONMENT``.
     :param project_endpoint: Foundry project endpoint from ``FOUNDRY_PROJECT_ENDPOINT``.
@@ -79,6 +82,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         agent_name: str,
         agent_version: str,
         agent_id: str,
+        agent_guid: str = "",
         is_hosted: bool,
         project_endpoint: str,
         project_id: str,
@@ -92,6 +96,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         self.agent_name = agent_name
         self.agent_version = agent_version
         self.agent_id = agent_id
+        self.agent_guid = agent_guid
         self.is_hosted = is_hosted
         self.project_endpoint = project_endpoint
         self.project_id = project_id
@@ -123,6 +128,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
             agent_name=agent_name,
             agent_version=agent_version,
             agent_id=agent_id,
+            agent_guid=os.environ.get(_ENV_FOUNDRY_AGENT_ID, ""),
             is_hosted=bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT, "")),
             project_endpoint=os.environ.get(_ENV_FOUNDRY_PROJECT_ENDPOINT, ""),
             project_id=os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, ""),
@@ -212,19 +218,73 @@ def resolve_port(port: Optional[int]) -> int:
 
 
 _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT = 30
+_ENV_GRACEFUL_SHUTDOWN_TIMEOUT = "AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS"
 
 
 def resolve_graceful_shutdown_timeout(timeout: Optional[int]) -> int:
-    """Resolve the graceful shutdown timeout from argument or default.
+    """Resolve the graceful shutdown timeout from argument, env var, or default.
+
+    Resolution order:
+    1. Explicit ``timeout`` argument (constructor / programmatic).
+    2. ``AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS`` env var.
+    3. Default of 30 seconds.
+
+    Lower values force Hypercorn to cancel in-flight connections sooner
+    on SIGTERM — useful for tests / operators that want shutdown handlers
+    (in-process markers, resilient task checkpoints) to fire before
+    long-running requests complete naturally.
 
     :param timeout: Explicitly requested timeout or None.
     :type timeout: Optional[int]
-    :return: The resolved timeout in seconds (default 30).
+    :return: The resolved timeout in seconds.
     :rtype: int
     """
     if timeout is not None:
         return max(0, _require_int("graceful_shutdown_timeout", timeout))
+    env_val = _parse_int_env(_ENV_GRACEFUL_SHUTDOWN_TIMEOUT)
+    if env_val is not None:
+        return max(0, env_val)
     return _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
+
+
+# ======================================================================
+# On-disk state storage paths
+# ======================================================================
+
+_ENV_STATE_ROOT = "AGENTSERVER_STATE_ROOT"
+_DEFAULT_STATE_ROOT_DIRNAME = ".agentserver"
+
+
+def _resolve_state_root() -> Path:
+    """Resolve the root directory for agentserver on-disk state.
+
+    ``AGENTSERVER_STATE_ROOT`` if set, else ``~/.agentserver``. Private —
+    callers resolve a named subdirectory via :func:`resolve_state_subdir`.
+
+    :return: The resolved state-root path.
+    :rtype: Path
+    """
+    env_value = os.environ.get(_ENV_STATE_ROOT)
+    if env_value:
+        return Path(env_value)
+    return Path.home() / _DEFAULT_STATE_ROOT_DIRNAME
+
+
+def resolve_state_subdir(name: str) -> Path:
+    """Resolve an on-disk state subdirectory under the agentserver state root.
+
+    The root is ``AGENTSERVER_STATE_ROOT`` (the single operator knob), or
+    ``~/.agentserver`` when unset. Each subsystem owns and passes its own
+    subdirectory name (e.g. ``"tasks"``); the core layer does not enumerate
+    or reserve names. The path is not created on disk — callers mkdir lazily
+    on first write.
+
+    :param name: The subdirectory name owned by the calling subsystem.
+    :type name: str
+    :return: The resolved subdirectory path under the state root.
+    :rtype: Path
+    """
+    return _resolve_state_root() / name
 
 
 _VALID_LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
@@ -315,6 +375,15 @@ def resolve_agent_id() -> str:
     return agent_name
 
 
+def resolve_agent_guid() -> str:
+    """Resolve the agent stable GUID from the ``FOUNDRY_AGENT_ID`` environment variable.
+
+    :return: The agent GUID, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(_ENV_FOUNDRY_AGENT_ID, "")
+
+
 def resolve_agent_blueprint_id() -> str:
     """Resolve the agent blueprint client ID from the ``FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID`` environment variable.
 
@@ -343,6 +412,15 @@ def resolve_project_id() -> str:
     :rtype: str
     """
     return os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, "")
+
+
+def resolve_session_id() -> str:
+    """Resolve the default session ID from the ``FOUNDRY_AGENT_SESSION_ID`` environment variable.
+
+    :return: The default session ID, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_ID, "")
 
 
 def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:

@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
 import os
+from threading import Event, Thread
 from unittest import mock
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
@@ -15,8 +16,12 @@ from azure.ai.agentserver.core._config import (
     resolve_agent_name,
     resolve_agent_version,
     resolve_appinsights_connection_string,
+    resolve_session_id,
 )
-from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
+from azure.ai.agentserver.core._tracing import (
+    _BaggageLogRecordProcessor,
+    _FoundryEnrichmentSpanProcessor,
+)
 
 
 class _CollectorExporter(SpanExporter):
@@ -142,6 +147,290 @@ class TestSetupDistroExport:
             mock_distro.assert_called_once()
             kwargs = mock_distro.call_args[1]
             assert kwargs["connection_string"] is None
+
+    def test_grpc_protocol_without_optional_extra_logs_warning(self, caplog) -> None:
+        from azure.ai.agentserver.core import _tracing
+
+        original_import = __import__
+
+        def import_without_grpc_exporter(name, *args, **kwargs):
+            if name.startswith("opentelemetry.exporter.otlp.proto.grpc"):
+                raise ImportError(name)
+            return original_import(name, *args, **kwargs)
+
+        with (
+            mock.patch.dict(
+                os.environ,
+                {
+                    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+                    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+                },
+            ),
+            mock.patch("builtins.__import__", side_effect=import_without_grpc_exporter),
+            caplog.at_level("WARNING", logger="azure.ai.agentserver"),
+        ):
+            suppress_distro_otlp = _tracing._append_managed_otlp_components([], [], [])
+
+        assert suppress_distro_otlp is True
+        assert "azure-ai-agentserver-core[otlp-grpc]" in caplog.text
+
+    def test_signal_specific_otlp_protocol_overrides_global(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+
+        with mock.patch.dict(
+            os.environ,
+            {
+                "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf",
+                "OTEL_EXPORTER_OTLP_TRACES_PROTOCOL": "grpc",
+            },
+        ):
+            assert _tracing._resolve_otlp_protocol("OTEL_EXPORTER_OTLP_TRACES_PROTOCOL") == "grpc"
+            assert _tracing._resolve_otlp_protocol("OTEL_EXPORTER_OTLP_METRICS_PROTOCOL") == "http/protobuf"
+
+    def test_managed_otlp_handles_mixed_signal_protocols(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+
+        with mock.patch.dict(
+            os.environ,
+            {
+                "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+                "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf",
+                "OTEL_EXPORTER_OTLP_TRACES_PROTOCOL": "grpc",
+            },
+        ):
+            span_processors = []
+            metric_readers = []
+            log_record_processors = []
+            suppress_distro_otlp = _tracing._append_managed_otlp_components(
+                span_processors,
+                metric_readers,
+                log_record_processors,
+            )
+
+        try:
+            assert suppress_distro_otlp is True
+            assert len(span_processors) == 1
+            assert len(metric_readers) == 1
+            assert len(log_record_processors) == 1
+            assert span_processors[0].span_exporter.__module__.startswith(
+                "opentelemetry.exporter.otlp.proto.grpc"
+            )
+            assert metric_readers[0]._exporter.__module__.startswith(
+                "opentelemetry.exporter.otlp.proto.http"
+            )
+            assert log_record_processors[0]._batch_processor._exporter.__module__.startswith(
+                "opentelemetry.exporter.otlp.proto.http"
+            )
+        finally:
+            for processor in span_processors + log_record_processors:
+                processor.shutdown()
+            for reader in metric_readers:
+                reader.shutdown()
+
+    def test_suppressing_distro_otlp_leaves_env_visible(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+
+        with mock.patch.dict(
+            os.environ,
+            {
+                "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+                "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+            },
+        ):
+            with _tracing._suppress_distro_otlp_components():
+                import microsoft.opentelemetry as microsoft_opentelemetry
+
+                distro_globals = microsoft_opentelemetry.use_microsoft_opentelemetry.__globals__
+                assert distro_globals["is_otlp_enabled"]()
+                assert os.environ["OTEL_EXPORTER_OTLP_PROTOCOL"] == "grpc"
+
+    def test_suppressing_distro_otlp_prevents_duplicate_http_and_console_exporters(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+        from microsoft.opentelemetry import use_microsoft_opentelemetry
+
+        distro_globals = use_microsoft_opentelemetry.__globals__
+        configured_kwargs = []
+
+        def capture_setup(_resource, otel_kwargs):
+            configured_kwargs.append(otel_kwargs)
+            return None
+
+        with (
+            mock.patch.dict(
+                os.environ,
+                {
+                    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+                    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+                },
+            ),
+            mock.patch.dict(
+                distro_globals,
+                {
+                    "_setup_tracing": capture_setup,
+                    "_setup_metrics": capture_setup,
+                    "_setup_logging": capture_setup,
+                    "_setup_instrumentations": lambda *_args, **_kwargs: None,
+                    "_initialize_sdkstats": lambda _enable_azure_monitor: None,
+                },
+            ),
+        ):
+            with _tracing._suppress_distro_otlp_components():
+                use_microsoft_opentelemetry()
+
+        exporter_modules = []
+        for otel_kwargs in configured_kwargs:
+            exporter_modules.extend(
+                getattr(processor.span_exporter, "__module__", "")
+                for processor in otel_kwargs.get("span_processors") or []
+            )
+            exporter_modules.extend(
+                getattr(reader._exporter, "__module__", "")
+                for reader in otel_kwargs.get("metric_readers") or []
+            )
+            exporter_modules.extend(
+                getattr(processor._batch_processor._exporter, "__module__", "")
+                for processor in otel_kwargs.get("log_record_processors") or []
+            )
+
+        assert len(configured_kwargs) == 3
+        assert not any(module.startswith("opentelemetry.exporter.otlp.proto.http") for module in exporter_modules)
+        assert not any(module.startswith("opentelemetry.sdk.trace.export") for module in exporter_modules)
+        assert not any(module.startswith("opentelemetry.sdk.metrics.export") for module in exporter_modules)
+        assert not any(module.startswith("opentelemetry.sdk._logs.export") for module in exporter_modules)
+
+    def test_suppressing_distro_otlp_serializes_overlapping_contexts(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+        from microsoft.opentelemetry import use_microsoft_opentelemetry
+
+        distro_globals = use_microsoft_opentelemetry.__globals__
+        original_append_otlp_components = distro_globals["_append_otlp_components"]
+        first_context_entered = Event()
+        release_first_context = Event()
+        second_context_entered = Event()
+        errors = []
+
+        def first_context():
+            try:
+                with _tracing._suppress_distro_otlp_components():
+                    first_context_entered.set()
+                    release_first_context.wait(timeout=5)
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                errors.append(exc)
+
+        def second_context():
+            try:
+                first_context_entered.wait(timeout=5)
+                with _tracing._suppress_distro_otlp_components():
+                    second_context_entered.set()
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                errors.append(exc)
+
+        first_thread = Thread(target=first_context)
+        second_thread = Thread(target=second_context)
+        first_thread.start()
+        assert first_context_entered.wait(timeout=5)
+        second_thread.start()
+
+        try:
+            assert not second_context_entered.wait(timeout=0.1)
+            assert distro_globals["_append_otlp_components"] is not original_append_otlp_components
+        finally:
+            release_first_context.set()
+            first_thread.join(timeout=5)
+            second_thread.join(timeout=5)
+
+        assert not first_thread.is_alive()
+        assert not second_thread.is_alive()
+        assert second_context_entered.is_set()
+        assert distro_globals["_append_otlp_components"] is original_append_otlp_components
+        assert errors == []
+
+    def test_suppressing_distro_otlp_only_applies_to_current_thread(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+        from microsoft.opentelemetry import use_microsoft_opentelemetry
+
+        distro_globals = use_microsoft_opentelemetry.__globals__
+        other_thread_kwargs = {}
+        errors = []
+
+        def fake_append_otlp_components(otel_kwargs):
+            otel_kwargs["delegated"] = True
+
+        def call_helper_in_other_thread(helper):
+            try:
+                helper(other_thread_kwargs)
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                errors.append(exc)
+
+        with mock.patch.dict(distro_globals, {"_append_otlp_components": fake_append_otlp_components}):
+            with _tracing._suppress_distro_otlp_components():
+                active_helper = distro_globals["_append_otlp_components"]
+                current_thread_kwargs = {}
+                active_helper(current_thread_kwargs)
+
+                other_thread = Thread(target=call_helper_in_other_thread, args=(active_helper,))
+                other_thread.start()
+                other_thread.join(timeout=5)
+
+        assert current_thread_kwargs == {}
+        assert other_thread_kwargs == {"delegated": True}
+        assert not other_thread.is_alive()
+        assert errors == []
+
+
+# ------------------------------------------------------------------ #
+# Entra-based Azure Monitor export credential
+# ------------------------------------------------------------------ #
+
+
+class TestEntraAuthMode:
+    """Verify _setup_distro_export wires a managed identity credential for Entra auth."""
+
+    def _run(self, env: dict) -> dict:
+        from azure.ai.agentserver.core import _tracing
+        with mock.patch("microsoft.opentelemetry.use_microsoft_opentelemetry") as mock_use, \
+                mock.patch.dict(os.environ, env, clear=False):
+            _tracing._setup_distro_export(
+                resource=Resource.create({}),
+                span_processors=[],
+                metric_readers=[],
+                log_record_processors=[],
+                connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000",
+            )
+            mock_use.assert_called_once()
+            return mock_use.call_args[1]
+
+    def test_entra_auth_mode_passes_managed_identity_credential(self) -> None:
+        sentinel = object()
+        with mock.patch(
+            "azure.identity.ManagedIdentityCredential",
+            return_value=sentinel,
+        ):
+            kwargs = self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "Entra"})
+        assert kwargs["enable_azure_monitor"] is True
+        assert kwargs["azure_monitor_exporter_credential"] is sentinel
+
+    def test_entra_auth_mode_case_insensitive(self) -> None:
+        sentinel = object()
+        with mock.patch(
+            "azure.identity.ManagedIdentityCredential",
+            return_value=sentinel,
+        ):
+            kwargs = self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "entra"})
+        assert kwargs["azure_monitor_exporter_credential"] is sentinel
+
+    def test_no_credential_when_auth_mode_not_entra(self) -> None:
+        env = {"APPLICATIONINSIGHTS_AUTH_MODE": ""}
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("APPLICATIONINSIGHTS_AUTH_MODE", None)
+            kwargs = self._run(env)
+        assert kwargs["enable_azure_monitor"] is True
+        assert "azure_monitor_exporter_credential" not in kwargs
+
+    def test_managed_identity_credential_has_no_client_id(self) -> None:
+        with mock.patch("azure.identity.ManagedIdentityCredential") as mock_cred:
+            self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "Entra"})
+            mock_cred.assert_called_once_with()
 
 
 # ------------------------------------------------------------------ #
@@ -408,7 +697,7 @@ class TestFoundryEnrichmentSpanProcessor:
 
 
 class TestAgentIdentityResolution:
-    """Tests for resolve_agent_name() and resolve_agent_version()."""
+    """Tests for agent identity/session resolution helpers."""
 
     def test_agent_name_from_env(self) -> None:
         with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_NAME": "my-agent"}):
@@ -430,5 +719,78 @@ class TestAgentIdentityResolution:
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_version() == ""
 
+    def test_session_id_from_env(self) -> None:
+        with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": "session-1"}):
+            assert resolve_session_id() == "session-1"
+
+    def test_session_id_default_empty(self) -> None:
+        env = os.environ.copy()
+        env.pop("FOUNDRY_AGENT_SESSION_ID", None)
+        with mock.patch.dict(os.environ, env, clear=True):
+            assert resolve_session_id() == ""
 
 
+class _FakeLogRecord:
+    def __init__(self, attributes):
+        self.attributes = attributes
+
+
+class _FakeLogData:
+    def __init__(self, attributes):
+        self.log_record = _FakeLogRecord(attributes)
+
+
+class TestBaggageLogRecordProcessor:
+    def test_adds_agent_and_fallback_session_attributes(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        log_data = _FakeLogData({})
+
+        proc.on_emit(log_data)
+
+        attrs = log_data.log_record.attributes
+        assert attrs["gen_ai.agent.name"] == "agent-a"
+        assert attrs["gen_ai.agent.version"] == "1.2.3"
+        assert attrs["microsoft.session.id"] == "session-fallback-1"
+
+    def test_prefers_baggage_session_id_over_fallback(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        log_data = _FakeLogData({})
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.session_id", "session-from-baggage",
+        )
+        token = _otel_context.attach(ctx)
+        try:
+            proc.on_emit(log_data)
+        finally:
+            _otel_context.detach(token)
+
+        attrs = log_data.log_record.attributes
+        assert attrs["microsoft.session.id"] == "session-from-baggage"
+
+    def test_does_not_overwrite_existing_log_attributes(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        attrs = {
+            "gen_ai.agent.name": "existing-name",
+            "gen_ai.agent.version": "0.0.1",
+            "microsoft.session.id": "existing-session",
+        }
+        log_data = _FakeLogData(attrs)
+
+        proc.on_emit(log_data)
+
+        assert attrs["gen_ai.agent.name"] == "existing-name"
+        assert attrs["gen_ai.agent.version"] == "0.0.1"
+        assert attrs["microsoft.session.id"] == "existing-session"

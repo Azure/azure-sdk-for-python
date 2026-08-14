@@ -4,7 +4,7 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpVerticalLimitSettings as RestNlpLimitSettings
+from azure.ai.ml._restclient.arm_ml_service.models import NlpVerticalLimitSettings as RestNlpLimitSettings
 from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -12,12 +12,12 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class NlpLimitSettings(RestTranslatableMixin):
     """Limit settings for all AutoML NLP Verticals.
 
-    :param max_concurrent_trials: Maximum number of concurrent AutoML iterations.
-    :type max_concurrent_trials: int
-    :param max_trials: Maximum number of AutoML iterations.
-    :type max_trials: int
-    :param timeout_minutes: AutoML job timeout.
-    :type timeout_minutes: int
+    :keyword max_concurrent_trials: Maximum number of concurrent AutoML iterations.
+    :paramtype max_concurrent_trials: int
+    :keyword max_trials: Maximum number of AutoML iterations.
+    :paramtype max_trials: int
+    :keyword timeout_minutes: AutoML job timeout.
+    :paramtype timeout_minutes: int
 
     .. admonition:: Example:
 
@@ -45,22 +45,28 @@ class NlpLimitSettings(RestTranslatableMixin):
         self.trial_timeout_minutes = trial_timeout_minutes
 
     def _to_rest_object(self) -> RestNlpLimitSettings:
-        return RestNlpLimitSettings(
+        rest_obj = RestNlpLimitSettings(
             max_concurrent_trials=self.max_concurrent_trials,
             max_trials=self.max_trials,
-            max_nodes=self.max_nodes,
             timeout=to_iso_duration_format_mins(self.timeout_minutes),
-            trial_timeout=to_iso_duration_format_mins(self.trial_timeout_minutes),
         )
+        # ``maxNodes``/``trialTimeout`` exist on the 2023-04 wire contract but were dropped from the
+        # arm_ml_service (2025-12) model; preserve them via wire-key assignment.
+        if self.max_nodes is not None:
+            rest_obj["maxNodes"] = self.max_nodes
+        trial_timeout = to_iso_duration_format_mins(self.trial_timeout_minutes)
+        if trial_timeout is not None:
+            rest_obj["trialTimeout"] = trial_timeout
+        return rest_obj
 
     @classmethod
     def _from_rest_object(cls, obj: RestNlpLimitSettings) -> "NlpLimitSettings":
         return cls(
             max_concurrent_trials=obj.max_concurrent_trials,
             max_trials=obj.max_trials,
-            max_nodes=obj.max_nodes,
+            max_nodes=obj.get("maxNodes"),
             timeout_minutes=from_iso_duration_format_mins(obj.timeout),
-            trial_timeout_minutes=from_iso_duration_format_mins(obj.trial_timeout),
+            trial_timeout_minutes=from_iso_duration_format_mins(obj.get("trialTimeout")),
         )
 
     def __eq__(self, other: object) -> bool:

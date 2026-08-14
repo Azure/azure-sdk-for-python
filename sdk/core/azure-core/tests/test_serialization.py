@@ -11,15 +11,6 @@ import typing
 from typing import Any, Dict, List, Optional, Union, Type
 from io import BytesIO
 
-from azure.core.serialization import (
-    AzureJSONEncoder,
-    NULL,
-    as_attribute_dict,
-    get_backcompat_attr_name,
-    is_generated_model,
-    attribute_list,
-)
-from azure.core.exceptions import DeserializationError
 import pytest
 from modeltypes._utils.model_base import (
     Model as HybridModel,
@@ -28,8 +19,16 @@ from modeltypes._utils.model_base import (
     TYPE_HANDLER_REGISTRY,
     _deserialize,
 )
-from modeltypes._utils.serialization import Model as MsrestModel
 from modeltypes import models
+
+from azure.core.serialization import (
+    AzureJSONEncoder,
+    NULL,
+    as_attribute_dict,
+    get_backcompat_attr_name,
+    is_generated_model,
+    attribute_list,
+)
 
 
 def _expand_value(obj):
@@ -40,12 +39,11 @@ def _expand_value(obj):
         except AttributeError:
             if isinstance(obj, Enum):
                 return obj.value
-            elif isinstance(obj, list):
+            if isinstance(obj, list):
                 return [_expand_value(item) for item in obj]
-            elif isinstance(obj, dict):
+            if isinstance(obj, dict):
                 return _expand_dict(obj)
-            else:
-                return _expand_dict(vars(obj))
+            return _expand_dict(vars(obj))
 
     except TypeError:
         return obj
@@ -696,7 +694,7 @@ def test_cache_model_equality():
 
 def test_dictionary_set_datetime():
     """Test that dictionary with datetime values properly serializes/deserializes."""
-    from datetime import datetime, timezone
+    from datetime import timezone
 
     class MyModel(HybridModel):
         my_dict: Dict[str, datetime] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1238,7 +1236,7 @@ def test_readonly():
     model = models.ReadonlyModel({"id": 1})
     assert model.id == 1
     assert model.as_dict() == {"id": 1}
-    assert model.as_dict(exclude_readonly=True) == {}
+    assert not model.as_dict(exclude_readonly=True)
 
 
 def test_as_attribute_dict_scratch():
@@ -1725,7 +1723,7 @@ class TestTypeHandlerRegistry:
         deserialized = _deserialize(TestTypeHandlerRegistry.FooModel, json_dict)
         # If no deserializer is registered, the input should be returned as-is
         assert deserialized == json_dict
-        assert type(deserialized) is dict
+        assert isinstance(deserialized, dict)
 
     def test_serialize_external_model(self):
 
@@ -2097,10 +2095,9 @@ class TestTypeHandlerRegistry:
         def ext_deserializer(cls: Type, data: Dict[str, Any]) -> Union[ExternalModelA, ExternalModelB]:
             if "foo" in data:
                 return ExternalModelA(foo=data["foo"], bar=data.get("bar"))
-            elif "biz" in data:
+            if "biz" in data:
                 return ExternalModelB(biz=data["biz"], baz=data.get("baz"))
-            else:
-                raise ValueError("Invalid data for deserialization")
+            raise ValueError("Invalid data for deserialization")
 
         TYPE_HANDLER_REGISTRY.register_deserializer(lambda t: t in (ExternalModelA, ExternalModelB))(ext_deserializer)
 
@@ -2139,10 +2136,9 @@ class TestTypeHandlerRegistry:
         def ext_deserializer(cls: Type, data: Dict[str, Any]) -> Union[ExternalModelA, ExternalModelB]:
             if "baz" in data:
                 return ExternalModelB(foo=data["foo"], bar=data.get("bar"), baz=data.get("baz"))
-            elif "foo" in data:
+            if "foo" in data:
                 return ExternalModelA(foo=data["foo"], bar=data.get("bar"))
-            else:
-                raise ValueError("Invalid data for deserialization")
+            raise ValueError("Invalid data for deserialization")
 
         TYPE_HANDLER_REGISTRY.register_deserializer(lambda t: t in (ExternalModelA, ExternalModelB))(ext_deserializer)
 
@@ -2421,7 +2417,7 @@ class TestBackcompatPropertyMatrix:
         # Should use attr_name, but excluded when exclude_readonly=True
         assert attribute_list(model) == ["field_name"]
         assert as_attribute_dict(model) == {"field_name": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert getattr(model, "field_name") == "value"
         assert get_backcompat_attr_name(model, "field_name") == "field_name"
 
@@ -2452,7 +2448,7 @@ class TestBackcompatPropertyMatrix:
         # Should use attr_name, excluded when exclude_readonly=True
         assert attribute_list(model) == ["client_field"]
         assert as_attribute_dict(model) == {"client_field": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert getattr(model, "client_field") == "value"
         assert get_backcompat_attr_name(model, "client_field") == "client_field"
 
@@ -2481,7 +2477,7 @@ class TestBackcompatPropertyMatrix:
 
         assert attribute_list(model) == ["keys_property"]
         assert as_attribute_dict(model) == {"keys_property": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert get_backcompat_attr_name(model, "keys_property") == "keys"
         assert getattr(model, "keys_property") == "value"
         assert set(model.keys()) == {"keys_property"}
@@ -2511,7 +2507,7 @@ class TestBackcompatPropertyMatrix:
 
         assert attribute_list(model) == ["pop_property"]
         assert as_attribute_dict(model) == {"pop_property": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert getattr(model, "pop_property") == "value"
         assert set(model.keys()) == {"popWire"}
 

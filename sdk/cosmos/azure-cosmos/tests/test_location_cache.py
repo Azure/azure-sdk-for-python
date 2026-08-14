@@ -9,6 +9,7 @@ from typing import Mapping, Any
 
 import pytest
 from azure.cosmos import documents
+from azure.cosmos._global_endpoint_manager import _GlobalEndpointManager
 from azure.cosmos._service_request_retry_policy import ServiceRequestRetryPolicy
 
 from azure.cosmos.documents import DatabaseAccount, _OperationType
@@ -42,8 +43,10 @@ def create_database_account(enable_multiple_writable_locations):
 
 canonical_location1_name = "East US 2"
 canonical_location2_name = "West US 3"
+canonical_location3_name = "Central US"
 canonical_location1_endpoint = "https://eastus2.documents.azure.com"
 canonical_location2_endpoint = "https://westus3.documents.azure.com"
+canonical_location3_endpoint = "https://centralus.documents.azure.com"
 
 
 def create_database_account_with_canonical_regions(enable_multiple_writable_locations):
@@ -60,7 +63,23 @@ def create_database_account_with_canonical_regions(enable_multiple_writable_loca
     return db_acc
 
 
-def refresh_location_cache(preferred_locations, use_multiple_write_locations, connection_policy=documents.ConnectionPolicy()):
+def create_database_account_with_three_canonical_regions(enable_multiple_writable_locations):
+    # Builds a three-region account for tests that need a longer preferred list.
+    db_acc = DatabaseAccount()
+    regions = [
+        {"name": canonical_location1_name, "databaseAccountEndpoint": canonical_location1_endpoint},
+        {"name": canonical_location2_name, "databaseAccountEndpoint": canonical_location2_endpoint},
+        {"name": canonical_location3_name, "databaseAccountEndpoint": canonical_location3_endpoint},
+    ]
+    db_acc._WritableLocations = list(regions)
+    db_acc._ReadableLocations = list(regions)
+    db_acc._EnableMultipleWritableLocations = enable_multiple_writable_locations
+    return db_acc
+
+
+def refresh_location_cache(preferred_locations, use_multiple_write_locations, connection_policy=None):
+    if connection_policy is None:
+        connection_policy = documents.ConnectionPolicy()
     connection_policy.PreferredLocations = preferred_locations
     connection_policy.UseMultipleWriteLocations = use_multiple_write_locations
     lc = LocationCache(default_endpoint=default_endpoint,
@@ -714,11 +733,9 @@ class TestLocationCache:
         assert lc.resolve_service_endpoint(read_request) == canonical_location1_endpoint
 
     def test_preferred_locations_support_normalized_region_names(self, caplog):
-        # Preferred locations should match account region names even with case/spacing/separator variations.
-        # Also guards against drift between the two call sites that normalize region names:
-        # the routing path (get_preferred_regional_routing_contexts) and the diagnostic path
-        # (_emit_config_mismatch_warning_once). If they ever disagree on normalization, routing
-        # would still succeed while users got a misleading "did not match" warning.
+        # Preferred locations should match account region names even when the
+        # caller uses different case, spacing, hyphens, or underscores. No
+        # mismatch warning should appear when every entry matches a real region.
         with caplog.at_level(logging.WARNING):
             lc = refresh_location_cache(["east-us-2", " west_us_3 "], True)
             db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
@@ -735,10 +752,9 @@ class TestLocationCache:
         assert read_contexts[1].get_primary() == canonical_location2_endpoint
 
     def test_excluded_locations_support_normalized_region_names(self, caplog):
-        # Excluded locations should filter regions even when normalized names are used.
-        # Same divergence guard as the preferred-locations test: excluded_locations also flows
-        # through both the routing path and the diagnostic warning emitter, so a normalization
-        # mismatch between them would produce correct filtering plus a spurious warning.
+        # Excluded locations should filter regions even when the caller spells
+        # them with different case, spacing, hyphens, or underscores. No
+        # mismatch warning should appear when every entry matches a real region.
         connection_policy = documents.ConnectionPolicy()
         connection_policy.ExcludedLocations = ["east-us-2"]
 
@@ -767,20 +783,9 @@ class TestLocationCache:
         assert lc.should_refresh_endpoints() is False
 
     def test_should_refresh_endpoints_returns_true_for_normalized_non_primary(self):
-        # Companion to the False-branch test above: pins the True branch of
-        # should_refresh_endpoints() against a normalized preferred-location
-        # input. If normalization regresses on this path, the SDK silently
-        # stops scheduling background refreshes when the most-preferred
-        # region is no longer the primary — leaving customer traffic pinned
-        # to a region they tried to leave.
-        #
-        # Engineering the inequality: with two preferred regions
-        # ["east-us-2", "west-us-3"], the routing list normally puts East US 2
-        # first (primary == most-preferred → False). Marking East US 2's read
-        # endpoint unavailable promotes West US 3 to primary, but the
-        # normalized lookup for "east-us-2" still resolves to the East US 2
-        # context — which now != read_regional_routing_contexts[0], firing
-        # the True branch.
+        # When the caller's most preferred region (spelled with a hyphen here)
+        # is no longer the primary because its endpoint was marked unavailable,
+        # should_refresh_endpoints must return True so a refresh runs.
         lc = refresh_location_cache(["east-us-2", "west-us-3"], True)
         db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
         lc.perform_on_database_account_read(db_acc)
@@ -791,9 +796,8 @@ class TestLocationCache:
         assert lc.should_refresh_endpoints() is True
 
     def test_get_locational_endpoint_normalizes_customer_region_string(self):
-        # GetLocationalEndpoint is used during bootstrap fallback with the customer-supplied
-        # preferred region string. It must produce the canonical regional URL for any
-        # accepted normalization variant.
+        # The static helper builds a region-specific URL from the account host.
+        # Any spelling variant of the same region should produce the same URL.
         default_endpoint_url = "https://contoso.documents.azure.com:443/"
         expected_endpoint = "https://contoso-eastus2.documents.azure.com:443/"
 
@@ -834,10 +838,9 @@ class TestLocationCache:
         assert len(unmatched_logs) == 1
 
     def test_excluded_locations_ignore_none_and_empty_entries(self):
-        # Defensive: None / "" / whitespace-only entries in excluded_locations must
-        # NOT collide with the "" sentinel produced by _normalize_region_name(None)
-        # and silently filter out unrelated endpoints. Behavior must equal the
-        # clean-list equivalent.
+        # None, empty, and whitespace-only entries in excluded_locations should
+        # be ignored. They must not accidentally match real endpoints and they
+        # must not block the valid entries from filtering correctly.
         connection_policy = documents.ConnectionPolicy()
         connection_policy.ExcludedLocations = [None, "", "  ", "east-us-2"]  # type: ignore[list-item]
 
@@ -857,22 +860,313 @@ class TestLocationCache:
         # West US 3 is excluded on the request → writes route to East US 2.
         assert lc.resolve_service_endpoint(write_request) == canonical_location1_endpoint
 
+    def test_preferred_locations_handle_uppercase_and_pascalcase_variants(self):
+        # The caller may spell preferred regions in all caps or PascalCase.
+        # Both should resolve to the same canonical endpoints.
+        lc = refresh_location_cache(["EAST US 2", "WestUs3"], True)
+        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
 
-class TestNormalizeRegionName:
-    """Pin down the safety invariants of `_normalize_region_name`.
+        write_contexts = lc.get_write_regional_routing_contexts()
+        read_contexts = lc.get_read_regional_routing_contexts()
+        assert write_contexts[0].get_primary() == canonical_location1_endpoint
+        assert write_contexts[1].get_primary() == canonical_location2_endpoint
+        assert read_contexts[0].get_primary() == canonical_location1_endpoint
+        assert read_contexts[1].get_primary() == canonical_location2_endpoint
 
-    The normalization rule must satisfy two opposing requirements:
-      1. Forgive cosmetic differences in user-supplied region names
-         (case, whitespace, hyphens, underscores) so that lookups
-         match the service-reported canonical names.
-      2. NEVER collapse two genuinely distinct Azure regions into
-         the same key — doing so would silently misroute traffic.
-         Prefix-sharing pairs like "East US" / "East US 2" are the
-         highest-risk case and are explicitly called out in the PR
-         description as the primary regression hazard.
+    def test_excluded_locations_handle_uppercase_and_mixed_punctuation(self):
+        # Client-level and per-request excluded entries that mix uppercase and
+        # different separators should still filter the right regions.
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.ExcludedLocations = ["EAST-US_2"]
+        lc = refresh_location_cache(
+            [canonical_location1_name, canonical_location2_name], True, connection_policy,
+        )
+        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_request.excluded_locations = ["WEST-US_3"]
+
+        assert lc.resolve_service_endpoint(read_request) == canonical_location2_endpoint
+        assert lc.resolve_service_endpoint(write_request) == canonical_location1_endpoint
+
+    def test_duplicate_normalized_entries_in_excluded_list_warn_once(self, caplog):
+        # When the same region is listed twice in different spellings, the
+        # filter should still work and no duplicate mismatch warning should fire.
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.ExcludedLocations = ["East US 2", "east-us-2", "EAST_US_2"]
+        lc = refresh_location_cache(
+            [canonical_location1_name, canonical_location2_name], True, connection_policy,
+        )
+        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+
+        with caplog.at_level("WARNING", logger="azure.cosmos.LocationCache"):
+            lc.perform_on_database_account_read(db_acc)
+            read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+            resolved = lc.resolve_service_endpoint(read_request)
+
+        assert resolved == canonical_location2_endpoint
+        mismatch_warnings = [
+            r for r in caplog.records if "did not match" in r.getMessage()
+        ]
+        assert mismatch_warnings == []
+
+    def test_preferred_locations_mix_normalized_and_canonical_forms(self):
+        # A three-region preferred list that mixes canonical and messy spellings
+        # should map every entry to the right account region in the right order.
+        lc = refresh_location_cache(
+            ["east-us-2", "WestUs3", "  central us  "], True,
+        )
+        db_acc = create_database_account_with_three_canonical_regions(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        write_endpoints = [ctx.get_primary() for ctx in lc.get_write_regional_routing_contexts()]
+        read_endpoints = [ctx.get_primary() for ctx in lc.get_read_regional_routing_contexts()]
+        expected = [
+            canonical_location1_endpoint,
+            canonical_location2_endpoint,
+            canonical_location3_endpoint,
+        ]
+        assert write_endpoints == expected
+        assert read_endpoints == expected
+
+    def test_global_endpoint_manager_normalizes_preferred_locations_from_policy(self):
+        # End-to-end check that messy region names set on ConnectionPolicy flow
+        # through the endpoint manager into the location cache and resolve correctly.
+        cp = documents.ConnectionPolicy()
+        cp.PreferredLocations = ["east-us-2", " WEST_US_3 "]
+        cp.UseMultipleWriteLocations = True
+
+        mock_client = unittest.mock.Mock()
+        mock_client.connection_policy = cp
+        mock_client.url_connection = default_endpoint
+
+        gem = _GlobalEndpointManager(mock_client)
+        gem.location_cache.perform_on_database_account_read(
+            create_database_account_with_canonical_regions(enable_multiple_writable_locations=True),
+        )
+
+        read_endpoints = [
+            ctx.get_primary() for ctx in gem.location_cache.get_read_regional_routing_contexts()
+        ]
+        assert read_endpoints == [canonical_location1_endpoint, canonical_location2_endpoint]
+
+    """
+    Additional sync coverage for keeping unavailable endpoints as
+    fallback options. Covers the global-endpoint-manager wrapper,
+    single-write accounts, the health-check probe set, ordering,
+    circuit-breaker fallback, recovery, and account-refresh preservation.
     """
 
-    # --- Collision-safety: distinct regions must stay distinct. ---
+    def test_sync_global_endpoint_manager_returns_unavailable_as_last_resort(self):
+        # Sync wrapper around LocationCache should also keep an unavailable
+        # endpoint at the tail of the routing list so it can be used as fallback.
+        cp = documents.ConnectionPolicy()
+        cp.PreferredLocations = [location1_name, location2_name]
+        cp.UseMultipleWriteLocations = True
+        mock_client = unittest.mock.Mock()
+        mock_client.connection_policy = cp
+        mock_client.url_connection = default_endpoint
+
+        gem = _GlobalEndpointManager(mock_client)
+        gem.location_cache.perform_on_database_account_read(create_database_account(True))
+
+        # Mark location1 unavailable for both reads and writes.
+        gem.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=True, context="test")
+        gem.mark_endpoint_unavailable_for_write(location1_endpoint, refresh_cache=True, context="test")
+
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_ctxs = gem.get_applicable_read_regional_routing_contexts(read_request)
+        assert [c.get_primary() for c in read_ctxs] == [location2_endpoint, location1_endpoint], \
+            "Sync GEM should keep unavailable read endpoint at the tail, not drop it."
+
+        # If the only healthy region is excluded, the unavailable region
+        # should still be returned by the sync wrapper, not the global default.
+        read_request.excluded_locations = [location2_name]
+        assert gem._resolve_service_endpoint(read_request) == location1_endpoint
+
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_ctxs = gem.get_applicable_write_regional_routing_contexts(write_request)
+        assert [c.get_primary() for c in write_ctxs] == [location2_endpoint, location1_endpoint]
+
+        write_request.excluded_locations = [location2_name]
+        assert gem._resolve_service_endpoint(write_request) == location1_endpoint
+
+    def test_sync_single_write_account_read_unavailable_and_excluded(self):
+        # On a single-write account, an excluded healthy region should still
+        # fall back to the unavailable preferred region rather than the global default.
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=False
+        )
+        lc.perform_on_database_account_read(create_database_account(False))
+        assert lc.can_use_multiple_write_locations() is False, \
+            "Test setup must be a single-write account."
+
+        lc.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=True)
+
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_request.excluded_locations = [location2_name]
+
+        resolved = lc.resolve_service_endpoint(read_request)
+        assert resolved == location1_endpoint, \
+            "Single-write read path returned the global default instead of " \
+            "the unavailable preferred region."
+
+    def test_sync_health_check_set_includes_unavailable_endpoints(self):
+        # Unavailable read endpoints must remain in the health-check probe set so
+        # they can be re-marked available once the prober finds them healthy.
+        # First mark location1 write-unavailable so it is no longer the primary
+        # write probe endpoint; this isolates the read-unavailable assertion from
+        # write-endpoint inclusion.
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True
+        )
+        lc.perform_on_database_account_read(create_database_account(True))
+        lc.mark_endpoint_unavailable_for_write(
+            location1_endpoint, refresh_cache=True, context="test"
+        )
+        assert lc.get_write_regional_routing_contexts()[0].get_primary() == location2_endpoint, \
+            "Test precondition failed: location1 must not be the primary write endpoint."
+
+        lc.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=True)
+        endpoints = lc.endpoints_to_health_check()
+        assert location1_endpoint in endpoints, \
+            "Health-check probe set is missing the unavailable read endpoint."
+        assert location2_endpoint in endpoints
+
+    @pytest.mark.parametrize("unavailable", [[], [location1_name], [location1_name, location2_name]])
+    def test_sync_routing_list_has_no_duplicate_endpoints(self, unavailable):
+        # The routing list should never contain the same endpoint twice,
+        # regardless of how many regions are marked unavailable.
+        endpoint_by_loc = {location1_name: location1_endpoint, location2_name: location2_endpoint}
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True
+        )
+        lc.perform_on_database_account_read(create_database_account(True))
+
+        for loc in unavailable:
+            lc.mark_endpoint_unavailable_for_read(endpoint_by_loc[loc], refresh_cache=True)
+        read_primaries = [c.get_primary() for c in lc.get_read_regional_routing_contexts()]
+        assert len(read_primaries) == len(set(read_primaries)), \
+            f"Read routing list has duplicates: {read_primaries}"
+        assert set(read_primaries) == {location1_endpoint, location2_endpoint}
+
+        for loc in unavailable:
+            lc.mark_endpoint_unavailable_for_write(
+                endpoint_by_loc[loc], refresh_cache=True, context="test"
+            )
+        write_primaries = [c.get_primary() for c in lc.get_write_regional_routing_contexts()]
+        assert len(write_primaries) == len(set(write_primaries)), \
+            f"Write routing list has duplicates: {write_primaries}"
+        assert set(write_primaries) == {location1_endpoint, location2_endpoint}
+
+    def test_mark_endpoint_available_restores_head_position(self):
+        # After recovery, a previously-unavailable preferred endpoint should
+        # return to the head of the routing list, not stay at the tail.
+        lc = refresh_location_cache(
+            [location1_name, location2_name, location3_name],
+            use_multiple_write_locations=True,
+        )
+        lc.perform_on_database_account_read(create_database_account(True))
+
+        # Initial state: most-preferred is location1.
+        assert lc.read_regional_routing_contexts[0].get_primary() == location1_endpoint
+        assert lc.write_regional_routing_contexts[0].get_primary() == location1_endpoint
+
+        # Mark location1 unavailable for both lanes — it should slide to the tail.
+        lc.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=True)
+        lc.mark_endpoint_unavailable_for_write(location1_endpoint, refresh_cache=True, context="test")
+        assert lc.read_regional_routing_contexts[-1].get_primary() == location1_endpoint
+        assert lc.write_regional_routing_contexts[-1].get_primary() == location1_endpoint
+
+        # Simulate the health-probe rehabilitating the endpoint.
+        lc.mark_endpoint_available(location1_endpoint)
+        lc.update_location_cache()
+
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Read") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Write") is False
+        assert lc.read_regional_routing_contexts[0].get_primary() == location1_endpoint, \
+            "Recovered endpoint should return to the head of the read routing list."
+        assert lc.write_regional_routing_contexts[0].get_primary() == location1_endpoint, \
+            "Recovered endpoint should return to the head of the write routing list."
+
+    def test_account_topology_refresh_preserves_unavailability_tail_order(self):
+        # A periodic account-topology refresh must not drop endpoints that
+        # were marked unavailable, and the tail ordering must be preserved.
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True
+        )
+        db_acc = create_database_account(True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Mark location1 unavailable for writes — it should move to the tail.
+        lc.mark_endpoint_unavailable_for_write(location1_endpoint, refresh_cache=True, context="test")
+        write_primaries_before = [c.get_primary() for c in lc.get_write_regional_routing_contexts()]
+        assert write_primaries_before == [location2_endpoint, location1_endpoint]
+
+        # Simulate a periodic background refresh — the same topology comes back.
+        lc.perform_on_database_account_read(db_acc)
+
+        # The unavailability mark must survive, AND the routing list must
+        # still contain location1 (as the tail), not drop it.
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Write"), \
+            "Unavailability mark must survive an account-topology refresh."
+        write_primaries_after = [c.get_primary() for c in lc.get_write_regional_routing_contexts()]
+        assert write_primaries_after == write_primaries_before, \
+            "Account-topology refresh dropped the unavailable endpoint from the routing list."
+
+    def test_circuit_breaker_excluded_read_falls_back_before_global_default(self):
+        # With the only healthy region user-excluded and the other region
+        # circuit-breaker-excluded, reads should still resolve to the
+        # circuit-breaker-excluded region instead of the global default.
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True
+        )
+        lc.perform_on_database_account_read(create_database_account(True))
+
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_request.excluded_locations = [location1_name]
+        read_request.excluded_locations_circuit_breaker = [location2_name]
+
+        resolved = lc.resolve_service_endpoint(read_request)
+        assert resolved == location2_endpoint, \
+            "Read should fall back to the circuit-breaker-excluded region " \
+            "instead of dropping to the global default."
+
+    def test_master_resource_appends_user_excluded_to_tail(self):
+        # For master/metadata requests, user-excluded locations should be
+        # appended to the tail so the request still has a chance to succeed.
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True
+        )
+        lc.perform_on_database_account_read(create_database_account(True))
+
+        # Both regions healthy and both user-excluded — for a metadata request,
+        # the SDK must still try them as a last resort.
+        master_request = RequestObject(ResourceType.Database, _OperationType.Read, None)
+        master_request.excluded_locations = [location1_name, location2_name]
+
+        applicable = lc._get_applicable_read_regional_routing_contexts(master_request)
+        primaries = [c.get_primary() for c in applicable]
+        # The fix preserves user-excluded regions as a tail fallback for
+        # master requests; both location1 and location2 should appear.
+        assert location1_endpoint in primaries
+        assert location2_endpoint in primaries
+        # And neither should be the global default.
+        assert default_endpoint not in primaries
+
+
+class TestNormalizeRegionName:
+    """Unit tests for the _normalize_region_name helper.
+
+    The helper must accept cosmetic differences (case, spacing, hyphens,
+    underscores) but never collapse two genuinely different regions like
+    "East US" and "East US 2".
+    """
+
+    # Distinct regions must stay distinct after normalization.
     def test_does_not_collapse_prefix_sharing_regions(self):
         assert _normalize_region_name("East US") != _normalize_region_name("East US 2")
         assert _normalize_region_name("West US") != _normalize_region_name("West US 2")
@@ -881,10 +1175,7 @@ class TestNormalizeRegionName:
         assert _normalize_region_name("Central US") != _normalize_region_name("South Central US")
         assert _normalize_region_name("China East") != _normalize_region_name("China East 2")
 
-    # --- Positive normalization: cosmetic variants must collapse. ---
-    # These pin down that the function isn't a no-op — without them,
-    # a "fix" that just returned the input unchanged would still pass
-    # the collision-safety test above.
+    # Cosmetic differences should collapse to the same canonical form.
     def test_collapses_case_and_whitespace_variants(self):
         canonical = _normalize_region_name("East US 2")
         assert _normalize_region_name("east us 2") == canonical
@@ -893,11 +1184,21 @@ class TestNormalizeRegionName:
         assert _normalize_region_name("eastus2") == canonical
         assert _normalize_region_name("east-us-2") == canonical
         assert _normalize_region_name("east_us_2") == canonical
+        # Extra internal whitespace and mixed punctuation should also collapse.
+        assert _normalize_region_name("East  US  2") == canonical
+        assert _normalize_region_name("East-US_2") == canonical
+        assert _normalize_region_name("east -_ us -_ 2") == canonical
 
     def test_handles_none_and_empty(self):
         assert _normalize_region_name(None) == ""
         assert _normalize_region_name("") == ""
         assert _normalize_region_name("   ") == ""
+
+    # Calling the helper on its own output should be a no-op.
+    def test_is_idempotent(self):
+        for raw in ("East US 2", "  East-US_2  ", "eastus2", "EAST US 2", ""):
+            once = _normalize_region_name(raw)
+            assert _normalize_region_name(once) == once
 
 
 if __name__ == "__main__":
