@@ -817,6 +817,35 @@ class ConnectedGroupPrivateEndpointsScale(str, Enum, metaclass=CaseInsensitiveEn
     """Allows for up to 20K private endpoints in the connected group."""
 
 
+class ConnectionAnalyzerEndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The endpoint type for a connection analyzer source or destination."""
+
+    VM = "VM"
+    """An Azure virtual machine endpoint, identified by its ARM resource ID."""
+    VMSS = "VMSS"
+    """An Azure virtual machine scale set (or scale set instance) endpoint, identified by its ARM
+    resource ID."""
+    EXTERNAL_ADDRESS = "ExternalAddress"
+    """An external endpoint reachable from outside Azure, identified by an IP address or FQDN."""
+    BASTION_HOST = "BastionHost"
+    """An Azure Bastion host endpoint, identified by its ARM resource ID."""
+    APPLICATION_GATEWAY = "ApplicationGateway"
+    """An Application Gateway endpoint, identified by its ARM resource ID."""
+
+
+class ConnectionAnalyzerStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current execution status of the connection analyzer."""
+
+    NOT_STARTED = "NotStarted"
+    """The connection analyzer has been created but execution has not yet begun."""
+    RUNNING = "Running"
+    """The connection analyzer is currently running its diagnostic operations."""
+    SUCCEEDED = "Succeeded"
+    """The connection analyzer completed all diagnostic operations successfully."""
+    FAILED = "Failed"
+    """The connection analyzer failed to complete its diagnostic operations."""
+
+
 class ConnectionAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gateway connection authentication type."""
 
@@ -1015,6 +1044,21 @@ class DhGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DHGroup24."""
 
 
+class DiagnosticOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of diagnostic operation to run on a connection analyzer."""
+
+    NEXT_HOP = "NextHop"
+    """Determines the next hop for traffic from the source to the destination."""
+    NSG = "NSG"
+    """Evaluates the network security group rules that apply to the traffic."""
+    PORT_SCAN = "PortScan"
+    """Scans the destination ports to determine their reachability."""
+    CONNECTIVITY_CHECK = "ConnectivityCheck"
+    """Performs an end-to-end connectivity check between the source and destination."""
+    EXPRESS_ROUTE_DIAGNOSTIC = "ExpressRouteDiagnostic"
+    """Runs Express Route specific diagnostics for the connection."""
+
+
 class Direction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The direction of the traffic."""
 
@@ -1082,6 +1126,15 @@ class EffectiveSecurityRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """Udp."""
     ALL = "All"
     """All."""
+
+
+class EnableOnlyIpv6PeeringState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of IPv6 peering."""
+
+    ENABLED = "Enabled"
+    """IPv6 peering is enabled."""
+    DISABLED = "Disabled"
+    """IPv6 peering is disabled."""
 
 
 class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1192,6 +1245,8 @@ class ExpressRouteCircuitSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Basic."""
     LOCAL = "Local"
     """Local."""
+    MULTI_CLOUD = "MultiCloud"
+    """MultiCloud tier for cross-cloud connectivity."""
 
 
 class ExpressRouteFailoverBgpStatusAddressFamily(  # pylint: disable=name-too-long
@@ -1212,6 +1267,33 @@ class ExpressRouteFailoverLinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Primary link."""
     SECONDARY = "Secondary"
     """Secondary link."""
+
+
+class ExpressRouteLagBillingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The billing type of the ExpressRouteLag resource."""
+
+    METERED_DATA = "MeteredData"
+    """Metered data transfer billing."""
+    UNLIMITED_DATA = "UnlimitedData"
+    """Unlimited data transfer billing."""
+
+
+class ExpressRouteLagEncapsulation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Encapsulation method on LAG."""
+
+    DOT1_Q = "Dot1Q"
+    """IEEE 802.1Q encapsulation."""
+    QIN_Q = "QinQ"
+    """IEEE 802.1ad encapsulation."""
+
+
+class ExpressRouteLagLacpTimer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """LACP timer configuration."""
+
+    FAST = "Fast"
+    """Fast LACP timer (30 seconds)."""
+    SLOW = "Slow"
+    """Slow LACP timer (90 seconds)."""
 
 
 class ExpressRouteLinkAdminState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1568,6 +1650,17 @@ class FlowLogFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """JSON."""
 
 
+class GatewayEffectiveRouteNextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The next hop type of a gateway effective route."""
+
+    TUNNEL = "Tunnel"
+    """The next hop is a VPN tunnel."""
+    VIRTUAL_NETWORK = "VirtualNetwork"
+    """The next hop is within the local virtual network."""
+    UNKNOWN = "Unknown"
+    """The next hop type could not be determined."""
+
+
 class GatewayLoadBalancerTunnelInterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Traffic type of gateway load balancer tunnel interface."""
 
@@ -1871,6 +1964,19 @@ class IsWorkloadProtected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """True."""
 
 
+class LabelSelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """operator represents a Kubernetes label selector requirement's relationship to a set of values."""
+
+    IN = "In"
+    """The label value must be in the supplied set of values."""
+    NOT_IN = "NotIn"
+    """The label value must not be in the supplied set of values."""
+    EXISTS = "Exists"
+    """The label key must exist, regardless of its value."""
+    DOES_NOT_EXIST = "DoesNotExist"
+    """The label key must not exist."""
+
+
 class LoadBalancerBackendAddressAdminState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A list of administrative states which once set can override health probe so that Load Balancer
     will always forward new connections to backend, or deny new connections and reset existing
@@ -1890,6 +1996,15 @@ class LoadBalancerDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REDUCED = "Reduced"
     """When set to 'Reduced', read-only reference collections may be omitted."""
+
+
+class LoadBalancerMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The load balancer mode. Set to ``Advanced`` to enable additional capabilities on a Standard SKU
+    load balancer. Advanced mode must be specified at creation and cannot be changed afterward.
+    """
+
+    ADVANCED = "Advanced"
+    """Advanced mode, which enables additional capabilities on a Standard SKU load balancer."""
 
 
 class LoadBalancerOutboundRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1921,6 +2036,8 @@ class LoadBalancerSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Standard."""
     GATEWAY = "Gateway"
     """Gateway."""
+    SERVICE = "Service"
+    """Service load balancer SKU."""
 
 
 class LoadBalancerSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1959,6 +2076,15 @@ class ManagedRuleEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disabled."""
     ENABLED = "Enabled"
     """Enabled."""
+
+
+class MigrationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of migration workflow performed on a Network Virtual Appliance."""
+
+    MIGRATE_TO_NEW_OS_VERSION = "MigrateToNewOSVersion"
+    """Migrate the Network Virtual Appliance to a new OS / marketplace image version."""
+    MIGRATE_TO_NEW_ILB_ARCHITECTURE = "MigrateToNewILBArchitecture"
+    """Migrate the Network Virtual Appliance to the new internal load balancer architecture."""
 
 
 class Nat64State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2553,6 +2679,17 @@ class PublicIPPrefixSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Global."""
 
 
+class ResiliencyLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resiliency level of the ExpressRoute circuit."""
+
+    STANDARD = "Standard"
+    """Standard resiliency level."""
+    HIGH = "High"
+    """High resiliency level."""
+    MAXIMUM = "Maximum"
+    """Maximum resiliency level."""
+
+
 class ResiliencyModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Property to indicate if the Express Route Gateway has resiliency model of MultiHomed or
     SingleHomed.
@@ -2875,6 +3012,8 @@ class ServiceProviderProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     """Provisioned."""
     DEPROVISIONING = "Deprovisioning"
     """Deprovisioning."""
+    DE_PROVISIONED = "DeProvisioned"
+    """DeProvisioned State."""
 
 
 class ServiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
