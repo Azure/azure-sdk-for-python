@@ -427,17 +427,26 @@ class ResilientResponseOrchestrator:
         # function and does not need this reference.
         self._parent_orchestrator = parent_orchestrator
 
-        # Opting into resilience implies the durable task subsystem must be
-        # constructed (and recovery enabled) for this deployment. The subsystem
-        # is gated SOLELY on the process-global switch (``AgentServerHost``
-        # constructs the ``TaskManager`` only when it is set), so translate the
-        # explicit resilience opt-in — ``resilient_background`` /
-        # ``steerable_conversations`` — into that switch here, at host
-        # construction time (before the ASGI lifespan runs). A plain host that
-        # sets neither leaves the switch off: no TaskManager is constructed and
-        # ``store=true`` work degrades to non-durable in-process execution
-        # (``_start_resilient_background`` swallows ``TaskManagerNotInitialized``).
-        if options.resilient_background or options.steerable_conversations:
+        # Opting into resilient background responses implies the durable task
+        # subsystem must be constructed (and recovery enabled) for this
+        # deployment. The subsystem is gated SOLELY on the process-global switch
+        # (``AgentServerHost`` constructs the ``TaskManager`` only when it is
+        # set), so translate the explicit ``resilient_background`` opt-in into
+        # that switch here, at host construction time (before the ASGI lifespan
+        # runs).
+        #
+        # NOTE: only ``resilient_background`` auto-enables the subsystem —
+        # ``steerable_conversations`` intentionally does NOT. Recovery is tied to
+        # ``resilient_background`` alone; a steerable host that wants durability
+        # must set ``resilient_background=True`` (or call
+        # ``set_resilient_tasks_enabled(True)`` explicitly). The two-switch UX is
+        # a known rough edge to smooth over post-Public-Preview.
+        #
+        # A host that leaves ``resilient_background`` off (and does not set the
+        # switch) constructs no ``TaskManager``: ``store=true`` work degrades to
+        # non-durable in-process execution (``_start_resilient_background``
+        # swallows ``TaskManagerNotInitialized``).
+        if options.resilient_background:
             from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
                 set_resilient_tasks_enabled,
             )
