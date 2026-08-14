@@ -20,7 +20,7 @@
   - Added model `CloudEndpointUpdateParameters`
   - Added model `CloudEndpointUpdateProperties`
   - Added enum `ServerEndpointSyncSessionWarningType`
-  - Model `CloudEndpointsOperations` added method `begin_update`
+  - Operation group `CloudEndpointsOperations` added method `begin_update`
 
 ## 2.0.0 (2026-07-29)
 
