@@ -111,7 +111,7 @@ class TestOnlineEndpoint(AzureRecordedTestCase):
         finally:
             client.online_endpoints.begin_delete(name=mir_endpoint_name).result()
 
-    @pytest.mark.skip("skip for now to run e2e in eastus2. will undo this once we go back to centraluseuap")
+    @pytest.mark.skip(reason="K8s online endpoint test requires a centraluseuap workspace with K8s compute; currently running in eastus2. Re-enable once the test workspace is migrated back to centraluseuap.")
     @pytest.mark.e2etest
     def test_online_endpoint_submit(self, client: MLClient, location: str, rand_online_name: Callable[[], str]):
         import logging, sys

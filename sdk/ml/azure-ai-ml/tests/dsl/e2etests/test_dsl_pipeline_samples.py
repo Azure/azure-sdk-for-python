@@ -265,7 +265,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
+    @pytest.mark.skip(reason="Parallel job tests fail to record due to non-deterministic parallel step ordering in test-proxy recordings. Re-enable once the recording infrastructure supports stable parallel step capture.")
     def test_parallel_components_with_tabular_input_pipeline_output(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.parallel_component_with_tabular_input.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,
@@ -275,7 +275,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
+    @pytest.mark.skip(reason="Parallel job tests fail to record due to non-deterministic parallel step ordering in test-proxy recordings. Re-enable once the recording infrastructure supports stable parallel step capture.")
     def test_parallel_components(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.parallel_component.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,
@@ -312,7 +312,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
-    @pytest.mark.skip("Skipping due to Spark version Upgrade")
+    @pytest.mark.skip(reason="Spark version upgrade broke these tests; the Spark runtime version in the test workspace is incompatible with the test configuration. Re-enable after updating test configs for the new Spark version.")
     def test_spark_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
             generate_dsl_pipeline_from_yaml as spark_job_in_pipeline,
@@ -322,7 +322,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
-    @pytest.mark.skip("Skipping due to Spark version Upgrade")
+    @pytest.mark.skip(reason="Spark version upgrade broke these tests; the Spark runtime version in the test workspace is incompatible with the test configuration. Re-enable after updating test configs for the new Spark version.")
     def test_spark_job_with_builder_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
             generate_dsl_pipeline_from_builder as spark_job_in_pipeline,
@@ -332,7 +332,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
-    @pytest.mark.skip("Skipping due to Spark version Upgrade")
+    @pytest.mark.skip(reason="Spark version upgrade broke these tests; the Spark runtime version in the test workspace is incompatible with the test configuration. Re-enable after updating test configs for the new Spark version.")
     def test_spark_job_with_multiple_node_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.kmeans_sample.pipeline import (
             generate_dsl_pipeline_from_yaml as spark_job_in_pipeline,

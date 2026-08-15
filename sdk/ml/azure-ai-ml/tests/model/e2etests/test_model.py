@@ -147,7 +147,7 @@ class TestModel(AzureRecordedTestCase):
         client.models.restore(name=name, version=version_archived)
         assert version_archived in get_model_list()
 
-    @pytest.mark.skip(reason="Task 1791832: Inefficient, possibly causing testing pipeline to time out.")
+    @pytest.mark.skip(reason="TODO (ADO 1791832): The full-model-list operation is slow enough to cause testing pipeline timeouts. This archive/restore container test needs a more efficient assertion strategy.")
     def test_model_archive_restore_container(
         self, client: MLClient, randstr: Callable[[], str], tmp_path: Path
     ) -> None:
@@ -215,7 +215,7 @@ class TestModel(AzureRecordedTestCase):
         model_list = [m.name for m in model_list if m is not None]
         assert model.name in model_list
 
-    @pytest.mark.skip(reason="_prepare_to_copy method was removed")
+    @pytest.mark.skip(reason="The private `_prepare_to_copy` method was removed; model promotion now uses `MLClient.models.share()`. This test needs to be rewritten against the public API.")
     def test_promote_model(self, randstr: Callable[[], str], client: MLClient, registry_client: MLClient) -> None:
         # Create model in workspace
         model_path = Path("./tests/test_configs/model/model_full.yml")

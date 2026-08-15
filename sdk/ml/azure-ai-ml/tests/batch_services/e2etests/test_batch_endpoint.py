@@ -67,7 +67,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
-    @pytest.mark.skip("TODO (2349930) SSL Certificate error")
+    @pytest.mark.skip(reason="TODO (ADO 2349930): SSL Certificate error when invoking batch endpoint. TLS/certificate validation fails in the test environment.")
     def test_batch_invoke(
         self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]
     ) -> None:
@@ -143,7 +143,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         )
         assert job
 
-    @pytest.mark.skip("TODO (2349930) SSL Certificate error")
+    @pytest.mark.skip(reason="TODO (ADO 2349930): SSL Certificate error when invoking batch endpoint. TLS/certificate validation fails in the test environment.")
     def test_batch_invoke_outputs(
         self,
         client: MLClient,
