@@ -32,7 +32,7 @@ VoiceAgentRequestConversationItem = Union[
     "_models.RealtimeConversationItemFunctionCallOutput",
 ]
 VoiceAgentCreateConversationItem = Union[
-    VoiceAgentRequestConversationItem, "_models.RealtimeMCPApprovalResponse"
+    "_unions.VoiceAgentRequestConversationItem", "_models.RealtimeMCPApprovalResponse"
 ]
 VoiceAgentResponseMessageItem = Union[
     "_models.RealtimeConversationItemMessageSystem",
@@ -40,7 +40,7 @@ VoiceAgentResponseMessageItem = Union[
     "_models.RealtimeConversationItemMessageAssistant",
 ]
 VoiceAgentResponseItem = Union[
-    VoiceAgentResponseMessageItem,
+    "_unions.VoiceAgentResponseMessageItem",
     "_models.VoiceFunctionCallItem",
     "_models.VoiceFunctionCallOutputItem",
     "_models.VoiceMcpListToolsItem",

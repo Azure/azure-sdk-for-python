@@ -63,6 +63,7 @@ if TYPE_CHECKING:
     from . import _unions
     from .models import (
         AgentEndpointProtocol,
+        AgentKind,
         AttackStrategy,
         AzureAISearchQueryType,
         CallableToolAllowedCaller,

@@ -20,6 +20,14 @@ from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
+from ._realtime import (
+    Realtime,
+    RealtimeConnection,
+    RealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 
 _OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
 logger = logging.getLogger(__name__)
@@ -239,6 +247,18 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
+        self._realtime: Optional[Realtime] = None
+
+    @property
+    def realtime(self) -> Realtime:
+        """Realtime streaming entry point for voice agents.
+
+        :return: The realtime namespace, exposing ``connect(...)``.
+        :rtype: ~azure.ai.projects.Realtime
+        """
+        if self._realtime is None:
+            self._realtime = Realtime(self)
+        return self._realtime
 
     def _get_openai_api_key(self, kwargs: dict):
         """Resolve the API key for the OpenAI client.
@@ -501,6 +521,9 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
 
 __all__: List[str] = [
     "AIProjectClient",
+    "Realtime",
+    "RealtimeConnection",
+    "RealtimeConnectionManager",
 ]  # Add all objects you want publicly available to users at this package level
 
 
