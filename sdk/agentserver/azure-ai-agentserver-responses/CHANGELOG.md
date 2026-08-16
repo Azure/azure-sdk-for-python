@@ -1,10 +1,12 @@
 # Release History
 
-## 2.1.0b1 (2026-08-13)
+## 2.1.0b2 (Unreleased)
 
 ### Bugs Fixed
 
-- `get_history_item_ids` on the in-memory and file stores now keeps the newest item IDs when applying `limit`. (#48514)
+- `get_history_item_ids` on `InMemoryResponseProvider` and `FileResponseStore` now keeps the newest item IDs when applying `limit`. (#48514)
+
+## 2.1.0b1 (2026-08-11)
 
 ### Breaking Changes
 
