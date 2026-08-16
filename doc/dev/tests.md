@@ -586,8 +586,8 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [get_credential]: https://github.com/Azure/azure-sdk-for-python/blob/4df650d2ce4c292942009ed648cae21eb9c2121d/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L78
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 [kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.bicep
-[kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.bicep
-[kv_test_resources_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.bicep
+[kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.bicep#L174-L182
+[kv_test_resources_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.bicep#L38-L172
 [manage_recordings]: https://github.com/Azure/azure-sdk-for-python/blob/main/scripts/manage_recordings.py
 [packaging]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
 [proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
