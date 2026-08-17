@@ -32,7 +32,14 @@ from openai.types.graders.string_check_grader_param import StringCheckGraderPara
 from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
 from ._client import AIProjectClient as AIProjectClientGenerated
-from ._realtime import AsyncRealtime, AsyncRealtimeConnection, AsyncRealtimeConnectionManager
+from ._realtime import (
+    AsyncRealtime,
+    AsyncRealtimeConnection,
+    AsyncRealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 from .operations import TelemetryOperations
 from ..models import (
     AzureAIBenchmarkPreviewEvalRunDataSource,
@@ -117,6 +124,14 @@ class _LoggingAsyncByteStream(httpx.AsyncByteStream): ...
 def _log_streaming_response_notice(logging_enabled: bool) -> bool: ...
 
 # To make mypy happy... otherwise imports of the below result in mypy "attr-defined" error
-__all__: List[str] = ["AIProjectClient", "AsyncRealtime", "AsyncRealtimeConnection", "AsyncRealtimeConnectionManager"]
+__all__: List[str] = [
+    "AIProjectClient",
+    "AsyncRealtime",
+    "AsyncRealtimeConnection",
+    "AsyncRealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
+]
 
 def patch_sdk() -> None: ...

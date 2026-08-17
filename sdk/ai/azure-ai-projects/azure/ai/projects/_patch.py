@@ -254,13 +254,17 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         # (no WebSocket upgrade handshake) and discards the connection, returning None. It is not a
         # usable WebSocket client. Remove it from the public surface so it can't be mistaken for the
         # real, functional voice-agent WebSocket client exposed via `.realtime`.
-        del self.voice_agent_web_socket
+        if hasattr(self, "voice_agent_web_socket"):
+            del self.voice_agent_web_socket
         # Voice-agent conversation reads require the VoiceAgents=V1Preview opt-in header, which
         # isn't part of the standard agent preview headers; inject it transparently.
-        self.agent_endpoint_conversations = _OperationMethodHeaderProxy(  # type: ignore
-            self.agent_endpoint_conversations,
-            _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
-        )
+        # Guarded with hasattr since some tests mock out the generated __init__ entirely, in which
+        # case none of the generated operation-group attributes are set on `self`.
+        if hasattr(self, "agent_endpoint_conversations"):
+            self.agent_endpoint_conversations = _OperationMethodHeaderProxy(  # type: ignore
+                self.agent_endpoint_conversations,
+                _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
+            )
 
     @property
     def realtime(self) -> Realtime:
@@ -537,6 +541,9 @@ __all__: List[str] = [
     "Realtime",
     "RealtimeConnection",
     "RealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
 ]  # Add all objects you want publicly available to users at this package level
 
 
