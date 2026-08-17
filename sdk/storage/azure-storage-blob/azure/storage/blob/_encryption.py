@@ -979,7 +979,7 @@ class _GCMRegionNonceValidator:
                 self._encoding = next(iter(self._candidates.values()))
 
 
-def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements,disable=too-many-branches
+def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     require_encryption: bool,
     key_encryption_key: Optional[KeyEncryptionKey],
     key_resolver: Optional[Callable[[str], KeyEncryptionKey]],
