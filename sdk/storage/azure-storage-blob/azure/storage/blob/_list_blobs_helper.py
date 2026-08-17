@@ -108,7 +108,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
         "CopyCompletionTime": "x-ms-copy-completion-time",
         "CopyStatusDescription": "x-ms-copy-status-description",
         "IncrementalCopy": "x-ms-incremental-copy",
-        "DestinationSnapshot": "x-ms-copy-destination-snapshot",
+        "CopyDestinationSnapshot": "x-ms-copy-destination-snapshot",
     }
 
     next_marker: Optional[str] = None
