@@ -1,5 +1,30 @@
 # Release History
 
+## 2.1.0b1 (2026-08-11)
+
+### Features Added
+
+- `FoundryStateStore` now uses a file-backed local fallback when AgentServer is not hosted, and item operations accept an explicit `call_id` for forwarding recovered durable work outside the original request context.
+
+### Breaking Changes
+
+- The resilient task subsystem is now **strictly opt-in**. `AgentServerHost`
+  constructs the `TaskManager` only when resilient tasks are enabled via
+  `set_resilient_tasks_enabled(True)` (or a protocol option that maps to it,
+  e.g. the responses `resilient_background`). Previously the manager was always
+  constructed and a declared `@task` / `@multi_turn_task` implicitly enabled the
+  startup recovery scan. Now, declaring a task does **not** turn the subsystem
+  on: with the switch off, `get_task_manager()` raises `TaskManagerNotInitialized`
+  and `.run()` / `.start()` cannot run a task. Existing apps that rely on `@task`
+  must call `set_resilient_tasks_enabled(True)` (before host startup) to keep
+  durable tasks and crash recovery. Plain servers that use no tasks are
+  unaffected and continue to pay nothing.
+- Removed `TaskMetadata`, `TaskContext.metadata`, and `TaskRun.metadata`.
+  Durable application state now belongs in an explicit `FoundryStateStore`
+  and no longer shares task lifecycle PATCHes or lease renewal. Typed task
+  inputs may carry a top-level `call_id`, which the framework restores in
+  `FoundryAgentRequestContext` for every handler attempt.
+
 ## 2.0.0 (2026-08-05)
 
 ### Other Changes

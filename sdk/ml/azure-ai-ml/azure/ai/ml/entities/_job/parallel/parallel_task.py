@@ -18,12 +18,12 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 class ParallelTask(RestTranslatableMixin, DictMixin):
     """Parallel task.
 
-    :param type: The type of the parallel task.
+    :keyword type: The type of the parallel task.
         Possible values are 'run_function'and 'model'.
-    :type type: str
-    :param code: A local or remote path pointing at source code.
-    :type code: str
-    :param entry_script: User script which will be run in parallel on multiple nodes. This is
+    :paramtype type: str
+    :keyword code: A local or remote path pointing at source code.
+    :paramtype code: str
+    :keyword entry_script: User script which will be run in parallel on multiple nodes. This is
         specified as a local file path.
         The entry_script should contain two functions:
         ``init()``: this function should be used for any costly or common preparation for subsequent inferences,
@@ -38,17 +38,17 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
         each returned output element indicates one successful inference of input element in the input mini-batch.
         Each parallel worker process will call `init` once and then loop over `run` function until all mini-batches
         are processed.
-    :type entry_script: str
-    :param program_arguments: The arguments of the parallel task.
-    :type program_arguments: str
-    :param model: The model of the parallel task.
-    :type model: str
-    :param append_row_to: All values output by run() method invocations will be aggregated into
+    :paramtype entry_script: str
+    :keyword program_arguments: The arguments of the parallel task.
+    :paramtype program_arguments: str
+    :keyword model: The model of the parallel task.
+    :paramtype model: str
+    :keyword append_row_to: All values output by run() method invocations will be aggregated into
         one unique file which is created in the output location.
         if it is not set, 'summary_only' would invoked,  which means user script is expected to store the output itself.
-    :type append_row_to: str
-    :param environment: Environment that training job will run in.
-    :type environment: Union[Environment, str]
+    :paramtype append_row_to: str
+    :keyword environment: Environment that training job will run in.
+    :paramtype environment: Union[Environment, str]
     """
 
     def __init__(

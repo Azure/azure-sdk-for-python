@@ -288,7 +288,7 @@ async def test_precondition_mismatch_on_steering_append(tmp_path: Path) -> None:
 async def test_framework_namespace_isolated_from_user_payload(tmp_path: Path) -> None:
     """User cannot write `_last_input_id` via input meddling."""
     # We verify the slot lives in payload but not under user-controlled
-    # keys like `input` or `metadata`.
+    # framework payload keys such as `input`.
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
         await _fast_completing.start(task_id="t-ns-iso", input={"last_input_id": "USER-INJECTED"}, input_id="msg-A")

@@ -25,90 +25,90 @@ class ImageModelDistributionSettings(RestTranslatableMixin):
     """Model settings for all AutoML Image Verticals.
     Please do not instantiate directly. Use the child classes instead.
 
-    :param advanced_settings: Settings for advanced scenarios.
-    :type advanced_settings: str
-    :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
-    :type ams_gradient: bool
-    :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the range
+    :keyword advanced_settings: Settings for advanced scenarios.
+    :paramtype advanced_settings: str
+    :keyword ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
+    :paramtype ams_gradient: bool
+    :keyword beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the range
      [0, 1].
-    :type beta1: float
-    :param beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the range
+    :paramtype beta1: float
+    :keyword beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the range
      [0, 1].
-    :type beta2: float
-    :param checkpoint_frequency: Frequency to store model checkpoints. Must be a positive integer.
-    :type checkpoint_frequency: int
-    :param checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
+    :paramtype beta2: float
+    :keyword checkpoint_frequency: Frequency to store model checkpoints. Must be a positive integer.
+    :paramtype checkpoint_frequency: int
+    :keyword checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
      incremental training.
-    :type checkpoint_run_id: str
-    :param distributed: Whether to use distributed training.
-    :type distributed: bool
-    :param early_stopping: Enable early stopping logic during training.
-    :type early_stopping: bool
-    :param early_stopping_delay: Minimum number of epochs or validation evaluations to wait before
+    :paramtype checkpoint_run_id: str
+    :keyword distributed: Whether to use distributed training.
+    :paramtype distributed: bool
+    :keyword early_stopping: Enable early stopping logic during training.
+    :paramtype early_stopping: bool
+    :keyword early_stopping_delay: Minimum number of epochs or validation evaluations to wait before
      primary metric improvement
      is tracked for early stopping. Must be a positive integer.
-    :type early_stopping_delay: int
-    :param early_stopping_patience: Minimum number of epochs or validation evaluations with no
+    :paramtype early_stopping_delay: int
+    :keyword early_stopping_patience: Minimum number of epochs or validation evaluations with no
      primary metric improvement before
      the run is stopped. Must be a positive integer.
-    :type early_stopping_patience: int
-    :param enable_onnx_normalization: Enable normalization when exporting ONNX model.
-    :type enable_onnx_normalization: bool
-    :param evaluation_frequency: Frequency to evaluate validation dataset to get metric scores. Must
+    :paramtype early_stopping_patience: int
+    :keyword enable_onnx_normalization: Enable normalization when exporting ONNX model.
+    :paramtype enable_onnx_normalization: bool
+    :keyword evaluation_frequency: Frequency to evaluate validation dataset to get metric scores. Must
      be a positive integer.
-    :type evaluation_frequency: int
-    :param gradient_accumulation_step: Gradient accumulation means running a configured number of
+    :paramtype evaluation_frequency: int
+    :keyword gradient_accumulation_step: Gradient accumulation means running a configured number of
      "GradAccumulationStep" steps without
      updating the model weights while accumulating the gradients of those steps, and then using
      the accumulated gradients to compute the weight updates. Must be a positive integer.
-    :type gradient_accumulation_step: int
-    :param layers_to_freeze: Number of layers to freeze for the model. Must be a positive integer.
+    :paramtype gradient_accumulation_step: int
+    :keyword layers_to_freeze: Number of layers to freeze for the model. Must be a positive integer.
      For instance, passing 2 as value for 'seresnext' means
      freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
      please
      see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
-    :type layers_to_freeze: int
-    :param learning_rate: Initial learning rate. Must be a float in the range [0, 1].
-    :type learning_rate: float
-    :param learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
+    :paramtype layers_to_freeze: int
+    :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
+    :paramtype learning_rate: float
+    :keyword learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
      'step'. Possible values include: "None", "WarmupCosine", "Step".
-    :type learning_rate_scheduler: str or
+    :paramtype learning_rate_scheduler: str or
      ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
-    :param model_name: Name of the model to use for training.
+    :keyword model_name: Name of the model to use for training.
      For more information on the available models please visit the official documentation:
      https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
-    :type model_name: str
-    :param momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
-    :type momentum: float
-    :param nesterov: Enable nesterov when optimizer is 'sgd'.
-    :type nesterov: bool
-    :param number_of_epochs: Number of training epochs. Must be a positive integer.
-    :type number_of_epochs: int
-    :param number_of_workers: Number of data loader workers. Must be a non-negative integer.
-    :type number_of_workers: int
-    :param optimizer: Type of optimizer. Possible values include: "None", "Sgd", "Adam", "Adamw".
-    :type optimizer: str or ~azure.mgmt.machinelearningservices.models.StochasticOptimizer
-    :param random_seed: Random seed to be used when using deterministic training.
-    :type random_seed: int
-    :param step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float in
+    :paramtype model_name: str
+    :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
+    :paramtype momentum: float
+    :keyword nesterov: Enable nesterov when optimizer is 'sgd'.
+    :paramtype nesterov: bool
+    :keyword number_of_epochs: Number of training epochs. Must be a positive integer.
+    :paramtype number_of_epochs: int
+    :keyword number_of_workers: Number of data loader workers. Must be a non-negative integer.
+    :paramtype number_of_workers: int
+    :keyword optimizer: Type of optimizer. Possible values include: "None", "Sgd", "Adam", "Adamw".
+    :paramtype optimizer: str or ~azure.mgmt.machinelearningservices.models.StochasticOptimizer
+    :keyword random_seed: Random seed to be used when using deterministic training.
+    :paramtype random_seed: int
+    :keyword step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float in
      the range [0, 1].
-    :type step_lr_gamma: float
-    :param step_lr_step_size: Value of step size when learning rate scheduler is 'step'. Must be a
+    :paramtype step_lr_gamma: float
+    :keyword step_lr_step_size: Value of step size when learning rate scheduler is 'step'. Must be a
      positive integer.
-    :type step_lr_step_size: int
-    :param training_batch_size: Training batch size. Must be a positive integer.
-    :type training_batch_size: int
-    :param validation_batch_size: Validation batch size. Must be a positive integer.
-    :type validation_batch_size: int
-    :param warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
+    :paramtype step_lr_step_size: int
+    :keyword training_batch_size: Training batch size. Must be a positive integer.
+    :paramtype training_batch_size: int
+    :keyword validation_batch_size: Validation batch size. Must be a positive integer.
+    :paramtype validation_batch_size: int
+    :keyword warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
      'warmup_cosine'. Must be a float in the range [0, 1].
-    :type warmup_cosine_lr_cycles: float
-    :param warmup_cosine_lr_warmup_epochs: Value of warmup epochs when learning rate scheduler is
+    :paramtype warmup_cosine_lr_cycles: float
+    :keyword warmup_cosine_lr_warmup_epochs: Value of warmup epochs when learning rate scheduler is
      'warmup_cosine'. Must be a positive integer.
-    :type warmup_cosine_lr_warmup_epochs: int
-    :param weight_decay: Value of weight decay when optimizer is 'sgd', 'adam', or 'adamw'. Must be
+    :paramtype warmup_cosine_lr_warmup_epochs: int
+    :keyword weight_decay: Value of weight decay when optimizer is 'sgd', 'adam', or 'adamw'. Must be
      a float in the range[0, 1].
-    :type weight_decay: float
+    :paramtype weight_decay: float
     """
 
     def __init__(
@@ -217,103 +217,103 @@ class ImageModelDistributionSettings(RestTranslatableMixin):
 class ImageModelSettingsClassification(ImageModelDistributionSettings):
     """Model settings for AutoML Image Classification tasks.
 
-    :param advanced_settings: Settings for advanced scenarios.
-    :type advanced_settings: str
-    :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
-    :type ams_gradient: bool
-    :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the range
+    :keyword advanced_settings: Settings for advanced scenarios.
+    :paramtype advanced_settings: str
+    :keyword ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
+    :paramtype ams_gradient: bool
+    :keyword beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the range
      [0, 1].
-    :type beta1: float
-    :param beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the range
+    :paramtype beta1: float
+    :keyword beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the range
      [0, 1].
-    :type beta2: float
-    :param checkpoint_frequency: Frequency to store model checkpoints. Must be a positive integer.
-    :type checkpoint_frequency: int
-    :param checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
+    :paramtype beta2: float
+    :keyword checkpoint_frequency: Frequency to store model checkpoints. Must be a positive integer.
+    :paramtype checkpoint_frequency: int
+    :keyword checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
      incremental training.
-    :type checkpoint_run_id: str
-    :param distributed: Whether to use distributed training.
-    :type distributed: bool
-    :param early_stopping: Enable early stopping logic during training.
-    :type early_stopping: bool
-    :param early_stopping_delay: Minimum number of epochs or validation evaluations to wait before
+    :paramtype checkpoint_run_id: str
+    :keyword distributed: Whether to use distributed training.
+    :paramtype distributed: bool
+    :keyword early_stopping: Enable early stopping logic during training.
+    :paramtype early_stopping: bool
+    :keyword early_stopping_delay: Minimum number of epochs or validation evaluations to wait before
      primary metric improvement
      is tracked for early stopping. Must be a positive integer.
-    :type early_stopping_delay: int
-    :param early_stopping_patience: Minimum number of epochs or validation evaluations with no
+    :paramtype early_stopping_delay: int
+    :keyword early_stopping_patience: Minimum number of epochs or validation evaluations with no
      primary metric improvement before
      the run is stopped. Must be a positive integer.
-    :type early_stopping_patience: int
-    :param enable_onnx_normalization: Enable normalization when exporting ONNX model.
-    :type enable_onnx_normalization: bool
-    :param evaluation_frequency: Frequency to evaluate validation dataset to get metric scores. Must
+    :paramtype early_stopping_patience: int
+    :keyword enable_onnx_normalization: Enable normalization when exporting ONNX model.
+    :paramtype enable_onnx_normalization: bool
+    :keyword evaluation_frequency: Frequency to evaluate validation dataset to get metric scores. Must
      be a positive integer.
-    :type evaluation_frequency: int
-    :param gradient_accumulation_step: Gradient accumulation means running a configured number of
+    :paramtype evaluation_frequency: int
+    :keyword gradient_accumulation_step: Gradient accumulation means running a configured number of
      "GradAccumulationStep" steps without
      updating the model weights while accumulating the gradients of those steps, and then using
      the accumulated gradients to compute the weight updates. Must be a positive integer.
-    :type gradient_accumulation_step: int
-    :param layers_to_freeze: Number of layers to freeze for the model. Must be a positive integer.
+    :paramtype gradient_accumulation_step: int
+    :keyword layers_to_freeze: Number of layers to freeze for the model. Must be a positive integer.
      For instance, passing 2 as value for 'seresnext' means
      freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
      please
      see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
-    :type layers_to_freeze: int
-    :param learning_rate: Initial learning rate. Must be a float in the range [0, 1].
-    :type learning_rate: float
-    :param learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
+    :paramtype layers_to_freeze: int
+    :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
+    :paramtype learning_rate: float
+    :keyword learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
      'step'. Possible values include: "None", "WarmupCosine", "Step".
-    :type learning_rate_scheduler: str or
+    :paramtype learning_rate_scheduler: str or
      ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
-    :param model_name: Name of the model to use for training.
+    :keyword model_name: Name of the model to use for training.
      For more information on the available models please visit the official documentation:
      https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
-    :type model_name: str
-    :param momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
-    :type momentum: float
-    :param nesterov: Enable nesterov when optimizer is 'sgd'.
-    :type nesterov: bool
-    :param number_of_epochs: Number of training epochs. Must be a positive integer.
-    :type number_of_epochs: int
-    :param number_of_workers: Number of data loader workers. Must be a non-negative integer.
-    :type number_of_workers: int
-    :param optimizer: Type of optimizer. Possible values include: "None", "Sgd", "Adam", "Adamw".
-    :type optimizer: str or ~azure.mgmt.machinelearningservices.models.StochasticOptimizer
-    :param random_seed: Random seed to be used when using deterministic training.
-    :type random_seed: int
-    :param step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float in
+    :paramtype model_name: str
+    :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
+    :paramtype momentum: float
+    :keyword nesterov: Enable nesterov when optimizer is 'sgd'.
+    :paramtype nesterov: bool
+    :keyword number_of_epochs: Number of training epochs. Must be a positive integer.
+    :paramtype number_of_epochs: int
+    :keyword number_of_workers: Number of data loader workers. Must be a non-negative integer.
+    :paramtype number_of_workers: int
+    :keyword optimizer: Type of optimizer. Possible values include: "None", "Sgd", "Adam", "Adamw".
+    :paramtype optimizer: str or ~azure.mgmt.machinelearningservices.models.StochasticOptimizer
+    :keyword random_seed: Random seed to be used when using deterministic training.
+    :paramtype random_seed: int
+    :keyword step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float in
      the range [0, 1].
-    :type step_lr_gamma: float
-    :param step_lr_step_size: Value of step size when learning rate scheduler is 'step'. Must be a
+    :paramtype step_lr_gamma: float
+    :keyword step_lr_step_size: Value of step size when learning rate scheduler is 'step'. Must be a
      positive integer.
-    :type step_lr_step_size: int
-    :param training_batch_size: Training batch size. Must be a positive integer.
-    :type training_batch_size: int
-    :param validation_batch_size: Validation batch size. Must be a positive integer.
-    :type validation_batch_size: int
-    :param warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
+    :paramtype step_lr_step_size: int
+    :keyword training_batch_size: Training batch size. Must be a positive integer.
+    :paramtype training_batch_size: int
+    :keyword validation_batch_size: Validation batch size. Must be a positive integer.
+    :paramtype validation_batch_size: int
+    :keyword warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
      'warmup_cosine'. Must be a float in the range [0, 1].
-    :type warmup_cosine_lr_cycles: float
-    :param warmup_cosine_lr_warmup_epochs: Value of warmup epochs when learning rate scheduler is
+    :paramtype warmup_cosine_lr_cycles: float
+    :keyword warmup_cosine_lr_warmup_epochs: Value of warmup epochs when learning rate scheduler is
      'warmup_cosine'. Must be a positive integer.
-    :type warmup_cosine_lr_warmup_epochs: int
-    :param weight_decay: Value of weight decay when optimizer is 'sgd', 'adam', or 'adamw'. Must be
+    :paramtype warmup_cosine_lr_warmup_epochs: int
+    :keyword weight_decay: Value of weight decay when optimizer is 'sgd', 'adam', or 'adamw'. Must be
      a float in the range[0, 1].
-    :type weight_decay: float
-    :param training_crop_size: Image crop size that is input to the neural network for the training
+    :paramtype weight_decay: float
+    :keyword training_crop_size: Image crop size that is input to the neural network for the training
      dataset. Must be a positive integer.
-    :type training_crop_size: int
-    :param validation_crop_size: Image crop size that is input to the neural network for the
+    :paramtype training_crop_size: int
+    :keyword validation_crop_size: Image crop size that is input to the neural network for the
      validation dataset. Must be a positive integer.
-    :type validation_crop_size: int
-    :param validation_resize_size: Image size to which to resize before cropping for validation
+    :paramtype validation_crop_size: int
+    :keyword validation_resize_size: Image size to which to resize before cropping for validation
      dataset. Must be a positive integer.
-    :type validation_resize_size: int
-    :param weighted_loss: Weighted loss. The accepted values are 0 for no weighted loss.
+    :paramtype validation_resize_size: int
+    :keyword weighted_loss: Weighted loss. The accepted values are 0 for no weighted loss.
      1 for weighted loss with sqrt.(class_weights). 2 for weighted loss with class_weights. Must be
      0 or 1 or 2.
-    :type weighted_loss: int
+    :paramtype weighted_loss: int
 
     .. admonition:: Example:
 
@@ -498,148 +498,148 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
 class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
     """Model settings for AutoML Image Object Detection Task.
 
-    :param advanced_settings: Settings for advanced scenarios.
-    :type advanced_settings: str
-    :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
-    :type ams_gradient: bool
-    :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the range
+    :keyword advanced_settings: Settings for advanced scenarios.
+    :paramtype advanced_settings: str
+    :keyword ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
+    :paramtype ams_gradient: bool
+    :keyword beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the range
      [0, 1].
-    :type beta1: float
-    :param beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the range
+    :paramtype beta1: float
+    :keyword beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the range
      [0, 1].
-    :type beta2: float
-    :param checkpoint_frequency: Frequency to store model checkpoints. Must be a positive integer.
-    :type checkpoint_frequency: int
-    :param checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
+    :paramtype beta2: float
+    :keyword checkpoint_frequency: Frequency to store model checkpoints. Must be a positive integer.
+    :paramtype checkpoint_frequency: int
+    :keyword checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
      incremental training.
-    :type checkpoint_run_id: str
-    :param distributed: Whether to use distributed training.
-    :type distributed: bool
-    :param early_stopping: Enable early stopping logic during training.
-    :type early_stopping: bool
-    :param early_stopping_delay: Minimum number of epochs or validation evaluations to wait before
+    :paramtype checkpoint_run_id: str
+    :keyword distributed: Whether to use distributed training.
+    :paramtype distributed: bool
+    :keyword early_stopping: Enable early stopping logic during training.
+    :paramtype early_stopping: bool
+    :keyword early_stopping_delay: Minimum number of epochs or validation evaluations to wait before
      primary metric improvement
      is tracked for early stopping. Must be a positive integer.
-    :type early_stopping_delay: int
-    :param early_stopping_patience: Minimum number of epochs or validation evaluations with no
+    :paramtype early_stopping_delay: int
+    :keyword early_stopping_patience: Minimum number of epochs or validation evaluations with no
      primary metric improvement before
      the run is stopped. Must be a positive integer.
-    :type early_stopping_patience: int
-    :param enable_onnx_normalization: Enable normalization when exporting ONNX model.
-    :type enable_onnx_normalization: bool
-    :param evaluation_frequency: Frequency to evaluate validation dataset to get metric scores. Must
+    :paramtype early_stopping_patience: int
+    :keyword enable_onnx_normalization: Enable normalization when exporting ONNX model.
+    :paramtype enable_onnx_normalization: bool
+    :keyword evaluation_frequency: Frequency to evaluate validation dataset to get metric scores. Must
      be a positive integer.
-    :type evaluation_frequency: int
-    :param gradient_accumulation_step: Gradient accumulation means running a configured number of
+    :paramtype evaluation_frequency: int
+    :keyword gradient_accumulation_step: Gradient accumulation means running a configured number of
      "GradAccumulationStep" steps without
      updating the model weights while accumulating the gradients of those steps, and then using
      the accumulated gradients to compute the weight updates. Must be a positive integer.
-    :type gradient_accumulation_step: int
-    :param layers_to_freeze: Number of layers to freeze for the model. Must be a positive integer.
+    :paramtype gradient_accumulation_step: int
+    :keyword layers_to_freeze: Number of layers to freeze for the model. Must be a positive integer.
      For instance, passing 2 as value for 'seresnext' means
      freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
      please
      see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
-    :type layers_to_freeze: int
-    :param learning_rate: Initial learning rate. Must be a float in the range [0, 1].
-    :type learning_rate: float
-    :param learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
+    :paramtype layers_to_freeze: int
+    :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
+    :paramtype learning_rate: float
+    :keyword learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
      'step'. Possible values include: "None", "WarmupCosine", "Step".
-    :type learning_rate_scheduler: str or
+    :paramtype learning_rate_scheduler: str or
      ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
-    :param model_name: Name of the model to use for training.
+    :keyword model_name: Name of the model to use for training.
      For more information on the available models please visit the official documentation:
      https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
-    :type model_name: str
-    :param momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
-    :type momentum: float
-    :param nesterov: Enable nesterov when optimizer is 'sgd'.
-    :type nesterov: bool
-    :param number_of_epochs: Number of training epochs. Must be a positive integer.
-    :type number_of_epochs: int
-    :param number_of_workers: Number of data loader workers. Must be a non-negative integer.
-    :type number_of_workers: int
-    :param optimizer: Type of optimizer. Possible values include: "None", "Sgd", "Adam", "Adamw".
-    :type optimizer: str or ~azure.mgmt.machinelearningservices.models.StochasticOptimizer
-    :param random_seed: Random seed to be used when using deterministic training.
-    :type random_seed: int
-    :param step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float in
+    :paramtype model_name: str
+    :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
+    :paramtype momentum: float
+    :keyword nesterov: Enable nesterov when optimizer is 'sgd'.
+    :paramtype nesterov: bool
+    :keyword number_of_epochs: Number of training epochs. Must be a positive integer.
+    :paramtype number_of_epochs: int
+    :keyword number_of_workers: Number of data loader workers. Must be a non-negative integer.
+    :paramtype number_of_workers: int
+    :keyword optimizer: Type of optimizer. Possible values include: "None", "Sgd", "Adam", "Adamw".
+    :paramtype optimizer: str or ~azure.mgmt.machinelearningservices.models.StochasticOptimizer
+    :keyword random_seed: Random seed to be used when using deterministic training.
+    :paramtype random_seed: int
+    :keyword step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float in
      the range [0, 1].
-    :type step_lr_gamma: float
-    :param step_lr_step_size: Value of step size when learning rate scheduler is 'step'. Must be a
+    :paramtype step_lr_gamma: float
+    :keyword step_lr_step_size: Value of step size when learning rate scheduler is 'step'. Must be a
      positive integer.
-    :type step_lr_step_size: int
-    :param training_batch_size: Training batch size. Must be a positive integer.
-    :type training_batch_size: int
-    :param validation_batch_size: Validation batch size. Must be a positive integer.
-    :type validation_batch_size: int
-    :param warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
+    :paramtype step_lr_step_size: int
+    :keyword training_batch_size: Training batch size. Must be a positive integer.
+    :paramtype training_batch_size: int
+    :keyword validation_batch_size: Validation batch size. Must be a positive integer.
+    :paramtype validation_batch_size: int
+    :keyword warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
      'warmup_cosine'. Must be a float in the range [0, 1].
-    :type warmup_cosine_lr_cycles: float
-    :param warmup_cosine_lr_warmup_epochs: Value of warmup epochs when learning rate scheduler is
+    :paramtype warmup_cosine_lr_cycles: float
+    :keyword warmup_cosine_lr_warmup_epochs: Value of warmup epochs when learning rate scheduler is
      'warmup_cosine'. Must be a positive integer.
-    :type warmup_cosine_lr_warmup_epochs: int
-    :param weight_decay: Value of weight decay when optimizer is 'sgd', 'adam', or 'adamw'. Must be
+    :paramtype warmup_cosine_lr_warmup_epochs: int
+    :keyword weight_decay: Value of weight decay when optimizer is 'sgd', 'adam', or 'adamw'. Must be
      a float in the range[0, 1].
-    :type weight_decay: float
-    :param box_detections_per_image: Maximum number of detections per image, for all classes. Must
+    :paramtype weight_decay: float
+    :keyword box_detections_per_image: Maximum number of detections per image, for all classes. Must
      be a positive integer.
      Note: This settings is not supported for the 'yolov5' algorithm.
-    :type box_detections_per_image: int
-    :param box_score_threshold: During inference, only return proposals with a classification score
+    :paramtype box_detections_per_image: int
+    :keyword box_score_threshold: During inference, only return proposals with a classification score
      greater than
      BoxScoreThreshold. Must be a float in the range[0, 1].
-    :type box_score_threshold: float
-    :param image_size: Image size for train and validation. Must be a positive integer.
+    :paramtype box_score_threshold: float
+    :keyword image_size: Image size for train and validation. Must be a positive integer.
      Note: The training run may get into CUDA OOM if the size is too big.
      Note: This settings is only supported for the 'yolov5' algorithm.
-    :type image_size: int
-    :param max_size: Maximum size of the image to be rescaled before feeding it to the backbone.
+    :paramtype image_size: int
+    :keyword max_size: Maximum size of the image to be rescaled before feeding it to the backbone.
      Must be a positive integer. Note: training run may get into CUDA OOM if the size is too big.
      Note: This settings is not supported for the 'yolov5' algorithm.
-    :type max_size: int
-    :param min_size: Minimum size of the image to be rescaled before feeding it to the backbone.
+    :paramtype max_size: int
+    :keyword min_size: Minimum size of the image to be rescaled before feeding it to the backbone.
      Must be a positive integer. Note: training run may get into CUDA OOM if the size is too big.
      Note: This settings is not supported for the 'yolov5' algorithm.
-    :type min_size: int
-    :param model_size: Model size. Must be 'small', 'medium', 'large'.
+    :paramtype min_size: int
+    :keyword model_size: Model size. Must be 'small', 'medium', 'large'.
      Note: training run may get into CUDA OOM if the model size is too big.
      Note: This settings is only supported for the 'yolov5' algorithm. Possible values include:
      "None", "Small", "Medium", "Large", "ExtraLarge".
-    :type model_size: str or ~azure.mgmt.machinelearningservices.models.ModelSize
-    :param multi_scale: Enable multi-scale image by varying image size by +/- 50%.
+    :paramtype model_size: str or ~azure.mgmt.machinelearningservices.models.ModelSize
+    :keyword multi_scale: Enable multi-scale image by varying image size by +/- 50%.
      Note: training run may get into CUDA OOM if no sufficient GPU memory.
      Note: This settings is only supported for the 'yolov5' algorithm.
-    :type multi_scale: bool
-    :param nms_iou_threshold: IOU threshold used during inference in NMS post processing. Must be a
+    :paramtype multi_scale: bool
+    :keyword nms_iou_threshold: IOU threshold used during inference in NMS post processing. Must be a
      float in the range [0, 1].
-    :type nms_iou_threshold: float
-    :param tile_grid_size: The grid size to use for tiling each image. Note: TileGridSize must not
+    :paramtype nms_iou_threshold: float
+    :keyword tile_grid_size: The grid size to use for tiling each image. Note: TileGridSize must not
      be
      None to enable small object detection logic. A string containing two integers in mxn format.
      Note: This settings is not supported for the 'yolov5' algorithm.
-    :type tile_grid_size: str
-    :param tile_overlap_ratio: Overlap ratio between adjacent tiles in each dimension. Must be float
+    :paramtype tile_grid_size: str
+    :keyword tile_overlap_ratio: Overlap ratio between adjacent tiles in each dimension. Must be float
      in the range [0, 1).
      Note: This settings is not supported for the 'yolov5' algorithm.
-    :type tile_overlap_ratio: float
-    :param tile_predictions_nms_threshold: The IOU threshold to use to perform NMS while merging
+    :paramtype tile_overlap_ratio: float
+    :keyword tile_predictions_nms_threshold: The IOU threshold to use to perform NMS while merging
      predictions from tiles and image.
      Used in validation/ inference. Must be float in the range [0, 1].
      Note: This settings is not supported for the 'yolov5' algorithm.
-    :type tile_predictions_nms_threshold: float
-    :param validation_iou_threshold: IOU threshold to use when computing validation metric. Must be
+    :paramtype tile_predictions_nms_threshold: float
+    :keyword validation_iou_threshold: IOU threshold to use when computing validation metric. Must be
      float in the range [0, 1].
-    :type validation_iou_threshold: float
-    :param validation_metric_type: Metric computation method to use for validation metrics. Possible
+    :paramtype validation_iou_threshold: float
+    :keyword validation_metric_type: Metric computation method to use for validation metrics. Possible
      values include: "None", "Coco", "Voc", "CocoVoc".
-    :type validation_metric_type: str or
+    :paramtype validation_metric_type: str or
      ~azure.mgmt.machinelearningservices.models.ValidationMetricType
-    :param log_training_metrics: indicates whether or not to log training metrics
-    :type log_training_metrics: str or
+    :keyword log_training_metrics: indicates whether or not to log training metrics
+    :paramtype log_training_metrics: str or
      ~azure.mgmt.machinelearningservices.models.LogTrainingMetrics
-    :param log_validation_loss: indicates whether or not to log validation loss
-    :type log_validation_loss: str or
+    :keyword log_validation_loss: indicates whether or not to log validation loss
+    :paramtype log_validation_loss: str or
      ~azure.mgmt.machinelearningservices.models.LogValidationLoss
 
     .. literalinclude:: ../samples/ml_samples_automl_image.py

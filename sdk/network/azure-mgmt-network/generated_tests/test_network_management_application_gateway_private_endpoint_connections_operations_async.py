@@ -27,7 +27,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
             resource_group_name=resource_group.name,
             application_gateway_name="str",
             connection_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -642,7 +642,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         },
                                                                     },
                                                                 },
-                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "ipTags": [
+                                                                    {
+                                                                        "firstPartyServiceTagId": "str",
+                                                                        "ipTagType": "str",
+                                                                        "tag": "str",
+                                                                    }
+                                                                ],
                                                                 "linkedPublicIPAddress": ...,
                                                                 "migrationPhase": "str",
                                                                 "natGateway": {
@@ -674,6 +680,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 "publicIPPrefix": {"id": "str"},
                                                                 "resourceGuid": "str",
                                                                 "servicePublicIPAddress": ...,
+                                                                "upgradedToV2": bool,
                                                             },
                                                             "sku": {"name": "str", "tier": "str"},
                                                             "tags": {"str": "str"},
@@ -766,6 +773,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "ipConfiguration": ...,
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -813,6 +821,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -1129,6 +1138,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                             "ddosSettings": {
                                                                                 "ddosCustomPolicy": {"id": "str"}
                                                                             },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -1583,6 +1593,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -1630,6 +1641,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -1723,6 +1735,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                         "ipConfiguration": ...,
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -1790,6 +1803,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -2396,6 +2410,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "ipConfiguration": ...,
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -2443,6 +2458,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -2693,6 +2709,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             "ipConfiguration": ...,
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -2744,6 +2761,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -3079,6 +3097,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                             "name": "str",
                                                             "properties": {
                                                                 "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                                "enableConnectionTracking": bool,
                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                 "inboundNatPools": [{"id": "str"}],
                                                                 "inboundNatRules": [{"id": "str"}],
@@ -3496,7 +3515,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 },
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -3528,6 +3553,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -3621,6 +3647,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             "ipConfiguration": ...,
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -3672,6 +3699,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -4050,6 +4078,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         "ddosSettings": {
                                                                             "ddosCustomPolicy": {"id": "str"}
                                                                         },
+                                                                        "enableConnectionTracking": bool,
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -4499,7 +4528,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -4542,6 +4575,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -4635,6 +4669,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     "ipConfiguration": ...,
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -4702,6 +4737,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -5607,7 +5643,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -5650,6 +5690,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -5742,6 +5783,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     "ipConfiguration": ...,
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -5809,6 +5851,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -6256,7 +6299,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                             "idleTimeoutInMinutes": 0,
                                                             "ipAddress": "str",
                                                             "ipConfiguration": ...,
-                                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                            "ipTags": [
+                                                                {
+                                                                    "firstPartyServiceTagId": "str",
+                                                                    "ipTagType": "str",
+                                                                    "tag": "str",
+                                                                }
+                                                            ],
                                                             "linkedPublicIPAddress": ...,
                                                             "migrationPhase": "str",
                                                             "natGateway": {
@@ -6288,6 +6337,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                             "publicIPPrefix": {"id": "str"},
                                                             "resourceGuid": "str",
                                                             "servicePublicIPAddress": ...,
+                                                            "upgradedToV2": bool,
                                                         },
                                                         "sku": {"name": "str", "tier": "str"},
                                                         "tags": {"str": "str"},
@@ -6593,7 +6643,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -6636,6 +6690,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -6660,6 +6715,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     "id": "str"
                                                                                                 }
                                                                                             },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -6721,6 +6777,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -6788,6 +6845,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -6874,6 +6932,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "ddosSettings": {
                                                                                     "ddosCustomPolicy": {"id": "str"}
                                                                                 },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -6925,6 +6984,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -6974,6 +7034,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -7041,6 +7102,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -7102,6 +7164,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -7167,6 +7230,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -7371,6 +7435,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -7436,6 +7501,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -7653,7 +7719,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                     },
                     "type": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -7668,7 +7734,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
                 connection_name="str",
-                api_version="2025-07-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -7681,7 +7747,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
         response = self.client.application_gateway_private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
