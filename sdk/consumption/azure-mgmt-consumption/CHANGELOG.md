@@ -11,7 +11,7 @@
   - Added model `LegacyManagementGroupScopeReservationRecommendationProperties`
   - Added model `ModernManagementGroupScopeReservationRecommendationProperties`
   - Added model `ReservationRecommendationDetailsProjectedUsageProperties`
-  - Model `ReservationRecommendationDetailsOperations` added parameter `management_group_id` in method `get`
+  - Operation group `ReservationRecommendationDetailsOperations` added parameter `management_group_id` in method `get`
 
 ## 11.0.0 (2026-07-20)
 
