@@ -18,6 +18,11 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
 
 import anyio
 
+from azure.ai.agentserver.core import (
+    FoundryAgentRequestContext,
+    reset_request_context,
+    set_request_context,
+)
 from azure.ai.agentserver.core.platform_headers import (
     PLATFORM_ERROR_TAG,
 )
@@ -77,6 +82,32 @@ _STORAGE_ERROR_MESSAGE = (
     "An internal error occurred while storing the response. "
     "Subsequent retrieval is not guaranteed. Please retry the request."
 )
+
+
+async def _iter_handler_with_request_context(
+    create_fn: "Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]]",
+    parsed: "CreateResponse",
+    context: "ResponseContext | None",
+    cancellation_signal: asyncio.Event,
+    agent_session_id: str | None,
+) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    """Run a developer handler with its reconstructed ambient platform identity."""
+    token = None
+    if context is not None:
+        platform_context = context.platform_context
+        token = set_request_context(
+            FoundryAgentRequestContext(
+                user_id=platform_context.user_id_key or None,
+                call_id=platform_context.call_id or None,
+                session_id=agent_session_id,
+            )
+        )
+    try:
+        async for event in create_fn(parsed, context, cancellation_signal):
+            yield event
+    finally:
+        if token is not None:
+            reset_request_context(token)
 
 
 async def _resolve_input_items_for_persistence(
@@ -942,9 +973,14 @@ async def _bg_drain_handler_events(
     :rtype: bool
     """
     try:
-        async for handler_event in _iter_with_winddown(
-            create_fn(parsed, context, cancellation_signal), cancellation_signal
-        ):
+        handler_iterator = _iter_handler_with_request_context(
+            create_fn,
+            parsed,
+            context,
+            cancellation_signal,
+            agent_session_id,
+        )
+        async for handler_event in _iter_with_winddown(handler_iterator, cancellation_signal):
             # Intercept developer ``stream.checkpoint()`` events (spec 025 §A.3):
             # persist (resilient background only) and never forward them.
             if isinstance(handler_event, ResponseCheckpointEvent):
@@ -3831,14 +3867,19 @@ class _ResponseOrchestrator:
                 exc_info=True,
             )
             state.next_seq = 0
-        handler_iterator = self._create_fn(parsed, context, cancellation_signal)
-
         # Drive the streaming pipeline. Events flow to the per-response
         # stream — the wire iterator on _live_stream's side consumes from
         # the same registry stream independently, and the file-backed
         # backing (when configured) persists every emit to disk for the
         # GET reconnect endpoint.
         try:
+            handler_iterator = _iter_handler_with_request_context(
+                self._create_fn,
+                parsed,
+                context,
+                cancellation_signal,
+                agent_session_id,
+            )
             async for _event in self._process_handler_events(ctx, state, handler_iterator):
                 # Events are emitted to record.subject inside
                 # _process_handler_events; we only need to drain the
