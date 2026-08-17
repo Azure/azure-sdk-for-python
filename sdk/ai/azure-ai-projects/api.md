@@ -2,6 +2,7 @@
 namespace azure.ai.projects
 
     class azure.ai.projects.AIProjectClient(AIProjectClientGenerated): implements ContextManager 
+        property realtime: Realtime    # Read-only
         agents: AgentsOperations
         beta: BetaOperations
         connections: ConnectionsOperations
@@ -39,6 +40,71 @@ namespace azure.ai.projects
                 stream: bool = False, 
                 **kwargs: Any
             ) -> HttpResponse: ...
+
+
+    class azure.ai.projects.Realtime:
+
+        def __init__(self, client: AIProjectClient) -> None: ...
+
+        def connect(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_session_id: Optional[str] = ..., 
+                agent_version_override: Optional[str] = ..., 
+                api_version: Optional[str] = ..., 
+                connection_url: Optional[str] = ..., 
+                credential_scopes: Optional[List[str]] = ..., 
+                extra_headers: Optional[Mapping[str, str]] = ..., 
+                extra_query: Optional[Mapping[str, str]] = ..., 
+                foundry_features: str = _VOICE_AGENT_FEATURE_HEADER, 
+                structured_inputs: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> RealtimeConnectionManager: ...
+
+
+    class azure.ai.projects.RealtimeConnection: implements ContextManager 
+        property closed: bool    # Read-only
+
+        def __init__(self, connection: ClientConnection) -> None: ...
+
+        def __iter__(self) -> Iterator[ServerEvent]: ...
+
+        def __repr__(self) -> str: ...
+
+        def close(
+                self, 
+                *, 
+                code: int = 1000, 
+                reason: str = ""
+            ) -> None: ...
+
+        def recv(self) -> ServerEvent: ...
+
+        def send(self, event: ClientEvent) -> None: ...
+
+
+    class azure.ai.projects.RealtimeConnectionManager: implements ContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_session_id: Optional[str] = ..., 
+                agent_version_override: Optional[str] = ..., 
+                api_version: str, 
+                connection_url: Optional[str] = ..., 
+                credential: TokenCredential, 
+                credential_scopes: List[str], 
+                endpoint: str, 
+                extra_headers: Optional[Mapping[str, str]] = ..., 
+                extra_query: Optional[Mapping[str, str]] = ..., 
+                foundry_features: str, 
+                structured_inputs: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        def enter(self) -> RealtimeConnection: ...
 
 
 namespace azure.ai.projects.aio
