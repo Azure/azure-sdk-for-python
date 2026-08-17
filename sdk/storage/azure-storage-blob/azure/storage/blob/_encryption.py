@@ -979,7 +979,7 @@ class _GCMRegionNonceValidator:
                 self._encoding = next(iter(self._candidates.values()))
 
 
-def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
+def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements,disable=too-many-branches
     require_encryption: bool,
     key_encryption_key: Optional[KeyEncryptionKey],
     key_resolver: Optional[Callable[[str], KeyEncryptionKey]],
@@ -1018,9 +1018,11 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         'x-ms-meta-encryptiondata' header if the blob was encrypted.
     :param Optional[_EncryptionData] expected_encryption_data:
         The encryption data retrieved at the start of the download. If provided, the encryption
+        metadata on this response is validated against it to detect the blob's encryption metadata
         being modified (tampered with) partway through a download.
     :param Optional[_GCMRegionNonceValidator] nonce_validator:
-        Shared state used to enforce a single V2 nonce encoding across every chunk of a
+        Shared state used to enforce a single V2 nonce encoding across every chunk of a Blob download.
+        Required for V2 decryption unless the caller has set the
         AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS environment variable.
     :return: The decrypted blob content.
     :rtype: bytes

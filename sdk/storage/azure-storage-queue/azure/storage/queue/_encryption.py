@@ -8,6 +8,7 @@
 import math
 import os
 import sys
+import threading
 import warnings
 from collections import OrderedDict
 from io import BytesIO
@@ -41,11 +42,7 @@ if TYPE_CHECKING:
 _ENCRYPTION_PROTOCOL_V1 = "1.0"
 _ENCRYPTION_PROTOCOL_V2 = "2.0"
 _ENCRYPTION_PROTOCOL_V2_1 = "2.1"
-_VALID_ENCRYPTION_PROTOCOLS = [
-    _ENCRYPTION_PROTOCOL_V1,
-    _ENCRYPTION_PROTOCOL_V2,
-    _ENCRYPTION_PROTOCOL_V2_1,
-]
+_VALID_ENCRYPTION_PROTOCOLS = [_ENCRYPTION_PROTOCOL_V1, _ENCRYPTION_PROTOCOL_V2, _ENCRYPTION_PROTOCOL_V2_1]
 _ENCRYPTION_V2_PROTOCOLS = [_ENCRYPTION_PROTOCOL_V2, _ENCRYPTION_PROTOCOL_V2_1]
 _GCM_REGION_DATA_LENGTH = 4 * 1024 * 1024
 _GCM_NONCE_LENGTH = 12
@@ -56,6 +53,13 @@ _ERROR_OBJECT_INVALID = "{0} does not define a complete interface. Value of {1} 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     "The require_encryption flag is set, but encryption is not supported for this method."
 )
+_ERROR_ENCRYPTION_METADATA_MISMATCH = (
+    "The encryption metadata in the download response does not match the encryption metadata "
+    "retrieved at the start of the download. The blob's encryption metadata may have been modified "
+    "while the download was in progress."
+)
+
+_ERROR_INVALID_ENCRYPTION_METADATA = "The encryption metadata is not valid and may have been modified."
 
 
 class KeyEncryptionKey(Protocol):
@@ -220,6 +224,49 @@ class _EncryptionData:
         self.wrapped_content_key = wrapped_content_key
         self.key_wrapping_metadata = key_wrapping_metadata
 
+    def matches(self, other: "_EncryptionData") -> bool:
+        """
+        Determines whether this encryption data refers to the same encrypted content by comparing
+        every field that affects decryption. This is used to detect whether a blob's encryption
+        metadata has changed partway through a download, which could indicate the blob was
+        overwritten or tampered with.
+
+        :param _EncryptionData other: The encryption data to compare against.
+        :return: True if the decryption-relevant metadata matches, False otherwise.
+        :rtype: bool
+        """
+        if (
+            self.encryption_agent.protocol != other.encryption_agent.protocol
+            or self.encryption_agent.encryption_algorithm != other.encryption_agent.encryption_algorithm
+        ):
+            return False
+
+        if (
+            self.wrapped_content_key.key_id != other.wrapped_content_key.key_id
+            or self.wrapped_content_key.algorithm != other.wrapped_content_key.algorithm
+            or self.wrapped_content_key.encrypted_key != other.wrapped_content_key.encrypted_key
+        ):
+            return False
+
+        # Compare the content encryption IV (used for AES-CBC / V1).
+        if self.content_encryption_IV != other.content_encryption_IV:
+            return False
+
+        # Compare the encrypted region info (used for AES-GCM / V2).
+        self_region = self.encrypted_region_info
+        other_region = other.encrypted_region_info
+        if (self_region is None) != (other_region is None):
+            return False
+        if self_region is not None and other_region is not None:
+            if (
+                self_region.data_length != other_region.data_length
+                or self_region.nonce_length != other_region.nonce_length
+                or self_region.tag_length != other_region.tag_length
+            ):
+                return False
+
+        return True
+
 
 class GCMBlobEncryptionStream:
     """
@@ -312,10 +359,7 @@ def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
 
 
 def modify_user_agent_for_encryption(
-    user_agent: str,
-    moniker: str,
-    encryption_version: str,
-    request_options: Dict[str, Any],
+    user_agent: str, moniker: str, encryption_version: str, request_options: Dict[str, Any]
 ) -> None:
     """
     Modifies the request options to contain a user agent string updated with encryption information.
@@ -367,10 +411,7 @@ def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
 
 
 def get_adjusted_download_range_and_offset(
-    start: int,
-    end: int,
-    length: Optional[int],
-    encryption_data: Optional[_EncryptionData],
+    start: int, end: int, length: Optional[int], encryption_data: Optional[_EncryptionData]
 ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """
     Gets the new download range and offsets into the decrypted data for
@@ -589,17 +630,11 @@ def _dict_to_encryption_data(encryption_data_dict: Dict[str, Any]) -> _Encryptio
     if "EncryptedRegionInfo" in encryption_data_dict:
         encrypted_region_info = encryption_data_dict["EncryptedRegionInfo"]
         region_info = _EncryptedRegionInfo(
-            encrypted_region_info["DataLength"],
-            encrypted_region_info["NonceLength"],
-            _GCM_TAG_LENGTH,
+            encrypted_region_info["DataLength"], encrypted_region_info["NonceLength"], _GCM_TAG_LENGTH
         )
 
     encryption_data = _EncryptionData(
-        encryption_iv,
-        region_info,
-        encryption_agent,
-        wrapped_content_key,
-        key_wrapping_metadata,
+        encryption_iv, region_info, encryption_agent, wrapped_content_key, key_wrapping_metadata
     )
 
     return encryption_data
@@ -672,8 +707,7 @@ def _validate_and_unwrap_cek(
         raise ValueError("Provided or resolved key-encryption-key does not match the id of key used to encrypt.")
     # Will throw an exception if the specified algorithm is not supported.
     content_encryption_key = key_encryption_key.unwrap_key(
-        encryption_data.wrapped_content_key.encrypted_key,
-        encryption_data.wrapped_content_key.algorithm,
+        encryption_data.wrapped_content_key.encrypted_key, encryption_data.wrapped_content_key.algorithm
     )
 
     # For V2, the version is included with the cek. We need to validate it
@@ -682,7 +716,7 @@ def _validate_and_unwrap_cek(
         version_2_bytes = encryption_data.encryption_agent.protocol.encode().ljust(8, b"\0")
         cek_version_bytes = content_encryption_key[: len(version_2_bytes)]
         if cek_version_bytes != version_2_bytes:
-            raise ValueError("The encryption metadata is not valid and may have been modified.")
+            raise ValueError(_ERROR_INVALID_ENCRYPTION_METADATA)
 
         # Remove version from the start of the cek.
         content_encryption_key = content_encryption_key[len(version_2_bytes) :]
@@ -856,7 +890,96 @@ def generate_blob_encryption_data(
     return content_encryption_key, initialization_vector, encryption_data
 
 
-def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
+def _parse_content_range(content_range: str) -> Tuple[int, int, int]:
+    """
+    Parses a Content-Range header of the form 'bytes x-y/size' into its
+    start, end, and total size components.
+
+    :param str content_range: The Content-Range header value.
+    :return: A tuple of (start, end, total size).
+    :rtype: Tuple[int, int, int]
+    """
+    # Format: 'bytes x-y/size' -- ignore the leading 'bytes' word.
+    byte_range, size = content_range.split(" ")[1].split("/")
+    start, end = byte_range.split("-")
+    return int(start), int(end), int(size)
+
+
+def _region_nonce_encodings(nonce_length: int) -> Dict[str, Callable[[int], bytes]]:
+    """
+    Returns the supported per-region nonce encodings, keyed by the SDK that produces them.
+
+    The per-region nonce is a counter of the region's position, but each SDK encodes it
+    differently, so all supported encodings must be understood for interoperability:
+
+    * Python: zero-based counter, big-endian across the whole nonce (value in trailing bytes).
+    * Java: zero-based counter, big-endian in the leading 8 bytes, trailing bytes zeroed.
+    * .NET: one-based counter, little-endian in the trailing 8 bytes, leading bytes zeroed.
+
+    These encodings share the same value space, so they must not be accepted independently
+    per region (for example Java's nonce for region 1 is identical to .NET's nonce for
+    region 16,777,215). A single encoding is instead selected and enforced across the whole
+    download; see ``decrypt_blob``.
+
+    :param int nonce_length: The length of the nonce in bytes.
+    :return: A mapping of SDK name to a function returning that SDK's nonce for a region index.
+    :rtype: Dict[str, Callable[[int], bytes]]
+    """
+    encodings: Dict[str, Callable[[int], bytes]] = {
+        "python": lambda index: index.to_bytes(nonce_length, "big"),
+    }
+
+    counter_length = 8
+    pad = nonce_length - counter_length
+    encodings["java"] = lambda index: index.to_bytes(counter_length, "big") + b"\x00" * pad
+    encodings["dotnet"] = lambda index: b"\x00" * pad + (index + 1).to_bytes(counter_length, "little")
+
+    return encodings
+
+
+class _GCMRegionNonceValidator:
+    """
+    Enforces that every region across a whole download uses a single nonce encoding.
+
+    ``decrypt_blob`` runs once per HTTP chunk, so the candidate encodings are shared and
+    intersected across all chunks (including concurrent ones) rather than reset per call.
+    Otherwise the encoding could change at a chunk boundary and, at an encoding collision,
+    let a relocated region pass validation.
+    """
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._candidates: Optional[Dict[str, Callable[[int], bytes]]] = None
+        # Set once the candidates collapse to a single encoding; read lock-free thereafter.
+        self._encoding: Optional[Callable[[int], bytes]] = None
+
+    def validate_region(self, region_index: int, nonce: bytes, nonce_length: int) -> None:
+        """
+        Narrows the shared candidate encodings to those consistent with this region.
+
+        :param int region_index: The zero-based index of the region within the blob.
+        :param bytes nonce: The nonce read from the region.
+        :param int nonce_length: The length of the nonce in bytes.
+        """
+        encoding = self._encoding
+        if encoding is not None:
+            if encoding(region_index) != nonce:
+                raise ValueError(_ERROR_INVALID_ENCRYPTION_METADATA)
+            return
+
+        with self._lock:
+            if self._candidates is None:
+                self._candidates = _region_nonce_encodings(nonce_length)
+            self._candidates = {
+                name: encode for name, encode in self._candidates.items() if encode(region_index) == nonce
+            }
+            if not self._candidates:
+                raise ValueError(_ERROR_INVALID_ENCRYPTION_METADATA)
+            if len(self._candidates) == 1:
+                self._encoding = next(iter(self._candidates.values()))
+
+
+def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements,disable=too-many-branches
     require_encryption: bool,
     key_encryption_key: Optional[KeyEncryptionKey],
     key_resolver: Optional[Callable[[str], KeyEncryptionKey]],
@@ -864,6 +987,8 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     start_offset: int,
     end_offset: int,
     response_headers: Dict[str, Any],
+    expected_encryption_data: Optional[_EncryptionData] = None,
+    nonce_validator: Optional["_GCMRegionNonceValidator"] = None,
 ) -> bytes:
     """
     Decrypts the given blob contents and returns only the requested range.
@@ -891,12 +1016,22 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     :param Dict[str, Any] response_headers:
         A dictionary of response headers from the download request. Expected to include the
         'x-ms-meta-encryptiondata' header if the blob was encrypted.
+    :param Optional[_EncryptionData] expected_encryption_data:
+        The encryption data retrieved at the start of the download. If provided, the encryption
+        metadata on this response is validated against it to detect the blob's encryption metadata
+        being modified (tampered with) partway through a download.
+    :param Optional[_GCMRegionNonceValidator] nonce_validator:
+        Shared state used to enforce a single V2 nonce encoding across every chunk of a Blob download.
+        Required for V2 decryption unless the caller has set the
+        AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS environment variable.
     :return: The decrypted blob content.
     :rtype: bytes
     """
     try:
         encryption_data = _dict_to_encryption_data(loads(response_headers["x-ms-meta-encryptiondata"]))
     except Exception as exc:  # pylint: disable=broad-except
+        if expected_encryption_data is not None:
+            raise ValueError(_ERROR_ENCRYPTION_METADATA_MISMATCH) from exc
         if require_encryption:
             raise ValueError(
                 "Encryption required, but received data does not contain appropriate metadata."
@@ -905,11 +1040,12 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
 
         return content
 
+    # Validate that the encryption metadata has not changed since the start of the download.
+    if expected_encryption_data is not None and not expected_encryption_data.matches(encryption_data):
+        raise ValueError(_ERROR_ENCRYPTION_METADATA_MISMATCH)
+
     algorithm = encryption_data.encryption_agent.encryption_algorithm
-    if algorithm not in (
-        _EncryptionAlgorithm.AES_CBC_256,
-        _EncryptionAlgorithm.AES_GCM_256,
-    ):
+    if algorithm not in (_EncryptionAlgorithm.AES_CBC_256, _EncryptionAlgorithm.AES_GCM_256):
         raise ValueError("Specified encryption algorithm is not supported.")
 
     version = encryption_data.encryption_agent.protocol
@@ -924,16 +1060,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         iv: Optional[bytes] = None
         unpad = False
         if "content-range" in response_headers:
-            content_range = response_headers["content-range"]
-            # Format: 'bytes x-y/size'
-
-            # Ignore the word 'bytes'
-            content_range = content_range.split(" ")
-
-            content_range = content_range[1].split("-")
-            content_range = content_range[1].split("/")
-            end_range = int(content_range[0])
-            blob_size = int(content_range[1])
+            _, end_range, blob_size = _parse_content_range(response_headers["content-range"])
 
             if start_offset >= 16:
                 iv = content[:16]
@@ -977,6 +1104,25 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         tag_length = encryption_data.encrypted_region_info.tag_length
         region_length = nonce_length + data_length + tag_length
 
+        # The per-region nonce is a counter of the region's index within the blob. The
+        # downloaded content always begins on a region boundary, so derive the first
+        # region's index from the download range (0 when the whole blob was downloaded).
+        # This lets us validate each nonce and detect reordered regions.
+        start_range = 0
+        if "content-range" in response_headers:
+            start_range, _, _ = _parse_content_range(response_headers["content-range"])
+        nonce_counter = start_range // region_length
+
+        # Bypass nonce validation via an environment variable for data-recovery scenarios
+        # where regions were reordered. Not recommended: it can allow tampered data through.
+        validate_nonce = os.environ.get(
+            "AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS", ""
+        ).strip().lower() not in ("true", "1")
+
+        # A validator is required to enforce a single nonce encoding across the whole download.
+        if validate_nonce and nonce_validator is None:
+            raise ValueError("A nonce validator is required to decrypt Encryption V2 content.")
+
         decrypted_content = bytearray()
         while offset < total_size:
             # Process one encryption region at a time
@@ -985,6 +1131,10 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
 
             # First bytes are the nonce
             nonce = encrypted_region[:nonce_length]
+            # Validate the nonce matches the expected counter for this region under a single
+            # consistent encoding. A mismatch indicates the regions were reordered or tampered with.
+            if nonce_validator is not None and validate_nonce:
+                nonce_validator.validate_region(nonce_counter, nonce, nonce_length)
             ciphertext_with_tag = encrypted_region[nonce_length:]
 
             aesgcm = AESGCM(content_encryption_key)
@@ -992,6 +1142,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
             decrypted_content.extend(decrypted_data)
 
             offset += process_size
+            nonce_counter += 1
 
         # Read the caller requested data from the decrypted content
         return decrypted_content[start_offset:end_offset]

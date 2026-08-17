@@ -1512,5 +1512,7 @@ class TestGCMRegionNonceValidation:
 
         # Act / Assert -- with the bypass set, decryption succeeds without a validator.
         with mock.patch.dict(os.environ, {"AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS": "true"}):
-            decrypted = self._decrypt(kek, headers, region0 + region1, 2 * self.REGION_DATA_LENGTH, nonce_validator=None)
+            decrypted = self._decrypt(
+                kek, headers, region0 + region1, 2 * self.REGION_DATA_LENGTH, nonce_validator=None
+            )
         assert decrypted == plaintext
