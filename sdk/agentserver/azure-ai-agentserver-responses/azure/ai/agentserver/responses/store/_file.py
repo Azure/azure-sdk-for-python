@@ -579,7 +579,7 @@ class FileResponseStore(ResponseProviderProtocol):
 
             if limit <= 0:
                 return []
-            return resolved[:limit]
+            return resolved[-limit:]
 
     # ------------------------------------------------------------------
     # Internal helpers (must be called with self._lock held)

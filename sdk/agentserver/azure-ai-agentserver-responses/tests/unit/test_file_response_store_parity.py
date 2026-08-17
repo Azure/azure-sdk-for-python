@@ -327,7 +327,7 @@ async def test_history_respects_limit(tmp_path: Path) -> None:
             history_item_ids=["hist1", "hist2"],
         )
         ids = await provider.get_history_item_ids("r_prev", None, limit=3)
-        assert ids == ["hist1", "hist2", "in1"]
+        assert ids == ["out1", "out2", "out3"]
         # Non-positive limit returns empty.
         ids_zero = await provider.get_history_item_ids("r_prev", None, limit=0)
         assert ids_zero == []
