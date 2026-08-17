@@ -10,7 +10,7 @@ DESCRIPTION:
     `.evaluators` methods to create, get and list evaluators.
 
 USAGE:
-    python sample_evaluators.py
+    python sample_eval_catalog.py
 
     Before running the sample:
 

@@ -389,13 +389,14 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
-        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
+        :keyword int prefetch_count: The number of messages the receiver requests ahead of a
+         receive call, so that receive calls can be served from the buffer instead of waiting on a
+         service request. This is separate from the `max_message_count` argument to
+         `receive_messages`, which bounds a single call rather than the buffer.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
-         performance but increase the chance that messages will expire while they are cached if they're not
+         performance but increase the chance that messages will expire while they are buffered if they're not
          processed fast enough.
-         The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
-         `max_message_count` (if provided) within its request to the service.
+         The default value is 0, meaning prefetch is turned off.
          WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
@@ -580,13 +581,14 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
-        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
+        :keyword int prefetch_count: The number of messages the receiver requests ahead of a
+         receive call, so that receive calls can be served from the buffer instead of waiting on a
+         service request. This is separate from the `max_message_count` argument to
+         `receive_messages`, which bounds a single call rather than the buffer.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
-         performance but increase the chance that messages will expire while they are cached if they're not
+         performance but increase the chance that messages will expire while they are buffered if they're not
          processed fast enough.
-         The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
-         `max_message_count` (if provided) within its request to the service.
+         The default value is 0, meaning prefetch is turned off.
          WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.

@@ -1,21 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for the gated resilient ``TaskManager`` startup recovery scan.
+"""Tests for the gated resilient ``TaskManager`` construction + recovery.
 
-``AgentServerHost`` always constructs the resilient ``TaskManager`` (a cheap,
-in-memory object that makes no task-store calls), so ``get_task_manager()`` and
-``.run()`` / ``.start()`` work regardless. Its network-backed **startup
-recovery scan** (and the periodic recovery loop it spawns) runs when EITHER:
+The resilient ``TaskManager`` is CONSTRUCTED ONLY when resilient tasks were
+explicitly enabled via ``set_resilient_tasks_enabled(True)`` (default
+``False``). Recovery — and the durable task subsystem as a whole — is strictly
+opt-in.
 
-1. at least one durable task has been declared (``@task`` /
-   ``@multi_turn_task``, tracked in the ``_REGISTERED_DESCRIPTORS`` list), OR
-2. the switch was set via ``set_resilient_tasks_enabled(True)`` (default
-   ``False``) — a force-enable.
-
-Both signals are read directly at lifespan startup. When neither is true, no
-task-store call is made — plain servers (e.g. invocations-only hosts) pay
-nothing.
+When the switch is off the manager is NOT installed, so ``get_task_manager()``
+raises ``TaskManagerNotInitialized``; callers that route through the manager
+(e.g. the responses ``store=true`` path) swallow that at their outer catch and
+degrade to non-durable in-process execution. Merely declaring a durable task
+(``@task`` / ``@multi_turn_task``) — including internal protocol primitives —
+does NOT turn the subsystem on. A plain server pays nothing: no manager, no
+task-store call.
 """
 import logging
 
@@ -27,6 +26,7 @@ from azure.ai.agentserver.core._base import (
 )
 from azure.ai.agentserver.core.tasks import (
     TaskContext,
+    TaskManagerNotInitialized,
     multi_turn_task,
     resilient_tasks_enabled,
     set_resilient_tasks_enabled,
@@ -136,63 +136,64 @@ class TestGateSignals:
 
 
 class TestLifespanManagerAndRecovery:
-    """The TaskManager is ALWAYS constructed (cheap, no task-store calls);
-    the network-backed startup recovery scan runs when EITHER the switch is
-    enabled OR at least one durable task is declared."""
+    """The resilient TaskManager is CONSTRUCTED ONLY when the switch is
+    explicitly enabled via ``set_resilient_tasks_enabled(True)``. With the
+    switch off no manager is installed and ``get_task_manager()`` raises —
+    callers swallow that and degrade to non-durable execution."""
 
     @pytest.mark.asyncio
-    async def test_neither_enabled_nor_task_no_recovery(
+    async def test_neither_enabled_nor_task_no_manager(
         self, _clean_state, _fake_task_manager
     ) -> None:
-        """No switch, no task: the manager is constructed and installed so
-        ``get_task_manager()`` works (no ``TaskManagerNotInitialized``) — but
-        the startup recovery scan does NOT run (plain invocations host)."""
+        """No switch, no task: the manager is NOT constructed and
+        ``get_task_manager()`` raises ``TaskManagerNotInitialized``."""
         from azure.ai.agentserver.core import AgentServerHost
         from azure.ai.agentserver.core.tasks._manager import get_task_manager
 
         app = AgentServerHost()
         async with app.router.lifespan_context(app):
-            # A manager exists and is retrievable during the active lifespan.
-            assert len(_fake_task_manager.instances) == 1
-            assert get_task_manager() is _fake_task_manager.instances[0]
-            # No recovery scan happened (neither gate true).
-            assert _fake_task_manager.instances[0].startup_called is False
-
-        # Torn down + cleared on shutdown.
-        assert _fake_task_manager.instances[0].shutdown_called is True
+            # No manager constructed (switch off).
+            assert len(_fake_task_manager.instances) == 0
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
 
     @pytest.mark.asyncio
-    async def test_task_declared_runs_recovery_without_switch(self, _clean_state, _fake_task_manager) -> None:
-        """A declared task alone runs recovery (backward compatible — an
-        existing ``@task`` app gets recovery without calling the switch)."""
+    async def test_task_declared_without_switch_no_manager(self, _clean_state, _fake_task_manager) -> None:
+        """A declared task alone does NOT construct the manager: the durable
+        task subsystem is opt-in and gated solely on the switch."""
         from azure.ai.agentserver.core import AgentServerHost
+        from azure.ai.agentserver.core.tasks._manager import get_task_manager
 
         _declare_task()
         # switch left at default False
         app = AgentServerHost()
         async with app.router.lifespan_context(app):
-            pass
-        assert len(_fake_task_manager.instances) == 1
-        assert _fake_task_manager.instances[0].startup_called is True
+            assert len(_fake_task_manager.instances) == 0
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
 
     @pytest.mark.asyncio
-    async def test_switch_alone_runs_recovery_without_task(self, _clean_state, _fake_task_manager) -> None:
-        """The switch alone runs recovery (force-enable) — starting the
-        periodic recovery loop so a task declared later is picked up."""
+    async def test_switch_alone_builds_manager_and_runs_recovery(self, _clean_state, _fake_task_manager) -> None:
+        """The switch constructs the manager and runs recovery (force-enable)
+        — starting the periodic recovery loop so a task declared later is
+        picked up."""
         from azure.ai.agentserver.core import AgentServerHost
+        from azure.ai.agentserver.core.tasks._manager import get_task_manager
 
         set_resilient_tasks_enabled(True)
         app = AgentServerHost()
         async with app.router.lifespan_context(app):
-            pass
-        assert len(_fake_task_manager.instances) == 1
-        assert _fake_task_manager.instances[0].startup_called is True
+            assert len(_fake_task_manager.instances) == 1
+            assert get_task_manager() is _fake_task_manager.instances[0]
+            assert _fake_task_manager.instances[0].startup_called is True
+        assert _fake_task_manager.instances[0].shutdown_called is True
 
     @pytest.mark.asyncio
-    async def test_switch_and_task_runs_recovery(
+    async def test_switch_and_task_builds_manager_and_runs_recovery(
         self, _clean_state, _fake_task_manager, caplog: pytest.LogCaptureFixture
     ) -> None:
-        """Both signals true -> manager built and startup recovery runs."""
+        """Switch on and a task declared -> manager built and startup recovery
+        runs."""
         from azure.ai.agentserver.core import AgentServerHost
 
         set_resilient_tasks_enabled(True)
@@ -210,9 +211,13 @@ class TestLifespanManagerAndRecovery:
         assert any("TaskManager initialized with startup recovery" in r.message for r in caplog.records)
 
     @pytest.mark.asyncio
-    async def test_multi_turn_task_runs_recovery_without_switch(self, _clean_state, _fake_task_manager) -> None:
-        """A declared ``@multi_turn_task`` alone also runs recovery."""
+    async def test_multi_turn_task_declared_without_switch_no_manager(
+        self, _clean_state, _fake_task_manager
+    ) -> None:
+        """A declared ``@multi_turn_task`` alone also does NOT construct the
+        manager (opt-in)."""
         from azure.ai.agentserver.core import AgentServerHost
+        from azure.ai.agentserver.core.tasks._manager import get_task_manager
 
         @multi_turn_task(name="gate_lifespan_mt")
         async def _probe(ctx: "TaskContext[dict]") -> None:
@@ -220,7 +225,46 @@ class TestLifespanManagerAndRecovery:
 
         app = AgentServerHost()
         async with app.router.lifespan_context(app):
-            pass
+            assert len(_fake_task_manager.instances) == 0
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
 
-        assert len(_fake_task_manager.instances) == 1
-        assert _fake_task_manager.instances[0].startup_called is True
+    @pytest.mark.asyncio
+    async def test_switch_on_startup_failure_fails_lifespan(
+        self, _clean_state, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """When resilient tasks are ENABLED but manager startup fails, the
+        lifespan must fail fast (fail-fast at boot) rather than start a server
+        that would silently run store=true work non-durably. The partially
+        started manager must be torn down and the singleton cleared so it is not
+        left visible through ``get_task_manager()``."""
+        from azure.ai.agentserver.core import AgentServerHost
+        from azure.ai.agentserver.core.tasks._manager import get_task_manager
+
+        shutdown_calls: list[int] = []
+
+        class _FailingManager:
+            def __init__(self, **kwargs) -> None:
+                pass
+
+            async def startup(self) -> None:
+                raise RuntimeError("simulated boot failure")
+
+            async def shutdown(self) -> None:
+                shutdown_calls.append(1)
+
+        monkeypatch.setattr(
+            "azure.ai.agentserver.core.tasks._manager.TaskManager",
+            _FailingManager,
+        )
+        set_resilient_tasks_enabled(True)
+
+        app = AgentServerHost()
+        with pytest.raises(RuntimeError, match="simulated boot failure"):
+            async with app.router.lifespan_context(app):
+                pass
+
+        # The partially started manager was torn down and the singleton cleared.
+        assert shutdown_calls == [1]
+        with pytest.raises(TaskManagerNotInitialized):
+            get_task_manager()

@@ -33,9 +33,7 @@ class ActivityConstants:
 
     # Routing
     ACTIVITY_MESSAGES_PATH: str = "/activity/messages"
-    API_MESSAGES_PATH: str = "/api/messages"
     ACTIVITY_ROUTE_NAME: str = "create_activity"
-    API_MESSAGES_ROUTE_NAME: str = "create_activity_api_messages"
 
 
 class FoundryEnv:

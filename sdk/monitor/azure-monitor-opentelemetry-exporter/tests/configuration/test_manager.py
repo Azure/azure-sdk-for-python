@@ -133,6 +133,33 @@ class TestConfigurationManager(unittest.TestCase):
         mock_worker_class.assert_called_once()
 
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_initialize_merges_profile_first_wins_across_calls(self, mock_worker_class):
+        """A later initialize() contributes new profile fields without overriding earlier ones.
+
+        Supports a component call chain (e.g. distro -> exporter): the first caller sets
+        component, and a later caller still supplies ikey/region without clobbering component.
+        The worker must start only once across all initialize() calls.
+        """
+        from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile
+
+        # Reset the module-level profile (class variables persist across tests).
+        for _field in ("os", "rp", "attach", "version", "component", "region", "ikey"):
+            setattr(_ConfigurationProfile, _field, "")
+
+        manager = _ConfigurationManager()
+        # First caller (e.g. the distro) sets the component.
+        manager.initialize(component="dst")
+        # Second caller (e.g. the exporter) tries a different component but adds ikey/region.
+        manager.initialize(component="ext", ikey="my-ikey", region="eastus")
+
+        # First-wins: component stays "dst"; the new fields are filled.
+        self.assertEqual(_ConfigurationProfile.component, "dst")
+        self.assertEqual(_ConfigurationProfile.ikey, "my-ikey")
+        self.assertEqual(_ConfigurationProfile.region, "eastus")
+        # Worker started exactly once despite two initialize() calls.
+        mock_worker_class.assert_called_once()
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     def test_shutdown_is_soft_reset_and_reusable(self, mock_worker_class):
         """Test that shutdown() is a soft reset: the singleton instance stays reusable.
 

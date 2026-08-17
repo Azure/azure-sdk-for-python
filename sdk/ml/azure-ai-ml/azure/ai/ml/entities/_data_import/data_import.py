@@ -18,20 +18,20 @@ from azure.ai.ml.entities._util import load_from_dict
 class DataImport(Data):
     """Data asset with a creating data import job.
 
-    :param name: Name of the asset.
-    :type name: str
-    :param path: The path to the asset being created by data import job.
-    :type path: str
-    :param source: The source of the asset data being copied from.
-    :type source: Union[Database, FileSystem]
-    :param version: Version of the resource.
-    :type version: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
+    :keyword name: Name of the asset.
+    :paramtype name: str
+    :keyword path: The path to the asset being created by data import job.
+    :paramtype path: str
+    :keyword source: The source of the asset data being copied from.
+    :paramtype source: Union[Database, FileSystem]
+    :keyword version: Version of the resource.
+    :paramtype version: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
