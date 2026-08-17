@@ -45,7 +45,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "schedules": "Schedules=V1Preview",
     "skills": "Skills=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
 }
 
 # Methods on .beta sub-clients that are NOT simple one-HTTP-call wrappers and
@@ -83,13 +83,32 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     #   The test id is derived automatically from method_name.
     pytest.param(
         "agents.create_version",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
     ),
     pytest.param(
         "evaluation_rules.create_or_update",
         "Evaluations=V1Preview",
     ),
 ]
+
+# Methods on `agent_endpoint_conversations` that always send the Foundry-Features header,
+# unconditionally, regardless of `allow_preview`. Unlike _NON_BETA_OPTIONAL_TEST_CASES above,
+# this sub-client is wrapped with `_OperationMethodHeaderProxy` directly in `_patch.py` (not
+# gated behind `allow_preview`), because voice-agent conversation reads require the
+# VoiceAgents=V1Preview opt-in header even when the caller hasn't requested other preview
+# features. Used by test_foundry_features_header_on_agent_endpoint_conversations.py (sync) and
+# its async counterpart.
+_AGENT_ENDPOINT_CONVERSATIONS_TEST_CASES = [
+    # Each pytest.param entry has the following positional argument:
+    #   1. method_name (str) – "agent_endpoint_conversations.<method>" on AIProjectClient.
+    #   The expected header value is always "VoiceAgents=V1Preview" for all of these.
+    pytest.param("agent_endpoint_conversations.list_agent_conversations"),
+    pytest.param("agent_endpoint_conversations.get_agent_conversation"),
+    pytest.param("agent_endpoint_conversations.delete_agent_conversation"),
+    pytest.param("agent_endpoint_conversations.list_agent_conversation_responses"),
+]
+
+_AGENT_ENDPOINT_CONVERSATIONS_EXPECTED_HEADER_VALUE = "VoiceAgents=V1Preview"
 
 # Both sentinel values – used by _make_fake_call to detect required parameters
 # whose defaults are the internal _Unset object (rather than inspect.Parameter.empty).

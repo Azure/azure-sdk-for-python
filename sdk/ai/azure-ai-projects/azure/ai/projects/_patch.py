@@ -250,6 +250,11 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
         self._realtime: Optional[Realtime] = None
+        # The generated `voice_agent_web_socket` operation group only performs a plain HTTP GET
+        # (no WebSocket upgrade handshake) and discards the connection, returning None. It is not a
+        # usable WebSocket client. Remove it from the public surface so it can't be mistaken for the
+        # real, functional voice-agent WebSocket client exposed via `.realtime`.
+        del self.voice_agent_web_socket
         # Voice-agent conversation reads require the VoiceAgents=V1Preview opt-in header, which
         # isn't part of the standard agent preview headers; inject it transparently.
         self.agent_endpoint_conversations = _OperationMethodHeaderProxy(  # type: ignore

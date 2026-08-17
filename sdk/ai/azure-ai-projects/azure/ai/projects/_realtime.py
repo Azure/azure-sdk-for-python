@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import base64
 import json
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 from typing import (
     Any,
     Dict,
@@ -229,6 +229,29 @@ def _to_ws_url(endpoint: str, agent_name: str) -> str:
     elif base.startswith("http://"):
         base = "ws://" + base[len("http://") :]
     return f"{base}/agents/{agent_name}/endpoint/protocols/voice"
+
+
+def _assert_trusted_connection_url(connection_url: str, endpoint: str) -> None:
+    """Guard against attaching the caller's Entra bearer token to an untrusted host.
+
+    ``connection_url`` is an escape hatch that lets a caller override the computed
+    scheme/host/path, but the Authorization header carrying the live credential's
+    token must never be sent to a host other than the configured Foundry project
+    endpoint: a caller-controlled or compromised URL could otherwise be used to
+    exfiltrate the token to an arbitrary host.
+
+    :param str connection_url: The caller-supplied override URL.
+    :param str endpoint: The configured, trusted Foundry project endpoint.
+    :raises ValueError: If the override URL's host does not match the endpoint's host.
+    """
+    override_host = (urlparse(connection_url).hostname or "").lower()
+    trusted_host = (urlparse(endpoint).hostname or "").lower()
+    if not override_host or override_host != trusted_host:
+        raise ValueError(
+            "The 'connection_url' override must target the same host as the configured Foundry "
+            f"project endpoint ('{trusted_host}') to avoid sending the Authorization token to an "
+            f"untrusted host; got host '{override_host or connection_url}'."
+        )
 
 
 class _BaseResource:  # pylint: disable=too-few-public-methods
@@ -643,6 +666,7 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
         """
         try:
             from websockets.sync.client import connect as _ws_connect  # pylint: disable=import-outside-toplevel
+            from websockets.typing import Subprotocol  # pylint: disable=import-outside-toplevel
         except ImportError as exc:  # pragma: no cover - dependency guard
             raise RuntimeError(
                 "The realtime client requires `websockets`. Install it with `pip install websockets`."
@@ -650,6 +674,8 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
 
         # ``connection_url`` fully overrides the computed route (scheme/host/path). This is the
         # escape hatch used to reach a specific data-plane host/path directly.
+        if self._connection_url is not None:
+            _assert_trusted_connection_url(self._connection_url, self._endpoint)
         url = self._connection_url or _to_ws_url(self._endpoint, self._agent_name)
         if not url.startswith("wss://"):
             raise ValueError("The realtime WebSocket URL must use wss:// to protect credentials in transit.")
@@ -676,11 +702,11 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
             connection = _ws_connect(
                 full_url,
                 additional_headers=headers,
-                subprotocols=["realtime"],
+                subprotocols=[Subprotocol("realtime")],
                 **self._kwargs,
             )
         except BaseException as exc:
-            if isinstance(exc, (ValueError, RuntimeError)):
+            if not isinstance(exc, Exception) or isinstance(exc, (ValueError, RuntimeError)):
                 raise
             raise ConnectionError(
                 f"Failed to open the realtime WebSocket connection to voice agent "
