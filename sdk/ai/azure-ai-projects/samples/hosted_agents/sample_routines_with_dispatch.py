@@ -6,23 +6,23 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create a Routine with a timer scheduled
-    far in the future, fire it early via `dispatch(...)`, then record the
-    resulting run by polling `list_runs(...)` using the synchronous
-    AIProjectClient.
+    This sample demonstrates how to create a Routine with a custom trigger and
+    manually dispatch it using the Azure AI Projects SDK. The sample:
 
-    The sample uploads the basic hosted-agent code from `assets/basic-agent/`
-    as a temporary hosted-agent version and routes the configured hosted agent
-    name to that version. The timer is scheduled beyond the sample's polling
-    window, and the sample explicitly invokes the routine early with
-    `project_client.beta.routines.dispatch(...)` passing an
-    `InvokeAgentResponsesApiDispatchPayload` carrying the input sent to the
-    agent. The sample then polls the run history until a terminal phase is
-    reached (or a deadline elapses), printing each observed transition. The
-    routine and hosted-agent version are deleted at the end of the sample.
+    - Uploads the code in `assets/basic-agent/` as a temporary Hosted Agent version.
+    - Creates a Routine associated with the Hosted Agent.
+    - Dispatches the Routine using an
+    `InvokeAgentResponsesApiDispatchPayload`.
+    - Polls the Routine run history until execution reaches a terminal state.
+    - Prints status transitions during execution.
+    - Deletes the created Routine and Hosted Agent version when finished.
 
-    Routines are currently a preview feature. In the Python SDK, you access
-    these operations via `project_client.beta.routines`.
+    Because the Routine uses a `CustomRoutineTrigger`, it does not run
+    automatically and must be explicitly invoked through
+    `project_client.beta.routines.dispatch()`.
+
+    Routines are currently a preview feature and are available through
+    `project_client.beta.routines`.
 
 USAGE:
     python sample_routines_with_dispatch.py
