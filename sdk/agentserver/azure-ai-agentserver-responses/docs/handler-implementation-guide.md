@@ -1529,13 +1529,21 @@ stream.internal_metadata["resume_phase"] = 3
 del stream.internal_metadata["scratch"]
 ```
 
+Response-level values may be any JSON-serializable type, but the complete bag
+is encoded into one string-valued reserved metadata entry. Its compact JSON
+representation must fit the Foundry metadata value limit of 512 characters,
+and the reserved entry consumes one of the response metadata map's 16 keys.
+Item-level internal metadata is stored directly on the output item and does not
+use those response metadata limits.
+
 Use it for lightweight per-turn watermarks, id mappings (e.g. an upstream
 framework's message id ↔ the emitted item), or stale-message / crash-recovery
 detection within the turn. It is persisted whenever the response is persisted —
 at `response.created`, at each `yield stream.checkpoint()`, and at terminal — so
-on recovery you read it back from `context.persisted_response`. It is distinct
-from the *public* `ResponseObject.metadata` dict (the client's own metadata,
-which is NOT stripped).
+on recovery, seed `ResponseEventStream(response=context.persisted_response, ...)`
+and read it through `stream.internal_metadata`. It is distinct from the *public*
+`ResponseObject.metadata` dict (the client's own metadata, which is NOT
+stripped).
 
 ### Which state facility?
 

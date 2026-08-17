@@ -53,6 +53,7 @@ from __future__ import annotations
 import asyncio
 import os
 
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -101,6 +102,12 @@ options = ResponsesServerOptions(
     resilient_background=_RESILIENT_BG,
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
+# Conformance exercises the durable-response subsystem (Rows 1/2/3), which is
+# gated on the resilient-tasks switch. Row 2 runs with resilient_background=False
+# (which does NOT auto-enable the switch), so enable it explicitly here — the
+# server must construct the TaskManager and run recovery to honour the Row 2
+# mark-failed-on-crash contract.
+set_resilient_tasks_enabled(True)
 app = ResponsesAgentServerHost(options=options)
 
 
