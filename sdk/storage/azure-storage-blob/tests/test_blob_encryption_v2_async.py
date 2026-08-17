@@ -394,6 +394,55 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         assert "Decryption failed." in str(e.value)
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_encryption_v2_v1_downgrade_mid_download(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper("key1")
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
+            require_encryption=True,
+            encryption_version="2.0",
+            key_encryption_key=kek,
+        )
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b"abcd" * 2 * MiB  # 8 MiB spans multiple encryption regions -> multiple download requests
+
+        await blob.upload_blob(content, overwrite=True)
+
+        # Build tampered metadata that downgrades the blob from V2 to V1
+        metadata = (await blob.get_blob_properties()).metadata
+        tampered = loads(metadata["encryptiondata"])
+        tampered["EncryptionAgent"]["Protocol"] = "1.0"
+        tampered["EncryptionAgent"]["EncryptionAlgorithm"] = "AES_CBC_256"
+        tampered["ContentEncryptionIV"] = base64.b64encode(os.urandom(16)).decode("utf-8")
+        tampered_header = dumps(tampered)
+
+        # Simulate the service returning downgraded (V1) encryption metadata partway through the
+        # download by tampering with the response headers of every request after the initial one.
+        from azure.storage.blob.aio import _download_async as download_module
+
+        real_process_content = download_module.process_content
+        call_count = {"value": 0}
+
+        async def tampering_process_content(data, start_offset, end_offset, encryption, expected_encryption_data):
+            call_count["value"] += 1
+            if call_count["value"] > 1:
+                data.response.headers["x-ms-meta-encryptiondata"] = tampered_header
+            return await real_process_content(data, start_offset, end_offset, encryption, expected_encryption_data)
+
+        # Act / Assert
+        with mock.patch.object(download_module, "process_content", tampering_process_content):
+            with pytest.raises(HttpResponseError) as e:
+                await (await blob.download_blob()).readall()
+
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_encryption_modify_cek(self, **kwargs):
