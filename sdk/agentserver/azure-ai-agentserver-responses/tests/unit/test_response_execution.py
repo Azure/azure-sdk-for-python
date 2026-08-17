@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Unit tests for ResponseExecution fields, properties, apply_event, and build_cancelled_response."""
+"""Unit tests for ResponseExecution fields, properties, apply_event, and cancelled response building."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import pytest
 from azure.ai.agentserver.responses.models.runtime import (
     ResponseExecution,
     ResponseModeFlags,
-    build_cancelled_response,
+    _build_cancelled_response,
 )
 
 # ---------------------------------------------------------------------------
@@ -222,12 +222,12 @@ def test_apply_event_output_item_added() -> None:
 
 
 # ---------------------------------------------------------------------------
-# T12 – build_cancelled_response
+# T12 - _build_cancelled_response
 # ---------------------------------------------------------------------------
 
 
 def test_build_cancelled_response() -> None:
-    response = build_cancelled_response(
+    response = _build_cancelled_response(
         "caresp_xxx0000000000000000000000000000",
         {"name": "agent-a"},
         "gpt-4o",

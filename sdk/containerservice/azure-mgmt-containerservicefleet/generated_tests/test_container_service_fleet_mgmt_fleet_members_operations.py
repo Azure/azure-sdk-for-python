@@ -45,22 +45,6 @@ class TestContainerServiceFleetMgmtFleetMembersOperations(AzureMgmtRecordedTestC
                     "clusterResourceId": "str",
                     "group": "str",
                     "labels": {"str": "str"},
-                    "meshProperties": {
-                        "ciliumProperties": {"id": 0, "name": "str"},
-                        "clusterMeshProfileResourceId": "str",
-                        "status": {
-                            "state": "str",
-                            "error": {
-                                "additionalInfo": [{"info": {}, "type": "str"}],
-                                "code": "str",
-                                "details": [...],
-                                "message": "str",
-                                "target": "str",
-                            },
-                            "lastOperationId": "str",
-                            "lastUpdatedAt": "2020-02-20 00:00:00",
-                        },
-                    },
                     "provisioningState": "str",
                     "status": {
                         "lastOperationError": {

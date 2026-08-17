@@ -1,64 +1,6 @@
 ```py
 namespace azure.ai.agentserver.responses
 
-    def azure.ai.agentserver.responses.get_conversation_id(request: CreateResponse | ResponseObject) -> Optional[str]: ...
-
-
-    def azure.ai.agentserver.responses.get_input_expanded(request: CreateResponse) -> list[Item]: ...
-
-
-    def azure.ai.agentserver.responses.to_output_item(item: Item, response_id: str | None = None) -> OutputItem | None: ...
-
-
-    class azure.ai.agentserver.responses.ConversationChainMetadataNamespace(Protocol): implements Collection 
-
-        def __call__(self, name: Optional[str] = None) -> ConversationChainMetadataNamespace: ...
-
-        def __delitem__(self, key: str) -> None: ...
-
-        def __getitem__(self, key: str) -> Any: ...
-
-        def __setitem__(
-                self, 
-                key: str, 
-                value: Any
-            ) -> None: ...
-
-        def clear(self) -> None: ...
-
-        async def flush(self) -> None: ...
-
-        def get(
-                self, 
-                key: str, 
-                default: Any = None
-            ) -> Any: ...
-
-        def items(self) -> Any: ...
-
-        def keys(self) -> Any: ...
-
-        def pop(
-                self, 
-                key: str, 
-                *default: Any
-            ) -> Any: ...
-
-        def setdefault(
-                self, 
-                key: str, 
-                default: Any = None
-            ) -> Any: ...
-
-        def update(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def values(self) -> Any: ...
-
-
     class azure.ai.agentserver.responses.CreateResponse(TypedDict, total=False):
         key "agent_reference": ForwardRef('AgentReference', module='types')
         key "background": Optional[bool]
@@ -186,6 +128,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryApiError(FoundryStorageError):
 
         def __init__(
@@ -196,6 +139,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryBadRequestError(FoundryStorageError):
 
         def __init__(
@@ -206,6 +150,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryResourceNotFoundError(FoundryStorageError):
 
         def __init__(
@@ -216,6 +161,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryStorageError(Exception):
 
         def __init__(
@@ -226,6 +172,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryStorageProvider: implements AsyncContextManager 
 
         def __init__(
@@ -295,6 +242,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryStorageSettings:
 
         def __init__(
@@ -442,7 +390,6 @@ namespace azure.ai.agentserver.responses
         property conversation_chain_id: str    # Read-only
         client_cancelled: bool
         client_headers: dict[str, str]
-        conversation_chain_metadata: ConversationChainMetadataNamespace
         conversation_id: str | None
         created_at: datetime
         is_recovery: bool
@@ -5927,107 +5874,7 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[workflow_action]
 
 
-namespace azure.ai.agentserver.responses.models.errors
-
-    class azure.ai.agentserver.responses.models.errors.ApiErrorResponse(TypedDict, total=False):
-        key "error": Required[Error]
-        error: Error
-
-
-    class azure.ai.agentserver.responses.models.errors.Error(TypedDict, total=False):
-        key "code": Required[Optional[str]]
-        key "message": Required[str]
-        key "param": Optional[str]
-        key "type": str
-        additionalInfo: dict[str, Any]
-        additional_info: dict[str, Any]
-        code: str
-        debugInfo: dict[str, Any]
-        debug_info: dict[str, Any]
-        details: list[Error]
-        message: str
-        param: str
-        type: str
-
-
-    class azure.ai.agentserver.responses.models.errors.RequestValidationError(ValueError):
-
-        def __init__(
-                self, 
-                message: str, 
-                *, 
-                code: str = "invalid_request_error", 
-                debug_info: dict[str, Any] | None = ..., 
-                details: list[dict[str, str]] | None = ..., 
-                error_type: str = "invalid_request_error", 
-                param: str | None = ...
-            ) -> None: ...
-
-        def to_api_error_response(self) -> ApiErrorResponse: ...
-
-        def to_error(self) -> Error: ...
-
-
 namespace azure.ai.agentserver.responses.models.runtime
-
-    def azure.ai.agentserver.responses.models.runtime.apply_cancelled_terminal(base: Mapping[str, Any]) -> dict[str, Any]: ...
-
-
-    def azure.ai.agentserver.responses.models.runtime.apply_failed_terminal(
-            base: Mapping[str, Any], 
-            *, 
-            error: dict[str, Any]
-        ) -> dict[str, Any]: ...
-
-
-    def azure.ai.agentserver.responses.models.runtime.build_cancelled_response(
-            response_id: str, 
-            agent_reference: AgentReference | dict[str, Any], 
-            model: str | None, 
-            created_at: datetime | None = None
-        ) -> ResponseObject: ...
-
-
-    def azure.ai.agentserver.responses.models.runtime.build_failed_response(
-            response_id: str, 
-            agent_reference: AgentReference | dict[str, Any], 
-            model: str | None, 
-            created_at: datetime | None = None, 
-            error_message: str = "An internal server error occurred.", 
-            error_code: str = "server_error"
-        ) -> ResponseObject: ...
-
-
-    def azure.ai.agentserver.responses.models.runtime.resolve_cancelled_response(
-            base: Mapping[str, Any] | None, 
-            response_id: str, 
-            agent_reference: AgentReference | dict[str, Any], 
-            model: str | None, 
-            *, 
-            created_at: datetime | None = ...
-        ) -> ResponseObject: ...
-
-
-    def azure.ai.agentserver.responses.models.runtime.resolve_failed_response(
-            base: Mapping[str, Any] | None, 
-            response_id: str, 
-            agent_reference: AgentReference | dict[str, Any], 
-            model: str | None, 
-            *, 
-            created_at: datetime | None = ..., 
-            error_code: str = "server_error", 
-            error_message: str = _DEFAULT_FAILED_ERROR_MESSAGE
-        ) -> ResponseObject: ...
-
-
-    class azure.ai.agentserver.responses.models.runtime.AgentReference(TypedDict, total=False):
-        key "name": Required[str]
-        key "type": Required[Literal["agent_reference"]]
-        key "version": str
-        name: str
-        type: Literal[agent_reference]
-        version: str
-
 
     class azure.ai.agentserver.responses.models.runtime.ResponseExecution:
         property agent_reference: AgentReference | dict[str, Any]    # Read-only
@@ -6084,78 +5931,6 @@ namespace azure.ai.agentserver.responses.models.runtime
             ) -> None: ...
 
 
-    class azure.ai.agentserver.responses.models.runtime.ResponseObject(TypedDict, total=False):
-        key "agent_reference": Required[Optional[AgentReference]]
-        key "background": Optional[bool]
-        key "completed_at": Optional[int]
-        key "conversation": Optional[ConversationReference]
-        key "created_at": Required[int]
-        key "error": Required[Optional[ResponseErrorInfo]]
-        key "id": Required[str]
-        key "incomplete_details": Required[Optional[ResponseIncompleteDetails]]
-        key "instructions": Required[Optional[Union[str, list[Item]]]]
-        key "max_output_tokens": Optional[int]
-        key "max_tool_calls": Optional[int]
-        key "metadata": Optional[Metadata]
-        key "model": str
-        key "moderation": Optional[Moderation]
-        key "object": Required[Literal["response"]]
-        key "output": Required[list[OutputItem]]
-        key "output_text": Optional[str]
-        key "parallel_tool_calls": Required[bool]
-        key "previous_response_id": Optional[str]
-        key "prompt": ForwardRef('Prompt', module='types')
-        key "prompt_cache_key": str
-        key "prompt_cache_retention": Optional[Literal["in_memory", "24h"]]
-        key "reasoning": Optional[Reasoning]
-        key "safety_identifier": str
-        key "service_tier": Optional[Literal["auto", "default", "flex", "scale", "priority"]]
-        key "status": Literal["completed", "failed", "in_progress", "cancelled", "queued", "incomplete"]
-        key "temperature": Optional[float]
-        key "text": ForwardRef('ResponseTextParam', module='types')
-        key "tool_choice": Union[Literal["none", "auto", "required"], ToolChoiceParam]
-        key "top_logprobs": Optional[int]
-        key "top_p": Optional[float]
-        key "truncation": Optional[Literal["auto", "disabled"]]
-        key "usage": ForwardRef('ResponseUsage', module='types')
-        key "user": str
-        agent_reference: AgentReference
-        background: bool
-        completed_at: int
-        conversation: ConversationReference
-        created_at: int
-        error: ResponseErrorInfo
-        id: str
-        incomplete_details: ResponseIncompleteDetails
-        instructions: Union[str, list[Item]]
-        max_output_tokens: int
-        max_tool_calls: int
-        metadata: Metadata
-        model: str
-        moderation: Moderation
-        object: Literal[response]
-        output: list[OutputItem]
-        output_text: str
-        parallel_tool_calls: bool
-        previous_response_id: str
-        prompt: Prompt
-        prompt_cache_key: str
-        prompt_cache_retention: Literal[in_memory, 24h]
-        reasoning: Reasoning
-        safety_identifier: str
-        service_tier: Literal[auto, default, flex, scale, priority]
-        status: Literal[completed, failed, in_progress, cancelled, queued, incomplete]
-        temperature: float
-        text: ResponseTextParam
-        tool_choice: Union[ToolChoiceOptions, ToolChoiceParam]
-        tools: list[Tool]
-        top_logprobs: int
-        top_p: float
-        truncation: Literal[auto, disabled]
-        usage: ResponseUsage
-        user: str
-
-
     class azure.ai.agentserver.responses.models.runtime.StreamEventRecord:
         property terminal: bool    # Read-only
 
@@ -6174,19 +5949,6 @@ namespace azure.ai.agentserver.responses.models.runtime
                 event: ResponseStreamEvent, 
                 payload: Mapping[str, Any]
             ) -> StreamEventRecord: ...
-
-
-    class azure.ai.agentserver.responses.models.runtime.StreamReplayState:
-        property terminal_event_seen: bool    # Read-only
-
-        def __init__(
-                self, 
-                *, 
-                events: list[StreamEventRecord] | None = ..., 
-                response_id: str
-            ) -> None: ...
-
-        def append(self, event: StreamEventRecord) -> None: ...
 
 
 namespace azure.ai.agentserver.responses.store

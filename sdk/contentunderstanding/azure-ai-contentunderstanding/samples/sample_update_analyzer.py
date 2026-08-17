@@ -70,7 +70,7 @@ def main() -> None:
                 ),
             },
         ),
-        models={"completion": "gpt-4.1"},
+        models={"completion": "gpt-5.2"},
         tags={"tag1": "tag1_initial_value", "tag2": "tag2_initial_value"},
     )
 
