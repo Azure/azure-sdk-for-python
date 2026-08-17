@@ -89,14 +89,14 @@ package_folder_path = PACKAGE_NAME.replace('-', '/')
 namespace_name = PACKAGE_NAME.replace('-', '.')
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.rst', encoding='utf-8') as f:
+with open('README.md', encoding='utf-8') as f:
     readme = f.read()
 with open('HISTORY.rst', encoding='utf-8') as f:
     history = f.read()
@@ -177,9 +177,11 @@ except ImportError:
 
 This was to prevent some difficult update scenario 6 years ago, and can be safely removed from your setup.py
 
-# Note on Python 2
+# Note on Python 2 (obsolete)
 
-The "extras_requires" section MUST include a conditional dependency on "azure-nspkg" for Python 2. Example:
+> **Note (obsolete):** Python 2 is no longer supported as of January 1st 2022. The following `azure-nspkg` requirement only applied to packages that supported Python 2 and is no longer needed. Do not add this to new packages.
+
+The "extras_requires" section previously required a conditional dependency on "azure-nspkg" for Python 2. Example:
 
 ```python
     extras_require={
