@@ -1293,23 +1293,24 @@ class RLEnvironmentDiskImageConversionStatus(str, Enum, metaclass=CaseInsensitiv
     """Disk image conversion failed. See ``diskImageConversionError`` for details."""
 
 
-class RLEInstanceGroupStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Allocation lifecycle status of an RLE instance group. This tracks allocation, not ML outcome:
-    RLE does not run the training, so there is no group-level ``Succeeded`` status. ``Closed`` is the
-    normal (success-equivalent) terminal and ``Failed`` is an infrastructure/allocation verdict only
-    (RLE could not serve the environment)."""
+class RLEnvironmentVersionBump(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Semantic-version component to bump when creating a new environment version."""
 
-    CREATED = "Created"
-    """Instance-group record exists; no instance has been leased yet."""
-    ACTIVE = "Active"
-    """At least one instance has been leased for the group."""
-    CLOSED = "Closed"
-    """Ended normally; all instances released. Success-equivalent terminal state."""
-    FAILED = "Failed"
-    """RLE could not serve the environment (invalid version, broken image, or all instances failed).
-    Infrastructure verdict only."""
-    CANCELLED = "Cancelled"
-    """Aborted early by an explicit cancel or delete."""
+    MAJOR = "Major"
+    """Increment the major version component."""
+    MINOR = "Minor"
+    """Increment the minor version component."""
+    PATCH = "Patch"
+    """Increment the patch version component."""
+
+
+class RLEPaginationOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sort order for opaque cursor pagination."""
+
+    ASC = "asc"
+    """Ascending order."""
+    DESC = "desc"
+    """Descending order."""
 
 
 class RLEInstanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1325,16 +1326,3 @@ class RLEInstanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The instance errored during provisioning or at runtime. See ``error`` for details."""
     DELETED = "Deleted"
     """The backing runtime has been torn down / removed."""
-    CANCELLED = "Cancelled"
-    """The instance was released before its task completed (e.g. the instance group was cancelled)."""
-
-
-class RLEInstanceLeaseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Allocation (lease) state of an RLE instance, orthogonal to its runtime ``status``."""
-
-    LEASED = "Leased"
-    """The instance is actively leased and counts against the group's reserved quota."""
-    IDLE = "Idle"
-    """Reserved for future instance reuse. Not used in this version."""
-    RELEASED = "Released"
-    """The lease has been released; the instance no longer counts against quota and is not reused."""

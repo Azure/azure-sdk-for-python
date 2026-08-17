@@ -23,7 +23,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     StreamClosedError,
     StreamConsumedError,
-    map_error,
+    map_error as _map_error,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
@@ -47,6 +47,15 @@ List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
+
+
+def map_error(*, status_code: int, response: HttpResponse, error_map: MutableMapping) -> None:
+    request_url = str(getattr(getattr(response, "request", None), "url", ""))
+    error_type = error_map.get(status_code)
+    if "/rl_environments/" in request_url and error_type:
+        error = _failsafe_deserialize(_models.RLEErrorResponse, response)
+        raise error_type(response=response, model=error)
+    _map_error(status_code=status_code, response=response, error_map=error_map)
 
 
 def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
@@ -17183,7 +17192,7 @@ def build_rl_environments_create_environment_request(  # pylint: disable=name-to
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/environments/create"
+    _url = "/rl_environments/create"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -17198,8 +17207,10 @@ def build_rl_environments_create_environment_request(  # pylint: disable=name-to
 def build_rl_environments_list_environments_request(  # pylint: disable=name-too-long
     *,
     name: Optional[str] = None,
-    skip: Optional[int] = None,
-    top: Optional[int] = None,
+    limit: Optional[int] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    order: Optional[Union[str, _models.RLEPaginationOrder]] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -17209,15 +17220,19 @@ def build_rl_environments_list_environments_request(  # pylint: disable=name-too
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/environments"
+    _url = "/rl_environments"
 
     # Construct parameters
     if name is not None:
         _params["name"] = _SERIALIZER.query("name", name, "str")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -17235,7 +17250,7 @@ def build_rl_environments_get_environment_request(  # pylint: disable=name-too-l
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/environments/{name}"
+    _url = "/rl_environments/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -17262,7 +17277,7 @@ def build_rl_environments_get_environment_version_request(  # pylint: disable=na
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/environments/{name}/versions/{version}"
+    _url = "/rl_environments/{name}/versions/{version}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
         "version": _SERIALIZER.url("version", version, "str"),
@@ -17288,7 +17303,7 @@ def build_rl_environments_delete_environment_version_request(  # pylint: disable
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
-    _url = "/rle/environments/{name}/versions/{version}"
+    _url = "/rl_environments/{name}/versions/{version}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
         "version": _SERIALIZER.url("version", version, "str"),
@@ -17304,7 +17319,13 @@ def build_rl_environments_delete_environment_version_request(  # pylint: disable
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 def build_rl_environments_list_rl_environment_versions_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
+    name: str,
+    *,
+    limit: Optional[int] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    order: Optional[Union[str, _models.RLEPaginationOrder]] = None,
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -17313,7 +17334,7 @@ def build_rl_environments_list_rl_environment_versions_request(  # pylint: disab
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/environments/{name}/versions"
+    _url = "/rl_environments/{name}/versions"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -17321,6 +17342,14 @@ def build_rl_environments_list_rl_environment_versions_request(  # pylint: disab
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -17328,8 +17357,29 @@ def build_rl_environments_list_rl_environment_versions_request(  # pylint: disab
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
+def _get_rle_environment_control_plane_path(environment_name: str, environment_version: Optional[str]) -> str:
+    path = "/rl_environments/{environmentName}"
+    path_format_arguments = {
+        "environmentName": _SERIALIZER.url("environment_name", environment_name, "str"),
+    }
+    if environment_version is not None:
+        path += "/versions/{environmentVersion}"
+        path_format_arguments["environmentVersion"] = _SERIALIZER.url(
+            "environment_version", environment_version, "str"
+        )
+    return path.format(**path_format_arguments)
+
+
+def _validate_rle_runtime_environment_version(environment_version: str) -> None:
+    if not environment_version:
+        raise ValueError("environment_version is required for RLE instance runtime operations")
+
+
 def build_rle_instance_groups_create_instance_group_request(  # pylint: disable=name-too-long
-    **kwargs: Any
+    environment_name: str,
+    *,
+    environment_version: Optional[str] = None,
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -17339,7 +17389,7 @@ def build_rle_instance_groups_create_instance_group_request(  # pylint: disable=
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instance-groups"
+    _url = _get_rle_environment_control_plane_path(environment_name, environment_version) + "/instance_groups"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -17352,9 +17402,9 @@ def build_rle_instance_groups_create_instance_group_request(  # pylint: disable=
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 def build_rle_instance_groups_list_instance_groups_request(  # pylint: disable=name-too-long
+    environment_name: str,
     *,
-    status: Optional[Union[str, _models.RLEInstanceGroupStatus]] = None,
-    environment_name: Optional[str] = None,
+    environment_version: Optional[str] = None,
     skip: Optional[int] = None,
     top: Optional[int] = None,
     **kwargs: Any,
@@ -17366,13 +17416,9 @@ def build_rle_instance_groups_list_instance_groups_request(  # pylint: disable=n
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instance-groups"
+    _url = _get_rle_environment_control_plane_path(environment_name, environment_version) + "/instance_groups"
 
     # Construct parameters
-    if status is not None:
-        _params["status"] = _SERIALIZER.query("status", status, "str")
-    if environment_name is not None:
-        _params["environmentName"] = _SERIALIZER.query("environment_name", environment_name, "str")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
     if top is not None:
@@ -17385,7 +17431,10 @@ def build_rle_instance_groups_list_instance_groups_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 def build_rle_instance_groups_get_instance_group_request(  # pylint: disable=name-too-long
+    environment_name: str,
     instance_group_id: str,
+    *,
+    environment_version: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -17395,7 +17444,10 @@ def build_rle_instance_groups_get_instance_group_request(  # pylint: disable=nam
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instance-groups/{instanceGroupId}"
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}"
+    )
     path_format_arguments = {
         "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
     }
@@ -17410,37 +17462,11 @@ def build_rle_instance_groups_get_instance_group_request(  # pylint: disable=nam
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
-def build_rle_instance_groups_update_instance_group_request(  # pylint: disable=name-too-long
-    instance_group_id: str,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/rle/instance-groups/{instanceGroupId}"
-    path_format_arguments = {
-        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
 def build_rle_instance_groups_delete_instance_group_request(  # pylint: disable=name-too-long
+    environment_name: str,
     instance_group_id: str,
+    *,
+    environment_version: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -17448,7 +17474,10 @@ def build_rle_instance_groups_delete_instance_group_request(  # pylint: disable=
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
-    _url = "/rle/instance-groups/{instanceGroupId}"
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}"
+    )
     path_format_arguments = {
         "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
     }
@@ -17463,7 +17492,10 @@ def build_rle_instance_groups_delete_instance_group_request(  # pylint: disable=
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 def build_rle_instances_create_instance_request(  # pylint: disable=name-too-long
+    environment_name: str,
     instance_group_id: str,
+    *,
+    environment_version: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -17473,7 +17505,10 @@ def build_rle_instances_create_instance_request(  # pylint: disable=name-too-lon
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instance-groups/{instanceGroupId}/instances"
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances"
+    )
     path_format_arguments = {
         "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
     }
@@ -17488,45 +17523,12 @@ def build_rle_instances_create_instance_request(  # pylint: disable=name-too-lon
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
-def build_rle_instances_list_instances_request(  # pylint: disable=name-too-long
-    instance_group_id: str,
-    *,
-    lease_state: Optional[Union[str, _models.RLEInstanceLeaseState]] = None,
-    skip: Optional[int] = None,
-    top: Optional[int] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/rle/instance-groups/{instanceGroupId}/instances"
-    path_format_arguments = {
-        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if lease_state is not None:
-        _params["leaseState"] = _SERIALIZER.query("lease_state", lease_state, "str")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
 def build_rle_instances_get_instance_request(
+    environment_name: str,
     instance_group_id: str,
     instance_id: str,
+    *,
+    environment_version: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -17536,7 +17538,10 @@ def build_rle_instances_get_instance_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instance-groups/{instanceGroupId}/instances/{instanceId}"
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}"
+    )
     path_format_arguments = {
         "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
         "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
@@ -17553,8 +17558,11 @@ def build_rle_instances_get_instance_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 def build_rle_instances_release_instance_request(  # pylint: disable=name-too-long
+    environment_name: str,
     instance_group_id: str,
     instance_id: str,
+    *,
+    environment_version: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -17564,7 +17572,10 @@ def build_rle_instances_release_instance_request(  # pylint: disable=name-too-lo
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instance-groups/{instanceGroupId}/instances/{instanceId}"
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}"
+    )
     path_format_arguments = {
         "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
         "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
@@ -17581,11 +17592,15 @@ def build_rle_instances_release_instance_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 def build_rle_instance_runtime_reset_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
     instance_id: str,
     *,
     session_id: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -17594,8 +17609,12 @@ def build_rle_instance_runtime_reset_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instances/{instanceId}/openenv/reset"
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/reset"
+    )
     path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
         "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
     }
 
@@ -17614,11 +17633,15 @@ def build_rle_instance_runtime_reset_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 def build_rle_instance_runtime_step_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
     instance_id: str,
     *,
     session_id: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -17627,8 +17650,12 @@ def build_rle_instance_runtime_step_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instances/{instanceId}/openenv/step"
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/step"
+    )
     path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
         "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
     }
 
@@ -17647,11 +17674,15 @@ def build_rle_instance_runtime_step_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 def build_rle_instance_runtime_state_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
     instance_id: str,
     *,
     session_id: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -17659,8 +17690,12 @@ def build_rle_instance_runtime_state_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instances/{instanceId}/openenv/state"
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/state"
+    )
     path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
         "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
     }
 
@@ -17677,11 +17712,15 @@ def build_rle_instance_runtime_state_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 def build_rle_instance_runtime_health_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
     instance_id: str,
     *,
     session_id: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -17689,8 +17728,12 @@ def build_rle_instance_runtime_health_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instances/{instanceId}/openenv/health"
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/health"
+    )
     path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
         "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
     }
 
@@ -17707,11 +17750,15 @@ def build_rle_instance_runtime_health_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 def build_rle_instance_runtime_get_metadata_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
     instance_id: str,
     *,
     session_id: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -17719,8 +17766,12 @@ def build_rle_instance_runtime_get_metadata_request(  # pylint: disable=name-too
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instances/{instanceId}/openenv/metadata"
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/metadata"
+    )
     path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
         "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
     }
 
@@ -17737,11 +17788,15 @@ def build_rle_instance_runtime_get_metadata_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 def build_rle_instance_runtime_schema_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
     instance_id: str,
     *,
     session_id: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -17749,8 +17804,12 @@ def build_rle_instance_runtime_schema_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rle/instances/{instanceId}/openenv/schema"
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/schema"
+    )
     path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
         "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
     }
 
@@ -17887,7 +17946,7 @@ class RLEnvironmentsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -17907,8 +17966,10 @@ class RLEnvironmentsOperations:
         self,
         *,
         name: Optional[str] = None,
-        skip: Optional[int] = None,
-        top: Optional[int] = None,
+        limit: Optional[int] = None,
+        after: Optional[str] = None,
+        before: Optional[str] = None,
+        order: Optional[Union[str, _models.RLEPaginationOrder]] = None,
         **kwargs: Any,
     ) -> _models.ListRLEnvironmentsResponse:
         """List all hosted RLE environments in the project.
@@ -17941,8 +18002,10 @@ class RLEnvironmentsOperations:
 
         _request = build_rl_environments_list_environments_request(
             name=name,
-            skip=skip,
-            top=top,
+            limit=limit,
+            after=after,
+            before=before,
+            order=order,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -17968,7 +18031,7 @@ class RLEnvironmentsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -18035,7 +18098,7 @@ class RLEnvironmentsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -18108,7 +18171,7 @@ class RLEnvironmentsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -18175,7 +18238,7 @@ class RLEnvironmentsOperations:
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -18185,8 +18248,15 @@ class RLEnvironmentsOperations:
 
     @distributed_trace
     def list_rl_environment_versions(
-        self, name: str, **kwargs: Any
-    ) -> list[_models.RLEnvironmentVersion]:
+        self,
+        name: str,
+        *,
+        limit: Optional[int] = None,
+        after: Optional[str] = None,
+        before: Optional[str] = None,
+        order: Optional[Union[str, _models.RLEPaginationOrder]] = None,
+        **kwargs: Any,
+    ) -> _models.ListRLEnvironmentVersionsResponse:
         """List historical versions of a hosted RLE environment.
 
         :param name: Environment name. Required.
@@ -18206,10 +18276,14 @@ class RLEnvironmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.RLEnvironmentVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ListRLEnvironmentVersionsResponse] = kwargs.pop("cls", None)
 
         _request = build_rl_environments_list_rl_environment_versions_request(
             name=name,
+            limit=limit,
+            after=after,
+            before=before,
+            order=order,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -18235,7 +18309,7 @@ class RLEnvironmentsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -18243,7 +18317,7 @@ class RLEnvironmentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(list[_models.RLEnvironmentVersion], response.json())
+            deserialized = _deserialize(_models.ListRLEnvironmentVersionsResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -18270,8 +18344,10 @@ class RLEInstanceGroupsOperations:
     @overload
     def create_instance_group(
         self,
+        environment_name: str,
         body: _models.CreateRLEInstanceGroupRequest,
         *,
+        environment_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.RLEInstanceGroup: ...
@@ -18279,8 +18355,10 @@ class RLEInstanceGroupsOperations:
     @overload
     def create_instance_group(
         self,
+        environment_name: str,
         body: IO[bytes],
         *,
+        environment_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.RLEInstanceGroup: ...
@@ -18288,12 +18366,15 @@ class RLEInstanceGroupsOperations:
     @distributed_trace
     def create_instance_group(
         self,
+        environment_name: str,
         body: Union[_models.CreateRLEInstanceGroupRequest, IO[bytes]],
+        *,
+        environment_version: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.RLEInstanceGroup:
         """Create a new RLE instance group.
 
-        The service mints ``instance_group_id`` and reserves ``instance_count`` slots of quota.
+        The service mints the group identifier and reserves ``max_active_instances`` slots of quota.
         Returns ``403`` with code ``QuotaExceeded`` when the requested quota cannot be reserved.
 
         :param body: The instance group to create. Is either a CreateRLEInstanceGroupRequest type or a
@@ -18325,6 +18406,8 @@ class RLEInstanceGroupsOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_rle_instance_groups_create_instance_group_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -18352,7 +18435,7 @@ class RLEInstanceGroupsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -18370,24 +18453,18 @@ class RLEInstanceGroupsOperations:
     @distributed_trace
     def list_instance_groups(
         self,
+        environment_name: str,
         *,
-        status: Optional[Union[str, _models.RLEInstanceGroupStatus]] = None,
-        environment_name: Optional[str] = None,
+        environment_version: Optional[str] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
         **kwargs: Any,
     ) -> _models.ListRLEInstanceGroupsResponse:
         """List RLE instance groups in the project.
 
-        :keyword status: Optional instance group status filter. Known values are: "Created", "Active",
-         "Closed", "Failed", and "Cancelled". Default value is None.
-        :paramtype status: str or ~azure.ai.projects.models.RLEInstanceGroupStatus
-        :keyword environment_name: Optional environment name filter. Default value is None.
-        :paramtype environment_name: str
-        :keyword skip: Number of instance groups to skip. Defaults to 0. Default value is None.
+        :keyword skip: Number of instance groups to skip. Default value is None.
         :paramtype skip: int
-        :keyword top: Maximum number of instance groups to return. Defaults to 50; valid range is
-         [1, 200]. Default value is None.
+        :keyword top: Maximum number of instance groups to return. Default value is None.
         :paramtype top: int
         :return: ListRLEInstanceGroupsResponse. The ListRLEInstanceGroupsResponse is compatible with
          MutableMapping
@@ -18408,8 +18485,8 @@ class RLEInstanceGroupsOperations:
         cls: ClsType[_models.ListRLEInstanceGroupsResponse] = kwargs.pop("cls", None)
 
         _request = build_rle_instance_groups_list_instance_groups_request(
-            status=status,
             environment_name=environment_name,
+            environment_version=environment_version,
             skip=skip,
             top=top,
             api_version=self._config.api_version,
@@ -18437,7 +18514,7 @@ class RLEInstanceGroupsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -18455,7 +18532,10 @@ class RLEInstanceGroupsOperations:
     @distributed_trace
     def get_instance_group(
         self,
+        environment_name: str,
         instance_group_id: str,
+        *,
+        environment_version: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.RLEInstanceGroup:
         """Get an RLE instance group by identifier.
@@ -18480,6 +18560,8 @@ class RLEInstanceGroupsOperations:
         cls: ClsType[_models.RLEInstanceGroup] = kwargs.pop("cls", None)
 
         _request = build_rle_instance_groups_get_instance_group_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
             instance_group_id=instance_group_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -18506,113 +18588,7 @@ class RLEInstanceGroupsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.RLEInstanceGroup, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update_instance_group(
-        self,
-        instance_group_id: str,
-        body: _models.UpdateRLEInstanceGroupRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.RLEInstanceGroup: ...
-
-    @overload
-    def update_instance_group(
-        self,
-        instance_group_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.RLEInstanceGroup: ...
-
-    @distributed_trace
-    def update_instance_group(
-        self,
-        instance_group_id: str,
-        body: Union[_models.UpdateRLEInstanceGroupRequest, IO[bytes]],
-        **kwargs: Any,
-    ) -> _models.RLEInstanceGroup:
-        """Update an RLE instance group.
-
-        Setting ``status`` to ``Closed`` signals normal completion and releases all instances owned by
-        the group.
-
-        :param instance_group_id: Instance group identifier. Required.
-        :type instance_group_id: str
-        :param body: The update to apply. Is either an UpdateRLEInstanceGroupRequest type or a IO[bytes]
-         type. Required.
-        :type body: ~azure.ai.projects.models.UpdateRLEInstanceGroupRequest or IO[bytes]
-        :return: RLEInstanceGroup. The RLEInstanceGroup is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLEInstanceGroup
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RLEInstanceGroup] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_rle_instance_groups_update_instance_group_request(
-            instance_group_id=instance_group_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -18630,7 +18606,10 @@ class RLEInstanceGroupsOperations:
     @distributed_trace
     def delete_instance_group(
         self,
+        environment_name: str,
         instance_group_id: str,
+        *,
+        environment_version: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Cancel an RLE instance group.
@@ -18657,6 +18636,8 @@ class RLEInstanceGroupsOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_rle_instance_groups_delete_instance_group_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
             instance_group_id=instance_group_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -18682,7 +18663,7 @@ class RLEInstanceGroupsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -18711,7 +18692,10 @@ class RLEInstancesOperations:
     @distributed_trace
     def create_instance(
         self,
+        environment_name: str,
         instance_group_id: str,
+        *,
+        environment_version: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.RLEInstance:
         """Lease a new RLE instance under the instance group.
@@ -18742,6 +18726,8 @@ class RLEInstancesOperations:
         cls: ClsType[_models.RLEInstance] = kwargs.pop("cls", None)
 
         _request = build_rle_instances_create_instance_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
             instance_group_id=instance_group_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -18768,7 +18754,11 @@ class RLEInstancesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                (
+                    _models.RLEInstanceGroupAtCapacityErrorResponse
+                    if response.status_code == 429
+                    else _models.RLEErrorResponse
+                ),
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -18784,95 +18774,13 @@ class RLEInstancesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_instances(
-        self,
-        instance_group_id: str,
-        *,
-        lease_state: Optional[Union[str, _models.RLEInstanceLeaseState]] = None,
-        skip: Optional[int] = None,
-        top: Optional[int] = None,
-        **kwargs: Any,
-    ) -> _models.ListRLEInstancesResponse:
-        """List instances owned by an RLE instance group.
-
-        :param instance_group_id: Instance group identifier whose instances to list. Required.
-        :type instance_group_id: str
-        :keyword lease_state: Optional lease-state filter. Known values are: "Leased", "Idle", and
-         "Released". Default value is None.
-        :paramtype lease_state: str or ~azure.ai.projects.models.RLEInstanceLeaseState
-        :keyword skip: Number of instances to skip. Defaults to 0. Default value is None.
-        :paramtype skip: int
-        :keyword top: Maximum number of instances to return. Defaults to 50; valid range is [1, 200].
-         Default value is None.
-        :paramtype top: int
-        :return: ListRLEInstancesResponse. The ListRLEInstancesResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.ListRLEInstancesResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ListRLEInstancesResponse] = kwargs.pop("cls", None)
-
-        _request = build_rle_instances_list_instances_request(
-            instance_group_id=instance_group_id,
-            lease_state=lease_state,
-            skip=skip,
-            top=top,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ListRLEInstancesResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
     def get_instance(
         self,
+        environment_name: str,
         instance_group_id: str,
         instance_id: str,
+        *,
+        environment_version: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.RLEInstance:
         """Get an RLE instance by identifier.
@@ -18899,6 +18807,8 @@ class RLEInstancesOperations:
         cls: ClsType[_models.RLEInstance] = kwargs.pop("cls", None)
 
         _request = build_rle_instances_get_instance_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
             instance_group_id=instance_group_id,
             instance_id=instance_id,
             api_version=self._config.api_version,
@@ -18926,7 +18836,7 @@ class RLEInstancesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -18944,22 +18854,21 @@ class RLEInstancesOperations:
     @distributed_trace
     def release_instance(
         self,
+        environment_name: str,
         instance_group_id: str,
         instance_id: str,
+        *,
+        environment_version: Optional[str] = None,
         **kwargs: Any,
-    ) -> _models.RLEInstance:
-        """Release an RLE instance (soft delete).
-
-        The backing runtime is stopped and the instance is marked ``Stopped``/``Released`` while the
-        ledger row is retained. Idempotent -- re-releasing an already-released instance is a no-op.
-        Returns the final instance state.
+    ) -> None:
+        """Release an RLE instance.
 
         :param instance_group_id: Instance group identifier the instance belongs to. Required.
         :type instance_group_id: str
         :param instance_id: Instance identifier. Required.
         :type instance_id: str
-        :return: RLEInstance. The RLEInstance is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RLEInstance
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -18973,9 +18882,11 @@ class RLEInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.RLEInstance] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_rle_instances_release_instance_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
             instance_group_id=instance_group_id,
             instance_id=instance_id,
             api_version=self._config.api_version,
@@ -18987,15 +18898,14 @@ class RLEInstancesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -19003,24 +18913,20 @@ class RLEInstancesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.RLEInstance, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def reset(
         self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
         instance_id: str,
         body: _models.RLEResetRequest,
         *,
@@ -19032,6 +18938,9 @@ class RLEInstancesOperations:
     @overload
     def reset(
         self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
         instance_id: str,
         body: IO[bytes],
         *,
@@ -19043,6 +18952,9 @@ class RLEInstancesOperations:
     @distributed_trace
     def reset(
         self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
         instance_id: str,
         body: Union[_models.RLEResetRequest, IO[bytes]],
         *,
@@ -19051,6 +18963,12 @@ class RLEInstancesOperations:
     ) -> _models.RLEStepResult:
         """Start a new episode and return the initial observation.
 
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
         :param instance_id: Instance identifier. Required.
         :type instance_id: str
         :param body: Reset request body. Is either a RLEResetRequest type or a IO[bytes] type. Required.
@@ -19084,6 +19002,9 @@ class RLEInstancesOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_rle_instance_runtime_reset_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
             instance_id=instance_id,
             session_id=session_id,
             content_type=content_type,
@@ -19113,7 +19034,7 @@ class RLEInstancesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -19131,6 +19052,9 @@ class RLEInstancesOperations:
     @overload
     def step(
         self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
         instance_id: str,
         body: _models.RLEStepRequest,
         *,
@@ -19142,6 +19066,9 @@ class RLEInstancesOperations:
     @overload
     def step(
         self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
         instance_id: str,
         body: IO[bytes],
         *,
@@ -19153,6 +19080,9 @@ class RLEInstancesOperations:
     @distributed_trace
     def step(
         self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
         instance_id: str,
         body: Union[_models.RLEStepRequest, IO[bytes]],
         *,
@@ -19161,6 +19091,12 @@ class RLEInstancesOperations:
     ) -> _models.RLEStepResult:
         """Apply an action and return the resulting transition.
 
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
         :param instance_id: Instance identifier. Required.
         :type instance_id: str
         :param body: Step request body. Is either a RLEStepRequest type or a IO[bytes] type. Required.
@@ -19194,6 +19130,9 @@ class RLEInstancesOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_rle_instance_runtime_step_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
             instance_id=instance_id,
             session_id=session_id,
             content_type=content_type,
@@ -19223,7 +19162,7 @@ class RLEInstancesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -19241,6 +19180,9 @@ class RLEInstancesOperations:
     @distributed_trace
     def state(
         self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
         instance_id: str,
         *,
         session_id: Optional[str] = None,
@@ -19248,6 +19190,12 @@ class RLEInstancesOperations:
     ) -> _models.RLEnvironmentState:
         """Return the current environment state.
 
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
         :param instance_id: Instance identifier. Required.
         :type instance_id: str
         :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
@@ -19271,6 +19219,9 @@ class RLEInstancesOperations:
         cls: ClsType[_models.RLEnvironmentState] = kwargs.pop("cls", None)
 
         _request = build_rle_instance_runtime_state_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
             instance_id=instance_id,
             session_id=session_id,
             api_version=self._config.api_version,
@@ -19298,7 +19249,7 @@ class RLEInstancesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -19316,6 +19267,9 @@ class RLEInstancesOperations:
     @distributed_trace
     def health(
         self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
         instance_id: str,
         *,
         session_id: Optional[str] = None,
@@ -19323,6 +19277,12 @@ class RLEInstancesOperations:
     ) -> dict[str, Any]:
         """Return environment health details.
 
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
         :param instance_id: Instance identifier. Required.
         :type instance_id: str
         :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
@@ -19346,6 +19306,9 @@ class RLEInstancesOperations:
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
         _request = build_rle_instance_runtime_health_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
             instance_id=instance_id,
             session_id=session_id,
             api_version=self._config.api_version,
@@ -19373,7 +19336,7 @@ class RLEInstancesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -19391,6 +19354,9 @@ class RLEInstancesOperations:
     @distributed_trace
     def get_metadata(
         self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
         instance_id: str,
         *,
         session_id: Optional[str] = None,
@@ -19398,6 +19364,12 @@ class RLEInstancesOperations:
     ) -> dict[str, Any]:
         """Return environment metadata.
 
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
         :param instance_id: Instance identifier. Required.
         :type instance_id: str
         :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
@@ -19421,6 +19393,9 @@ class RLEInstancesOperations:
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
         _request = build_rle_instance_runtime_get_metadata_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
             instance_id=instance_id,
             session_id=session_id,
             api_version=self._config.api_version,
@@ -19448,7 +19423,7 @@ class RLEInstancesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -19466,6 +19441,9 @@ class RLEInstancesOperations:
     @distributed_trace
     def schema(
         self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
         instance_id: str,
         *,
         session_id: Optional[str] = None,
@@ -19473,6 +19451,12 @@ class RLEInstancesOperations:
     ) -> dict[str, Any]:
         """Return environment-provided action and observation schemas.
 
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
         :param instance_id: Instance identifier. Required.
         :type instance_id: str
         :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
@@ -19496,6 +19480,9 @@ class RLEInstancesOperations:
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
         _request = build_rle_instance_runtime_schema_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
             instance_id=instance_id,
             session_id=session_id,
             api_version=self._config.api_version,
@@ -19523,7 +19510,7 @@ class RLEInstancesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
+                _models.RLEErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
