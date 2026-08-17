@@ -28,10 +28,10 @@
   - Added enum `ManagedServiceIdentityType`
   - Added enum `PrincipalTypes`
   - Added model `UserAssignedIdentity`
-  - Model `HorizonDbClustersOperations` added method `begin_restart`
-  - Model `HorizonDbClustersOperations` added method `begin_start`
-  - Model `HorizonDbClustersOperations` added method `begin_stop`
-  - Model `HorizonDbPrivateEndpointConnectionsOperations` added method `update_status`
+  - Operation group `HorizonDbClustersOperations` added method `begin_restart`
+  - Operation group `HorizonDbClustersOperations` added method `begin_start`
+  - Operation group `HorizonDbClustersOperations` added method `begin_stop`
+  - Operation group `HorizonDbPrivateEndpointConnectionsOperations` added method `update_status`
   - Added operation group `HorizonDbAdministratorsOperations`
 
 ### Breaking Changes
