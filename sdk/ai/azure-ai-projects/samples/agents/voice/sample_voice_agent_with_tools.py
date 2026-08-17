@@ -128,7 +128,7 @@ definition = VoiceAgentDefinition(
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
 ):
     try:
         created_version = project_client.agents.create_version(agent_name=agent_name, definition=definition)

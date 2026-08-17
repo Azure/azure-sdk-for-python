@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import os
 import logging
+from functools import wraps
 from typing import List, Any, Optional, cast
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import AsyncOpenAI, DefaultAsyncHttpxClient
@@ -28,6 +29,9 @@ from .._patch import (
 )
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
+from ..operations._patch import _OperationMethodHeaderProxy, _method_accepts_keyword_headers
+from ..models._enums import _AgentDefinitionOptInKeys
+from ..models._patch import _has_header_case_insensitive
 from ._realtime import (
     AsyncRealtime,
     AsyncRealtimeConnection,
@@ -40,6 +44,54 @@ from ._realtime import (
 _OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
 logger = logging.getLogger(__name__)
 _openai_transport_logger = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
+
+# Workaround for a known azure-core/aiohttp issue where compressed (e.g. gzip/brotli) response
+# bodies on some non-2xx or write (POST/PATCH/DELETE) calls can reach text/JSON deserialization
+# before being decompressed, causing a spurious UnicodeDecodeError. Forcing "Accept-Encoding:
+# identity" disables response compression for the affected operation groups so the response body
+# is never compressed in the first place. This is scoped narrowly (not applied client-wide) to
+# avoid unnecessarily disabling compression on unaffected operations.
+_ACCEPT_ENCODING_HEADER_NAME = "Accept-Encoding"
+_ACCEPT_ENCODING_IDENTITY_VALUE = "identity"
+
+
+class _AcceptEncodingIdentityProxy:
+    """Proxy that forces 'Accept-Encoding: identity' on public operation method calls.
+
+    Works around a known async aiohttp transport issue where compressed response bodies can be
+    handed to text/JSON deserialization before decompression, raising a spurious
+    UnicodeDecodeError.
+    """
+
+    def __init__(self, operation: Any):
+        object.__setattr__(self, "_operation", operation)
+
+    def __getattr__(self, name: str) -> Any:
+        attribute = getattr(self._operation, name)
+
+        if name.startswith("_") or not callable(attribute) or not _method_accepts_keyword_headers(attribute):
+            return attribute
+
+        @wraps(attribute)
+        def _wrapped(*args: Any, **kwargs: Any) -> Any:
+            headers = kwargs.get("headers")
+            if headers is None:
+                kwargs["headers"] = {_ACCEPT_ENCODING_HEADER_NAME: _ACCEPT_ENCODING_IDENTITY_VALUE}
+            elif not _has_header_case_insensitive(headers, _ACCEPT_ENCODING_HEADER_NAME):
+                try:
+                    headers[_ACCEPT_ENCODING_HEADER_NAME] = _ACCEPT_ENCODING_IDENTITY_VALUE
+                except Exception:  # pylint: disable=broad-except
+                    kwargs["headers"] = {_ACCEPT_ENCODING_HEADER_NAME: _ACCEPT_ENCODING_IDENTITY_VALUE}
+
+            return attribute(*args, **kwargs)
+
+        return _wrapped
+
+    def __dir__(self) -> list:
+        return dir(self._operation)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        setattr(self._operation, name, value)
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -129,6 +181,19 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
         self._realtime: Optional[AsyncRealtime] = None
+        # Voice-agent conversation reads require the VoiceAgents=V1Preview opt-in header, which
+        # isn't part of the standard agent preview headers; inject it transparently.
+        self.agent_endpoint_conversations = _OperationMethodHeaderProxy(  # type: ignore
+            self.agent_endpoint_conversations,
+            _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
+        )
+        # Work around a known async aiohttp transport issue (spurious UnicodeDecodeError caused by
+        # compressed response bodies reaching text/JSON deserialization before decompression) by
+        # disabling response compression for these two operation groups only.
+        self.agents = _AcceptEncodingIdentityProxy(self.agents)  # type: ignore
+        self.agent_endpoint_conversations = _AcceptEncodingIdentityProxy(  # type: ignore
+            self.agent_endpoint_conversations
+        )
 
     @property
     def realtime(self) -> AsyncRealtime:

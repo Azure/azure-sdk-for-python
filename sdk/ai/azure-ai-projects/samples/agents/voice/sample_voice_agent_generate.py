@@ -34,7 +34,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
 ):
     agent = project_client.agents.generate_agent(kind="voice")
     print(f"Generated voice agent: {agent.name}")

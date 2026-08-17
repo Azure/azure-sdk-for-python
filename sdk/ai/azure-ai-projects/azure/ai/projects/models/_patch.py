@@ -49,10 +49,8 @@ _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
     [
         _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.DRAFT_AGENTS_V1_PREVIEW.value,
-        # NOTE: VOICE_AGENTS_V1_PREVIEW is intentionally excluded here for now. The service
-        # API for voice agents is not yet ready, and recorded tests were captured without this
-        # opt-in value. Re-add it once the service is ready and recordings can be refreshed.
         _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V2_PREVIEW.value,
     ]
 )
