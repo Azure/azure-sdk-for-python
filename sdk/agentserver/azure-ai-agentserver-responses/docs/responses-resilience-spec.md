@@ -755,7 +755,10 @@ client-facing HTTP/SSE payload** — and symmetrically stripped on ingress, so
 clients can neither read nor inject it. Use it for lightweight per-turn
 watermarks, id mappings (upstream message id ↔ emitted item), or in-turn
 stale-message detection; read it back on recovery via
-`context.persisted_response`. It is distinct from the *public*
+`ResponseEventStream(response=context.persisted_response, ...)`. Response-level
+internal metadata is compact-JSON encoded into one string-valued reserved
+metadata entry and must fit that entry's 512-character limit. It is distinct
+from the *public*
 `ResponseObject.metadata` (the client's own metadata, never stripped) and
 from `FoundryStateStore` (cross-turn application state — §8.1).
 Rule of thumb: cross-turn state → `FoundryStateStore`; reconstruct

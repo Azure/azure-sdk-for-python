@@ -19,6 +19,10 @@
   applications now persist cross-turn state explicitly with
   `FoundryStateStore`.
 
+### Bugs Fixed
+
+- Restored JSON-string encoding for response-level `internal_metadata` so resilient response checkpoints round-trip through Foundry storage.
+
 ### Other Changes
 
 - Updated the resilient Responses samples to use conversation-scoped
