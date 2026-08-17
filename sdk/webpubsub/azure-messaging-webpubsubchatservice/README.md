@@ -1,5 +1,6 @@
-# "Azure Web PubSub Chat Service" client library for Python
-<!-- write necessary description of service -->
+# Azure Web PubSub Chat service client library for Python
+
+Use this client library to manage server-side Chat resources hosted by Azure Web PubSub. Applications use the service client to manage roles, rooms, users, room membership, and persisted message history. Connected clients send real-time messages separately over WebSockets.
 
 ## Getting started
 
@@ -9,51 +10,135 @@
 python -m pip install azure-messaging-webpubsubchatservice
 ```
 
-#### Prequisites
+### Prerequisites
 
 - Python 3.10 or later is required to use this package.
-- You need an [Azure subscription][azure_sub] to use this package.
-- An existing "Azure Web PubSub Chat Service" instance.
+- An [Azure subscription][azure_sub].
+- An [Azure Web PubSub resource][webpubsub_docs] with Chat enabled for the target hub.
 
 ### Use with AI tools
 
 AI coding tools such as VS Code and GitHub Copilot can help you write and debug code that uses this library. See [Using the Azure SDK for Python with AI tools](https://aka.ms/azsdk/python/ai) for available integrations.
 
-#### Create with an Azure Active Directory Credential
-To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
-provide an instance of the desired credential type obtained from the
-[azure-identity][azure_identity_credentials] library.
+### Create and authenticate the client
 
-To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip]
+Use a connection string:
 
-After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
-As an example, [DefaultAzureCredential][default_azure_credential] can be used to authenticate the client:
-
-Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
-
-Use the returned token credential to authenticate the client:
+<!-- SNIPPET:sample_authentication.connection_string_auth -->
 
 ```python
->>> from azure.messaging.webpubsubservice.chat import WebPubSubChatClient
->>> from azure.identity import DefaultAzureCredential
->>> client = WebPubSubChatClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+import os
+from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+
+hub = os.environ.get("WPS_CHAT_HUB", "test_hub")
+with WebPubSubChatServiceClient.from_connection_string(
+    os.environ["WPS_CHAT_CONNECTION_STRING"], hub
+) as connection_string_client:
+    print(type(connection_string_client).__name__)
 ```
+
+<!-- END SNIPPET -->
+
+Use an access key:
+
+<!-- SNIPPET:sample_authentication.key_auth -->
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+
+endpoint = os.environ["WPS_CHAT_ENDPOINT"]
+hub = os.environ.get("WPS_CHAT_HUB", "test_hub")
+with WebPubSubChatServiceClient(
+    endpoint,
+    hub,
+    AzureKeyCredential(os.environ["WPS_CHAT_ACCESS_KEY"]),
+) as key_client:
+    print(type(key_client).__name__)
+```
+
+<!-- END SNIPPET -->
+
+Use Microsoft Entra ID after installing `azure-identity` and assigning the appropriate Web PubSub data-plane role:
+
+<!-- SNIPPET:sample_authentication.entra_auth -->
+
+```python
+import os
+from azure.identity import DefaultAzureCredential
+from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+
+endpoint = os.environ["WPS_CHAT_ENDPOINT"]
+hub = os.environ.get("WPS_CHAT_HUB", "test_hub")
+with WebPubSubChatServiceClient(endpoint, hub, DefaultAzureCredential()) as entra_client:
+    print(type(entra_client).__name__)
+```
+
+<!-- END SNIPPET -->
+
+## Key concepts
+
+- **Role**: A named set of user or room permissions.
+- **User**: A Chat profile assigned to a user role.
+- **Room**: A server-side Chat room with a default persisted conversation.
+- **Room member**: A user assigned a room role within a room.
+- **Message history**: Messages sent by connected WebSocket clients and persisted by the Chat service. The REST API lists, updates, and deletes messages; it does not create them.
 
 ## Examples
 
+### Generate client access credentials
+
+<!-- SNIPPET:sample_client_access.client_access -->
+
 ```python
->>> from azure.messaging.webpubsubservice.chat import WebPubSubChatClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
+import os
+from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
 
->>> client = WebPubSubChatClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> try:
-        <!-- write test code here -->
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
-
+connection_string = os.environ["WPS_CHAT_CONNECTION_STRING"]
+with WebPubSubChatServiceClient.from_connection_string(
+    connection_string,
+    os.environ.get("WPS_CHAT_HUB", "test_hub"),
+) as client:
+    access = client.get_client_access_token(user_id="sample-user")
+    print(access["url"])
 ```
+
+<!-- END SNIPPET -->
+
+### Create a custom role
+
+```python
+from azure.messaging.webpubsubservice.chat import UserPermissions
+from azure.messaging.webpubsubservice.chat.models import ChatRole
+
+client.create_or_replace_role(
+    "user.moderator",
+    ChatRole(permissions=[UserPermissions.CREATE_ROOM]),
+)
+for role in client.list_roles():
+    print(role.name, role.permissions)
+client.delete_role("user.moderator")
+```
+
+### Handle service errors
+
+```python
+from azure.core.exceptions import HttpResponseError
+
+try:
+    room = client.get_room("room-id")
+except HttpResponseError as error:
+    print(f"Chat service request failed: {error}")
+```
+
+See the executable [package samples][samples] for authentication, sync and async resource management, built-in constants, client access generation, and message history.
+
+## Troubleshooting
+
+Enable SDK logging by passing `logging_enable=True` when creating the client. HTTP headers and bodies can contain sensitive information; do not enable detailed logging in production without reviewing the output.
+
+The client access API returns a WebSocket URL containing an access token. Do not log or persist that URL. Connection strings and access keys must also be treated as secrets.
 
 ## Contributing
 
@@ -74,9 +159,6 @@ additional questions or comments.
 
 <!-- LINKS -->
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
-[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
-[azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
+[webpubsub_docs]: https://learn.microsoft.com/azure/azure-web-pubsub/overview
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples

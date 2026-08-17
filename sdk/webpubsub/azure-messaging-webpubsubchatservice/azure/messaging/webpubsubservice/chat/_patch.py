@@ -7,9 +7,135 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from typing import Any, Dict, Optional, TYPE_CHECKING, Union
+
+from azure.core.credentials import AzureKeyCredential
+from azure.core.tracing.decorator import distributed_trace
+
+from azure.messaging.webpubsubservice._patch import (
+    ApiManagementProxy,
+    JwtCredentialPolicy,
+    WebPubSubServiceClient,
+    _parse_connection_string,
+)
+
+from ._client import WebPubSubChatServiceClient as WebPubSubChatServiceClientGenerated
+from ._constants import ChatRoles, RoomPermissions, UserPermissions
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+_CHAT_CLIENT_ROLES = ["webpubsub.getGroupState", "webpubsub.setGroupState"]
+
+
+class WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated):
+    """Client for managing Azure Web PubSub Chat resources.
+
+    :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
+    :type endpoint: str
+    :param hub: Target hub name.
+    :type hub: str
+    :param credential: Credential used to authenticate requests to the service.
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
+    :keyword api_version: The API version to use for Chat service operations.
+    :paramtype api_version: str
+    """
+
+    def __init__(
+        self,
+        endpoint: str,
+        hub: str,
+        credential: Union["TokenCredential", AzureKeyCredential],
+        *,
+        api_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        if not endpoint:
+            raise ValueError("Parameter 'endpoint' must not be empty.")
+        if not hub:
+            raise ValueError("Parameter 'hub' must not be empty.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
+        service_client_kwargs = {
+            name: kwargs[name] for name in ("reverse_proxy_endpoint", "transport") if name in kwargs
+        }
+        port = kwargs.pop("port", None)
+        if port:
+            endpoint = f"{endpoint.rstrip('/')}:{port}"
+        kwargs["origin_endpoint"] = endpoint
+        if isinstance(credential, AzureKeyCredential):
+            kwargs["authentication_policy"] = JwtCredentialPolicy(
+                credential,
+                origin_endpoint=endpoint,
+                reverse_proxy_endpoint=kwargs.get("reverse_proxy_endpoint"),
+            )
+        if "proxy_policy" not in kwargs:
+            kwargs["proxy_policy"] = ApiManagementProxy(**kwargs)
+        if api_version is not None:
+            kwargs["api_version"] = api_version
+        super().__init__(endpoint=endpoint, hub=hub, credential=credential, **kwargs)
+        self._web_pub_sub_service_client = WebPubSubServiceClient(
+            endpoint=endpoint,
+            hub=hub,
+            credential=credential,
+            **service_client_kwargs,
+        )
+
+    @classmethod
+    def from_connection_string(cls, connection_string: str, hub: str, **kwargs: Any) -> "WebPubSubChatServiceClient":
+        """Create a client from a Web PubSub connection string.
+
+        :param connection_string: Web PubSub connection string.
+        :type connection_string: str
+        :param hub: Target hub name.
+        :type hub: str
+        :return: A Web PubSub Chat service client.
+        :rtype: ~azure.messaging.webpubsubservice.chat.WebPubSubChatServiceClient
+        """
+        if not connection_string:
+            raise ValueError("Parameter 'connection_string' must not be empty.")
+        parsed = _parse_connection_string(connection_string, **kwargs)
+        credential = AzureKeyCredential(parsed.pop("accesskey"))
+        return cls(hub=hub, credential=credential, **parsed)
+
+    @distributed_trace
+    def get_client_access_token(
+        self,
+        *,
+        user_id: Optional[str] = None,
+        minutes_to_expire: int = 60,
+        **kwargs: Any,
+    ) -> Dict[str, Any]:
+        """Generate credentials for a client to connect to Azure Web PubSub.
+
+        :keyword user_id: Optional user ID for the connection.
+        :paramtype user_id: str
+        :keyword minutes_to_expire: Token lifetime in minutes. Defaults to 60.
+        :paramtype minutes_to_expire: int
+        :return: The Web PubSub client endpoint, token, and connection URL.
+        :rtype: dict[str, Any]
+        """
+        return self._web_pub_sub_service_client.get_client_access_token(  # pylint: disable=no-member
+            user_id=user_id,
+            roles=list(_CHAT_CLIENT_ROLES),
+            minutes_to_expire=minutes_to_expire,
+            groups=[],
+            client_protocol="Default",
+            **kwargs,
+        )
+
+    def close(self) -> None:
+        self._web_pub_sub_service_client.close()
+        super().close()
+
+
+__all__: list[str] = [
+    "ChatRoles",
+    "RoomPermissions",
+    "UserPermissions",
+    "WebPubSubChatServiceClient",
+]
 
 
 def patch_sdk():

@@ -67,6 +67,8 @@ setup(
     install_requires=[
         "isodate>=0.6.1",
         "azure-core>=1.37.0",
+        "azure-messaging-webpubsubservice>=1.3.0",
+        "PyJWT>=2.6.0",
         "typing-extensions>=4.6.0",
     ],
     python_requires=">=3.10",
