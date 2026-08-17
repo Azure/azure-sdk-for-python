@@ -175,5 +175,5 @@
         "azure.mgmt.consumption.operations.LotsOperations.list_by_customer": "Microsoft.Consumption.LotsOperationGroup.listByCustomer",
         "azure.mgmt.consumption.aio.operations.LotsOperations.list_by_customer": "Microsoft.Consumption.LotsOperationGroup.listByCustomer"
     },
-    "CrossLanguageVersion": "041c8626feff"
+    "CrossLanguageVersion": "4cef19d23bc5"
 }

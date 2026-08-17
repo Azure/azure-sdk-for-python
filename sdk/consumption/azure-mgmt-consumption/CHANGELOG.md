@@ -1,6 +1,6 @@
 # Release History
 
-## 11.1.0 (2026-08-14)
+## 11.1.0 (2026-08-17)
 
 ### Features Added
 
@@ -11,7 +11,7 @@
   - Added model `LegacyManagementGroupScopeReservationRecommendationProperties`
   - Added model `ModernManagementGroupScopeReservationRecommendationProperties`
   - Added model `ReservationRecommendationDetailsProjectedUsageProperties`
-  - Operation group `ReservationRecommendationDetailsOperations` added parameter `management_group_id` in method `get`
+  - Model `ReservationRecommendationDetailsOperations` added parameter `management_group_id` in method `get`
 
 ## 11.0.0 (2026-07-20)
 
