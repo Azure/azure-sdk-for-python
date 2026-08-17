@@ -1185,7 +1185,7 @@ class AccessPolicy(_BackCompatMixin):
         )
 
 
-class SignedIdentifier(object):  # pylint: disable=protected-access
+class SignedIdentifier(DictMixin):  # pylint: disable=protected-access
     """A stored access policy identifier for container access policies.
 
     :param str id: The identifier name of the stored access policy.
