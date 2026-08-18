@@ -156,7 +156,7 @@ class Tool(_Model):
     """A tool that can be used to generate a response.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    A2APreviewTool, ApplyPatchToolParam, AzureAISearchTool, AzureFunctionTool,
+    A2ATool, A2APreviewTool, ApplyPatchToolParam, AzureAISearchTool, AzureFunctionTool,
     BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationPreviewTool,
     CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
     CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
@@ -169,7 +169,7 @@ class Tool(_Model):
      "local_shell", "shell", "custom", "namespace", "tool_search", "web_search_preview",
      "apply_patch", "a2a_preview", "bing_custom_search_preview", "browser_automation_preview",
      "fabric_dataagent_preview", "sharepoint_grounding_preview", "memory_search_preview",
-     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview", "azure_ai_search",
+     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview", "a2a", "azure_ai_search",
      "azure_function", "bing_grounding", "capture_structured_outputs", and "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
@@ -182,8 +182,8 @@ class Tool(_Model):
      \"apply_patch\", \"a2a_preview\", \"bing_custom_search_preview\",
      \"browser_automation_preview\", \"fabric_dataagent_preview\", \"sharepoint_grounding_preview\",
      \"memory_search_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
-     \"toolbox_search_preview\", \"azure_ai_search\", \"azure_function\", \"bing_grounding\",
-     \"capture_structured_outputs\", and \"openapi\"."""
+     \"toolbox_search_preview\", \"a2a\", \"azure_ai_search\", \"azure_function\",
+     \"bing_grounding\", \"capture_structured_outputs\", and \"openapi\"."""
 
     @overload
     def __init__(
@@ -265,15 +265,16 @@ class ToolboxTool(_Model):
     """An abstract representation of a tool stored in a toolbox.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    A2APreviewToolboxTool, AzureAISearchToolboxTool, BrowserAutomationPreviewToolboxTool,
-    CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool, FileSearchToolboxTool, MCPToolboxTool,
-    OpenApiToolboxTool, ReminderPreviewToolboxTool, ToolSearchToolboxTool,
-    ToolboxSearchPreviewToolboxTool, WebSearchToolboxTool, WorkIQPreviewToolboxTool
+    A2AToolboxTool, A2APreviewToolboxTool, AzureAISearchToolboxTool,
+    BrowserAutomationPreviewToolboxTool, CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool,
+    FileSearchToolboxTool, MCPToolboxTool, OpenApiToolboxTool, ReminderPreviewToolboxTool,
+    ToolSearchToolboxTool, ToolboxSearchPreviewToolboxTool, WebSearchToolboxTool,
+    WorkIQPreviewToolboxTool
 
     :ivar type: The type of tool. Required. Known values are: "code_interpreter", "file_search",
-     "web_search", "mcp", "azure_ai_search", "openapi", "a2a_preview", "browser_automation_preview",
-     "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search", and
-     "toolbox_search_preview".
+     "web_search", "mcp", "azure_ai_search", "openapi", "a2a", "a2a_preview",
+     "browser_automation_preview", "reminder_preview", "work_iq_preview", "fabric_iq_preview",
+     "toolbox_search", and "toolbox_search_preview".
     :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -288,7 +289,7 @@ class ToolboxTool(_Model):
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of tool. Required. Known values are: \"code_interpreter\", \"file_search\",
-     \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a_preview\",
+     \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a\", \"a2a_preview\",
      \"browser_automation_preview\", \"reminder_preview\", \"work_iq_preview\",
      \"fabric_iq_preview\", \"toolbox_search\", and \"toolbox_search_preview\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -394,6 +395,147 @@ class A2APreviewToolboxTool(ToolboxTool, discriminator="a2a_preview"):
 
 class A2AProtocolConfiguration(_Model):
     """Configuration specific to the A2A protocol."""
+
+
+class A2ATool(Tool, discriminator="a2a"):
+    """An agent implementing the A2A protocol.
+
+    :ivar type: The type of the tool. Always ``"a2a"``. Required. A2_A.
+    :vartype type: str or ~azure.ai.projects.models.A2_A
+    :ivar base_url: Base URL of the agent.
+    :vartype base_url: str
+    :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
+     provided, defaults to  ``/.well-known/agent-card.json``.
+    :vartype agent_card_path: str
+    :ivar project_connection_id: The connection ID in the project for the A2A server. The
+     connection stores authentication and other connection details needed to connect to the A2A
+     server.
+    :vartype project_connection_id: str
+    :ivar send_credentials_for_agent_card: When ``true``, Foundry sends its credentials when
+     fetching the remote agent's Agent Card. The service defaults to ``false`` if a value is not
+     specified by the caller (anonymous fetch).
+    :vartype send_credentials_for_agent_card: bool
+    :ivar a2_a_version: The A2A protocol version supported by the agent. Required. "1.0"
+    :vartype a2_a_version: str or ~azure.ai.projects.models.A2AProtocolVersion
+    """
+
+    type: Literal[ToolType.A2_A] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``\"a2a\"``. Required. A2_A."""
+    base_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base URL of the agent."""
+    agent_card_path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path to the agent card relative to the ``base_url``. If not provided, defaults to
+     ``/.well-known/agent-card.json``."""
+    project_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The connection ID in the project for the A2A server. The connection stores authentication and
+     other connection details needed to connect to the A2A server."""
+    send_credentials_for_agent_card: Optional[bool] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When ``true``, Foundry sends its credentials when fetching the remote agent's Agent Card. The
+     service defaults to ``false`` if a value is not specified by the caller (anonymous fetch)."""
+    a2_a_version: Union[str, "_models.A2AProtocolVersion"] = rest_field(
+        name="a2a_version", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The A2A protocol version supported by the agent. Required. \"1.0\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        a2_a_version: Union[str, "_models.A2AProtocolVersion"],
+        base_url: Optional[str] = None,
+        agent_card_path: Optional[str] = None,
+        project_connection_id: Optional[str] = None,
+        send_credentials_for_agent_card: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.A2_A  # type: ignore
+
+
+class A2AToolboxTool(ToolboxTool, discriminator="a2a"):
+    """An A2A tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. A2_A.
+    :vartype type: str or ~azure.ai.projects.models.A2_A
+    :ivar base_url: Base URL of the agent.
+    :vartype base_url: str
+    :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
+     provided, defaults to  ``/.well-known/agent-card.json``.
+    :vartype agent_card_path: str
+    :ivar project_connection_id: The connection ID in the project for the A2A server. The
+     connection stores authentication and other connection details needed to connect to the A2A
+     server.
+    :vartype project_connection_id: str
+    :ivar send_credentials_for_agent_card: When ``true``, Foundry sends its credentials when
+     fetching the remote agent's Agent Card. The service defaults to ``false`` if a value is not
+     specified by the caller (anonymous fetch).
+    :vartype send_credentials_for_agent_card: bool
+    :ivar a2_a_version: The A2A protocol version supported by the agent. Required. "1.0"
+    :vartype a2_a_version: str or ~azure.ai.projects.models.A2AProtocolVersion
+    """
+
+    type: Literal[ToolboxToolType.A2_A] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A2_A."""
+    base_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base URL of the agent."""
+    agent_card_path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path to the agent card relative to the ``base_url``. If not provided, defaults to
+     ``/.well-known/agent-card.json``."""
+    project_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The connection ID in the project for the A2A server. The connection stores authentication and
+     other connection details needed to connect to the A2A server."""
+    send_credentials_for_agent_card: Optional[bool] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When ``true``, Foundry sends its credentials when fetching the remote agent's Agent Card. The
+     service defaults to ``false`` if a value is not specified by the caller (anonymous fetch)."""
+    a2_a_version: Union[str, "_models.A2AProtocolVersion"] = rest_field(
+        name="a2a_version", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The A2A protocol version supported by the agent. Required. \"1.0\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        a2_a_version: Union[str, "_models.A2AProtocolVersion"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        base_url: Optional[str] = None,
+        agent_card_path: Optional[str] = None,
+        project_connection_id: Optional[str] = None,
+        send_credentials_for_agent_card: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.A2_A  # type: ignore
 
 
 class ActivityProtocolConfiguration(_Model):
@@ -4489,16 +4631,31 @@ class ContainerConfiguration(_Model):
 
     :ivar image: The container image for the hosted agent. Required.
     :vartype image: str
+    :ivar registry_connection_id: The id (or name) of the Foundry project connection that provides
+     the credentials used to authenticate to the private container registry hosting ``image``. The
+     connection abstracts the auth mechanism — for example a managed-identity-federated token
+     exchange, or a username/token secret — so registry credentials are never part of the agent
+     definition. Omit for public images or registries already reachable by the platform's default
+     identity (for example, Azure Container Registry).
+    :vartype registry_connection_id: str
     """
 
     image: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The container image for the hosted agent. Required."""
+    registry_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The id (or name) of the Foundry project connection that provides the credentials used to
+     authenticate to the private container registry hosting ``image``. The connection abstracts the
+     auth mechanism — for example a managed-identity-federated token exchange, or a username/token
+     secret — so registry credentials are never part of the agent definition. Omit for public images
+     or registries already reachable by the platform's default identity (for example, Azure
+     Container Registry)."""
 
     @overload
     def __init__(
         self,
         *,
         image: str,
+        registry_connection_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -5443,11 +5600,11 @@ class DataGenerationJobOptions(_Model):
     """Options for managing data generation jobs.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    SimpleQnADataGenerationJobOptions, TaskGenerationDataGenerationJobOptions,
+    SimpleQnADataGenerationJobOptions, SimulationSeedDataGenerationJobOptions,
     ToolUseFineTuningDataGenerationJobOptions, TracesDataGenerationJobOptions
 
     :ivar type: The data generation job type. Required. Known values are: "simple_qna", "traces",
-     "tool_use", and "task_generation".
+     "tool_use", and "simulation_seed".
     :vartype type: str or ~azure.ai.projects.models.DataGenerationJobType
     :ivar max_samples: Maximum number of samples to generate. Required.
     :vartype max_samples: int
@@ -5461,7 +5618,7 @@ class DataGenerationJobOptions(_Model):
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The data generation job type. Required. Known values are: \"simple_qna\", \"traces\",
-     \"tool_use\", and \"task_generation\"."""
+     \"tool_use\", and \"simulation_seed\"."""
     max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum number of samples to generate. Required."""
     train_split: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -13610,6 +13767,48 @@ class SimpleQnADataGenerationJobOptions(DataGenerationJobOptions, discriminator=
         self.type = DataGenerationJobType.SIMPLE_QNA  # type: ignore
 
 
+class SimulationSeedDataGenerationJobOptions(DataGenerationJobOptions, discriminator="simulation_seed"):
+    """The options for a simulation seed data generation job. Use with multiturn evaluation scenarios
+    and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
+    ``category``, ``test_case_description``, and ``desired_num_turns``.
+
+    :ivar max_samples: Maximum number of samples to generate. Required.
+    :vartype max_samples: int
+    :ivar train_split: The proportion of the generated data to be used for training when the data
+     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
+    :vartype train_split: float
+    :ivar model_options: The LLM model options.
+    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
+    :ivar type: The data generation job type, which is SimulationSeed for this model. Required.
+     Simulation seed for evaluation scenarios.
+    :vartype type: str or ~azure.ai.projects.models.SIMULATION_SEED
+    """
+
+    type: Literal[DataGenerationJobType.SIMULATION_SEED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The data generation job type, which is SimulationSeed for this model. Required. Simulation seed
+     for evaluation scenarios."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_samples: int,
+        train_split: Optional[float] = None,
+        model_options: Optional["_models.DataGenerationModelOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobType.SIMULATION_SEED  # type: ignore
+
+
 class SkillDetails(_Model):
     """A skill resource.
 
@@ -14001,48 +14200,6 @@ class StructuredOutputDefinition(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class TaskGenerationDataGenerationJobOptions(DataGenerationJobOptions, discriminator="task_generation"):
-    """The options for a task generation data generation job. Use with multiturn evaluation scenarios
-    and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
-    ``category``, ``test_case_description``, and ``desired_num_turns``.
-
-    :ivar max_samples: Maximum number of samples to generate. Required.
-    :vartype max_samples: int
-    :ivar train_split: The proportion of the generated data to be used for training when the data
-     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
-    :vartype train_split: float
-    :ivar model_options: The LLM model options.
-    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
-    :ivar type: The data generation job type, which is TaskGeneration for this model. Required.
-     Task generation for evaluation scenarios.
-    :vartype type: str or ~azure.ai.projects.models.TASK_GENERATION
-    """
-
-    type: Literal[DataGenerationJobType.TASK_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The data generation job type, which is TaskGeneration for this model. Required. Task generation
-     for evaluation scenarios."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        max_samples: int,
-        train_split: Optional[float] = None,
-        model_options: Optional["_models.DataGenerationModelOptions"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = DataGenerationJobType.TASK_GENERATION  # type: ignore
 
 
 class TaxonomyCategory(_Model):
@@ -15263,11 +15420,17 @@ class TracesDataGenerationJobOptions(DataGenerationJobOptions, discriminator="tr
     :ivar type: The data generation job type, which is Traces for this model. Required. Single turn
      query and response from agent traces.
     :vartype type: str or ~azure.ai.projects.models.TRACES
+    :ivar redact_private_content: Whether to redact private content from traces. When omitted or
+     set to true, private content is redacted. Set to false to opt out of redaction.
+    :vartype redact_private_content: bool
     """
 
     type: Literal[DataGenerationJobType.TRACES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The data generation job type, which is Traces for this model. Required. Single turn query and
      response from agent traces."""
+    redact_private_content: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to redact private content from traces. When omitted or set to true, private content is
+     redacted. Set to false to opt out of redaction."""
 
     @overload
     def __init__(
@@ -15276,6 +15439,7 @@ class TracesDataGenerationJobOptions(DataGenerationJobOptions, discriminator="tr
         max_samples: int,
         train_split: Optional[float] = None,
         model_options: Optional["_models.DataGenerationModelOptions"] = None,
+        redact_private_content: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -15985,7 +16149,10 @@ class WeeklyRecurrenceSchedule(RecurrenceSchedule, discriminator="Weekly"):
 
 
 class WorkflowAgentDefinition(AgentDefinition, discriminator="workflow"):
-    """The workflow agent definition.
+    """The workflow agent definition. Microsoft Foundry is retiring workflows on December 1, 2026. If
+    you're looking to build new workflows, use Microsoft Agent Framework. To migrate existing
+    workflows, see the `Migration guide
+    <https://learn.microsoft.com/azure/foundry/agents/concepts/workflow#migration-guide>`_.
 
     :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
     :vartype rai_config: ~azure.ai.projects.models.RaiConfig
