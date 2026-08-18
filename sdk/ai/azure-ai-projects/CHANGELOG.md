@@ -14,6 +14,7 @@
 
 All breaking changes are associated with beta features.
 
+* Methods `.beta.routines.list` and `.beta.routines.list_runs` replaced the `before` argument with `after` and now use the service-provided `next_link` for continuation.
 * Renamed class `TaskGenerationDataGenerationJobOptions` to `SimulationSeedDataGenerationJobOptions`. The corresponding `DataGenerationJobType.TASK_GENERATION` enum member was renamed to `DataGenerationJobType.SIMULATION_SEED`, and its wire value changed from `task_generation` to `simulation_seed`.
 * Renamed enum `OptimizationDatasetInputType` to `AgentOptimizationDatasetInputType`.
 * Renamed class `OptimizationAgentIdentifier` to `OptimizedAgentIdentifier`.
