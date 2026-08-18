@@ -64,6 +64,36 @@ _DEFAULT_TASK_TIMEOUT = timedelta(days=1)
 _MAX_TASK_TIMEOUT = timedelta(days=7)
 
 
+def _resolve_hard_stop_grace() -> timedelta:
+    """Spec 037 #8 (hard execution cap) — grace after the cooperative timeout
+    cancel before the framework FORCE-stops the handler.
+
+    Defaults to 1 hour; overridable via
+    ``AGENTSERVER_TASK_TIMEOUT_HARDCAP_GRACE_SECONDS`` (used to shorten the
+    window for tests / the hosted POC). Non-positive or unparseable values fall
+    back to the 1-hour default.
+
+    :return: The hard-stop grace window.
+    :rtype: ~datetime.timedelta
+    """
+    import os  # pylint: disable=import-outside-toplevel
+
+    raw = os.environ.get("AGENTSERVER_TASK_TIMEOUT_HARDCAP_GRACE_SECONDS", "").strip()
+    if raw:
+        try:
+            secs = float(raw)
+            if secs > 0:
+                return timedelta(seconds=secs)
+        except ValueError:
+            pass
+    return timedelta(hours=1)
+
+
+#: Hard execution cap grace (see :func:`_resolve_hard_stop_grace`). Resolved at
+# import; the watchdog reads it per turn so an env override takes effect.
+_TIMEOUT_HARD_STOP_GRACE = _resolve_hard_stop_grace()
+
+
 def _validate_task_name(name: str | None) -> None:
     """Spec 037 #7 — ``name`` is a required, explicit, stable identity anchor.
 
