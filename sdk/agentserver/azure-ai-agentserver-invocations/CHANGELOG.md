@@ -14,12 +14,18 @@
 - Added source-aware `Session.termination` for classifying unfinished
   application work during connection cleanup.
 
+### Bugs Fixed
+
+- Classified RFC 6455 close code `1001` (Going Away) consistently as a
+  completed Voice connection in cleanup state and telemetry.
+
 ### Samples
 
 - Updated `basic_voice_agent` to declare target turns around real background
   generation work and report truthful response, timeout, cancellation,
   end-call, and transport outcomes, with bounded per-connection concurrency and
-  retained model output.
+  retained model output. Unfinished turns now distinguish clean abandonment,
+  application/server errors, and protocol or transport loss.
 
 ## 1.1.0b1 (2026-08-11)
 

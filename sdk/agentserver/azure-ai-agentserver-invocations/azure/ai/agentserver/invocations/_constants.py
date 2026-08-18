@@ -1,7 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.agentserver.core._platform_headers import SESSION_ID as _SESSION_ID  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core._platform_headers import (
+    SESSION_ID as _SESSION_ID,
+)  # pylint: disable=import-error,no-name-in-module
 
 
 class InvocationConstants:
@@ -35,7 +37,9 @@ class InvocationsWSConstants:
 
     # Close codes (RFC 6455)
     CLOSE_NORMAL = 1000  # handler returned cleanly
+    CLOSE_GOING_AWAY = 1001  # peer is leaving or restarting
     CLOSE_INTERNAL_ERROR = 1011  # handler raised an unhandled exception
+    NORMAL_CLOSE_CODES = frozenset({CLOSE_NORMAL, CLOSE_GOING_AWAY})
 
     # Structured-log ``extra`` keys.
     ATTR_SPAN_SESSION_ID = "azure.ai.agentserver.invocations_ws.session_id"

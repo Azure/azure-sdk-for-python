@@ -128,7 +128,17 @@ def termination_outcome(termination: SessionTermination | None) -> TargetTurnOut
     """Map a physical connection fact to an unfinished application decision."""
     if termination is None or termination is SessionTermination.CANCELLED:
         return TargetTurnOutcome.CANCELLED
-    return TargetTurnOutcome.TRANSPORT_ERROR
+    if termination is SessionTermination.COMPLETED:
+        return TargetTurnOutcome.ABANDONED
+    if termination in {SessionTermination.PROTOCOL_ERROR, SessionTermination.TRANSPORT_ERROR}:
+        return TargetTurnOutcome.TRANSPORT_ERROR
+    if termination in {
+        SessionTermination.ACCEPT_ERROR,
+        SessionTermination.CALLBACK_ERROR,
+        SessionTermination.INTERNAL_ERROR,
+    }:
+        return TargetTurnOutcome.ERROR
+    raise AssertionError(f"Unhandled Voice session termination: {termination!r}")
 
 
 def generation_error_outcome(generation: Generation) -> TargetTurnOutcome:
@@ -149,7 +159,7 @@ async def send_no_response(session: Session, input_ids: tuple[str, ...], reason:
         turn.complete(outcome=TargetTurnOutcome.NONE, output_item_count=0)
     except asyncio.CancelledError:
         if not turn.is_completed:
-            turn.complete(outcome=TargetTurnOutcome.CANCELLED, output_item_count=0)
+            turn.complete(outcome=termination_outcome(session.termination), output_item_count=0)
         raise
     except BaseException:
         if not turn.is_completed:

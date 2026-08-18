@@ -55,6 +55,10 @@ around the real model/output work and completes it only after the activation
 scope exits. Cancellation callbacks store an application-owned terminal hint
 before cancelling the task; the runner or done callback then completes the turn
 with the first truthful outcome. The SDK does not inspect or retain the task.
+For unfinished work, the sample maps clean peer closure to `abandoned`,
+application/server failures to `error`, protocol or transport loss to
+`transport_error`, and cancellation to `cancelled`. An explicit application
+hint such as `end_call` or `timeout` remains the first winner.
 The sample also caps active generations per connection and bounds retained model
 output by both UTF-8 bytes and chunk count; excess input receives `response.none`.
 

@@ -429,9 +429,11 @@ def _commit_voice_session_termination(
         termination = SessionTermination.CALLBACK_ERROR
     elif disconnect_event is not None:
         termination = (
-            SessionTermination.COMPLETED if int(disconnect_event.code) == 1000 else SessionTermination.TRANSPORT_ERROR
+            SessionTermination.COMPLETED
+            if int(disconnect_event.code) in InvocationsWSConstants.NORMAL_CLOSE_CODES
+            else SessionTermination.TRANSPORT_ERROR
         )
-    elif close_code in {1000, 1001}:
+    elif close_code in InvocationsWSConstants.NORMAL_CLOSE_CODES:
         termination = SessionTermination.COMPLETED
     elif close_code in {1002, 1003, 1007, 1008, 1009, 1010}:
         termination = SessionTermination.PROTOCOL_ERROR
@@ -513,7 +515,9 @@ async def _receive_voice_event(
         reason = raw_reason if isinstance(raw_reason, str) else None
         _select_voice_close_code(websocket, code)
         session._begin_termination(  # pylint: disable=protected-access
-            SessionTermination.COMPLETED if code == 1000 else SessionTermination.TRANSPORT_ERROR
+            SessionTermination.COMPLETED
+            if code in InvocationsWSConstants.NORMAL_CLOSE_CODES
+            else SessionTermination.TRANSPORT_ERROR
         )
         _begin_voice_termination(websocket, session)
         websocket.scope.setdefault(

@@ -22,6 +22,7 @@ from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from azure.ai.agentserver.invocations.voice import (
     Session,
+    SessionDisconnected,
     SessionReady,
     SessionTermination,
     TargetTurnOrigin,
@@ -572,6 +573,111 @@ def test_connection_termination_fact_is_visible_before_cleanup(spans, scenario, 
     assert observed == [expected]
     connection = _span_by_name(exporter, "agentserver.connection")
     assert connection.attributes["bridge.outcome"] == expected.value
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("close_code", "expected_termination"),
+    [
+        pytest.param(1000, SessionTermination.COMPLETED, id="normal-baseline"),
+        pytest.param(1001, SessionTermination.COMPLETED, id="going-away"),
+        pytest.param(1006, SessionTermination.TRANSPORT_ERROR, id="abnormal-negative-control"),
+    ],
+)
+async def test_peer_disconnect_classification_matches_cleanup_and_telemetry(
+    spans,
+    metric_reader,
+    close_code,
+    expected_termination,
+):
+    _, exporter = spans
+    app = VoiceAgentServerHost(configure_observability=None)
+    callback_order = []
+    terminations = []
+    disconnects = []
+    rejected_writes = []
+    later_callbacks = []
+    sent_messages = []
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.disconnect", "code": close_code, "reason": "peer close"},
+        {"type": "websocket.receive", "text": json.dumps(_session_start_frame())},
+    ]
+
+    @app.on_session_start
+    async def on_session_start(_session, _event):
+        later_callbacks.append("session.start")
+
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        callback_order.append("terminating")
+        terminations.append(session.termination)
+
+    @app.on_disconnect
+    async def on_disconnect(session, event):
+        callback_order.append("disconnect")
+        disconnects.append((session.termination, event.code, event.reason))
+        with pytest.raises(RuntimeError, match="terminating"):
+            await session.send(SessionReady())
+        rejected_writes.append(True)
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+
+    expected_outcome = expected_termination.value
+    expected_metric_attributes = {"bridge.outcome": expected_outcome}
+    if expected_termination is not SessionTermination.COMPLETED:
+        expected_metric_attributes["error.type"] = expected_outcome
+    metric_name = "azure.ai.agentserver.voice.connection.duration"
+    before_metric_count = sum(
+        point.count
+        for point in _metric_points(metric_reader, metric_name)
+        if point.attributes == expected_metric_attributes
+    )
+
+    await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
+
+    assert callback_order == ["terminating", "disconnect"]
+    assert terminations == [expected_termination]
+    assert disconnects == [(expected_termination, close_code, "peer close")]
+    assert rejected_writes == [True]
+    assert later_callbacks == []
+    assert len(inbound_events) == 1
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+    assert Session._current(websocket) is None  # pylint: disable=protected-access
+
+    connection = _span_by_name(exporter, "agentserver.connection")
+    assert connection.attributes["bridge.outcome"] == expected_outcome
+    fallback_websocket = _websocket_with_headers([])
+    fallback_session = Session._create(fallback_websocket)  # pylint: disable=protected-access
+    try:
+        voice_host_module._commit_voice_session_termination(  # pylint: disable=protected-access
+            fallback_session,
+            handler_error=None,
+            disconnect_event=SessionDisconnected(code=close_code, reason="peer close"),
+            close_code=close_code,
+            accept_failed=False,
+        )
+        assert fallback_session.termination is expected_termination
+    finally:
+        Session._release(fallback_websocket, fallback_session)  # pylint: disable=protected-access
+    assert tracing_module._connection_outcome(close_code, None) == expected_outcome  # pylint: disable=protected-access
+    points = _metric_points(metric_reader, metric_name)
+    after_metric_count = sum(point.count for point in points if point.attributes == expected_metric_attributes)
+    assert after_metric_count - before_metric_count == 1
+    if expected_termination is SessionTermination.COMPLETED:
+        assert "error.type" not in connection.attributes
+        assert connection.status.status_code is trace.StatusCode.UNSET
+    else:
+        assert connection.attributes["error.type"] == expected_outcome
+        assert connection.status.status_code is trace.StatusCode.ERROR
 
 
 def test_missing_and_invalid_context_record_sanitized_failure_metrics(metric_reader):

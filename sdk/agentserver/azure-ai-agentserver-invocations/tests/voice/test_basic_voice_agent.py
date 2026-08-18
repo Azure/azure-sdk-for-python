@@ -111,6 +111,70 @@ def _session_start(protocol_version):
     )
 
 
+@pytest.mark.parametrize(
+    ("termination", "expected"),
+    [
+        pytest.param(None, TargetTurnOutcome.CANCELLED, id="local-cancellation"),
+        pytest.param(SessionTermination.CANCELLED, TargetTurnOutcome.CANCELLED, id="connection-cancelled"),
+        pytest.param(SessionTermination.COMPLETED, TargetTurnOutcome.ABANDONED, id="clean-peer-close"),
+        pytest.param(SessionTermination.PROTOCOL_ERROR, TargetTurnOutcome.TRANSPORT_ERROR, id="protocol-error"),
+        pytest.param(SessionTermination.TRANSPORT_ERROR, TargetTurnOutcome.TRANSPORT_ERROR, id="transport-error"),
+        pytest.param(SessionTermination.ACCEPT_ERROR, TargetTurnOutcome.ERROR, id="accept-error"),
+        pytest.param(SessionTermination.CALLBACK_ERROR, TargetTurnOutcome.ERROR, id="callback-error"),
+        pytest.param(SessionTermination.INTERNAL_ERROR, TargetTurnOutcome.ERROR, id="internal-error"),
+    ],
+)
+def test_termination_outcome_preserves_source_semantics(sample_module, termination, expected):
+    assert sample_module.termination_outcome(termination) is expected
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("termination", "expected"),
+    [
+        pytest.param(None, TargetTurnOutcome.CANCELLED, id="local-cancellation-negative-control"),
+        pytest.param(
+            SessionTermination.TRANSPORT_ERROR,
+            TargetTurnOutcome.TRANSPORT_ERROR,
+            id="committed-transport-error",
+        ),
+        pytest.param(SessionTermination.CALLBACK_ERROR, TargetTurnOutcome.ERROR, id="committed-callback-error"),
+    ],
+)
+async def test_no_response_cancellation_preserves_committed_termination(
+    sample_module,
+    termination,
+    expected,
+):
+    session = _CapturingSession()
+    send_attempts = []
+
+    async def cancel_send(message):
+        send_attempts.append(message)
+        session.termination = termination
+        raise asyncio.CancelledError()
+
+    session.send = cancel_send
+
+    with pytest.raises(asyncio.CancelledError):
+        await sample_module.send_no_response(session, ("in_1",), "no_reply_needed")
+
+    assert len(send_attempts) == 1
+    assert len(session.turns) == 1
+    turn = session.turns[0]
+    assert turn.completions == [
+        {
+            "outcome": expected,
+            "output_item_count": 0,
+        }
+    ]
+    assert not sample_module.generations
+    assert not sample_module.input_generations
+
+    sample_module.on_connection_terminating(session)
+    assert len(turn.completions) == 1
+
+
 def test_sample_includes_setup_run_and_bridge_manifest():
     readme = (_SAMPLE_ROOT / "README.md").read_text(encoding="utf-8")
     requirements = (_SAMPLE_ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines()
@@ -180,6 +244,108 @@ async def test_connection_termination_cancels_sample_owned_generation(sample_mod
     assert generation.turn.completions == [
         {
             "outcome": TargetTurnOutcome.TRANSPORT_ERROR,
+            "response_id": generation.response_id,
+            "output_item_count": 0,
+        }
+    ]
+    assert not sample_module.generations
+    assert not sample_module.input_generations
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("termination", "expected"),
+    [
+        pytest.param(SessionTermination.COMPLETED, TargetTurnOutcome.ABANDONED, id="clean-peer-close"),
+        pytest.param(SessionTermination.CALLBACK_ERROR, TargetTurnOutcome.ERROR, id="callback-error"),
+        pytest.param(SessionTermination.PROTOCOL_ERROR, TargetTurnOutcome.TRANSPORT_ERROR, id="protocol-error"),
+    ],
+)
+async def test_connection_cleanup_projects_source_aware_outcome_once(
+    sample_module,
+    monkeypatch,
+    termination,
+    expected,
+):
+    generation_started = asyncio.Event()
+
+    async def blocked_generation(_text):
+        generation_started.set()
+        await asyncio.Future()
+        yield "not reached"
+
+    monkeypatch.setattr(sample_module, "generate_answer", blocked_generation)
+    session = _CapturingSession()
+    await sample_module.on_user_message(
+        session,
+        UserMessage(
+            id="m_user",
+            ts="2026-08-12T00:00:00Z",
+            item_id="in_1",
+            content=(InputTextPart(text="hello"),),
+        ),
+    )
+    await asyncio.wait_for(generation_started.wait(), timeout=1)
+    generation = next(iter(sample_module.generations.values()))
+    sent_count = len(session.messages)
+
+    session.termination = termination
+    sample_module.on_connection_terminating(session)
+    sample_module.on_connection_terminating(session)
+
+    with pytest.raises(asyncio.CancelledError):
+        await generation.task
+    await asyncio.sleep(0)
+
+    assert generation.turn.completions == [
+        {
+            "outcome": expected,
+            "response_id": generation.response_id,
+            "output_item_count": 0,
+        }
+    ]
+    assert len(session.messages) == sent_count
+    assert not sample_module.generations
+    assert not sample_module.input_generations
+
+    sample_module.on_connection_terminating(session)
+    assert len(generation.turn.completions) == 1
+
+
+@pytest.mark.asyncio
+async def test_explicit_end_call_hint_wins_later_completed_connection(sample_module, monkeypatch):
+    generation_started = asyncio.Event()
+
+    async def blocked_generation(_text):
+        generation_started.set()
+        await asyncio.Future()
+        yield "not reached"
+
+    monkeypatch.setattr(sample_module, "generate_answer", blocked_generation)
+    session = _CapturingSession()
+    await sample_module.on_user_message(
+        session,
+        UserMessage(
+            id="m_user",
+            ts="2026-08-12T00:00:00Z",
+            item_id="in_1",
+            content=(InputTextPart(text="hello"),),
+        ),
+    )
+    await asyncio.wait_for(generation_started.wait(), timeout=1)
+    generation = next(iter(sample_module.generations.values()))
+
+    sample_module.cancel_session_generation_tasks(session, TargetTurnOutcome.END_CALL)
+    session.termination = SessionTermination.COMPLETED
+    sample_module.on_connection_terminating(session)
+
+    with pytest.raises(asyncio.CancelledError):
+        await generation.task
+    await asyncio.sleep(0)
+
+    assert generation.turn.completions == [
+        {
+            "outcome": TargetTurnOutcome.END_CALL,
             "response_id": generation.response_id,
             "output_item_count": 0,
         }
