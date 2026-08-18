@@ -89,44 +89,83 @@ network:
     - github
     - dev.azure.com
     - aka.ms
-    - containers
 
 pre-agent-steps:
-  - name: Install Azure SDK MCP server
+  - name: Install Azure SDK CLI
     shell: pwsh
     run: |
-      $installDirectory = Join-Path $HOME "bin"
+      $installDirectory = Join-Path $env:RUNNER_TEMP "azsdk-cli"
       ./eng/common/mcp/azure-sdk-mcp.ps1 -InstallDirectory $installDirectory
+      Add-Content -Path $env:GITHUB_PATH -Value $installDirectory
+  - name: Analyze failing pipeline
+    shell: bash
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      PR_URL: "https://github.com/${{ github.repository }}/pull/${{ needs.pre_activation.outputs.pr_number }}"
+    run: |
+      set -uo pipefail
+      analysis_file="$GITHUB_WORKSPACE/pipeline-analysis.json"
+      test_results_file="$GITHUB_WORKSPACE/pipeline-test-results.txt"
+      exit_code=0
+      azsdk ci analyze "$PR_URL" --output json > "$analysis_file" 2>&1 || exit_code=$?
 
-      $mcpDirectory = Join-Path $env:RUNNER_TEMP "azsdk-mcp"
-      New-Item -ItemType Directory -Path $mcpDirectory -Force | Out-Null
-      $mcpExecutable = Join-Path $mcpDirectory "azsdk"
-      Copy-Item (Join-Path $installDirectory "azsdk") $mcpExecutable
-      chmod +x $mcpExecutable
-      if ($LASTEXITCODE) {
-        throw "Failed to mark the Azure SDK MCP executable."
+      echo "azsdk ci analyze exit code: $exit_code"
+      echo "----- pipeline-analysis.json -----"
+      sed 's/^::/ ::/' "$analysis_file"
+      if [ "$exit_code" -ne 0 ]; then
+        if grep -qF "No failed Azure Pipeline builds found" "$analysis_file"; then
+          echo "No failing Azure Pipeline builds resolved for this PR; the agent will no-op."
+          : > "$test_results_file"
+          exit 0
+        fi
+        echo "::error::azsdk ci analyze failed (exit $exit_code) with an unexpected error."
+        exit "$exit_code"
+      fi
+
+      : > "$test_results_file"
+      artifact_files=$(python3 - "$analysis_file" <<'PY'
+      import json
+      import sys
+
+      def artifact_paths(value):
+          if isinstance(value, dict):
+              path = value.get("artifact_file_path")
+              if path:
+                  yield path
+              for child in value.values():
+                  yield from artifact_paths(child)
+          elif isinstance(value, list):
+              for child in value:
+                  yield from artifact_paths(child)
+
+      with open(sys.argv[1], encoding="utf-8") as analysis:
+          print("\n".join(sorted(set(artifact_paths(json.load(analysis))))))
+      PY
+      ) || {
+        echo "::error::Failed to parse artifact paths from the pipeline analysis."
+        exit 1
       }
+      while IFS= read -r artifact_file; do
+        [ -n "$artifact_file" ] || continue
+        printf '%s\n' "===== $artifact_file =====" >> "$test_results_file"
+        test_exit_code=0
+        # With neither --titles nor --filter-title, this dispatches to the same
+        # GetFailedTestResults method as azsdk_get_failed_test_run_data.
+        azsdk pkg test results --test-results-file "$artifact_file" --output json \
+          >> "$test_results_file" 2>&1 || test_exit_code=$?
+        if [ "$test_exit_code" -ne 0 ]; then
+          echo "::error::azsdk pkg test results failed for an analysis artifact (exit $test_exit_code)."
+          exit "$test_exit_code"
+        fi
+      done <<< "$artifact_files"
+
+      echo "----- pipeline-test-results.txt -----"
+      sed 's/^::/ ::/' "$test_results_file"
 
 tools:
   github:
     toolsets: [pull_requests]
-
-mcp-servers:
-  azure-sdk-mcp:
-    type: stdio
-    container: "mcr.microsoft.com/dotnet/runtime-deps:8.0-noble"
-    args:
-      - "-v"
-      - "${RUNNER_TEMP}/azsdk-mcp/azsdk:/usr/local/bin/azsdk:ro"
-    entrypoint: "/usr/local/bin/azsdk"
-    entrypointArgs: ["mcp"]
-    env:
-      GH_TOKEN: "${{ github.token }}"
-      GITHUB_TOKEN: "${{ github.token }}"
-    allowed:
-      - azsdk_analyze_pipeline
-      - azsdk_get_failed_test_run_data
-      - azsdk_get_failed_test_case_data
+  bash: ["cat", "head", "tail", "wc"]
 
 jobs:
   pre-activation:
@@ -180,14 +219,16 @@ safe-outputs:
 1. Retrieve pull request `${{ needs.pre_activation.outputs.pr_number }}`. If it is not
   open or its current head is not `${{ needs.pre_activation.outputs.head_sha }}`, call `noop` and stop.
 2. Read `.github/skills/azsdk-common-pipeline-analysis/SKILL.md` and its
-  `references/failure-patterns.md`, then follow their diagnosis guidance.
-3. Call `azsdk_analyze_pipeline` with
-  `pipelineIdentifier: "https://github.com/${{ github.repository }}/pull/${{ needs.pre_activation.outputs.pr_number }}"`.
-4. Inspect every `failed_pipeline_tests` entry returned by the analysis. If an
-  `artifact_file_path` is present, call `azsdk_get_failed_test_run_data` exactly once per unique
-  artifact with `failedTestRunsPath` set to that path. Call `azsdk_get_failed_test_case_data` only
-  when one exact `testCaseTitle` needs targeted follow-up. Never diagnose or classify fixability
-  from test titles alone.
+  `references/failure-patterns.md`, then follow their diagnosis guidance. The deterministic setup
+  has already run the CLI analysis, so do not follow the skill's MCP invocation requirement.
+3. Read `pipeline-analysis.json`, which contains the complete JSON output from `azsdk ci analyze`.
+  If it contains `No failed Azure Pipeline builds found` or no real failures, call `noop` and stop.
+4. Read `pipeline-test-results.txt`, which contains full failed-test details for every unique
+  `artifact_file_path` returned by the analysis. The CLI invocation uses the same
+  `GetFailedTestResults` implementation as `azsdk_get_failed_test_run_data`. The exact-case MCP
+  tool only performs a case-insensitive title selection over this same full result set, so select
+  an exact case from this file when targeted follow-up is needed. Never diagnose or classify
+  fixability from test titles alone.
 5. Group evidence by build, platform, artifact file, and failed test. Preserve platform-specific
   failures when titles overlap, but consolidate failures with one demonstrated root cause.
 6. Categorize the failures and determine whether any are fixable by an automated code change.
@@ -232,7 +273,7 @@ Azure DevOps pipeline is internal or private and cannot be accessed by the workf
 they can analyze the pipeline by running this command locally while authenticated to Azure DevOps:
 
 ```bash
-azsdk azp analyze https://github.com/${{ github.repository }}/pull/${{ needs.pre_activation.outputs.pr_number }}
+azsdk ci analyze https://github.com/${{ github.repository }}/pull/${{ needs.pre_activation.outputs.pr_number }} --output json
 ```
 
 ## Publish
