@@ -1613,9 +1613,9 @@ namespace azure.ai.projects.aio.operations
         def list(
                 self, 
                 *, 
-                before: Optional[str] = ..., 
+                after: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
-                order: Optional[str] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[Routine]: ...
 
@@ -1624,10 +1624,10 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 routine_name: str, 
                 *, 
-                before: Optional[str] = ..., 
+                after: Optional[str] = ..., 
                 filter: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
-                order: Optional[str] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[RoutineRun]: ...
 
@@ -2372,6 +2372,62 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.A2AProtocolConfiguration(_Model):
+
+
+    class azure.ai.projects.models.A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        V1_0 = "1.0"
+
+
+    class azure.ai.projects.models.A2ATool(Tool, discriminator='a2a'):
+        a2_a_version: Union[str, A2AProtocolVersion]
+        agent_card_path: Optional[str]
+        base_url: Optional[str]
+        project_connection_id: Optional[str]
+        send_credentials_for_agent_card: Optional[bool]
+        type: Literal[ToolType.A2_A]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                a2_a_version: Union[str, A2AProtocolVersion], 
+                agent_card_path: Optional[str] = ..., 
+                base_url: Optional[str] = ..., 
+                project_connection_id: Optional[str] = ..., 
+                send_credentials_for_agent_card: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.A2AToolboxTool(ToolboxTool, discriminator='a2a'):
+        a2_a_version: Union[str, A2AProtocolVersion]
+        agent_card_path: Optional[str]
+        base_url: Optional[str]
+        description: str
+        name: str
+        project_connection_id: Optional[str]
+        send_credentials_for_agent_card: Optional[bool]
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.A2_A]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                a2_a_version: Union[str, A2AProtocolVersion], 
+                agent_card_path: Optional[str] = ..., 
+                base_url: Optional[str] = ..., 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                project_connection_id: Optional[str] = ..., 
+                send_credentials_for_agent_card: Optional[bool] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.AISearchIndexResource(_Model):
@@ -4095,12 +4151,14 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.ContainerConfiguration(_Model):
         image: str
+        registry_connection_id: Optional[str]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                image: str
+                image: str, 
+                registry_connection_id: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -4568,7 +4626,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         SIMPLE_QNA = "simple_qna"
-        TASK_GENERATION = "task_generation"
+        SIMULATION_SEED = "simulation_seed"
         TOOL_USE = "tool_use"
         TRACES = "traces"
 
@@ -8316,6 +8374,25 @@ namespace azure.ai.projects.models
         SHORT_ANSWER = "short_answer"
 
 
+    class azure.ai.projects.models.SimulationSeedDataGenerationJobOptions(DataGenerationJobOptions, discriminator='simulation_seed'):
+        max_samples: int
+        model_options: DataGenerationModelOptions
+        train_split: float
+        type: Literal[DataGenerationJobType.SIMULATION_SEED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_samples: int, 
+                model_options: Optional[DataGenerationModelOptions] = ..., 
+                train_split: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.SkillDetails(_Model):
         created_at: datetime
         default_version: str
@@ -8470,25 +8547,6 @@ namespace azure.ai.projects.models
         key "source": Required[Union[SourceFileContent, SourceFileID]]
         key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
         key "type": Required[Literal["azure_ai_target_completions"]]
-
-
-    class azure.ai.projects.models.TaskGenerationDataGenerationJobOptions(DataGenerationJobOptions, discriminator='task_generation'):
-        max_samples: int
-        model_options: DataGenerationModelOptions
-        train_split: float
-        type: Literal[DataGenerationJobType.TASK_GENERATION]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                max_samples: int, 
-                model_options: Optional[DataGenerationModelOptions] = ..., 
-                train_split: Optional[float] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.TaxonomyCategory(_Model):
@@ -8972,6 +9030,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         A2A_PREVIEW = "a2a_preview"
+        A2_A = "a2a"
         APPLY_PATCH = "apply_patch"
         AZURE_AI_SEARCH = "azure_ai_search"
         AZURE_FUNCTION = "azure_function"
@@ -9125,6 +9184,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         A2A_PREVIEW = "a2a_preview"
+        A2_A = "a2a"
         AZURE_AI_SEARCH = "azure_ai_search"
         BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
         CODE_INTERPRETER = "code_interpreter"
@@ -9172,6 +9232,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.TracesDataGenerationJobOptions(DataGenerationJobOptions, discriminator='traces'):
         max_samples: int
         model_options: DataGenerationModelOptions
+        redact_private_content: Optional[bool]
         train_split: float
         type: Literal[DataGenerationJobType.TRACES]
 
@@ -9181,6 +9242,7 @@ namespace azure.ai.projects.models
                 *, 
                 max_samples: int, 
                 model_options: Optional[DataGenerationModelOptions] = ..., 
+                redact_private_content: Optional[bool] = ..., 
                 train_split: Optional[float] = ...
             ) -> None: ...
 
@@ -11132,9 +11194,9 @@ namespace azure.ai.projects.operations
         def list(
                 self, 
                 *, 
-                before: Optional[str] = ..., 
+                after: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
-                order: Optional[str] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[Routine]: ...
 
@@ -11143,10 +11205,10 @@ namespace azure.ai.projects.operations
                 self, 
                 routine_name: str, 
                 *, 
-                before: Optional[str] = ..., 
+                after: Optional[str] = ..., 
                 filter: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
-                order: Optional[str] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[RoutineRun]: ...
 
