@@ -8,19 +8,28 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import inspect
 import logging
+import os
+import re
 import time
 import uuid
 from collections.abc import Awaitable, Callable, MutableMapping
 from typing import Any, NoReturn, TypeVar, cast
+from urllib.parse import unquote_to_bytes
 
-from opentelemetry import baggage as _otel_baggage, context as _otel_context
+from opentelemetry import (
+    baggage as _otel_baggage,
+    context as _otel_context,
+    trace as _otel_trace,
+)
 from opentelemetry.propagators.textmap import Getter
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from starlette.routing import Host, Match, Mount, Router, WebSocketRoute
 from starlette.types import Receive, Scope, Send
 from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import (
     FoundryAgentRequestContext,
+    configure_observability as _CORE_CONFIGURE_OBSERVABILITY,
     experimental,
     set_request_context,
 )
@@ -49,7 +58,14 @@ from ._models import (
     UserNoInput,
     UserSpeechStarted,
 )
-from ._session import Session
+from ._session import Session, SessionTermination
+from ._tracing import (
+    _SpanScope,
+    _attach_context,
+    _connection_outcome,
+    _record_propagation_failure,
+    _reset_context,
+)
 
 SessionStartCallback = Callable[[Session, SessionStart], Awaitable[None]]
 UserMessageCallback = Callable[[Session, UserMessage], Awaitable[None]]
@@ -67,12 +83,88 @@ ConnectionTerminatingCallback = Callable[[Session], None]
 _CallbackT = TypeVar("_CallbackT", bound=Callable[..., Awaitable[None]])
 _AwaitedT = TypeVar("_AwaitedT")
 _VoiceCallback = Callable[[Session, Any], Awaitable[None]]
-logger = logging.getLogger("azure.ai.agentserver")
+
+
+class _NoOpVoiceLogger:
+    @staticmethod
+    def debug(*_args: Any, **_kwargs: Any) -> None:
+        return None
+
+    @staticmethod
+    def info(*_args: Any, **_kwargs: Any) -> None:
+        return None
+
+    @staticmethod
+    def error(*_args: Any, **_kwargs: Any) -> None:
+        return None
+
+
+def _get_voice_logger() -> Any:
+    try:
+        return logging.getLogger("azure.ai.agentserver")
+    except BaseException:  # pylint: disable=broad-exception-caught
+        return _NoOpVoiceLogger()
+
+
+def _get_voice_trace_propagator() -> Any:
+    try:
+        return TraceContextTextMapPropagator()
+    except BaseException:  # pylint: disable=broad-exception-caught
+        return None
+
+
+def _new_voice_context() -> Any:
+    try:
+        return _otel_context.Context()
+    except BaseException:  # pylint: disable=broad-exception-caught
+        return None
+
+
+logger = _get_voice_logger()
+# Voice host and Session intentionally cooperate through package-private transport hooks.
+# pylint: disable=protected-access
 _VOICE_AUTHORITY_ROUTE = object()
 _VOICE_CLOSE_CODE = _session_transport._VOICE_CLOSE_CODE_SCOPE_KEY  # pylint: disable=protected-access
 _VOICE_DISCONNECT_EVENT = _session_transport._VOICE_DISCONNECT_EVENT_SCOPE_KEY  # pylint: disable=protected-access
 _VOICE_TERMINATION_DEADLINE = "azure.ai.agentserver.invocations.voice.termination_deadline"
+_VOICE_CONNECTION_TRACE = "azure.ai.agentserver.invocations.voice.connection_trace"
+_VOICE_CONNECTION_CONTEXT = "azure.ai.agentserver.invocations.voice.connection_context"
 _VOICE_ROUTE_CONFLICT = "VoiceAgentServerHost cannot own /invocations_ws because the route is already registered"
+_VOICE_TRACE_PROPAGATOR = _get_voice_trace_propagator()
+_VOICE_BAGGAGE_KEYS = frozenset(
+    {
+        "azure.ai.agentserver.session_id",
+        "microsoft.a365.agent.blueprint.id",
+        "user.id",
+        "gen_ai.agent.id",
+        "microsoft.tenant.id",
+    }
+)
+_VOICE_SESSION_ID = re.compile(r"^[A-Za-z0-9_-]{8,128}$")
+_VOICE_OPAQUE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:@/-]*$")
+_VOICE_PROTOCOL_VERSION = re.compile(r"^[0-9]{1,3}(?:\.[0-9]{1,3}){1,2}$")
+_TRACESTATE_KEY = r"[a-z][_0-9a-z\-*\/]{0,255}|" + r"[a-z0-9][_0-9a-z\-*\/]{0,240}@[a-z][_0-9a-z\-*\/]{0,13}"
+_TRACESTATE_VALUE = r"[\x20-\x2b\x2d-\x3c\x3e-\x7e]{0,255}[\x21-\x2b\x2d-\x3c\x3e-\x7e]"
+_TRACESTATE_MEMBER = re.compile(rf"({_TRACESTATE_KEY})=({_TRACESTATE_VALUE})[ \t]*")
+_VALID_PERCENT_ESCAPE = re.compile(r"%(?:[0-9A-Fa-f]{2})")
+
+
+def _configure_voice_observability(
+    *,
+    connection_string: str | None = None,
+    log_level: str | None = None,
+    enable_sensitive_data: bool = False,
+) -> None:
+    del enable_sensitive_data
+    configured = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "false")
+    try:
+        _CORE_CONFIGURE_OBSERVABILITY(
+            connection_string=connection_string,
+            log_level=log_level,
+            enable_sensitive_data=configured.strip().lower() in {"1", "true"},
+        )
+    except BaseException:  # pylint: disable=broad-exception-caught
+        pass
 
 
 def _is_async_callable(callback: Callable[..., Any]) -> bool:
@@ -135,19 +227,132 @@ class _VoiceHeaderGetter(Getter[list[tuple[bytes, bytes]]]):
 _VOICE_HEADER_GETTER = _VoiceHeaderGetter()
 
 
-def _extract_voice_websocket_context(websocket: WebSocket) -> Any:
+def _is_valid_voice_correlation_id(key: str, value: str) -> bool:
     try:
-        raw_headers: list[tuple[bytes, bytes]] = websocket.scope.get("headers", [])
-        from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+        encoded = value.encode("ascii")
+    except UnicodeEncodeError:
+        return False
+    if key == "azure.ai.agentserver.session_id":
+        return _VOICE_SESSION_ID.fullmatch(value) is not None
+    return len(encoded) <= 256 and _VOICE_OPAQUE_ID.fullmatch(value) is not None
 
-        context = extract(carrier=raw_headers, getter=_VOICE_HEADER_GETTER)
+
+def _decode_voice_baggage_value(value: str) -> str | None:
+    without_escapes = _VALID_PERCENT_ESCAPE.sub("", value)
+    if "%" in without_escapes:
+        return None
+    try:
+        return unquote_to_bytes(value).decode("utf-8", errors="strict")
+    except (UnicodeDecodeError, ValueError):
+        return None
+
+
+def _copy_voice_baggage(raw_headers: list[tuple[bytes, bytes]], context: Any) -> tuple[Any, bool]:
+    raw_values = [value.decode("latin-1") for name, value in raw_headers if name.lower() == b"baggage"]
+    if not raw_values:
+        return context, False
+    header = ",".join(raw_values)
+    if len(header.encode("latin-1")) > 8192:
+        return context, True
+    members = header.split(",")
+    if len(members) > 180:
+        return context, True
+    approved_members: dict[str, list[str]] = {}
+    invalid = False
+    for member in members:
+        candidate = member.strip()
+        if "=" not in candidate:
+            if candidate in _VOICE_BAGGAGE_KEYS:
+                invalid = True
+            continue
+        key, encoded_value = candidate.split("=", 1)
+        if key not in _VOICE_BAGGAGE_KEYS:
+            continue
+        approved_members.setdefault(key, []).append(encoded_value)
+
+    for key, encoded_values in approved_members.items():
+        if len(encoded_values) != 1:
+            invalid = True
+            continue
+        encoded_value = encoded_values[0]
+        if ";" in encoded_value:
+            invalid = True
+            continue
+        value = _decode_voice_baggage_value(encoded_value)
+        if value is not None and _is_valid_voice_correlation_id(key, value):
+            context = _otel_baggage.set_baggage(key, value, context=context)
+        else:
+            invalid = True
+    return context, invalid
+
+
+def _has_valid_tracestate(raw_headers: list[tuple[bytes, bytes]]) -> bool:
+    values = [value.decode("latin-1") for name, value in raw_headers if name.lower() == b"tracestate"]
+    if not values:
+        return True
+    header = ",".join(values)
+    if len(header.encode("latin-1")) > 512:
+        return False
+    members = re.split(r"[ \t]*,[ \t]*", header)
+    if len(members) > 32:
+        return False
+    keys: set[str] = set()
+    for member in members:
+        if not member:
+            return False
+        match = _TRACESTATE_MEMBER.fullmatch(member)
+        if match is None or match.group(1) in keys:
+            return False
+        keys.add(match.group(1))
+    return True
+
+
+def _extract_voice_websocket_context(websocket: WebSocket) -> Any:
+    failure: str | None = None
+    try:
+        base_context = _new_voice_context()
+        if base_context is None or _VOICE_TRACE_PROPAGATOR is None:
+            _record_propagation_failure("extraction_error")
+            return None
+        raw_headers: list[tuple[bytes, bytes]] = websocket.scope.get("headers", [])
+        traceparents = [value for name, value in raw_headers if name.lower() == b"traceparent"]
+        if not traceparents:
+            failure = "missing"
+        elif len(traceparents) != 1:
+            failure = "invalid"
+        trace_headers = raw_headers
+        valid_tracestate = _has_valid_tracestate(raw_headers)
+        if not valid_tracestate:
+            failure = "invalid"
+            trace_headers = [(name, value) for name, value in raw_headers if name.lower() != b"tracestate"]
+        context = _VOICE_TRACE_PROPAGATOR.extract(
+            carrier=trace_headers,
+            context=base_context,
+            getter=_VOICE_HEADER_GETTER,
+        )
+        if context is None:
+            _record_propagation_failure("extraction_error")
+            return None
+        if traceparents and not _otel_trace.get_current_span(context).get_span_context().is_valid:
+            failure = "invalid"
+        context, invalid_baggage = _copy_voice_baggage(raw_headers, context)
+        if invalid_baggage:
+            failure = "invalid"
         request_ids = _VOICE_HEADER_GETTER.get(raw_headers, REQUEST_ID) or []
-        request_id = next((value for value in request_ids if value), None)
+        request_id = request_ids[0] if len(request_ids) == 1 else None
+        if request_ids and (
+            request_id is None or not request_id or not _is_valid_voice_correlation_id("x_request_id", request_id)
+        ):
+            failure = "invalid"
+            request_id = None
         if request_id:
             context = _otel_baggage.set_baggage("x_request_id", request_id, context=context)
+        if failure is not None:
+            _record_propagation_failure(failure)
         return context
     except BaseException:  # pylint: disable=broad-exception-caught
-        return _otel_context.Context()
+        _record_propagation_failure("extraction_error")
+        return None
 
 
 def _selected_voice_close_code(websocket: WebSocket, default_code: int) -> int:
@@ -166,6 +371,9 @@ def _select_voice_close_code(websocket: WebSocket, code: int) -> None:
 
 def _raise_voice_disconnect(websocket: WebSocket, code: int, reason: str) -> NoReturn:
     _select_voice_close_code(websocket, code)
+    session = Session._current(websocket)  # pylint: disable=protected-access
+    if session is not None:
+        session._begin_termination(SessionTermination.PROTOCOL_ERROR)  # pylint: disable=protected-access
     raise WebSocketDisconnect(code=code, reason=reason)
 
 
@@ -203,6 +411,35 @@ def _selected_voice_termination_deadline(websocket: WebSocket) -> float:
     return asyncio.get_running_loop().time() + _session_transport.CLOSE_TIMEOUT_SECONDS
 
 
+def _commit_voice_session_termination(
+    session: Session,
+    *,
+    handler_error: BaseException | None,
+    disconnect_event: SessionDisconnected | None,
+    close_code: int,
+    accept_failed: bool,
+) -> None:
+    if session.termination is not None:
+        return
+    if accept_failed:
+        termination = SessionTermination.ACCEPT_ERROR
+    elif isinstance(handler_error, asyncio.CancelledError):
+        termination = SessionTermination.CANCELLED
+    elif handler_error is not None:
+        termination = SessionTermination.CALLBACK_ERROR
+    elif disconnect_event is not None:
+        termination = (
+            SessionTermination.COMPLETED if int(disconnect_event.code) == 1000 else SessionTermination.TRANSPORT_ERROR
+        )
+    elif close_code in {1000, 1001}:
+        termination = SessionTermination.COMPLETED
+    elif close_code in {1002, 1003, 1007, 1008, 1009, 1010}:
+        termination = SessionTermination.PROTOCOL_ERROR
+    else:
+        termination = SessionTermination.TRANSPORT_ERROR
+    session._begin_termination(termination)
+
+
 def _peek_voice_disconnect_event(websocket: WebSocket) -> SessionDisconnected | None:
     scope = getattr(websocket, "scope", None)
     if not isinstance(scope, MutableMapping):
@@ -223,7 +460,9 @@ async def _raise_pending_cancellation() -> None:
     await asyncio.sleep(0)
 
 
-async def _raise_pending_or_consumed_cancellation(cancellation_requests: int | None) -> None:
+async def _raise_pending_or_consumed_cancellation(
+    cancellation_requests: int | None,
+) -> None:
     await _raise_pending_cancellation()
     current_requests = _task_cancellation_requests()
     if cancellation_requests is not None and current_requests is not None and current_requests > cancellation_requests:
@@ -243,10 +482,57 @@ async def _await_with_cancellation_guard(
     return result
 
 
-async def _receive_voice_transport_message(websocket: WebSocket) -> MutableMapping[str, Any]:
+async def _receive_voice_transport_message(
+    websocket: WebSocket,
+) -> MutableMapping[str, Any]:
     message = await _session_transport._run_transport_operation(websocket.receive())  # pylint: disable=protected-access
     await _raise_pending_cancellation()
     return message
+
+
+async def _receive_voice_event(
+    websocket: WebSocket,
+    session: Session,
+) -> InboundVoiceMessage | None:
+    try:
+        raw_message = await _receive_voice_transport_message(websocket)
+    except OSError as error:
+        code = 1006
+        _select_voice_close_code(websocket, code)
+        session._begin_termination(SessionTermination.TRANSPORT_ERROR)  # pylint: disable=protected-access
+        _begin_voice_termination(websocket, session)
+        websocket.scope.setdefault(
+            _VOICE_DISCONNECT_EVENT,
+            SessionDisconnected(code=code),
+        )
+        raise WebSocketDisconnect(code=code) from error
+    raw_type = raw_message.get("type")
+    if raw_type == "websocket.disconnect":
+        code = int(raw_message.get("code") or 1000)
+        raw_reason = raw_message.get("reason")
+        reason = raw_reason if isinstance(raw_reason, str) else None
+        _select_voice_close_code(websocket, code)
+        session._begin_termination(  # pylint: disable=protected-access
+            SessionTermination.COMPLETED if code == 1000 else SessionTermination.TRANSPORT_ERROR
+        )
+        _begin_voice_termination(websocket, session)
+        websocket.scope.setdefault(
+            _VOICE_DISCONNECT_EVENT,
+            SessionDisconnected(code=code, reason=reason),
+        )
+        raise WebSocketDisconnect(code=code, reason=reason)
+    if raw_type != "websocket.receive":
+        _raise_voice_disconnect(websocket, 1002, "Invalid Voice WebSocket event")
+    frame = raw_message.get("text")
+    if frame is None:
+        _raise_voice_disconnect(websocket, 1003, "Voice messages must be text frames")
+    try:
+        return decode_inbound_message(frame)
+    except VoiceProtocolError as exc:
+        try:
+            _raise_voice_disconnect(websocket, exc.close_code, "Invalid Voice message")
+        except WebSocketDisconnect as disconnect:
+            raise disconnect from exc
 
 
 @experimental
@@ -274,6 +560,8 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         self._voice_callbacks: dict[str, _VoiceCallback] = {}
         self._connection_terminating_callback: ConnectionTerminatingCallback | None = None
         self._voice_route: _VoiceWebSocketRoute | None = None
+        if "configure_observability" not in kwargs:
+            kwargs["configure_observability"] = _configure_voice_observability
         super().__init__(
             openapi_spec=openapi_spec,
             asyncapi_spec_json=asyncapi_spec_json,
@@ -308,12 +596,25 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
     async def _ws_endpoint(self, websocket: WebSocket) -> None:
         session_id = self.config.session_id or str(uuid.uuid4())
         start_ns = time.monotonic_ns()
-        trace_token = None
+        parent_attachment = None
+        connection_trace = _SpanScope()
+        scope = getattr(websocket, "scope", None)
         try:
-            try:
-                trace_token = _otel_context.attach(_extract_voice_websocket_context(websocket))
-            except BaseException:  # pylint: disable=broad-exception-caught
-                trace_token = None
+            extracted_context = _extract_voice_websocket_context(websocket)
+            parent_attachment = _attach_context(extracted_context)
+            if parent_attachment is not None:
+                connection_attributes: dict[str, Any] = {"network.protocol.name": "websocket"}
+                if _is_valid_voice_correlation_id("azure.ai.agentserver.session_id", session_id):
+                    connection_attributes[InvocationsWSConstants.ATTR_SPAN_SESSION_ID] = session_id
+                connection_trace = _SpanScope.start(
+                    "agentserver.connection",
+                    kind=_otel_trace.SpanKind.SERVER,
+                    parent_context=extracted_context,
+                    attributes=connection_attributes,
+                )
+            if isinstance(scope, MutableMapping):
+                scope[_VOICE_CONNECTION_TRACE] = connection_trace
+                scope[_VOICE_CONNECTION_CONTEXT] = connection_trace.context if connection_trace.is_active else None
             platform_token = set_request_context(
                 FoundryAgentRequestContext(
                     call_id=websocket.headers.get(FOUNDRY_CALL_ID) or None,
@@ -322,14 +623,25 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                 )
             )
             try:
-                await self._run_voice_endpoint(websocket, session_id, start_ns)
+                await self._run_voice_endpoint(websocket, session_id, start_ns, connection_trace)
             finally:
                 platform_token.var.reset(platform_token)
         finally:
-            if trace_token is not None:
-                trace_token.var.reset(trace_token)
+            if isinstance(scope, MutableMapping):
+                scope.pop(_VOICE_CONNECTION_TRACE, None)
+                scope.pop(_VOICE_CONNECTION_CONTEXT, None)
+            if not connection_trace.is_completed:
+                connection_trace.complete_connection("internal_error", InvocationsWSConstants.CLOSE_INTERNAL_ERROR)
+            connection_trace.close()
+            _reset_context(parent_attachment)
 
-    async def _run_voice_endpoint(self, websocket: WebSocket, session_id: str, start_ns: int) -> None:
+    async def _run_voice_endpoint(
+        self,
+        websocket: WebSocket,
+        session_id: str,
+        start_ns: int,
+        connection_trace: _SpanScope,
+    ) -> None:
         try:
             accept_error, voice_session, close_code, handler_exc, pending_error = (
                 await self._run_voice_connection_context(
@@ -343,6 +655,8 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                 start_ns=start_ns,
                 close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
                 error_code="cancelled",
+                connection_trace=connection_trace,
+                outcome="cancelled",
             )
             raise
 
@@ -357,12 +671,13 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     handler_exc=None,
                     pending_error=None,
                     error_code_override="accept_failed",
+                    connection_trace=connection_trace,
                 )
             self._report_voice_accept_failure(
                 session_id,
                 start_ns,
-                accept_error,
                 emit_event=voice_session is None,
+                connection_trace=connection_trace,
             )
             return
 
@@ -376,13 +691,20 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
             close_code=close_code,
             handler_exc=handler_exc,
             pending_error=pending_error,
+            connection_trace=connection_trace,
         )
 
     async def _run_voice_connection_context(
         self,
         websocket: WebSocket,
         session_id: str,
-    ) -> tuple[Exception | None, Session | None, int, BaseException | None, BaseException | None]:
+    ) -> tuple[
+        Exception | None,
+        Session | None,
+        int,
+        BaseException | None,
+        BaseException | None,
+    ]:
         accept_error: Exception | None = None
         voice_session: Session | None = None
         close_code = InvocationsWSConstants.CLOSE_NORMAL
@@ -396,7 +718,11 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     session_id,
                 )
             elif websocket.application_state == WebSocketState.CONNECTED:
-                voice_session = Session._create(websocket)  # pylint: disable=protected-access
+                voice_session = Session._create(  # pylint: disable=protected-access
+                    websocket,
+                    connection_context=websocket.scope.get(_VOICE_CONNECTION_CONTEXT),
+                )
+                voice_session._begin_termination(SessionTermination.ACCEPT_ERROR)  # pylint: disable=protected-access
                 _begin_voice_termination(websocket, voice_session)
                 close_code = InvocationsWSConstants.CLOSE_INTERNAL_ERROR
         finally:
@@ -429,7 +755,10 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         websocket: WebSocket,
         session_id: str,
     ) -> tuple[Session, int, BaseException | None, BaseException | None]:
-        voice_session = Session._create(websocket)  # pylint: disable=protected-access
+        voice_session = Session._create(  # pylint: disable=protected-access
+            websocket,
+            connection_context=websocket.scope.get(_VOICE_CONNECTION_CONTEXT),
+        )
         close_code = InvocationsWSConstants.CLOSE_NORMAL
         handler_exc: BaseException | None = None
         pending_error: BaseException | None = None
@@ -459,6 +788,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         close_code: int,
         handler_exc: BaseException | None,
         pending_error: BaseException | None,
+        connection_trace: _SpanScope,
         error_code_override: str | None = None,
     ) -> None:
         deadline = _selected_voice_termination_deadline(websocket)
@@ -474,6 +804,13 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
             error_code = "cancelled"
         else:
             error_code = "internal_error"
+        _commit_voice_session_termination(
+            voice_session,
+            handler_error=handler_exc,
+            disconnect_event=disconnect_event,
+            close_code=close_code,
+            accept_failed=error_code_override == "accept_failed",
+        )
         if cancellation is None and disconnect_event is None and close_code not in {1005, 1006, 1015}:
             reason = "Internal server error" if close_code == InvocationsWSConstants.CLOSE_INTERNAL_ERROR else ""
             try:
@@ -492,6 +829,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     close_error = exc
             disconnect_event = _take_voice_disconnect_event(websocket)
             disconnect_error = await self._notify_peer_disconnect(
+                websocket,
                 voice_session,
                 disconnect_event,
             )
@@ -507,12 +845,13 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                 error_code=(
                     "internal_error" if termination_error is not None or disconnect_error is not None else error_code
                 ),
+                connection_trace=connection_trace,
+                outcome=(voice_session.termination.value if voice_session.termination is not None else None),
             )
 
         if pending_error is not None:
             raise pending_error
         self._report_voice_endpoint_errors(
-            session_id=session_id,
             handler_error=handler_exc if isinstance(handler_exc, Exception) else None,
             termination_error=termination_error,
             disconnect_error=disconnect_error,
@@ -522,7 +861,6 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
     @staticmethod
     def _report_voice_endpoint_errors(
         *,
-        session_id: str,
         handler_error: Exception | None,
         termination_error: BaseException | None,
         disconnect_error: BaseException | None,
@@ -530,22 +868,22 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
     ) -> None:
         if handler_error is not None:
             try:
-                logger.error("Voice WebSocket handler raised for session %s", session_id, exc_info=handler_error)
+                logger.error("Voice WebSocket handler failed")
             except BaseException:  # pylint: disable=broad-exception-caught
                 pass
         if termination_error is not None:
             try:
-                logger.error("Voice connection termination callback failed", exc_info=termination_error)
+                logger.error("Voice connection termination callback failed")
             except BaseException:  # pylint: disable=broad-exception-caught
                 pass
         if disconnect_error is not None:
             try:
-                logger.error("Voice disconnect callback failed", exc_info=disconnect_error)
+                logger.error("Voice disconnect callback failed")
             except BaseException:  # pylint: disable=broad-exception-caught
                 pass
         if close_error is not None:
             try:
-                logger.debug("Error closing Voice WebSocket session %s", session_id, exc_info=close_error)
+                logger.debug("Voice WebSocket close failed")
             except BaseException:  # pylint: disable=broad-exception-caught
                 pass
 
@@ -553,9 +891,9 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         self,
         session_id: str,
         start_ns: int,
-        accept_error: Exception,
         *,
         emit_event: bool,
+        connection_trace: _SpanScope,
     ) -> None:
         if emit_event:
             self._emit_voice_close_event(
@@ -563,11 +901,52 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                 start_ns=start_ns,
                 close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
                 error_code="accept_failed",
+                connection_trace=connection_trace,
+                outcome="accept_error",
             )
         try:
-            logger.error("Voice WebSocket accept failed for session %s", session_id, exc_info=accept_error)
+            logger.error("Voice WebSocket accept failed")
         except BaseException:  # pylint: disable=broad-exception-caught
             pass
+
+    async def _invoke_traced_voice_callback(
+        self,
+        websocket: WebSocket,
+        session: Session,
+        event: InboundVoiceMessage,
+        callback: _VoiceCallback,
+    ) -> None:
+        callback_trace = self._start_voice_callback_trace(websocket, event.type)
+        try:
+            await _await_with_cancellation_guard(
+                callback(session, event),
+                on_success=(
+                    (lambda: _begin_voice_termination(websocket, session)) if isinstance(event, SessionEnd) else None
+                ),
+            )
+        except asyncio.CancelledError:
+            callback_trace.record_callback_error("cancelled")
+            raise
+        except BaseException:  # pylint: disable=broad-exception-caught
+            error_type = (
+                "transport_error" if session.termination is SessionTermination.TRANSPORT_ERROR else "callback_error"
+            )
+            callback_trace.record_callback_error(error_type)
+            raise
+        finally:
+            callback_trace.close()
+
+    @staticmethod
+    def _start_voice_callback_trace(websocket: WebSocket, event_type: str) -> _SpanScope:
+        connection_context = websocket.scope.get(_VOICE_CONNECTION_CONTEXT)
+        if connection_context is None:
+            return _SpanScope()
+        return _SpanScope.start(
+            "voice.callback",
+            kind=_otel_trace.SpanKind.INTERNAL,
+            parent_context=connection_context,
+            attributes={"voice.event.type": event_type},
+        )
 
     async def _invoke_user_handler(
         self,
@@ -583,7 +962,10 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
             return InvocationsWSConstants.CLOSE_NORMAL, None
         except WebSocketDisconnect as exc:
             _raise_wrapped_cancellation(exc, cancellation_requests)
-            return int(exc.code) if exc.code else InvocationsWSConstants.CLOSE_NORMAL, None
+            session = Session._current(websocket)  # pylint: disable=protected-access
+            if session is None or (session.termination is None and _peek_voice_disconnect_event(websocket) is None):
+                return InvocationsWSConstants.CLOSE_INTERNAL_ERROR, exc
+            return (int(exc.code) if exc.code else InvocationsWSConstants.CLOSE_NORMAL), None
         except Exception as exc:  # pylint: disable=broad-exception-caught
             _raise_wrapped_cancellation(exc, cancellation_requests)
             return InvocationsWSConstants.CLOSE_INTERNAL_ERROR, exc
@@ -595,12 +977,36 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         start_ns: int,
         close_code: int,
         error_code: str | None,
+        connection_trace: _SpanScope,
+        outcome: str | None = None,
     ) -> None:
         duration_ms = (time.monotonic_ns() - start_ns) // 1_000_000
+        connection_trace.complete_connection(
+            outcome or _connection_outcome(close_code, error_code),
+            close_code,
+        )
         try:
             self._emit_close_event(session_id, close_code, duration_ms, error_code=error_code)
         except BaseException:  # pylint: disable=broad-exception-caught
             pass
+
+    @staticmethod
+    def _emit_close_event(
+        session_id: str,
+        close_code: int,
+        duration_ms: int,
+        *,
+        error_code: str | None = None,
+    ) -> None:
+        extra: dict[str, Any] = {
+            InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE: close_code,
+            InvocationsWSConstants.ATTR_SPAN_DURATION_MS: duration_ms,
+        }
+        if _is_valid_voice_correlation_id("azure.ai.agentserver.session_id", session_id):
+            extra[InvocationsWSConstants.ATTR_SPAN_SESSION_ID] = session_id
+        if error_code is not None:
+            extra[InvocationsWSConstants.ATTR_SPAN_ERROR_CODE] = error_code
+        logger.info("Voice connection closed", extra=extra)
 
     def ws_handler(self, fn: Any) -> NoReturn:
         """Reject raw-handler registration on the typed Voice host.
@@ -779,81 +1185,73 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
 
     async def _notify_peer_disconnect(
         self,
+        websocket: WebSocket,
         session: Session,
         event: SessionDisconnected | None,
     ) -> BaseException | None:
         callback = self._voice_callbacks.get("disconnect")
         if callback is None or event is None:
             return None
+        callback_trace = self._start_voice_callback_trace(websocket, "disconnect")
         cancellation_requests = _task_cancellation_requests()
         try:
-            await callback(session, event)
-        except asyncio.CancelledError as exc:
-            current_requests = _task_cancellation_requests()
-            if (
-                cancellation_requests is not None
-                and current_requests is not None
-                and current_requests > cancellation_requests
-            ):
+            try:
+                await callback(session, event)
+            except asyncio.CancelledError as exc:
+                callback_trace.record_callback_error("cancelled")
+                current_requests = _task_cancellation_requests()
+                if (
+                    cancellation_requests is not None
+                    and current_requests is not None
+                    and current_requests > cancellation_requests
+                ):
+                    raise
+                return exc
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                callback_trace.record_callback_error("callback_error")
+                _raise_wrapped_cancellation(exc, cancellation_requests)
+                return exc
+            except BaseException as exc:  # pylint: disable=broad-exception-caught
+                callback_trace.record_callback_error("callback_error")
+                _raise_wrapped_cancellation(exc, cancellation_requests)
+                return exc
+            try:
+                await _raise_pending_or_consumed_cancellation(cancellation_requests)
+            except asyncio.CancelledError:
+                callback_trace.record_callback_error("cancelled")
                 raise
-            return exc
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            _raise_wrapped_cancellation(exc, cancellation_requests)
-            return exc
-        except BaseException as exc:  # pylint: disable=broad-exception-caught
-            _raise_wrapped_cancellation(exc, cancellation_requests)
-            return exc
-        await _raise_pending_or_consumed_cancellation(cancellation_requests)
-        return None
+            return None
+        finally:
+            callback_trace.close()
 
     async def _handle_voice_connection(self, websocket: WebSocket) -> None:
         bound_session = Session._current(websocket)  # pylint: disable=protected-access
         session = bound_session or Session._create(websocket)  # pylint: disable=protected-access
         try:
             while True:
-                raw_message = await _receive_voice_transport_message(websocket)
-                raw_type = raw_message.get("type")
-                if raw_type == "websocket.disconnect":
-                    code = int(raw_message.get("code") or 1000)
-                    raw_reason = raw_message.get("reason")
-                    reason = raw_reason if isinstance(raw_reason, str) else None
-                    _select_voice_close_code(websocket, code)
-                    _begin_voice_termination(websocket, session)
-                    websocket.scope.setdefault(
-                        _VOICE_DISCONNECT_EVENT,
-                        SessionDisconnected(code=code, reason=reason),
-                    )
-                    raise WebSocketDisconnect(
-                        code=code,
-                        reason=reason,
-                    )
-                if raw_type != "websocket.receive":
-                    reason = "Invalid Voice WebSocket event"
-                    _raise_voice_disconnect(websocket, 1002, reason)
-                frame = raw_message.get("text")
-                if frame is None:
-                    reason = "Voice messages must be text frames"
-                    _raise_voice_disconnect(websocket, 1003, reason)
-                try:
-                    event = decode_inbound_message(frame)
-                except VoiceProtocolError as exc:
-                    reason = "Invalid Voice message"
-                    try:
-                        _raise_voice_disconnect(websocket, exc.close_code, reason)
-                    except WebSocketDisconnect as disconnect:
-                        raise disconnect from exc
+                event = await _receive_voice_event(websocket, session)
                 if event is None:
                     continue
+                if isinstance(event, SessionStart):
+                    scope = getattr(websocket, "scope", None)
+                    connection_trace = scope.get(_VOICE_CONNECTION_TRACE) if isinstance(scope, MutableMapping) else None
+                    if isinstance(connection_trace, _SpanScope):
+                        attributes: dict[str, Any] = {
+                            "azure.ai.agentserver.invocations_ws.reconnect": event.reconnect,
+                        }
+                        if _VOICE_PROTOCOL_VERSION.fullmatch(event.protocol_version) is not None:
+                            attributes["azure.ai.agentserver.invocations_ws.protocol_version"] = event.protocol_version
+                        connection_trace.set_attributes(attributes)
                 callback = self._voice_callbacks.get(event.type)
                 if callback is not None:
-                    await _await_with_cancellation_guard(
-                        callback(session, cast(InboundVoiceMessage, event)),
-                        on_success=(
-                            (lambda: _begin_voice_termination(websocket, session))
-                            if isinstance(event, SessionEnd)
-                            else None
-                        ),
+                    await self._invoke_traced_voice_callback(
+                        websocket,
+                        session,
+                        cast(InboundVoiceMessage, event),
+                        callback,
                     )
+                    if isinstance(event, SessionEnd):
+                        session._begin_termination(SessionTermination.COMPLETED)  # pylint: disable=protected-access
                 if isinstance(event, SessionEnd):
                     return
         finally:
@@ -862,17 +1260,18 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                 Session._release(websocket, session)  # pylint: disable=protected-access
                 termination_error = self._notify_connection_terminating(session)
                 disconnect_error = await self._notify_peer_disconnect(
+                    websocket,
                     session,
                     _take_voice_disconnect_event(websocket),
                 )
                 if termination_error is not None:
                     try:
-                        logger.error("Voice connection termination callback failed", exc_info=termination_error)
+                        logger.error("Voice connection termination callback failed")
                     except BaseException:  # pylint: disable=broad-exception-caught
                         pass
                 if disconnect_error is not None:
                     try:
-                        logger.error("Voice disconnect callback failed", exc_info=disconnect_error)
+                        logger.error("Voice disconnect callback failed")
                     except BaseException:  # pylint: disable=broad-exception-caught
                         pass
 

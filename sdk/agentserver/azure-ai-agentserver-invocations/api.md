@@ -6,11 +6,11 @@ namespace azure.ai.agentserver.invocations
         property ws_ping_interval: float    # Read-only
 
         def __init__(
-                self,
-                *,
-                asyncapi_spec_json: Optional[dict[str, Any]] = ...,
-                asyncapi_spec_yaml: Optional[str] = ...,
-                openapi_spec: Optional[dict[str, Any]] = ...,
+                self, 
+                *, 
+                asyncapi_spec_json: Optional[dict[str, Any]] = ..., 
+                asyncapi_spec_yaml: Optional[str] = ..., 
+                openapi_spec: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -61,11 +61,11 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                code: str,
-                message: str,
-                response_id: str | None = None,
+                id: str = ..., 
+                ts: str = ..., 
+                code: str, 
+                message: str, 
+                response_id: str | None = None, 
                 item_id: str | None = None
             ) -> None: ...
 
@@ -91,10 +91,10 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                response_id: str,
-                heard_text: str,
+                id: str, 
+                ts: str, 
+                response_id: str, 
+                heard_text: str, 
                 item_id: str | None = None
             ) -> None: ...
 
@@ -119,9 +119,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                reason: str,
+                id: str = ..., 
+                ts: str = ..., 
+                reason: str, 
                 mode: EndCallMode = ...
             ) -> None: ...
 
@@ -170,8 +170,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
+                id: str, 
+                ts: str, 
                 response_id: str
             ) -> None: ...
 
@@ -196,9 +196,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                response_id: str,
+                id: str = ..., 
+                ts: str = ..., 
+                response_id: str, 
                 reason: str | None = None
             ) -> None: ...
 
@@ -224,10 +224,10 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                response_id: str,
-                heard_text: str,
+                id: str, 
+                ts: str, 
+                response_id: str, 
+                heard_text: str, 
                 item_id: str | None = None
             ) -> None: ...
 
@@ -254,11 +254,11 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                response_id: str,
-                in_reply_to: tuple = None,
-                admission_timeout_ms: int | None = None,
+                id: str = ..., 
+                ts: str = ..., 
+                response_id: str, 
+                in_reply_to: tuple = None, 
+                admission_timeout_ms: int | None = None, 
                 supersede_key: str | None = None
             ) -> None: ...
 
@@ -282,8 +282,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
+                id: str = ..., 
+                ts: str = ..., 
                 response_id: str
             ) -> None: ...
 
@@ -308,9 +308,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                response_id: str,
+                id: str, 
+                ts: str, 
+                response_id: str, 
                 reason: str
             ) -> None: ...
 
@@ -335,9 +335,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                in_reply_to: tuple,
+                id: str = ..., 
+                ts: str = ..., 
+                in_reply_to: tuple, 
                 reason: str | None = None
             ) -> None: ...
 
@@ -364,11 +364,11 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                response_id: str,
-                item_id: str,
-                delta: str,
+                id: str = ..., 
+                ts: str = ..., 
+                response_id: str, 
+                item_id: str, 
+                delta: str, 
                 voice: Mapping = None
             ) -> None: ...
 
@@ -397,11 +397,11 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                response_id: str,
-                item_id: str,
-                text: str,
+                id: str = ..., 
+                ts: str = ..., 
+                response_id: str, 
+                item_id: str, 
+                text: str, 
                 voice: Mapping = None
             ) -> None: ...
 
@@ -429,10 +429,10 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                stage: str,
-                response_id: str | None = None,
+                id: str, 
+                ts: str, 
+                stage: str, 
+                response_id: str | None = None, 
                 item_ids: tuple = None
             ) -> None: ...
 
@@ -455,8 +455,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                first_output_ms: int,
-                idle_ms: int,
+                first_output_ms: int, 
+                idle_ms: int, 
                 max_duration_ms: int
             ) -> None: ...
 
@@ -467,10 +467,19 @@ namespace azure.ai.agentserver.invocations.voice
 
     @experimental
     class azure.ai.agentserver.invocations.voice.Session:
+        property termination: SessionTermination | None    # Read-only
 
         def __init__(self) -> None: ...
 
         async def send(self, message: OutboundVoiceMessage) -> None: ...
+
+        def start_target_turn(
+                self, 
+                *, 
+                input_count: int, 
+                origin: TargetTurnOrigin | str, 
+                trigger_context: SpanContext | None = ...
+            ) -> TargetTurn: ...
 
 
     @experimental
@@ -507,8 +516,8 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
+                id: str, 
+                ts: str, 
                 reason: str
             ) -> None: ...
 
@@ -554,10 +563,10 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str = ...,
-                ts: str = ...,
-                code: str,
-                retriable: bool,
+                id: str = ..., 
+                ts: str = ..., 
+                code: str, 
+                retriable: bool, 
                 message: str | None = None
             ) -> None: ...
 
@@ -586,19 +595,71 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                protocol_version: str,
-                reconnect: bool,
-                response_timeouts: ResponseTimeouts,
-                greeting: str | None = None,
-                no_input_timeout_ms: int | None = None,
-                caller: Mapping = None
+                self, 
+                *, 
+                caller: Mapping[str, Any] | None = ..., 
+                greeting: str | None = ..., 
+                id: str, 
+                no_input_timeout_ms: int | None = ..., 
+                protocol_version: str, 
+                reconnect: bool, 
+                response_timeouts: ResponseTimeouts, 
+                ts: str
             ) -> None: ...
 
         def __setattr__() -> None: ...
 
         def _voice_model_repr(self: Any) -> str: ...
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.SessionTermination(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCEPT_ERROR = "accept_error"
+        CALLBACK_ERROR = "callback_error"
+        CANCELLED = "cancelled"
+        COMPLETED = "completed"
+        INTERNAL_ERROR = "internal_error"
+        PROTOCOL_ERROR = "protocol_error"
+        TRANSPORT_ERROR = "transport_error"
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.TargetTurn:
+        property is_completed: bool    # Read-only
+
+        def __init__(self) -> None: ...
+
+        def activate(self) -> ContextManager[None]: ...
+
+        def complete(
+                self, 
+                *, 
+                outcome: TargetTurnOutcome | str, 
+                output_item_count: int | None = ..., 
+                response_id: str | None = ...
+            ) -> None: ...
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.TargetTurnOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NO_INPUT = "no_input"
+        OTHER = "other"
+        PROACTIVE = "proactive"
+        RECOVERY = "recovery"
+        USER = "user"
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.TargetTurnOutcome(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ABANDONED = "abandoned"
+        CANCELLED = "cancelled"
+        END_CALL = "end_call"
+        ERROR = "error"
+        NONE = "none"
+        OTHER = "other"
+        RESPONSE = "response"
+        TIMEOUT = "timeout"
+        TRANSPORT_ERROR = "transport_error"
 
 
     @experimental
@@ -617,9 +678,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                item_id: str,
+                id: str, 
+                ts: str, 
+                item_id: str, 
                 content: tuple
             ) -> None: ...
 
@@ -644,9 +705,9 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
-                id: str,
-                ts: str,
-                item_id: str,
+                id: str, 
+                ts: str, 
+                item_id: str, 
                 count: int
             ) -> None: ...
 
@@ -680,12 +741,19 @@ namespace azure.ai.agentserver.invocations.voice
         property routes: list[BaseRoute]    # Read-only
         property ws_ping_interval: float    # Read-only
 
+        async def __call__(
+                self, 
+                scope: Scope, 
+                receive: Receive, 
+                send: Send
+            ) -> None: ...
+
         def __init__(
-                self,
-                *,
-                asyncapi_spec_json: dict[str, Any] | None = ...,
-                asyncapi_spec_yaml: str | None = ...,
-                openapi_spec: dict[str, Any] | None = ...,
+                self, 
+                *, 
+                asyncapi_spec_json: dict[str, Any] | None = ..., 
+                asyncapi_spec_yaml: str | None = ..., 
+                openapi_spec: dict[str, Any] | None = ..., 
                 **kwargs: Any
             ) -> None: ...
 
