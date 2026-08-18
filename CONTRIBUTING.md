@@ -184,6 +184,14 @@ requirement files, and the `azpysdk` tool pins in `eng/tool_requirements/` — a
 runs `pip download` (including transitive dependencies) against CFS so the latest
 versions are cached before an unauthenticated build needs them.
 
+Because our CI runs a matrix of Python versions across Linux, Windows and macOS,
+the script also does a cross-target pass: for every resolved package that ships
+compiled, platform-specific wheels (for example `cryptography`, `aiohttp`,
+`mypy`), it fetches the wheels for each configured `(python version, platform)`
+target so those are cached too. Pure-Python (`py3-none-any`) packages are covered
+by their single universal wheel. Use `--no-platform-matrix`, `--python-versions`
+and `--platforms` to control this pass.
+
 The static-analysis tools that `azpysdk` installs at runtime (mypy, pylint,
 pyright, sphinx, black, bandit, ...) are pinned in `eng/tool_requirements/*.txt`.
 That is the single source of truth for those versions; bump a tool by editing the

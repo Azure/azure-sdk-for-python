@@ -46,6 +46,26 @@ The script aggregates requirement specifiers from:
 First-party / local entries (editable installs, relative paths, and the
 first-party ``azure-*`` packages that live in this repo) are skipped: they are
 built and published by our own pipelines and are not pulled from PyPI upstream.
+
+Python-version and platform-specific wheels
+-------------------------------------------
+``pip download`` only fetches the artifacts compatible with the interpreter and
+platform it runs on, and it evaluates environment markers for *that* environment.
+On its own that leaves gaps, because our CI runs a matrix of Python versions
+(3.10 - 3.14) across Linux, Windows and macOS, and packages such as
+``cryptography``, ``aiohttp`` and ``mypy`` ship compiled, per-``(python, platform)``
+wheels (``cp312-...-win_amd64``, ``cp310-...-manylinux_...`` and so on).
+
+To cover that, after the primary "native" download (which resolves the full
+dependency closure and caches sdists plus the runner-native wheels), the script
+does a second **cross-target** pass: for every resolved ``name==version`` that is
+*not* a universal ``py3-none-any`` wheel, it runs a targeted
+``pip download --no-deps --only-binary=:all: --python-version <v> --platform <p>``
+for each configured ``(python version, platform)`` target so the corresponding
+wheels get pulled through and cached too. Universal (pure-Python) packages are
+skipped in this pass because a single ``*-none-any`` wheel already serves every
+target. Missing wheels for a given target are expected (many packages do not
+publish one) and are not treated as errors.
 """
 
 from __future__ import annotations
@@ -60,6 +80,13 @@ from datetime import datetime, timezone
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 from packaging.requirements import InvalidRequirement, Requirement
+from packaging.utils import (
+    InvalidSdistFilename,
+    InvalidWheelFilename,
+    canonicalize_name,
+    parse_sdist_filename,
+    parse_wheel_filename,
+)
 
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.parsing import ParsedSetup
@@ -67,6 +94,22 @@ from ci_tools.parsing.parse_functions import get_pyproject_dict
 from ci_tools.variables import discover_repo_root
 
 CFS_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+
+# Default cross-target matrix, grounded in eng/pipelines/templates/stages/platform-matrix.json
+# (Linux + Windows on 3.10/3.12, macOS on 3.11, Linux on 3.13/3.14). These are the
+# CPython (python_version, pip --platform tag) pairs whose binary wheels we warm.
+DEFAULT_TARGET_PYTHON_VERSIONS = ["3.10", "3.11", "3.12", "3.13", "3.14"]
+DEFAULT_TARGET_PLATFORMS = [
+    # Linux (manylinux). The 2014 tag is compatible with older tags too; pip picks
+    # the most-specific available wheel for each.
+    "manylinux2014_x86_64",
+    "manylinux_2_17_x86_64",
+    # Windows
+    "win_amd64",
+    # macOS (both Apple Silicon and Intel)
+    "macosx_11_0_arm64",
+    "macosx_10_9_x86_64",
+]
 
 # Requirement files at well-known locations that are not attached to a single package.
 SHARED_REQUIREMENT_FILES = [
@@ -293,6 +336,97 @@ def pip_download(spec: str, dest: str, index_url: str, python_executable: str) -
     return False, (result.stderr or result.stdout).strip()
 
 
+def _abi_for_python(python_version: str) -> str:
+    """Return the CPython ABI tag for a dotted python version (e.g. '3.12' -> 'cp312')."""
+    return "cp" + python_version.replace(".", "")
+
+
+def classify_downloaded(dest: str) -> Tuple[Set[Tuple[str, str]], Set[Tuple[str, str]]]:
+    """Inspect files in *dest* produced by the native pass.
+
+    :returns: a tuple ``(universal, needs_cross_target)`` of ``(canonical_name, version)``
+        pairs. ``universal`` are packages already covered by a ``py3-none-any`` wheel;
+        ``needs_cross_target`` are packages that resolved to a platform-specific wheel or
+        to an sdist only (so per-target binary wheels may exist and should be warmed).
+    """
+    universal: Set[Tuple[str, str]] = set()
+    platform_specific: Set[Tuple[str, str]] = set()
+    sdist_only: Set[Tuple[str, str]] = set()
+
+    for entry in os.listdir(dest):
+        if entry.endswith(".whl"):
+            try:
+                name, version, _build, tags = parse_wheel_filename(entry)
+            except InvalidWheelFilename:
+                continue
+            key = (str(name), str(version))
+            # A universal wheel has platform tag "any" and an abi of "none".
+            if any(tag.platform == "any" and tag.abi == "none" for tag in tags):
+                universal.add(key)
+            else:
+                platform_specific.add(key)
+        elif entry.endswith((".tar.gz", ".zip")):
+            try:
+                name, version = parse_sdist_filename(entry)
+            except (InvalidSdistFilename, ValueError):
+                continue
+            sdist_only.add((str(name), str(version)))
+
+    # Anything with a universal wheel is fully covered regardless of an also-present sdist.
+    needs_cross_target = (platform_specific | sdist_only) - universal
+    return universal, needs_cross_target
+
+
+def pip_download_target(
+    name: str,
+    version: str,
+    dest: str,
+    index_url: str,
+    python_executable: str,
+    python_version: str,
+    platform_tag: str,
+) -> Tuple[bool, str]:
+    """Download the wheel of ``name==version`` for a specific (python, platform) target.
+
+    Uses ``--no-deps --only-binary=:all:`` because cross-target resolution cannot
+    build sdists; the exact version is already known from the native pass, so no
+    dependency resolution is needed. A missing wheel for the target is a normal,
+    expected outcome (returned as a soft failure for reporting only).
+    """
+    command = [
+        python_executable,
+        "-m",
+        "pip",
+        "download",
+        f"{name}=={version}",
+        "--dest",
+        dest,
+        "--index-url",
+        index_url,
+        "--no-deps",
+        "--only-binary=:all:",
+        "--python-version",
+        python_version,
+        "--implementation",
+        "cp",
+        "--abi",
+        _abi_for_python(python_version),
+        "--platform",
+        platform_tag,
+        "--pre",
+    ]
+    result = subprocess.run(command, capture_output=True, text=True)
+    if result.returncode == 0:
+        return True, ""
+    return False, (result.stderr or result.stdout).strip()
+
+
+def _parse_csv_option(value: Optional[str], default: List[str]) -> List[str]:
+    if value is None:
+        return list(default)
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
@@ -319,6 +453,29 @@ def build_arg_parser() -> argparse.ArgumentParser:
         "--fail-on-error",
         action="store_true",
         help="Exit non-zero if any requirement failed to download. By default the daily job exits 0 and just reports.",
+    )
+    parser.add_argument(
+        "--no-platform-matrix",
+        dest="platform_matrix",
+        action="store_false",
+        default=True,
+        help="Disable the cross-target pass that warms per-(python version, platform) binary wheels.",
+    )
+    parser.add_argument(
+        "--python-versions",
+        default=None,
+        help=(
+            "Comma-separated CPython versions to warm binary wheels for "
+            f"(default: {','.join(DEFAULT_TARGET_PYTHON_VERSIONS)})."
+        ),
+    )
+    parser.add_argument(
+        "--platforms",
+        default=None,
+        help=(
+            "Comma-separated pip platform tags to warm binary wheels for "
+            f"(default: {','.join(DEFAULT_TARGET_PLATFORMS)})."
+        ),
     )
     return parser
 
@@ -363,6 +520,55 @@ def main(argv: Optional[List[str]] = None) -> int:
             else:
                 print(f"[warn] failed to warm {spec}: {error.splitlines()[-1] if error else 'unknown error'}")
                 failed.append({"spec": spec, "origins": spec_to_origins[spec], "error": error})
+
+        # Cross-target pass: warm per-(python, platform) binary wheels for packages
+        # that are not already covered by a universal py3-none-any wheel.
+        matrix_summary: Dict[str, object] = {"enabled": args.platform_matrix}
+        if args.platform_matrix:
+            target_python_versions = _parse_csv_option(args.python_versions, DEFAULT_TARGET_PYTHON_VERSIONS)
+            target_platforms = _parse_csv_option(args.platforms, DEFAULT_TARGET_PLATFORMS)
+            universal, needs_cross_target = classify_downloaded(dest)
+            targets = [(pv, plat) for pv in target_python_versions for plat in target_platforms]
+
+            print(
+                f"[info] cross-target pass: {len(needs_cross_target)} binary packages "
+                f"x {len(targets)} targets "
+                f"({len(universal)} universal packages skipped)"
+            )
+
+            wheels_warmed = 0
+            targets_missing = 0
+            for name, version in sorted(needs_cross_target):
+                for python_version, platform_tag in targets:
+                    ok, _error = pip_download_target(
+                        name,
+                        version,
+                        dest,
+                        args.index_url,
+                        sys.executable,
+                        python_version,
+                        platform_tag,
+                    )
+                    if ok:
+                        wheels_warmed += 1
+                    else:
+                        # A missing wheel for a given target is expected, not an error.
+                        targets_missing += 1
+
+            matrix_summary.update(
+                {
+                    "python_versions": target_python_versions,
+                    "platforms": target_platforms,
+                    "binary_packages": len(needs_cross_target),
+                    "universal_packages_skipped": len(universal),
+                    "target_wheels_warmed": wheels_warmed,
+                    "target_wheels_missing": targets_missing,
+                }
+            )
+            print(
+                f"[info] cross-target pass done: {wheels_warmed} wheels warmed, "
+                f"{targets_missing} (package, target) combinations had no wheel"
+            )
     finally:
         if dest_context is not None:
             dest_context.cleanup()
@@ -374,6 +580,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         "succeeded": len(succeeded),
         "failed": len(failed),
         "skipped_first_party": len(skipped_first_party),
+        "cross_target": matrix_summary,
         "failures": failed,
     }
 
