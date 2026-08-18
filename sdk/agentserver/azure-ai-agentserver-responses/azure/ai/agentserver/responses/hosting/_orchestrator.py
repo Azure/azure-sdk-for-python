@@ -97,8 +97,8 @@ async def _iter_handler_with_request_context(
         platform_context = context.platform_context
         token = set_request_context(
             FoundryAgentRequestContext(
-                user_id=platform_context.user_id_key or None,
-                call_id=platform_context.call_id or None,
+                user_id=platform_context.user_id_key,
+                call_id=platform_context.call_id,
                 session_id=agent_session_id,
             )
         )
