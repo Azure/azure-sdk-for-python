@@ -16,7 +16,6 @@ from .._generated.models import (
     BlobItemInternal,
     BlobPrefix as GenBlobPrefix,
     ListBlobsHierarchicalResponse,
-    ListBlobsResponse,
 )
 from .._generated._utils.model_base import _deserialize_xml
 from .._list_blobs_helper import _ARROW_CONTENT_TYPE, _parse_arrow_response

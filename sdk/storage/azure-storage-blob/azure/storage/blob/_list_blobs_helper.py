@@ -27,7 +27,6 @@ from ._generated.models import (
     BlobPrefix as GenBlobPrefix,
     FilterBlobItem,
     ListBlobsHierarchicalResponse,
-    ListBlobsResponse,
 )
 from ._generated._utils.model_base import _deserialize_xml
 from ._generated._utils.serialization import Deserializer
