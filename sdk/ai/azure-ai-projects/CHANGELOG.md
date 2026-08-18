@@ -24,6 +24,7 @@
 * New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
 * New `.beta.jobs` sub-client with CommandJob operations: `create_or_update`, `get`, `list`, `begin_delete`, `begin_cancel`, `validate`, `show_services`, `stream`, `download`.
+* New optional `priority` property on class `CommandJob`, typed as the new `JobPriority` enum (`LOW`, `MID`, `HIGH`). If omitted, the service defaults to `LOW`.
 
 
 ### Breaking Changes
@@ -56,6 +57,7 @@ Breaking changes in beta classes:
 * Removed classes: `DatasetDataGenerationJobSource`, `DatasetItem`, `EvalRunOutputItemResultStatus`, `EvaluationCriterion`, `OptimizationAgentSkill`, `RoutineRunDiagnostics`.
 * Removed enums: `OptimizationMode`, `OptimizationStrategy`.
 * Removed properties `has_blob`, `skill_id`, `metadata` from class `SkillDetails`.
+* Properties `instance_type`, `properties`, `shm_size` and `docker_args` on class `JobResourceConfiguration` are now read-only and can no longer be set when creating a job. The service infers them from the target compute cluster and still returns them on read. `instance_count` remains settable and is used to request whole nodes on a CPU cluster.
 
 ### Bugs Fixed
 
@@ -77,6 +79,7 @@ Breaking changes in beta classes:
 * Added new Agent tool samples `sample_agent_fabric_iq.py` and `sample_agent_fabric_iq_async.py` demonstrating use of `FabricIQPreviewTool`.
 * Refreshed evaluation samples under `samples/evaluations/` and `samples/evaluations/agentic_evaluators/` (including `sample_agent_evaluation`, `sample_agent_response_evaluation`, `sample_eval_catalog_prompt_based_evaluators`, `sample_evaluations_ai_assisted`, `sample_evaluations_builtin_with_csv`, `sample_evaluations_builtin_with_dataset_id`, `sample_evaluations_builtin_with_inline_data`, `sample_evaluations_builtin_with_inline_data_oai`, `sample_scheduled_evaluations`, `sample_coherence`, `sample_fluency`, `sample_intent_resolution`, `sample_relevance`, `sample_response_completeness`, `sample_tool_call_accuracy`, `sample_tool_call_success`, `sample_tool_input_accuracy`, `sample_tool_output_utilization`, `sample_tool_selection`, and `sample_generic_agentic_evaluator`).
 * New sample `sample_dataset_generation_job_simpleqna_with_prompt_source.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
+* Updated job samples `sample_jobs.py` and `sample_jobs_async.py` to show requesting GPUs with `gpu_count` on a GPU cluster versus whole nodes with `instance_count` on a CPU cluster, and to set the new `priority` property.
 
 ## 2.1.0 (2026-04-20)
 
