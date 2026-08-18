@@ -49,5 +49,5 @@
         "azure.iot.deviceregistrysoftwareupdate.operations.SoftwareUpdateOperations.get_operation_status": "DeviceRegistrySoftwareUpdateClient.SoftwareUpdateOperationGroup.getOperationStatus",
         "azure.iot.deviceregistrysoftwareupdate.aio.operations.SoftwareUpdateOperations.get_operation_status": "DeviceRegistrySoftwareUpdateClient.SoftwareUpdateOperationGroup.getOperationStatus"
     },
-    "CrossLanguageVersion": "ef8fdbde668a"
+    "CrossLanguageVersion": "9f048e962491"
 }
