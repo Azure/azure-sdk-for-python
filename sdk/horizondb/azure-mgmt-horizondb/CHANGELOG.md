@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2026-08-14)
+## 1.0.0b2 (2026-08-18)
 
 ### Features Added
 
@@ -31,7 +31,6 @@
   - Operation group `HorizonDbClustersOperations` added method `begin_restart`
   - Operation group `HorizonDbClustersOperations` added method `begin_start`
   - Operation group `HorizonDbClustersOperations` added method `begin_stop`
-  - Operation group `HorizonDbPrivateEndpointConnectionsOperations` added method `update_status`
   - Added operation group `HorizonDbAdministratorsOperations`
 
 ### Breaking Changes
@@ -40,7 +39,7 @@
   - Deleted or renamed model `PrivateEndpointConnection`
   - Deleted or renamed model `PrivateEndpointConnectionUpdate`
   - Method `HorizonDbPrivateEndpointConnectionsOperations.begin_delete` inserted a `positional_or_keyword` parameter `cluster_name`
-  - Deleted or renamed method `HorizonDbPrivateEndpointConnectionsOperations.begin_update`
+  - Renamed method `HorizonDbPrivateEndpointConnectionsOperations.begin_update` to `update_status`
 
 ## 1.0.0b1 (2026-04-22)
 
