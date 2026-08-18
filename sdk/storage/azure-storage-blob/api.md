@@ -1389,6 +1389,7 @@ namespace azure.storage.blob
         delete: bool = False
         delete_previous_version: bool = False
         execute: Optional[bool]
+        list: Optional[bool]
         move: Optional[bool]
         permanent_delete: Optional[bool]
         read: bool = False
@@ -1407,6 +1408,7 @@ namespace azure.storage.blob
                 tag: bool = False, 
                 *, 
                 execute: Optional[bool] = ..., 
+                list: Optional[bool] = ..., 
                 move: Optional[bool] = ..., 
                 permanent_delete: Optional[bool] = ..., 
                 set_immutability_policy: Optional[bool] = ..., 
