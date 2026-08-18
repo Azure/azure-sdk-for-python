@@ -9,6 +9,7 @@ on:
     types: [completed]
   permissions:
     checks: read
+    pull-requests: read
   steps:
     - name: Check whether analysis should run
       id: analysis_gate
