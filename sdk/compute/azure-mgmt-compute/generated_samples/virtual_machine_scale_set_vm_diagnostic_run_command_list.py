@@ -15,7 +15,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_deallocate_with_hibernation.py
+    python virtual_machine_scale_set_vm_diagnostic_run_command_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.virtual_machines.begin_deallocate(
-        resource_group_name="rgcompute",
-        vm_name="aaaaaaaaaaaaaaaa",
-    ).result()
+    response = client.virtual_machine_scale_set_vm_diagnostic_run_commands.diagnostic_list(
+        resource_group_name="myResourceGroup",
+        vm_scale_set_name="myvmScaleSet",
+        instance_id="0",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineExamples/VirtualMachine_Deallocate_WithHibernation.json
+# x-ms-original-file: 2026-04-01/diagnosticRunCommandExamples/VirtualMachineScaleSetVMDiagnosticRunCommand_List.json
 if __name__ == "__main__":
     main()

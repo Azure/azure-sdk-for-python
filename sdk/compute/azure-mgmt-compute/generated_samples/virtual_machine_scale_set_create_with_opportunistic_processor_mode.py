@@ -16,7 +16,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_scale_set_create_with_interconnect_block.py
+    python virtual_machine_scale_set_create_with_opportunistic_processor_mode.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,26 +37,11 @@ def main():
         parameters={
             "location": "westus",
             "properties": {
-                "highSpeedInterconnectPlacement": "Trunk",
                 "overprovision": True,
                 "upgradePolicy": {"mode": "Manual"},
                 "virtualMachineProfile": {
-                    "interconnectBlockProfile": {
-                        "interconnectBlock": {
-                            "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/interconnectBlocks/myInterconnectBlock"
-                        }
-                    },
+                    "hardwareProfile": {"processorMode": "Opportunistic"},
                     "networkProfile": {
-                        "interconnectGroupProfile": {
-                            "interconnectGroup": {
-                                "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Network/interconnectGroups/myInterconnectGroup"
-                            },
-                            "subgroups": [
-                                {
-                                    "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Network/interconnectGroups/myInterconnectGroup/subgroups/subgroup0"
-                                }
-                            ],
-                        },
                         "networkInterfaceConfigurations": [
                             {
                                 "name": "{vmss-name}",
@@ -75,36 +60,34 @@ def main():
                                     "primary": True,
                                 },
                             }
-                        ],
+                        ]
                     },
                     "osProfile": {
                         "adminPassword": "{your-password}",
                         "adminUsername": "{your-username}",
                         "computerNamePrefix": "{vmss-name}",
-                        "linuxConfiguration": {"disablePasswordAuthentication": False},
                     },
                     "storageProfile": {
                         "imageReference": {
-                            "offer": "ubuntu-hpc",
-                            "publisher": "microsoft-dsvm",
-                            "sku": "2404-gb",
+                            "offer": "WindowsServer",
+                            "publisher": "MicrosoftWindowsServer",
+                            "sku": "2019-Datacenter",
                             "version": "latest",
                         },
                         "osDisk": {
                             "caching": "ReadWrite",
                             "createOption": "FromImage",
-                            "managedDisk": {"storageAccountType": "Premium_LRS"},
+                            "managedDisk": {"storageAccountType": "Standard_LRS"},
                         },
                     },
                 },
             },
-            "sku": {"capacity": 3, "name": "Standard_ND128isr_GB300_v6", "tier": "Standard"},
-            "zones": ["1"],
+            "sku": {"capacity": 3, "name": "Standard_D2s_v5", "tier": "Standard"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithInterconnectBlock.json
+# x-ms-original-file: 2026-04-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithOpportunisticProcessorMode.json
 if __name__ == "__main__":
     main()

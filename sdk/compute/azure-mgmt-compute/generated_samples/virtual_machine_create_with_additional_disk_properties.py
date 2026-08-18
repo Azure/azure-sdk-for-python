@@ -16,7 +16,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_create_with_interconnect_block.py
+    python virtual_machine_create_with_additional_disk_properties.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,57 +37,67 @@ def main():
         parameters={
             "location": "westus",
             "properties": {
-                "hardwareProfile": {"vmSize": "Standard_ND128isr_GB300_v6"},
-                "interconnectBlockProfile": {
-                    "interconnectBlock": {
-                        "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/interconnectBlocks/myInterconnectBlock"
-                    }
-                },
+                "hardwareProfile": {"vmSize": "Standard_D4s_v3"},
                 "networkProfile": {
-                    "interconnectGroupProfile": {
-                        "interconnectGroup": {
-                            "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Network/interconnectGroups/myInterconnectGroup"
-                        },
-                        "subgroups": [
-                            {
-                                "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Network/interconnectGroups/myInterconnectGroup/subgroups/subgroup0"
-                            }
-                        ],
-                    },
                     "networkInterfaces": [
                         {
                             "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Network/networkInterfaces/{existing-nic-name}",
                             "properties": {"primary": True},
                         }
-                    ],
+                    ]
                 },
                 "osProfile": {
                     "adminPassword": "{your-password}",
                     "adminUsername": "{your-username}",
                     "computerName": "myVM",
-                    "linuxConfiguration": {"disablePasswordAuthentication": False},
                 },
                 "storageProfile": {
+                    "dataDisks": [
+                        {
+                            "createOption": "Empty",
+                            "diskSizeGB": 1024,
+                            "lun": 0,
+                            "managedDisk": {
+                                "additionalDiskProperties": {
+                                    "managedDiskProperties": {
+                                        "diskAccessId": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/diskAccesses/myDiskAccess",
+                                        "networkAccessPolicy": "AllowPrivate",
+                                        "tier": "P30",
+                                    }
+                                },
+                                "storageAccountType": "Premium_LRS",
+                            },
+                            "name": "myDataDisk",
+                        }
+                    ],
+                    "diskApiVersion": "2026-03-02",
                     "imageReference": {
-                        "offer": "ubuntu-hpc",
-                        "publisher": "microsoft-dsvm",
-                        "sku": "2404-gb",
+                        "offer": "WindowsServer",
+                        "publisher": "MicrosoftWindowsServer",
+                        "sku": "2022-datacenter-azure-edition",
                         "version": "latest",
                     },
                     "osDisk": {
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
-                        "managedDisk": {"storageAccountType": "Premium_LRS"},
+                        "managedDisk": {
+                            "additionalDiskProperties": {
+                                "managedDiskProperties": {
+                                    "diskAccessId": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/diskAccesses/myDiskAccess",
+                                    "networkAccessPolicy": "AllowPrivate",
+                                }
+                            },
+                            "storageAccountType": "Premium_LRS",
+                        },
                         "name": "myVMosdisk",
                     },
                 },
             },
-            "zones": ["1"],
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineExamples/VirtualMachine_Create_WithInterconnectBlock.json
+# x-ms-original-file: 2026-04-01/virtualMachineExamples/VirtualMachine_Create_WithAdditionalDiskProperties.json
 if __name__ == "__main__":
     main()
