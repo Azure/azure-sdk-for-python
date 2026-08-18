@@ -1,0 +1,4 @@
+directory: specification/contosowidgetmanager/Contoso.Management
+commit: 6b5cac988256cefc738766d87fad1a261d9f6f61
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
