@@ -1,10 +1,10 @@
 -e ../../../eng/tools/azure-sdk-tools
 -e ../azure-ai-agentserver-core
 ../../monitor/azure-monitor-query
-azure-identity>=1.17.0
+azure-identity>=1.17.0,<2.0.0
 httpx
-hypercorn
+hypercorn>=0.17.0,<0.18.0
 openai
 pytest
 pytest-asyncio
-starlette
+starlette>=0.45.0,<1.0.0

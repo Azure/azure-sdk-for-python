@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0b2 (Unreleased)
+
+### Other Changes
+
+- Constrained `azure-ai-agentserver-core` to the compatible 2.1 release line and added upper bounds to other runtime dependencies.
+
 ## 2.1.0b1 (2026-08-11)
 
 ### Breaking Changes

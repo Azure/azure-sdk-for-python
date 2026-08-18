@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0b2 (Unreleased)
+
+### Other Changes
+
+- Added upper bounds to runtime dependencies so installation cannot silently resolve to incompatible major or pre-1.0 minor releases.
+
 ## 2.1.0b1 (2026-08-11)
 
 ### Features Added
