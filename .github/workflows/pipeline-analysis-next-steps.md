@@ -1,4 +1,8 @@
 ---
+# This workflow is triggered for every eligible completed check suite and filters
+# unrelated suites during pre-activation, adding noise to GitHub Actions.
+# The long-term plan is to handle these checks through our GitHub App webhook.
+
 description: Analyze failed Azure SDK pull-request pipelines.
 on:
   check_suite:
@@ -48,6 +52,10 @@ on:
             return;
           }
           const pull = matchingPulls[0];
+          if (pull.head.ref.startsWith("pipeline-fix/")) {
+            core.info("Skipping analysis for an automatically generated pipeline fix pull request.");
+            return;
+          }
           if (pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`) {
             core.info("Skipping analysis because external fork-owned pull request branches are not supported.");
             return;
