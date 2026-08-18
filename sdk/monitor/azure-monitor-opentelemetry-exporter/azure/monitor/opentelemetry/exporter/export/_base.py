@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import getpass
-import json
 import logging
 import os
 import tempfile
@@ -27,9 +26,6 @@ from azure.monitor.opentelemetry.exporter._generated.exporter._configuration imp
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
-)
-from azure.monitor.opentelemetry.exporter._generated.exporter._utils.model_base import (
-    SdkJSONEncoder,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
@@ -67,6 +63,8 @@ from azure.monitor.opentelemetry.exporter._utils import (
     _get_os_name,
     _get_rp_name,
     _get_attach_type_name,
+    _is_item_too_large,
+    _split_oversized_batch,
 )
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter.export._rate_limiter import (
@@ -98,15 +96,6 @@ logger = logging.getLogger(__name__)
 _AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
-
-# Maximum request body size (in bytes) the ingestion endpoint accepts on the wire before
-# responding with 413 (Payload Too Large).
-_MAX_INGESTION_PAYLOAD_SIZE_BYTES = 30 * 1000 * 1000
-
-# Maximum size (in bytes) of a single telemetry item the ingestion endpoint accepts. Items
-# larger than this are rejected per-item (surfaced as a 400 within a 206 partial response) and
-# cannot be split further. ~1.2 MiB.
-_MAX_INGESTION_ITEM_SIZE_BYTES = 1258291
 
 
 class ExportResult(Enum):
@@ -349,8 +338,6 @@ class BaseExporter:
                     len(envelopes),
                     response_error.message,
                 )
-                if self._should_collect_customer_sdkstats():
-                    track_dropped_items(envelopes, DropCode.CLIENT_STORAGE_DISABLED)
             return ExportResult.FAILED_NOT_RETRYABLE
         if len(envelopes) <= 1:
             if not self._is_stats_exporter():
@@ -366,7 +353,7 @@ class BaseExporter:
         for sub_batch in _split_oversized_batch(envelopes):
             result_from_storage_put = self.storage.put([x.as_dict() for x in sub_batch])
             if result_from_storage_put == StorageExportResult.LOCAL_FILE_BLOB_SUCCESS:
-                if self._should_collect_customer_sdkstats():
+                if not self._is_stats_exporter() and self._should_collect_customer_sdkstats():
                     track_retry_items(sub_batch, response_error)
             else:
                 if not self._is_stats_exporter():
@@ -509,29 +496,19 @@ class BaseExporter:
                                     ):
                                         track_dropped_items([envelopes[error.index]], error.status_code)
                                 dropped_envelope = envelopes[error.index] if error.index is not None else None
-                                # An envelope that exceeds the per-item ingestion size limit (~1.2 MiB)
-                                # cannot be split further and is dropped here. Dumping it would flood the
-                                # log with a huge (and potentially PII-laden) payload, so log a concise
-                                # summary instead. For all other drops keep the existing behavior of
-                                # logging the full envelope to aid debugging.
-                                if (
-                                    dropped_envelope is not None
-                                    and _get_envelope_serialized_size(dropped_envelope) > _MAX_INGESTION_ITEM_SIZE_BYTES
-                                ):
-                                    logger.error(
-                                        "Data drop %s: %s. Envelope of type %s exceeds the per-item "
-                                        "ingestion size limit and is omitted from the log.",
-                                        error.status_code,
-                                        error.message,
-                                        dropped_envelope.name,
-                                    )
-                                else:
-                                    logger.error(
-                                        "Data drop %s: %s. %s",
-                                        error.status_code,
-                                        error.message,
-                                        (dropped_envelope if dropped_envelope is not None else ""),
-                                    )
+                                # The ingestion endpoint already tells us when an item was rejected
+                                # for exceeding the per-item size limit, so trust that message
+                                # instead of re-serializing every dropped envelope to measure it.
+                                # Such an envelope is huge (and potentially PII-laden), so stop the
+                                # log at the server message and leave the payload out.
+                                if dropped_envelope is None or _is_item_too_large(error.message):
+                                    dropped_envelope = ""  # type: ignore[assignment]
+                                logger.error(
+                                    "Data drop %s: %s. %s",
+                                    error.status_code,
+                                    error.message,
+                                    dropped_envelope,
+                                )
                     storage = self.storage
                     if storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
@@ -891,55 +868,6 @@ class BaseExporter:
         return False
 
 
-def _get_envelope_serialized_size(envelope: TelemetryItem) -> int:
-    """Return the serialized wire size (in bytes) of a single envelope on the wire.
-
-    :param envelope: The telemetry envelope to measure.
-    :type envelope: ~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem
-    :return: The serialized size of the envelope in bytes.
-    :rtype: int
-    """
-    try:
-        serialized = json.dumps(envelope, cls=SdkJSONEncoder, exclude_readonly=True)
-        return len(serialized.encode("utf-8"))
-    except Exception:  # pylint: disable=broad-except
-        return _MAX_INGESTION_PAYLOAD_SIZE_BYTES
-
-
-def _split_oversized_batch(envelopes: List[TelemetryItem]) -> List[List[TelemetryItem]]:
-    """Split an oversized batch into sub-batches that each fit under the ingestion size limit.
-
-    :param envelopes: The oversized batch of telemetry envelopes to split.
-    :type envelopes: list[~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem]
-    :return: A list of sub-batches, each expected to fit under the ingestion size limit.
-    :rtype: list[list[~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem]]
-    """
-    chunks: List[List[TelemetryItem]] = []
-    current: List[TelemetryItem] = []
-    current_size = 2  # account for the enclosing "[" and "]" of the JSON array
-    for envelope in envelopes:
-        envelope_size = _get_envelope_serialized_size(envelope)
-        # Default json.dumps (used by the transport) separates array elements with ", " (2 bytes).
-        separator_size = 2 if current else 0
-        if current and current_size + separator_size + envelope_size > _MAX_INGESTION_PAYLOAD_SIZE_BYTES:
-            chunks.append(current)
-            current = []
-            current_size = 2
-            separator_size = 0
-        current.append(envelope)
-        current_size += separator_size + envelope_size
-    if current:
-        chunks.append(current)
-    # Guarantee progress: if size-based packing produced a single chunk (e.g. because the byte
-    # estimate under-reported), fall back to halving by count so repeated 413s keep shrinking the
-    # batch. Only split when there is more than one envelope; a single envelope cannot be divided
-    # and is handled by the caller (which drops it), so this never produces an empty sub-batch.
-    if len(chunks) < 2 and len(envelopes) > 1:
-        midpoint = len(envelopes) // 2
-        chunks = [envelopes[:midpoint], envelopes[midpoint:]]
-    return chunks
-
-
 def _is_invalid_code(response_code: Optional[int]) -> bool:
     """Determine if response is a invalid response.
 
@@ -1004,6 +932,9 @@ def _is_sampling_rejection(message: Optional[str]) -> bool:
     if message is None:
         return False
     return message.lower() == "telemetry sampled out."
+
+
+
 
 
 # mypy: disable-error-code="union-attr"
