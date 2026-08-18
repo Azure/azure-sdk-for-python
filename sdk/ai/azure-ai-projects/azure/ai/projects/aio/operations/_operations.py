@@ -11244,7 +11244,12 @@ class BetaRoutinesOperations:
 
     @distributed_trace
     def list(
-        self, *, limit: Optional[int] = None, before: Optional[str] = None, order: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        limit: Optional[int] = None,
+        after: Optional[str] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.Routine"]:
         """List routines.
 
@@ -11252,12 +11257,14 @@ class BetaRoutinesOperations:
 
         :keyword limit: The maximum number of routines to return. Default value is None.
         :paramtype limit: int
-        :keyword before: Unsupported. Reserved for future backward pagination support. Default value is
-         None.
-        :paramtype before: str
-        :keyword order: The ordering direction. Supported values are asc and desc. Default value is
-         None.
-        :paramtype order: str
+        :keyword after: An opaque continuation token identifying where to resume the list. Prefer
+         following the ``next_link`` returned by the previous response, which embeds this value. Default
+         value is None.
+        :paramtype after: str
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :return: An iterator like instance of Routine
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Routine]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11275,21 +11282,47 @@ class BetaRoutinesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(_continuation_token=None):
+        def prepare_request(next_link=None):
+            if not next_link:
 
-            _request = build_beta_routines_list_request(
-                limit=limit,
-                after=_continuation_token,
-                before=before,
-                order=order,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request = build_beta_routines_list_request(
+                    limit=limit,
+                    after=after,
+                    order=order,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
             return _request
 
         async def extract_data(pipeline_response):
@@ -11300,10 +11333,10 @@ class BetaRoutinesOperations:
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+            return deserialized.get("next_link") or None, AsyncList(list_of_elem)
 
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
@@ -11384,8 +11417,8 @@ class BetaRoutinesOperations:
         *,
         filter: Optional[str] = None,
         limit: Optional[int] = None,
-        before: Optional[str] = None,
-        order: Optional[str] = None,
+        after: Optional[str] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.RoutineRun"]:
         """List prior runs for a routine.
@@ -11399,12 +11432,14 @@ class BetaRoutinesOperations:
         :paramtype filter: str
         :keyword limit: The maximum number of runs to return. Default value is None.
         :paramtype limit: int
-        :keyword before: Unsupported. Reserved for future backward pagination support. Default value is
-         None.
-        :paramtype before: str
-        :keyword order: The ordering direction. Supported values are asc and desc. Default value is
-         None.
-        :paramtype order: str
+        :keyword after: An opaque continuation token identifying where to resume the list. Prefer
+         following the ``next_link`` returned by the previous response, which embeds this value. Default
+         value is None.
+        :paramtype after: str
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :return: An iterator like instance of RoutineRun
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RoutineRun]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11422,23 +11457,49 @@ class BetaRoutinesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(_continuation_token=None):
+        def prepare_request(next_link=None):
+            if not next_link:
 
-            _request = build_beta_routines_list_runs_request(
-                routine_name=routine_name,
-                filter=filter,
-                limit=limit,
-                after=_continuation_token,
-                before=before,
-                order=order,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request = build_beta_routines_list_runs_request(
+                    routine_name=routine_name,
+                    filter=filter,
+                    limit=limit,
+                    after=after,
+                    order=order,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
             return _request
 
         async def extract_data(pipeline_response):
@@ -11449,10 +11510,10 @@ class BetaRoutinesOperations:
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+            return deserialized.get("next_link") or None, AsyncList(list_of_elem)
 
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access

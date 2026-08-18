@@ -6,6 +6,8 @@
         "azure.ai.projects.models.ToolboxTool": "Azure.AI.Projects.ToolboxTool",
         "azure.ai.projects.models.A2APreviewToolboxTool": "Azure.AI.Projects.A2APreviewToolboxTool",
         "azure.ai.projects.models.A2AProtocolConfiguration": "Azure.AI.Projects.A2AProtocolConfiguration",
+        "azure.ai.projects.models.A2ATool": "Azure.AI.Projects.A2ATool",
+        "azure.ai.projects.models.A2AToolboxTool": "Azure.AI.Projects.A2AToolboxTool",
         "azure.ai.projects.models.ActivityProtocolConfiguration": "Azure.AI.Projects.ActivityProtocolConfiguration",
         "azure.ai.projects.models.AgentBlueprintReference": "Azure.AI.Projects.AgentBlueprintReference",
         "azure.ai.projects.models.AgentCard": "Azure.AI.Projects.AgentCard",
@@ -297,6 +299,7 @@
         "azure.ai.projects.models.SharepointGroundingToolParameters": "Azure.AI.Projects.SharepointGroundingToolParameters",
         "azure.ai.projects.models.SharepointPreviewTool": "Azure.AI.Projects.SharepointPreviewTool",
         "azure.ai.projects.models.SimpleQnADataGenerationJobOptions": "Azure.AI.Projects.SimpleQnADataGenerationJobOptions",
+        "azure.ai.projects.models.SimulationSeedDataGenerationJobOptions": "Azure.AI.Projects.SimulationSeedDataGenerationJobOptions",
         "azure.ai.projects.models.SkillDetails": "Azure.AI.Projects.Skill",
         "azure.ai.projects.models.SkillInlineContent": "Azure.AI.Projects.SkillInlineContent",
         "azure.ai.projects.models.SkillReferenceParam": "OpenAI.SkillReferenceParam",
@@ -306,7 +309,6 @@
         "azure.ai.projects.models.SpecificFunctionShellParam": "OpenAI.SpecificFunctionShellParam",
         "azure.ai.projects.models.StructuredInputDefinition": "Azure.AI.Projects.StructuredInputDefinition",
         "azure.ai.projects.models.StructuredOutputDefinition": "Azure.AI.Projects.StructuredOutputDefinition",
-        "azure.ai.projects.models.TaskGenerationDataGenerationJobOptions": "Azure.AI.Projects.TaskGenerationDataGenerationJobOptions",
         "azure.ai.projects.models.TaxonomyCategory": "Azure.AI.Projects.TaxonomyCategory",
         "azure.ai.projects.models.TaxonomySubCategory": "Azure.AI.Projects.TaxonomySubCategory",
         "azure.ai.projects.models.TelemetryConfig": "Azure.AI.Projects.TelemetryConfig",
@@ -360,6 +362,7 @@
         "azure.ai.projects.models.WorkIQPreviewToolboxTool": "Azure.AI.Projects.WorkIQPreviewToolboxTool",
         "azure.ai.projects.models.EvaluationTaxonomyInputType": "Azure.AI.Projects.EvaluationTaxonomyInputType",
         "azure.ai.projects.models.ToolType": "OpenAI.ToolType",
+        "azure.ai.projects.models.A2AProtocolVersion": "Azure.AI.Projects.A2AProtocolVersion",
         "azure.ai.projects.models.AzureAISearchQueryType": "Azure.AI.Projects.AzureAISearchQueryType",
         "azure.ai.projects.models.ContainerMemoryLimit": "OpenAI.ContainerMemoryLimit",
         "azure.ai.projects.models.ContainerNetworkPolicyParamType": "OpenAI.ContainerNetworkPolicyParamType",
@@ -549,5 +552,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "3ccff18cabc9"
+    "CrossLanguageVersion": "6178e51a6cdd"
 }
