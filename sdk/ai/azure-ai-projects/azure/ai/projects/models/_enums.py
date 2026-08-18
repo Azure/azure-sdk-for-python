@@ -719,6 +719,17 @@ class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HEADER."""
 
 
+class JobPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Priority of the job."""
+
+    LOW = "Low"
+    """Low priority."""
+    MID = "Mid"
+    """Medium priority."""
+    HIGH = "High"
+    """High priority."""
+
+
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Extensible status values shared by Foundry jobs."""
 

@@ -437,6 +437,7 @@
         "azure.ai.projects.models.DataGenerationJobOutputType": "Azure.AI.Projects.DataGenerationJobOutputType",
         "azure.ai.projects.models.AssetTypes": "Azure.AI.Projects.AssetTypes",
         "azure.ai.projects.models.InputOutputModes": "Azure.AI.Projects.InputOutputModes",
+        "azure.ai.projects.models.JobPriority": "Azure.AI.Projects.JobPriority",
         "azure.ai.projects.models.JobType": "Azure.AI.Projects.JobType",
         "azure.ai.projects.models.ListViewType": "Azure.AI.Projects.ListViewType",
         "azure.ai.projects.models.EvaluationRuleActionType": "Azure.AI.Projects.EvaluationRuleActionType",
@@ -502,5 +503,5 @@
         "azure.ai.projects.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion",
         "azure.ai.projects.aio.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion"
     },
-    "CrossLanguageVersion": "f06cc3dcdc2a"
+    "CrossLanguageVersion": "874a34c16eb2"
 }

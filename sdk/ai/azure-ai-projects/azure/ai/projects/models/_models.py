@@ -3827,6 +3827,9 @@ class CommandJob(JobProperties, discriminator="Command"):
     :vartype services: dict[str, ~azure.ai.projects.models.JobService]
     :ivar queue_settings: Queue settings for the job.
     :vartype queue_settings: ~azure.ai.projects.models.QueueSettings
+    :ivar priority: Priority of the job. If omitted, the service defaults to Low. Known values are:
+     "Low", "Mid", and "High".
+    :vartype priority: str or ~azure.ai.projects.models.JobPriority
     :ivar user_assigned_identity_id: user-assigned managed identity.
     :vartype user_assigned_identity_id: str
     :ivar gpu_count: Number of GPUs to allocate for the job.
@@ -3891,6 +3894,11 @@ class CommandJob(JobProperties, discriminator="Command"):
         name="queueSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Queue settings for the job."""
+    priority: Optional[Union[str, "_models.JobPriority"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Priority of the job. If omitted, the service defaults to Low. Known values are: \"Low\",
+     \"Mid\", and \"High\"."""
     user_assigned_identity_id: Optional[str] = rest_field(
         name="userAssignedIdentityId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3924,6 +3932,7 @@ class CommandJob(JobProperties, discriminator="Command"):
         limits: Optional["_models.CommandJobLimits"] = None,
         services: Optional[dict[str, "_models.JobService"]] = None,
         queue_settings: Optional["_models.QueueSettings"] = None,
+        priority: Optional[Union[str, "_models.JobPriority"]] = None,
         user_assigned_identity_id: Optional[str] = None,
         gpu_count: Optional[int] = None,
         is_archived: Optional[bool] = None,
@@ -9672,17 +9681,13 @@ class JobResourceConfiguration(_Model):
         name="instanceCount", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional number of instances or nodes used by the compute target."""
-    instance_type: Optional[str] = rest_field(
-        name="instanceType", visibility=["read", "create", "update", "delete", "query"]
-    )
+    instance_type: Optional[str] = rest_field(name="instanceType", visibility=["read"])
     """Optional type of VM used as supported by the compute target."""
-    properties: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[dict[str, Any]] = rest_field(visibility=["read"])
     """Additional properties bag."""
-    shm_size: Optional[str] = rest_field(name="shmSize", visibility=["read", "create", "update", "delete", "query"])
+    shm_size: Optional[str] = rest_field(name="shmSize", visibility=["read"])
     """Size of the docker container's shared memory block."""
-    docker_args: Optional[str] = rest_field(
-        name="dockerArgs", visibility=["read", "create", "update", "delete", "query"]
-    )
+    docker_args: Optional[str] = rest_field(name="dockerArgs", visibility=["read"])
     """Extra arguments to pass to the Docker run command."""
 
     @overload
@@ -9690,10 +9695,6 @@ class JobResourceConfiguration(_Model):
         self,
         *,
         instance_count: Optional[int] = None,
-        instance_type: Optional[str] = None,
-        properties: Optional[dict[str, Any]] = None,
-        shm_size: Optional[str] = None,
-        docker_args: Optional[str] = None,
     ) -> None: ...
 
     @overload
