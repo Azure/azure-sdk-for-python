@@ -3,6 +3,7 @@
 
 import datetime
 from importlib.metadata import version
+import json
 import locale
 from os import environ
 from os.path import isdir
@@ -11,7 +12,7 @@ import threading
 import time
 import warnings
 import hashlib
-from typing import Callable, Dict, Any, Optional
+from typing import Callable, Dict, Any, List, Optional
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
@@ -19,6 +20,7 @@ from opentelemetry.util.types import Attributes
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys, TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.exporter._utils.model_base import SdkJSONEncoder
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -28,7 +30,9 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_AAD_SCOPE,
     _FUNCTIONS_WORKER_RUNTIME,
     _INSTRUMENTATIONS_BIT_MAP,
+    _ITEM_TOO_LARGE_MESSAGE_MARKERS,
     _KUBERNETES_SERVICE_HOST,
+    _MAX_INGESTION_PAYLOAD_SIZE_BYTES,
     _MICROSOFT_OPENTELEMETRY_VERSION,
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
@@ -541,3 +545,51 @@ def _get_retry_delay_from_headers(headers: Any) -> Optional[int]:
     except ValueError:
         return None
     return None
+
+
+# Ingestion size helpers
+
+
+def _get_envelope_serialized_size(envelope: TelemetryItem) -> int:
+    """Return the serialized wire size (in bytes) of a single envelope on the wire."""
+    try:
+        serialized = json.dumps(envelope, cls=SdkJSONEncoder, exclude_readonly=True)
+        return len(serialized.encode("utf-8"))
+    except Exception:  # pylint: disable=broad-except
+        return _MAX_INGESTION_PAYLOAD_SIZE_BYTES
+
+
+def _split_oversized_batch(envelopes: List[TelemetryItem]) -> List[List[TelemetryItem]]:
+    """Split an oversized batch into sub-batches that each fit under the ingestion size limit."""
+    chunks: List[List[TelemetryItem]] = []
+    current: List[TelemetryItem] = []
+    current_size = 2  # account for the enclosing "[" and "]" of the JSON array
+    for envelope in envelopes:
+        envelope_size = _get_envelope_serialized_size(envelope)
+        # Default json.dumps (used by the transport) separates array elements with ", " (2 bytes).
+        separator_size = 2 if current else 0
+        if current and current_size + separator_size + envelope_size > _MAX_INGESTION_PAYLOAD_SIZE_BYTES:
+            chunks.append(current)
+            current = []
+            current_size = 2
+            separator_size = 0
+        current.append(envelope)
+        current_size += separator_size + envelope_size
+    if current:
+        chunks.append(current)
+    # Guarantee progress: if size-based packing produced a single chunk (e.g. because the byte
+    # estimate under-reported), fall back to halving by count so repeated 413s keep shrinking the
+    # batch. Only split when there is more than one envelope; a single envelope cannot be divided
+    # and is handled by the caller (which drops it), so this never produces an empty sub-batch.
+    if len(chunks) < 2 and len(envelopes) > 1:
+        midpoint = len(envelopes) // 2
+        chunks = [envelopes[:midpoint], envelopes[midpoint:]]
+    return chunks
+
+
+def _is_item_too_large(message: Optional[str]) -> bool:
+    """Determine if a per-item error indicates the envelope exceeded the ingestion size limit."""
+    if not message:
+        return False
+    lowered = message.lower()
+    return any(marker in lowered for marker in _ITEM_TOO_LARGE_MESSAGE_MARKERS)

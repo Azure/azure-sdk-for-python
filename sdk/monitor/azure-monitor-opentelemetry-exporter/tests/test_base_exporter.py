@@ -16,12 +16,13 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
     _get_storage_directory,
-    _get_envelope_serialized_size,
-    _split_oversized_batch,
-    _MAX_INGESTION_PAYLOAD_SIZE_BYTES,
-    _MAX_INGESTION_ITEM_SIZE_BYTES,
 )
-from azure.monitor.opentelemetry.exporter._utils import _get_retry_delay_from_headers
+from azure.monitor.opentelemetry.exporter._utils import (
+    _get_retry_delay_from_headers,
+    _get_envelope_serialized_size,
+    _is_item_too_large,
+    _split_oversized_batch,
+)
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter._constants import DropCode
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
@@ -31,6 +32,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_AAD_SCOPE,
+    _MAX_INGESTION_PAYLOAD_SIZE_BYTES,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
     _REQ_FAILURE_NAME,
@@ -1121,8 +1123,10 @@ class TestBaseExporter(unittest.TestCase):
         exporter.storage.put.assert_not_called()
 
     def test_transmission_206_oversized_item_omits_envelope_from_log(self):
-        """An item that exceeds the per-item ingestion size limit is dropped with a concise log
-        message; the full (potentially large / PII-laden) envelope must NOT be dumped to the log."""
+        """An item the server reports as exceeding the per-item ingestion size limit is dropped and
+        the log stops at the server message; the full (potentially large / PII-laden) envelope must
+        NOT be dumped. The decision comes from the server's error message, so the envelope is never
+        re-serialized to measure it."""
         exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = mock.Mock()
         oversized_envelope = TelemetryItem(
@@ -1132,9 +1136,8 @@ class TestBaseExporter(unittest.TestCase):
         )
         custom_envelopes_to_export = [oversized_envelope]
         with mock.patch.object(AzureMonitorClient, "track") as post, mock.patch(
-            "azure.monitor.opentelemetry.exporter.export._base._get_envelope_serialized_size",
-            return_value=_MAX_INGESTION_ITEM_SIZE_BYTES + 1,
-        ):
+            "azure.monitor.opentelemetry.exporter._utils._get_envelope_serialized_size",
+        ) as mock_size:
             post.return_value = TrackResponse(
                 items_received=1,
                 items_accepted=0,
@@ -1149,10 +1152,11 @@ class TestBaseExporter(unittest.TestCase):
             with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as cm:
                 result = exporter._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        # The drop path never re-serializes the envelope to decide what to log.
+        mock_size.assert_not_called()
         log_output = "\n".join(cm.output)
-        # Concise summary is logged (status, server message, and envelope type only).
-        self.assertIn("exceeds the per-item ingestion size limit and is omitted from the log", log_output)
-        self.assertIn("OversizedItem", log_output)
+        # The server message is still logged so the drop reason is visible.
+        self.assertIn("Telemetry item length must not exceed 1258291", log_output)
         # The full envelope payload (its tags/data) must NOT be dumped to the log.
         self.assertNotIn("SECRET_PAYLOAD_MARKER", log_output)
 
@@ -1400,8 +1404,9 @@ class TestBaseExporter(unittest.TestCase):
         exporter.storage.put.assert_not_called()
 
     def test_transmission_413_storage_disabled_dropped(self):
-        """A 413 with storage disabled cannot be persisted and should be dropped with the
-        CLIENT_STORAGE_DISABLED reason, consistent with other retryable codes."""
+        """A 413 with storage disabled cannot be persisted and should be dropped exactly once
+        with the CLIENT_STORAGE_DISABLED reason. Drop attribution for the storage-disabled case
+        is owned solely by _handle_transmit_from_storage, so _transmit must not also count it."""
         exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = None
         custom_envelopes_to_export = [
@@ -1414,9 +1419,11 @@ class TestBaseExporter(unittest.TestCase):
                     "azure.monitor.opentelemetry.exporter.export._base.track_dropped_items"
                 ) as mock_track_dropped:
                     result = exporter._transmit(custom_envelopes_to_export)
+                    # _transmit itself must not attribute the drop (avoids the double count).
+                    mock_track_dropped.assert_not_called()
+                    exporter._handle_transmit_from_storage(custom_envelopes_to_export, result)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-        # The batch is dropped with the storage-disabled reason, matching every other
-        # retryable failure when offline storage is turned off.
+        # The batch is dropped exactly once, with the storage-disabled reason.
         mock_track_dropped.assert_called_once_with(custom_envelopes_to_export, DropCode.CLIENT_STORAGE_DISABLED)
 
     def test_transmission_413_persists_and_retries(self):
@@ -1497,11 +1504,20 @@ class TestBaseExporter(unittest.TestCase):
         is isolated into its own sub-batch instead of being counted as weightless."""
         envelope = TelemetryItem(name="Test", time=datetime.now())
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter.export._base.json.dumps",
+            "azure.monitor.opentelemetry.exporter._utils.json.dumps",
             side_effect=TypeError("not serializable"),
         ):
             size = _get_envelope_serialized_size(envelope)
         self.assertEqual(size, _MAX_INGESTION_PAYLOAD_SIZE_BYTES)
+
+    def test_is_item_too_large(self):
+        """The oversized-item decision is driven by the server's error message, so no envelope
+        needs to be re-serialized to make it."""
+        self.assertTrue(_is_item_too_large("Telemetry item length must not exceed 1258291"))
+        self.assertTrue(_is_item_too_large("Payload too large"))
+        self.assertFalse(_is_item_too_large("Invalid instrumentation key"))
+        self.assertFalse(_is_item_too_large(""))
+        self.assertFalse(_is_item_too_large(None))
 
     def test_split_oversized_batch_empty(self):
         """Splitting an empty batch yields no sub-batches (and never an empty half)."""
@@ -1524,7 +1540,7 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test3", time=datetime.now()),
         ]
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter.export._base._get_envelope_serialized_size",
+            "azure.monitor.opentelemetry.exporter._utils._get_envelope_serialized_size",
             return_value=_MAX_INGESTION_PAYLOAD_SIZE_BYTES,
         ):
             chunks = _split_oversized_batch(envelopes)
@@ -1538,7 +1554,7 @@ class TestBaseExporter(unittest.TestCase):
         # 3*0.4 exceeds), yielding chunks of [2, 2, 1].
         per_item = int(_MAX_INGESTION_PAYLOAD_SIZE_BYTES * 0.4)
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter.export._base._get_envelope_serialized_size",
+            "azure.monitor.opentelemetry.exporter._utils._get_envelope_serialized_size",
             return_value=per_item,
         ):
             chunks = _split_oversized_batch(envelopes)
@@ -1554,7 +1570,7 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test4", time=datetime.now()),
         ]
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter.export._base._get_envelope_serialized_size",
+            "azure.monitor.opentelemetry.exporter._utils._get_envelope_serialized_size",
             return_value=1,
         ):
             chunks = _split_oversized_batch(envelopes)
