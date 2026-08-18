@@ -28,13 +28,3 @@ class TestServiceGroupsMgmtServiceGroupsOperationsAsync(AzureMgmtRecordedTestCas
 
         # please add some check logic here by yourself
         # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_service_groups_list_ancestors(self, resource_group):
-        response = await self.client.service_groups.list_ancestors(
-            service_group_name="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...

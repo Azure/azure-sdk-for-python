@@ -39,7 +39,12 @@ from .._shared.constants import DEFAULT_MAX_CONCURRENCY
 from .._shared.validation import is_md5_validation, CV_TYPE_PARSED
 from .._deserialize import deserialize_blob_properties, get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
-from .._encryption import adjust_blob_size_for_encryption, decrypt_blob, is_encryption_v2, parse_encryption_data
+from .._encryption import (
+    adjust_blob_size_for_encryption,
+    decrypt_blob,
+    is_encryption_v2,
+    parse_encryption_data,
+)
 
 if TYPE_CHECKING:
     from codecs import IncrementalDecoder
@@ -52,7 +57,13 @@ if TYPE_CHECKING:
 T = TypeVar("T", bytes, str)
 
 
-async def process_content(data: Any, start_offset: int, end_offset: int, encryption: Dict[str, Any]) -> bytes:
+async def process_content(
+    data: Any,
+    start_offset: int,
+    end_offset: int,
+    encryption: Dict[str, Any],
+    expected_encryption_data: Optional["_EncryptionData"],
+) -> bytes:
     if data is None:
         raise ValueError("Response cannot be None.")
     if hasattr(data.response, "is_stream_consumed") and data.response.is_stream_consumed:
@@ -69,6 +80,7 @@ async def process_content(data: Any, start_offset: int, end_offset: int, encrypt
                 start_offset,
                 end_offset,
                 data.response.headers,
+                expected_encryption_data,
             )
         except Exception as error:
             raise HttpResponseError(message="Decryption failed.", response=data.response, error=error) from error
@@ -149,7 +161,9 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                     process_storage_error(error)
 
                 try:
-                    chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
+                    chunk_data = await process_content(
+                        response, offset[0], offset[1], self.encryption_options, self.encryption_data
+                    )
                     retry_active = False
                 except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
                     retry_total -= 1
@@ -442,7 +456,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     self._current_content = b""
                 else:
                     self._current_content = await process_content(
-                        response, self._initial_offset[0], self._initial_offset[1], self._encryption_options
+                        response,
+                        self._initial_offset[0],
+                        self._initial_offset[1],
+                        self._encryption_options,
+                        self._encryption_data,
                     )
                 retry_active = False
             except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:

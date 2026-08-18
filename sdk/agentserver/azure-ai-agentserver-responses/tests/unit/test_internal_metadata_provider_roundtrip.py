@@ -14,6 +14,7 @@ from typing import Any, cast
 
 import pytest
 
+from azure.ai.agentserver.responses import ResponseEventStream
 from azure.ai.agentserver.responses.models._generated import ResponseObject
 from azure.ai.agentserver.responses.store._file import FileResponseStore
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
@@ -39,7 +40,7 @@ def _response(resp_id: str, output: list) -> ResponseObject:
             "status": "completed",
             "output": output,
             "model": "m",
-            "metadata": {"_internal_metadata": {"completed_phases": 3}},
+            "metadata": {"_internal_metadata": '{"completed_phases":3}'},
         },
     )
 
@@ -63,13 +64,16 @@ async def test_t28_t28a_response_output_item_internal_metadata_preserved(name, p
     assert loaded["output"][0]["internal_metadata"] == {"phase": "gather", "n": 7}
 
     # T28a — update + get
-    resp["metadata"]["_internal_metadata"]["extra"] = "x"
-    await provider.update_response(resp)
+    stream = ResponseEventStream(response_id="resp_a", response=resp)
+    stream.internal_metadata["extra"] = "x"
+    await provider.update_response(cast(ResponseObject, stream.response))
     loaded2 = await provider.get_response("resp_a")
     assert loaded2["output"][0]["internal_metadata"]["n"] == 7
 
     # T28d — response-level reserved key round-trips
-    assert loaded2["metadata"]["_internal_metadata"] == {"completed_phases": 3, "extra": "x"}
+    reloaded = ResponseEventStream(response_id="resp_a", response=loaded2)
+    assert dict(reloaded.internal_metadata) == {"completed_phases": 3, "extra": "x"}
+    assert loaded2["metadata"]["_internal_metadata"] == '{"completed_phases":3,"extra":"x"}'
 
 
 @pytest.mark.asyncio

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -59,6 +60,7 @@ from .operations import (
     SshPublicKeysOperations,
     TenantLevelSharedGalleryInvitesOperations,
     UsageOperations,
+    VirtualMachineDiagnosticRunCommandsOperations,
     VirtualMachineExtensionImagesOperations,
     VirtualMachineExtensionsOperations,
     VirtualMachineImagesEdgeZoneOperations,
@@ -67,6 +69,7 @@ from .operations import (
     VirtualMachineScaleSetExtensionsOperations,
     VirtualMachineScaleSetLifeCycleHookEventsOperations,
     VirtualMachineScaleSetRollingUpgradesOperations,
+    VirtualMachineScaleSetVMDiagnosticRunCommandsOperations,
     VirtualMachineScaleSetVMExtensionsOperations,
     VirtualMachineScaleSetVMRunCommandsOperations,
     VirtualMachineScaleSetVMsOperations,
@@ -85,7 +88,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Compute Client.
 
     :ivar operations: Operations operations
@@ -143,6 +146,14 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
      operations
     :vartype virtual_machine_scale_set_vm_run_commands:
      azure.mgmt.compute.operations.VirtualMachineScaleSetVMRunCommandsOperations
+    :ivar virtual_machine_diagnostic_run_commands: VirtualMachineDiagnosticRunCommandsOperations
+     operations
+    :vartype virtual_machine_diagnostic_run_commands:
+     azure.mgmt.compute.operations.VirtualMachineDiagnosticRunCommandsOperations
+    :ivar virtual_machine_scale_set_vm_diagnostic_run_commands:
+     VirtualMachineScaleSetVMDiagnosticRunCommandsOperations operations
+    :vartype virtual_machine_scale_set_vm_diagnostic_run_commands:
+     azure.mgmt.compute.operations.VirtualMachineScaleSetVMDiagnosticRunCommandsOperations
     :ivar disks: DisksOperations operations
     :vartype disks: azure.mgmt.compute.operations.DisksOperations
     :ivar disk_accesses: DiskAccessesOperations operations
@@ -333,6 +344,14 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         )
         self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
             self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_diagnostic_run_commands = VirtualMachineDiagnosticRunCommandsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_vm_diagnostic_run_commands = (
+            VirtualMachineScaleSetVMDiagnosticRunCommandsOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
         )
         self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.disk_accesses = DiskAccessesOperations(self._client, self._config, self._serialize, self._deserialize)
