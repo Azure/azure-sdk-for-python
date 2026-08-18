@@ -5058,7 +5058,7 @@ def build_metrics_configurations_list_by_cluster_request(  # pylint: disable=nam
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5168,7 +5168,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class AccessBridgesOperations:
+class AccessBridgesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6286,7 +6286,7 @@ class AccessBridgesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
+class BareMetalMachinesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9755,7 +9755,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class CloudServicesNetworksOperations:
+class CloudServicesNetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10789,7 +10789,7 @@ class CloudServicesNetworksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ClusterManagersOperations:
+class ClusterManagersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12048,7 +12048,7 @@ class ClusterManagersOperations:
         )
 
 
-class ClustersOperations:  # pylint: disable=too-many-public-methods
+class ClustersOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14609,7 +14609,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class KubernetesClustersOperations:
+class KubernetesClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15882,7 +15882,7 @@ class KubernetesClustersOperations:
         )
 
 
-class KubernetesVersionsOperations:
+class KubernetesVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17039,7 +17039,7 @@ class KubernetesVersionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class L2NetworksOperations:
+class L2NetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17986,7 +17986,7 @@ class L2NetworksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class L3NetworksOperations:
+class L3NetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18933,7 +18933,7 @@ class L3NetworksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RackSkusOperations:
+class RackSkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19110,7 +19110,7 @@ class RackSkusOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RacksOperations:
+class RacksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20131,7 +20131,7 @@ class RacksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class StorageAppliancesOperations:
+class StorageAppliancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21815,7 +21815,7 @@ class StorageAppliancesOperations:
         )
 
 
-class TrunkedNetworksOperations:
+class TrunkedNetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22765,7 +22765,7 @@ class TrunkedNetworksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class VirtualMachinesOperations:
+class VirtualMachinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24678,7 +24678,7 @@ class VirtualMachinesOperations:
         )
 
 
-class VolumesOperations:
+class VolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25625,7 +25625,7 @@ class VolumesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BareMetalMachineKeySetsOperations:
+class BareMetalMachineKeySetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26610,7 +26610,7 @@ class BareMetalMachineKeySetsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BmcKeySetsOperations:
+class BmcKeySetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -27585,7 +27585,7 @@ class BmcKeySetsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AgentPoolsOperations:
+class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28560,7 +28560,7 @@ class AgentPoolsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class KubernetesClusterFeaturesOperations:
+class KubernetesClusterFeaturesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29550,7 +29550,7 @@ class KubernetesClusterFeaturesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ConsolesOperations:
+class ConsolesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30525,7 +30525,7 @@ class ConsolesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MetricsConfigurationsOperations:
+class MetricsConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

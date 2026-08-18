@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -54,7 +55,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class NetworkCloudMgmtClient:  # pylint: disable=too-many-instance-attributes
+class NetworkCloudMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """The Network Cloud APIs provide management of the Azure Operator Nexus compute resources such as
     on-premises clusters, hardware resources, and workload infrastructure resources.
 

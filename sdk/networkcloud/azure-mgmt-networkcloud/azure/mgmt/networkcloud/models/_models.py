@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AadConfiguration(_Model):
+class AadConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AadConfiguration represents the Azure Active Directory Integration properties.
 
     :ivar admin_group_object_ids: The list of Azure Active Directory group object IDs that will
@@ -75,7 +75,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -119,7 +119,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AccessBridge(TrackedResource):
+class AccessBridge(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AccessBridge represents a managed access bridge resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -237,7 +237,7 @@ class AccessBridgeEndpoint(_Model):
     """The name that identifies the type of endpoint (for example VIP or host)."""
 
 
-class AccessBridgePatchParameters(_Model):
+class AccessBridgePatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AccessBridgePatchParameters represents the payload for a PATCH request to an access bridge.
 
     :ivar properties: The list of the resource properties.
@@ -272,7 +272,7 @@ class AccessBridgePatchParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessBridgePatchProperties(_Model):
+class AccessBridgePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AccessBridgePatchProperties identifies the mutable properties for patch operations.
 
     :ivar security_rules: The list of security rules enforced by the access bridge.
@@ -302,7 +302,7 @@ class AccessBridgePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessBridgeProperties(_Model):
+class AccessBridgeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AccessBridgeProperties captures the input and status for an access bridge.
 
     :ivar ipv4_connected_prefix: The IPv4 subnet from which the access bridge allocates an address.
@@ -383,7 +383,7 @@ class AccessBridgeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessBridgeSecurityRule(_Model):
+class AccessBridgeSecurityRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AccessBridgeSecurityRule captures an individual access rule enforced by the bridge.
 
     :ivar description: The user provided value describing this rule.
@@ -494,7 +494,7 @@ class ActionState(_Model):
     """The ordered list of the individual steps which make up the action."""
 
 
-class AdministrativeCredentials(_Model):
+class AdministrativeCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AdministrativeCredentials represents the admin credentials for the device requiring
     password-based authentication.
 
@@ -530,7 +530,7 @@ class AdministrativeCredentials(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdministrativeCredentialsPatch(_Model):
+class AdministrativeCredentialsPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AdministrativeCredentialsPatch represents the admin credentials for the device requiring
     password-based authentication.
 
@@ -564,7 +564,7 @@ class AdministrativeCredentialsPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdministratorConfiguration(_Model):
+class AdministratorConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AdministratorConfiguration represents the administrative credentials that will be applied to
     the control plane and agent pool nodes in Kubernetes clusters.
 
@@ -605,7 +605,7 @@ class AdministratorConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdministratorConfigurationPatch(_Model):
+class AdministratorConfigurationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AdministratorConfigurationPatch represents the patching capabilities for the administrator
     configuration.
 
@@ -637,7 +637,7 @@ class AdministratorConfigurationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptions(_Model):
+class AgentOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentOptions are configurations that will be applied to each agent in an agent pool.
 
     :ivar hugepages_count: The number of hugepages to allocate. Required.
@@ -672,7 +672,7 @@ class AgentOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPool(TrackedResource):
+class AgentPool(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentPool represents the agent pool of Kubernetes cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -697,7 +697,7 @@ class AgentPool(TrackedResource):
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
      (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.").
     :vartype etag: str
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
     """
 
@@ -711,6 +711,7 @@ class AgentPool(TrackedResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
 
     __flattened_items = [
         "administrator_configuration",
@@ -768,7 +769,7 @@ class AgentPool(TrackedResource):
             super().__setattr__(key, value)
 
 
-class AgentPoolPatchParameters(_Model):
+class AgentPoolPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentPoolPatchParameters represents the body of the request to patch the Kubernetes cluster
     agent pool.
 
@@ -824,7 +825,7 @@ class AgentPoolPatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class AgentPoolPatchProperties(_Model):
+class AgentPoolPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentPoolPatchProperties represents the properties of an agent pool that can be modified.
 
     :ivar administrator_configuration: The configuration of administrator credentials for the
@@ -868,7 +869,7 @@ class AgentPoolPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolProperties(_Model):
+class AgentPoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentPoolProperties represents the properties of the Kubernetes cluster agent pool.
 
     :ivar administrator_configuration: The administrator credentials to be used for the nodes in
@@ -988,7 +989,7 @@ class AgentPoolProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolUpgradeSettings(_Model):
+class AgentPoolUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentPoolUpgradeSettings specifies the upgrade settings for an agent pool.
 
     :ivar drain_timeout: The maximum time in seconds that is allowed for a node drain to complete
@@ -1050,7 +1051,7 @@ class AgentPoolUpgradeSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyticsOutputSettings(_Model):
+class AnalyticsOutputSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AnalyticsOutputSettings represents the settings for the log analytics workspace used for output
     of logs from this cluster.
 
@@ -1091,7 +1092,7 @@ class AnalyticsOutputSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AttachedNetworkConfiguration(_Model):
+class AttachedNetworkConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AttachedNetworkConfiguration represents the set of workload networks to attach to a resource.
 
     :ivar l2_networks: The list of Layer 2 Networks and related configuration for attachment.
@@ -1154,7 +1155,7 @@ class AvailableUpgrade(_Model):
     """The version available for upgrading."""
 
 
-class BareMetalMachine(TrackedResource):
+class BareMetalMachine(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachine represents the physical machine in the rack.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1276,7 +1277,7 @@ class BareMetalMachine(TrackedResource):
             super().__setattr__(key, value)
 
 
-class BareMetalMachineCommandSpecification(_Model):
+class BareMetalMachineCommandSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineCommandSpecification represents the command and optional arguments to exercise
     against the bare metal machine.
 
@@ -1311,7 +1312,7 @@ class BareMetalMachineCommandSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineConfigurationData(_Model):
+class BareMetalMachineConfigurationData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineConfigurationData represents configuration for the bare metal machine.
 
     :ivar bmc_connection_string: The connection string for the baseboard management controller
@@ -1395,7 +1396,7 @@ class BareMetalMachineConfigurationData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineConfigurationDataPatch(_Model):
+class BareMetalMachineConfigurationDataPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineConfigurationDataPatch represents configuration for the bare metal machine for
     patch operations.
 
@@ -1483,7 +1484,7 @@ class BareMetalMachineConfigurationDataPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineCordonParameters(_Model):
+class BareMetalMachineCordonParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineCordonParameters represents the body of the request to evacuate workloads from
     node on a bare metal machine.
 
@@ -1516,7 +1517,7 @@ class BareMetalMachineCordonParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineKeySet(TrackedResource):
+class BareMetalMachineKeySet(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineKeySet represents the bare metal machine key set.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1613,7 +1614,7 @@ class BareMetalMachineKeySet(TrackedResource):
             super().__setattr__(key, value)
 
 
-class BareMetalMachineKeySetPatchParameters(_Model):
+class BareMetalMachineKeySetPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineKeySetPatchParameters represents the body of the request to patch the bare
     metal machine key set.
 
@@ -1669,7 +1670,7 @@ class BareMetalMachineKeySetPatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class BareMetalMachineKeySetPatchProperties(_Model):
+class BareMetalMachineKeySetPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineKeySetPatchProperties represents the properties of bare metal machine key set
     that can be patched.
 
@@ -1718,7 +1719,7 @@ class BareMetalMachineKeySetPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineKeySetProperties(_Model):
+class BareMetalMachineKeySetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineKeySetProperties represents the properties of bare metal machine key set.
 
     :ivar azure_group_id: The object ID of Azure Active Directory group that all users in the list
@@ -1830,7 +1831,9 @@ class BareMetalMachineKeySetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineMonitoringConfigurationStatus(_Model):  # pylint: disable=name-too-long
+class BareMetalMachineMonitoringConfigurationStatus(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """BareMetalMachineMonitoringConfigurationStatus represents the monitoring configuration status of
     the bare metal machine.
 
@@ -1874,7 +1877,7 @@ class BareMetalMachineMonitoringConfigurationStatus(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachinePatchParameters(_Model):
+class BareMetalMachinePatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachinePatchParameters represents the body of the request to patch bare metal machine
     properties.
 
@@ -1930,7 +1933,7 @@ class BareMetalMachinePatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class BareMetalMachinePatchProperties(_Model):
+class BareMetalMachinePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachinePatchProperties represents the properties of the bare metal machine that can be
     patched.
 
@@ -1963,7 +1966,7 @@ class BareMetalMachinePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachinePowerOffParameters(_Model):
+class BareMetalMachinePowerOffParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachinePowerOffParameters represents the body of the request to power off bare metal
     machine.
 
@@ -1996,7 +1999,7 @@ class BareMetalMachinePowerOffParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineProperties(_Model):
+class BareMetalMachineProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineProperties represents the properties of a bare metal machine.
 
     :ivar bmc_connection_string: The connection string for the baseboard management controller
@@ -2252,7 +2255,7 @@ class BareMetalMachineProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineReimageParameters(_Model):
+class BareMetalMachineReimageParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineReimageParameters represents the body of the request to reimage a bare metal
     machine.
 
@@ -2288,7 +2291,7 @@ class BareMetalMachineReimageParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineReplaceParameters(_Model):
+class BareMetalMachineReplaceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineReplaceParameters represents the body of the request to physically swap a bare
     metal machine for another.
 
@@ -2374,7 +2377,7 @@ class BareMetalMachineReplaceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineRunCommandParameters(_Model):
+class BareMetalMachineRunCommandParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BareMetalMachineRunCommandParameters represents the body of the request to execute a script on
     the bare metal machine.
 
@@ -2420,7 +2423,9 @@ class BareMetalMachineRunCommandParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineRunDataExtractsParameters(_Model):  # pylint: disable=name-too-long
+class BareMetalMachineRunDataExtractsParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """BareMetalMachineRunDataExtractsParameters represents the body of request containing list of
     curated data extraction commands to run on the bare metal machine.
 
@@ -2464,7 +2469,9 @@ class BareMetalMachineRunDataExtractsParameters(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class BareMetalMachineRunReadCommandsParameters(_Model):  # pylint: disable=name-too-long
+class BareMetalMachineRunReadCommandsParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """BareMetalMachineRunReadCommandsParameters represents the body of request containing list of
     read-only commands to run on the bare metal machine.
 
@@ -2507,7 +2514,7 @@ class BareMetalMachineRunReadCommandsParameters(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class BgpAdvertisement(_Model):
+class BgpAdvertisement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BgpAdvertisement represents the association of IP address pools to the communities and peers.
 
     :ivar advertise_to_fabric: The indicator of if this advertisement is also made to the network
@@ -2561,7 +2568,7 @@ class BgpAdvertisement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BgpServiceLoadBalancerConfiguration(_Model):
+class BgpServiceLoadBalancerConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BgpServiceLoadBalancerConfiguration represents the configuration of a BGP service load
     balancer.
 
@@ -2620,7 +2627,7 @@ class BgpServiceLoadBalancerConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BmcKeySet(TrackedResource):
+class BmcKeySet(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BmcKeySet represents the baseboard management controller key set.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2712,7 +2719,7 @@ class BmcKeySet(TrackedResource):
             super().__setattr__(key, value)
 
 
-class BmcKeySetPatchParameters(_Model):
+class BmcKeySetPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BmcKeySetPatchParameters represents the body of the request to patch the baseboard management
     controller key set.
 
@@ -2768,7 +2775,7 @@ class BmcKeySetPatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class BmcKeySetPatchProperties(_Model):
+class BmcKeySetPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BmcKeySetPatchProperties represents the properties of baseboard management controller key set
     that are patchable.
 
@@ -2808,7 +2815,7 @@ class BmcKeySetPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BmcKeySetProperties(_Model):
+class BmcKeySetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BmcKeySetProperties represents the properties of baseboard management controller key set.
 
     :ivar azure_group_id: The object ID of Azure Active Directory group that all users in the list
@@ -2911,7 +2918,7 @@ class CertificateInfo(_Model):
     """The textual value of the X.509 Certificate."""
 
 
-class CloudServicesNetwork(TrackedResource):
+class CloudServicesNetwork(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Upon creation, the additional services that are provided by the platform will be allocated and
     represented in the status of this resource. All resources associated with this cloud services
     network will be part of the same layer 2 (L2) isolation domain. At least one service network
@@ -3012,7 +3019,7 @@ class CloudServicesNetwork(TrackedResource):
             super().__setattr__(key, value)
 
 
-class CloudServicesNetworkPatchParameters(_Model):
+class CloudServicesNetworkPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CloudServicesNetworkPatchParameters represents the body of the request to patch the cloud
     services network.
 
@@ -3068,7 +3075,7 @@ class CloudServicesNetworkPatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CloudServicesNetworkPatchProperties(_Model):
+class CloudServicesNetworkPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CloudServicesNetworkPatchProperties represents the properties of the cloud services network
     that can be updated using a patch request.
 
@@ -3121,7 +3128,7 @@ class CloudServicesNetworkPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudServicesNetworkProperties(_Model):
+class CloudServicesNetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CloudServicesNetworkProperties represents properties of the cloud services network.
 
     :ivar additional_egress_endpoints: The list of egress endpoints. This allows for connection
@@ -3243,7 +3250,7 @@ class CloudServicesNetworkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudServicesNetworkStorageOptions(_Model):
+class CloudServicesNetworkStorageOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CloudServicesNetworkStorageOptions represents the storage options for the cloud services
     network.
 
@@ -3290,7 +3297,7 @@ class CloudServicesNetworkStorageOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudServicesNetworkStorageOptionsPatch(_Model):
+class CloudServicesNetworkStorageOptionsPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CloudServicesNetworkStorageOptionsPatch represents the patchable storage options for the cloud
     services network.
 
@@ -3368,7 +3375,7 @@ class CloudServicesNetworkStorageStatus(_Model):
     """The resource ID of the volume created to host the shared storage."""
 
 
-class Cluster(TrackedResource):
+class Cluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cluster represents the on-premises Network Cloud cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3558,7 +3565,7 @@ class ClusterAvailableVersion(_Model):
     """The version of the cluster to be deployed."""
 
 
-class ClusterCapacity(_Model):
+class ClusterCapacity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterCapacity represents various details regarding compute capacity.
 
     :ivar available_appliance_storage_gb: The remaining appliance-based storage in GB available for
@@ -3649,7 +3656,7 @@ class ClusterCapacity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterContinueUpdateVersionParameters(_Model):
+class ClusterContinueUpdateVersionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterContinueUpdateVersionParameters represents the body of the request to continue the
     update of a cluster version.
 
@@ -3697,7 +3704,7 @@ class ClusterContinueUpdateVersionParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterDeployParameters(_Model):
+class ClusterDeployParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterDeployParameters represents the body of the request to deploy cluster.
 
     :ivar skip_validations_for_machines: The names of bare metal machines in the cluster that
@@ -3729,7 +3736,7 @@ class ClusterDeployParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterInspectParameters(_Model):
+class ClusterInspectParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterInspectParameters represents the body of the request to inspect the cluster.
 
     :ivar additional_actions: Additional actions supplement the default non-disruptive cluster
@@ -3772,7 +3779,7 @@ class ClusterInspectParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterManager(TrackedResource):
+class ClusterManager(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterManager represents a control-plane to manage one or more on-premises clusters.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3873,7 +3880,7 @@ class ClusterManager(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ClusterManagerPatchParameters(_Model):
+class ClusterManagerPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterManagerPatchParameters represents the body of the request to patch the cluster
     properties.
 
@@ -3909,7 +3916,7 @@ class ClusterManagerPatchParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterManagerProperties(_Model):
+class ClusterManagerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterManagerProperties represents the properties of a cluster manager.
 
     :ivar analytics_workspace_id: The resource ID of the Log Analytics workspace that is used for
@@ -4013,7 +4020,7 @@ class ClusterManagerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterManagerRelayConfiguration(_Model):
+class ClusterManagerRelayConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterManagerRelayConfiguration represents the relay configuration for the cluster manager.
 
     :ivar relay_namespace_id: The resource ID of the Azure relay namespace managed by the cluster
@@ -4044,7 +4051,9 @@ class ClusterManagerRelayConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterManagerUpdateRelayPrivateEndpointConnectionParameters(_Model):  # pylint: disable=name-too-long
+class ClusterManagerUpdateRelayPrivateEndpointConnectionParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ClusterManagerUpdateRelayPrivateEndpointConnectionParameters represents the body of the request
     to approve or reject the relay private endpoint connection for the private relay managed by a
     cluster manager.
@@ -4093,7 +4102,7 @@ class ClusterManagerUpdateRelayPrivateEndpointConnectionParameters(_Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class ClusterMetricsConfiguration(TrackedResource):
+class ClusterMetricsConfiguration(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterMetricsConfiguration represents the metrics configuration of an on-premises Network
     Cloud cluster.
 
@@ -4185,7 +4194,9 @@ class ClusterMetricsConfiguration(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ClusterMetricsConfigurationPatchParameters(_Model):  # pylint: disable=name-too-long
+class ClusterMetricsConfigurationPatchParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ClusterMetricsConfigurationPatchParameters represents the body of the request to patch the
     metrics configuration of cluster.
 
@@ -4241,7 +4252,9 @@ class ClusterMetricsConfigurationPatchParameters(_Model):  # pylint: disable=nam
             super().__setattr__(key, value)
 
 
-class ClusterMetricsConfigurationPatchProperties(_Model):  # pylint: disable=name-too-long
+class ClusterMetricsConfigurationPatchProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ClusterMetricsConfigurationPatchProperties represents the properties of metrics configuration
     for the cluster for patching.
 
@@ -4281,7 +4294,7 @@ class ClusterMetricsConfigurationPatchProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ClusterMetricsConfigurationProperties(_Model):
+class ClusterMetricsConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterMetricsConfigurationProperties represents the properties of metrics configuration for
     the cluster.
 
@@ -4349,7 +4362,7 @@ class ClusterMetricsConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterPatchParameters(_Model):
+class ClusterPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterPatchParameters represents the body of the request to patch the cluster properties.
 
     :ivar identity: The identity for the resource.
@@ -4424,7 +4437,7 @@ class ClusterPatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ClusterPatchProperties(_Model):
+class ClusterPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterPatchProperties represents the properties of the cluster for patching.
 
     :ivar aggregator_or_single_rack_definition: The rack definition that is intended to reflect
@@ -4550,7 +4563,7 @@ class ClusterPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterProperties(_Model):
+class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterProperties represents the properties of a cluster.
 
     :ivar aggregator_or_single_rack_definition: The rack definition that is intended to reflect
@@ -4822,7 +4835,7 @@ class ClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterRotateCredentialParameters(_Model):
+class ClusterRotateCredentialParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterRotateCredentialParameters represents the body of the request to rotate cluster
     credentials.
 
@@ -4851,7 +4864,7 @@ class ClusterRotateCredentialParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterScanRuntimeParameters(_Model):
+class ClusterScanRuntimeParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterScanRuntimeParameters defines the parameters for the cluster scan runtime operation.
 
     :ivar scan_activity: The choice of if the scan operation should run the scan. Known values are:
@@ -4884,7 +4897,7 @@ class ClusterScanRuntimeParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterSecretArchive(_Model):
+class ClusterSecretArchive(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterSecretArchive configures the key vault to archive the secrets of the cluster for later
     retrieval.
 
@@ -4923,7 +4936,7 @@ class ClusterSecretArchive(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterSecretArchivePatch(_Model):
+class ClusterSecretArchivePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterSecretArchivePatch configures the key vault to archive the secrets of the cluster for
     later retrieval for patch operations.
 
@@ -4963,7 +4976,7 @@ class ClusterSecretArchivePatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterUpdateStrategy(_Model):
+class ClusterUpdateStrategy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterUpdateStrategy represents the strategy for updating the cluster.
 
     :ivar max_unavailable: The maximum number of worker nodes that can be offline within the
@@ -5028,7 +5041,7 @@ class ClusterUpdateStrategy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterUpdateStrategyPatch(_Model):
+class ClusterUpdateStrategyPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterUpdateStrategyPatch represents the strategy for updating the cluster for patch
     operations.
 
@@ -5096,7 +5109,7 @@ class ClusterUpdateStrategyPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterUpdateVersionParameters(_Model):
+class ClusterUpdateVersionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterUpdateVersionParameters represents the body of the request to update cluster version.
 
     :ivar safeguard_mode: Specifies how safeguards are applied during the update version operation.
@@ -5138,7 +5151,7 @@ class ClusterUpdateVersionParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommandOutputOverride(_Model):
+class CommandOutputOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CommandOutputOverride represents an overridden value for the command output settings.
 
     :ivar associated_identity: The selection of the managed identity to use with this storage
@@ -5191,7 +5204,7 @@ class CommandOutputOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommandOutputSettings(_Model):
+class CommandOutputSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CommandOutputSettings represents the settings for commands run within the cluster such as bare
     metal machine run read-only commands.
 
@@ -5243,7 +5256,7 @@ class CommandOutputSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Console(TrackedResource):
+class Console(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Console represents the console of an on-premises Network Cloud virtual machine.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5334,7 +5347,7 @@ class Console(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ConsolePatchParameters(_Model):
+class ConsolePatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConsolePatchParameters represents the body of the request to patch the virtual machine console.
 
     :ivar properties: The list of the resource properties.
@@ -5389,7 +5402,7 @@ class ConsolePatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ConsolePatchProperties(_Model):
+class ConsolePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConsolePatchProperties represents the properties of the virtual machine console that can be
     patched.
 
@@ -5438,7 +5451,7 @@ class ConsolePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConsoleProperties(_Model):
+class ConsoleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConsoleProperties represents the properties of the virtual machine console.
 
     :ivar enabled: The indicator of whether the console access is enabled. Required. Known values
@@ -5516,7 +5529,7 @@ class ConsoleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneNodeConfiguration(_Model):
+class ControlPlaneNodeConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ControlPlaneNodeConfiguration represents the selection of virtual machines and size of the
     control plane for a Kubernetes cluster.
 
@@ -5567,7 +5580,7 @@ class ControlPlaneNodeConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneNodePatchConfiguration(_Model):
+class ControlPlaneNodePatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ControlPlaneNodePatchConfiguration represents the properties of the control plane that can be
     patched for this Kubernetes cluster.
 
@@ -5605,7 +5618,7 @@ class ControlPlaneNodePatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EgressEndpoint(_Model):
+class EgressEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EgressEndpoint represents the connection from a cloud services network to the specified
     endpoint for a common purpose.
 
@@ -5645,7 +5658,7 @@ class EgressEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDependency(_Model):
+class EndpointDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EndpointDependency represents the definition of an endpoint, including the domain and details.
 
     :ivar domain_name: The domain name of the dependency. Required.
@@ -5722,7 +5735,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -5750,7 +5763,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The complex type of the extended location.
 
     :ivar name: The name of the extended location. Required.
@@ -5814,7 +5827,7 @@ class FeatureStatus(_Model):
     """The version of the feature."""
 
 
-class FilterDevices(_Model):
+class FilterDevices(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FilterDevices defines the filtered target of the inspection.
 
     :ivar bare_metal_machine_names: The list of bare metal machine names to include in the
@@ -5923,7 +5936,7 @@ class HardwareValidationStatus(_Model):
     """The outcome of the hardware validation. Known values are: \"Pass\" and \"Fail\"."""
 
 
-class IdentitySelector(_Model):
+class IdentitySelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IdentitySelector represents the selection of a managed identity for use.
 
     :ivar identity_type: The type of managed identity that is being selected. Known values are:
@@ -5965,7 +5978,7 @@ class IdentitySelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageRepositoryCredentials(_Model):
+class ImageRepositoryCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ImageRepositoryCredentials represents the credentials used to login to the image repository.
 
     :ivar password: The password or token used to access an image in the target repository.
@@ -6005,7 +6018,7 @@ class ImageRepositoryCredentials(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageRepositoryCredentialsPatch(_Model):
+class ImageRepositoryCredentialsPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ImageRepositoryCredentialsPatch represents the credentials used to login to the image
     repository for patch operations.
 
@@ -6047,7 +6060,7 @@ class ImageRepositoryCredentialsPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InitialAgentPoolConfiguration(_Model):
+class InitialAgentPoolConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InitialAgentPoolConfiguration specifies the configuration of a pool of virtual machines that
     are initially defined with a Kubernetes cluster.
 
@@ -6150,7 +6163,7 @@ class InitialAgentPoolConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpAddressPool(_Model):
+class IpAddressPool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IpAddressPool represents a pool of IP addresses that can be allocated to a service.
 
     :ivar addresses: The list of IP address ranges. Each range can be a either a subnet in CIDR
@@ -6210,7 +6223,7 @@ class IpAddressPool(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeySetUser(_Model):
+class KeySetUser(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KeySetUser represents the properties of the user in the key set.
 
     :ivar azure_user_name: The user name that will be used for access. Required.
@@ -6282,7 +6295,7 @@ class KeySetUserStatus(_Model):
     """The additional information describing the current status of this user, if any available."""
 
 
-class KubernetesCluster(TrackedResource):
+class KubernetesCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesCluster represents the Kubernetes cluster hosted on Network Cloud.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6384,7 +6397,7 @@ class KubernetesCluster(TrackedResource):
             super().__setattr__(key, value)
 
 
-class KubernetesClusterFeature(TrackedResource):
+class KubernetesClusterFeature(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesClusterFeature represents the feature of a Kubernetes cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6469,7 +6482,7 @@ class KubernetesClusterFeature(TrackedResource):
             super().__setattr__(key, value)
 
 
-class KubernetesClusterFeaturePatchParameters(_Model):
+class KubernetesClusterFeaturePatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesClusterFeaturePatchParameters represents the body of the request to patch the
     Kubernetes cluster feature.
 
@@ -6525,7 +6538,7 @@ class KubernetesClusterFeaturePatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class KubernetesClusterFeaturePatchProperties(_Model):
+class KubernetesClusterFeaturePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesClusterFeaturePatchProperties represents the Kubernetes cluster feature properties
     for patching.
 
@@ -6556,7 +6569,7 @@ class KubernetesClusterFeaturePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesClusterFeatureProperties(_Model):
+class KubernetesClusterFeatureProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesClusterFeatureProperties represents the properties of a Kubernetes cluster feature.
 
     :ivar options: The configured options for the feature.
@@ -6729,7 +6742,7 @@ class KubernetesClusterNode(_Model):
     """The VM SKU name that was used to create this cluster node."""
 
 
-class KubernetesClusterPatchParameters(_Model):
+class KubernetesClusterPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesClusterPatchParameters represents the body of the request to patch the Hybrid AKS
     cluster.
 
@@ -6785,7 +6798,7 @@ class KubernetesClusterPatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class KubernetesClusterPatchProperties(_Model):
+class KubernetesClusterPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesClusterPatchProperties represents the properties of the Kubernetes cluster that can
     be patched.
 
@@ -6834,7 +6847,7 @@ class KubernetesClusterPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesClusterProperties(_Model):
+class KubernetesClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesClusterProperties represents the properties of Kubernetes cluster resource.
 
     :ivar aad_configuration: The Azure Active Directory Integration properties.
@@ -6983,7 +6996,7 @@ class KubernetesClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesClusterRestartNodeParameters(_Model):
+class KubernetesClusterRestartNodeParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesClusterRestartNodeParameters represents the body of the request to restart the node
     of a Kubernetes cluster.
 
@@ -7012,7 +7025,7 @@ class KubernetesClusterRestartNodeParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesLabel(_Model):
+class KubernetesLabel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesLabel represents a single entry for a Kubernetes label or taint such as those used on
     a node or pod.
 
@@ -7046,7 +7059,7 @@ class KubernetesLabel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesVersion(TrackedResource):
+class KubernetesVersion(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesVersion represents the available Kubernetes versions for a cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7130,7 +7143,7 @@ class KubernetesVersion(TrackedResource):
             super().__setattr__(key, value)
 
 
-class KubernetesVersionPatchParameters(_Model):
+class KubernetesVersionPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KubernetesVersionPatchParameters represents the body of the request to patch Kubernetes version
     tags.
 
@@ -7196,7 +7209,7 @@ class KubernetesVersionValue(_Model):
     """The Kubernetes version identifier."""
 
 
-class L2Network(TrackedResource):
+class L2Network(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L2Network represents a network that utilizes a single isolation domain set up for layer-2
     resources.
 
@@ -7290,7 +7303,7 @@ class L2Network(TrackedResource):
             super().__setattr__(key, value)
 
 
-class L2NetworkAttachmentConfiguration(_Model):
+class L2NetworkAttachmentConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L2NetworkAttachmentConfiguration represents the configuration of the attachment of a Layer 2
     network.
 
@@ -7329,7 +7342,7 @@ class L2NetworkAttachmentConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L2NetworkPatchParameters(_Model):
+class L2NetworkPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L2NetworkPatchParameters represents the body of the request to patch the L2 network.
 
     :ivar tags: Resource tags.
@@ -7357,7 +7370,7 @@ class L2NetworkPatchParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L2NetworkProperties(_Model):
+class L2NetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L2NetworkProperties represents properties of the L2 network.
 
     :ivar hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it will
@@ -7454,7 +7467,7 @@ class L2NetworkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L2ServiceLoadBalancerConfiguration(_Model):
+class L2ServiceLoadBalancerConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L2ServiceLoadBalancerConfiguration represents the configuration of a layer 2 service load
     balancer.
 
@@ -7486,7 +7499,7 @@ class L2ServiceLoadBalancerConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L3Network(TrackedResource):
+class L3Network(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L3Network represents a network that utilizes a single isolation domain set up for layer-3
     resources.
 
@@ -7585,7 +7598,7 @@ class L3Network(TrackedResource):
             super().__setattr__(key, value)
 
 
-class L3NetworkAttachmentConfiguration(_Model):
+class L3NetworkAttachmentConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L3NetworkAttachmentConfiguration represents the configuration of the attachment of a Layer 3
     network.
 
@@ -7633,7 +7646,7 @@ class L3NetworkAttachmentConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L3NetworkPatchParameters(_Model):
+class L3NetworkPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L3NetworkPatchParameters represents the body of the request to patch the cloud services
     network.
 
@@ -7662,7 +7675,7 @@ class L3NetworkPatchParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L3NetworkProperties(_Model):
+class L3NetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L3NetworkProperties represents properties of the L3 network.
 
     :ivar hybrid_aks_ipam_enabled: Field Deprecated. The field was previously optional, now it will
@@ -7900,7 +7913,7 @@ class MachineSkuProperties(_Model):
     """The make of the machine."""
 
 
-class MachineSkuSlot(_Model):
+class MachineSkuSlot(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MachineSkuSlot represents a single SKU and rack slot associated with the machine.
 
     :ivar properties: The list of the resource properties.
@@ -7966,7 +7979,7 @@ class MachineSkuSlot(_Model):
             super().__setattr__(key, value)
 
 
-class ManagedResourceGroupConfiguration(_Model):
+class ManagedResourceGroupConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedResourceGroupConfiguration represents the configuration of the resource group managed by
     Azure.
 
@@ -8004,7 +8017,7 @@ class ManagedResourceGroupConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -8056,7 +8069,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkAttachment(_Model):
+class NetworkAttachment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkAttachment represents the single network attachment.
 
     :ivar attached_network_id: The resource ID of the associated network attached to the virtual
@@ -8153,7 +8166,7 @@ class NetworkAttachment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkConfiguration(_Model):
+class NetworkConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkConfiguration specifies the Kubernetes cluster network related configuration.
 
     :ivar attached_network_configuration: The configuration of networks being attached to the
@@ -8305,7 +8318,7 @@ class Nic(_Model):
     """The name of the NIC/interface."""
 
 
-class NodePoolAdministratorConfigurationPatch(_Model):
+class NodePoolAdministratorConfigurationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NodePoolAdministratorConfigurationPatch represents the patching capabilities for the
     administrator configuration.
 
@@ -8337,7 +8350,7 @@ class NodePoolAdministratorConfigurationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -8425,7 +8438,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OperationStatusResult(_Model):
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar end_time: The end time of the operation.
@@ -8543,7 +8556,7 @@ class OperationStatusResultProperties(_Model):
      can be retrieved."""
 
 
-class OsDisk(_Model):
+class OsDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OsDisk represents configuration of the boot disk.
 
     :ivar create_option: The strategy for creating the OS disk. Known values are: "Ephemeral" and
@@ -8605,7 +8618,7 @@ class ProxyResource(Resource):
     """
 
 
-class Rack(TrackedResource):
+class Rack(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rack represents the hardware of the rack and is dependent upon the cluster for lifecycle.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8696,7 +8709,7 @@ class Rack(TrackedResource):
             super().__setattr__(key, value)
 
 
-class RackDefinition(_Model):
+class RackDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RackDefinition represents details regarding the rack.
 
     :ivar availability_zone: The zone name used for this rack when created. Availability zones are
@@ -8774,7 +8787,7 @@ class RackDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RackDefinitionPatch(_Model):
+class RackDefinitionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RackDefinitionPatch represents details regarding the rack for patch operations.
 
     :ivar availability_zone: The zone name used for this rack when created. Availability zones are
@@ -8854,7 +8867,7 @@ class RackDefinitionPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RackPatchParameters(_Model):
+class RackPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RackPatchParameters represents the body of the request to patch the rack properties.
 
     :ivar properties: The list of the resource properties.
@@ -8909,7 +8922,7 @@ class RackPatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class RackProperties(_Model):
+class RackProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RackProperties represents the properties of the rack.
 
     :ivar availability_zone: The value that will be used for machines in this rack to represent the
@@ -8990,7 +9003,7 @@ class RackProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RackSku(ProxyResource):
+class RackSku(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RackSku represents the SKU information of the rack.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9122,7 +9135,7 @@ class RackSkuProperties(_Model):
     """The list of supported SKUs if the rack is an aggregator."""
 
 
-class RacksPatchProperties(_Model):
+class RacksPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RacksPatchProperties represents the properties of the rack during patching.
 
     :ivar rack_location: The free-form description of the rack location. (e.g. "DTN Datacenter,
@@ -9161,7 +9174,7 @@ class RacksPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuntimeProtectionConfiguration(_Model):
+class RuntimeProtectionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RuntimeProtectionConfiguration represents the runtime protection configuration for the cluster.
 
     :ivar definition_update_mode: The definition update mode for runtime protection. Known values
@@ -9204,7 +9217,7 @@ class RuntimeProtectionConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuntimeProtectionConfigurationPatch(_Model):
+class RuntimeProtectionConfigurationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RuntimeProtectionConfigurationPatch represents the runtime protection configuration for the
     cluster for patch operations.
 
@@ -9348,7 +9361,7 @@ class SecretArchiveReference(_Model):
     """The version of the secret in the key vault."""
 
 
-class SecretArchiveSettings(_Model):
+class SecretArchiveSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecretArchiveSettings represents the settings for the secret archive used to hold credentials
     for the cluster.
 
@@ -9419,7 +9432,7 @@ class SecretRotationStatus(_Model):
     """The type name used to identify the purpose of the secret."""
 
 
-class ServiceLoadBalancerBgpPeer(_Model):
+class ServiceLoadBalancerBgpPeer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ServiceLoadBalancerBgpPeer represents the configuration of the BGP service load balancer for
     the Kubernetes cluster.
 
@@ -9510,7 +9523,7 @@ class ServiceLoadBalancerBgpPeer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServicePrincipalInformation(_Model):
+class ServicePrincipalInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ServicePrincipalInformation represents the details of the service principal to be used by the
     cluster during Arc Appliance installation.
 
@@ -9558,7 +9571,7 @@ class ServicePrincipalInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServicePrincipalInformationPatch(_Model):
+class ServicePrincipalInformationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ServicePrincipalInformationPatch represents the details of the service principal to be used by
     the cluster during Arc Appliance installation for patch operations.
 
@@ -9608,7 +9621,7 @@ class ServicePrincipalInformationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshPublicKey(_Model):
+class SshPublicKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SshPublicKey represents the public key used to authenticate with a resource through SSH.
 
     :ivar key_data: The SSH public key data. Required.
@@ -9636,7 +9649,7 @@ class SshPublicKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshPublicKeyPatch(_Model):
+class SshPublicKeyPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SshPublicKeyPatch represents the public key used to authenticate with a resource through SSH.
 
     :ivar key_data: The SSH public key data.
@@ -9696,7 +9709,7 @@ class StepState(_Model):
     """The name for the step."""
 
 
-class StorageAppliance(TrackedResource):
+class StorageAppliance(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageAppliance represents on-premises Network Cloud storage appliance.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9802,7 +9815,7 @@ class StorageAppliance(TrackedResource):
             super().__setattr__(key, value)
 
 
-class StorageApplianceCommandSpecification(_Model):
+class StorageApplianceCommandSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageApplianceCommandSpecification represents the command and optional arguments to run.
 
     :ivar arguments: The list of strings that will be passed to the script in order as separate
@@ -9836,7 +9849,7 @@ class StorageApplianceCommandSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageApplianceConfigurationData(_Model):
+class StorageApplianceConfigurationData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageApplianceConfigurationData represents configuration for the storage application.
 
     :ivar admin_credentials: The credentials of the administrative interface on this storage
@@ -9891,7 +9904,7 @@ class StorageApplianceConfigurationData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageApplianceConfigurationDataPatch(_Model):
+class StorageApplianceConfigurationDataPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageApplianceConfigurationDataPatch represents configuration for the storage application for
     patch operations.
 
@@ -9948,7 +9961,9 @@ class StorageApplianceConfigurationDataPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageApplianceEnableRemoteVendorManagementParameters(_Model):  # pylint: disable=name-too-long
+class StorageApplianceEnableRemoteVendorManagementParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StorageApplianceEnableRemoteVendorManagementParameters represents the body of the request to
     enable remote vendor management of a storage appliance.
 
@@ -9984,7 +9999,7 @@ class StorageApplianceEnableRemoteVendorManagementParameters(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class StorageApplianceExpansionShelf(_Model):
+class StorageApplianceExpansionShelf(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageApplianceExpansionShelf represents an expansion shelf connected to a storage appliance.
 
     :ivar model: The model of the expansion shelf.
@@ -10017,7 +10032,9 @@ class StorageApplianceExpansionShelf(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageApplianceMonitoringConfigurationStatus(_Model):  # pylint: disable=name-too-long
+class StorageApplianceMonitoringConfigurationStatus(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The monitoring configuration status of the storage appliance.
 
     :ivar log_level: The log level for the monitoring configuration status of the storage
@@ -10060,7 +10077,7 @@ class StorageApplianceMonitoringConfigurationStatus(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class StorageAppliancePatchParameters(_Model):
+class StorageAppliancePatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageAppliancePatchParameters represents the body of the request to patch storage appliance
     properties.
 
@@ -10116,7 +10133,7 @@ class StorageAppliancePatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class StorageAppliancePatchProperties(_Model):
+class StorageAppliancePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageAppliancePatchProperties represents the properties of the storage appliance that can be
     patched.
 
@@ -10147,7 +10164,7 @@ class StorageAppliancePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageApplianceProperties(_Model):
+class StorageApplianceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageApplianceProperties represents the properties of the storage appliance.
 
     :ivar rack_id: The resource ID of the rack where this storage appliance resides. Required.
@@ -10298,7 +10315,9 @@ class StorageApplianceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageApplianceRunReadCommandsParameters(_Model):  # pylint: disable=name-too-long
+class StorageApplianceRunReadCommandsParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StorageApplianceRunReadCommandsParameters represents the body of request containing list of
     read-only commands to run on the storage appliance.
 
@@ -10353,7 +10372,7 @@ class StorageApplianceSkuProperties(_Model):
     """The model of the storage appliance."""
 
 
-class StorageApplianceSkuSlot(_Model):
+class StorageApplianceSkuSlot(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageApplianceSkuSlot represents the single SKU and rack slot associated with the storage
     appliance.
 
@@ -10408,7 +10427,7 @@ class StorageApplianceSkuSlot(_Model):
             super().__setattr__(key, value)
 
 
-class StorageProfile(_Model):
+class StorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageProfile represents information about a disk.
 
     :ivar os_disk: The disk to use with this virtual machine. Required.
@@ -10444,7 +10463,7 @@ class StorageProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StringKeyValuePair(_Model):
+class StringKeyValuePair(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringKeyValuePair represents a single entry in a mapping of keys to values.
 
     :ivar key: The key to the mapped value. Required.
@@ -10477,7 +10496,7 @@ class StringKeyValuePair(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -10544,7 +10563,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrunkedNetwork(TrackedResource):
+class TrunkedNetwork(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TrunkedNetwork represents a network that utilizes multiple isolation domains and specified
     VLANs to create a trunked network.
 
@@ -10641,7 +10660,7 @@ class TrunkedNetwork(TrackedResource):
             super().__setattr__(key, value)
 
 
-class TrunkedNetworkAttachmentConfiguration(_Model):
+class TrunkedNetworkAttachmentConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TrunkedNetworkAttachmentConfiguration represents the configuration of the attachment of a
     trunked network.
 
@@ -10680,7 +10699,7 @@ class TrunkedNetworkAttachmentConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrunkedNetworkPatchParameters(_Model):
+class TrunkedNetworkPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TrunkedNetworkPatchParameters represents the body of the request to patch the Trunked network.
 
     :ivar tags: Resource tags.
@@ -10708,7 +10727,7 @@ class TrunkedNetworkPatchParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrunkedNetworkProperties(_Model):
+class TrunkedNetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TrunkedNetworkProperties represents properties of the trunked network.
 
     :ivar hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it will
@@ -10829,7 +10848,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class ValidationThreshold(_Model):
+class ValidationThreshold(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ValidationThreshold indicates allowed machine and node hardware and deployment failures.
 
     :ivar grouping: Selection of how the type evaluation is applied to the cluster calculation.
@@ -10875,7 +10894,7 @@ class ValidationThreshold(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidationThresholdPatch(_Model):
+class ValidationThresholdPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ValidationThresholdPatch indicates allowed machine and node hardware and deployment failures
     for patch operations.
 
@@ -10922,7 +10941,7 @@ class ValidationThresholdPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachine(TrackedResource):
+class VirtualMachine(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VirtualMachine represents the on-premises Network Cloud virtual machine.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11041,7 +11060,7 @@ class VirtualMachine(TrackedResource):
             super().__setattr__(key, value)
 
 
-class VirtualMachineAssignRelayParameters(_Model):
+class VirtualMachineAssignRelayParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VirtualMachineAssignRelayParameters represents the body of the request to update the relay used
     for a Microsoft.HybridCompute machine associated with the virtual machine.
 
@@ -11082,7 +11101,7 @@ class VirtualMachineAssignRelayParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachinePatchParameters(_Model):
+class VirtualMachinePatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VirtualMachinePatchParameters represents the body of the request to patch the virtual machine.
 
     :ivar identity: The identity for the resource.
@@ -11144,7 +11163,7 @@ class VirtualMachinePatchParameters(_Model):
             super().__setattr__(key, value)
 
 
-class VirtualMachinePatchProperties(_Model):
+class VirtualMachinePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VirtualMachinePatchProperties represents the properties of the virtual machine that can be
     patched.
 
@@ -11177,7 +11196,7 @@ class VirtualMachinePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachinePlacementHint(_Model):
+class VirtualMachinePlacementHint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VirtualMachinePlacementHint represents a single scheduling hint of the virtual machine.
 
     :ivar hint_type: The specification of whether this hint supports affinity or anti-affinity with
@@ -11235,7 +11254,7 @@ class VirtualMachinePlacementHint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachinePowerOffParameters(_Model):
+class VirtualMachinePowerOffParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VirtualMachinePowerOffParameters represents the body of the request to power off virtual
     machine.
 
@@ -11268,7 +11287,7 @@ class VirtualMachinePowerOffParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineProperties(_Model):
+class VirtualMachineProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VirtualMachineProperties represents the properties of the virtual machine.
 
     :ivar admin_username: The name of the administrator to which the ssh public keys will be added
@@ -11480,7 +11499,7 @@ class VirtualMachineProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Volume(TrackedResource):
+class Volume(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume represents storage made available for use by resources running on the cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11572,7 +11591,7 @@ class Volume(TrackedResource):
             super().__setattr__(key, value)
 
 
-class VolumePatchParameters(_Model):
+class VolumePatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VolumePatchParameters represents the body of the request to patch the volume resource.
 
     :ivar tags: Resource tags.
@@ -11600,7 +11619,7 @@ class VolumePatchParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeProperties(_Model):
+class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VolumeProperties represents properties of the volume resource.
 
     :ivar size_mi_b: The requested storage allocation for the volume in Mebibytes. Required.
@@ -11674,7 +11693,7 @@ class VolumeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VulnerabilityScanningSettings(_Model):
+class VulnerabilityScanningSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VulnerabilityScanningSettings represents the settings for how security vulnerability scanning
     is applied to the cluster.
 
@@ -11708,7 +11727,7 @@ class VulnerabilityScanningSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VulnerabilityScanningSettingsPatch(_Model):
+class VulnerabilityScanningSettingsPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VulnerabilityScanningSettingsPatch represents the settings for how security vulnerability
     scanning is applied to the cluster.
 

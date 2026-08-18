@@ -3,9 +3,9 @@
   "apiVersions": {
     "Microsoft.NetworkCloud": "2026-07-01"
   },
-  "commit": "60d0f02991387ea7ed7483d5e70f061f962216cf",
+  "commit": "96039e219527b07e9677908ff55707d0264b84fb",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/networkcloud/NetworkCloud.Management",
-  "emitterVersion": "0.63.3",
-  "httpClientPythonVersion": "^0.34.2"
+  "typespec_src": "specification/networkcloud/resource-manager/Microsoft.NetworkCloud/NetworkCloud",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }

@@ -626,5 +626,5 @@
         "azure.mgmt.networkcloud.operations.MetricsConfigurationsOperations.list_by_cluster": "Microsoft.NetworkCloud.ClusterMetricsConfigurations.listByCluster",
         "azure.mgmt.networkcloud.aio.operations.MetricsConfigurationsOperations.list_by_cluster": "Microsoft.NetworkCloud.ClusterMetricsConfigurations.listByCluster"
     },
-    "CrossLanguageVersion": "a80fa198d8a0"
+    "CrossLanguageVersion": "381675561b6b"
 }
