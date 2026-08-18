@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Features Added
+
+- Added `create_asyncpg_engine` for SQLAlchemy async engines using `asyncpg` and asynchronous Microsoft Entra credentials.
+
 ### Bugs Fixed
 
 - Fixed SQLAlchemy connection pools failing to create subsequent connections when using Entra authentication.

@@ -1,10 +1,16 @@
 # Release History
 
-## 2.1.0b2 (Unreleased)
+## 2.1.0b3 (Unreleased)
 
 ### Bugs Fixed
 
 - Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
+
+## 2.1.0b2 (2026-08-18)
+
+### Other Changes
+
+- Updated the hosted task provider's `Foundry-Features` opt-in header from `Routines=V1Preview` to `Routines=V2Preview` to align with the `agentserver-persistence` contract. #48617
 
 ## 2.1.0b1 (2026-08-11)
 
@@ -14,6 +20,17 @@
 
 ### Breaking Changes
 
+- The resilient task subsystem is now **strictly opt-in**. `AgentServerHost`
+  constructs the `TaskManager` only when resilient tasks are enabled via
+  `set_resilient_tasks_enabled(True)` (or a protocol option that maps to it,
+  e.g. the responses `resilient_background`). Previously the manager was always
+  constructed and a declared `@task` / `@multi_turn_task` implicitly enabled the
+  startup recovery scan. Now, declaring a task does **not** turn the subsystem
+  on: with the switch off, `get_task_manager()` raises `TaskManagerNotInitialized`
+  and `.run()` / `.start()` cannot run a task. Existing apps that rely on `@task`
+  must call `set_resilient_tasks_enabled(True)` (before host startup) to keep
+  durable tasks and crash recovery. Plain servers that use no tasks are
+  unaffected and continue to pay nothing.
 - Removed `TaskMetadata`, `TaskContext.metadata`, and `TaskRun.metadata`.
   Durable application state now belongs in an explicit `FoundryStateStore`
   and no longer shares task lifecycle PATCHes or lease renewal. Typed task
