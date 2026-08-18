@@ -16,7 +16,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_create_with_zone_movement_enabled.py
+    python virtual_machine_create_with_capacity_reservation_assignment_disabled.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,7 +37,8 @@ def main():
         parameters={
             "location": "westus",
             "properties": {
-                "hardwareProfile": {"vmSize": "Standard_D2s_v3"},
+                "capacityReservation": {"disableCapacityReservationAssignment": True},
+                "hardwareProfile": {"vmSize": "Standard_DS1_v2"},
                 "networkProfile": {
                     "networkInterfaces": [
                         {
@@ -51,18 +52,7 @@ def main():
                     "adminUsername": "{your-username}",
                     "computerName": "myVM",
                 },
-                "resiliencyProfile": {"zoneMovement": {"isEnabled": True}},
                 "storageProfile": {
-                    "dataDisks": [
-                        {
-                            "caching": "ReadWrite",
-                            "createOption": "Empty",
-                            "diskSizeGB": 128,
-                            "lun": 0,
-                            "managedDisk": {"storageAccountType": "Premium_ZRS"},
-                            "name": "myVMdatadisk1",
-                        }
-                    ],
                     "imageReference": {
                         "offer": "WindowsServer",
                         "publisher": "MicrosoftWindowsServer",
@@ -72,7 +62,7 @@ def main():
                     "osDisk": {
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
-                        "managedDisk": {"storageAccountType": "Premium_ZRS"},
+                        "managedDisk": {"storageAccountType": "Standard_LRS"},
                         "name": "myVMosdisk",
                     },
                 },
@@ -82,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineExamples/VirtualMachine_Create_WithZoneMovementEnabled.json
+# x-ms-original-file: 2026-04-01/virtualMachineExamples/VirtualMachine_Create_WithCapacityReservationAssignmentDisabled.json
 if __name__ == "__main__":
     main()

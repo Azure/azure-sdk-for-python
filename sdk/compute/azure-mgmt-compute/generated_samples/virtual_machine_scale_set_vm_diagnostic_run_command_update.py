@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_scale_set_vm_list_with_virtual_machine_resource_id.py
+    python virtual_machine_scale_set_vm_diagnostic_run_command_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,14 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.virtual_machine_scale_set_vms.list(
-        resource_group_name="resourceGroupname",
-        virtual_machine_scale_set_name="vmssName",
-    )
-    for item in response:
-        print(item)
+    client.virtual_machine_scale_set_vm_diagnostic_run_commands.begin_update(
+        resource_group_name="myResourceGroup",
+        vm_scale_set_name="myvmScaleSet",
+        instance_id="0",
+        run_command_name="myRunCommand",
+        run_command={"properties": {"source": {"commandId": "FleetDiagnosticsWindows"}}},
+    ).result()
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineScaleSetExamples/VirtualMachineScaleSetVM_List_WithVirtualMachineResourceId.json
+# x-ms-original-file: 2026-04-01/diagnosticRunCommandExamples/VirtualMachineScaleSetVMDiagnosticRunCommand_Update.json
 if __name__ == "__main__":
     main()
