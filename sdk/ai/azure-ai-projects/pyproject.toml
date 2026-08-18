@@ -43,6 +43,11 @@ dynamic = [
 "version", "readme"
 ]
 
+[project.optional-dependencies]
+realtime = [
+    "websockets>=13.0",
+]
+
 [project.urls]
 repository = "https://aka.ms/azsdk/azure-ai-projects-v2/python/code"
 
