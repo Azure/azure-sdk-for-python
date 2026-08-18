@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.servicegroups import ServiceGroupsMgmtClient
+from azure.mgmt.compute import ComputeManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-servicegroups
+    pip install azure-mgmt-compute
 # USAGE
-    python service_group_list_ancestors.py
+    python virtual_machine_get_with_deterministic_processor_mode.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,16 +25,18 @@ from azure.mgmt.servicegroups import ServiceGroupsMgmtClient
 
 
 def main():
-    client = ServiceGroupsMgmtClient(
+    client = ComputeManagementClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.service_groups.list_ancestors(
-        service_group_name="20000000-0001-0000-0000-000000000000",
+    response = client.virtual_machines.get(
+        resource_group_name="myResourceGroup",
+        vm_name="myVM",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-02-01-preview/ServiceGroup_ListAncestors.json
+# x-ms-original-file: 2026-04-01/virtualMachineExamples/VirtualMachine_Get_WithDeterministicProcessorMode.json
 if __name__ == "__main__":
     main()
