@@ -76,7 +76,22 @@ _THROTTLE_STATUS_CODES = (
     439,  # Quota, too Many Requests over extended time (legacy)
 )
 
-_REACHED_INGESTION_STATUS_CODES = (200, 206, 402, 408, 429, 439, 500)
+_REACHED_INGESTION_STATUS_CODES = (200, 206, 402, 408, 413, 429, 439, 500)
+
+# Ingestion size limits
+
+# Maximum request body size (in bytes) the ingestion endpoint accepts on the wire before
+# responding with 413 (Payload Too Large).
+_MAX_INGESTION_PAYLOAD_SIZE_BYTES = 30 * 1000 * 1000
+
+# Lowercased markers used by the ingestion endpoint when it rejects a single item for exceeding
+# the per-item size limit (~1.2 MiB, surfaced as a 400 within a 206 partial response). Such an
+# item cannot be split further, and the server tells us why it was dropped, so there is no need
+# to re-serialize the envelope to find out.
+_ITEM_TOO_LARGE_MESSAGE_MARKERS = (
+    "length must not exceed",
+    "too large",
+)
 
 # Envelope constants
 
