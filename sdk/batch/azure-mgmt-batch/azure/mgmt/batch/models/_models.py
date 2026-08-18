@@ -17,12 +17,12 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessRule(_Model):
+class AccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access rule in a network security perimeter configuration profile.
 
     :ivar name: Name of the access rule.
     :vartype name: str
-    :ivar properties:
+    :ivar properties: Properties of the access rule.
     :vartype properties: ~azure.mgmt.batch.models.AccessRuleProperties
     """
 
@@ -31,6 +31,7 @@ class AccessRule(_Model):
     properties: Optional["_models.AccessRuleProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Properties of the access rule."""
 
     @overload
     def __init__(
@@ -51,10 +52,10 @@ class AccessRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRuleProperties(_Model):
+class AccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Access Rule.
 
-    :ivar direction: Known values are: "Inbound" and "Outbound".
+    :ivar direction: Direction of the access rule. Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.batch.models.AccessRuleDirection
     :ivar address_prefixes: Address prefixes in the CIDR format for inbound rules.
     :vartype address_prefixes: list[str]
@@ -73,7 +74,7 @@ class AccessRuleProperties(_Model):
     direction: Optional[Union[str, "_models.AccessRuleDirection"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"Inbound\" and \"Outbound\"."""
+    """Direction of the access rule. Known values are: \"Inbound\" and \"Outbound\"."""
     address_prefixes: Optional[list[str]] = rest_field(
         name="addressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -123,7 +124,7 @@ class AccessRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRulePropertiesSubscription(_Model):
+class AccessRulePropertiesSubscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AccessRulePropertiesSubscription.
 
     :ivar id: The fully qualified Azure resource ID of the subscription e.g.
@@ -153,7 +154,7 @@ class AccessRulePropertiesSubscription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActivateApplicationPackageParameters(_Model):
+class ActivateApplicationPackageParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for an activating an application package.
 
     :ivar format: The format of the application package binary file. Required.
@@ -226,7 +227,7 @@ class ProxyResource(Resource):
     """
 
 
-class Application(ProxyResource):
+class Application(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about an application in a Batch account.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -296,7 +297,7 @@ class Application(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApplicationPackage(ProxyResource):
+class ApplicationPackage(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An application package which represents a particular version of an application.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -399,7 +400,7 @@ class ApplicationPackageProperties(_Model):
     """The time at which the package was last activated, if the package is active."""
 
 
-class ApplicationPackageReference(_Model):
+class ApplicationPackageReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Link to an application package inside the batch account.
 
     :ivar id: The ID of the application package to install. This must be inside the same Batch
@@ -437,7 +438,7 @@ class ApplicationPackageReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationProperties(_Model):
+class ApplicationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties associated with the Application.
 
     :ivar display_name: The display name for the application.
@@ -485,7 +486,7 @@ class ApplicationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticOSUpgradePolicy(_Model):
+class AutomaticOSUpgradePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used for performing automatic OS upgrade.
 
     :ivar disable_automatic_rollback: Whether OS image rollback feature should be disabled.
@@ -548,7 +549,7 @@ class AutomaticOSUpgradePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoScaleRun(_Model):
+class AutoScaleRun(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The results and errors from an execution of a pool autoscale formula.
 
     :ivar evaluation_time: The time at which the autoscale formula was last evaluated. Required.
@@ -593,7 +594,7 @@ class AutoScaleRun(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoScaleRunError(_Model):
+class AutoScaleRunError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error that occurred when autoscaling a pool.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -637,7 +638,7 @@ class AutoScaleRunError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoScaleSettings(_Model):
+class AutoScaleSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutoScale settings for the pool.
 
     :ivar formula: A formula for the desired number of compute nodes in the pool. Required.
@@ -674,7 +675,7 @@ class AutoScaleSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoStorageBaseProperties(_Model):
+class AutoStorageBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties related to the auto-storage account.
 
     :ivar storage_account_id: The resource ID of the storage account to be used for auto-storage
@@ -723,7 +724,7 @@ class AutoStorageBaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoStorageProperties(AutoStorageBaseProperties):
+class AutoStorageProperties(AutoStorageBaseProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about the auto-storage account associated with a Batch account.
 
     :ivar storage_account_id: The resource ID of the storage account to be used for auto-storage
@@ -766,7 +767,7 @@ class AutoStorageProperties(AutoStorageBaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class AutoUserSpecification(_Model):
+class AutoUserSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the parameters for the auto user that runs a task on the Batch service.
 
     :ivar scope: The scope for the auto user. Known values are: "Task" and "Pool".
@@ -804,7 +805,7 @@ class AutoUserSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobFileSystemConfiguration(_Model):
+class AzureBlobFileSystemConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information used to connect to an Azure Storage Container using Blobfuse.
 
     :ivar account_name: The Azure Storage Account name. Required.
@@ -872,7 +873,7 @@ class AzureBlobFileSystemConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileShareConfiguration(_Model):
+class AzureFileShareConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information used to connect to an Azure Fileshare.
 
     :ivar account_name: The Azure Storage account name. Required.
@@ -925,7 +926,7 @@ class AzureFileShareConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -969,7 +970,7 @@ class AzureResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class BatchAccount(AzureResource):
+class BatchAccount(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about an Azure Batch account.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1061,7 +1062,7 @@ class BatchAccount(AzureResource):
             super().__setattr__(key, value)
 
 
-class BatchAccountCreateParameters(_Model):
+class BatchAccountCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Create operation.
 
     :ivar location: The region in which to create the account. Required.
@@ -1136,7 +1137,7 @@ class BatchAccountCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class BatchAccountCreateProperties(_Model):
+class BatchAccountCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a Batch account.
 
     :ivar auto_storage: The properties related to the auto-storage account.
@@ -1217,7 +1218,7 @@ class BatchAccountCreateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchAccountIdentity(_Model):
+class BatchAccountIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The identity of the Batch account, if configured. This is used when the user specifies
     'Microsoft.KeyVault' as their Batch account encryption configuration or when
     ``ManagedIdentity`` is selected as the auto-storage authentication mode.
@@ -1289,7 +1290,7 @@ class BatchAccountKeys(_Model):
     """The secondary key associated with the account."""
 
 
-class BatchAccountProperties(_Model):
+class BatchAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Account specific properties.
 
     :ivar account_endpoint: The account endpoint used to interact with the Batch service.
@@ -1424,7 +1425,7 @@ class BatchAccountProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchAccountRegenerateKeyParameters(_Model):
+class BatchAccountRegenerateKeyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the RegenerateKey operation.
 
     :ivar key_name: The type of account key to regenerate. Required. Known values are: "Primary"
@@ -1456,7 +1457,7 @@ class BatchAccountRegenerateKeyParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchAccountUpdateParameters(_Model):
+class BatchAccountUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for updating an Azure Batch account.
 
     :ivar tags: The user-specified tags associated with the account.
@@ -1524,7 +1525,7 @@ class BatchAccountUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class BatchAccountUpdateProperties(_Model):
+class BatchAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a Batch account.
 
     :ivar auto_storage: The properties related to the auto-storage account.
@@ -1601,7 +1602,7 @@ class BatchLocationQuota(_Model):
      region."""
 
 
-class BatchPoolIdentity(_Model):
+class BatchPoolIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The identity of the Batch pool, if configured. If the pool identity is updated during update an
     existing pool, only the new vms which are created after the pool shrinks to 0 will have the
     updated identities.
@@ -1642,7 +1643,7 @@ class BatchPoolIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityParameters(_Model):
+class CheckNameAvailabilityParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for a check name availability request.
 
     :ivar name: The name to check for availability. Required.
@@ -1699,7 +1700,7 @@ class CheckNameAvailabilityResult(_Model):
     """Gets an error message explaining the Reason value in more detail."""
 
 
-class CIFSMountConfiguration(_Model):
+class CIFSMountConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information used to connect to a CIFS file system.
 
     :ivar user_name: The user to use for authentication against the CIFS file system. Required.
@@ -1752,7 +1753,7 @@ class CIFSMountConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from the Batch service.
 
     :ivar error: The body of the error response.
@@ -1780,7 +1781,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudErrorBody(_Model):
+class CloudErrorBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from the Batch service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -1829,7 +1830,7 @@ class CloudErrorBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComputeNodeIdentityReference(_Model):
+class ComputeNodeIdentityReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The reference to a user assigned identity associated with the Batch pool which a compute node
     will use.
 
@@ -1860,7 +1861,7 @@ class ComputeNodeIdentityReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerConfiguration(_Model):
+class ContainerConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration for container-enabled pools.
 
     :ivar type: The container technology to be used. Required. Known values are: "DockerCompatible"
@@ -1904,7 +1905,7 @@ class ContainerConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerHostBatchBindMountEntry(_Model):
+class ContainerHostBatchBindMountEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The entry of path and mount mode you want to mount into task container.
 
     :ivar source: The paths which will be mounted to container task's container. Known values are:
@@ -1944,7 +1945,7 @@ class ContainerHostBatchBindMountEntry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerRegistry(_Model):
+class ContainerRegistry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private container registry.
 
     :ivar user_name: The user name to log into the registry server.
@@ -1993,7 +1994,7 @@ class ContainerRegistry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataDisk(_Model):
+class DataDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings which will be used by the data disks associated to Compute Nodes in the Pool. When
     using attached data disks, you need to mount and format the disks from within a VM to use them.
 
@@ -2043,7 +2044,7 @@ class DataDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentConfiguration(_Model):
+class DeploymentConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment configuration properties.
 
     :ivar virtual_machine_configuration: The virtual machine configuration for the pool.
@@ -2073,7 +2074,7 @@ class DeploymentConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DetectorResponse(ProxyResource):
+class DetectorResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the information for a detector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2143,7 +2144,7 @@ class DetectorResponse(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DetectorResponseProperties(_Model):
+class DetectorResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Detector response properties.
 
     :ivar value: A base64 encoded string that represents the content of a detector.
@@ -2171,7 +2172,7 @@ class DetectorResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiffDiskSettings(_Model):
+class DiffDiskSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the ephemeral Disk Settings for the operating system disk used by the virtual
     machine.
 
@@ -2204,7 +2205,7 @@ class DiffDiskSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskCustomerManagedKey(_Model):
+class DiskCustomerManagedKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Customer Managed Key reference to encrypt the Disk.
 
     :ivar key_url: Fully versioned Key Url pointing to a key in KeyVault. Version segment of the
@@ -2252,7 +2253,7 @@ class DiskCustomerManagedKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionConfiguration(_Model):
+class DiskEncryptionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The disk encryption configuration applied on compute nodes in the pool. Disk encryption
     configuration is not supported on Linux pool created with Virtual Machine Image or Azure
     Compute Gallery Image.
@@ -2291,7 +2292,7 @@ class DiskEncryptionConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionSetParameters(_Model):
+class DiskEncryptionSetParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ARM resource id of the disk encryption set.
 
     :ivar id: The resource id of the disk encryption set. Required.
@@ -2319,7 +2320,7 @@ class DiskEncryptionSetParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionProperties(_Model):
+class EncryptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configures how customer data is encrypted inside the Batch account. By default, accounts are
     encrypted using a Microsoft managed key. For additional control, a customer-managed key can be
     used instead.
@@ -2359,7 +2360,7 @@ class EncryptionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointAccessProfile(_Model):
+class EndpointAccessProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network access profile for Batch endpoint.
 
     :ivar default_action: The default action when there is no IPRule matched. Required. Known
@@ -2431,7 +2432,7 @@ class EndpointDetail(_Model):
     """The port an endpoint is connected to."""
 
 
-class EnvironmentSetting(_Model):
+class EnvironmentSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An environment variable to be set on a task process.
 
     :ivar name: The name of the environment variable. Required.
@@ -2508,7 +2509,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -2536,7 +2537,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FixedScaleSettings(_Model):
+class FixedScaleSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fixed scale settings for the pool.
 
     :ivar resize_timeout: The timeout for allocation of compute nodes to the pool.
@@ -2593,7 +2594,7 @@ class FixedScaleSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostEndpointSettings(_Model):
+class HostEndpointSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies particular host endpoint settings.
 
     :ivar mode: Specifies the access control policy execution mode. Known values are: "Audit" and
@@ -2635,7 +2636,7 @@ class HostEndpointSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageReference(_Model):
+class ImageReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reference to an Azure Virtual Machines Marketplace image or the Azure Image resource of a
     custom Virtual Machine. To get the list of all imageReferences verified by Azure Batch, see the
     'List supported node agent SKUs' operation.
@@ -2703,7 +2704,7 @@ class ImageReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InboundNatPool(_Model):
+class InboundNatPool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A inbound NAT pool that can be used to address specific ports on compute nodes in a Batch pool
     externally.
 
@@ -2770,7 +2771,7 @@ class InboundNatPool(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPRule(_Model):
+class IPRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rule to filter client IP address.
 
     :ivar action: Action when client IP address is matched. Required. "Allow"
@@ -2803,7 +2804,7 @@ class IPRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPTag(_Model):
+class IPTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies how tasks should be distributed across compute nodes.
 
     :ivar ip_tag_type: The IP Tag type.
@@ -2838,7 +2839,7 @@ class IPTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultProperties(_Model):
+class KeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KeyVault configuration when using an encryption KeySource of Microsoft.KeyVault.
 
     :ivar key_identifier: Full path to the secret with or without version. Example
@@ -2886,7 +2887,7 @@ class KeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultReference(_Model):
+class KeyVaultReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identifies the Azure key vault associated with a Batch account.
 
     :ivar id: The resource ID of the Azure key vault associated with the Batch account. Required.
@@ -2919,7 +2920,7 @@ class KeyVaultReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxUserConfiguration(_Model):
+class LinuxUserConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties used to create a user account on a Linux node.
 
     :ivar uid: The user ID of the user account.
@@ -2959,7 +2960,7 @@ class LinuxUserConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedDisk(_Model):
+class ManagedDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed disk parameters.
 
     :ivar storage_account_type: The storage account type for use in creating data disks or OS disk.
@@ -3007,7 +3008,7 @@ class ManagedDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataItem(_Model):
+class MetadataItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A name-value pair associated with a Batch service resource.
 
     :ivar name: The name of the metadata item. Required.
@@ -3040,7 +3041,7 @@ class MetadataItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MountConfiguration(_Model):
+class MountConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The file system to mount on each node.
 
     :ivar azure_blob_file_system_configuration: The Azure Storage Container to mount using blob
@@ -3093,7 +3094,7 @@ class MountConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkConfiguration(_Model):
+class NetworkConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network configuration for a pool.
 
     :ivar subnet_id: The ARM resource identifier of the virtual network subnet which the compute
@@ -3157,7 +3158,7 @@ class NetworkConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkProfile(_Model):
+class NetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network profile for Batch account, which contains network rule settings for each endpoint.
 
     :ivar account_access: Network access profile for batchAccount endpoint (Batch account data
@@ -3197,7 +3198,7 @@ class NetworkProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityGroupRule(_Model):
+class NetworkSecurityGroupRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A network security group rule to apply to an inbound endpoint.
 
     :ivar priority: The priority for this rule. Required.
@@ -3248,7 +3249,7 @@ class NetworkSecurityGroupRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeter(_Model):
+class NetworkSecurityPerimeter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a network security perimeter (NSP).
 
     :ivar id: Fully qualified Azure resource ID of the NSP resource.
@@ -3288,7 +3289,9 @@ class NetworkSecurityPerimeter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfiguration(ProxyResource):
+class NetworkSecurityPerimeterConfiguration(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter (NSP) configuration resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3302,13 +3305,14 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.batch.models.SystemData
-    :ivar properties:
+    :ivar properties: Network security configuration properties.
     :vartype properties: ~azure.mgmt.batch.models.NetworkSecurityPerimeterConfigurationProperties
     """
 
     properties: Optional["_models.NetworkSecurityPerimeterConfigurationProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Network security configuration properties."""
 
     @overload
     def __init__(
@@ -3328,28 +3332,32 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network security configuration properties.
 
-    :ivar provisioning_state: Known values are: "Succeeded", "Creating", "Updating", "Deleting",
-     "Accepted", "Failed", and "Canceled".
+    :ivar provisioning_state: Provisioning state of the network security perimeter configuration.
+     Known values are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed", and
+     "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.batch.models.NetworkSecurityPerimeterConfigurationProvisioningState
     :ivar provisioning_issues: List of provisioning issues, if any.
     :vartype provisioning_issues: list[~azure.mgmt.batch.models.ProvisioningIssue]
-    :ivar network_security_perimeter:
+    :ivar network_security_perimeter: Information about the network security perimeter (NSP).
     :vartype network_security_perimeter: ~azure.mgmt.batch.models.NetworkSecurityPerimeter
-    :ivar resource_association:
+    :ivar resource_association: Information about the resource association.
     :vartype resource_association: ~azure.mgmt.batch.models.ResourceAssociation
-    :ivar profile:
+    :ivar profile: Network security perimeter configuration profile.
     :vartype profile: ~azure.mgmt.batch.models.NetworkSecurityProfile
     """
 
     provisioning_state: Optional[Union[str, "_models.NetworkSecurityPerimeterConfigurationProvisioningState"]] = (
         rest_field(name="provisioningState", visibility=["read"])
     )
-    """Known values are: \"Succeeded\", \"Creating\", \"Updating\", \"Deleting\", \"Accepted\",
-     \"Failed\", and \"Canceled\"."""
+    """Provisioning state of the network security perimeter configuration. Known values are:
+     \"Succeeded\", \"Creating\", \"Updating\", \"Deleting\", \"Accepted\", \"Failed\", and
+     \"Canceled\"."""
     provisioning_issues: Optional[list["_models.ProvisioningIssue"]] = rest_field(
         name="provisioningIssues", visibility=["read"]
     )
@@ -3357,12 +3365,15 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
     network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = rest_field(
         name="networkSecurityPerimeter", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Information about the network security perimeter (NSP)."""
     resource_association: Optional["_models.ResourceAssociation"] = rest_field(
         name="resourceAssociation", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Information about the resource association."""
     profile: Optional["_models.NetworkSecurityProfile"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Network security perimeter configuration profile."""
 
     @overload
     def __init__(
@@ -3384,7 +3395,7 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityProfile(_Model):
+class NetworkSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter configuration profile.
 
     :ivar name: Name of the profile.
@@ -3440,7 +3451,7 @@ class NetworkSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NFSMountConfiguration(_Model):
+class NFSMountConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information used to connect to an NFS file system.
 
     :ivar source: The URI of the file system to mount. Required.
@@ -3483,7 +3494,7 @@ class NFSMountConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodePlacementConfiguration(_Model):
+class NodePlacementConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Node placement configuration for Batch pools.
 
     :ivar policy: Node placement Policy type on Batch pools. Known values are: "Regional" and
@@ -3514,7 +3525,7 @@ class NodePlacementConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A REST API operation.
 
     :ivar name: The operation name.
@@ -3566,7 +3577,7 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that describes the operation.
 
     :ivar provider: Friendly name of the resource provider.
@@ -3609,7 +3620,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSDisk(_Model):
+class OSDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for the operating system disk of the virtual machine.
 
     :ivar ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
@@ -3689,7 +3700,7 @@ class OutboundEnvironmentEndpoint(_Model):
     """The endpoints for this service to which the Batch service makes outbound calls."""
 
 
-class Pool(ProxyResource):
+class Pool(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about a pool.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3791,7 +3802,7 @@ class Pool(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PoolEndpointConfiguration(_Model):
+class PoolEndpointConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The endpoint configuration for a pool.
 
     :ivar inbound_nat_pools: A list of inbound NAT pools that can be used to address specific ports
@@ -3823,7 +3834,7 @@ class PoolEndpointConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PoolProperties(_Model):
+class PoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pool properties.
 
     :ivar display_name: The display name for the pool.
@@ -4016,7 +4027,7 @@ class PrivateEndpoint(_Model):
      /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/privateEndpoints/{privateEndpoint}."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about a private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4086,7 +4097,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint connection properties.
 
     :ivar provisioning_state: The provisioning state of the private endpoint connection. Known
@@ -4135,7 +4146,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about a private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4225,7 +4236,7 @@ class PrivateLinkResourceProperties(_Model):
     """The list of required zone names for the private DNS resource name."""
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private link service connection state of the private endpoint connection.
 
     :ivar status: The status of the Batch private endpoint connection. Required. Known values are:
@@ -4271,13 +4282,14 @@ class ProvisioningIssue(_Model):
 
     :ivar name: Name of the issue.
     :vartype name: str
-    :ivar properties:
+    :ivar properties: Details of the provisioning issue.
     :vartype properties: ~azure.mgmt.batch.models.ProvisioningIssueProperties
     """
 
     name: Optional[str] = rest_field(visibility=["read"])
     """Name of the issue."""
     properties: Optional["_models.ProvisioningIssueProperties"] = rest_field(visibility=["read"])
+    """Details of the provisioning issue."""
 
 
 class ProvisioningIssueProperties(_Model):
@@ -4318,7 +4330,7 @@ class ProvisioningIssueProperties(_Model):
     """Access rules that can be added to the network security profile (NSP) to remediate the issue."""
 
 
-class ProxyAgentSettings(_Model):
+class ProxyAgentSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies ProxyAgent settings while creating the virtual machine.
 
     :ivar enabled: Specifies whether Metadata Security Protocol feature should be enabled on the
@@ -4362,7 +4374,7 @@ class ProxyAgentSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PublicIPAddressConfiguration(_Model):
+class PublicIPAddressConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The public IP Address configuration of the networking configuration of a Pool.
 
     :ivar provision: The provisioning type for Public IP Addresses for the Batch Pool. Known values
@@ -4416,7 +4428,7 @@ class PublicIPAddressConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResizeError(_Model):
+class ResizeError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error that occurred when resizing a pool.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -4460,7 +4472,7 @@ class ResizeError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResizeOperationStatus(_Model):
+class ResizeOperationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about the current or last completed resize operation.
 
     :ivar target_dedicated_nodes: The desired number of dedicated compute nodes in the pool.
@@ -4533,12 +4545,13 @@ class ResizeOperationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceAssociation(_Model):
+class ResourceAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about resource association.
 
     :ivar name: Name of the resource association.
     :vartype name: str
-    :ivar access_mode: Known values are: "Enforced", "Learning", and "Audit".
+    :ivar access_mode: Access mode of the resource association. Known values are: "Enforced",
+     "Learning", and "Audit".
     :vartype access_mode: str or ~azure.mgmt.batch.models.ResourceAssociationAccessMode
     """
 
@@ -4547,7 +4560,8 @@ class ResourceAssociation(_Model):
     access_mode: Optional[Union[str, "_models.ResourceAssociationAccessMode"]] = rest_field(
         name="accessMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"Enforced\", \"Learning\", and \"Audit\"."""
+    """Access mode of the resource association. Known values are: \"Enforced\", \"Learning\", and
+     \"Audit\"."""
 
     @overload
     def __init__(
@@ -4568,7 +4582,7 @@ class ResourceAssociation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceFile(_Model):
+class ResourceFile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single file or multiple files to be downloaded to a compute node.
 
     :ivar auto_storage_container_name: The storage container name in the auto storage account.
@@ -4640,7 +4654,7 @@ class ResourceFile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RollingUpgradePolicy(_Model):
+class RollingUpgradePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used while performing a rolling upgrade.
 
     :ivar enable_cross_zone_upgrade: Allow VMSS to ignore AZ boundaries when constructing upgrade
@@ -4756,7 +4770,7 @@ class RollingUpgradePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScaleSettings(_Model):
+class ScaleSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scale settings for the pool.
 
     :ivar fixed_scale: Fixed scale settings for the pool.
@@ -4793,7 +4807,7 @@ class ScaleSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityProfile(_Model):
+class SecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security profile settings for the virtual machine or virtual machine scale set.
 
     :ivar security_type: Specifies the SecurityType of the virtual machine. It has to be set to any
@@ -4852,7 +4866,7 @@ class SecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceArtifactReference(_Model):
+class ServiceArtifactReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the service artifact reference id used to set same image version for all virtual
     machines in the scale set when using 'latest' image version.
 
@@ -4896,7 +4910,7 @@ class SkuCapability(_Model):
     """The value of the feature."""
 
 
-class StartTask(_Model):
+class StartTask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A task which is run when a compute node joins a pool in the Azure Batch service, or when the
     compute node is rebooted or reimaged.
 
@@ -4999,7 +5013,7 @@ class SupportedSku(_Model):
     """The time when Azure Batch service will retire this SKU."""
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -5066,7 +5080,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaskContainerSettings(_Model):
+class TaskContainerSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The container settings for a task.
 
     :ivar container_run_options: Additional options to the container create command.
@@ -5128,7 +5142,7 @@ class TaskContainerSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaskSchedulingPolicy(_Model):
+class TaskSchedulingPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies how tasks should be distributed across compute nodes.
 
     :ivar job_default_order: If not specified, the default is none. Known values are: "None" and
@@ -5168,7 +5182,7 @@ class TaskSchedulingPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UefiSettings(_Model):
+class UefiSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security settings like secure boot and vTPM used while creating the virtual
     machine.
 
@@ -5207,7 +5221,7 @@ class UefiSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpgradePolicy(_Model):
+class UpgradePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an upgrade policy - automatic, manual, or rolling.
 
     :ivar mode: Specifies the mode of an upgrade to virtual machines in the scale set.<br /><br />
@@ -5261,7 +5275,7 @@ class UpgradePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAccount(_Model):
+class UserAccount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties used to create a user on an Azure Batch node.
 
     :ivar name: The name of the user account. Names can contain any Unicode characters up to a
@@ -5333,7 +5347,7 @@ class UserAssignedIdentities(_Model):
     """The client id of user assigned identity."""
 
 
-class UserIdentity(_Model):
+class UserIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of the user identity under which the task is run.
 
     :ivar user_name: The name of the user identity under which the task is run.
@@ -5368,7 +5382,7 @@ class UserIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineConfiguration(_Model):
+class VirtualMachineConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration for compute nodes in a pool based on the Azure Virtual Machines
     infrastructure.
 
@@ -5498,7 +5512,7 @@ class VirtualMachineFamilyCoreQuota(_Model):
     """The core quota for the VM family for the Batch account."""
 
 
-class VMDiskSecurityProfile(_Model):
+class VMDiskSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security profile settings for the managed disk. **Note**: It can only be set for
     Confidential VMs and is required when using Confidential VMs.
 
@@ -5548,7 +5562,7 @@ class VMDiskSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMExtension(_Model):
+class VMExtension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration for virtual machine extensions.
 
     :ivar name: The name of the virtual machine extension. Required.
@@ -5634,7 +5648,7 @@ class VMExtension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsConfiguration(_Model):
+class WindowsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Windows operating system settings to apply to the virtual machine.
 
     :ivar enable_automatic_updates: Whether automatic updates are enabled on the virtual machine.
@@ -5664,7 +5678,7 @@ class WindowsConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsUserConfiguration(_Model):
+class WindowsUserConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties used to create a user account on a Windows node.
 
     :ivar login_mode: Login mode for user. Known values are: "Batch" and "Interactive".
