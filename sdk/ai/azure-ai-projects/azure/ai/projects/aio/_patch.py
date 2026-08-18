@@ -346,7 +346,9 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
             _openai_transport_logger.debug("Body: [Content exists]")
 
 
-__all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "AIProjectClient",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

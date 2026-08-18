@@ -16089,3 +16089,653 @@ class WorkIQPreviewToolboxTool(ToolboxTool, discriminator="work_iq_preview"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolboxToolType.WORK_IQ_PREVIEW  # type: ignore
+
+
+# RLE (reinforcement learning) grafted from generated code
+
+
+class RLEErrorResponse(_Model):
+    """Error returned by RLE environment, instance-group, and instance operations.
+
+    :ivar code: Service-defined error code. Required.
+    :vartype code: str
+    :ivar message: Human-readable error message. Required.
+    :vartype message: str
+    """
+
+    code: str = rest_field(visibility=["read"])
+    """Service-defined error code. Required."""
+    message: str = rest_field(visibility=["read"])
+    """Human-readable error message. Required."""
+
+
+class RLEInstanceGroupAtCapacityErrorResponse(RLEErrorResponse):
+    """Error returned when an instance group has no remaining active-instance capacity.
+
+    :ivar code: Service-defined error code. Required.
+    :vartype code: str
+    :ivar message: Human-readable error message. Required.
+    :vartype message: str
+    :ivar active_instance_count: Number of currently active instances. Required.
+    :vartype active_instance_count: int
+    :ivar max_active_instances: Maximum active instances allowed by the group. Required.
+    :vartype max_active_instances: int
+    :ivar retry_after_seconds: Suggested delay before retrying. Required.
+    :vartype retry_after_seconds: int
+    """
+
+    active_instance_count: int = rest_field(name="activeInstanceCount", visibility=["read"])
+    """Number of currently active instances. Required."""
+    max_active_instances: int = rest_field(name="maxActiveInstances", visibility=["read"])
+    """Maximum active instances allowed by the group. Required."""
+    retry_after_seconds: int = rest_field(name="retryAfterSeconds", visibility=["read"])
+    """Suggested delay before retrying. Required."""
+
+
+class CreateRLEnvironmentRequest(_Model):
+    """Request body for creating a hosted RLE environment.
+
+    :ivar name: Optional caller-provided display name for the environment.
+    :vartype name: str
+    :ivar acr_image_path: Container image reference (Azure Container Registry path) that backs the
+     environment. Required.
+    :vartype acr_image_path: str
+    :ivar version_bump: Optional semantic-version bump to apply when a new version of an existing
+     environment is created. Defaults to a patch bump when omitted. Known values are: "Major",
+     "Minor", and "Patch".
+    :vartype version_bump: str or ~azure.ai.projects.models.RLEnvironmentVersionBump
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional caller-provided display name for the environment."""
+    acr_image_path: str = rest_field(name="acrImagePath", visibility=["read", "create", "update", "delete", "query"])
+    """Container image reference (Azure Container Registry path) that backs the environment. Required."""
+    version_bump: Optional[Union[str, "_models.RLEnvironmentVersionBump"]] = rest_field(
+        name="versionBump", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional semantic-version bump to apply when a new version of an existing environment is
+     created. Defaults to a patch bump when omitted."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        acr_image_path: str,
+        name: Optional[str] = None,
+        version_bump: Optional[Union[str, "_models.RLEnvironmentVersionBump"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RLEInstanceGroupResourceProfile(_Model):
+    """Forward-compatible resource allocation hints for an instance group. Recorded but not scheduled
+    against in this version.
+
+    :ivar cpu: Requested CPU allocation hint, encoded as a string (e.g. "1", "2", "500m").
+    :vartype cpu: str
+    :ivar memory: Requested memory allocation hint, for example "2Gi".
+    :vartype memory: str
+    :ivar disk: Requested disk allocation hint, for example "10Gi".
+    :vartype disk: str
+    """
+
+    cpu: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Requested CPU allocation hint, encoded as a string (e.g. \"1\", \"2\", \"500m\")."""
+    memory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Requested memory allocation hint, for example \"2Gi\"."""
+    disk: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Requested disk allocation hint, for example \"10Gi\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cpu: Optional[str] = None,
+        memory: Optional[str] = None,
+        disk: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CreateRLEInstanceGroupRequest(_Model):
+    """Request body for creating an RLE instance group.
+
+    :ivar max_active_instances: Maximum number of concurrently-active instances the group may hold.
+     Optional; defaults to 1 when omitted.
+    :vartype max_active_instances: int
+    :ivar metadata: Optional free-form correlation/tag key-values. ``external_job_id`` is a reserved
+     well-known key for the upstream Training API job / AML run.
+    :vartype metadata: dict[str, str]
+    :ivar resource_profile: Optional forward-compatible resource allocation hints. Recorded only in
+     this version.
+    :vartype resource_profile: ~azure.ai.projects.models.RLEInstanceGroupResourceProfile
+    """
+
+    max_active_instances: Optional[int] = rest_field(
+        name="maxActiveInstances", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum number of concurrently-active instances the group may hold. Optional; defaults to 1
+     when omitted."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional free-form correlation/tag key-values. ``external_job_id`` is a reserved well-known key
+     for the upstream Training API job / AML run."""
+    resource_profile: Optional["_models.RLEInstanceGroupResourceProfile"] = rest_field(
+        name="resourceProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional forward-compatible resource allocation hints. Recorded only in this version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_active_instances: Optional[int] = None,
+        metadata: Optional[dict[str, str]] = None,
+        resource_profile: Optional["_models.RLEInstanceGroupResourceProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListRLEnvironmentsResponse(_Model):
+    """Response for listing hosted RLE environments using opaque cursor pagination.
+
+    :ivar data: Environments on this page. Required.
+    :vartype data: list[~azure.ai.projects.models.RLEnvironment]
+    :ivar first_id: Opaque cursor of the first item on this page.
+    :vartype first_id: str
+    :ivar last_id: Opaque cursor of the last item on this page.
+    :vartype last_id: str
+    :ivar has_more: Whether more environments are available. Required.
+    :vartype has_more: bool
+    """
+
+    data: list["_models.RLEnvironment"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Environments on this page. Required."""
+    first_id: Optional[str] = rest_field(name="first_id", visibility=["read"])
+    """Opaque cursor of the first item on this page."""
+    last_id: Optional[str] = rest_field(name="last_id", visibility=["read"])
+    """Opaque cursor of the last item on this page."""
+    has_more: bool = rest_field(name="has_more", visibility=["read"])
+    """Whether more environments are available. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: list["_models.RLEnvironment"],
+        has_more: bool,
+        first_id: Optional[str] = None,
+        last_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListRLEnvironmentVersionsResponse(_Model):
+    """Response for listing RLE environment versions using opaque cursor pagination.
+
+    :ivar data: Environment versions on this page. Required.
+    :vartype data: list[~azure.ai.projects.models.RLEnvironmentVersion]
+    :ivar first_id: Opaque cursor of the first item on this page.
+    :vartype first_id: str
+    :ivar last_id: Opaque cursor of the last item on this page.
+    :vartype last_id: str
+    :ivar has_more: Whether more versions are available. Required.
+    :vartype has_more: bool
+    """
+
+    data: list["_models.RLEnvironmentVersion"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Environment versions on this page. Required."""
+    first_id: Optional[str] = rest_field(name="first_id", visibility=["read"])
+    """Opaque cursor of the first item on this page."""
+    last_id: Optional[str] = rest_field(name="last_id", visibility=["read"])
+    """Opaque cursor of the last item on this page."""
+    has_more: bool = rest_field(name="has_more", visibility=["read"])
+    """Whether more versions are available. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: list["_models.RLEnvironmentVersion"],
+        has_more: bool,
+        first_id: Optional[str] = None,
+        last_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListRLEInstanceGroupsResponse(_Model):
+    """Response for listing RLE instance groups.
+
+    :ivar data: Instance groups on this page. Required.
+    :vartype data: list[~azure.ai.projects.models.RLEInstanceGroup]
+    :ivar count: Number of instance groups returned. Required.
+    :vartype count: int
+    """
+
+    data: list["_models.RLEInstanceGroup"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Instance groups on this page. Required."""
+    count: int = rest_field(visibility=["read"])
+    """Number of instance groups returned. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: list["_models.RLEInstanceGroup"],
+        count: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RLEInstanceGroup(_Model):
+    """A first-class group of RLE instances leased for a single reinforcement-learning training job.
+    Created under a registered environment, optionally pinned to a specific environment version.
+
+    :ivar id: Instance group identifier, assigned by the service. Required.
+    :vartype id: str
+    :ivar project_id: Foundry project identifier that owns this instance group. Required.
+    :vartype project_id: str
+    :ivar environment_name: Name of the registered RLE environment the group's instances are leased
+     from. Required.
+    :vartype environment_name: str
+    :ivar environment_version: Version of the registered RLE environment the group's instances are
+     leased from. Required.
+    :vartype environment_version: str
+    :ivar max_active_instances: Maximum number of concurrently-active instances the
+     group may hold. Defaults to 1 when omitted on create. Required.
+    :vartype max_active_instances: int
+    :ivar metadata: Free-form correlation/tag key-values, persisted opaquely by RLE and echoed on
+     responses. ``external_job_id`` is a reserved well-known key that carries the upstream Training
+     API job / AML run this group backs.
+    :vartype metadata: dict[str, str]
+    :ivar resource_profile: Forward-compatible resource allocation hints. Recorded but not scheduled
+     against in this version.
+    :vartype resource_profile: ~azure.ai.projects.models.RLEInstanceGroupResourceProfile
+    :ivar created_at_utc: Timestamp the instance group was created, in UTC. Required.
+    :vartype created_at_utc: ~datetime.datetime
+    :ivar updated_at_utc: Timestamp the instance group was last updated, in UTC. Required.
+    :vartype updated_at_utc: ~datetime.datetime
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Instance group identifier, assigned by the service. Required."""
+    project_id: str = rest_field(name="projectId", visibility=["read"])
+    """Foundry project identifier that owns this instance group. Required."""
+    environment_name: str = rest_field(name="environmentName", visibility=["read"])
+    """Name of the registered RLE environment the group's instances are leased from. Required."""
+    environment_version: str = rest_field(name="environmentVersion", visibility=["read"])
+    """Version of the registered RLE environment the group's instances are leased from. Required."""
+    max_active_instances: int = rest_field(name="maxActiveInstances", visibility=["read"])
+    """Maximum number of concurrently-active instances the group may hold.
+     Defaults to 1 when omitted on create. Required."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Free-form correlation/tag key-values, persisted opaquely by RLE and echoed on responses.
+     ``external_job_id`` is a reserved well-known key that carries the upstream Training API job / AML
+     run this group backs."""
+    resource_profile: Optional["_models.RLEInstanceGroupResourceProfile"] = rest_field(
+        name="resourceProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Forward-compatible resource allocation hints. Recorded but not scheduled against in this
+     version."""
+    created_at_utc: datetime.datetime = rest_field(name="createdAtUtc", visibility=["read"], format="rfc3339")
+    """Timestamp the instance group was created, in UTC. Required."""
+    updated_at_utc: datetime.datetime = rest_field(name="updatedAtUtc", visibility=["read"], format="rfc3339")
+    """Timestamp the instance group was last updated, in UTC. Required."""
+
+
+class RLEnvironment(_Model):
+    """A hosted reinforcement-learning environment that sandboxes are leased from.
+
+    :ivar id: Hosted RLE environment identifier, assigned by the service. Required.
+    :vartype id: str
+    :ivar project_id: Foundry project identifier that owns this environment. Required.
+    :vartype project_id: str
+    :ivar name: Display name for the environment. Required.
+    :vartype name: str
+    :ivar acr_image_path: Container image reference (Azure Container Registry path) that backs the
+     environment. Required.
+    :vartype acr_image_path: str
+    :ivar version: Latest version identifier for the environment image. Required.
+    :vartype version: str
+    :ivar disk_image_conversion_status: Status of the asynchronous conversion from the ACR
+     container image to a disk image usable by leased sandboxes. Required. Known values are:
+     "NotRequested", "Pending", "Ready", and "Failed".
+    :vartype disk_image_conversion_status: str or
+     ~azure.ai.projects.models.RLEnvironmentDiskImageConversionStatus
+    :ivar disk_image_conversion_error: Error details from the most recent disk image conversion
+     attempt, when ``diskImageConversionStatus`` is ``Failed``.
+    :vartype disk_image_conversion_error: str
+    :ivar created_at_utc: Timestamp the environment was first created, in UTC. Required.
+    :vartype created_at_utc: ~datetime.datetime
+    :ivar updated_at_utc: Timestamp the environment was last updated, in UTC. Required.
+    :vartype updated_at_utc: ~datetime.datetime
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Hosted RLE environment identifier, assigned by the service. Required."""
+    project_id: str = rest_field(name="projectId", visibility=["read"])
+    """Foundry project identifier that owns this environment. Required."""
+    name: str = rest_field(visibility=["read"])
+    """Display name for the environment. Required."""
+    acr_image_path: str = rest_field(name="acrImagePath", visibility=["read"])
+    """Container image reference (Azure Container Registry path) that backs the environment. Required."""
+    version: str = rest_field(visibility=["read"])
+    """Latest version identifier for the environment image. Required."""
+    disk_image_conversion_status: Union[str, "_models.RLEnvironmentDiskImageConversionStatus"] = rest_field(
+        name="diskImageConversionStatus", visibility=["read"]
+    )
+    """Status of the asynchronous conversion from the ACR container image to a disk image usable by
+     leased sandboxes. Required. Known values are: \"NotRequested\", \"Pending\", \"Ready\", and
+     \"Failed\"."""
+    disk_image_conversion_error: Optional[str] = rest_field(name="diskImageConversionError", visibility=["read"])
+    """Error details from the most recent disk image conversion attempt, when
+     ``diskImageConversionStatus`` is ``Failed``."""
+    created_at_utc: datetime.datetime = rest_field(name="createdAtUtc", visibility=["read"], format="rfc3339")
+    """Timestamp the environment was first created, in UTC. Required."""
+    updated_at_utc: datetime.datetime = rest_field(name="updatedAtUtc", visibility=["read"], format="rfc3339")
+    """Timestamp the environment was last updated, in UTC. Required."""
+
+
+class RLEnvironmentState(_Model):
+    """Snapshot returned by the RLE environment ``state`` endpoint.
+
+    :ivar episode_id: Current episode identifier, when one is active.
+    :vartype episode_id: str
+    :ivar step_count: Number of completed steps in the current episode.
+    :vartype step_count: int
+    """
+
+    episode_id: Optional[str] = rest_field(
+        name="episode_id", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current episode identifier, when one is active."""
+    step_count: Optional[int] = rest_field(
+        name="step_count", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of completed steps in the current episode."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        episode_id: Optional[str] = None,
+        step_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RLEnvironmentVersion(_Model):
+    """A historical version snapshot of a hosted RLE environment.
+
+    :ivar environment_id: Identifier of the parent RLE environment. Required.
+    :vartype environment_id: str
+    :ivar project_id: Foundry project identifier that owns the parent environment. Required.
+    :vartype project_id: str
+    :ivar version: Version identifier for this snapshot. Required.
+    :vartype version: str
+    :ivar acr_image_path: Container image reference (Azure Container Registry path) for this
+     version. Required.
+    :vartype acr_image_path: str
+    :ivar created_at_utc: Timestamp this version was created, in UTC. Required.
+    :vartype created_at_utc: ~datetime.datetime
+    """
+
+    environment_id: str = rest_field(name="environmentId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the parent RLE environment. Required."""
+    project_id: str = rest_field(name="projectId", visibility=["read", "create", "update", "delete", "query"])
+    """Foundry project identifier that owns the parent environment. Required."""
+    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Version identifier for this snapshot. Required."""
+    acr_image_path: str = rest_field(name="acrImagePath", visibility=["read", "create", "update", "delete", "query"])
+    """Container image reference (Azure Container Registry path) for this version. Required."""
+    created_at_utc: datetime.datetime = rest_field(
+        name="createdAtUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp this version was created, in UTC. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        environment_id: str,
+        project_id: str,
+        version: str,
+        acr_image_path: str,
+        created_at_utc: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RLEResetRequest(_Model):
+    """Request body for starting or restarting an RLE environment episode.
+
+    :ivar seed: Optional deterministic seed for the next episode.
+    :vartype seed: int
+    :ivar episode_id: Optional caller-provided episode identifier.
+    :vartype episode_id: str
+    """
+
+    seed: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional deterministic seed for the next episode."""
+    episode_id: Optional[str] = rest_field(name="episodeId", visibility=["read", "create", "update", "delete", "query"])
+    """Optional caller-provided episode identifier."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        seed: Optional[int] = None,
+        episode_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RLEInstance(_Model):
+    """A leased runtime unit owned by an RLE instance group (replaces the former "sandbox" concept).
+    Combines the owning instance-group identity, runtime identity, runtime status, and data-plane
+    base URL.
+
+    :ivar instance_id: Instance identifier, assigned by the service. Globally unique. Required.
+    :vartype instance_id: str
+    :ivar instance_group_id: Identifier of the owning RLE instance group. Required.
+    :vartype instance_group_id: str
+    :ivar status: Runtime status of the instance. Required. Known values are: "Creating", "Running",
+     "Stopped", "Failed", and "Deleted".
+    :vartype status: str or ~azure.ai.projects.models.RLEInstanceStatus
+    :ivar base_url: Base URL used to reach the instance's OpenEnv endpoints.
+    :vartype base_url: str
+    :ivar error: Failure detail when the instance enters the ``Failed`` state.
+    :vartype error: str
+    :ivar created_at_utc: Timestamp the instance was created, in UTC. Required.
+    :vartype created_at_utc: ~datetime.datetime
+    :ivar updated_at_utc: Timestamp the instance was last updated, in UTC. Required.
+    :vartype updated_at_utc: ~datetime.datetime
+    """
+
+    instance_id: str = rest_field(name="instanceId", visibility=["read"])
+    """Instance identifier, assigned by the service. Globally unique. Required."""
+    instance_group_id: str = rest_field(name="instanceGroupId", visibility=["read"])
+    """Identifier of the owning RLE instance group. Required."""
+    status: Union[str, "_models.RLEInstanceStatus"] = rest_field(visibility=["read"])
+    """Runtime status of the instance. Required. Known values are: \"Creating\", \"Running\",
+     \"Stopped\", \"Failed\", and \"Deleted\"."""
+    base_url: Optional[str] = rest_field(name="baseUrl", visibility=["read"])
+    """Base URL used to reach the instance's OpenEnv endpoints."""
+    error: Optional[str] = rest_field(visibility=["read"])
+    """Failure detail when the instance enters the ``Failed`` state."""
+    created_at_utc: datetime.datetime = rest_field(name="createdAtUtc", visibility=["read"], format="rfc3339")
+    """Timestamp the instance was created, in UTC. Required."""
+    updated_at_utc: datetime.datetime = rest_field(name="updatedAtUtc", visibility=["read"], format="rfc3339")
+    """Timestamp the instance was last updated, in UTC. Required."""
+
+
+class RLEStepRequest(_Model):
+    """Request body for applying an action to the current RLE episode.
+
+    :ivar action: Environment-specific action payload. Required.
+    :vartype action: dict[str, any]
+    """
+
+    action: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Environment-specific action payload. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action: dict[str, Any],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RLEStepResult(_Model):
+    """Outcome returned by RLE ``reset`` and ``step`` in the OpenEnv / Gymnasium wire shape.
+
+    :ivar observation: Environment-specific observation payload.
+    :vartype observation: dict[str, any]
+    :ivar reward: Reward for the transition, when the environment provides one.
+    :vartype reward: float
+    :ivar terminated: True when the episode reached a natural terminal state.
+    :vartype terminated: bool
+    :ivar truncated: True when an external limit ended the episode.
+    :vartype truncated: bool
+    :ivar done: Legacy single terminal flag. New payloads should prefer ``terminated`` and
+     ``truncated``.
+    :vartype done: bool
+    :ivar info: Gymnasium info payload.
+    :vartype info: dict[str, any]
+    :ivar metadata: Legacy metadata payload. The SDK maps it to ``info`` when ``info`` is absent.
+    :vartype metadata: dict[str, any]
+    """
+
+    observation: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Environment-specific observation payload."""
+    reward: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Reward for the transition, when the environment provides one."""
+    terminated: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """True when the episode reached a natural terminal state."""
+    truncated: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """True when an external limit ended the episode."""
+    done: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Legacy single terminal flag. New payloads should prefer ``terminated`` and ``truncated``."""
+    info: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Gymnasium info payload."""
+    metadata: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Legacy metadata payload. The SDK maps it to ``info`` when ``info`` is absent."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        observation: Optional[dict[str, Any]] = None,
+        reward: Optional[float] = None,
+        terminated: Optional[bool] = None,
+        truncated: Optional[bool] = None,
+        done: Optional[bool] = None,
+        info: Optional[dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)

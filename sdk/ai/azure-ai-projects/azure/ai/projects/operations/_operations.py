@@ -23,7 +23,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     StreamClosedError,
     StreamConsumedError,
-    map_error,
+    map_error as _map_error,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
@@ -47,6 +47,15 @@ List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
+
+
+def map_error(*, status_code: int, response: HttpResponse, error_map: MutableMapping) -> None:
+    request_url = str(getattr(getattr(response, "request", None), "url", ""))
+    error_type = error_map.get(status_code)
+    if "/rl_environments/" in request_url and error_type:
+        error = _failsafe_deserialize(_models.RLEErrorResponse, response)
+        raise error_type(response=response, model=error)
+    _map_error(status_code=status_code, response=response, error_map=error_map)
 
 
 def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
@@ -17167,6 +17176,2354 @@ class BetaDatasetsOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+
+# RLE (reinforcement learning) operations grafted from generated code
+
+
+def build_rl_environments_create_environment_request(  # pylint: disable=name-too-long
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/rl_environments/create"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rl_environments_list_environments_request(  # pylint: disable=name-too-long
+    *,
+    name: Optional[str] = None,
+    limit: Optional[int] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    order: Optional[Union[str, _models.RLEPaginationOrder]] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/rl_environments"
+
+    # Construct parameters
+    if name is not None:
+        _params["name"] = _SERIALIZER.query("name", name, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rl_environments_get_environment_request(  # pylint: disable=name-too-long
+    name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/rl_environments/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rl_environments_get_environment_version_request(  # pylint: disable=name-too-long
+    name: str,
+    version: str,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/rl_environments/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rl_environments_delete_environment_version_request(  # pylint: disable=name-too-long
+    name: str,
+    version: str,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/rl_environments/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rl_environments_list_rl_environment_versions_request(  # pylint: disable=name-too-long
+    name: str,
+    *,
+    limit: Optional[int] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    order: Optional[Union[str, _models.RLEPaginationOrder]] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/rl_environments/{name}/versions"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+def _get_rle_environment_control_plane_path(environment_name: str, environment_version: Optional[str]) -> str:
+    path = "/rl_environments/{environmentName}"
+    path_format_arguments = {
+        "environmentName": _SERIALIZER.url("environment_name", environment_name, "str"),
+    }
+    if environment_version is not None:
+        path += "/versions/{environmentVersion}"
+        path_format_arguments["environmentVersion"] = _SERIALIZER.url(
+            "environment_version", environment_version, "str"
+        )
+    return path.format(**path_format_arguments)
+
+
+def _validate_rle_runtime_environment_version(environment_version: str) -> None:
+    if not environment_version:
+        raise ValueError("environment_version is required for RLE instance runtime operations")
+
+
+def build_rle_instance_groups_create_instance_group_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    *,
+    environment_version: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = _get_rle_environment_control_plane_path(environment_name, environment_version) + "/instance_groups"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instance_groups_list_instance_groups_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    *,
+    environment_version: Optional[str] = None,
+    skip: Optional[int] = None,
+    top: Optional[int] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = _get_rle_environment_control_plane_path(environment_name, environment_version) + "/instance_groups"
+
+    # Construct parameters
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instance_groups_get_instance_group_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    instance_group_id: str,
+    *,
+    environment_version: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}"
+    )
+    path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instance_groups_delete_instance_group_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    instance_group_id: str,
+    *,
+    environment_version: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}"
+    )
+    path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instances_create_instance_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    instance_group_id: str,
+    *,
+    environment_version: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances"
+    )
+    path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instances_get_instance_request(
+    environment_name: str,
+    instance_group_id: str,
+    instance_id: str,
+    *,
+    environment_version: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}"
+    )
+    path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
+        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instances_release_instance_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    instance_group_id: str,
+    instance_id: str,
+    *,
+    environment_version: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}"
+    )
+    path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
+        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instance_runtime_reset_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
+    instance_id: str,
+    *,
+    session_id: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/reset"
+    )
+    path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
+        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if session_id is not None:
+        _headers["x-rle-session-id"] = _SERIALIZER.header("session_id", session_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instance_runtime_step_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
+    instance_id: str,
+    *,
+    session_id: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/step"
+    )
+    path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
+        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if session_id is not None:
+        _headers["x-rle-session-id"] = _SERIALIZER.header("session_id", session_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instance_runtime_state_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
+    instance_id: str,
+    *,
+    session_id: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/state"
+    )
+    path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
+        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if session_id is not None:
+        _headers["x-rle-session-id"] = _SERIALIZER.header("session_id", session_id, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instance_runtime_health_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
+    instance_id: str,
+    *,
+    session_id: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/health"
+    )
+    path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
+        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if session_id is not None:
+        _headers["x-rle-session-id"] = _SERIALIZER.header("session_id", session_id, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instance_runtime_get_metadata_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
+    instance_id: str,
+    *,
+    session_id: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/metadata"
+    )
+    path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
+        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if session_id is not None:
+        _headers["x-rle-session-id"] = _SERIALIZER.header("session_id", session_id, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+def build_rle_instance_runtime_schema_request(  # pylint: disable=name-too-long
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
+    instance_id: str,
+    *,
+    session_id: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _validate_rle_runtime_environment_version(environment_version)
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        _get_rle_environment_control_plane_path(environment_name, environment_version)
+        + "/instance_groups/{instanceGroupId}/instances/{instanceId}/openenv/schema"
+    )
+    path_format_arguments = {
+        "instanceGroupId": _SERIALIZER.url("instance_group_id", instance_group_id, "str"),
+        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if session_id is not None:
+        _headers["x-rle-session-id"] = _SERIALIZER.header("session_id", session_id, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+class RLEnvironmentsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.ProjectsClient`'s
+        :attr:`rle` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    def create_environment(
+        self,
+        body: _models.CreateRLEnvironmentRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.RLEnvironment:
+        """Create a new hosted RLE environment.
+
+        :param body: The environment to create. Required.
+        :type body: ~azure.ai.projects.models.CreateRLEnvironmentRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RLEnvironment. The RLEnvironment is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEnvironment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_environment(
+        self,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.RLEnvironment:
+        """Create a new hosted RLE environment.
+
+        :param body: The environment to create. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RLEnvironment. The RLEnvironment is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEnvironment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_environment(
+        self,
+        body: Union[_models.CreateRLEnvironmentRequest, IO[bytes]],
+        **kwargs: Any,
+    ) -> _models.RLEnvironment:
+        """Create a new hosted RLE environment.
+
+        :param body: The environment to create. Is either a CreateRLEnvironmentRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.ai.projects.models.CreateRLEnvironmentRequest or IO[bytes]
+        :return: RLEnvironment. The RLEnvironment is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEnvironment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RLEnvironment] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_rl_environments_create_environment_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEnvironment, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_environments(
+        self,
+        *,
+        name: Optional[str] = None,
+        limit: Optional[int] = None,
+        after: Optional[str] = None,
+        before: Optional[str] = None,
+        order: Optional[Union[str, _models.RLEPaginationOrder]] = None,
+        **kwargs: Any,
+    ) -> _models.ListRLEnvironmentsResponse:
+        """List all hosted RLE environments in the project.
+
+        :keyword name: Optional environment name filter. When set, returns at most a single matching
+         environment. Default value is None.
+        :paramtype name: str
+        :keyword skip: Number of environments to skip. Defaults to 0. Default value is None.
+        :paramtype skip: int
+        :keyword top: Maximum number of environments to return. Defaults to 50; valid range is [1,
+         200]. Default value is None.
+        :paramtype top: int
+        :return: ListRLEnvironmentsResponse. The ListRLEnvironmentsResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ListRLEnvironmentsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListRLEnvironmentsResponse] = kwargs.pop("cls", None)
+
+        _request = build_rl_environments_list_environments_request(
+            name=name,
+            limit=limit,
+            after=after,
+            before=before,
+            order=order,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ListRLEnvironmentsResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_environment(
+        self, name: str, **kwargs: Any
+    ) -> _models.RLEnvironment:
+        """Get a hosted RLE environment by name. Returns the latest version of the environment.
+
+        :param name: Environment name. Required.
+        :type name: str
+        :return: RLEnvironment. The RLEnvironment is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEnvironment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RLEnvironment] = kwargs.pop("cls", None)
+
+        _request = build_rl_environments_get_environment_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEnvironment, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_environment_version(
+        self,
+        name: str,
+        version: str,
+        **kwargs: Any,
+    ) -> _models.RLEnvironment:
+        """Get a specific version of a hosted RLE environment by name and version.
+
+        :param name: Environment name. Required.
+        :type name: str
+        :param version: Environment version identifier. Required.
+        :type version: str
+        :return: RLEnvironment. The RLEnvironment is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEnvironment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RLEnvironment] = kwargs.pop("cls", None)
+
+        _request = build_rl_environments_get_environment_version_request(
+            name=name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEnvironment, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_environment_version(  # pylint: disable=inconsistent-return-statements
+        self,
+        name: str,
+        version: str,
+        **kwargs: Any,
+    ) -> None:
+        """Delete a specific version of a hosted RLE environment.
+
+        :param name: Environment name. Required.
+        :type name: str
+        :param version: Environment version identifier. Required.
+        :type version: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_rl_environments_delete_environment_version_request(
+            name=name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list_rl_environment_versions(
+        self,
+        name: str,
+        *,
+        limit: Optional[int] = None,
+        after: Optional[str] = None,
+        before: Optional[str] = None,
+        order: Optional[Union[str, _models.RLEPaginationOrder]] = None,
+        **kwargs: Any,
+    ) -> _models.ListRLEnvironmentVersionsResponse:
+        """List historical versions of a hosted RLE environment.
+
+        :param name: Environment name. Required.
+        :type name: str
+        :return: list of RLEnvironmentVersion
+        :rtype: list[~azure.ai.projects.models.RLEnvironmentVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListRLEnvironmentVersionsResponse] = kwargs.pop("cls", None)
+
+        _request = build_rl_environments_list_rl_environment_versions_request(
+            name=name,
+            limit=limit,
+            after=after,
+            before=before,
+            order=order,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ListRLEnvironmentVersionsResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+class RLEInstanceGroupsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.ProjectsClient`'s
+        :attr:`rle` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    def create_instance_group(
+        self,
+        environment_name: str,
+        body: _models.CreateRLEInstanceGroupRequest,
+        *,
+        environment_version: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.RLEInstanceGroup: ...
+
+    @overload
+    def create_instance_group(
+        self,
+        environment_name: str,
+        body: IO[bytes],
+        *,
+        environment_version: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.RLEInstanceGroup: ...
+
+    @distributed_trace
+    def create_instance_group(
+        self,
+        environment_name: str,
+        body: Union[_models.CreateRLEInstanceGroupRequest, IO[bytes]],
+        *,
+        environment_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.RLEInstanceGroup:
+        """Create a new RLE instance group.
+
+        The service mints the group identifier and reserves ``max_active_instances`` slots of quota.
+        Returns ``403`` with code ``QuotaExceeded`` when the requested quota cannot be reserved.
+
+        :param body: The instance group to create. Is either a CreateRLEInstanceGroupRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.ai.projects.models.CreateRLEInstanceGroupRequest or IO[bytes]
+        :return: RLEInstanceGroup. The RLEInstanceGroup is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEInstanceGroup
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RLEInstanceGroup] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_rle_instance_groups_create_instance_group_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEInstanceGroup, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_instance_groups(
+        self,
+        environment_name: str,
+        *,
+        environment_version: Optional[str] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
+        **kwargs: Any,
+    ) -> _models.ListRLEInstanceGroupsResponse:
+        """List RLE instance groups in the project.
+
+        :keyword skip: Number of instance groups to skip. Default value is None.
+        :paramtype skip: int
+        :keyword top: Maximum number of instance groups to return. Default value is None.
+        :paramtype top: int
+        :return: ListRLEInstanceGroupsResponse. The ListRLEInstanceGroupsResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ListRLEInstanceGroupsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListRLEInstanceGroupsResponse] = kwargs.pop("cls", None)
+
+        _request = build_rle_instance_groups_list_instance_groups_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            skip=skip,
+            top=top,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ListRLEInstanceGroupsResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_instance_group(
+        self,
+        environment_name: str,
+        instance_group_id: str,
+        *,
+        environment_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.RLEInstanceGroup:
+        """Get an RLE instance group by identifier.
+
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
+        :return: RLEInstanceGroup. The RLEInstanceGroup is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEInstanceGroup
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RLEInstanceGroup] = kwargs.pop("cls", None)
+
+        _request = build_rle_instance_groups_get_instance_group_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEInstanceGroup, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_instance_group(
+        self,
+        environment_name: str,
+        instance_group_id: str,
+        *,
+        environment_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Cancel an RLE instance group.
+
+        The group is marked ``Cancelled`` and all owned instances are released.
+
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_rle_instance_groups_delete_instance_group_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class RLEInstancesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.ProjectsClient`'s
+        :attr:`rle` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def create_instance(
+        self,
+        environment_name: str,
+        instance_group_id: str,
+        *,
+        environment_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.RLEInstance:
+        """Lease a new RLE instance under the instance group.
+
+        Synchronous and non-LRO: returns ``201`` with the new instance, ``429`` (with ``Retry-After``)
+        at the group's reserved capacity, ``202`` (with ``Retry-After``, status ``Pending``) when under
+        cap but no warm instance is available yet, or ``503`` on a hard backend failure. A ``202``
+        response body is the pending instance; higher-level polling belongs to the ``rle`` operation
+        group.
+
+        :param instance_group_id: Instance group identifier to lease the instance under. Required.
+        :type instance_group_id: str
+        :return: RLEInstance. The RLEInstance is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEInstance
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RLEInstance] = kwargs.pop("cls", None)
+
+        _request = build_rle_instances_create_instance_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201, 202]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                (
+                    _models.RLEInstanceGroupAtCapacityErrorResponse
+                    if response.status_code == 429
+                    else _models.RLEErrorResponse
+                ),
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEInstance, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_instance(
+        self,
+        environment_name: str,
+        instance_group_id: str,
+        instance_id: str,
+        *,
+        environment_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.RLEInstance:
+        """Get an RLE instance by identifier.
+
+        :param instance_group_id: Instance group identifier the instance belongs to. Required.
+        :type instance_group_id: str
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :return: RLEInstance. The RLEInstance is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEInstance
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RLEInstance] = kwargs.pop("cls", None)
+
+        _request = build_rle_instances_get_instance_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
+            instance_id=instance_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEInstance, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def release_instance(
+        self,
+        environment_name: str,
+        instance_group_id: str,
+        instance_id: str,
+        *,
+        environment_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Release an RLE instance.
+
+        :param instance_group_id: Instance group identifier the instance belongs to. Required.
+        :type instance_group_id: str
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_rle_instances_release_instance_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
+            instance_id=instance_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    def reset(
+        self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
+        instance_id: str,
+        body: _models.RLEResetRequest,
+        *,
+        session_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.RLEStepResult: ...
+
+    @overload
+    def reset(
+        self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
+        instance_id: str,
+        body: IO[bytes],
+        *,
+        session_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.RLEStepResult: ...
+
+    @distributed_trace
+    def reset(
+        self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
+        instance_id: str,
+        body: Union[_models.RLEResetRequest, IO[bytes]],
+        *,
+        session_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.RLEStepResult:
+        """Start a new episode and return the initial observation.
+
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :param body: Reset request body. Is either a RLEResetRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.ai.projects.models.RLEResetRequest or IO[bytes]
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
+        :return: RLEStepResult. The RLEStepResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEStepResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RLEStepResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_rle_instance_runtime_reset_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
+            instance_id=instance_id,
+            session_id=session_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEStepResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def step(
+        self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
+        instance_id: str,
+        body: _models.RLEStepRequest,
+        *,
+        session_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.RLEStepResult: ...
+
+    @overload
+    def step(
+        self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
+        instance_id: str,
+        body: IO[bytes],
+        *,
+        session_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.RLEStepResult: ...
+
+    @distributed_trace
+    def step(
+        self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
+        instance_id: str,
+        body: Union[_models.RLEStepRequest, IO[bytes]],
+        *,
+        session_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.RLEStepResult:
+        """Apply an action and return the resulting transition.
+
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :param body: Step request body. Is either a RLEStepRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.ai.projects.models.RLEStepRequest or IO[bytes]
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
+        :return: RLEStepResult. The RLEStepResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEStepResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RLEStepResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_rle_instance_runtime_step_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
+            instance_id=instance_id,
+            session_id=session_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEStepResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def state(
+        self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
+        instance_id: str,
+        *,
+        session_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.RLEnvironmentState:
+        """Return the current environment state.
+
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
+        :return: RLEnvironmentState. The RLEnvironmentState is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RLEnvironmentState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RLEnvironmentState] = kwargs.pop("cls", None)
+
+        _request = build_rle_instance_runtime_state_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
+            instance_id=instance_id,
+            session_id=session_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RLEnvironmentState, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def health(
+        self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
+        instance_id: str,
+        *,
+        session_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> dict[str, Any]:
+        """Return environment health details.
+
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
+
+        _request = build_rle_instance_runtime_health_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
+            instance_id=instance_id,
+            session_id=session_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(dict[str, Any], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_metadata(
+        self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
+        instance_id: str,
+        *,
+        session_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> dict[str, Any]:
+        """Return environment metadata.
+
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
+
+        _request = build_rle_instance_runtime_get_metadata_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
+            instance_id=instance_id,
+            session_id=session_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(dict[str, Any], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def schema(
+        self,
+        environment_name: str,
+        environment_version: str,
+        instance_group_id: str,
+        instance_id: str,
+        *,
+        session_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> dict[str, Any]:
+        """Return environment-provided action and observation schemas.
+
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Resolved environment version. Required.
+        :type environment_version: str
+        :param instance_group_id: Instance group identifier. Required.
+        :type instance_group_id: str
+        :param instance_id: Instance identifier. Required.
+        :type instance_id: str
+        :keyword session_id: Optional client-supplied session identifier, echoed to the runtime and
+         logs for correlation only. Default value is None.
+        :paramtype session_id: str
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
+
+        _request = build_rle_instance_runtime_schema_request(
+            environment_name=environment_name,
+            environment_version=environment_version,
+            instance_group_id=instance_group_id,
+            instance_id=instance_id,
+            session_id=session_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.RLEErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(dict[str, Any], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class BetaAgentsOperations:

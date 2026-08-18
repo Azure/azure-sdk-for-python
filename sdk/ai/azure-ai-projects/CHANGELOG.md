@@ -1,5 +1,16 @@
 # Release History
 
+## 2.5.0 
+
+### Features Added
+
+* Added Reinforcement Learning Environments (RLE) support:
+  * New generated models: `RLEnvironment`, `RLEnvironmentVersion`, `RLEInstanceGroup`, `RLEInstance`, `RLEErrorResponse`, `RLEInstanceGroupAtCapacityErrorResponse`, `CreateRLEnvironmentRequest`, `CreateRLEInstanceGroupRequest`, `RLEInstanceGroupResourceProfile`, `RLEResetRequest`, `RLEStepRequest`, `RLEStepResult`, `RLEnvironmentState`, `ListRLEnvironmentsResponse`, `ListRLEnvironmentVersionsResponse`, and `ListRLEInstanceGroupsResponse`, plus the `RLEnvironmentDiskImageConversionStatus`, `RLEnvironmentVersionBump`, `RLEPaginationOrder`, and `RLEInstanceStatus` enums.
+  * New root-client operation group `project_client.rle` (`RLEOperations`) exposing a single entry point, `get_openenv_client`. Environment, instance-group, and instance management operations are internal — customers interact only with the `OpenEnvClient` and the `OpenEnvInstance` objects it hands out.
+  * New OpenEnv client interface `project_client.rle.get_openenv_client(name, version=None, max_active_instances=1, instance_acquire_timeout=900, ...)` returning an `OpenEnvClient` / `AsyncOpenEnvClient` context manager. On both the sync and async surfaces `get_openenv_client(...)` is a plain (non-awaited) factory that performs no I/O. The environment is resolved by `name` (and `version` when supplied) on context entry, so a missing or invalid environment fails when the client is entered. Entering the client creates a single `RLEInstanceGroup` that reserves `max_active_instances` of concurrency on the service and fails fast if the quota cannot be granted. The service owns the pool and the reservation — the client keeps no local pool. `get_instance()` retries temporary `InstanceGroupAtCapacity` responses according to `Retry-After`, then waits for the instance to report `Running` and for its runtime health endpoint to become healthy, all within the configurable acquisition timeout (maximum 3600 seconds). Timeout failures raise `RLEInstanceAcquireTimeoutError` with the last status and typed capacity details when available. The returned `OpenEnvInstance` / `AsyncOpenEnvInstance` exposes resolved `environment_name` and `environment_version` properties in addition to `id`, `instance_group_id`, the underlying `instance`, and the `reset`/`step`/`state`/`health`/`metadata`/`schema` runtime operations. Every non-health runtime operation verifies runtime health before sending its request. Closing the client deletes the instance group, which releases any instances still leased on the service; the client keeps no local list of leased instances.
+  * Instance-group creation may omit the environment version to select the latest version. The response resolves the concrete environment name and version, which are then used for instance creation and all runtime operations (`reset`, `step`, `state`, `health`, `metadata`, `schema`) together with the instance-group and instance identifiers. Runtime requests flow through the `AIProjectClient` pipeline (auth, retries, tracing). The `reset`/`step` operations return the generated `RLEStepResult` model and `state` returns `RLEnvironmentState`; `health`, `metadata`, and `schema` return the raw JSON payload as a dictionary.
+  * RLE samples authenticate with `DefaultAzureCredential` for both sync and async clients.
+
 ## 2.4.0 (2026-07-24)
 
 ### Features Added
@@ -121,7 +132,6 @@ all derived from `ToolboxTool`, have been defined.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 * New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
-
 
 ### Breaking Changes
 
