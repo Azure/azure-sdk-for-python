@@ -91,23 +91,42 @@ async def _iter_handler_with_request_context(
     cancellation_signal: asyncio.Event,
     agent_session_id: str | None,
 ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
-    """Run a developer handler with its reconstructed ambient platform identity."""
-    token = None
+    """Run a developer handler with its reconstructed ambient platform identity.
+
+    :param create_fn: The handler's async generator callable.
+    :type create_fn: Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]]
+    :param parsed: The parsed request.
+    :type parsed: CreateResponse
+    :param context: The reconstructed response context.
+    :type context: ResponseContext | None
+    :param cancellation_signal: The cancellation event.
+    :type cancellation_signal: asyncio.Event
+    :param agent_session_id: The resolved agent session ID.
+    :type agent_session_id: str | None
+    :return: The handler's response stream events.
+    :rtype: AsyncIterator[generated_models.ResponseStreamEvent]
+    """
+    request_context = None
     if context is not None:
         platform_context = context.platform_context
-        token = set_request_context(
-            FoundryAgentRequestContext(
-                user_id=platform_context.user_id_key,
-                call_id=platform_context.call_id,
-                session_id=agent_session_id,
-            )
+        request_context = FoundryAgentRequestContext(
+            user_id=platform_context.user_id_key,
+            call_id=platform_context.call_id,
+            session_id=agent_session_id,
         )
-    try:
-        async for event in create_fn(parsed, context, cancellation_signal):
-            yield event
-    finally:
-        if token is not None:
-            reset_request_context(token)
+
+    handler_iterator = create_fn(parsed, context, cancellation_signal)
+    while True:
+        token = set_request_context(request_context) if request_context is not None else None
+        try:
+            try:
+                event = await handler_iterator.__anext__()
+            except StopAsyncIteration:
+                return
+        finally:
+            if token is not None:
+                reset_request_context(token)
+        yield event
 
 
 async def _resolve_input_items_for_persistence(
