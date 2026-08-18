@@ -4,6 +4,7 @@
 
 ### Features Added
 
+* Added stable Agent-to-Agent (A2A) tools `A2ATool` and `A2AToolboxTool`, with the new `A2AProtocolVersion` enum for selecting protocol version `1.0`.
 * Method `.beta.agents.begin_create_optimization_job` now returns a custom LRO poller named `AgentOptimizationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
 * Method `.beta.datasets.begin_create_generation_job` now returns a custom LRO poller named `DatasetGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
 * Method `.beta.evaluators.begin_create_generation_job` now returns a custom LRO poller named `EvaluatorGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
@@ -13,6 +14,7 @@
 
 All breaking changes are associated with beta features.
 
+* Renamed class `TaskGenerationDataGenerationJobOptions` to `SimulationSeedDataGenerationJobOptions`. The corresponding `DataGenerationJobType.TASK_GENERATION` enum member was renamed to `DataGenerationJobType.SIMULATION_SEED`, and its wire value changed from `task_generation` to `simulation_seed`.
 * Renamed enum `OptimizationDatasetInputType` to `AgentOptimizationDatasetInputType`.
 * Renamed class `OptimizationAgentIdentifier` to `OptimizedAgentIdentifier`.
 * Renamed class `OptimizationCandidate` to `AgentOptimizationCandidate`.
@@ -28,10 +30,6 @@ All breaking changes are associated with beta features.
 * Renamed class `OptimizationJobResult` to `AgentOptimizationJobResult`.
 * Renamed class `OptimizationOptions` to `AgentOptimizationOptions`.
 * Renamed class `OptimizationReferenceDatasetInput` to `AgentOptimizationReferenceDatasetInput`.
-
-### Bugs Fixed
-
-Placeholder
 
 ### Sample updates
 
