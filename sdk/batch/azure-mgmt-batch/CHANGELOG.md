@@ -2,13 +2,9 @@
 
 ## 20.0.0 (2026-08-18)
 
-### Features Added
-
-  - Added model `TrackedResource`
-
 ### Breaking Changes
 
-  - Deleted or renamed model `AzureResource`
+  - Renamed model `AzureResource` to `TrackedResource`
 
 ## 19.0.0 (2026-02-27)
 
