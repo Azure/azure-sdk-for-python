@@ -5,14 +5,8 @@
 
 import json
 import threading
-import time
 import urllib.error
 import urllib.request
-from urllib.parse import urlparse
-
-from azure.core.exceptions import ResourceNotFoundError
-
-from azure.ai.projects import AIProjectClient
 
 
 def create_github_issue(owner: str, repository: str, token: str, *, title: str, assignee: str) -> None:
