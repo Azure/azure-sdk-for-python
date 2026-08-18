@@ -32,13 +32,13 @@ def main():
     response = client.begin_update_service_group(
         service_group_name="ServiceGroup1",
         update_service_group_request={
-            "properties": {"displayName": "ServiceGroup 1 Name"},
+            "properties": {"attributes": {"criticality": 2}, "displayName": "ServiceGroup 1 Name"},
             "tags": {"tag1": "value1", "tag2": "value2"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-02-01-preview/ServiceGroup_Patch.json
+# x-ms-original-file: 2026-08-01/ServiceGroup_Patch.json
 if __name__ == "__main__":
     main()

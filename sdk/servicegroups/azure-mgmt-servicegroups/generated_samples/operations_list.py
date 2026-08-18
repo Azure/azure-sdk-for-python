@@ -15,7 +15,7 @@ from azure.mgmt.servicegroups import ServiceGroupsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-servicegroups
 # USAGE
-    python service_group_list_ancestors.py
+    python operations_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,12 +29,11 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.service_groups.list_ancestors(
-        service_group_name="20000000-0001-0000-0000-000000000000",
-    )
-    print(response)
+    response = client.operations.list()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2024-02-01-preview/ServiceGroup_ListAncestors.json
+# x-ms-original-file: 2026-08-01/Operations_List.json
 if __name__ == "__main__":
     main()

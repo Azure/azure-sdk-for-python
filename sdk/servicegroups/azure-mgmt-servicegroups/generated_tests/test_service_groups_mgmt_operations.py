@@ -6,25 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicegroups.aio import ServiceGroupsMgmtClient
+from azure.mgmt.servicegroups import ServiceGroupsMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestServiceGroupsMgmtServiceGroupsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestServiceGroupsMgmtOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ServiceGroupsMgmtClient, is_async=True)
+        self.client = self.create_mgmt_client(ServiceGroupsMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_service_groups_get(self, resource_group):
-        response = await self.client.service_groups.get(
-            service_group_name="str",
-        )
-
+    @recorded_by_proxy
+    def test_operations_list(self, resource_group):
+        response = self.client.operations.list()
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
