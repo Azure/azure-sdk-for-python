@@ -79,11 +79,7 @@ def hoist_messages_to_conversation(kwargs: Dict[str, Any]) -> Dict[str, Any]:
         # without prior calls leaking into later ones.
         messages = list(messages)
         for index, message in enumerate(messages):
-            if (
-                isinstance(message, dict)
-                and message.get("role") == "assistant"
-                and "ground_truth" not in message
-            ):
+            if isinstance(message, dict) and message.get("role") == "assistant" and "ground_truth" not in message:
                 messages[index] = {**message, "ground_truth": ground_truth}
         conv["messages"] = messages
 
