@@ -15,7 +15,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_deallocate_with_hibernation.py
+    python open_capacity_reservation_group_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,27 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.virtual_machines.begin_deallocate(
-        resource_group_name="rgcompute",
-        vm_name="aaaaaaaaaaaaaaaa",
-    ).result()
+    response = client.capacity_reservation_groups.create_or_update(
+        resource_group_name="myResourceGroup",
+        capacity_reservation_group_name="openCapacityReservationGroup",
+        parameters={
+            "location": "westus",
+            "properties": {
+                "reservationType": "Open",
+                "sharingProfile": {
+                    "subscriptionIds": [
+                        {"id": "/subscriptions/{subscription-id1}"},
+                        {"id": "/subscriptions/{subscription-id2}"},
+                    ]
+                },
+            },
+            "tags": {"department": "finance"},
+            "zones": ["1", "2"],
+        },
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineExamples/VirtualMachine_Deallocate_WithHibernation.json
+# x-ms-original-file: 2026-04-01/capacityReservationExamples/OpenCapacityReservationGroup_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

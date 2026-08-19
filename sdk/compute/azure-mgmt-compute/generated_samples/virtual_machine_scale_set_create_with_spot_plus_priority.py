@@ -16,7 +16,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_scale_set_create_with_operation_recovery_settings.py
+    python virtual_machine_scale_set_create_with_spot_plus_priority.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,16 +37,11 @@ def main():
         parameters={
             "location": "westus",
             "properties": {
-                "overprovision": False,
-                "resiliencyPolicy": {
-                    "operationRecoverySettings": {
-                        "reimageRecoveryPolicy": {"enabled": True},
-                        "restartRecoveryPolicy": {"enabled": True},
-                        "startRecoveryPolicy": {"enabled": True},
-                    }
-                },
+                "overprovision": True,
                 "upgradePolicy": {"mode": "Manual"},
                 "virtualMachineProfile": {
+                    "billingProfile": {"maxPrice": -1},
+                    "evictionPolicy": "Deallocate",
                     "networkProfile": {
                         "networkInterfaceConfigurations": [
                             {
@@ -73,6 +68,7 @@ def main():
                         "adminUsername": "{your-username}",
                         "computerNamePrefix": "{vmss-name}",
                     },
+                    "priority": "SpotPlus",
                     "storageProfile": {
                         "imageReference": {
                             "offer": "WindowsServer",
@@ -88,12 +84,12 @@ def main():
                     },
                 },
             },
-            "sku": {"capacity": 3, "name": "Standard_D1_v2", "tier": "Standard"},
+            "sku": {"capacity": 2, "name": "Standard_D2s_v5", "tier": "Standard"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithOperationRecoverySettings.json
+# x-ms-original-file: 2026-04-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithSpotPlusPriority.json
 if __name__ == "__main__":
     main()
