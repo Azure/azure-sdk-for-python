@@ -9,6 +9,9 @@
 * Method `.beta.datasets.begin_create_generation_job` now returns a custom LRO poller named `DatasetGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
 * Method `.beta.evaluators.begin_create_generation_job` now returns a custom LRO poller named `EvaluatorGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
 * Added the optional read-only `state_source` property to `AgentDetails` and the new `AgentStateSource` enum.
+* Added programmatic tool calling through `ProgrammaticToolCallingParam` and `SpecificProgrammaticToolCallingParam`, with new `ToolType.PROGRAMMATIC_TOOL_CALLING` and `ToolChoiceParamType.PROGRAMMATIC_TOOL_CALLING` enum members.
+* Added the optional `allowed_callers` property to `ApplyPatchToolParam`, `CodeInterpreterTool`, `CodeInterpreterToolboxTool`, `CustomToolParam`, `FunctionShellToolParam`, `FunctionTool`, `FunctionToolParam`, `MCPTool`, and `MCPToolboxTool`. Added the new `CallableToolAllowedCaller` enum values `direct` and `programmatic`.
+* Expanded `Reasoning` with optional `mode` and `context` properties. Added `ReasoningModeEnum` for `standard` and `pro`; `effort` now uses the new `ReasoningEffort` enum, including the new `max` effort.
 
 ### Breaking Changes
 
