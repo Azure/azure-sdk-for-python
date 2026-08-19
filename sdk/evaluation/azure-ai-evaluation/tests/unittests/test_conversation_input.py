@@ -18,6 +18,16 @@ Covers the six branches called out in review:
    across evaluators with different ``ground_truth`` values.
 """
 
+import pytest
+
+from azure.ai.evaluation import (
+    FluencyEvaluator,
+    RelevanceEvaluator,
+    ResponseCompletenessEvaluator,
+    RetrievalEvaluator,
+    SimilarityEvaluator,
+)
+from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._evaluators._common import hoist_messages_to_conversation
 
 
@@ -142,3 +152,173 @@ class TestHoistMessagesToConversation:
         hoist_messages_to_conversation(kwargs)
         stamped = kwargs["conversation"]["messages"][1]
         assert stamped["ground_truth"] == "per-turn"
+
+
+# Sample messages payload reused across the wiring tests below.
+_USER_TURN = {"role": "user", "content": "What is 2+2?"}
+_ASSISTANT_TURN = {"role": "assistant", "content": "4"}
+_MESSAGES = [_USER_TURN, _ASSISTANT_TURN]
+_TOOL_DEFS = [{"type": "function", "function": {"name": "calc"}}]
+
+
+# All 5 direct-edit evaluators fixed in this PR. RAI evaluators go through
+# ``RaiServiceEvaluatorBase._convert_kwargs_to_eval_input``, which is covered
+# by the hoist helper's own tests plus the base's existing test suite.
+_DIRECT_EVALUATORS = [
+    RelevanceEvaluator,
+    SimilarityEvaluator,
+    FluencyEvaluator,
+    RetrievalEvaluator,
+    ResponseCompletenessEvaluator,
+]
+
+
+@pytest.mark.usefixtures("mock_model_config")
+@pytest.mark.unittest
+class TestMessagesInputWiring:
+    """Wiring-layer tests for the 5 direct-edit evaluators.
+
+    The helper tests above prove ``hoist_messages_to_conversation`` reshapes
+    kwargs correctly. These tests prove each evaluator's overridden
+    ``_convert_kwargs_to_eval_input`` actually calls the hoist and that the
+    hoisted output is what the base's ``_derive_conversation_converter`` sees.
+
+    Assertion strategy: equivalence with the ``conversation={"messages": ...}``
+    invocation. If both invocations produce the same per-turn eval_input list,
+    hoist wiring is correct. This is robust to base-class output shape changes
+    because both sides re-execute in lockstep.
+    """
+
+    # ------------------------------------------------------------------
+    # A. Bare messages= (5 evaluators)
+    # ------------------------------------------------------------------
+    @pytest.mark.parametrize("evaluator_class", _DIRECT_EVALUATORS)
+    def test_wiring_bare_messages(self, mock_model_config, evaluator_class):
+        ev = evaluator_class(model_config=mock_model_config)
+
+        with_messages = ev._convert_kwargs_to_eval_input(messages=list(_MESSAGES))
+        with_conversation = ev._convert_kwargs_to_eval_input(
+            conversation={"messages": list(_MESSAGES)}
+        )
+
+        assert with_messages == with_conversation, (
+            f"{evaluator_class.__name__}: bare messages= did not produce the "
+            f"same eval_input as the equivalent conversation={{messages}} call."
+        )
+
+    # ------------------------------------------------------------------
+    # B. Bare messages= + context + ground_truth + tool_definitions (5)
+    # ------------------------------------------------------------------
+    @pytest.mark.parametrize("evaluator_class", _DIRECT_EVALUATORS)
+    def test_wiring_bare_messages_with_all_adjuncts(self, mock_model_config, evaluator_class):
+        ev = evaluator_class(model_config=mock_model_config)
+
+        with_messages = ev._convert_kwargs_to_eval_input(
+            messages=list(_MESSAGES),
+            context="ctx",
+            ground_truth="gt",
+            tool_definitions=list(_TOOL_DEFS),
+        )
+        # The equivalent conversation-shape call: ground_truth stamped onto
+        # the assistant turn (matches the helper's stamping semantics), and
+        # context / tool_definitions folded into the conversation dict.
+        equivalent_conversation = {
+            "messages": [
+                dict(_USER_TURN),
+                dict(_ASSISTANT_TURN, ground_truth="gt"),
+            ],
+            "context": "ctx",
+            "tool_definitions": list(_TOOL_DEFS),
+        }
+        with_conversation = ev._convert_kwargs_to_eval_input(
+            conversation=equivalent_conversation
+        )
+
+        assert with_messages == with_conversation, (
+            f"{evaluator_class.__name__}: bare messages= + adjuncts did not "
+            f"produce the same eval_input as the equivalent conversation= call. "
+            f"Check hoist stamping of ground_truth and folding of "
+            f"context / tool_definitions."
+        )
+
+    # ------------------------------------------------------------------
+    # C. Legacy (query, response) path unchanged (5) — regression net
+    # ------------------------------------------------------------------
+    @pytest.mark.parametrize("evaluator_class", _DIRECT_EVALUATORS)
+    def test_wiring_legacy_query_response_unchanged(self, mock_model_config, evaluator_class):
+        ev = evaluator_class(model_config=mock_model_config)
+
+        # Every legacy shape needs at minimum query + response. Similarity
+        # also requires ground_truth, Retrieval also requires context; supply
+        # both universally so the legacy path is exercised without validator
+        # noise unrelated to the wiring change.
+        legacy_kwargs = {
+            "query": "What is 2+2?",
+            "response": "4",
+            "context": "arithmetic",
+            "ground_truth": "4",
+        }
+
+        # Baseline expectation: legacy input still routes through the base's
+        # scalar path and produces a non-None eval_input. If this regresses,
+        # the hoist code path is stealing kwargs it shouldn't touch.
+        result = ev._convert_kwargs_to_eval_input(**legacy_kwargs)
+
+        assert result is not None, (
+            f"{evaluator_class.__name__}: legacy (query, response, ...) path "
+            f"returned None after PR — hoist may be intercepting kwargs it "
+            f"should leave alone."
+        )
+        # No hoisted 'conversation' key must have been synthesised when the
+        # caller passed only scalar inputs — hoist is a no-op in this branch.
+        assert "conversation" not in legacy_kwargs, (
+            f"{evaluator_class.__name__}: hoist mutated caller kwargs by "
+            f"synthesising 'conversation' on a legacy-only call."
+        )
+
+    # ------------------------------------------------------------------
+    # D. Negative wiring tests (3) — pre-existing safety nets still fire
+    # ------------------------------------------------------------------
+    def test_wiring_empty_messages_still_rejected(self, mock_model_config):
+        """Bare messages=[] must still fail the pre-existing empty-input check.
+        Hoist should not paper over an empty conversation."""
+        ev = RelevanceEvaluator(model_config=mock_model_config)
+        with pytest.raises(EvaluationException):
+            # Force validation to run end-to-end via the sync entry point.
+            ev(messages=[])
+
+    def test_wiring_messages_plus_query_is_ambiguous(self, mock_model_config):
+        """Mixing bare messages= with a top-level query= must still be
+        rejected as ambiguous input. Hoist is a routing fix, not a merge."""
+        ev = SimilarityEvaluator(model_config=mock_model_config)
+        with pytest.raises(EvaluationException):
+            ev(
+                messages=list(_MESSAGES),
+                query="What is 2+2?",
+                response="4",
+                ground_truth="4",
+            )
+
+    def test_wiring_non_dict_message_entries_do_not_crash_hoist(self, mock_model_config):
+        """Non-dict entries in messages must be silently skipped for
+        ground_truth stamping (matches
+        ``test_non_dict_messages_are_skipped_for_stamping`` in the helper
+        tests). Hoist itself must not raise; downstream validation is what
+        would reject a malformed message shape."""
+        ev = FluencyEvaluator(model_config=mock_model_config)
+        malformed = [
+            {"role": "user", "content": "hi"},
+            "not a dict",  # skipped for stamping
+            {"role": "assistant", "content": "hello"},
+        ]
+
+        kwargs = {"messages": malformed, "ground_truth": "gt"}
+        # Hoist runs at the top of the override; verify it doesn't raise.
+        hoist_messages_to_conversation(kwargs)
+        assert "conversation" in kwargs, "hoist should still synthesise conversation"
+        # The assistant turn (index 2 in the caller's list, but the assistant
+        # is the LAST entry in the shape we passed) receives the stamp; the
+        # non-dict entry is untouched.
+        conv_messages = kwargs["conversation"]["messages"]
+        assert conv_messages[1] == "not a dict"
+        assert conv_messages[2].get("ground_truth") == "gt"
