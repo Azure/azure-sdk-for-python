@@ -60,6 +60,9 @@ jobs:
         shell: bash
 
   verify-azpysdk-checks:
+    permissions:
+      id-token: write
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -71,6 +74,25 @@ jobs:
 
       - name: Configure package indexes
         uses: ./.github/actions/configure-package-indexes
+
+      - name: Az CLI login
+        uses: azure/login@v3
+        with:
+          client-id: e4cb9fd5-0875-4ca1-bc43-56196f5dfb8f
+          tenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+          allow-no-subscriptions: true
+
+      - name: Configure feed auth token for uv/pip upstream pull-through
+        run: |
+          AZURE_DEVOPS_TOKEN=$(az account get-access-token \
+            --resource 499b84ac-1321-427f-aa17-267ca6975798 \
+            --query accessToken \
+            -o tsv)
+          echo "::add-mask::$AZURE_DEVOPS_TOKEN"
+          echo "UV_INDEX_AZURE_SDK_USERNAME=x" >> "$GITHUB_ENV"
+          echo "UV_INDEX_AZURE_SDK_PASSWORD=$AZURE_DEVOPS_TOKEN" >> "$GITHUB_ENV"
+          echo "PIP_INDEX_URL=https://x:${AZURE_DEVOPS_TOKEN}@pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
+        shell: bash
 
       - name: Install uv
         run: |
