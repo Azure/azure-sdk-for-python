@@ -1,0 +1,2 @@
+# Pins for the azpysdk `black` check. Single source of truth (see README.md).
+black==24.4.0

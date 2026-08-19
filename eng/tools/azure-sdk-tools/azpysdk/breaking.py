@@ -7,12 +7,15 @@ from typing import Optional, List
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
+from ._tool_reqs import load_requirements, pinned_version
 from ci_tools.functions import install_into_venv
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, set_envvar_defaults
 from ci_tools.logging import logger
 
-JSONDIFF_VERSION = "1.2.0"
+# Tool version is pinned in eng/tool_requirements/breaking.txt (single source of
+# truth). Constant is derived for backwards compatibility.
+JSONDIFF_VERSION = pinned_version("breaking", "jsondiff")
 REPO_ROOT = discover_repo_root()
 BREAKING_CHECKER_PATH = os.path.join(REPO_ROOT, "scripts", "breaking_changes_checker")
 
@@ -141,7 +144,7 @@ class breaking(Check):
             try:
                 install_into_venv(
                     executable,
-                    [f"jsondiff=={JSONDIFF_VERSION}", "-e", BREAKING_CHECKER_PATH],
+                    load_requirements("breaking") + ["-e", BREAKING_CHECKER_PATH],
                     package_dir,
                 )
             except CalledProcessError as e:
