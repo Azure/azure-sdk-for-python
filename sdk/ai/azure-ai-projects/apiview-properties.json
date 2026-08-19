@@ -347,6 +347,7 @@
         "azure.ai.projects.models.SharepointGroundingToolParameters": "Azure.AI.Projects.SharepointGroundingToolParameters",
         "azure.ai.projects.models.SharepointPreviewTool": "Azure.AI.Projects.SharepointPreviewTool",
         "azure.ai.projects.models.SimpleQnADataGenerationJobOptions": "Azure.AI.Projects.SimpleQnADataGenerationJobOptions",
+        "azure.ai.projects.models.SimulationSeedDataGenerationJobOptions": "Azure.AI.Projects.SimulationSeedDataGenerationJobOptions",
         "azure.ai.projects.models.SkillDetails": "Azure.AI.Projects.Skill",
         "azure.ai.projects.models.SkillInlineContent": "Azure.AI.Projects.SkillInlineContent",
         "azure.ai.projects.models.SkillReferenceParam": "OpenAI.SkillReferenceParam",
@@ -357,7 +358,6 @@
         "azure.ai.projects.models.SpecificProgrammaticToolCallingParam": "OpenAI.SpecificProgrammaticToolCallingParam",
         "azure.ai.projects.models.StructuredInputDefinition": "Azure.AI.Projects.StructuredInputDefinition",
         "azure.ai.projects.models.StructuredOutputDefinition": "Azure.AI.Projects.StructuredOutputDefinition",
-        "azure.ai.projects.models.TaskGenerationDataGenerationJobOptions": "Azure.AI.Projects.TaskGenerationDataGenerationJobOptions",
         "azure.ai.projects.models.TaxonomyCategory": "Azure.AI.Projects.TaxonomyCategory",
         "azure.ai.projects.models.TaxonomySubCategory": "Azure.AI.Projects.TaxonomySubCategory",
         "azure.ai.projects.models.TelemetryConfig": "Azure.AI.Projects.TelemetryConfig",
@@ -788,5 +788,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "0ee3fce61394"
+    "CrossLanguageVersion": "9e9ec56d1a91"
 }

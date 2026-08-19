@@ -31,9 +31,7 @@ VoiceAgentRequestConversationItem = Union[
     "_models.RealtimeConversationItemFunctionCall",
     "_models.RealtimeConversationItemFunctionCallOutput",
 ]
-VoiceAgentCreateConversationItem = Union[
-    "VoiceAgentRequestConversationItem", "_models.RealtimeMCPApprovalResponse"
-]
+VoiceAgentCreateConversationItem = Union["VoiceAgentRequestConversationItem", "_models.RealtimeMCPApprovalResponse"]
 VoiceAgentResponseMessageItem = Union[
     "_models.RealtimeConversationItemMessageSystem",
     "_models.RealtimeConversationItemMessageUser",

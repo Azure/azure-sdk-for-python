@@ -60,6 +60,7 @@ from azure.ai.projects.models import (
     VoiceAgentServerEventResponseAudioDelta,
     VoiceAgentServerEventResponseAudioTranscriptDone,
     VoiceAgentServerEventResponseDone,
+    VoiceAgentServerEventSessionCreated,
     RealtimeServerEventError,
 )
 
@@ -233,7 +234,11 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
 
         try:
             async for event in conn:
-                if isinstance(event, VoiceAgentServerEventInputAudioBufferSpeechStarted):
+                if isinstance(event, VoiceAgentServerEventSessionCreated):
+                    # The persisted conversation id (only present when conversation
+                    # persistence is enabled) is set here, not on response.done.
+                    conversation_id = event.conversation_id or conversation_id
+                elif isinstance(event, VoiceAgentServerEventInputAudioBufferSpeechStarted):
                     # Barge-in: stop the active response and drop whatever reply
                     # audio is still queued locally. The service only supports
                     # output_audio_buffer.clear in avatar mode.
@@ -251,7 +256,7 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
                 elif isinstance(event, VoiceAgentServerEventResponseAudioTranscriptDone):
                     print(f"Agent: {event.transcript}")
                 elif isinstance(event, VoiceAgentServerEventResponseDone):
-                    conversation_id = event.response.conversation_id or conversation_id
+                    pass
         except (KeyboardInterrupt, asyncio.CancelledError):
             # Ctrl-C ends the session; read back whatever was persisted so far.
             print("\n(ending session...)")

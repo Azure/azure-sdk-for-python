@@ -161,6 +161,31 @@ foreach ($f in $files) {
 }
 
 
+# Fix pyright reportIncompatibleVariableOverride errors: VoiceResponse narrows the inherited
+# optional `id`/`conversation_id` fields (from OmitPropertiesRealtimeResponse) to required `str`,
+# which pyright flags as an incompatible override since the base type is `Optional[str]`. This is
+# an intentional, spec-driven narrowing (the fields are always present on a persisted voice
+# response), so silence the two specific lines rather than widen the type.
+$f = 'azure\ai\projects\models\_models.py'
+$lines = Get-Content $f
+$inVoiceResponse = $false
+for ($i = 0; $i -lt $lines.Length; $i++) {
+    if ($lines[$i] -match '^class VoiceResponse\(OmitPropertiesRealtimeResponse\)') {
+        $inVoiceResponse = $true
+        continue
+    }
+    if ($inVoiceResponse -and $lines[$i] -match '^class \w+') {
+        $inVoiceResponse = $false
+    }
+    if ($inVoiceResponse -and $lines[$i] -match '^\s*id: str = rest_field\(' -and $lines[$i] -notmatch '# type: ignore') {
+        $lines[$i] = $lines[$i] + '  # type: ignore[reportIncompatibleVariableOverride]'
+    }
+    if ($inVoiceResponse -and $lines[$i] -match '^\s*conversation_id: str = rest_field\(' -and $lines[$i] -notmatch '# type: ignore') {
+        $lines[$i] = $lines[$i] + '  # type: ignore[reportIncompatibleVariableOverride]'
+    }
+}
+Set-Content $f $lines
+
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .

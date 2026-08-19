@@ -51,6 +51,7 @@ from azure.ai.projects.models import (
     VoiceAgentServerEventResponseAudioDelta,
     VoiceAgentServerEventResponseAudioTranscriptDone,
     VoiceAgentServerEventResponseDone,
+    VoiceAgentServerEventSessionCreated,
     RealtimeServerEventError,
 )
 
@@ -142,8 +143,11 @@ def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Optional
             def pump() -> None:
                 nonlocal conversation_id, audio_delta_count
                 for event in conn:
+                    if isinstance(event, VoiceAgentServerEventSessionCreated):
+                        # The persisted conversation id (only present when conversation
+                        # persistence is enabled) is set here, not on response.done.
+                        conversation_id = event.conversation_id or conversation_id
                     if isinstance(event, VoiceAgentServerEventResponseDone):
-                        conversation_id = event.response.conversation_id or conversation_id
                         return
                     if isinstance(event, RealtimeServerEventError):
                         print(f"Session error: {event.error.message}")

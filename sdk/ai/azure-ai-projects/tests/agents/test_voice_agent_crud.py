@@ -90,9 +90,7 @@ class TestVoiceAgentCrud(TestBase):
 
         # Get the voice agent.
         retrieved_agent: AgentDetails = project_client.agents.get(agent_name=agent_name)
-        self._validate_agent(
-            retrieved_agent, expected_name=agent_name, expected_latest_version=agent_version2.version
-        )
+        self._validate_agent(retrieved_agent, expected_name=agent_name, expected_latest_version=agent_version2.version)
 
         # Retrieve a specific version.
         retrieved_agent_version: AgentVersionDetails = project_client.agents.get_version(

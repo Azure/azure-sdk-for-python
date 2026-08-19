@@ -126,9 +126,7 @@ class TestFoundryFeaturesHeaderOnAgentEndpointConversationsAsync(FoundryFeatures
         subclient_name, method_attr = method_name.split(".")
         sc = getattr(async_client_preview_enabled, subclient_name)
         method = getattr(sc, method_attr)
-        await self._assert_header_present_async(
-            f"{method_name} (allow_preview=True)", self._make_fake_call(method)
-        )
+        await self._assert_header_present_async(f"{method_name} (allow_preview=True)", self._make_fake_call(method))
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("method_name", _AGENT_ENDPOINT_CONVERSATIONS_TEST_CASES)
@@ -141,6 +139,4 @@ class TestFoundryFeaturesHeaderOnAgentEndpointConversationsAsync(FoundryFeatures
         subclient_name, method_attr = method_name.split(".")
         sc = getattr(async_client_preview_disabled, subclient_name)
         method = getattr(sc, method_attr)
-        await self._assert_header_present_async(
-            f"{method_name} (allow_preview unset)", self._make_fake_call(method)
-        )
+        await self._assert_header_present_async(f"{method_name} (allow_preview unset)", self._make_fake_call(method))

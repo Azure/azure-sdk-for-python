@@ -37,8 +37,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INSIGHTS_V1_PREVIEW."""
     MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
     """MEMORY_STORES_V1_PREVIEW."""
-    ROUTINES_V1_PREVIEW = "Routines=V1Preview"
-    """ROUTINES_V1_PREVIEW."""
+    ROUTINES_V2_PREVIEW = "Routines=V2Preview"
+    """ROUTINES_V2_PREVIEW."""
     SKILLS_V1_PREVIEW = "Skills=V1Preview"
     """SKILLS_V1_PREVIEW."""
     DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
@@ -447,8 +447,8 @@ class DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Single turn query and response from agent traces."""
     TOOL_USE = "tool_use"
     """Tool calling conversation between user and agent."""
-    TASK_GENERATION = "task_generation"
-    """Task generation for evaluation scenarios."""
+    SIMULATION_SEED = "simulation_seed"
+    """Simulation seed for evaluation scenarios."""
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1704,12 +1704,12 @@ class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The lifecycle status of a persisted voice conversation:
 
     * `in_progress`: the live session is active, or post-session persistence finalization is
-      pending.
+    pending.
     * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
-      max-duration `1001`
-      close, or a client or network disconnect that the service can still finalize.
+    max-duration `1001`
+    close, or a client or network disconnect that the service can still finalize.
     * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
-      finalization.
+    finalization.
     """
 
     IN_PROGRESS = "in_progress"

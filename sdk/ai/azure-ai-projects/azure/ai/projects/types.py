@@ -6879,8 +6879,8 @@ class StructuredOutputDefinition(TypedDict, total=False):
     """Whether to enforce strict validation. Default ``true``. Required."""
 
 
-class TaskGenerationDataGenerationJobOptions(TypedDict, total=False):
-    """The options for a task generation data generation job. Use with multiturn evaluation scenarios
+class SimulationSeedDataGenerationJobOptions(TypedDict, total=False):
+    """The options for a simulation seed data generation job. Use with multiturn evaluation scenarios
     and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
     ``category``, ``test_case_description``, and ``desired_num_turns``.
 
@@ -6891,9 +6891,9 @@ class TaskGenerationDataGenerationJobOptions(TypedDict, total=False):
     :vartype train_split: float
     :ivar model_options: The LLM model options.
     :vartype model_options: "DataGenerationModelOptions"
-    :ivar type: The data generation job type, which is TaskGeneration for this model. Required.
-     Task generation for evaluation scenarios.
-    :vartype type: Literal[DataGenerationJobType.TASK_GENERATION]
+    :ivar type: The data generation job type, which is SimulationSeed for this model. Required.
+     Simulation seed for evaluation scenarios.
+    :vartype type: Literal[DataGenerationJobType.SIMULATION_SEED]
     """
 
     max_samples: Required[int]
@@ -6903,8 +6903,8 @@ class TaskGenerationDataGenerationJobOptions(TypedDict, total=False):
      fine-tuning. The rest will be used for validation. Value should be between 0 and 1."""
     model_options: "DataGenerationModelOptions"
     """The LLM model options."""
-    type: Required[Literal[DataGenerationJobType.TASK_GENERATION]]
-    """The data generation job type, which is TaskGeneration for this model. Required. Task generation
+    type: Required[Literal[DataGenerationJobType.SIMULATION_SEED]]
+    """The data generation job type, which is SimulationSeed for this model. Required. Simulation seed
      for evaluation scenarios."""
 
 
@@ -12063,7 +12063,7 @@ RecurrenceSchedule = Union[
 ]
 DataGenerationJobOptions = Union[
     SimpleQnADataGenerationJobOptions,
-    TaskGenerationDataGenerationJobOptions,
+    SimulationSeedDataGenerationJobOptions,
     ToolUseFineTuningDataGenerationJobOptions,
     TracesDataGenerationJobOptions,
 ]

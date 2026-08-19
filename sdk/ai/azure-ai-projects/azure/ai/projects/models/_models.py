@@ -4576,16 +4576,31 @@ class ContainerConfiguration(_Model):  # pylint: disable=docstring-keyword-shoul
 
     :ivar image: The container image for the hosted agent. Required.
     :vartype image: str
+    :ivar registry_connection_id: The id (or name) of the Foundry project connection that provides
+     the credentials used to authenticate to the private container registry hosting ``image``. The
+     connection abstracts the auth mechanism — for example a managed-identity-federated token
+     exchange, or a username/token secret — so registry credentials are never part of the agent
+     definition. Omit for public images or registries already reachable by the platform's default
+     identity (for example, Azure Container Registry).
+    :vartype registry_connection_id: str
     """
 
     image: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The container image for the hosted agent. Required."""
+    registry_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The id (or name) of the Foundry project connection that provides the credentials used to
+     authenticate to the private container registry hosting ``image``. The connection abstracts the
+     auth mechanism — for example a managed-identity-federated token exchange, or a username/token
+     secret — so registry credentials are never part of the agent definition. Omit for public images
+     or registries already reachable by the platform's default identity (for example, Azure
+     Container Registry)."""
 
     @overload
     def __init__(
         self,
         *,
         image: str,
+        registry_connection_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -5580,11 +5595,11 @@ class DataGenerationJobOptions(_Model):  # pylint: disable=docstring-keyword-sho
     """Options for managing data generation jobs.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    SimpleQnADataGenerationJobOptions, TaskGenerationDataGenerationJobOptions,
+    SimpleQnADataGenerationJobOptions, SimulationSeedDataGenerationJobOptions,
     ToolUseFineTuningDataGenerationJobOptions, TracesDataGenerationJobOptions
 
     :ivar type: The data generation job type. Required. Known values are: "simple_qna", "traces",
-     "tool_use", and "task_generation".
+     "tool_use", and "simulation_seed".
     :vartype type: str or ~azure.ai.projects.models.DataGenerationJobType
     :ivar max_samples: Maximum number of samples to generate. Required.
     :vartype max_samples: int
@@ -5598,7 +5613,7 @@ class DataGenerationJobOptions(_Model):  # pylint: disable=docstring-keyword-sho
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The data generation job type. Required. Known values are: \"simple_qna\", \"traces\",
-     \"tool_use\", and \"task_generation\"."""
+     \"tool_use\", and \"simulation_seed\"."""
     max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum number of samples to generate. Required."""
     train_split: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -16048,6 +16063,50 @@ class SimpleQnADataGenerationJobOptions(
         self.type = DataGenerationJobType.SIMPLE_QNA  # type: ignore
 
 
+class SimulationSeedDataGenerationJobOptions(
+    DataGenerationJobOptions, discriminator="simulation_seed"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The options for a simulation seed data generation job. Use with multiturn evaluation scenarios
+    and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
+    ``category``, ``test_case_description``, and ``desired_num_turns``.
+
+    :ivar max_samples: Maximum number of samples to generate. Required.
+    :vartype max_samples: int
+    :ivar train_split: The proportion of the generated data to be used for training when the data
+     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
+    :vartype train_split: float
+    :ivar model_options: The LLM model options.
+    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
+    :ivar type: The data generation job type, which is SimulationSeed for this model. Required.
+     Simulation seed for evaluation scenarios.
+    :vartype type: str or ~azure.ai.projects.models.SIMULATION_SEED
+    """
+
+    type: Literal[DataGenerationJobType.SIMULATION_SEED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The data generation job type, which is SimulationSeed for this model. Required. Simulation seed
+     for evaluation scenarios."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_samples: int,
+        train_split: Optional[float] = None,
+        model_options: Optional["_models.DataGenerationModelOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobType.SIMULATION_SEED  # type: ignore
+
+
 class SkillDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill resource.
 
@@ -16470,50 +16529,6 @@ class StructuredOutputDefinition(_Model):  # pylint: disable=docstring-keyword-s
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class TaskGenerationDataGenerationJobOptions(
-    DataGenerationJobOptions, discriminator="task_generation"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The options for a task generation data generation job. Use with multiturn evaluation scenarios
-    and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
-    ``category``, ``test_case_description``, and ``desired_num_turns``.
-
-    :ivar max_samples: Maximum number of samples to generate. Required.
-    :vartype max_samples: int
-    :ivar train_split: The proportion of the generated data to be used for training when the data
-     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
-    :vartype train_split: float
-    :ivar model_options: The LLM model options.
-    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
-    :ivar type: The data generation job type, which is TaskGeneration for this model. Required.
-     Task generation for evaluation scenarios.
-    :vartype type: str or ~azure.ai.projects.models.TASK_GENERATION
-    """
-
-    type: Literal[DataGenerationJobType.TASK_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The data generation job type, which is TaskGeneration for this model. Required. Task generation
-     for evaluation scenarios."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        max_samples: int,
-        train_split: Optional[float] = None,
-        model_options: Optional["_models.DataGenerationModelOptions"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = DataGenerationJobType.TASK_GENERATION  # type: ignore
 
 
 class TaxonomyCategory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -17792,11 +17807,17 @@ class TracesDataGenerationJobOptions(
     :ivar type: The data generation job type, which is Traces for this model. Required. Single turn
      query and response from agent traces.
     :vartype type: str or ~azure.ai.projects.models.TRACES
+    :ivar redact_private_content: Whether to redact private content from traces. When omitted or
+     set to true, private content is redacted. Set to false to opt out of redaction.
+    :vartype redact_private_content: bool
     """
 
     type: Literal[DataGenerationJobType.TRACES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The data generation job type, which is Traces for this model. Required. Single turn query and
      response from agent traces."""
+    redact_private_content: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to redact private content from traces. When omitted or set to true, private content is
+     redacted. Set to false to opt out of redaction."""
 
     @overload
     def __init__(
@@ -17805,6 +17826,7 @@ class TracesDataGenerationJobOptions(
         max_samples: int,
         train_split: Optional[float] = None,
         model_options: Optional["_models.DataGenerationModelOptions"] = None,
+        redact_private_content: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -22700,6 +22722,9 @@ class VoiceAgentServerEventSessionCreated(_Model):  # pylint: disable=docstring-
     :vartype event_id: str
     :ivar type: The event type, must be ``session.created``. Required. SESSION_CREATED.
     :vartype type: str or ~azure.ai.projects.models.SESSION_CREATED
+    :ivar conversation_id: The id of the persisted conversation. Only present when conversation
+     persistence is enabled for the session.
+    :vartype conversation_id: str
     :ivar session: The initial effective voice-agent session configuration. Required.
     :vartype session: ~azure.ai.projects.models.VoiceAgentSessionResponseConfig
     """
@@ -22710,6 +22735,9 @@ class VoiceAgentServerEventSessionCreated(_Model):  # pylint: disable=docstring-
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The event type, must be ``session.created``. Required. SESSION_CREATED."""
+    conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The id of the persisted conversation. Only present when conversation persistence is enabled for
+     the session."""
     session: "_models.VoiceAgentSessionResponseConfig" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -22722,6 +22750,7 @@ class VoiceAgentServerEventSessionCreated(_Model):  # pylint: disable=docstring-
         event_id: str,
         type: Literal[RealtimeServerEventType.SESSION_CREATED],
         session: "_models.VoiceAgentSessionResponseConfig",
+        conversation_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -23731,14 +23760,13 @@ class VoiceAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-shoul
 
     * `openai`: `voice` and `speed`.
     * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
-      `custom_lexicon_url`,
-      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    `custom_lexicon_url`,
+    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
     * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
-      `personal_voice_model`; the voice name is derived from the avatar.
+    `personal_voice_model`; the voice name is derived from the avatar.
     * `azure-realtime-native`: `voice` and `speed`.
-
     `format` and `output_audio_timestamp_types` apply to every voice type.
 
     :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
@@ -25031,9 +25059,7 @@ class VoiceResponse(OmitPropertiesRealtimeResponse):  # pylint: disable=docstrin
     :vartype completed_at: ~datetime.datetime
     """
 
-    id: str = rest_field(  # type: ignore[reportIncompatibleVariableOverride]
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])  # type: ignore[reportIncompatibleVariableOverride]
     """The unique id of the response. Required."""
     output: Optional[list["_models.VoiceConversationItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -25042,9 +25068,7 @@ class VoiceResponse(OmitPropertiesRealtimeResponse):  # pylint: disable=docstrin
      response (GET .../responses/{response_id}) or use the paged response-items route (GET
      .../responses/{response_id}/items) for its output items. Each item's ``response_id`` also links
      it back to this response in the conversation-level items list."""
-    conversation_id: str = rest_field(  # type: ignore[reportIncompatibleVariableOverride]
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    conversation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])  # type: ignore[reportIncompatibleVariableOverride]
     """The id of the conversation this response belongs to. Required."""
     audio: Optional["_models.VoiceResponseAudio"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -25832,7 +25856,10 @@ class WeeklyRecurrenceSchedule(
 class WorkflowAgentDefinition(
     AgentDefinition, discriminator="workflow"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The workflow agent definition.
+    """The workflow agent definition. Microsoft Foundry is retiring workflows on December 1, 2026. If
+    you're looking to build new workflows, use Microsoft Agent Framework. To migrate existing
+    workflows, see the `Migration guide
+    <https://learn.microsoft.com/azure/foundry/agents/concepts/workflow#migration-guide>`_.
 
     :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
     :vartype rai_config: ~azure.ai.projects.models.RaiConfig

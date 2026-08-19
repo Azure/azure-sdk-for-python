@@ -28,6 +28,7 @@ valid event but does not (yet) have a dedicated generated model in this package)
 ``aiohttp`` is required for this feature and is *not* a hard dependency of the package; it is
 imported lazily so importing the SDK never fails when it is absent.
 """
+
 from __future__ import annotations
 
 import base64
