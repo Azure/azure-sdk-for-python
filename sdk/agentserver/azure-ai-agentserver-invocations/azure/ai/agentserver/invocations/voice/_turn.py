@@ -254,11 +254,20 @@ class TargetTurn:
     ) -> None:
         """Complete the target turn with application-owned terminal facts.
 
+        Validation depends on ``outcome``:
+
+        * ``TargetTurnOutcome.RESPONSE`` requires ``response_id`` and an
+            ``output_item_count`` of at least 1.
+        * ``TargetTurnOutcome.NONE`` requires no ``response_id`` and an
+            ``output_item_count`` equal to 0.
+        * Other outcomes allow both values to be omitted. If
+            ``output_item_count`` is positive, ``response_id`` is required.
+
         :keyword outcome: First immutable terminal outcome.
         :paramtype outcome: TargetTurnOutcome or str
-        :keyword response_id: Real response identifier, when a response exists.
+        :keyword response_id: Real response identifier subject to the outcome rules above.
         :paramtype response_id: str or None
-        :keyword output_item_count: Number of completed output items, when known.
+        :keyword output_item_count: Completed output item count subject to the outcome rules above.
         :paramtype output_item_count: int or None
         """
         self._check_affinity()

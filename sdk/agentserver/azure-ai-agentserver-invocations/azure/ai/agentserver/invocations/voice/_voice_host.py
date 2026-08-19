@@ -155,6 +155,10 @@ def _configure_voice_observability(
     log_level: str | None = None,
     enable_sensitive_data: bool = False,
 ) -> None:
+    # AgentServerHost derives this callback argument from the same environment
+    # variable, defaulting it to True when unset. Voice requires an explicit
+    # environment opt-in for sensitive Agent Framework instrumentation, so
+    # ignore the inherited value and resolve the variable with default False.
     del enable_sensitive_data
     configured = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "false")
     try:
@@ -546,6 +550,12 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
     The host performs only per-frame decoding and static callback dispatch.
     Agent code owns IDs, application tasks, response lifecycle, terminal-event
     correlation, cancellation, history, and reconnect restoration.
+
+    Default Voice observability enables sensitive Agent Framework
+    instrumentation only when
+    ``OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT`` is explicitly set to
+    ``true`` or ``1``. Pass a custom ``configure_observability`` callable in
+    ``kwargs`` to use a different policy.
 
     :param openapi_spec: Optional OpenAPI document inherited from Invocations.
     :param asyncapi_spec_json: Optional AsyncAPI JSON document.
