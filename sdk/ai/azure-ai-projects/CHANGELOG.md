@@ -63,6 +63,7 @@ Breaking changes in beta classes:
 ### Bugs Fixed
 
 * Fixed telemetry instrumentor to correctly call is_recording() as a method on spans, ensuring non-recording spans are properly skipped (e.g., when sampling is configured) ([GitHub issue 46544](https://github.com/Azure/azure-sdk-for-python/issues/46544)).
+* Fixed `load_job` dropping the `outputs` block of a job YAML file. Unlike `inputs`, outputs were not converted into `Output` instances, so a YAML file using the documented snake_case field names (for example `asset_name`) was serialized with those names verbatim instead of their wire names, and the values never reached the service. Outputs are now converted in the same way as inputs.
 
 ### Sample updates
 
