@@ -14,11 +14,6 @@
 - Added source-aware `Session.termination` for classifying unfinished
   application work during connection cleanup.
 
-### Bugs Fixed
-
-- Classified RFC 6455 close code `1001` (Going Away) consistently as a
-  completed Voice connection in cleanup state and telemetry.
-
 ### Samples
 
 - Updated `basic_voice_agent` to declare target turns around real background
