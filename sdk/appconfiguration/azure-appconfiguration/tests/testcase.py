@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 from consts import (
     KEY,
     LABEL,
@@ -13,19 +14,32 @@ from consts import (
 from devtools_testutils import AzureRecordedTestCase
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
+    FeatureFlagClient,
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
     ConfigurationSnapshot,
 )
 
+# Sentinel distinguishing "argument omitted" (apply env-var fallback) from an
+# explicit ``audience=None`` (force no audience).
+_AUDIENCE_UNSET = object()
+
 
 class AppConfigTestCase(AzureRecordedTestCase):
     client = None
 
-    def create_client(self, appconfiguration_endpoint_string, audience=None):
+    def create_client(self, appconfiguration_endpoint_string, audience=_AUDIENCE_UNSET):
         cred = self.get_credential(AzureAppConfigurationClient)
+        if audience is _AUDIENCE_UNSET:
+            audience = os.environ.get("APPCONFIGURATION_AUDIENCE")
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, audience=audience)
+
+    def create_feature_flag_client(self, appconfiguration_endpoint_string, audience=_AUDIENCE_UNSET):
+        cred = self.get_credential(FeatureFlagClient)
+        if audience is _AUDIENCE_UNSET:
+            audience = os.environ.get("APPCONFIGURATION_AUDIENCE")
+        return FeatureFlagClient(appconfiguration_endpoint_string, cred, audience=audience)
 
     def create_config_setting(self):
         return ConfigurationSetting(

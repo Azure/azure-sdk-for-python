@@ -33,6 +33,33 @@ class ConfigurationSettingFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Etag field."""
 
 
+class FeatureFlagFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Feature Flag fields."""
+
+    NAME = "name"
+    """Name field."""
+    ENABLED = "enabled"
+    """Enabled field."""
+    LABEL = "label"
+    """Label field."""
+    DESCRIPTION = "description"
+    """Description field."""
+    CONDITIONS = "conditions"
+    """Conditions field."""
+    VARIANTS = "variants"
+    """Variants field."""
+    ALLOCATION = "allocation"
+    """Allocation field."""
+    TELEMETRY = "telemetry"
+    """Telemetry field."""
+    TAGS = "tags"
+    """Tags field."""
+    LAST_MODIFIED = "last_modified"
+    """Last modified field."""
+    ETAG = "etag"
+    """Etag field."""
+
+
 class LabelFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Label fields."""
 
@@ -53,6 +80,15 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has failed."""
     CANCELED = "Canceled"
     """The operation has been canceled by the user."""
+
+
+class RequirementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls how multiple feature-flag filters are combined."""
+
+    ANY = "Any"
+    """Enables the feature flag when any filter matches."""
+    ALL = "All"
+    """Enables the feature flag only when all filters match."""
 
 
 class SnapshotComposition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -104,3 +140,14 @@ class SnapshotStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Archived."""
     FAILED = "failed"
     """Failed."""
+
+
+class StatusOverride(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status Override."""
+
+    NONE = "None"
+    """No status override."""
+    ENABLED = "Enabled"
+    """Overrides the status to enabled."""
+    DISABLED = "Disabled"
+    """Overrides the status to disabled."""

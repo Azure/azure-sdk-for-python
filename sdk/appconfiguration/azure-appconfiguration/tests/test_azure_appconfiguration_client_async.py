@@ -41,6 +41,7 @@ from azure.appconfiguration import (
     ConfigurationSettingsFilter,
     SecretReferenceConfigurationSetting,
     FeatureFlagConfigurationSetting,
+    FeatureFlag,
     FILTER_PERCENTAGE,
     FILTER_TARGETING,
     FILTER_TIME_WINDOW,
@@ -476,8 +477,9 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):  # pylint: dis
         await self.set_up(appconfiguration_endpoint_string)
         items = await self.convert_to_list(self.client.list_revisions(tags_filter=["tag1=value1"]))
         assert len(items) >= 1
-        assert all(x.key == KEY for x in items)
-        assert all(x.label == LABEL for x in items)
+        # list_revisions returns full revision history, which on a shared live store may include
+        # revisions of other keys that previously carried this tag. Verify the filter itself instead.
+        assert all(x.tags.get("tag1") == "value1" for x in items)
         await self.tear_down()
 
     @AppConfigPreparer()
@@ -1333,6 +1335,35 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):  # pylint: dis
 
         rep = await self.convert_to_list(self.client.list_labels())
         assert len(list(rep)) == 0
+        await self.client.close()
+
+    @AppConfigPreparer()
+    @recorded_by_proxy_async
+    async def test_list_labels_resource_type(self, appconfiguration_endpoint_string):
+        await self.set_up(appconfiguration_endpoint_string)
+        # set_up creates key-value settings labeled LABEL. Add a dedicated feature flag
+        # (written through the feature-flag endpoint) with a distinct label so we can
+        # verify each client only returns labels for its own resource type: the
+        # configuration client always lists key-value labels ('kv') and the feature
+        # flag client always lists feature-flag labels ('ff').
+        ff_label = "ff_resource_type_" + LABEL
+        ff_client = self.create_feature_flag_client(appconfiguration_endpoint_string)
+        feature_flag = FeatureFlag(name="resource_type_feature", enabled=True, label=ff_label)
+        await ff_client.set_feature_flag(feature_flag)
+        try:
+            # The configuration client only lists key-value labels.
+            kv_labels = {item.name for item in await self.convert_to_list(self.client.list_labels())}
+            assert LABEL in kv_labels
+            assert ff_label not in kv_labels
+
+            # The feature flag client only lists feature-flag labels.
+            ff_labels = {item.name for item in await self.convert_to_list(ff_client.list_labels())}
+            assert ff_label in ff_labels
+            assert LABEL not in ff_labels
+        finally:
+            await ff_client.delete_feature_flag("resource_type_feature", label=ff_label)
+            await ff_client.close()
+            await self.tear_down()
         await self.client.close()
 
 

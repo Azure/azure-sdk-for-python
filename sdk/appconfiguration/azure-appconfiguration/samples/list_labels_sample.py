@@ -54,6 +54,18 @@ def main():
         print(config_setting)
     # [END list_labels]
 
+    # [START list_labels_by_resource_type]
+    print("List labels used by key-value settings only")
+    config_settings = client.list_labels(resource_type="kv")
+    for config_setting in config_settings:
+        print(config_setting)
+
+    print("List labels used by feature flags only")
+    config_settings = client.list_labels(resource_type="ff")
+    for config_setting in config_settings:
+        print(config_setting)
+    # [END list_labels_by_resource_type]
+
     client.delete_configuration_setting(key="MyKey1", label="my label1")
     client.delete_configuration_setting(key="MyKey2", label="my label2")
 

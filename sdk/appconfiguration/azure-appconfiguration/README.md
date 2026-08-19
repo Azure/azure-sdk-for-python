@@ -168,6 +168,20 @@ etag : str
 
 Azure App Configuration allows users to create a point-in-time snapshot of their configuration store, providing them with the ability to treat settings as one consistent version. This feature enables applications to hold a consistent view of configuration, ensuring that there are no version mismatches to individual settings due to reading as updates were made. Snapshots are immutable, ensuring that configuration can confidently be rolled back to a last-known-good configuration in the event of a problem.
 
+### Feature Flag
+
+A Feature Flag is a special kind of configuration that turns application functionality on or off at runtime. Azure App Configuration exposes a dedicated feature flag endpoint that works with the strongly typed `FeatureFlag` model rather than raw configuration settings.
+
+A `FeatureFlag` can be as simple as a name with an `enabled` flag, or it can carry a rich model:
+
+* `conditions` / `client_filters` - gate the feature with filters such as time windows, percentages, or targeting.
+* `variants` - the possible values the feature can resolve to.
+* `allocation` - how percentiles, users, and groups map to variants.
+* `telemetry` - telemetry configuration and free-form metadata.
+* `tags` - user-defined tags for organizing feature flags.
+
+The feature flag endpoint methods are `set_feature_flag`, `get_feature_flag`, `list_feature_flags`, `list_feature_flag_revisions`, and `delete_feature_flag`.
+
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Configuration Service tasks, including:
@@ -182,6 +196,10 @@ The following sections provide several code snippets covering some of the most c
 * [Recover a Snapshot](#recover-a-snapshot)
 * [List Snapshots](#list-snapshots)
 * [List Configuration Settings of a Snapshot](#list-configuration-settings-of-a-snapshot)
+* [Set a Feature Flag](#set-a-feature-flag)
+* [Get a Feature Flag](#get-a-feature-flag)
+* [List Feature Flags](#list-feature-flags)
+* [Delete a Feature Flag](#delete-a-feature-flag)
 * [Async APIs](#async-apis)
 
 ### Create a Configuration Setting
@@ -313,6 +331,24 @@ for config_setting in config_settings:
 
 <!-- END SNIPPET -->
 
+You can also filter labels by the type of resource they belong to with `resource_type`, using `"kv"` for key-value settings or `"ff"` for feature flags.
+
+<!-- SNIPPET:list_labels_sample.list_labels_by_resource_type -->
+
+```python
+print("List labels used by key-value settings only")
+config_settings = client.list_labels(resource_type="kv")
+for config_setting in config_settings:
+    print(config_setting)
+
+print("List labels used by feature flags only")
+config_settings = client.list_labels(resource_type="ff")
+for config_setting in config_settings:
+    print(config_setting)
+```
+
+<!-- END SNIPPET -->
+
 ### Create a Snapshot
 
 <!-- SNIPPET:snapshot_sample.create_snapshot -->
@@ -379,6 +415,51 @@ for config_setting in client.list_configuration_settings(snapshot_name=snapshot_
 
 <!-- END SNIPPET -->
 
+### Set a Feature Flag
+
+Create or update a feature flag through the dedicated feature flag endpoint. A feature flag can be a simple on/off toggle or carry the full model (conditions, variants, allocation, telemetry, tags).
+
+<!-- SNIPPET:feature_flag_sample.set_feature_flag -->
+
+```python
+flag = FeatureFlag(name="SampleFeature", enabled=True, description="A simple on/off feature flag")
+created = client.set_feature_flag(flag)
+```
+
+<!-- END SNIPPET -->
+
+### Get a Feature Flag
+
+<!-- SNIPPET:feature_flag_sample.get_feature_flag -->
+
+```python
+retrieved = client.get_feature_flag("SampleFeature")
+```
+
+<!-- END SNIPPET -->
+
+### List Feature Flags
+
+<!-- SNIPPET:feature_flag_sample.list_feature_flags -->
+
+```python
+for f in client.list_feature_flags():
+    print(f"  {f.name}: enabled={f.enabled}")
+```
+
+<!-- END SNIPPET -->
+
+### Delete a Feature Flag
+
+<!-- SNIPPET:feature_flag_sample.delete_feature_flag -->
+
+```python
+client.delete_feature_flag("SampleFeature")
+client.delete_feature_flag("RichFeature")
+```
+
+<!-- END SNIPPET -->
+
 ### Async APIs
 
 Async client is supported.
@@ -436,6 +517,7 @@ Several App Configuration client library samples are available to you in this Gi
 - [Read revision history](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/list_revision_sample.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/list_revision_sample_async.py)
 - [Get a setting if changed](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/conditional_operation_sample.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/conditional_operation_sample_async.py)
 - [Create, retrieve and update status of a configuration settings snapshot](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/snapshot_sample.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/snapshot_sample_async.py)
+- [Set, get, list and delete feature flags (including the full FeatureFlag model)](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/feature_flag_sample.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/feature_flag_sample_async.py)
 - [Send custom HTTP requests](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/send_request_sample.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/send_request_sample_async.py)
 - [Update AzureAppConfigurationClient sync_token](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/sync_token_sample.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/sync_token_sample_async.py)
 
