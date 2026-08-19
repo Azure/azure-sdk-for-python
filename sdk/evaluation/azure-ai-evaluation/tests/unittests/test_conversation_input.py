@@ -322,3 +322,182 @@ class TestMessagesInputWiring:
         conv_messages = kwargs["conversation"]["messages"]
         assert conv_messages[1] == "not a dict"
         assert conv_messages[2].get("ground_truth") == "gt"
+
+# ------------------------------------------------------------------------
+# RAI evaluator wiring — 8 evaluators inherit the hoist through
+# ``RaiServiceEvaluatorBase._convert_kwargs_to_eval_input``. These tests
+# parametrise directly over the 8 concrete RAI evaluators so each one gets
+# a wiring assertion, mirroring the coverage grid used above for the 5
+# direct-edit evaluators.
+# ------------------------------------------------------------------------
+from unittest.mock import MagicMock
+
+from azure.ai.evaluation import (
+    CodeVulnerabilityEvaluator,
+    HateUnfairnessEvaluator,
+    IndirectAttackEvaluator,
+    ProtectedMaterialEvaluator,
+    SelfHarmEvaluator,
+    SexualEvaluator,
+    ViolenceEvaluator,
+)
+from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
+
+
+_RAI_EVALUATORS = [
+    ViolenceEvaluator,
+    HateUnfairnessEvaluator,
+    SelfHarmEvaluator,
+    SexualEvaluator,
+    ProtectedMaterialEvaluator,
+    IndirectAttackEvaluator,
+    CodeVulnerabilityEvaluator,
+    ECIEvaluator,
+]
+
+
+def _make_rai_evaluator(cls):
+    """Instantiate a RAI evaluator with a mock credential and a mock project
+    scope. ``_convert_kwargs_to_eval_input`` runs entirely locally (no network),
+    so mocks are sufficient for wiring-layer assertions."""
+    scope = {
+        "subscription_id": "mock-sub",
+        "resource_group_name": "mock-rg",
+        "project_name": "mock-project",
+    }
+    return cls(credential=MagicMock(), azure_ai_project=scope)
+
+
+@pytest.mark.unittest
+class TestRaiMessagesInputWiring:
+    """Wiring-layer tests for the 8 RAI evaluators fixed by the
+    ``RaiServiceEvaluatorBase._convert_kwargs_to_eval_input`` override.
+
+    Same assertion strategy as ``TestMessagesInputWiring`` for the 5
+    direct-edit evaluators: shape equivalence with the ``conversation={...}``
+    invocation. If both invocations produce the same eval_input, hoist wiring
+    through the RAI base is correct for that concrete evaluator.
+    """
+
+    # ------------------------------------------------------------------
+    # A. Bare messages= (8 evaluators)
+    # ------------------------------------------------------------------
+    @pytest.mark.parametrize("evaluator_class", _RAI_EVALUATORS)
+    def test_wiring_bare_messages_rai(self, evaluator_class):
+        ev = _make_rai_evaluator(evaluator_class)
+
+        with_messages = ev._convert_kwargs_to_eval_input(messages=list(_MESSAGES))
+        with_conversation = ev._convert_kwargs_to_eval_input(
+            conversation={"messages": list(_MESSAGES)}
+        )
+
+        assert with_messages == with_conversation, (
+            f"{evaluator_class.__name__}: bare messages= did not route through "
+            f"RaiServiceEvaluatorBase._convert_kwargs_to_eval_input equivalently "
+            f"to a conversation={{messages}} call."
+        )
+
+    # ------------------------------------------------------------------
+    # B. Bare messages= + context + ground_truth + tool_definitions (8)
+    # ------------------------------------------------------------------
+    @pytest.mark.parametrize("evaluator_class", _RAI_EVALUATORS)
+    def test_wiring_bare_messages_with_all_adjuncts_rai(self, evaluator_class):
+        ev = _make_rai_evaluator(evaluator_class)
+
+        with_messages = ev._convert_kwargs_to_eval_input(
+            messages=list(_MESSAGES),
+            context="ctx",
+            ground_truth="gt",
+            tool_definitions=list(_TOOL_DEFS),
+        )
+        equivalent_conversation = {
+            "messages": [
+                dict(_USER_TURN),
+                dict(_ASSISTANT_TURN, ground_truth="gt"),
+            ],
+            "context": "ctx",
+            "tool_definitions": list(_TOOL_DEFS),
+        }
+        with_conversation = ev._convert_kwargs_to_eval_input(
+            conversation=equivalent_conversation
+        )
+
+        assert with_messages == with_conversation, (
+            f"{evaluator_class.__name__}: bare messages= + adjuncts did not "
+            f"produce the same eval_input as the equivalent conversation= call "
+            f"via the RAI base override."
+        )
+
+    # ------------------------------------------------------------------
+    # C. Legacy (query, response) path unchanged (8) — regression net
+    # ------------------------------------------------------------------
+    @pytest.mark.parametrize("evaluator_class", _RAI_EVALUATORS)
+    def test_wiring_legacy_query_response_unchanged_rai(self, evaluator_class):
+        ev = _make_rai_evaluator(evaluator_class)
+
+        legacy_kwargs = {"query": "What is 2+2?", "response": "4"}
+        result = ev._convert_kwargs_to_eval_input(**legacy_kwargs)
+
+        assert result is not None, (
+            f"{evaluator_class.__name__}: legacy (query, response) path returned "
+            f"None after PR — RAI base hoist may be intercepting kwargs it "
+            f"should leave alone."
+        )
+        # No hoisted 'conversation' key must have been synthesised when the
+        # caller passed only scalar inputs.
+        assert "conversation" not in legacy_kwargs, (
+            f"{evaluator_class.__name__}: RAI base hoist mutated caller kwargs "
+            f"by synthesising 'conversation' on a legacy-only call."
+        )
+
+    # ------------------------------------------------------------------
+    # D. Branch tests for the ``_use_legacy_endpoint`` short-circuit (2)
+    # ------------------------------------------------------------------
+    def test_use_legacy_endpoint_true_short_circuits_to_kwargs_list(self):
+        """When ``_use_legacy_endpoint`` is True, the RAI override must
+        return ``[kwargs]`` with the hoisted ``conversation`` present, NOT
+        delegate to ``super()._convert_kwargs_to_eval_input``. This preserves
+        pre-sync-migration single-call behavior for the legacy endpoint."""
+        ev = _make_rai_evaluator(ViolenceEvaluator)
+        ev._use_legacy_endpoint = True
+
+        result = ev._convert_kwargs_to_eval_input(messages=list(_MESSAGES))
+
+        # Short-circuit branch returns [kwargs] intact.
+        assert isinstance(result, list), "legacy-endpoint branch should return a list"
+        assert len(result) == 1, "legacy-endpoint branch returns exactly one entry"
+        assert "conversation" in result[0], (
+            "legacy-endpoint branch must return kwargs with 'conversation' "
+            "hoisted from bare messages="
+        )
+        # Sanity: the hoisted conversation carries the same messages the
+        # caller supplied.
+        assert result[0]["conversation"]["messages"] == list(_MESSAGES)
+
+    def test_use_legacy_endpoint_false_delegates_to_super(self):
+        """When ``_use_legacy_endpoint`` is False (the default), the RAI
+        override must delegate to ``super()._convert_kwargs_to_eval_input``
+        so the base's per-turn conversation converter runs. The observable
+        difference vs. the legacy branch is that the result is NOT the raw
+        kwargs list."""
+        ev = _make_rai_evaluator(ViolenceEvaluator)
+        assert ev._use_legacy_endpoint is False, "default should be non-legacy"
+
+        result = ev._convert_kwargs_to_eval_input(messages=list(_MESSAGES))
+
+        # Delegated branch: base's per-turn converter runs. Concretely, the
+        # result must equal what we'd get by calling with the equivalent
+        # conversation dict directly — that IS super()'s output.
+        reference = ev._convert_kwargs_to_eval_input(
+            conversation={"messages": list(_MESSAGES)}
+        )
+        assert result == reference
+
+        # And it must NOT be shaped like the legacy short-circuit's
+        # ``[kwargs]`` (which would still carry the raw ``messages`` key).
+        # In the delegated path, the raw ``messages`` kwarg was consumed by
+        # hoist before super() ran, so no result entry should retain it.
+        if isinstance(result, list) and result and isinstance(result[0], dict):
+            assert "messages" not in result[0], (
+                "delegated branch must not pass raw ``messages`` kwarg through"
+            )
