@@ -446,23 +446,13 @@ class BlobServiceClient(  # type: ignore [misc]
             raise ValueError("set_service_properties should be called with at least one parameter")
 
         props = StorageServiceProperties(
-            logging=(
-                analytics_logging._to_generated() if analytics_logging else None
-            ),
+            logging=(analytics_logging._to_generated() if analytics_logging else None),
             hour_metrics=hour_metrics._to_generated() if hour_metrics else None,
-            minute_metrics=(
-                minute_metrics._to_generated() if minute_metrics else None
-            ),
+            minute_metrics=(minute_metrics._to_generated() if minute_metrics else None),
             cors=CorsRule._to_generated(cors),
             default_service_version=target_version,
-            delete_retention_policy=(
-                delete_retention_policy._to_generated()
-                if delete_retention_policy
-                else None
-            ),
-            static_website=(
-                static_website._to_generated() if static_website else None
-            ),
+            delete_retention_policy=(delete_retention_policy._to_generated() if delete_retention_policy else None),
+            static_website=(static_website._to_generated() if static_website else None),
         )
         timeout = kwargs.pop("timeout", None)
         try:
