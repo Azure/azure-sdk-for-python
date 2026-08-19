@@ -72,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineExamples/VirtualMachine_Create_WithManagedBootDiagnostics.json
+# x-ms-original-file: 2026-04-01/virtualMachineExamples/VirtualMachine_Create_WithManagedBootDiagnostics.json
 if __name__ == "__main__":
     main()

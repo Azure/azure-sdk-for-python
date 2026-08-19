@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-04-15-preview/ElasticSnapshotPolicies_ListByElasticAccount.json
+# x-ms-original-file: 2026-05-15-preview/ElasticSnapshotPolicies_ListByElasticAccount.json
 if __name__ == "__main__":
     main()

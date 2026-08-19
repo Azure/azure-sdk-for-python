@@ -65,4 +65,4 @@ for queue in queues:
         try:
             print(" Message: {!r}".format(base64.b64decode(message.content)))
         except (binascii.Error, ValueError) as e:
-            print("  Message: {}".format(message.content))
+            print("  Message: {!a}".format(message.content))

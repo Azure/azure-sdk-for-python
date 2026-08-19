@@ -1856,6 +1856,12 @@
       ]
     },
     {
+      "filename": "sdk/discovery/azure-ai-discovery/**",
+      "words": [
+        "deser"
+      ]
+    },
+    {
       "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/_operations/*.py",
       "words": [
         "mrenclave",

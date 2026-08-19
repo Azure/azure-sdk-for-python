@@ -47,9 +47,13 @@ def main():
                     },
                     "certificateCNHost": "ldap.krypton.com",
                     "domain": "example.com",
+                    "groupDN": "OU=subdirectory,OU=directory,DC=example,DC=com",
                     "ldapOverTLS": False,
+                    "ldapPort": 636,
                     "ldapServers": ["192.0.2.1", "192.0.2.2"],
+                    "netGroupDN": "OU=subdirectory,OU=directory,DC=example,DC=com",
                     "serverCACertificate": "<REDACTED>",
+                    "userDN": "OU=subdirectory,OU=directory,DC=example,DC=com",
                 }
             },
         },
@@ -57,6 +61,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-15-preview/Accounts_CreateOrUpdateLdapConfig.json
+# x-ms-original-file: 2026-05-15-preview/Accounts_CreateOrUpdateLdapConfig.json
 if __name__ == "__main__":
     main()

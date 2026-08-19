@@ -65,7 +65,7 @@ def main():
                 "friendlyName": "harshitbi2",
                 "identityDetails": {
                     "useSystemAssignedIdentity": False,
-                    "userAssignedIdentityArmUrl": "/subscriptions/f75d8d8b-6735-4697-82e1-1a7a3ff0d5d4/resourcegroups/rg-name/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testUami",
+                    "userAssignedIdentityArmUrl": "/subscriptions/f75d8d8b-6735-4697-82e1-1a7a3ff0d5d4/resourceGroups/rg-name/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testUami",
                 },
                 "objectType": "BackupInstance",
                 "policyInfo": {

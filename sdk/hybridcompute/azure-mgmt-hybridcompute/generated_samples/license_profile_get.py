@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-16-preview/licenseProfile/LicenseProfile_Get.json
+# x-ms-original-file: 2026-07-15/licenseProfile/LicenseProfile_Get.json
 if __name__ == "__main__":
     main()

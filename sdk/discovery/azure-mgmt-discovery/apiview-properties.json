@@ -39,6 +39,7 @@
         "azure.mgmt.discovery.models.Supercomputer": "Microsoft.Discovery.Supercomputer",
         "azure.mgmt.discovery.models.SupercomputerIdentities": "Microsoft.Discovery.SupercomputerIdentities",
         "azure.mgmt.discovery.models.SupercomputerProperties": "Microsoft.Discovery.SupercomputerProperties",
+        "azure.mgmt.discovery.models.SystemAssignedServiceIdentity": "Azure.ResourceManager.CommonTypes.SystemAssignedServiceIdentity",
         "azure.mgmt.discovery.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.discovery.models.Tool": "Microsoft.Discovery.Tool",
         "azure.mgmt.discovery.models.ToolProperties": "Microsoft.Discovery.ToolProperties",
@@ -60,7 +61,10 @@
         "azure.mgmt.discovery.models.ScaleSetPriority": "Microsoft.Discovery.ScaleSetPriority",
         "azure.mgmt.discovery.models.NetworkEgressType": "Microsoft.Discovery.NetworkEgressType",
         "azure.mgmt.discovery.models.SystemSku": "Microsoft.Discovery.SystemSku",
+        "azure.mgmt.discovery.models.SystemAssignedServiceIdentityType": "Azure.ResourceManager.CommonTypes.SystemAssignedServiceIdentityType",
         "azure.mgmt.discovery.models.StorageStoreType": "Microsoft.Discovery.StorageStoreType",
+        "azure.mgmt.discovery.models.NetAppMountProtocol": "Microsoft.Discovery.NetAppMountProtocol",
+        "azure.mgmt.discovery.models.BlobStorageMountProtocol": "Microsoft.Discovery.BlobStorageMountProtocol",
         "azure.mgmt.discovery.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.discovery.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.discovery.operations.BookshelvesOperations.get": "Microsoft.Discovery.Bookshelves.get",
@@ -187,5 +191,6 @@
         "azure.mgmt.discovery.aio.operations.StorageContainersOperations.list_by_resource_group": "Microsoft.Discovery.StorageContainers.listByResourceGroup",
         "azure.mgmt.discovery.operations.StorageContainersOperations.list_by_subscription": "Microsoft.Discovery.StorageContainers.listBySubscription",
         "azure.mgmt.discovery.aio.operations.StorageContainersOperations.list_by_subscription": "Microsoft.Discovery.StorageContainers.listBySubscription"
-    }
+    },
+    "CrossLanguageVersion": "3b69322817f3"
 }

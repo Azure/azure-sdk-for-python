@@ -3,9 +3,9 @@
   "apiVersions": {
     "Microsoft.AlertsManagement": "2021-08-08"
   },
-  "commit": "360b77c3130197756d9affa3708d646f3b8e3a0f",
+  "commit": "801a60cdad2669e8f824fedfbabbfe7f7093b940",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertProcessingRules",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.34.1"
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
 }

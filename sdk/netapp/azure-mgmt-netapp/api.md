@@ -143,7 +143,7 @@ namespace azure.mgmt.netapp.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ChangeKeyVault] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -176,7 +176,7 @@ namespace azure.mgmt.netapp.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: NetAppAccount, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -210,7 +210,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[GetKeyVaultStatusResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-15-preview', params_added_on={'2026-04-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name']}, api_versions_list=['2026-04-15-preview'])
+        @api_version_validation(method_added_on='2026-04-15-preview', params_added_on={'2026-04-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name']}, api_versions_list=['2026-04-15-preview', '2026-05-15-preview'])
         async def begin_refresh_ldap_bind_password(
                 self, 
                 resource_group_name: str, 
@@ -242,7 +242,7 @@ namespace azure.mgmt.netapp.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[EncryptionTransitionRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -275,7 +275,7 @@ namespace azure.mgmt.netapp.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: NetAppAccountPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -335,7 +335,7 @@ namespace azure.mgmt.netapp.aio.operations
                 self, 
                 resource_group_name: str, 
                 active_directory_config_name: str, 
-                body: JSON, 
+                body: ActiveDirectoryConfig, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -353,7 +353,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ActiveDirectoryConfig]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'active_directory_config_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'active_directory_config_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -377,7 +377,7 @@ namespace azure.mgmt.netapp.aio.operations
                 self, 
                 resource_group_name: str, 
                 active_directory_config_name: str, 
-                body: JSON, 
+                body: ActiveDirectoryConfigUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -395,7 +395,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ActiveDirectoryConfig]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'active_directory_config_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'active_directory_config_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -404,7 +404,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> ActiveDirectoryConfig: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -412,7 +412,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncItemPaged[ActiveDirectoryConfig]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[ActiveDirectoryConfig]: ...
 
 
@@ -442,7 +442,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_policy_name: str, 
-                body: JSON, 
+                body: BackupPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -487,7 +487,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_policy_name: str, 
-                body: JSON, 
+                body: BackupPolicyPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -549,7 +549,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_vault_name: str, 
-                body: JSON, 
+                body: BackupVault, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -594,7 +594,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_vault_name: str, 
-                body: JSON, 
+                body: BackupVaultPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -658,7 +658,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 backup_vault_name: str, 
                 backup_name: str, 
-                body: JSON, 
+                body: Backup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -707,7 +707,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 backup_vault_name: str, 
                 backup_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[BackupPatch] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -792,7 +792,7 @@ namespace azure.mgmt.netapp.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: BackupsMigrationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -838,7 +838,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 backup_vault_name: str, 
                 backup_name: str, 
-                body: JSON, 
+                body: BackupRestoreFiles, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -886,7 +886,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: BackupsMigrationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -936,7 +936,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 bucket_name: str, 
-                body: JSON, 
+                body: Bucket, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -957,7 +957,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[Bucket]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -990,7 +990,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 bucket_name: str, 
-                body: JSON, 
+                body: BucketCredentialsExpiry, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1011,7 +1011,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         async def begin_refresh_certificate(
                 self, 
                 resource_group_name: str, 
@@ -1044,7 +1044,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 bucket_name: str, 
-                body: JSON, 
+                body: BucketPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1086,7 +1086,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 bucket_name: str, 
-                body: JSON, 
+                body: BucketCredentialsExpiry, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1107,7 +1107,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> BucketGenerateCredentials: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1119,7 +1119,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> Bucket: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1158,7 +1158,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 cache_name: str, 
-                body: JSON, 
+                body: Cache, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1178,7 +1178,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[Cache]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1208,7 +1208,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 cache_name: str, 
-                body: JSON, 
+                body: PoolChangeRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1228,7 +1228,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[Cache]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         async def begin_reset_smb_password(
                 self, 
                 resource_group_name: str, 
@@ -1258,7 +1258,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 cache_name: str, 
-                body: JSON, 
+                body: CacheUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1278,7 +1278,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[Cache]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1289,7 +1289,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> Cache: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1299,7 +1299,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncItemPaged[Cache]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         async def list_peering_passphrases(
                 self, 
                 resource_group_name: str, 
@@ -1334,7 +1334,7 @@ namespace azure.mgmt.netapp.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: ElasticAccount, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1352,7 +1352,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticAccount]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1376,7 +1376,7 @@ namespace azure.mgmt.netapp.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: ElasticAccountUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1394,7 +1394,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticAccount]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1403,7 +1403,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> ElasticAccount: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -1411,7 +1411,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncItemPaged[ElasticAccount]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[ElasticAccount]: ...
 
 
@@ -1441,7 +1441,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_policy_name: str, 
-                body: JSON, 
+                body: ElasticBackupPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1460,7 +1460,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticBackupPolicy]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_policy_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_policy_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1487,7 +1487,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_policy_name: str, 
-                body: JSON, 
+                body: ElasticBackupPolicyUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1506,7 +1506,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticBackupPolicy]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1516,7 +1516,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> ElasticBackupPolicy: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_account(
                 self, 
                 resource_group_name: str, 
@@ -1551,7 +1551,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_vault_name: str, 
-                body: JSON, 
+                body: ElasticBackupVault, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1570,7 +1570,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticBackupVault]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1597,7 +1597,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_vault_name: str, 
-                body: JSON, 
+                body: ElasticBackupVaultUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1616,7 +1616,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticBackupVault]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1626,7 +1626,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> ElasticBackupVault: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_account(
                 self, 
                 resource_group_name: str, 
@@ -1663,7 +1663,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 backup_vault_name: str, 
                 backup_name: str, 
-                body: JSON, 
+                body: ElasticBackup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1683,7 +1683,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticBackup]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'backup_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'backup_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1713,7 +1713,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 backup_vault_name: str, 
                 backup_name: str, 
-                body: JSON, 
+                body: ElasticBackup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1733,7 +1733,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticBackup]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'backup_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'backup_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1744,7 +1744,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> ElasticBackup: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_vault(
                 self, 
                 resource_group_name: str, 
@@ -1780,7 +1780,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: ChangeZoneRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1816,7 +1816,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: ElasticCapacityPool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1835,7 +1835,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticCapacityPool]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1862,7 +1862,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: ElasticCapacityPoolUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1898,7 +1898,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: CheckElasticVolumeFilePathAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1917,7 +1917,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> CheckElasticResourceAvailabilityResponse: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1927,7 +1927,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> ElasticCapacityPool: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_account(
                 self, 
                 resource_group_name: str, 
@@ -1962,7 +1962,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 snapshot_policy_name: str, 
-                body: JSON, 
+                body: ElasticSnapshotPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1981,7 +1981,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticSnapshotPolicy]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2008,7 +2008,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 snapshot_policy_name: str, 
-                body: JSON, 
+                body: ElasticSnapshotPolicyUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2027,7 +2027,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticSnapshotPolicy]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2037,7 +2037,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> ElasticSnapshotPolicy: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_account(
                 self, 
                 resource_group_name: str, 
@@ -2046,7 +2046,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncItemPaged[ElasticSnapshotPolicy]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_elastic_volumes(
                 self, 
                 resource_group_name: str, 
@@ -2086,7 +2086,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 snapshot_name: str, 
-                body: JSON, 
+                body: ElasticSnapshot, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2107,7 +2107,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticSnapshot]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'snapshot_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'snapshot_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2119,7 +2119,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'snapshot_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'snapshot_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2131,7 +2131,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> ElasticSnapshot: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_volume(
                 self, 
                 resource_group_name: str, 
@@ -2170,7 +2170,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: ElasticVolume, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2190,7 +2190,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticVolume]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2220,7 +2220,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: ElasticVolumeRevert, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2259,7 +2259,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: ElasticVolumeUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2279,7 +2279,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[ElasticVolume]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2290,7 +2290,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> ElasticVolume: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_pool(
                 self, 
                 resource_group_name: str, 
@@ -2322,7 +2322,7 @@ namespace azure.mgmt.netapp.aio.operations
         async def begin_update_network_sibling_set(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: UpdateNetworkSiblingSetRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2352,7 +2352,7 @@ namespace azure.mgmt.netapp.aio.operations
         async def check_file_path_availability(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: FilePathAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2382,7 +2382,7 @@ namespace azure.mgmt.netapp.aio.operations
         async def check_name_availability(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: ResourceNameAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2412,7 +2412,7 @@ namespace azure.mgmt.netapp.aio.operations
         async def check_quota_availability(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: QuotaAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2442,7 +2442,7 @@ namespace azure.mgmt.netapp.aio.operations
         async def query_network_sibling_set(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: QueryNetworkSiblingSetRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2475,7 +2475,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'quota_limit_name', 'accept']}, api_versions_list=['2025-08-01', '2025-09-01', '2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'quota_limit_name', 'accept']}, api_versions_list=['2025-08-01', '2025-09-01', '2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2485,7 +2485,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> QuotaItem: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2025-09-01', '2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2025-09-01', '2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -2603,7 +2603,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: CapacityPool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2648,7 +2648,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: CapacityPoolPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2714,7 +2714,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 ransomware_report_name: str, 
-                body: JSON, 
+                body: RansomwareSuspectsClearRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2735,7 +2735,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-01', params_added_on={'2025-12-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'ransomware_report_name', 'accept']}, api_versions_list=['2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-01', params_added_on={'2025-12-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'ransomware_report_name', 'accept']}, api_versions_list=['2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2747,7 +2747,7 @@ namespace azure.mgmt.netapp.aio.operations
             ) -> RansomwareReport: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-01', params_added_on={'2025-12-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-01', params_added_on={'2025-12-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -2793,7 +2793,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 snapshot_policy_name: str, 
-                body: JSON, 
+                body: SnapshotPolicyPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2829,7 +2829,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 snapshot_policy_name: str, 
-                body: JSON, 
+                body: SnapshotPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2904,7 +2904,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 snapshot_name: str, 
-                body: JSON, 
+                body: Snapshot, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2957,7 +2957,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 snapshot_name: str, 
-                body: JSON, 
+                body: SnapshotRestoreFiles, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2999,7 +2999,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 snapshot_name: str, 
-                body: JSON, 
+                body: SnapshotPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3071,7 +3071,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 subvolume_name: str, 
-                body: JSON, 
+                body: SubvolumeInfo, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3135,7 +3135,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 subvolume_name: str, 
-                body: JSON, 
+                body: SubvolumePatchRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3203,7 +3203,7 @@ namespace azure.mgmt.netapp.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 volume_group_name: str, 
-                body: JSON, 
+                body: VolumeGroupDetails, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3278,7 +3278,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 volume_quota_rule_name: str, 
-                body: JSON, 
+                body: VolumeQuotaRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3331,7 +3331,7 @@ namespace azure.mgmt.netapp.aio.operations
                 pool_name: str, 
                 volume_name: str, 
                 volume_quota_rule_name: str, 
-                body: JSON, 
+                body: VolumeQuotaRulePatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3411,7 +3411,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: AuthorizeRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3450,7 +3450,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[BreakFileLocksRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3489,7 +3489,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[BreakReplicationRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3528,7 +3528,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: Volume, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3609,7 +3609,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: GetGroupIdListForLDAPUserRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3648,7 +3648,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[QuotaReportFilterRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3687,7 +3687,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: PeerClusterForVolumeMigrationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3736,7 +3736,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: PoolChangeRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3795,7 +3795,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: ReestablishReplicationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3834,7 +3834,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[RelocateVolumeRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3893,7 +3893,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: VolumeRevert, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3952,7 +3952,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: VolumePatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4010,7 +4010,7 @@ namespace azure.mgmt.netapp.aio.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ListReplicationsRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6688,10 +6688,15 @@ namespace azure.mgmt.netapp.models
         bind_dn: Optional[str]
         bind_password_akv_config: Optional[BindPasswordAkvConfig]
         certificate_cn_host: Optional[str]
+        dns_servers: Optional[list[str]]
         domain: Optional[str]
+        group_dn: Optional[str]
         ldap_over_tls: Optional[bool]
+        ldap_port: Optional[int]
         ldap_servers: Optional[list[str]]
+        net_group_dn: Optional[str]
         server_ca_certificate: Optional[str]
+        user_dn: Optional[str]
 
         @overload
         def __init__(
@@ -6701,10 +6706,15 @@ namespace azure.mgmt.netapp.models
                 bind_dn: Optional[str] = ..., 
                 bind_password_akv_config: Optional[BindPasswordAkvConfig] = ..., 
                 certificate_cn_host: Optional[str] = ..., 
+                dns_servers: Optional[list[str]] = ..., 
                 domain: Optional[str] = ..., 
+                group_dn: Optional[str] = ..., 
                 ldap_over_tls: Optional[bool] = ..., 
+                ldap_port: Optional[int] = ..., 
                 ldap_servers: Optional[list[str]] = ..., 
-                server_ca_certificate: Optional[str] = ...
+                net_group_dn: Optional[str] = ..., 
+                server_ca_certificate: Optional[str] = ..., 
+                user_dn: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -6716,10 +6726,15 @@ namespace azure.mgmt.netapp.models
         bind_dn: Optional[str]
         bind_password_akv_config: Optional[BindPasswordAkvConfigPatch]
         certificate_cn_host: Optional[str]
+        dns_servers: Optional[list[str]]
         domain: Optional[str]
+        group_dn: Optional[str]
         ldap_over_tls: Optional[bool]
+        ldap_port: Optional[int]
         ldap_servers: Optional[list[str]]
+        net_group_dn: Optional[str]
         server_ca_certificate: Optional[str]
+        user_dn: Optional[str]
 
         @overload
         def __init__(
@@ -6729,10 +6744,15 @@ namespace azure.mgmt.netapp.models
                 bind_dn: Optional[str] = ..., 
                 bind_password_akv_config: Optional[BindPasswordAkvConfigPatch] = ..., 
                 certificate_cn_host: Optional[str] = ..., 
+                dns_servers: Optional[list[str]] = ..., 
                 domain: Optional[str] = ..., 
+                group_dn: Optional[str] = ..., 
                 ldap_over_tls: Optional[bool] = ..., 
+                ldap_port: Optional[int] = ..., 
                 ldap_servers: Optional[list[str]] = ..., 
-                server_ca_certificate: Optional[str] = ...
+                net_group_dn: Optional[str] = ..., 
+                server_ca_certificate: Optional[str] = ..., 
+                user_dn: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -9054,7 +9074,7 @@ namespace azure.mgmt.netapp.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ChangeKeyVault] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9087,7 +9107,7 @@ namespace azure.mgmt.netapp.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: NetAppAccount, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9121,7 +9141,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[GetKeyVaultStatusResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-15-preview', params_added_on={'2026-04-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name']}, api_versions_list=['2026-04-15-preview'])
+        @api_version_validation(method_added_on='2026-04-15-preview', params_added_on={'2026-04-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name']}, api_versions_list=['2026-04-15-preview', '2026-05-15-preview'])
         def begin_refresh_ldap_bind_password(
                 self, 
                 resource_group_name: str, 
@@ -9153,7 +9173,7 @@ namespace azure.mgmt.netapp.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[EncryptionTransitionRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9186,7 +9206,7 @@ namespace azure.mgmt.netapp.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: NetAppAccountPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9246,7 +9266,7 @@ namespace azure.mgmt.netapp.operations
                 self, 
                 resource_group_name: str, 
                 active_directory_config_name: str, 
-                body: JSON, 
+                body: ActiveDirectoryConfig, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9264,7 +9284,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ActiveDirectoryConfig]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'active_directory_config_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'active_directory_config_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -9288,7 +9308,7 @@ namespace azure.mgmt.netapp.operations
                 self, 
                 resource_group_name: str, 
                 active_directory_config_name: str, 
-                body: JSON, 
+                body: ActiveDirectoryConfigUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9306,7 +9326,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ActiveDirectoryConfig]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'active_directory_config_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'active_directory_config_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -9315,7 +9335,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ActiveDirectoryConfig: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -9323,7 +9343,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ItemPaged[ActiveDirectoryConfig]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[ActiveDirectoryConfig]: ...
 
 
@@ -9353,7 +9373,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_policy_name: str, 
-                body: JSON, 
+                body: BackupPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9398,7 +9418,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_policy_name: str, 
-                body: JSON, 
+                body: BackupPolicyPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9460,7 +9480,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_vault_name: str, 
-                body: JSON, 
+                body: BackupVault, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9505,7 +9525,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_vault_name: str, 
-                body: JSON, 
+                body: BackupVaultPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9569,7 +9589,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 backup_vault_name: str, 
                 backup_name: str, 
-                body: JSON, 
+                body: Backup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9618,7 +9638,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 backup_vault_name: str, 
                 backup_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[BackupPatch] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9703,7 +9723,7 @@ namespace azure.mgmt.netapp.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: BackupsMigrationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9749,7 +9769,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 backup_vault_name: str, 
                 backup_name: str, 
-                body: JSON, 
+                body: BackupRestoreFiles, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9797,7 +9817,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: BackupsMigrationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9847,7 +9867,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 bucket_name: str, 
-                body: JSON, 
+                body: Bucket, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9868,7 +9888,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[Bucket]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -9901,7 +9921,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 bucket_name: str, 
-                body: JSON, 
+                body: BucketCredentialsExpiry, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9922,7 +9942,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def begin_refresh_certificate(
                 self, 
                 resource_group_name: str, 
@@ -9955,7 +9975,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 bucket_name: str, 
-                body: JSON, 
+                body: BucketPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9997,7 +10017,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 bucket_name: str, 
-                body: JSON, 
+                body: BucketCredentialsExpiry, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10018,7 +10038,7 @@ namespace azure.mgmt.netapp.operations
             ) -> BucketGenerateCredentials: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'bucket_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10030,7 +10050,7 @@ namespace azure.mgmt.netapp.operations
             ) -> Bucket: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -10069,7 +10089,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 cache_name: str, 
-                body: JSON, 
+                body: Cache, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10089,7 +10109,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[Cache]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -10119,7 +10139,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 cache_name: str, 
-                body: JSON, 
+                body: PoolChangeRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10139,7 +10159,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[Cache]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def begin_reset_smb_password(
                 self, 
                 resource_group_name: str, 
@@ -10169,7 +10189,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 cache_name: str, 
-                body: JSON, 
+                body: CacheUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10189,7 +10209,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[Cache]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10200,7 +10220,7 @@ namespace azure.mgmt.netapp.operations
             ) -> Cache: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -10210,7 +10230,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ItemPaged[Cache]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'cache_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def list_peering_passphrases(
                 self, 
                 resource_group_name: str, 
@@ -10245,7 +10265,7 @@ namespace azure.mgmt.netapp.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: ElasticAccount, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10263,7 +10283,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticAccount]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -10287,7 +10307,7 @@ namespace azure.mgmt.netapp.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: ElasticAccountUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10305,7 +10325,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticAccount]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10314,7 +10334,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ElasticAccount: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -10322,7 +10342,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ItemPaged[ElasticAccount]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[ElasticAccount]: ...
 
 
@@ -10352,7 +10372,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_policy_name: str, 
-                body: JSON, 
+                body: ElasticBackupPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10371,7 +10391,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticBackupPolicy]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_policy_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_policy_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -10398,7 +10418,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_policy_name: str, 
-                body: JSON, 
+                body: ElasticBackupPolicyUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10417,7 +10437,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticBackupPolicy]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10427,7 +10447,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ElasticBackupPolicy: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_account(
                 self, 
                 resource_group_name: str, 
@@ -10462,7 +10482,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_vault_name: str, 
-                body: JSON, 
+                body: ElasticBackupVault, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10481,7 +10501,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticBackupVault]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -10508,7 +10528,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 backup_vault_name: str, 
-                body: JSON, 
+                body: ElasticBackupVaultUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10527,7 +10547,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticBackupVault]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10537,7 +10557,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ElasticBackupVault: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_account(
                 self, 
                 resource_group_name: str, 
@@ -10574,7 +10594,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 backup_vault_name: str, 
                 backup_name: str, 
-                body: JSON, 
+                body: ElasticBackup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10594,7 +10614,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticBackup]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'backup_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'backup_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -10624,7 +10644,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 backup_vault_name: str, 
                 backup_name: str, 
-                body: JSON, 
+                body: ElasticBackup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10644,7 +10664,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticBackup]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'backup_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'backup_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10655,7 +10675,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ElasticBackup: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'backup_vault_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_vault(
                 self, 
                 resource_group_name: str, 
@@ -10691,7 +10711,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: ChangeZoneRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10727,7 +10747,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: ElasticCapacityPool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10746,7 +10766,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticCapacityPool]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -10773,7 +10793,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: ElasticCapacityPoolUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10809,7 +10829,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: CheckElasticVolumeFilePathAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10828,7 +10848,7 @@ namespace azure.mgmt.netapp.operations
             ) -> CheckElasticResourceAvailabilityResponse: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10838,7 +10858,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ElasticCapacityPool: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_account(
                 self, 
                 resource_group_name: str, 
@@ -10873,7 +10893,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 snapshot_policy_name: str, 
-                body: JSON, 
+                body: ElasticSnapshotPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10892,7 +10912,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticSnapshotPolicy]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -10919,7 +10939,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 snapshot_policy_name: str, 
-                body: JSON, 
+                body: ElasticSnapshotPolicyUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10938,7 +10958,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticSnapshotPolicy]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10948,7 +10968,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ElasticSnapshotPolicy: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_account(
                 self, 
                 resource_group_name: str, 
@@ -10957,7 +10977,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ItemPaged[ElasticSnapshotPolicy]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'snapshot_policy_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_elastic_volumes(
                 self, 
                 resource_group_name: str, 
@@ -10997,7 +11017,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 snapshot_name: str, 
-                body: JSON, 
+                body: ElasticSnapshot, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11018,7 +11038,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticSnapshot]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'snapshot_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'snapshot_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -11030,7 +11050,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'snapshot_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'snapshot_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -11042,7 +11062,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ElasticSnapshot: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_volume(
                 self, 
                 resource_group_name: str, 
@@ -11081,7 +11101,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: ElasticVolume, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11101,7 +11121,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticVolume]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -11131,7 +11151,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: ElasticVolumeRevert, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11170,7 +11190,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: ElasticVolumeUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11190,7 +11210,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[ElasticVolume]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -11201,7 +11221,7 @@ namespace azure.mgmt.netapp.operations
             ) -> ElasticVolume: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-15-preview', params_added_on={'2025-12-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'accept']}, api_versions_list=['2025-12-15-preview', '2026-01-15-preview', '2026-03-15-preview', '2026-04-15-preview', '2026-05-15-preview'])
         def list_by_elastic_pool(
                 self, 
                 resource_group_name: str, 
@@ -11233,7 +11253,7 @@ namespace azure.mgmt.netapp.operations
         def begin_update_network_sibling_set(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: UpdateNetworkSiblingSetRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11263,7 +11283,7 @@ namespace azure.mgmt.netapp.operations
         def check_file_path_availability(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: FilePathAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11293,7 +11313,7 @@ namespace azure.mgmt.netapp.operations
         def check_name_availability(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: ResourceNameAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11323,7 +11343,7 @@ namespace azure.mgmt.netapp.operations
         def check_quota_availability(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: QuotaAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11353,7 +11373,7 @@ namespace azure.mgmt.netapp.operations
         def query_network_sibling_set(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: QueryNetworkSiblingSetRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11386,7 +11406,7 @@ namespace azure.mgmt.netapp.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'quota_limit_name', 'accept']}, api_versions_list=['2025-08-01', '2025-09-01', '2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'quota_limit_name', 'accept']}, api_versions_list=['2025-08-01', '2025-09-01', '2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -11396,7 +11416,7 @@ namespace azure.mgmt.netapp.operations
             ) -> QuotaItem: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2025-09-01', '2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2025-09-01', '2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -11514,7 +11534,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: CapacityPool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11559,7 +11579,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: CapacityPoolPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11625,7 +11645,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 ransomware_report_name: str, 
-                body: JSON, 
+                body: RansomwareSuspectsClearRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11646,7 +11666,7 @@ namespace azure.mgmt.netapp.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-01', params_added_on={'2025-12-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'ransomware_report_name', 'accept']}, api_versions_list=['2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-01', params_added_on={'2025-12-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'ransomware_report_name', 'accept']}, api_versions_list=['2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -11658,7 +11678,7 @@ namespace azure.mgmt.netapp.operations
             ) -> RansomwareReport: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-01', params_added_on={'2025-12-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview'])
+        @api_version_validation(method_added_on='2025-12-01', params_added_on={'2025-12-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'pool_name', 'volume_name', 'accept']}, api_versions_list=['2025-12-01', '2025-12-15-preview', '2026-01-01', '2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-04-01', '2026-04-15-preview', '2026-05-01', '2026-05-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -11704,7 +11724,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 snapshot_policy_name: str, 
-                body: JSON, 
+                body: SnapshotPolicyPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11740,7 +11760,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 snapshot_policy_name: str, 
-                body: JSON, 
+                body: SnapshotPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11815,7 +11835,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 snapshot_name: str, 
-                body: JSON, 
+                body: Snapshot, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11868,7 +11888,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 snapshot_name: str, 
-                body: JSON, 
+                body: SnapshotRestoreFiles, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11910,7 +11930,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 snapshot_name: str, 
-                body: JSON, 
+                body: SnapshotPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11982,7 +12002,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 subvolume_name: str, 
-                body: JSON, 
+                body: SubvolumeInfo, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12046,7 +12066,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 subvolume_name: str, 
-                body: JSON, 
+                body: SubvolumePatchRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12114,7 +12134,7 @@ namespace azure.mgmt.netapp.operations
                 resource_group_name: str, 
                 account_name: str, 
                 volume_group_name: str, 
-                body: JSON, 
+                body: VolumeGroupDetails, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12189,7 +12209,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 volume_quota_rule_name: str, 
-                body: JSON, 
+                body: VolumeQuotaRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12242,7 +12262,7 @@ namespace azure.mgmt.netapp.operations
                 pool_name: str, 
                 volume_name: str, 
                 volume_quota_rule_name: str, 
-                body: JSON, 
+                body: VolumeQuotaRulePatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12322,7 +12342,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: AuthorizeRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12361,7 +12381,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[BreakFileLocksRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12400,7 +12420,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[BreakReplicationRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12439,7 +12459,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: Volume, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12520,7 +12540,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: GetGroupIdListForLDAPUserRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12559,7 +12579,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[QuotaReportFilterRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12598,7 +12618,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: PeerClusterForVolumeMigrationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12647,7 +12667,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: PoolChangeRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12706,7 +12726,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: ReestablishReplicationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12745,7 +12765,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[RelocateVolumeRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12804,7 +12824,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: VolumeRevert, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12863,7 +12883,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: JSON, 
+                body: VolumePatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12921,7 +12941,7 @@ namespace azure.mgmt.netapp.operations
                 account_name: str, 
                 pool_name: str, 
                 volume_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ListReplicationsRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12949,6 +12969,2158 @@ namespace azure.mgmt.netapp.operations
                 volume_name: str, 
                 **kwargs: Any
             ) -> ReplicationStatus: ...
+
+
+namespace azure.mgmt.netapp.types
+
+    class azure.mgmt.netapp.types.AccountEncryption(TypedDict, total=False):
+        key "identity": ForwardRef('EncryptionIdentity', module='types')
+        key "keySource": Union[str, KeySource]
+        key "keyVaultProperties": ForwardRef('KeyVaultProperties', module='types')
+        identity: EncryptionIdentity
+        key_source: Union[str, KeySource]
+        key_vault_properties: KeyVaultProperties
+
+
+    class azure.mgmt.netapp.types.AccountProperties(TypedDict, total=False):
+        key "disableShowmount": Optional[bool]
+        key "encryption": ForwardRef('AccountEncryption', module='types')
+        key "entraIdConfig": ForwardRef('EntraIdConfig', module='types')
+        key "ldapConfiguration": ForwardRef('LdapConfiguration', module='types')
+        key "multiAdStatus": Union[str, MultiAdStatus]
+        key "nfsV4IDDomain": Optional[str]
+        key "provisioningState": str
+        activeDirectories: list[ActiveDirectory]
+        active_directories: list[ActiveDirectory]
+        disable_showmount: bool
+        encryption: AccountEncryption
+        entra_id_config: EntraIdConfig
+        ldap_configuration: LdapConfiguration
+        multi_ad_status: Union[str, MultiAdStatus]
+        nfs_v4_id_domain: str
+        provisioning_state: str
+
+
+    class azure.mgmt.netapp.types.AccountPropertiesPatch(TypedDict, total=False):
+        key "encryption": ForwardRef('AccountEncryption', module='types')
+        key "entraIdConfig": ForwardRef('EntraIdConfigPatch', module='types')
+        key "ldapConfiguration": ForwardRef('LdapConfigurationPatch', module='types')
+        key "nfsV4IDDomain": Optional[str]
+        activeDirectories: list[ActiveDirectory]
+        active_directories: list[ActiveDirectory]
+        encryption: AccountEncryption
+        entra_id_config: EntraIdConfigPatch
+        ldap_configuration: LdapConfigurationPatch
+        nfs_v4_id_domain: str
+
+
+    class azure.mgmt.netapp.types.ActiveDirectory(TypedDict, total=False):
+        key "activeDirectoryId": Optional[str]
+        key "adName": str
+        key "aesEncryption": bool
+        key "allowLocalNfsUsersWithLdap": bool
+        key "dns": str
+        key "domain": str
+        key "encryptDCConnections": bool
+        key "kdcIP": str
+        key "ldapOverTLS": bool
+        key "ldapSearchScope": ForwardRef('LdapSearchScopeOpt', module='types')
+        key "ldapSigning": bool
+        key "organizationalUnit": str
+        key "password": str
+        key "preferredServersForLdapClient": str
+        key "serverRootCACertificate": str
+        key "site": str
+        key "smbServerName": str
+        key "status": Union[str, ActiveDirectoryStatus]
+        key "statusDetails": str
+        key "username": str
+        active_directory_id: str
+        ad_name: str
+        administrators: list[str]
+        aes_encryption: bool
+        allow_local_nfs_users_with_ldap: bool
+        backupOperators: list[str]
+        backup_operators: list[str]
+        dns: str
+        domain: str
+        encrypt_dc_connections: bool
+        kdc_ip: str
+        ldap_over_tls: bool
+        ldap_search_scope: LdapSearchScopeOpt
+        ldap_signing: bool
+        organizational_unit: str
+        password: str
+        preferred_servers_for_ldap_client: str
+        securityOperators: list[str]
+        security_operators: list[str]
+        server_root_ca_certificate: str
+        site: str
+        smb_server_name: str
+        status: Union[str, ActiveDirectoryStatus]
+        status_details: str
+        username: str
+
+
+    class azure.mgmt.netapp.types.ActiveDirectoryConfig(TrackedResource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ActiveDirectoryConfigProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: ActiveDirectoryConfigProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.ActiveDirectoryConfigProperties(TypedDict, total=False):
+        key "activeDirectoryStatus": Union[str, ActiveDirectoryStatus]
+        key "domain": Required[str]
+        key "organizationalUnit": str
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        key "secretPassword": Required[SecretPassword]
+        key "site": Required[str]
+        key "smbServerName": str
+        key "userName": str
+        active_directory_status: Union[str, ActiveDirectoryStatus]
+        administrators: list[str]
+        backupOperators: list[str]
+        backup_operators: list[str]
+        dns: list[str]
+        domain: str
+        organizational_unit: str
+        provisioning_state: Union[str, NetAppProvisioningState]
+        secret_password: SecretPassword
+        securityOperators: list[str]
+        security_operators: list[str]
+        site: str
+        smb_server_name: str
+        user_name: str
+
+
+    class azure.mgmt.netapp.types.ActiveDirectoryConfigUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "properties": ForwardRef('ActiveDirectoryConfigUpdateProperties', module='types')
+        identity: ManagedServiceIdentity
+        properties: ActiveDirectoryConfigUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.netapp.types.ActiveDirectoryConfigUpdateProperties(TypedDict, total=False):
+        key "domain": str
+        key "organizationalUnit": str
+        key "secretPassword": ForwardRef('SecretPassword', module='types')
+        key "site": str
+        key "smbServerName": str
+        key "userName": str
+        administrators: list[str]
+        backupOperators: list[str]
+        backup_operators: list[str]
+        dns: list[str]
+        domain: str
+        organizational_unit: str
+        secret_password: SecretPassword
+        securityOperators: list[str]
+        security_operators: list[str]
+        site: str
+        smb_server_name: str
+        user_name: str
+
+
+    class azure.mgmt.netapp.types.AuthorizeRequest(TypedDict, total=False):
+        key "remoteVolumeResourceId": str
+        remote_volume_resource_id: str
+
+
+    class azure.mgmt.netapp.types.AzureKeyVaultDetails(TypedDict, total=False):
+        key "certificateAkvDetails": ForwardRef('CertificateAkvDetails', module='types')
+        key "credentialsAkvDetails": ForwardRef('CredentialsAkvDetails', module='types')
+        certificate_akv_details: CertificateAkvDetails
+        credentials_akv_details: CredentialsAkvDetails
+
+
+    class azure.mgmt.netapp.types.Backup(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[BackupProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: BackupProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.netapp.types.BackupPatch(TypedDict, total=False):
+        key "properties": ForwardRef('BackupPatchProperties', module='types')
+        properties: BackupPatchProperties
+
+
+    class azure.mgmt.netapp.types.BackupPatchProperties(TypedDict, total=False):
+        key "label": str
+        label: str
+
+
+    class azure.mgmt.netapp.types.BackupPolicy(TrackedResource):
+        key "etag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[BackupPolicyProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: BackupPolicyProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.BackupPolicyPatch(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('BackupPolicyProperties', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: BackupPolicyProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.BackupPolicyProperties(TypedDict, total=False):
+        key "backupPolicyId": str
+        key "dailyBackupsToKeep": int
+        key "enabled": bool
+        key "monthlyBackupsToKeep": int
+        key "provisioningState": str
+        key "volumesAssigned": int
+        key "weeklyBackupsToKeep": int
+        backup_policy_id: str
+        daily_backups_to_keep: int
+        enabled: bool
+        monthly_backups_to_keep: int
+        provisioning_state: str
+        volumeBackups: list[VolumeBackups]
+        volume_backups: list[VolumeBackups]
+        volumes_assigned: int
+        weekly_backups_to_keep: int
+
+
+    class azure.mgmt.netapp.types.BackupProperties(TypedDict, total=False):
+        key "backupId": str
+        key "backupPolicyResourceId": str
+        key "backupType": Union[str, BackupType]
+        key "completionDate": Optional[str]
+        key "creationDate": str
+        key "failureReason": str
+        key "isLargeVolume": bool
+        key "label": str
+        key "provisioningState": str
+        key "size": int
+        key "snapshotCreationDate": Optional[str]
+        key "snapshotName": str
+        key "useExistingSnapshot": bool
+        key "volumeResourceId": Required[str]
+        backup_id: str
+        backup_policy_resource_id: str
+        backup_type: Union[str, BackupType]
+        completion_date: str
+        creation_date: str
+        failure_reason: str
+        is_large_volume: bool
+        label: str
+        provisioning_state: str
+        size: int
+        snapshot_creation_date: str
+        snapshot_name: str
+        use_existing_snapshot: bool
+        volume_resource_id: str
+
+
+    class azure.mgmt.netapp.types.BackupRestoreFiles(TypedDict, total=False):
+        key "destinationVolumeId": Required[str]
+        key "fileList": Required[list[str]]
+        key "restoreFilePath": str
+        destination_volume_id: str
+        file_list: list[str]
+        restore_file_path: str
+
+
+    class azure.mgmt.netapp.types.BackupVault(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('BackupVaultProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: BackupVaultProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.BackupVaultPatch(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.netapp.types.BackupVaultProperties(TypedDict, total=False):
+        key "provisioningState": str
+        provisioning_state: str
+
+
+    class azure.mgmt.netapp.types.BackupsMigrationRequest(TypedDict, total=False):
+        key "backupVaultId": Required[str]
+        backup_vault_id: str
+
+
+    class azure.mgmt.netapp.types.BindPasswordAkvConfig(TypedDict, total=False):
+        key "azureKeyVaultUri": Required[str]
+        key "secretName": Required[str]
+        key "userAssignedIdentity": str
+        azure_key_vault_uri: str
+        secret_name: str
+        user_assigned_identity: str
+
+
+    class azure.mgmt.netapp.types.BindPasswordAkvConfigPatch(TypedDict, total=False):
+        key "azureKeyVaultUri": str
+        key "secretName": str
+        key "userAssignedIdentity": str
+        azure_key_vault_uri: str
+        secret_name: str
+        user_assigned_identity: str
+
+
+    class azure.mgmt.netapp.types.BreakFileLocksRequest(TypedDict, total=False):
+        key "clientIp": str
+        key "confirmRunningDisruptiveOperation": bool
+        client_ip: str
+        confirm_running_disruptive_operation: bool
+
+
+    class azure.mgmt.netapp.types.BreakReplicationRequest(TypedDict, total=False):
+        key "forceBreakReplication": bool
+        force_break_replication: bool
+
+
+    class azure.mgmt.netapp.types.Bucket(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('BucketProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: BucketProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.netapp.types.BucketCredentialsExpiry(TypedDict, total=False):
+        key "keyPairExpiryDays": int
+        key_pair_expiry_days: int
+
+
+    class azure.mgmt.netapp.types.BucketPatch(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('BucketPatchProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: BucketPatchProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.netapp.types.BucketPatchProperties(TypedDict, total=False):
+        key "akvDetails": ForwardRef('AzureKeyVaultDetails', module='types')
+        key "fileSystemUser": ForwardRef('FileSystemUser', module='types')
+        key "permissions": Union[str, BucketPatchPermissions]
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        key "server": ForwardRef('BucketServerPatchProperties', module='types')
+        akv_details: AzureKeyVaultDetails
+        file_system_user: FileSystemUser
+        permissions: Union[str, BucketPatchPermissions]
+        provisioning_state: Union[str, NetAppProvisioningState]
+        server: BucketServerPatchProperties
+
+
+    class azure.mgmt.netapp.types.BucketProperties(TypedDict, total=False):
+        key "akvDetails": ForwardRef('AzureKeyVaultDetails', module='types')
+        key "fileSystemUser": ForwardRef('FileSystemUser', module='types')
+        key "path": str
+        key "permissions": Union[str, BucketPermissions]
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        key "server": ForwardRef('BucketServerProperties', module='types')
+        key "status": Union[str, CredentialsStatus]
+        akv_details: AzureKeyVaultDetails
+        file_system_user: FileSystemUser
+        path: str
+        permissions: Union[str, BucketPermissions]
+        provisioning_state: Union[str, NetAppProvisioningState]
+        server: BucketServerProperties
+        status: Union[str, CredentialsStatus]
+
+
+    class azure.mgmt.netapp.types.BucketServerPatchProperties(TypedDict, total=False):
+        key "certificateObject": str
+        key "fqdn": str
+        key "onCertificateConflictAction": Union[str, OnCertificateConflictAction]
+        certificate_object: str
+        fqdn: str
+        on_certificate_conflict_action: Union[str, OnCertificateConflictAction]
+
+
+    class azure.mgmt.netapp.types.BucketServerProperties(TypedDict, total=False):
+        key "certificateCommonName": str
+        key "certificateExpiryDate": str
+        key "certificateObject": str
+        key "fqdn": str
+        key "ipAddress": str
+        key "onCertificateConflictAction": Union[str, OnCertificateConflictAction]
+        certificate_common_name: str
+        certificate_expiry_date: str
+        certificate_object: str
+        fqdn: str
+        ip_address: str
+        on_certificate_conflict_action: Union[str, OnCertificateConflictAction]
+
+
+    class azure.mgmt.netapp.types.Cache(TrackedResource):
+        key "etag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[CacheProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: CacheProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.netapp.types.CacheMountTargetProperties(TypedDict, total=False):
+        key "ipAddress": str
+        key "mountTargetId": str
+        key "smbServerFqdn": str
+        ip_address: str
+        mount_target_id: str
+        smb_server_fqdn: str
+
+
+    class azure.mgmt.netapp.types.CacheProperties(TypedDict, total=False):
+        key "actualThroughputMibps": float
+        key "cacheState": Union[str, CacheLifeCycleState]
+        key "cacheSubnetResourceId": Required[str]
+        key "cifsChangeNotifications": Union[str, CifsChangeNotifyState]
+        key "encryption": Union[str, EncryptionState]
+        key "encryptionKeySource": Required[Union[str, EncryptionKeySource]]
+        key "exportPolicy": ForwardRef('CachePropertiesExportPolicy', module='types')
+        key "fileAccessLogs": Union[str, CacheFileAccessLogs]
+        key "filePath": Required[str]
+        key "globalFileLocking": Union[str, GlobalFileLockingState]
+        key "kerberos": Union[str, KerberosState]
+        key "keyVaultPrivateEndpointResourceId": str
+        key "language": Union[str, VolumeLanguage]
+        key "ldap": Union[str, LdapState]
+        key "ldapServerType": Union[str, LdapServerType]
+        key "maximumNumberOfFiles": int
+        key "originClusterInformation": Required[OriginClusterInformation]
+        key "peeringSubnetResourceId": Required[str]
+        key "provisioningState": Union[str, CacheProvisioningState]
+        key "size": Required[int]
+        key "smbSettings": ForwardRef('SmbSettings', module='types')
+        key "throughputMibps": float
+        key "writeBack": Union[str, EnableWriteBackState]
+        actual_throughput_mibps: float
+        cache_state: Union[str, CacheLifeCycleState]
+        cache_subnet_resource_id: str
+        cifs_change_notifications: Union[str, CifsChangeNotifyState]
+        encryption: Union[str, EncryptionState]
+        encryption_key_source: Union[str, EncryptionKeySource]
+        export_policy: CachePropertiesExportPolicy
+        file_access_logs: Union[str, CacheFileAccessLogs]
+        file_path: str
+        global_file_locking: Union[str, GlobalFileLockingState]
+        kerberos: Union[str, KerberosState]
+        key_vault_private_endpoint_resource_id: str
+        language: Union[str, VolumeLanguage]
+        ldap: Union[str, LdapState]
+        ldap_server_type: Union[str, LdapServerType]
+        maximum_number_of_files: int
+        mountTargets: list[CacheMountTargetProperties]
+        mount_targets: list[CacheMountTargetProperties]
+        origin_cluster_information: OriginClusterInformation
+        peering_subnet_resource_id: str
+        protocolTypes: list[Union[str, ProtocolTypes]]
+        protocol_types: list[Union[str, ProtocolTypes]]
+        provisioning_state: Union[str, CacheProvisioningState]
+        size: int
+        smb_settings: SmbSettings
+        throughput_mibps: float
+        write_back: Union[str, EnableWriteBackState]
+
+
+    class azure.mgmt.netapp.types.CachePropertiesExportPolicy(TypedDict, total=False):
+        rules: list[ExportPolicyRule]
+
+
+    class azure.mgmt.netapp.types.CacheUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('CacheUpdateProperties', module='types')
+        properties: CacheUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.netapp.types.CacheUpdateProperties(TypedDict, total=False):
+        key "cifsChangeNotifications": Union[str, CifsChangeNotifyState]
+        key "exportPolicy": ForwardRef('CachePropertiesExportPolicy', module='types')
+        key "keyVaultPrivateEndpointResourceId": str
+        key "size": int
+        key "smbSettings": ForwardRef('SmbSettings', module='types')
+        key "throughputMibps": float
+        key "writeBack": Union[str, EnableWriteBackState]
+        cifs_change_notifications: Union[str, CifsChangeNotifyState]
+        export_policy: CachePropertiesExportPolicy
+        key_vault_private_endpoint_resource_id: str
+        protocolTypes: list[Union[str, ProtocolTypes]]
+        protocol_types: list[Union[str, ProtocolTypes]]
+        size: int
+        smb_settings: SmbSettings
+        throughput_mibps: float
+        write_back: Union[str, EnableWriteBackState]
+
+
+    class azure.mgmt.netapp.types.CapacityPool(TrackedResource):
+        key "etag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[PoolProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: PoolProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.CapacityPoolPatch(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('PoolPatchProperties', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: PoolPatchProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.CertificateAkvDetails(TypedDict, total=False):
+        key "certificateKeyVaultUri": str
+        key "certificateName": str
+        key "userAssignedIdentity": str
+        certificate_key_vault_uri: str
+        certificate_name: str
+        user_assigned_identity: str
+
+
+    class azure.mgmt.netapp.types.ChangeKeyVault(TypedDict, total=False):
+        key "keyName": Required[str]
+        key "keyVaultPrivateEndpoints": Required[list[KeyVaultPrivateEndpoint]]
+        key "keyVaultResourceId": str
+        key "keyVaultUri": Required[str]
+        key_name: str
+        key_vault_private_endpoints: list[KeyVaultPrivateEndpoint]
+        key_vault_resource_id: str
+        key_vault_uri: str
+
+
+    class azure.mgmt.netapp.types.ChangeZoneRequest(TypedDict, total=False):
+        key "newZone": Required[str]
+        new_zone: str
+
+
+    class azure.mgmt.netapp.types.CheckElasticVolumeFilePathAvailabilityRequest(TypedDict, total=False):
+        key "filePath": Required[str]
+        file_path: str
+
+
+    class azure.mgmt.netapp.types.CifsUser(TypedDict, total=False):
+        key "username": str
+        username: str
+
+
+    class azure.mgmt.netapp.types.CredentialsAkvDetails(TypedDict, total=False):
+        key "credentialsKeyVaultUri": str
+        key "secretName": str
+        key "userAssignedIdentity": str
+        credentials_key_vault_uri: str
+        secret_name: str
+        user_assigned_identity: str
+
+
+    class azure.mgmt.netapp.types.DailySchedule(TypedDict, total=False):
+        key "hour": int
+        key "minute": int
+        key "snapshotsToKeep": int
+        key "usedBytes": int
+        hour: int
+        minute: int
+        snapshots_to_keep: int
+        used_bytes: int
+
+
+    class azure.mgmt.netapp.types.DestinationReplication(TypedDict, total=False):
+        key "region": str
+        key "replicationType": Union[str, ReplicationType]
+        key "resourceId": str
+        key "zone": str
+        region: str
+        replication_type: Union[str, ReplicationType]
+        resource_id: str
+        zone: str
+
+
+    class azure.mgmt.netapp.types.ElasticAccount(TrackedResource):
+        key "eTag": str
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ElasticAccountProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        e_tag: str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: ElasticAccountProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.ElasticAccountProperties(TypedDict, total=False):
+        key "encryption": ForwardRef('ElasticEncryption', module='types')
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        encryption: ElasticEncryption
+        provisioning_state: Union[str, NetAppProvisioningState]
+
+
+    class azure.mgmt.netapp.types.ElasticAccountUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "properties": ForwardRef('ElasticAccountUpdateProperties', module='types')
+        identity: ManagedServiceIdentity
+        properties: ElasticAccountUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.netapp.types.ElasticAccountUpdateProperties(TypedDict, total=False):
+        key "encryption": ForwardRef('ElasticEncryption', module='types')
+        encryption: ElasticEncryption
+
+
+    class azure.mgmt.netapp.types.ElasticBackup(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ElasticBackupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ElasticBackupProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.netapp.types.ElasticBackupPolicy(TrackedResource):
+        key "eTag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ElasticBackupPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        e_tag: str
+        id: str
+        location: str
+        name: str
+        properties: ElasticBackupPolicyProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.ElasticBackupPolicyProperties(TypedDict, total=False):
+        key "assignedVolumesCount": int
+        key "dailyBackupsToKeep": int
+        key "monthlyBackupsToKeep": int
+        key "policyState": Union[str, ElasticBackupPolicyState]
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        key "weeklyBackupsToKeep": int
+        assigned_volumes_count: int
+        daily_backups_to_keep: int
+        monthly_backups_to_keep: int
+        policy_state: Union[str, ElasticBackupPolicyState]
+        provisioning_state: Union[str, NetAppProvisioningState]
+        weekly_backups_to_keep: int
+
+
+    class azure.mgmt.netapp.types.ElasticBackupPolicyUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('ElasticBackupPolicyUpdateProperties', module='types')
+        properties: ElasticBackupPolicyUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.netapp.types.ElasticBackupPolicyUpdateProperties(TypedDict, total=False):
+        key "dailyBackupsToKeep": int
+        key "monthlyBackupsToKeep": int
+        key "policyState": Union[str, ElasticBackupPolicyState]
+        key "weeklyBackupsToKeep": int
+        daily_backups_to_keep: int
+        monthly_backups_to_keep: int
+        policy_state: Union[str, ElasticBackupPolicyState]
+        weekly_backups_to_keep: int
+
+
+    class azure.mgmt.netapp.types.ElasticBackupProperties(TypedDict, total=False):
+        key "backupType": Union[str, ElasticBackupType]
+        key "completionDate": str
+        key "creationDate": str
+        key "elasticBackupPolicyResourceId": str
+        key "elasticSnapshotResourceId": str
+        key "elasticVolumeResourceId": Required[str]
+        key "failureReason": str
+        key "label": str
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        key "size": int
+        key "snapshotCreationDate": str
+        key "snapshotUsage": Union[str, SnapshotUsage]
+        key "volumeSize": Union[str, VolumeSize]
+        backup_type: Union[str, ElasticBackupType]
+        completion_date: str
+        creation_date: str
+        elastic_backup_policy_resource_id: str
+        elastic_snapshot_resource_id: str
+        elastic_volume_resource_id: str
+        failure_reason: str
+        label: str
+        provisioning_state: Union[str, NetAppProvisioningState]
+        size: int
+        snapshot_creation_date: str
+        snapshot_usage: Union[str, SnapshotUsage]
+        volume_size: Union[str, VolumeSize]
+
+
+    class azure.mgmt.netapp.types.ElasticBackupVault(TrackedResource):
+        key "eTag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ElasticBackupVaultProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        e_tag: str
+        id: str
+        location: str
+        name: str
+        properties: ElasticBackupVaultProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.ElasticBackupVaultProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        provisioning_state: Union[str, NetAppProvisioningState]
+
+
+    class azure.mgmt.netapp.types.ElasticBackupVaultUpdate(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.netapp.types.ElasticCapacityPool(TrackedResource):
+        key "eTag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ElasticCapacityPoolProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        e_tag: str
+        id: str
+        location: str
+        name: str
+        properties: ElasticCapacityPoolProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.netapp.types.ElasticCapacityPoolProperties(TypedDict, total=False):
+        key "activeDirectoryConfigResourceId": str
+        key "availabilityStatus": Union[str, ElasticResourceAvailabilityStatus]
+        key "currentZone": str
+        key "encryption": ForwardRef('ElasticEncryptionConfiguration', module='types')
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        key "serviceLevel": Required[Union[str, ElasticServiceLevel]]
+        key "size": Required[int]
+        key "subnetResourceId": Required[str]
+        key "totalThroughputMibps": float
+        active_directory_config_resource_id: str
+        availability_status: Union[str, ElasticResourceAvailabilityStatus]
+        current_zone: str
+        encryption: ElasticEncryptionConfiguration
+        provisioning_state: Union[str, NetAppProvisioningState]
+        service_level: Union[str, ElasticServiceLevel]
+        size: int
+        subnet_resource_id: str
+        total_throughput_mibps: float
+
+
+    class azure.mgmt.netapp.types.ElasticCapacityPoolUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('ElasticCapacityPoolUpdateProperties', module='types')
+        properties: ElasticCapacityPoolUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.netapp.types.ElasticCapacityPoolUpdateProperties(TypedDict, total=False):
+        key "activeDirectoryConfigResourceId": str
+        key "encryption": ForwardRef('ElasticEncryptionConfiguration', module='types')
+        key "size": int
+        active_directory_config_resource_id: str
+        encryption: ElasticEncryptionConfiguration
+        size: int
+
+
+    class azure.mgmt.netapp.types.ElasticEncryption(TypedDict, total=False):
+        key "identity": ForwardRef('ElasticEncryptionIdentity', module='types')
+        key "keySource": Union[str, KeySource]
+        key "keyVaultProperties": ForwardRef('ElasticKeyVaultProperties', module='types')
+        identity: ElasticEncryptionIdentity
+        key_source: Union[str, KeySource]
+        key_vault_properties: ElasticKeyVaultProperties
+
+
+    class azure.mgmt.netapp.types.ElasticEncryptionConfiguration(TypedDict, total=False):
+        key "elasticPoolEncryptionKeySource": Required[Union[str, ElasticPoolEncryptionKeySource]]
+        key "keyVaultPrivateEndpointResourceId": Required[str]
+        elastic_pool_encryption_key_source: Union[str, ElasticPoolEncryptionKeySource]
+        key_vault_private_endpoint_resource_id: str
+
+
+    class azure.mgmt.netapp.types.ElasticEncryptionIdentity(TypedDict, total=False):
+        key "federatedClientId": str
+        key "principalId": str
+        key "userAssignedIdentity": str
+        federated_client_id: str
+        principal_id: str
+        user_assigned_identity: str
+
+
+    class azure.mgmt.netapp.types.ElasticExportPolicy(TypedDict, total=False):
+        rules: list[ElasticExportPolicyRule]
+
+
+    class azure.mgmt.netapp.types.ElasticExportPolicyRule(TypedDict, total=False):
+        key "nfsv3": Union[str, ElasticNfsv3Access]
+        key "nfsv4": Union[str, ElasticNfsv4Access]
+        key "rootAccess": Union[str, ElasticRootAccess]
+        key "ruleIndex": int
+        key "unixAccessRule": Union[str, ElasticUnixAccessRule]
+        allowedClients: list[str]
+        allowed_clients: list[str]
+        nfsv3: Union[str, ElasticNfsv3Access]
+        nfsv4: Union[str, ElasticNfsv4Access]
+        root_access: Union[str, ElasticRootAccess]
+        rule_index: int
+        unix_access_rule: Union[str, ElasticUnixAccessRule]
+
+
+    class azure.mgmt.netapp.types.ElasticKeyVaultProperties(TypedDict, total=False):
+        key "keyName": str
+        key "keyVaultResourceId": str
+        key "keyVaultUri": str
+        key "status": Union[str, ElasticKeyVaultStatus]
+        key_name: str
+        key_vault_resource_id: str
+        key_vault_uri: str
+        status: Union[str, ElasticKeyVaultStatus]
+
+
+    class azure.mgmt.netapp.types.ElasticMountTargetProperties(TypedDict, total=False):
+        key "ipAddress": str
+        key "smbServerFqdn": str
+        ip_address: str
+        smb_server_fqdn: str
+
+
+    class azure.mgmt.netapp.types.ElasticSmbPatchProperties(TypedDict, total=False):
+        key "smbEncryption": Union[str, ElasticSmbEncryption]
+        smb_encryption: Union[str, ElasticSmbEncryption]
+
+
+    class azure.mgmt.netapp.types.ElasticSmbProperties(TypedDict, total=False):
+        key "smbEncryption": Union[str, ElasticSmbEncryption]
+        smb_encryption: Union[str, ElasticSmbEncryption]
+
+
+    class azure.mgmt.netapp.types.ElasticSnapshot(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ElasticSnapshotProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ElasticSnapshotProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.netapp.types.ElasticSnapshotPolicy(TrackedResource):
+        key "eTag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ElasticSnapshotPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        e_tag: str
+        id: str
+        location: str
+        name: str
+        properties: ElasticSnapshotPolicyProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.ElasticSnapshotPolicyDailySchedule(TypedDict, total=False):
+        key "hour": int
+        key "minute": int
+        key "snapshotsToKeep": int
+        hour: int
+        minute: int
+        snapshots_to_keep: int
+
+
+    class azure.mgmt.netapp.types.ElasticSnapshotPolicyHourlySchedule(TypedDict, total=False):
+        key "minute": int
+        key "snapshotsToKeep": int
+        minute: int
+        snapshots_to_keep: int
+
+
+    class azure.mgmt.netapp.types.ElasticSnapshotPolicyMonthlySchedule(TypedDict, total=False):
+        key "hour": int
+        key "minute": int
+        key "snapshotsToKeep": int
+        daysOfMonth: list[int]
+        days_of_month: list[int]
+        hour: int
+        minute: int
+        snapshots_to_keep: int
+
+
+    class azure.mgmt.netapp.types.ElasticSnapshotPolicyProperties(TypedDict, total=False):
+        key "dailySchedule": ForwardRef('ElasticSnapshotPolicyDailySchedule', module='types')
+        key "hourlySchedule": ForwardRef('ElasticSnapshotPolicyHourlySchedule', module='types')
+        key "monthlySchedule": ForwardRef('ElasticSnapshotPolicyMonthlySchedule', module='types')
+        key "policyStatus": Union[str, PolicyStatus]
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        key "weeklySchedule": ForwardRef('ElasticSnapshotPolicyWeeklySchedule', module='types')
+        daily_schedule: ElasticSnapshotPolicyDailySchedule
+        hourly_schedule: ElasticSnapshotPolicyHourlySchedule
+        monthly_schedule: ElasticSnapshotPolicyMonthlySchedule
+        policy_status: Union[str, PolicyStatus]
+        provisioning_state: Union[str, NetAppProvisioningState]
+        weekly_schedule: ElasticSnapshotPolicyWeeklySchedule
+
+
+    class azure.mgmt.netapp.types.ElasticSnapshotPolicyUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('ElasticSnapshotPolicyUpdateProperties', module='types')
+        properties: ElasticSnapshotPolicyUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.netapp.types.ElasticSnapshotPolicyUpdateProperties(TypedDict, total=False):
+        key "dailySchedule": ForwardRef('ElasticSnapshotPolicyDailySchedule', module='types')
+        key "hourlySchedule": ForwardRef('ElasticSnapshotPolicyHourlySchedule', module='types')
+        key "monthlySchedule": ForwardRef('ElasticSnapshotPolicyMonthlySchedule', module='types')
+        key "policyStatus": Union[str, PolicyStatus]
+        key "weeklySchedule": ForwardRef('ElasticSnapshotPolicyWeeklySchedule', module='types')
+        daily_schedule: ElasticSnapshotPolicyDailySchedule
+        hourly_schedule: ElasticSnapshotPolicyHourlySchedule
+        monthly_schedule: ElasticSnapshotPolicyMonthlySchedule
+        policy_status: Union[str, PolicyStatus]
+        weekly_schedule: ElasticSnapshotPolicyWeeklySchedule
+
+
+    class azure.mgmt.netapp.types.ElasticSnapshotPolicyWeeklySchedule(TypedDict, total=False):
+        key "hour": int
+        key "minute": int
+        key "snapshotsToKeep": int
+        days: list[Union[str, DayOfWeek]]
+        hour: int
+        minute: int
+        snapshots_to_keep: int
+
+
+    class azure.mgmt.netapp.types.ElasticSnapshotProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        provisioning_state: Union[str, NetAppProvisioningState]
+
+
+    class azure.mgmt.netapp.types.ElasticVolume(TrackedResource):
+        key "eTag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ElasticVolumeProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        e_tag: str
+        id: str
+        location: str
+        name: str
+        properties: ElasticVolumeProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.netapp.types.ElasticVolumeBackupProperties(TypedDict, total=False):
+        key "elasticBackupPolicyResourceId": str
+        key "elasticBackupVaultResourceId": str
+        key "policyEnforcement": Union[str, ElasticVolumePolicyEnforcement]
+        elastic_backup_policy_resource_id: str
+        elastic_backup_vault_resource_id: str
+        policy_enforcement: Union[str, ElasticVolumePolicyEnforcement]
+
+
+    class azure.mgmt.netapp.types.ElasticVolumeDataProtectionPatchProperties(TypedDict, total=False):
+        key "backup": ForwardRef('ElasticVolumeBackupProperties', module='types')
+        key "snapshot": ForwardRef('ElasticVolumeSnapshotProperties', module='types')
+        backup: ElasticVolumeBackupProperties
+        snapshot: ElasticVolumeSnapshotProperties
+
+
+    class azure.mgmt.netapp.types.ElasticVolumeDataProtectionProperties(TypedDict, total=False):
+        key "backup": ForwardRef('ElasticVolumeBackupProperties', module='types')
+        key "snapshot": ForwardRef('ElasticVolumeSnapshotProperties', module='types')
+        backup: ElasticVolumeBackupProperties
+        snapshot: ElasticVolumeSnapshotProperties
+
+
+    class azure.mgmt.netapp.types.ElasticVolumeProperties(TypedDict, total=False):
+        key "availabilityStatus": Union[str, ElasticResourceAvailabilityStatus]
+        key "backupResourceId": str
+        key "dataProtection": ForwardRef('ElasticVolumeDataProtectionProperties', module='types')
+        key "exportPolicy": ForwardRef('ElasticExportPolicy', module='types')
+        key "filePath": Required[str]
+        key "protocolTypes": Required[list[Union[str, ElasticProtocolType]]]
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        key "restorationState": Union[str, ElasticVolumeRestorationState]
+        key "size": Required[int]
+        key "smbProperties": ForwardRef('ElasticSmbProperties', module='types')
+        key "snapshotDirectoryVisibility": Union[str, SnapshotDirectoryVisibility]
+        key "snapshotResourceId": str
+        availability_status: Union[str, ElasticResourceAvailabilityStatus]
+        backup_resource_id: str
+        data_protection: ElasticVolumeDataProtectionProperties
+        export_policy: ElasticExportPolicy
+        file_path: str
+        mountTargets: list[ElasticMountTargetProperties]
+        mount_targets: list[ElasticMountTargetProperties]
+        protocol_types: list[Union[str, ElasticProtocolType]]
+        provisioning_state: Union[str, NetAppProvisioningState]
+        restoration_state: Union[str, ElasticVolumeRestorationState]
+        size: int
+        smb_properties: ElasticSmbProperties
+        snapshot_directory_visibility: Union[str, SnapshotDirectoryVisibility]
+        snapshot_resource_id: str
+
+
+    class azure.mgmt.netapp.types.ElasticVolumeRevert(TypedDict, total=False):
+        key "snapshotResourceId": str
+        snapshot_resource_id: str
+
+
+    class azure.mgmt.netapp.types.ElasticVolumeSnapshotProperties(TypedDict, total=False):
+        key "snapshotPolicyResourceId": str
+        snapshot_policy_resource_id: str
+
+
+    class azure.mgmt.netapp.types.ElasticVolumeUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('ElasticVolumeUpdateProperties', module='types')
+        properties: ElasticVolumeUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.netapp.types.ElasticVolumeUpdateProperties(TypedDict, total=False):
+        key "dataProtection": ForwardRef('ElasticVolumeDataProtectionPatchProperties', module='types')
+        key "exportPolicy": ForwardRef('ElasticExportPolicy', module='types')
+        key "size": int
+        key "smbProperties": ForwardRef('ElasticSmbPatchProperties', module='types')
+        key "snapshotDirectoryVisibility": Union[str, SnapshotDirectoryVisibility]
+        data_protection: ElasticVolumeDataProtectionPatchProperties
+        export_policy: ElasticExportPolicy
+        size: int
+        smb_properties: ElasticSmbPatchProperties
+        snapshot_directory_visibility: Union[str, SnapshotDirectoryVisibility]
+
+
+    class azure.mgmt.netapp.types.EncryptionIdentity(TypedDict, total=False):
+        key "federatedClientId": str
+        key "principalId": str
+        key "userAssignedIdentity": str
+        federated_client_id: str
+        principal_id: str
+        user_assigned_identity: str
+
+
+    class azure.mgmt.netapp.types.EncryptionTransitionRequest(TypedDict, total=False):
+        key "privateEndpointId": Required[str]
+        key "virtualNetworkId": Required[str]
+        private_endpoint_id: str
+        virtual_network_id: str
+
+
+    class azure.mgmt.netapp.types.EntraIdAkvConfig(TypedDict, total=False):
+        key "azureKeyVaultUri": Required[str]
+        key "certificateName": Required[str]
+        key "userAssignedIdentity": str
+        azure_key_vault_uri: str
+        certificate_name: str
+        user_assigned_identity: str
+
+
+    class azure.mgmt.netapp.types.EntraIdAkvConfigPatch(TypedDict, total=False):
+        key "azureKeyVaultUri": str
+        key "certificateName": str
+        key "userAssignedIdentity": str
+        azure_key_vault_uri: str
+        certificate_name: str
+        user_assigned_identity: str
+
+
+    class azure.mgmt.netapp.types.EntraIdConfig(TypedDict, total=False):
+        key "applicationId": Required[str]
+        key "domain": Required[str]
+        key "entraIdAkvConfig": ForwardRef('EntraIdAkvConfig', module='types')
+        key "serverNamePrefix": Required[str]
+        application_id: str
+        domain: str
+        entra_id_akv_config: EntraIdAkvConfig
+        server_name_prefix: str
+
+
+    class azure.mgmt.netapp.types.EntraIdConfigPatch(TypedDict, total=False):
+        key "applicationId": str
+        key "domain": str
+        key "entraIdAkvConfig": ForwardRef('EntraIdAkvConfigPatch', module='types')
+        key "serverNamePrefix": str
+        application_id: str
+        domain: str
+        entra_id_akv_config: EntraIdAkvConfigPatch
+        server_name_prefix: str
+
+
+    class azure.mgmt.netapp.types.ExportPolicyRule(TypedDict, total=False):
+        key "allowedClients": str
+        key "chownMode": Union[str, ChownMode]
+        key "cifs": bool
+        key "hasRootAccess": bool
+        key "kerberos5ReadOnly": bool
+        key "kerberos5ReadWrite": bool
+        key "kerberos5iReadOnly": bool
+        key "kerberos5iReadWrite": bool
+        key "kerberos5pReadOnly": bool
+        key "kerberos5pReadWrite": bool
+        key "nfsv3": bool
+        key "nfsv41": bool
+        key "ruleIndex": int
+        key "unixReadOnly": bool
+        key "unixReadWrite": bool
+        allowed_clients: str
+        chown_mode: Union[str, ChownMode]
+        cifs: bool
+        has_root_access: bool
+        kerberos5_i_read_only: bool
+        kerberos5_i_read_write: bool
+        kerberos5_p_read_only: bool
+        kerberos5_p_read_write: bool
+        kerberos5_read_only: bool
+        kerberos5_read_write: bool
+        nfsv3: bool
+        nfsv41: bool
+        rule_index: int
+        unix_read_only: bool
+        unix_read_write: bool
+
+
+    class azure.mgmt.netapp.types.FilePathAvailabilityRequest(TypedDict, total=False):
+        key "availabilityZone": Optional[str]
+        key "name": Required[str]
+        key "subnetId": Required[str]
+        availability_zone: str
+        name: str
+        subnet_id: str
+
+
+    class azure.mgmt.netapp.types.FileSystemUser(TypedDict, total=False):
+        key "cifsUser": ForwardRef('CifsUser', module='types')
+        key "nfsUser": ForwardRef('NfsUser', module='types')
+        cifs_user: CifsUser
+        nfs_user: NfsUser
+
+
+    class azure.mgmt.netapp.types.GetGroupIdListForLDAPUserRequest(TypedDict, total=False):
+        key "username": Required[str]
+        username: str
+
+
+    class azure.mgmt.netapp.types.HourlySchedule(TypedDict, total=False):
+        key "minute": int
+        key "snapshotsToKeep": int
+        key "usedBytes": int
+        minute: int
+        snapshots_to_keep: int
+        used_bytes: int
+
+
+    class azure.mgmt.netapp.types.KeyVaultPrivateEndpoint(TypedDict, total=False):
+        key "privateEndpointId": str
+        key "virtualNetworkId": str
+        private_endpoint_id: str
+        virtual_network_id: str
+
+
+    class azure.mgmt.netapp.types.KeyVaultProperties(TypedDict, total=False):
+        key "keyName": Required[str]
+        key "keyVaultId": str
+        key "keyVaultResourceId": str
+        key "keyVaultUri": Required[str]
+        key "status": Union[str, KeyVaultStatus]
+        key_name: str
+        key_vault_id: str
+        key_vault_resource_id: str
+        key_vault_uri: str
+        status: Union[str, KeyVaultStatus]
+
+
+    class azure.mgmt.netapp.types.LdapConfiguration(TypedDict, total=False):
+        key "bindAuthenticationLevel": Union[str, BindAuthenticationLevel]
+        key "bindDN": str
+        key "bindPasswordAkvConfig": ForwardRef('BindPasswordAkvConfig', module='types')
+        key "certificateCNHost": Optional[str]
+        key "domain": str
+        key "groupDN": str
+        key "ldapOverTLS": bool
+        key "ldapPort": int
+        key "netGroupDN": str
+        key "serverCACertificate": str
+        key "userDN": str
+        bind_authentication_level: Union[str, BindAuthenticationLevel]
+        bind_dn: str
+        bind_password_akv_config: BindPasswordAkvConfig
+        certificate_cn_host: str
+        dnsServers: list[str]
+        dns_servers: list[str]
+        domain: str
+        group_dn: str
+        ldapServers: list[str]
+        ldap_over_tls: bool
+        ldap_port: int
+        ldap_servers: list[str]
+        net_group_dn: str
+        server_ca_certificate: str
+        user_dn: str
+
+
+    class azure.mgmt.netapp.types.LdapConfigurationPatch(TypedDict, total=False):
+        key "bindAuthenticationLevel": Union[str, BindAuthenticationLevel]
+        key "bindDN": str
+        key "bindPasswordAkvConfig": ForwardRef('BindPasswordAkvConfigPatch', module='types')
+        key "certificateCNHost": Optional[str]
+        key "domain": str
+        key "groupDN": str
+        key "ldapOverTLS": bool
+        key "ldapPort": int
+        key "netGroupDN": str
+        key "serverCACertificate": str
+        key "userDN": str
+        bind_authentication_level: Union[str, BindAuthenticationLevel]
+        bind_dn: str
+        bind_password_akv_config: BindPasswordAkvConfigPatch
+        certificate_cn_host: str
+        dnsServers: list[str]
+        dns_servers: list[str]
+        domain: str
+        group_dn: str
+        ldapServers: list[str]
+        ldap_over_tls: bool
+        ldap_port: int
+        ldap_servers: list[str]
+        net_group_dn: str
+        server_ca_certificate: str
+        user_dn: str
+
+
+    class azure.mgmt.netapp.types.LdapSearchScopeOpt(TypedDict, total=False):
+        key "groupDN": str
+        key "groupMembershipFilter": str
+        key "userDN": str
+        group_dn: str
+        group_membership_filter: str
+        user_dn: str
+
+
+    class azure.mgmt.netapp.types.ListReplicationsRequest(TypedDict, total=False):
+        key "exclude": Union[str, Exclude]
+        exclude: Union[str, Exclude]
+
+
+    class azure.mgmt.netapp.types.ManagedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, ManagedServiceIdentityType]]
+        principal_id: str
+        tenant_id: str
+        type: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentity]
+        user_assigned_identities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.netapp.types.MonthlySchedule(TypedDict, total=False):
+        key "daysOfMonth": str
+        key "hour": int
+        key "minute": int
+        key "snapshotsToKeep": int
+        key "usedBytes": int
+        days_of_month: str
+        hour: int
+        minute: int
+        snapshots_to_keep: int
+        used_bytes: int
+
+
+    class azure.mgmt.netapp.types.MountTargetProperties(TypedDict, total=False):
+        key "fileSystemId": Required[str]
+        key "ipAddress": str
+        key "mountTargetId": str
+        key "smbServerFqdn": str
+        file_system_id: str
+        ip_address: str
+        mount_target_id: str
+        smb_server_fqdn: str
+
+
+    class azure.mgmt.netapp.types.NetAppAccount(TrackedResource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('AccountProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: AccountProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.NetAppAccountPatch(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "properties": ForwardRef('AccountPropertiesPatch', module='types')
+        identity: ManagedServiceIdentity
+        properties: AccountPropertiesPatch
+        tags: dict[str, str]
+
+
+    class azure.mgmt.netapp.types.NfsUser(TypedDict, total=False):
+        key "groupId": int
+        key "userId": int
+        group_id: int
+        user_id: int
+
+
+    class azure.mgmt.netapp.types.OriginClusterInformation(TypedDict, total=False):
+        key "peerAddresses": Required[list[str]]
+        key "peerClusterName": Required[str]
+        key "peerVolumeName": Required[str]
+        key "peerVserverName": Required[str]
+        peer_addresses: list[str]
+        peer_cluster_name: str
+        peer_volume_name: str
+        peer_vserver_name: str
+
+
+    class azure.mgmt.netapp.types.PeerClusterForVolumeMigrationRequest(TypedDict, total=False):
+        key "peerIpAddresses": Required[list[str]]
+        peer_ip_addresses: list[str]
+
+
+    class azure.mgmt.netapp.types.PlacementKeyValuePairs(TypedDict, total=False):
+        key "key": Required[str]
+        key "value": Required[str]
+        key: str
+        value: str
+
+
+    class azure.mgmt.netapp.types.PoolChangeRequest(TypedDict, total=False):
+        key "newPoolResourceId": Required[str]
+        new_pool_resource_id: str
+
+
+    class azure.mgmt.netapp.types.PoolPatchProperties(TypedDict, total=False):
+        key "coolAccess": bool
+        key "customThroughputMibps": Optional[int]
+        key "qosType": Union[str, QosType]
+        key "size": int
+        cool_access: bool
+        custom_throughput_mibps: int
+        qos_type: Union[str, QosType]
+        size: int
+
+
+    class azure.mgmt.netapp.types.PoolProperties(TypedDict, total=False):
+        key "coolAccess": bool
+        key "customThroughputMibps": Optional[int]
+        key "encryptionType": Optional[Union[str, EncryptionType]]
+        key "poolId": str
+        key "provisioningState": str
+        key "qosType": Union[str, QosType]
+        key "serviceLevel": Required[Union[str, ServiceLevel]]
+        key "size": Required[int]
+        key "totalThroughputMibps": float
+        key "utilizedThroughputMibps": float
+        cool_access: bool
+        custom_throughput_mibps: int
+        encryption_type: Union[str, EncryptionType]
+        pool_id: str
+        provisioning_state: str
+        qos_type: Union[str, QosType]
+        service_level: Union[str, ServiceLevel]
+        size: int
+        total_throughput_mibps: float
+        utilized_throughput_mibps: float
+
+
+    class azure.mgmt.netapp.types.ProxyResource(Resource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.netapp.types.QueryNetworkSiblingSetRequest(TypedDict, total=False):
+        key "networkSiblingSetId": Required[str]
+        key "subnetId": Required[str]
+        network_sibling_set_id: str
+        subnet_id: str
+
+
+    class azure.mgmt.netapp.types.QuotaAvailabilityRequest(TypedDict, total=False):
+        key "name": Required[str]
+        key "resourceGroup": Required[str]
+        key "type": Required[Union[str, CheckQuotaNameResourceTypes]]
+        name: str
+        resource_group: str
+        type: Union[str, CheckQuotaNameResourceTypes]
+
+
+    class azure.mgmt.netapp.types.QuotaReportFilterRequest(TypedDict, total=False):
+        key "quotaTarget": str
+        key "quotaType": Union[str, QuotaType]
+        key "usageThresholdPercentage": int
+        quota_target: str
+        quota_type: Union[str, QuotaType]
+        usage_threshold_percentage: int
+
+
+    class azure.mgmt.netapp.types.RansomwareProtectionPatchSettings(TypedDict, total=False):
+        key "desiredRansomwareProtectionState": Union[str, DesiredRansomwareProtectionState]
+        desired_ransomware_protection_state: Union[str, DesiredRansomwareProtectionState]
+
+
+    class azure.mgmt.netapp.types.RansomwareProtectionSettings(TypedDict, total=False):
+        key "actualRansomwareProtectionState": Union[str, ActualRansomwareProtectionState]
+        key "desiredRansomwareProtectionState": Union[str, DesiredRansomwareProtectionState]
+        actual_ransomware_protection_state: Union[str, ActualRansomwareProtectionState]
+        desired_ransomware_protection_state: Union[str, DesiredRansomwareProtectionState]
+
+
+    class azure.mgmt.netapp.types.RansomwareSuspectsClearRequest(TypedDict, total=False):
+        key "extensions": Required[list[str]]
+        key "resolution": Required[Union[str, RansomwareSuspectResolution]]
+        extensions: list[str]
+        resolution: Union[str, RansomwareSuspectResolution]
+
+
+    class azure.mgmt.netapp.types.ReestablishReplicationRequest(TypedDict, total=False):
+        key "sourceVolumeId": str
+        source_volume_id: str
+
+
+    class azure.mgmt.netapp.types.RelocateVolumeRequest(TypedDict, total=False):
+        key "creationToken": str
+        creation_token: str
+
+
+    class azure.mgmt.netapp.types.RemotePath(TypedDict, total=False):
+        key "externalHostName": Required[str]
+        key "serverName": Required[str]
+        key "volumeName": Required[str]
+        external_host_name: str
+        server_name: str
+        volume_name: str
+
+
+    class azure.mgmt.netapp.types.ReplicationObject(TypedDict, total=False):
+        key "endpointType": Union[str, EndpointType]
+        key "externalReplicationSetupInfo": str
+        key "externalReplicationSetupStatus": Union[str, ExternalReplicationSetupStatus]
+        key "mirrorState": Union[str, MirrorState]
+        key "relationshipStatus": Union[str, VolumeReplicationRelationshipStatus]
+        key "remotePath": ForwardRef('RemotePath', module='types')
+        key "remoteVolumeRegion": str
+        key "remoteVolumeResourceId": str
+        key "replicationId": str
+        key "replicationSchedule": Union[str, ReplicationSchedule]
+        destinationReplications: list[DestinationReplication]
+        destination_replications: list[DestinationReplication]
+        endpoint_type: Union[str, EndpointType]
+        external_replication_setup_info: str
+        external_replication_setup_status: Union[str, ExternalReplicationSetupStatus]
+        mirror_state: Union[str, MirrorState]
+        relationship_status: Union[str, VolumeReplicationRelationshipStatus]
+        remote_path: RemotePath
+        remote_volume_region: str
+        remote_volume_resource_id: str
+        replication_id: str
+        replication_schedule: Union[str, ReplicationSchedule]
+
+
+    class azure.mgmt.netapp.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.netapp.types.ResourceNameAvailabilityRequest(TypedDict, total=False):
+        key "name": Required[str]
+        key "resourceGroup": Required[str]
+        key "type": Required[Union[str, CheckNameResourceTypes]]
+        name: str
+        resource_group: str
+        type: Union[str, CheckNameResourceTypes]
+
+
+    class azure.mgmt.netapp.types.SecretPassword(TypedDict, total=False):
+        key "identity": ForwardRef('SecretPasswordIdentity', module='types')
+        key "keyVaultProperties": ForwardRef('SecretPasswordKeyVaultProperties', module='types')
+        identity: SecretPasswordIdentity
+        key_vault_properties: SecretPasswordKeyVaultProperties
+
+
+    class azure.mgmt.netapp.types.SecretPasswordIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "userAssignedIdentity": str
+        principal_id: str
+        user_assigned_identity: str
+
+
+    class azure.mgmt.netapp.types.SecretPasswordKeyVaultProperties(TypedDict, total=False):
+        key "keyVaultUri": Required[str]
+        key "secretName": Required[str]
+        key_vault_uri: str
+        secret_name: str
+
+
+    class azure.mgmt.netapp.types.SmbSettings(TypedDict, total=False):
+        key "smbAccessBasedEnumeration": Union[str, SmbAccessBasedEnumeration]
+        key "smbEncryption": Union[str, SmbEncryptionState]
+        key "smbNonBrowsable": Union[str, SmbNonBrowsable]
+        smb_access_based_enumeration: Union[str, SmbAccessBasedEnumeration]
+        smb_encryption: Union[str, SmbEncryptionState]
+        smb_non_browsable: Union[str, SmbNonBrowsable]
+
+
+    class azure.mgmt.netapp.types.Snapshot(ProxyResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('SnapshotProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: SnapshotProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.netapp.types.SnapshotPatch(TypedDict, total=False):
+
+
+    class azure.mgmt.netapp.types.SnapshotPolicy(TrackedResource):
+        key "etag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[SnapshotPolicyProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: SnapshotPolicyProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.SnapshotPolicyPatch(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('SnapshotPolicyProperties', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: SnapshotPolicyProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.SnapshotPolicyProperties(TypedDict, total=False):
+        key "dailySchedule": ForwardRef('DailySchedule', module='types')
+        key "enabled": bool
+        key "hourlySchedule": ForwardRef('HourlySchedule', module='types')
+        key "monthlySchedule": ForwardRef('MonthlySchedule', module='types')
+        key "provisioningState": str
+        key "weeklySchedule": ForwardRef('WeeklySchedule', module='types')
+        daily_schedule: DailySchedule
+        enabled: bool
+        hourly_schedule: HourlySchedule
+        monthly_schedule: MonthlySchedule
+        provisioning_state: str
+        weekly_schedule: WeeklySchedule
+
+
+    class azure.mgmt.netapp.types.SnapshotProperties(TypedDict, total=False):
+        key "created": str
+        key "provisioningState": str
+        key "snapshotId": str
+        created: str
+        provisioning_state: str
+        snapshot_id: str
+
+
+    class azure.mgmt.netapp.types.SnapshotRestoreFiles(TypedDict, total=False):
+        key "destinationPath": str
+        key "filePaths": Required[list[str]]
+        destination_path: str
+        file_paths: list[str]
+
+
+    class azure.mgmt.netapp.types.SubvolumeInfo(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SubvolumeProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SubvolumeProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.netapp.types.SubvolumePatchParams(TypedDict, total=False):
+        key "path": str
+        key "size": Optional[int]
+        path: str
+        size: int
+
+
+    class azure.mgmt.netapp.types.SubvolumePatchRequest(TypedDict, total=False):
+        key "properties": ForwardRef('SubvolumePatchParams', module='types')
+        properties: SubvolumePatchParams
+
+
+    class azure.mgmt.netapp.types.SubvolumeProperties(TypedDict, total=False):
+        key "parentPath": Optional[str]
+        key "path": str
+        key "provisioningState": str
+        key "size": Optional[int]
+        parent_path: str
+        path: str
+        provisioning_state: str
+        size: int
+
+
+    class azure.mgmt.netapp.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        created_at: str
+        created_by: str
+        created_by_type: Union[str, CreatedByType]
+        last_modified_at: str
+        last_modified_by: str
+        last_modified_by_type: Union[str, CreatedByType]
+
+
+    class azure.mgmt.netapp.types.TrackedResource(Resource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.UpdateNetworkSiblingSetRequest(TypedDict, total=False):
+        key "networkFeatures": Required[Union[str, NetworkFeatures]]
+        key "networkSiblingSetId": Required[str]
+        key "networkSiblingSetStateId": Required[str]
+        key "subnetId": Required[str]
+        network_features: Union[str, NetworkFeatures]
+        network_sibling_set_id: str
+        network_sibling_set_state_id: str
+        subnet_id: str
+
+
+    class azure.mgmt.netapp.types.UserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        client_id: str
+        principal_id: str
+
+
+    class azure.mgmt.netapp.types.Volume(TrackedResource):
+        key "etag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[VolumeProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: VolumeProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.netapp.types.VolumeBackupProperties(TypedDict, total=False):
+        key "backupPolicyId": str
+        key "backupVaultId": str
+        key "policyEnforced": bool
+        backup_policy_id: str
+        backup_vault_id: str
+        policy_enforced: bool
+
+
+    class azure.mgmt.netapp.types.VolumeBackups(TypedDict, total=False):
+        key "backupsCount": int
+        key "policyEnabled": bool
+        key "volumeName": str
+        key "volumeResourceId": str
+        backups_count: int
+        policy_enabled: bool
+        volume_name: str
+        volume_resource_id: str
+
+
+    class azure.mgmt.netapp.types.VolumeGroupDetails(ProxyResource):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VolumeGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: VolumeGroupProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.netapp.types.VolumeGroupMetaData(TypedDict, total=False):
+        key "applicationIdentifier": str
+        key "applicationType": Union[str, ApplicationType]
+        key "groupDescription": str
+        key "volumesCount": int
+        application_identifier: str
+        application_type: Union[str, ApplicationType]
+        globalPlacementRules: list[PlacementKeyValuePairs]
+        global_placement_rules: list[PlacementKeyValuePairs]
+        group_description: str
+        volumes_count: int
+
+
+    class azure.mgmt.netapp.types.VolumeGroupProperties(TypedDict, total=False):
+        key "groupMetaData": ForwardRef('VolumeGroupMetaData', module='types')
+        key "provisioningState": str
+        group_meta_data: VolumeGroupMetaData
+        provisioning_state: str
+        volumes: list[VolumeGroupVolumeProperties]
+
+
+    class azure.mgmt.netapp.types.VolumeGroupVolumeProperties(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "properties": Required[VolumeProperties]
+        key "type": str
+        id: str
+        name: str
+        properties: VolumeProperties
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.netapp.types.VolumePatch(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VolumePatchProperties', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: VolumePatchProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.VolumePatchProperties(TypedDict, total=False):
+        key "coolAccess": bool
+        key "coolAccessRetrievalPolicy": Union[str, CoolAccessRetrievalPolicy]
+        key "coolAccessTieringPolicy": Union[str, CoolAccessTieringPolicy]
+        key "coolnessPeriod": int
+        key "dataProtection": ForwardRef('VolumePatchPropertiesDataProtection', module='types')
+        key "defaultGroupQuotaInKiBs": int
+        key "defaultUserQuotaInKiBs": int
+        key "exportPolicy": ForwardRef('VolumePatchPropertiesExportPolicy', module='types')
+        key "isDefaultQuotaEnabled": bool
+        key "serviceLevel": Union[str, ServiceLevel]
+        key "smbAccessBasedEnumeration": Optional[Union[str, SmbAccessBasedEnumeration]]
+        key "smbNonBrowsable": Union[str, SmbNonBrowsable]
+        key "snapshotDirectoryVisible": bool
+        key "throughputMibps": float
+        key "unixPermissions": Optional[str]
+        key "usageThreshold": int
+        cool_access: bool
+        cool_access_retrieval_policy: Union[str, CoolAccessRetrievalPolicy]
+        cool_access_tiering_policy: Union[str, CoolAccessTieringPolicy]
+        coolness_period: int
+        data_protection: VolumePatchPropertiesDataProtection
+        default_group_quota_in_ki_bs: int
+        default_user_quota_in_ki_bs: int
+        export_policy: VolumePatchPropertiesExportPolicy
+        is_default_quota_enabled: bool
+        protocolTypes: list[str]
+        protocol_types: list[str]
+        service_level: Union[str, ServiceLevel]
+        smb_access_based_enumeration: Union[str, SmbAccessBasedEnumeration]
+        smb_non_browsable: Union[str, SmbNonBrowsable]
+        snapshot_directory_visible: bool
+        throughput_mibps: float
+        unix_permissions: str
+        usage_threshold: int
+
+
+    class azure.mgmt.netapp.types.VolumePatchPropertiesDataProtection(TypedDict, total=False):
+        key "backup": ForwardRef('VolumeBackupProperties', module='types')
+        key "ransomwareProtection": ForwardRef('RansomwareProtectionPatchSettings', module='types')
+        key "snapshot": ForwardRef('VolumeSnapshotProperties', module='types')
+        backup: VolumeBackupProperties
+        ransomware_protection: RansomwareProtectionPatchSettings
+        snapshot: VolumeSnapshotProperties
+
+
+    class azure.mgmt.netapp.types.VolumePatchPropertiesExportPolicy(TypedDict, total=False):
+        rules: list[ExportPolicyRule]
+
+
+    class azure.mgmt.netapp.types.VolumeProperties(TypedDict, total=False):
+        key "acceptGrowCapacityPoolForShortTermCloneSplit": Union[str, AcceptGrowCapacityPoolForShortTermCloneSplit]
+        key "actualThroughputMibps": float
+        key "avsDataStore": Union[str, AvsDataStore]
+        key "backupId": Optional[str]
+        key "baremetalTenantId": str
+        key "breakthroughMode": Union[str, BreakthroughMode]
+        key "capacityPoolResourceId": str
+        key "cloneProgress": Optional[int]
+        key "coolAccess": bool
+        key "coolAccessRetrievalPolicy": Union[str, CoolAccessRetrievalPolicy]
+        key "coolAccessTieringPolicy": Union[str, CoolAccessTieringPolicy]
+        key "coolnessPeriod": int
+        key "creationToken": Required[str]
+        key "dataProtection": ForwardRef('VolumePropertiesDataProtection', module='types')
+        key "defaultGroupQuotaInKiBs": int
+        key "defaultUserQuotaInKiBs": int
+        key "deleteBaseSnapshot": bool
+        key "effectiveNetworkFeatures": Union[str, NetworkFeatures]
+        key "enableSubvolumes": Union[str, EnableSubvolumes]
+        key "encrypted": bool
+        key "encryptionKeySource": Union[str, EncryptionKeySource]
+        key "exportPolicy": ForwardRef('VolumePropertiesExportPolicy', module='types')
+        key "fileAccessLogs": Union[str, FileAccessLogs]
+        key "fileSystemId": str
+        key "inheritedSizeInBytes": Optional[int]
+        key "isDefaultQuotaEnabled": bool
+        key "isLargeVolume": bool
+        key "isRestoring": bool
+        key "kerberosEnabled": bool
+        key "keyVaultPrivateEndpointResourceId": str
+        key "language": Union[str, VolumeLanguage]
+        key "largeVolumeType": Union[str, LargeVolumeType]
+        key "ldapEnabled": bool
+        key "ldapServerType": Union[str, LdapServerType]
+        key "maximumNumberOfFiles": int
+        key "networkFeatures": Union[str, NetworkFeatures]
+        key "networkSiblingSetId": str
+        key "originatingResourceId": Optional[str]
+        key "provisionedAvailabilityZone": Optional[str]
+        key "provisioningState": str
+        key "proximityPlacementGroup": str
+        key "securityStyle": Union[str, SecurityStyle]
+        key "serviceLevel": Union[str, ServiceLevel]
+        key "smbAccessBasedEnumeration": Optional[Union[str, SmbAccessBasedEnumeration]]
+        key "smbContinuouslyAvailable": bool
+        key "smbEncryption": bool
+        key "smbNonBrowsable": Union[str, SmbNonBrowsable]
+        key "snapshotDirectoryVisible": bool
+        key "snapshotId": Optional[str]
+        key "storageToNetworkProximity": Union[str, VolumeStorageToNetworkProximity]
+        key "subnetId": Required[str]
+        key "t2Network": str
+        key "throughputMibps": Optional[float]
+        key "unixPermissions": Optional[str]
+        key "usageThreshold": Required[int]
+        key "volumeGroupName": str
+        key "volumeSpecName": str
+        key "volumeType": str
+        accept_grow_capacity_pool_for_short_term_clone_split: Union[str, AcceptGrowCapacityPoolForShortTermCloneSplit]
+        actual_throughput_mibps: float
+        avs_data_store: Union[str, AvsDataStore]
+        backup_id: str
+        baremetal_tenant_id: str
+        breakthrough_mode: Union[str, BreakthroughMode]
+        capacity_pool_resource_id: str
+        clone_progress: int
+        cool_access: bool
+        cool_access_retrieval_policy: Union[str, CoolAccessRetrievalPolicy]
+        cool_access_tiering_policy: Union[str, CoolAccessTieringPolicy]
+        coolness_period: int
+        creation_token: str
+        dataStoreResourceId: list[str]
+        data_protection: VolumePropertiesDataProtection
+        data_store_resource_id: list[str]
+        default_group_quota_in_ki_bs: int
+        default_user_quota_in_ki_bs: int
+        delete_base_snapshot: bool
+        effective_network_features: Union[str, NetworkFeatures]
+        enable_subvolumes: Union[str, EnableSubvolumes]
+        encrypted: bool
+        encryption_key_source: Union[str, EncryptionKeySource]
+        export_policy: VolumePropertiesExportPolicy
+        file_access_logs: Union[str, FileAccessLogs]
+        file_system_id: str
+        inherited_size_in_bytes: int
+        is_default_quota_enabled: bool
+        is_large_volume: bool
+        is_restoring: bool
+        kerberos_enabled: bool
+        key_vault_private_endpoint_resource_id: str
+        language: Union[str, VolumeLanguage]
+        large_volume_type: Union[str, LargeVolumeType]
+        ldap_enabled: bool
+        ldap_server_type: Union[str, LdapServerType]
+        maximum_number_of_files: int
+        mountTargets: list[MountTargetProperties]
+        mount_targets: list[MountTargetProperties]
+        network_features: Union[str, NetworkFeatures]
+        network_sibling_set_id: str
+        originating_resource_id: str
+        placementRules: list[PlacementKeyValuePairs]
+        placement_rules: list[PlacementKeyValuePairs]
+        protocolTypes: list[str]
+        protocol_types: list[str]
+        provisioned_availability_zone: str
+        provisioning_state: str
+        proximity_placement_group: str
+        security_style: Union[str, SecurityStyle]
+        service_level: Union[str, ServiceLevel]
+        smb_access_based_enumeration: Union[str, SmbAccessBasedEnumeration]
+        smb_continuously_available: bool
+        smb_encryption: bool
+        smb_non_browsable: Union[str, SmbNonBrowsable]
+        snapshot_directory_visible: bool
+        snapshot_id: str
+        storage_to_network_proximity: Union[str, VolumeStorageToNetworkProximity]
+        subnet_id: str
+        t2_network: str
+        throughput_mibps: float
+        unix_permissions: str
+        usage_threshold: int
+        volume_group_name: str
+        volume_spec_name: str
+        volume_type: str
+
+
+    class azure.mgmt.netapp.types.VolumePropertiesDataProtection(TypedDict, total=False):
+        key "backup": ForwardRef('VolumeBackupProperties', module='types')
+        key "ransomwareProtection": ForwardRef('RansomwareProtectionSettings', module='types')
+        key "replication": ForwardRef('ReplicationObject', module='types')
+        key "snapshot": ForwardRef('VolumeSnapshotProperties', module='types')
+        key "volumeRelocation": ForwardRef('VolumeRelocationProperties', module='types')
+        backup: VolumeBackupProperties
+        ransomware_protection: RansomwareProtectionSettings
+        replication: ReplicationObject
+        snapshot: VolumeSnapshotProperties
+        volume_relocation: VolumeRelocationProperties
+
+
+    class azure.mgmt.netapp.types.VolumePropertiesExportPolicy(TypedDict, total=False):
+        rules: list[ExportPolicyRule]
+
+
+    class azure.mgmt.netapp.types.VolumeQuotaRule(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('VolumeQuotaRulesProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: VolumeQuotaRulesProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.netapp.types.VolumeQuotaRulePatch(TypedDict, total=False):
+        key "properties": ForwardRef('VolumeQuotaRulesProperties', module='types')
+        properties: VolumeQuotaRulesProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.netapp.types.VolumeQuotaRulesProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, NetAppProvisioningState]
+        key "quotaSizeInKiBs": int
+        key "quotaTarget": str
+        key "quotaType": Union[str, QuotaType]
+        provisioning_state: Union[str, NetAppProvisioningState]
+        quota_size_in_ki_bs: int
+        quota_target: str
+        quota_type: Union[str, QuotaType]
+
+
+    class azure.mgmt.netapp.types.VolumeRelocationProperties(TypedDict, total=False):
+        key "readyToBeFinalized": bool
+        key "relocationRequested": bool
+        ready_to_be_finalized: bool
+        relocation_requested: bool
+
+
+    class azure.mgmt.netapp.types.VolumeRevert(TypedDict, total=False):
+        key "snapshotId": str
+        snapshot_id: str
+
+
+    class azure.mgmt.netapp.types.VolumeSnapshotProperties(TypedDict, total=False):
+        key "snapshotPolicyId": str
+        snapshot_policy_id: str
+
+
+    class azure.mgmt.netapp.types.WeeklySchedule(TypedDict, total=False):
+        key "day": str
+        key "hour": int
+        key "minute": int
+        key "snapshotsToKeep": int
+        key "usedBytes": int
+        day: str
+        hour: int
+        minute: int
+        snapshots_to_keep: int
+        used_bytes: int
 
 
 ```

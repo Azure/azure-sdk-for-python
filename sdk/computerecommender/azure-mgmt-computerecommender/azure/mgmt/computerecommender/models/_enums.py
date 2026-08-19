@@ -43,3 +43,64 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a system."""
     USER_SYSTEM = "user,system"
     """Indicates the operation is initiated by a user or system."""
+
+
+class SkuMixPlacementAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allocation strategy for determining the optimal SKU split."""
+
+    LOWEST_PRICE = "LowestPrice"
+    """VMs allocated to optimize for lowest price."""
+    PRIORITIZED = "Prioritized"
+    """VMs allocated based on customer-specified rank for each VM size."""
+    EVICTION_OPTIMIZED = "EvictionOptimized"
+    """VMs allocated to optimize for lowest eviction rate (Spot only)."""
+
+
+class SkuMixPlacementCapacityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The unit type for the capacity value."""
+
+    VM = "VM"
+    """Capacity measured in number of VMs."""
+    V_CPU = "VCpu"
+    """Capacity measured in number of vCPUs."""
+
+
+class SkuMixPlacementOSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OS type of the VMs."""
+
+    WINDOWS = "Windows"
+    """Windows OS."""
+    LINUX = "Linux"
+    """Linux OS."""
+
+
+class SkuMixPlacementPartialFulfillmentReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason for partial fulfillment of the requested capacity."""
+
+    NONE = "None"
+    """Full capacity was fulfilled."""
+    INSUFFICIENT_CAPACITY = "InsufficientCapacity"
+    """Not enough allocable capacity was available."""
+    INSUFFICIENT_QUOTA = "InsufficientQuota"
+    """Not enough quota was available."""
+
+
+class SkuMixPlacementPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Priority levels for VM allocation."""
+
+    REGULAR = "Regular"
+    """Regular priority VMs with guaranteed capacity."""
+    SPOT = "Spot"
+    """Spot priority VMs with lower cost but potential eviction."""
+
+
+class SkuMixPlacementZonalDistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Strategy for distributing capacity across availability zones."""
+
+    BEST_EFFORT_BALANCED = "BestEffortBalanced"
+    """Capacity distributed across zones on a best-effort balanced basis."""
+    PRIORITIZED = "Prioritized"
+    """Zones filled based on zone preferences/rank. Higher priority zones filled first."""
+    BEST_EFFORT_SINGLE_ZONE = "BestEffortSingleZone"
+    """Capacity allocated within a single zone on a best-effort basis; may spill across zones if
+    single-zone capacity is insufficient."""
