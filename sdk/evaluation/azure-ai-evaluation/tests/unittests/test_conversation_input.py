@@ -197,9 +197,7 @@ class TestMessagesInputWiring:
         ev = evaluator_class(model_config=mock_model_config)
 
         with_messages = ev._convert_kwargs_to_eval_input(messages=list(_MESSAGES))
-        with_conversation = ev._convert_kwargs_to_eval_input(
-            conversation={"messages": list(_MESSAGES)}
-        )
+        with_conversation = ev._convert_kwargs_to_eval_input(conversation={"messages": list(_MESSAGES)})
 
         assert with_messages == with_conversation, (
             f"{evaluator_class.__name__}: bare messages= did not produce the "
@@ -230,9 +228,7 @@ class TestMessagesInputWiring:
             "context": "ctx",
             "tool_definitions": list(_TOOL_DEFS),
         }
-        with_conversation = ev._convert_kwargs_to_eval_input(
-            conversation=equivalent_conversation
-        )
+        with_conversation = ev._convert_kwargs_to_eval_input(conversation=equivalent_conversation)
 
         assert with_messages == with_conversation, (
             f"{evaluator_class.__name__}: bare messages= + adjuncts did not "
@@ -323,6 +319,7 @@ class TestMessagesInputWiring:
         assert conv_messages[1] == "not a dict"
         assert conv_messages[2].get("ground_truth") == "gt"
 
+
 # ------------------------------------------------------------------------
 # RAI evaluator wiring — 8 evaluators inherit the hoist through
 # ``RaiServiceEvaluatorBase._convert_kwargs_to_eval_input``. These tests
@@ -342,7 +339,6 @@ from azure.ai.evaluation import (
     ViolenceEvaluator,
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
-
 
 _RAI_EVALUATORS = [
     ViolenceEvaluator,
@@ -387,9 +383,7 @@ class TestRaiMessagesInputWiring:
         ev = _make_rai_evaluator(evaluator_class)
 
         with_messages = ev._convert_kwargs_to_eval_input(messages=list(_MESSAGES))
-        with_conversation = ev._convert_kwargs_to_eval_input(
-            conversation={"messages": list(_MESSAGES)}
-        )
+        with_conversation = ev._convert_kwargs_to_eval_input(conversation={"messages": list(_MESSAGES)})
 
         assert with_messages == with_conversation, (
             f"{evaluator_class.__name__}: bare messages= did not route through "
@@ -418,9 +412,7 @@ class TestRaiMessagesInputWiring:
             "context": "ctx",
             "tool_definitions": list(_TOOL_DEFS),
         }
-        with_conversation = ev._convert_kwargs_to_eval_input(
-            conversation=equivalent_conversation
-        )
+        with_conversation = ev._convert_kwargs_to_eval_input(conversation=equivalent_conversation)
 
         assert with_messages == with_conversation, (
             f"{evaluator_class.__name__}: bare messages= + adjuncts did not "
@@ -467,8 +459,7 @@ class TestRaiMessagesInputWiring:
         assert isinstance(result, list), "legacy-endpoint branch should return a list"
         assert len(result) == 1, "legacy-endpoint branch returns exactly one entry"
         assert "conversation" in result[0], (
-            "legacy-endpoint branch must return kwargs with 'conversation' "
-            "hoisted from bare messages="
+            "legacy-endpoint branch must return kwargs with 'conversation' " "hoisted from bare messages="
         )
         # Sanity: the hoisted conversation carries the same messages the
         # caller supplied.
@@ -488,9 +479,7 @@ class TestRaiMessagesInputWiring:
         # Delegated branch: base's per-turn converter runs. Concretely, the
         # result must equal what we'd get by calling with the equivalent
         # conversation dict directly — that IS super()'s output.
-        reference = ev._convert_kwargs_to_eval_input(
-            conversation={"messages": list(_MESSAGES)}
-        )
+        reference = ev._convert_kwargs_to_eval_input(conversation={"messages": list(_MESSAGES)})
         assert result == reference
 
         # And it must NOT be shaped like the legacy short-circuit's
@@ -498,6 +487,4 @@ class TestRaiMessagesInputWiring:
         # In the delegated path, the raw ``messages`` kwarg was consumed by
         # hoist before super() ran, so no result entry should retain it.
         if isinstance(result, list) and result and isinstance(result[0], dict):
-            assert "messages" not in result[0], (
-                "delegated branch must not pass raw ``messages`` kwarg through"
-            )
+            assert "messages" not in result[0], "delegated branch must not pass raw ``messages`` kwarg through"
