@@ -149,8 +149,7 @@ class FilteredBlobPaged(AsyncPageIterator):
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.marker = self._response.next_marker
-        blob_items = getattr(self._response, "blob_items", None) or getattr(self._response, "blobs", None) or []
-        self.current_page = [self._build_item(item) for item in blob_items]
+        self.current_page = [self._build_item(item) for item in self._response.blob_items]
 
         return self._response.next_marker or None, self.current_page
 
