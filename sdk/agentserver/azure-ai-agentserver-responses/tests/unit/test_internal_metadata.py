@@ -9,6 +9,7 @@ Test IDs map to spec 025 §7.1.
 
 from __future__ import annotations
 
+from collections.abc import MutableMapping
 from copy import deepcopy
 from typing import Any, cast
 
@@ -17,6 +18,7 @@ import pytest
 from azure.ai.agentserver.responses._egress import strip_internal_metadata
 from azure.ai.agentserver.responses import CreateResponse, ResponseEventStream
 from azure.ai.agentserver.responses.models._generated import ResponseObject
+from azure.ai.agentserver.responses.streaming._internal_metadata import _ResponseInternalMetadataView
 
 
 def _item() -> dict[str, Any]:
@@ -34,9 +36,8 @@ def _item_internal_metadata(item: dict[str, Any]) -> dict[str, Any]:
     return item.setdefault("internal_metadata", {})
 
 
-def _response_internal_metadata(response: ResponseObject) -> dict[str, Any]:
-    metadata = response.setdefault("metadata", {})
-    return metadata.setdefault("_internal_metadata", {})
+def _response_internal_metadata(response: ResponseObject) -> MutableMapping[str, Any]:
+    return _ResponseInternalMetadataView(cast(dict[str, Any], response))
 
 
 # --------------------------------------------------------------------------
@@ -150,8 +151,8 @@ def test_t1r_response_empty_view_when_unset():
 def test_t2r_response_stores_under_reserved_key():
     resp = _response()
     _response_internal_metadata(resp)["phase"] = 3
-    assert resp["metadata"]["_internal_metadata"] == {"phase": 3}
-    assert dict(resp["metadata"]["_internal_metadata"]) == {"phase": 3}
+    assert resp["metadata"]["_internal_metadata"] == '{"phase":3}'
+    assert dict(_response_internal_metadata(resp)) == {"phase": 3}
 
 
 def test_t3r_in_place_mutation_writes_through():
@@ -173,15 +174,25 @@ def test_t4r_does_not_clobber_client_metadata():
 def test_t5r_clear_removes_only_reserved_key():
     resp = _response()
     resp["metadata"] = {"user": "x"}
-    _response_internal_metadata(resp)["phase"] = 3
-    resp["metadata"].pop("_internal_metadata")
+    metadata = _response_internal_metadata(resp)
+    metadata["phase"] = 3
+    metadata.clear()
     assert dict(resp["metadata"]) == {"user": "x"}
 
 
 def test_t6r_512_char_guard():
     resp = _response()
-    _response_internal_metadata(resp)["big"] = "x" * 600
-    assert resp["metadata"]["_internal_metadata"]["big"] == "x" * 600
+    with pytest.raises(ValueError, match="512-char limit"):
+        _response_internal_metadata(resp)["big"] = "x" * 600
+    assert "_internal_metadata" not in resp.get("metadata", {})
+
+
+def test_t6r_unicode_uses_character_limit_not_ascii_escape_length():
+    resp = _response()
+    value = "\N{SNOWMAN}" * 100
+    _response_internal_metadata(resp)["unicode"] = value
+    assert len(resp["metadata"]["_internal_metadata"]) < 512
+    assert dict(_response_internal_metadata(resp)) == {"unicode": value}
 
 
 def test_t6r2_16_key_guard():
@@ -192,8 +203,9 @@ def test_t6r2_16_key_guard():
 
     resp16 = _response()
     resp16["metadata"] = {f"k{i}": "v" for i in range(16)}
-    _response_internal_metadata(resp16)["p"] = 1
-    assert resp16["metadata"]["_internal_metadata"] == {"p": 1}
+    with pytest.raises(ValueError, match="already has 16 keys"):
+        _response_internal_metadata(resp16)["p"] = 1
+    assert "_internal_metadata" not in resp16["metadata"]
 
 
 def test_t7r_v_shaped_response_empty_view():
@@ -207,8 +219,9 @@ def test_t10r_stream_proxy_is_response_view():
     req = CreateResponse({"model": "m", "input": "hi"})
     stream = ResponseEventStream(response_id="resp_1", request=req)
     stream.internal_metadata["phase"] = 3
-    assert dict(stream.response["metadata"]["_internal_metadata"]) == {"phase": 3}
-    stream.response["metadata"]["_internal_metadata"]["x"] = 1
+    assert stream.response["metadata"]["_internal_metadata"] == '{"phase":3}'
+    second_view = _ResponseInternalMetadataView(stream.response)
+    second_view["x"] = 1
     assert stream.internal_metadata["x"] == 1
 
 
@@ -216,14 +229,33 @@ def test_t28d_response_reserved_key_roundtrips():
     resp = _response()
     _response_internal_metadata(resp)["phase"] = 3
     reloaded = dict(resp)
-    assert dict(reloaded["metadata"]["_internal_metadata"]) == {"phase": 3}
-    assert reloaded["metadata"]["_internal_metadata"] == {"phase": 3}
+    assert reloaded["metadata"]["_internal_metadata"] == '{"phase":3}'
+    assert dict(ResponseEventStream(response_id="resp_1", response=reloaded).internal_metadata) == {"phase": 3}
 
 
 def test_t7a_compact_deterministic_encoding():
     # Deterministic so checkpoint idempotency byte-compare is stable.
     resp = _response()
     _response_internal_metadata(resp)["b"] = 2
-    resp["metadata"]["_internal_metadata"]["a"] = 1
+    _response_internal_metadata(resp)["a"] = 1
+    assert resp["metadata"]["_internal_metadata"] == '{"a":1,"b":2}'
     stripped = strip_internal_metadata(deepcopy(resp))
     assert stripped["metadata"] is None
+
+
+def test_nested_dict_snapshot_is_normalized_without_property_access():
+    resp = _response()
+    resp["metadata"] = {"user": "x", "_internal_metadata": {"phase": 3}}
+
+    stream = ResponseEventStream(response_id="resp_1", response=resp)
+
+    assert stream.response["metadata"] == {"user": "x", "_internal_metadata": '{"phase":3}'}
+
+
+def test_nested_dict_snapshot_respects_total_metadata_key_limit():
+    resp = _response()
+    resp["metadata"] = {f"k{i}": "v" for i in range(16)}
+    resp["metadata"]["_internal_metadata"] = {"phase": 3}
+
+    with pytest.raises(ValueError, match="already has 17 keys"):
+        ResponseEventStream(response_id="resp_1", response=resp)

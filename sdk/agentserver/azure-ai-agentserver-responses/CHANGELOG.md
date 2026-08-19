@@ -10,10 +10,25 @@
 
 ### Breaking Changes
 
+- The durable-response subsystem is now **opt-in**. A `store=true` response is
+  wrapped in a resilient task (with crash recovery) only when the resilient task
+  subsystem is enabled — which `resilient_background=True` (or
+  `set_resilient_tasks_enabled(True)`) now does automatically. On a host that
+  enables neither, `store=true` responses run **non-durably in-process**: they
+  execute and persist (GET works), but a response in-flight when the process is
+  ungracefully killed stays `in_progress` on a later GET (no mark-failed/recovery)
+  — matching a plain stateless server. A one-time startup log announces which
+  mode is active. Previously every responses host implicitly used the task
+  subsystem (and paid the boot recovery scan) regardless of these options.
 - Removed `ResponseContext.conversation_chain_metadata` and the
   `ConversationChainMetadataNamespace` protocol. Resilient response
   applications now persist cross-turn state explicitly with
   `FoundryStateStore`.
+
+### Bugs Fixed
+
+- Restored JSON-string encoding for response-level `internal_metadata` so resilient response checkpoints round-trip through Foundry storage.
+- Restored `get_request_context()` identity values while stored Responses handlers run inside durable tasks.
 
 ### Other Changes
 
