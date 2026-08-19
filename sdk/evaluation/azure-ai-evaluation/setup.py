@@ -76,7 +76,7 @@ setup(
         'pandas>=2.1.2,<3.0.0;python_version<"3.13"',
         'pandas>=2.2.3,<3.0.0;python_version=="3.13"',
         'pandas>=2.3.3,<3.0.0;python_version>="3.14"',
-        "openai>=1.108.0,<3.0",
+        "openai>=1.108.0",
         "ruamel.yaml>=0.17.10,<1.0.0",
         "msrest>=0.6.21",
         "Jinja2>=3.1.6",
