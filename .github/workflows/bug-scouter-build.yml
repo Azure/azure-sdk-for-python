@@ -1,0 +1,80 @@
+name: Bug Scouter Build
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled]
+    paths:
+      - sdk/ml/azure-ai-ml/**
+
+permissions: {}
+
+concurrency:
+  group: bug-scouter-build-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build-wheel:
+    name: Build exact PR wheel
+    if: contains(github.event.pull_request.labels.*.name, 'bug-scouter')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout exact PR commit without credentials
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.11'
+
+      - name: Build exact-SHA inputs
+        env:
+          BUGSCOUTER_REPOSITORY: ${{ github.repository }}
+          BUGSCOUTER_RUN_ID: ${{ github.run_id }}
+          BUGSCOUTER_PR_NUMBER: ${{ github.event.pull_request.number }}
+          BUGSCOUTER_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python -m pip install --disable-pip-version-check build
+          python -m build --wheel --outdir "$RUNNER_TEMP/bugscouter-input" sdk/ml/azure-ai-ml
+          cp sdk/ml/azure-ai-ml/README.md "$RUNNER_TEMP/bugscouter-input/README.md"
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          directory = Path(os.environ["RUNNER_TEMP"]) / "bugscouter-input"
+          wheels = list(directory.glob("azure_ai_ml-*-py3-none-any.whl"))
+          if len(wheels) != 1:
+              raise RuntimeError(f"expected one azure-ai-ml wheel, found {len(wheels)}")
+          wheel = wheels[0]
+          document = directory / "README.md"
+          if wheel.stat().st_size > 200 * 1024 * 1024:
+              raise RuntimeError("wheel exceeds the maximum allowed size")
+          if document.stat().st_size > 2 * 1024 * 1024:
+              raise RuntimeError("README exceeds the maximum allowed size")
+          digest = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+          manifest = {
+              "schema_version": 1,
+              "repository": os.environ["BUGSCOUTER_REPOSITORY"],
+              "run_id": int(os.environ["BUGSCOUTER_RUN_ID"]),
+              "pr_number": int(os.environ["BUGSCOUTER_PR_NUMBER"]),
+              "head_sha": os.environ["BUGSCOUTER_HEAD_SHA"].lower(),
+              "wheel_filename": wheel.name,
+              "wheel_sha256": digest(wheel),
+              "document_sha256": digest(document),
+          }
+          (directory / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+          PY
+
+      - name: Upload exact-SHA inputs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: bug-scouter-input-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/bugscouter-input
+          if-no-files-found: error
+          retention-days: 1
