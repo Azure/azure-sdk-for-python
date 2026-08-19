@@ -27,7 +27,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             subnet_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -108,7 +108,9 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                             "idleTimeoutInMinutes": 0,
                                             "ipAddress": "str",
                                             "ipConfiguration": ...,
-                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                            "ipTags": [
+                                                {"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}
+                                            ],
                                             "linkedPublicIPAddress": ...,
                                             "migrationPhase": "str",
                                             "natGateway": {
@@ -140,6 +142,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                             "publicIPPrefix": {"id": "str"},
                                             "resourceGuid": "str",
                                             "servicePublicIPAddress": ...,
+                                            "upgradedToV2": bool,
                                         },
                                         "sku": {"name": "str", "tier": "str"},
                                         "tags": {"str": "str"},
@@ -422,7 +425,13 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                         "subnet": ...,
                                                                     },
                                                                 },
-                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "ipTags": [
+                                                                    {
+                                                                        "firstPartyServiceTagId": "str",
+                                                                        "ipTagType": "str",
+                                                                        "tag": "str",
+                                                                    }
+                                                                ],
                                                                 "linkedPublicIPAddress": ...,
                                                                 "migrationPhase": "str",
                                                                 "natGateway": {
@@ -454,6 +463,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                 "publicIPPrefix": {"id": "str"},
                                                                 "resourceGuid": "str",
                                                                 "servicePublicIPAddress": ...,
+                                                                "upgradedToV2": bool,
                                                             },
                                                             "sku": {"name": "str", "tier": "str"},
                                                             "tags": {"str": "str"},
@@ -476,6 +486,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                             "ddosSettings": {
                                                                                 "ddosCustomPolicy": {"id": "str"}
                                                                             },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -527,6 +538,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -574,6 +586,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -734,6 +747,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                             "name": "str",
                                                             "properties": {
                                                                 "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                                "enableConnectionTracking": bool,
                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                 "inboundNatPools": [{"id": "str"}],
                                                                 "inboundNatRules": [{"id": "str"}],
@@ -776,7 +790,13 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                 "subnet": ...,
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -808,6 +828,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -953,6 +974,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                         "ddosSettings": {
                                                                             "ddosCustomPolicy": {"id": "str"}
                                                                         },
+                                                                        "enableConnectionTracking": bool,
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -999,7 +1021,11 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -1042,6 +1068,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -1220,7 +1247,11 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -1263,6 +1294,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -1579,7 +1611,13 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                             "subnet": ...,
                                                                         },
                                                                     },
-                                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "firstPartyServiceTagId": "str",
+                                                                            "ipTagType": "str",
+                                                                            "tag": "str",
+                                                                        }
+                                                                    ],
                                                                     "linkedPublicIPAddress": ...,
                                                                     "migrationPhase": "str",
                                                                     "natGateway": {
@@ -1611,6 +1649,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                     "publicIPPrefix": {"id": "str"},
                                                                     "resourceGuid": "str",
                                                                     "servicePublicIPAddress": ...,
+                                                                    "upgradedToV2": bool,
                                                                 },
                                                                 "sku": {"name": "str", "tier": "str"},
                                                                 "tags": {"str": "str"},
@@ -1633,6 +1672,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                 "ddosSettings": {
                                                                                     "ddosCustomPolicy": {"id": "str"}
                                                                                 },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -1684,6 +1724,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -1733,6 +1774,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -1971,6 +2013,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                                    "enableConnectionTracking": bool,
                                                                     "gatewayLoadBalancer": {"id": "str"},
                                                                     "inboundNatPools": [{"id": "str"}],
                                                                     "inboundNatRules": [{"id": "str"}],
@@ -2017,7 +2060,11 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -2058,6 +2105,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -2120,6 +2168,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                             "ddosSettings": {
                                                                                 "ddosCustomPolicy": {"id": "str"}
                                                                             },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -2171,6 +2220,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -2218,6 +2268,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -2413,6 +2464,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -2460,6 +2512,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -2620,7 +2673,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2635,7 +2688,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 virtual_network_name="str",
                 subnet_name="str",
-                api_version="2025-07-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2648,7 +2701,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.subnets.list(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -2678,7 +2731,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                     ],
                     "serviceName": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2694,7 +2747,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                 virtual_network_name="str",
                 subnet_name="str",
                 unprepare_network_policies_request_parameters={"serviceName": "str"},
-                api_version="2025-07-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

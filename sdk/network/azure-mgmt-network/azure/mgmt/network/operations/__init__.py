@@ -31,8 +31,10 @@ from ._operations import ExpressRouteCrossConnectionsOperations  # type: ignore
 from ._operations import ExpressRoutePortsLocationsOperations  # type: ignore
 from ._operations import ExpressRoutePortsOperations  # type: ignore
 from ._operations import ExpressRoutePortAuthorizationsOperations  # type: ignore
+from ._operations import ExpressRouteLagsOperations  # type: ignore
 from ._operations import FirewallPoliciesOperations  # type: ignore
 from ._operations import FirewallPolicyRuleCollectionGroupsOperations  # type: ignore
+from ._operations import FirewallPolicyKubeSelectorGroupsOperations  # type: ignore
 from ._operations import FirewallPolicyIdpsSignaturesOverridesOperations  # type: ignore
 from ._operations import FirewallPolicyDraftsOperations  # type: ignore
 from ._operations import FirewallPolicyRuleCollectionGroupDraftsOperations  # type: ignore
@@ -109,6 +111,8 @@ from ._operations import VirtualNetworkAppliancesOperations  # type: ignore
 from ._operations import ServiceGatewaysOperations  # type: ignore
 from ._operations import InterconnectGroupsOperations  # type: ignore
 from ._operations import SubgroupsOperations  # type: ignore
+from ._operations import FirstPartyServiceTagsOperations  # type: ignore
+from ._operations import AddressPrefixSetsOperations  # type: ignore
 from ._operations import ApplicationGatewayPrivateLinkResourcesOperations  # type: ignore
 from ._operations import ApplicationGatewayWafDynamicManifestsDefaultOperations  # type: ignore
 from ._operations import ApplicationGatewayWafDynamicManifestsOperations  # type: ignore
@@ -200,8 +204,10 @@ __all__ = [
     "ExpressRoutePortsLocationsOperations",
     "ExpressRoutePortsOperations",
     "ExpressRoutePortAuthorizationsOperations",
+    "ExpressRouteLagsOperations",
     "FirewallPoliciesOperations",
     "FirewallPolicyRuleCollectionGroupsOperations",
+    "FirewallPolicyKubeSelectorGroupsOperations",
     "FirewallPolicyIdpsSignaturesOverridesOperations",
     "FirewallPolicyDraftsOperations",
     "FirewallPolicyRuleCollectionGroupDraftsOperations",
@@ -278,6 +284,8 @@ __all__ = [
     "ServiceGatewaysOperations",
     "InterconnectGroupsOperations",
     "SubgroupsOperations",
+    "FirstPartyServiceTagsOperations",
+    "AddressPrefixSetsOperations",
     "ApplicationGatewayPrivateLinkResourcesOperations",
     "ApplicationGatewayWafDynamicManifestsDefaultOperations",
     "ApplicationGatewayWafDynamicManifestsOperations",

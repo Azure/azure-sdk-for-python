@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.service_gateways.begin_update_address_locations(
+    response = client.service_gateways.update_address_locations(
         resource_group_name="rg1",
         service_gateway_name="sg",
         parameters={
@@ -48,9 +48,10 @@ def main():
                 },
             ],
         },
-    ).result()
+    )
+    print(response)
 
 
-# x-ms-original-file: 2025-07-01/ServiceGatewayFullUpdateAddressLocationsRequest.json
+# x-ms-original-file: 2025-09-01/ServiceGatewayFullUpdateAddressLocationsRequest.json
 if __name__ == "__main__":
     main()

@@ -41,7 +41,8 @@ def _build_params_for_recovery() -> dict:
         disposition="re-invoke",
         agent_reference={"name": "test-agent"},
         agent_session_id="session_xyz",
-        user_id_key=None,
+        user_id_key="user_recovered",
+        call_id="call_recovered",
         client_headers={"client-trace-id": "abc"},
         query_parameters={"q": "1"},
     ).to_task_input()
@@ -75,6 +76,153 @@ def test_reconstruct_from_params_returns_record_and_context() -> None:
     assert context.response_id == "resp_recover_001"
     assert context.conversation_id == "conv_abc"
     assert context.mode_flags.store is True
+    assert context.platform_context.user_id_key == "user_recovered"
+    assert context.platform_context.call_id == "call_recovered"
+
+
+@pytest.mark.asyncio
+async def test_recovered_handler_sees_reconstructed_ambient_request_context() -> None:
+    """Cross-process reconstruction rebinds platform identity while the handler runs."""
+    from azure.ai.agentserver.core import get_request_context
+    from azure.ai.agentserver.responses._options import ResponsesServerOptions
+    from azure.ai.agentserver.responses.hosting._orchestrator import (
+        _iter_handler_with_request_context,
+    )
+    from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
+        _reconstruct_from_params,
+        _reconstruct_parsed_from_params,
+    )
+
+    params = _build_params_for_recovery()
+    record, context = _reconstruct_from_params(
+        params=params,
+        response_id="resp_recover_001",
+        provider=None,
+        runtime_state=None,
+        runtime_options=ResponsesServerOptions(),
+    )
+    parsed = _reconstruct_parsed_from_params(params)
+    captured: dict[str, str | None] = {}
+
+    async def handler(*_args):
+        request_context = get_request_context()
+        captured["user_id"] = request_context.user_id
+        captured["call_id"] = request_context.call_id
+        captured["session_id"] = request_context.session_id
+        yield {"type": "test"}
+
+    events = [
+        event
+        async for event in _iter_handler_with_request_context(
+            handler,
+            parsed,
+            context,
+            record.cancel_signal,
+            record.agent_session_id,
+        )
+    ]
+
+    assert events == [{"type": "test"}]
+    assert captured == {
+        "user_id": "user_recovered",
+        "call_id": "call_recovered",
+        "session_id": "session_xyz",
+    }
+
+
+@pytest.mark.asyncio
+async def test_recovered_handler_preserves_empty_platform_identity_values() -> None:
+    """Ambient identity preserves the distinction between empty and absent headers."""
+    from azure.ai.agentserver.core import get_request_context
+    from azure.ai.agentserver.responses._options import ResponsesServerOptions
+    from azure.ai.agentserver.responses.hosting._orchestrator import (
+        _iter_handler_with_request_context,
+    )
+    from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
+        _reconstruct_from_params,
+        _reconstruct_parsed_from_params,
+    )
+
+    params = _build_params_for_recovery()
+    params["user_id_key"] = ""
+    params["call_id"] = ""
+    record, context = _reconstruct_from_params(
+        params=params,
+        response_id="resp_recover_001",
+        provider=None,
+        runtime_state=None,
+        runtime_options=ResponsesServerOptions(),
+    )
+    parsed = _reconstruct_parsed_from_params(params)
+    captured: dict[str, str | None] = {}
+
+    async def handler(*_args):
+        request_context = get_request_context()
+        captured["user_id"] = request_context.user_id
+        captured["call_id"] = request_context.call_id
+        yield {"type": "test"}
+
+    events = [
+        event
+        async for event in _iter_handler_with_request_context(
+            handler,
+            parsed,
+            context,
+            record.cancel_signal,
+            record.agent_session_id,
+        )
+    ]
+
+    assert events == [{"type": "test"}]
+    assert captured == {"user_id": "", "call_id": ""}
+
+
+@pytest.mark.asyncio
+async def test_recovered_handler_context_is_safe_across_winddown_tasks() -> None:
+    """Each timed iterator advance binds and resets context in the same asyncio task."""
+    from azure.ai.agentserver.core import get_request_context
+    from azure.ai.agentserver.responses._options import ResponsesServerOptions
+    from azure.ai.agentserver.responses.hosting._orchestrator import (
+        _iter_handler_with_request_context,
+        _iter_with_winddown,
+    )
+    from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
+        _reconstruct_from_params,
+        _reconstruct_parsed_from_params,
+    )
+
+    params = _build_params_for_recovery()
+    record, context = _reconstruct_from_params(
+        params=params,
+        response_id="resp_recover_001",
+        provider=None,
+        runtime_state=None,
+        runtime_options=ResponsesServerOptions(),
+    )
+    parsed = _reconstruct_parsed_from_params(params)
+
+    async def handler(*_args):
+        assert get_request_context().user_id == "user_recovered"
+        yield {"type": "test"}
+
+    record.cancel_signal.set()
+    handler_iterator = _iter_handler_with_request_context(
+        handler,
+        parsed,
+        context,
+        record.cancel_signal,
+        record.agent_session_id,
+    )
+    events = [
+        event
+        async for event in _iter_with_winddown(
+            handler_iterator,
+            record.cancel_signal,
+            timeout=1.0,
+        )
+    ]
+
+    assert events == [{"type": "test"}]
 
 
 def test_reconstruct_preserves_client_headers_and_query() -> None:  # Spec 033 FR-002b

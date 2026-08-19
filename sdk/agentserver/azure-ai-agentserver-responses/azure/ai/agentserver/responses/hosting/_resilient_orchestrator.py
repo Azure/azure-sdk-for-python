@@ -427,6 +427,32 @@ class ResilientResponseOrchestrator:
         # function and does not need this reference.
         self._parent_orchestrator = parent_orchestrator
 
+        # Opting into resilient background responses implies the durable task
+        # subsystem must be constructed (and recovery enabled) for this
+        # deployment. The subsystem is gated SOLELY on the process-global switch
+        # (``AgentServerHost`` constructs the ``TaskManager`` only when it is
+        # set), so translate the explicit ``resilient_background`` opt-in into
+        # that switch here, at host construction time (before the ASGI lifespan
+        # runs).
+        #
+        # NOTE: only ``resilient_background`` auto-enables the subsystem —
+        # ``steerable_conversations`` intentionally does NOT. Recovery is tied to
+        # ``resilient_background`` alone; a steerable host that wants durability
+        # must set ``resilient_background=True`` (or call
+        # ``set_resilient_tasks_enabled(True)`` explicitly). The two-switch UX is
+        # a known rough edge to smooth over post-Public-Preview.
+        #
+        # A host that leaves ``resilient_background`` off (and does not set the
+        # switch) constructs no ``TaskManager``: ``store=true`` work degrades to
+        # non-durable in-process execution (``_start_resilient_background``
+        # swallows ``TaskManagerNotInitialized``).
+        if options.resilient_background:
+            from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
+                set_resilient_tasks_enabled,
+            )
+
+            set_resilient_tasks_enabled(True)
+
         # Spec 023 — per-request primitive dispatch (SOT §6.6).
         # Two task primitives are registered per deployment; ``_pick_primitive``
         # selects per request based on (conversation_id, previous_response_id,
@@ -1220,7 +1246,17 @@ class ResilientResponseOrchestrator:
         # auto-queues against an in-flight chain and returns a TaskRun
         # whose ``is_queued`` is True (the public-surface detection signal).
         # See the queued-vs-fresh check below.
-        task_run = await picked_primitive.start(**start_kwargs)
+        try:
+            task_run = await picked_primitive.start(**start_kwargs)
+        except BaseException:
+            # If the primitive never started (e.g. ``TaskManagerNotInitialized``
+            # when resilient tasks are disabled, or any start failure), the
+            # resilient task body — whose ``finally`` normally evicts the
+            # out-of-band refs — never runs. Drop the cache entry here so we do
+            # not permanently retain the record/context/parsed-request/cancel
+            # event for a response that fell back to in-process execution.
+            _RUNTIME_REFS.pop(response_id, None)
+            raise
         # Store the task run reference on the record for observability
         record.resilient_task_run = task_run  # type: ignore[attr-defined]
 

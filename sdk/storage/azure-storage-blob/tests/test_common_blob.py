@@ -3094,11 +3094,12 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
     def test_set_blob_permission(self):
         # Arrange
-        permission = BlobSasPermissions.from_string("wrdx")
+        permission = BlobSasPermissions.from_string("wrdxl")
         assert permission.read == True
         assert permission.delete == True
         assert permission.write == True
-        assert permission._str == "rwdx"
+        assert permission.list == True
+        assert permission._str == "rwdxl"
 
     @BlobPreparer()
     @recorded_by_proxy
