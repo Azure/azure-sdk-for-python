@@ -300,9 +300,7 @@ safe-outputs:
 </details>
 
 <for fixable failures only:>
-**Automated fix:** [requested from this analysis run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-<!-- pipeline-auto-fix-authorized -->
+**Automated fix:** In progress
 
 <for non-fixable failures only:>
 > Copilot detected the failing pipeline and generated the analysis above. To have it attempt a
@@ -324,6 +322,6 @@ azsdk ci analyze https://github.com/${{ github.repository }}/pull/${{ needs.pre_
 - Call `publish_analysis` exactly once with the complete analysis and `fixable` if any failure is fixable; otherwise use `non-fixable`.
 - Call `add_comment` exactly once with item number `${{ needs.pre_activation.outputs.pr_number }}` and the same complete analysis.
 - Keep the fix section after the outer `</details>` so it is outside the collapsible analysis.
-- For `fixable`, use the exact requested-status line and hidden authorization marker from the
-  comment format, then call `dispatch_workflow` exactly once with this structure:
+- For `fixable`, use the exact requested-status line from the comment format, then call
+  `dispatch_workflow` exactly once with this structure:
   `workflow_name: "pipeline-analysis-auto-fix"` and `inputs: { "pr_number": "${{ needs.pre_activation.outputs.pr_number }}", "ci_head_sha": "${{ needs.pre_activation.outputs.head_sha }}", "parent_run_id": "${{ github.run_id }}" }`. Do not place the workflow inputs at the top level.

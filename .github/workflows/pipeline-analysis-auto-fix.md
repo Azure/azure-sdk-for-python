@@ -43,11 +43,12 @@ on:
             issue_number: Number(process.env.PR_NUMBER),
             per_page: 100,
           });
+          const requestedStatus = "**Automated fix:** In progress";
           const matches = comments.filter(comment =>
             comment.user?.login === "github-actions[bot]" &&
             comment.body?.includes(runUrl) &&
             comment.body.includes("[Pilot] PR Pipeline Failure Analysis") &&
-            comment.body.includes("<!-- pipeline-auto-fix-authorized -->")
+            comment.body.includes(requestedStatus)
           );
           if (matches.length !== 1) {
             core.setFailed(`Expected one authorized analysis comment, found ${matches.length}.`);
@@ -209,6 +210,7 @@ safe-outputs:
               }
               const fixPrUrl = `${process.env.GITHUB_SERVER_URL}/${context.repo.owner}/${context.repo.repo}/pull/${process.env.FIX_PR_NUMBER}`;
               const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.PARENT_RUN_ID}`;
+              const requestedStatus = "**Automated fix:** In progress";
               const comments = await github.paginate(github.rest.issues.listComments, {
                 ...context.repo,
                 issue_number: Number(process.env.SOURCE_PR_NUMBER),
@@ -218,15 +220,12 @@ safe-outputs:
                 comment.user?.login === "github-actions[bot]" &&
                 comment.body?.includes(runUrl) &&
                 comment.body.includes("[Pilot] PR Pipeline Failure Analysis") &&
-                comment.body.includes("<!-- pipeline-auto-fix-authorized -->")
+                comment.body.includes(requestedStatus)
               );
               if (matches.length !== 1) {
                 core.setFailed(`Expected one authorized analysis comment, found ${matches.length}.`);
                 return;
               }
-              const requestedStatus =
-                `**Automated fix:** [requested from this analysis run](${runUrl})\n\n` +
-                "<!-- pipeline-auto-fix-authorized -->";
               if (!matches[0].body.includes(requestedStatus)) {
                 core.setFailed("The authorized analysis comment has an unexpected automated-fix status.");
                 return;
