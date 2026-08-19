@@ -54,11 +54,7 @@ def hoist_messages_to_conversation(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     ground_truth = kwargs.pop("ground_truth", None)
     if ground_truth is not None and isinstance(messages, list):
         for message in messages:
-            if (
-                isinstance(message, dict)
-                and message.get("role") == "assistant"
-                and "ground_truth" not in message
-            ):
+            if isinstance(message, dict) and message.get("role") == "assistant" and "ground_truth" not in message:
                 message["ground_truth"] = ground_truth
 
     kwargs["conversation"] = conv
