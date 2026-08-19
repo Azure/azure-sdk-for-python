@@ -4,7 +4,7 @@
 import logging
 import math
 import os
-from typing import Dict, Union, List
+from typing import Any, Dict, Union, List
 
 from typing_extensions import overload, override
 
@@ -13,7 +13,11 @@ from ..._common.utils import reformat_conversation_history, reformat_agent_respo
 
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
+from azure.ai.evaluation._evaluators._common._validators import (
+    ConversationValidator,
+    MessagesOrQueryResponseInputValidator,
+    ValidatorInterface,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -91,8 +95,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
 
-        # Initialize input validator
-        self._validator = ConversationValidator(error_target=ErrorTarget.RELEVANCE_EVALUATOR)
+        # Initialize input validator — accepts messages OR query/response.
+        self._validator = MessagesOrQueryResponseInputValidator(error_target=ErrorTarget.RELEVANCE_EVALUATOR)
 
         super().__init__(
             model_config=model_config,
@@ -159,6 +163,37 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(*args, **kwargs)
+
+    @override
+    def _convert_kwargs_to_eval_input(self, **kwargs):
+        """Normalize a bare ``messages=[...]`` kwarg (plus any scalar adjuncts the SDK
+        batch engine may forward alongside it) into a ``conversation={...}`` dict, so
+        the base ``_derive_conversation_converter`` can extract per-turn q/r for the
+        judge. This mirrors the shape ACA/RAISvc produce when a customer's
+        ``data_mapping`` targets ``messages`` plus top-level ``context`` /
+        ``ground_truth`` / ``tool_definitions`` fields — otherwise the base class
+        rejects the combination as "both conversation and individual inputs"."""
+        conversation = kwargs.get("conversation")
+        messages = kwargs.get("messages")
+        if conversation is None and messages is not None:
+            conv: Dict[str, Any] = {"messages": messages}
+            context = kwargs.pop("context", None)
+            if context is not None:
+                conv["context"] = context
+            tool_definitions = kwargs.pop("tool_definitions", None)
+            if tool_definitions is not None:
+                conv["tool_definitions"] = tool_definitions
+            # Top-level ground_truth: stamp onto assistant turns that don't already
+            # carry one, so the base converter's per-response ground_truth extractor
+            # picks it up.
+            ground_truth = kwargs.pop("ground_truth", None)
+            if ground_truth is not None and isinstance(messages, list):
+                for m in messages:
+                    if isinstance(m, dict) and m.get("role") == "assistant" and "ground_truth" not in m:
+                        m["ground_truth"] = ground_truth
+            kwargs["conversation"] = conv
+            kwargs.pop("messages", None)
+        return super()._convert_kwargs_to_eval_input(**kwargs)
 
     @override
     async def _real_call(self, **kwargs):
