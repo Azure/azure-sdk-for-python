@@ -44,6 +44,7 @@
         "azure.mgmt.costmanagement.models.CostManagementProxyResource": "Microsoft.CostManagement.CostManagementProxyResource",
         "azure.mgmt.costmanagement.models.CostManagementResource": "Microsoft.CostManagement.CostManagementResource",
         "azure.mgmt.costmanagement.models.CurrentSpend": "Microsoft.CostManagement.CurrentSpend",
+        "azure.mgmt.costmanagement.models.CustomerMetadata": "Microsoft.CostManagement.CustomerMetadata",
         "azure.mgmt.costmanagement.models.Dimension": "Microsoft.CostManagement.Dimension",
         "azure.mgmt.costmanagement.models.DimensionProperties": "Microsoft.CostManagement.DimensionProperties",
         "azure.mgmt.costmanagement.models.DismissAlertPayload": "Microsoft.CostManagement.DismissAlertPayload",
@@ -93,6 +94,9 @@
         "azure.mgmt.costmanagement.models.IncludedQuantityUtilizationSummary": "Microsoft.CostManagement.IncludedQuantityUtilizationSummary",
         "azure.mgmt.costmanagement.models.IncludedQuantityUtilizationSummaryProperties": "Microsoft.CostManagement.IncludedQuantityUtilizationSummaryProperties",
         "azure.mgmt.costmanagement.models.KpiProperties": "Microsoft.CostManagement.KpiProperties",
+        "azure.mgmt.costmanagement.models.ManagementGroupScopeBenefitRecommendationProperties": "Microsoft.CostManagement.ManagementGroupScopeBenefitRecommendationProperties",
+        "azure.mgmt.costmanagement.models.MarkupRule": "Microsoft.CostManagement.MarkupRule",
+        "azure.mgmt.costmanagement.models.MarkupRuleProperties": "Microsoft.CostManagement.MarkupRuleProperties",
         "azure.mgmt.costmanagement.models.MCAPriceSheetProperties": "Microsoft.CostManagement.MCAPriceSheetProperties",
         "azure.mgmt.costmanagement.models.Notification": "Microsoft.CostManagement.Notification",
         "azure.mgmt.costmanagement.models.NotificationProperties": "Microsoft.CostManagement.NotificationProperties",
@@ -299,6 +303,14 @@
         "azure.mgmt.costmanagement.aio.operations.SettingsOperations.delete_by_scope": "Microsoft.CostManagement.Settings.deleteByScope",
         "azure.mgmt.costmanagement.operations.SettingsOperations.list": "Microsoft.CostManagement.Settings.list",
         "azure.mgmt.costmanagement.aio.operations.SettingsOperations.list": "Microsoft.CostManagement.Settings.list",
+        "azure.mgmt.costmanagement.operations.MarkupRulesOperations.get": "Microsoft.CostManagement.MarkupRules.get",
+        "azure.mgmt.costmanagement.aio.operations.MarkupRulesOperations.get": "Microsoft.CostManagement.MarkupRules.get",
+        "azure.mgmt.costmanagement.operations.MarkupRulesOperations.create_or_update": "Microsoft.CostManagement.MarkupRules.createOrUpdate",
+        "azure.mgmt.costmanagement.aio.operations.MarkupRulesOperations.create_or_update": "Microsoft.CostManagement.MarkupRules.createOrUpdate",
+        "azure.mgmt.costmanagement.operations.MarkupRulesOperations.delete": "Microsoft.CostManagement.MarkupRules.delete",
+        "azure.mgmt.costmanagement.aio.operations.MarkupRulesOperations.delete": "Microsoft.CostManagement.MarkupRules.delete",
+        "azure.mgmt.costmanagement.operations.MarkupRulesOperations.list": "Microsoft.CostManagement.MarkupRules.list",
+        "azure.mgmt.costmanagement.aio.operations.MarkupRulesOperations.list": "Microsoft.CostManagement.MarkupRules.list",
         "azure.mgmt.costmanagement.operations.GenerateCostDetailsReportOperations.begin_get_operation_results": "Microsoft.CostManagement.GenerateCostDetailsReport.getOperationResults",
         "azure.mgmt.costmanagement.aio.operations.GenerateCostDetailsReportOperations.begin_get_operation_results": "Microsoft.CostManagement.GenerateCostDetailsReport.getOperationResults",
         "azure.mgmt.costmanagement.operations.GenerateCostDetailsReportOperations.begin_create_operation": "Microsoft.CostManagement.GenerateCostDetailsReportOperationGroup.createOperation",
@@ -360,5 +372,5 @@
         "azure.mgmt.costmanagement.operations.PriceSheetOperations.begin_download_by_billing_account": "Microsoft.CostManagement.PriceSheetOperationGroup.downloadByBillingAccount",
         "azure.mgmt.costmanagement.aio.operations.PriceSheetOperations.begin_download_by_billing_account": "Microsoft.CostManagement.PriceSheetOperationGroup.downloadByBillingAccount"
     },
-    "CrossLanguageVersion": "e883ab5009d5"
+    "CrossLanguageVersion": "44c244b2f62a"
 }

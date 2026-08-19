@@ -64,7 +64,7 @@ class ExtensionResource(Resource):
     """
 
 
-class Alert(ExtensionResource):
+class Alert(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An individual alert.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -144,7 +144,7 @@ class Alert(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class AlertProperties(_Model):
+class AlertProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alert properties.
 
     :ivar definition: defines the type of alert.
@@ -242,7 +242,7 @@ class AlertProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertPropertiesDefinition(_Model):
+class AlertPropertiesDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """defines the type of alert.
 
     :ivar type: type of alert. Known values are: "Budget", "Invoice", "Credit", "Quota", "General",
@@ -298,7 +298,7 @@ class AlertPropertiesDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertPropertiesDetails(_Model):
+class AlertPropertiesDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alert details.
 
     :ivar time_grain_type: Type of timegrain cadence. Known values are: "None", "Monthly",
@@ -558,7 +558,7 @@ class AllSavingsList(_Model):
     """The link (URL) to the next page of results."""
 
 
-class ArmErrorResponse(_Model):
+class ArmErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -586,7 +586,7 @@ class ArmErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AsyncOperationStatusProperties(_Model):
+class AsyncOperationStatusProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Object representing the report url and valid until date of the async report generated.
 
     :ivar report_url: Sas url to the async benefit utilization summaries report. Will be empty if
@@ -646,7 +646,7 @@ class AsyncOperationStatusProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BenefitResource(Resource):
+class BenefitResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The benefit resource model definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -689,7 +689,7 @@ class BenefitResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class BenefitRecommendationModel(BenefitResource):
+class BenefitRecommendationModel(BenefitResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """benefit plan recommendation details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -734,10 +734,11 @@ class BenefitRecommendationModel(BenefitResource):
         super().__init__(*args, **kwargs)
 
 
-class BenefitRecommendationProperties(_Model):
+class BenefitRecommendationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the benefit recommendations.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ManagementGroupScopeBenefitRecommendationProperties,
     SharedScopeBenefitRecommendationProperties, SingleScopeBenefitRecommendationProperties
 
     :ivar first_consumption_date: The first usage date used for looking back for computing the
@@ -773,8 +774,8 @@ class BenefitRecommendationProperties(_Model):
     :ivar all_recommendation_details: The list of all benefit recommendations with the
      recommendation details.
     :vartype all_recommendation_details: ~azure.mgmt.costmanagement.models.AllSavingsList
-    :ivar scope: Benefit scope. For example, Single or Shared. Required. Known values are: "Single"
-     and "Shared".
+    :ivar scope: Benefit scope. For example, Single or Shared. Required. Known values are:
+     "Single", "Shared", and "ManagementGroup".
     :vartype scope: str or ~azure.mgmt.costmanagement.models.Scope
     """
 
@@ -822,8 +823,8 @@ class BenefitRecommendationProperties(_Model):
     )
     """The list of all benefit recommendations with the recommendation details."""
     scope: str = rest_discriminator(name="scope", visibility=["read", "create", "update", "delete", "query"])
-    """Benefit scope. For example, Single or Shared. Required. Known values are: \"Single\" and
-     \"Shared\"."""
+    """Benefit scope. For example, Single or Shared. Required. Known values are: \"Single\",
+     \"Shared\", and \"ManagementGroup\"."""
 
     @overload
     def __init__(
@@ -848,7 +849,9 @@ class BenefitRecommendationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BenefitUtilizationSummariesOperationStatus(_Model):  # pylint: disable=name-too-long
+class BenefitUtilizationSummariesOperationStatus(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Status of a benefit utilization summaries report. Provides Async Benefit Utilization Summaries
     Request input, status, and report sas url.
 
@@ -898,7 +901,7 @@ class BenefitUtilizationSummariesOperationStatus(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class BenefitUtilizationSummariesRequest(_Model):
+class BenefitUtilizationSummariesRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an async benefit utilization summaries request.
 
     :ivar billing_account_id: Billing account the benefit utilization summaries report is for.
@@ -989,7 +992,7 @@ class BenefitUtilizationSummariesRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BenefitUtilizationSummary(Resource):
+class BenefitUtilizationSummary(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Benefit utilization summary resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1034,7 +1037,7 @@ class BenefitUtilizationSummary(Resource):
         super().__init__(*args, **kwargs)
 
 
-class BenefitUtilizationSummaryProperties(_Model):
+class BenefitUtilizationSummaryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a benefit utilization summary.
 
     :ivar arm_sku_name: ARM SKU name. For example, 'Compute_Savings_Plan' for savings plan.
@@ -1084,7 +1087,7 @@ class BenefitUtilizationSummaryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobInfo(_Model):
+class BlobInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The blob information generated by this operation.
 
     :ivar blob_link: Link to the blob to download file.
@@ -1117,7 +1120,7 @@ class BlobInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Budget(ExtensionResource):
+class Budget(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A budget resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1194,7 +1197,7 @@ class Budget(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class BudgetComparisonExpression(_Model):
+class BudgetComparisonExpression(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The comparison expression to be used in the budgets.
 
     :ivar name: The name of the column to use in comparison. Required.
@@ -1236,7 +1239,7 @@ class BudgetComparisonExpression(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BudgetFilter(_Model):
+class BudgetFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """May be used to filter budgets by user-specified dimensions and/or tags.
 
     Supported for CategoryType(s): Cost, ReservationUtilization.
@@ -1299,7 +1302,7 @@ class BudgetFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BudgetFilterProperties(_Model):
+class BudgetFilterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Dimensions or Tags to filter a budget by.
 
     Supported for CategoryType(s): Cost, ReservationUtilization.
@@ -1351,7 +1354,7 @@ class BudgetFilterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BudgetProperties(_Model):
+class BudgetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the budget.
 
     :ivar category: The category of the budget.
@@ -1510,7 +1513,7 @@ class BudgetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BudgetTimePeriod(_Model):
+class BudgetTimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The time period that defines the active period of the budget. The budget will evaluate data on
     or after the startDate and will expire on the endDate.
 
@@ -1580,7 +1583,7 @@ class BudgetTimePeriod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityRequest(_Model):
+class CheckNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability request body.
 
     :ivar name: The name of the resource for which availability needs to be checked.
@@ -1613,7 +1616,7 @@ class CheckNameAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResponse(_Model):
+class CheckNameAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability result.
 
     :ivar name_available: Indicates if the resource name is available.
@@ -1657,7 +1660,7 @@ class CheckNameAvailabilityResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommonExportProperties(_Model):
+class CommonExportProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The common properties of the export.
 
     :ivar format: The format of the export being delivered. Known values are: "Csv" and "Parquet".
@@ -1762,7 +1765,7 @@ class CommonExportProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CostAllocationProportion(_Model):
+class CostAllocationProportion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target resources and allocation.
 
     :ivar name: Target resource for cost allocation. Required.
@@ -1799,7 +1802,7 @@ class CostAllocationProportion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CostAllocationResource(_Model):
+class CostAllocationResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common values for resources for cost allocation.
 
     :ivar resource_type: Type of resources contained in this cost allocation rule. Required. Known
@@ -1838,7 +1841,9 @@ class CostAllocationResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CostAllocationRuleCheckNameAvailabilityRequest(_Model):  # pylint: disable=name-too-long
+class CostAllocationRuleCheckNameAvailabilityRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The cost allocation rule check name availability request.
 
     :ivar name: Rule name.
@@ -1871,7 +1876,9 @@ class CostAllocationRuleCheckNameAvailabilityRequest(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class CostAllocationRuleCheckNameAvailabilityResponse(_Model):  # pylint: disable=name-too-long
+class CostAllocationRuleCheckNameAvailabilityResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The cost allocation rule check name availability response.
 
     :ivar name_available: Whether this rule name is available.
@@ -1932,7 +1939,7 @@ class ProxyResource(Resource):
     """
 
 
-class CostAllocationRuleDefinition(ProxyResource):
+class CostAllocationRuleDefinition(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The cost allocation rule model definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1973,7 +1980,7 @@ class CostAllocationRuleDefinition(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class CostAllocationRuleDetails(_Model):
+class CostAllocationRuleDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource details of the cost allocation rule.
 
     :ivar source_resources: Source resources for cost allocation. At this time, this list can
@@ -2014,7 +2021,7 @@ class CostAllocationRuleDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CostAllocationRuleProperties(_Model):
+class CostAllocationRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a cost allocation rule.
 
     :ivar description: Description of a cost allocation rule.
@@ -2065,7 +2072,7 @@ class CostAllocationRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CostDetailsOperationResults(_Model):
+class CostDetailsOperationResults(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of the long running operation for cost details Api.
 
     :ivar id: The id of the long running operation.
@@ -2132,7 +2139,7 @@ class CostDetailsOperationResults(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CostDetailsTimePeriod(_Model):
+class CostDetailsTimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The start and end date for pulling data for the cost detailed report. API only allows data to
     be pulled for 1 month or less and no older than 13 months.
 
@@ -2166,7 +2173,7 @@ class CostDetailsTimePeriod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -2223,7 +2230,7 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CostManagementOperation(Operation):
+class CostManagementOperation(Operation):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Cost management REST API operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -2266,7 +2273,7 @@ class CostManagementOperation(Operation):
         super().__init__(*args, **kwargs)
 
 
-class CostManagementProxyResource(_Model):
+class CostManagementProxyResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Resource model definition.
 
     :ivar id: Resource Id.
@@ -2360,7 +2367,44 @@ class CurrentSpend(_Model):
     """The unit of measure for the budget amount."""
 
 
-class Dimension(CostManagementResource):
+class CustomerMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The customer billing metadata.
+
+    :ivar billing_account_id: Customer billing account id. Required.
+    :vartype billing_account_id: str
+    :ivar billing_profile_id: Customer billing profile id. Required.
+    :vartype billing_profile_id: str
+    """
+
+    billing_account_id: str = rest_field(
+        name="billingAccountId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Customer billing account id. Required."""
+    billing_profile_id: str = rest_field(
+        name="billingProfileId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Customer billing profile id. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        billing_account_id: str,
+        billing_profile_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Dimension(CostManagementResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of Dimension.
 
     :ivar id: Resource Id.
@@ -2434,7 +2478,7 @@ class Dimension(CostManagementResource):
             super().__setattr__(key, value)
 
 
-class DimensionProperties(_Model):
+class DimensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dimension properties.
 
     :ivar description: Dimension description.
@@ -2494,7 +2538,7 @@ class DimensionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DismissAlertPayload(_Model):
+class DismissAlertPayload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request payload to update an alert.
 
     :ivar properties: Alert properties.
@@ -2556,7 +2600,7 @@ class DismissAlertPayload(_Model):
             super().__setattr__(key, value)
 
 
-class DownloadURL(_Model):
+class DownloadURL(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The URL to download the generated report.
 
     :ivar expiry_time: The time at which report URL becomes invalid/expires in UTC e.g.
@@ -2673,7 +2717,7 @@ class ErrorDetailsWithNestedDetails(ErrorDetails):
     """The additional details of the error."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response indicates that the service is not able to process the incoming request. The
     reason is provided in the error message. \\n\\nSome Error responses: \\n\\n * 429
     TooManyRequests - Request is throttled. Retry after waiting for the time specified in the
@@ -2706,7 +2750,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponseWithNestedDetails(_Model):
+class ErrorResponseWithNestedDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response indicates that the service is not able to process the incoming request. The
     reason is provided in the error message.
 
@@ -2747,7 +2791,7 @@ class ErrorResponseWithNestedDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Export(ExtensionResource):
+class Export(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An export resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2840,7 +2884,7 @@ class Export(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class ExportDataset(_Model):
+class ExportDataset(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition for data in the export.
 
     :ivar granularity: The granularity of rows in the export. Currently 'Daily' is supported for
@@ -2879,7 +2923,7 @@ class ExportDataset(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportDatasetConfiguration(_Model):
+class ExportDatasetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is on path to deprecation and will not be supported going forward.
 
     :ivar columns: Array of column names to be included in the export. If not provided then the
@@ -2927,7 +2971,7 @@ class ExportDatasetConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportDefinition(_Model):
+class ExportDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of an export.
 
     :ivar type: The type of the export. Note that 'Usage' is equivalent to 'ActualCost' and is
@@ -2988,7 +3032,7 @@ class ExportDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportDeliveryDestination(_Model):
+class ExportDeliveryDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This represents the blob storage account location where exports of costs will be delivered.
     There are two ways to configure the destination. The approach recommended for most customers is
     to specify the resourceId of the storage account. This requires a one-time registration of the
@@ -3080,7 +3124,7 @@ class ExportDeliveryDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportDeliveryInfo(_Model):
+class ExportDeliveryInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The delivery information associated with a export.
 
     :ivar destination: Has destination for the export being delivered. Required.
@@ -3132,7 +3176,7 @@ class ExportListResult(_Model):
     """The list of exports."""
 
 
-class ExportProperties(CommonExportProperties):
+class ExportProperties(CommonExportProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the export.
 
     :ivar format: The format of the export being delivered. Known values are: "Csv" and "Parquet".
@@ -3200,7 +3244,7 @@ class ExportProperties(CommonExportProperties):
         super().__init__(*args, **kwargs)
 
 
-class ExportRecurrencePeriod(_Model):
+class ExportRecurrencePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The start and end date for recurrence schedule.
 
     :ivar from_property: The start date of recurrence. Required.
@@ -3237,7 +3281,7 @@ class ExportRecurrencePeriod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportRun(CostManagementProxyResource):
+class ExportRun(CostManagementProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An export run.
 
     :ivar id: Resource Id.
@@ -3310,7 +3354,7 @@ class ExportRun(CostManagementProxyResource):
             super().__setattr__(key, value)
 
 
-class ExportRunProperties(_Model):
+class ExportRunProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the export run.
 
     :ivar execution_type: The type of the export run. Known values are: "OnDemand" and "Scheduled".
@@ -3417,7 +3461,7 @@ class ExportRunProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportRunRequest(_Model):
+class ExportRunRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The export run request.
 
     :ivar time_period: Has time period for pulling data for the export.
@@ -3447,7 +3491,7 @@ class ExportRunRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportSchedule(_Model):
+class ExportSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The schedule associated with the export.
 
     :ivar status: The status of the export's schedule. If 'Inactive', the export's schedule is
@@ -3499,7 +3543,7 @@ class ExportSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportSuspensionContext(_Model):
+class ExportSuspensionContext(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the export run. This is not populated currently.
 
     :ivar suspension_code: The code for export suspension.
@@ -3543,7 +3587,7 @@ class ExportSuspensionContext(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportTimePeriod(_Model):
+class ExportTimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The date range for data in the export. This should only be specified with timeFrame set to
     'Custom'. The maximum date range is 1 calendar month.
 
@@ -3579,7 +3623,7 @@ class ExportTimePeriod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileDestination(_Model):
+class FileDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Destination of the view data. This is optional. Currently only CSV format is supported.
 
     :ivar file_formats: Destination of the view data. Currently only CSV format is supported.
@@ -3609,7 +3653,7 @@ class FileDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FilterItems(_Model):
+class FilterItems(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Will contain the filter name and value to operate on. This is currently only supported for
     Export Definition type of ReservationRecommendations.
 
@@ -3660,7 +3704,7 @@ class FilterItems(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForecastAggregation(_Model):
+class ForecastAggregation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The aggregation expression to be used in the forecast.
 
     :ivar name: The name of the column to aggregate. Required. Known values are: "PreTaxCostUSD",
@@ -3697,7 +3741,7 @@ class ForecastAggregation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForecastColumn(_Model):
+class ForecastColumn(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Forecast column properties.
 
     :ivar name: The name of column.
@@ -3730,7 +3774,7 @@ class ForecastColumn(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForecastComparisonExpression(_Model):
+class ForecastComparisonExpression(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The comparison expression to be used in the forecast.
 
     :ivar name: The name of the column to use in comparison. Required.
@@ -3772,7 +3816,7 @@ class ForecastComparisonExpression(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForecastDataset(_Model):
+class ForecastDataset(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of data present in the forecast.
 
     :ivar granularity: The granularity of rows in the forecast. Known values are: "Daily" and
@@ -3828,7 +3872,7 @@ class ForecastDataset(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForecastDatasetConfiguration(_Model):
+class ForecastDatasetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration of dataset in the forecast.
 
     :ivar columns: Array of column names to be included in the forecast. Any valid forecast column
@@ -3858,7 +3902,7 @@ class ForecastDatasetConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForecastDefinition(_Model):
+class ForecastDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a forecast.
 
     :ivar type: The type of the forecast. Required. Known values are: "Usage", "ActualCost", and
@@ -3923,7 +3967,7 @@ class ForecastDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForecastFilter(_Model):
+class ForecastFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The filter expression to be used in the export.
 
     :ivar and_property: The logical "AND" expression. Must have at least 2 items.
@@ -3974,7 +4018,7 @@ class ForecastFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForecastProperties(_Model):
+class ForecastProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Forecast properties.
 
     :ivar next_link: The link (url) to the next page of results.
@@ -4014,7 +4058,7 @@ class ForecastProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForecastResult(CostManagementResource):
+class ForecastResult(CostManagementResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of forecast. It contains all columns listed under groupings and aggregation.
 
     :ivar id: Resource Id.
@@ -4097,7 +4141,7 @@ class ForecastSpend(_Model):
     """The unit of measure for the budget amount."""
 
 
-class ForecastTimePeriod(_Model):
+class ForecastTimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Has time period for pulling data for the forecast.
 
     :ivar from_property: The start date to pull data from. Required.
@@ -4132,7 +4176,7 @@ class ForecastTimePeriod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenerateCostDetailsReportErrorResponse(_Model):
+class GenerateCostDetailsReportErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response indicates that the service is not able to process the incoming request. The
     reason is provided in the error message.
 
@@ -4184,7 +4228,9 @@ class GenerateCostDetailsReportErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenerateCostDetailsReportRequestDefinition(_Model):  # pylint: disable=name-too-long
+class GenerateCostDetailsReportRequestDefinition(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The definition of a cost detailed report.
 
     :ivar metric: The type of the detailed report. By default ActualCost is provided. Known values
@@ -4258,7 +4304,7 @@ class GenerateCostDetailsReportRequestDefinition(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class GenerateDetailedCostReportDefinition(_Model):
+class GenerateDetailedCostReportDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a cost detailed report.
 
     :ivar metric: The type of the detailed report. By default ActualCost is provided. Known values
@@ -4329,7 +4375,7 @@ class GenerateDetailedCostReportDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenerateDetailedCostReportErrorResponse(_Model):
+class GenerateDetailedCostReportErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response indicates that the service is not able to process the incoming request. The
     reason is provided in the error message.
 
@@ -4372,7 +4418,9 @@ class GenerateDetailedCostReportErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenerateDetailedCostReportOperationResult(ExtensionResource):  # pylint: disable=name-too-long
+class GenerateDetailedCostReportOperationResult(
+    ExtensionResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The result of the long running operation for cost detailed report.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4431,7 +4479,9 @@ class GenerateDetailedCostReportOperationResult(ExtensionResource):  # pylint: d
             super().__setattr__(key, value)
 
 
-class GenerateDetailedCostReportOperationStatuses(ExtensionResource):  # pylint: disable=name-too-long
+class GenerateDetailedCostReportOperationStatuses(
+    ExtensionResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The status of the long running operation for cost detailed report.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4510,7 +4560,7 @@ class GenerateDetailedCostReportOperationStatuses(ExtensionResource):  # pylint:
             super().__setattr__(key, value)
 
 
-class GenerateDetailedCostReportTimePeriod(_Model):
+class GenerateDetailedCostReportTimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The start and end date for pulling data for the cost detailed report.
 
     :ivar start: The start date to pull data from. example format 2020-03-15. Required.
@@ -4543,7 +4593,9 @@ class GenerateDetailedCostReportTimePeriod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncludedQuantityUtilizationSummary(BenefitUtilizationSummary, discriminator="IncludedQuantity"):
+class IncludedQuantityUtilizationSummary(
+    BenefitUtilizationSummary, discriminator="IncludedQuantity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Included Quantity utilization summary resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4618,7 +4670,7 @@ class IncludedQuantityUtilizationSummary(BenefitUtilizationSummary, discriminato
 
 class IncludedQuantityUtilizationSummaryProperties(
     BenefitUtilizationSummaryProperties
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Included Quantity utilization summary properties.
 
     :ivar arm_sku_name: ARM SKU name. For example, 'Compute_Savings_Plan' for savings plan.
@@ -4658,7 +4710,7 @@ class IncludedQuantityUtilizationSummaryProperties(
         super().__init__(*args, **kwargs)
 
 
-class KpiProperties(_Model):
+class KpiProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Each KPI must contain a 'type' and 'enabled' key.
 
     :ivar type: KPI type (Forecast, Budget). Known values are: "Forecast" and "Budget".
@@ -4685,6 +4737,185 @@ class KpiProperties(_Model):
         type: Optional[Union[str, "_models.KpiType"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagementGroupScopeBenefitRecommendationProperties(
+    BenefitRecommendationProperties, discriminator="ManagementGroup"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The properties of the benefit recommendation when scope is 'ManagementGroup'.
+
+    :ivar first_consumption_date: The first usage date used for looking back for computing the
+     recommendations.
+    :vartype first_consumption_date: ~datetime.datetime
+    :ivar last_consumption_date: The last usage date used for looking back for computing the
+     recommendations.
+    :vartype last_consumption_date: ~datetime.datetime
+    :ivar look_back_period: The number of days of usage evaluated for computing the
+     recommendations. Known values are: "Last7Days", "Last30Days", and "Last60Days".
+    :vartype look_back_period: str or ~azure.mgmt.costmanagement.models.LookBackPeriod
+    :ivar total_hours: The total hours for which the cost is covered. Its equal to number of
+     records in a property 'properties/usage/charges'.
+    :vartype total_hours: int
+    :ivar usage: On-demand charges between firstConsumptionDate and lastConsumptionDate that were
+     used for computing benefit recommendations.
+    :vartype usage: ~azure.mgmt.costmanagement.models.RecommendationUsageDetails
+    :ivar arm_sku_name: ARM SKU name. 'Compute_Savings_Plan' for SavingsPlan.
+    :vartype arm_sku_name: str
+    :ivar term: Term period of the benefit. For example, P1Y or P3Y. Known values are: "P1Y" and
+     "P3Y".
+    :vartype term: str or ~azure.mgmt.costmanagement.models.Term
+    :ivar commitment_granularity: Grain of the proposed commitment amount. Supported values:
+     'Hourly'. Known values are: "Hourly", "Daily", and "Monthly".
+    :vartype commitment_granularity: str or ~azure.mgmt.costmanagement.models.Grain
+    :ivar currency_code: An ISO 4217 currency code identifier for the costs and savings amounts.
+    :vartype currency_code: str
+    :ivar cost_without_benefit: The current cost without benefit, corresponds to 'totalHours' in
+     the look-back period.
+    :vartype cost_without_benefit: ~decimal.Decimal
+    :ivar recommendation_details: The details of the proposed recommendation.
+    :vartype recommendation_details: ~azure.mgmt.costmanagement.models.AllSavingsBenefitDetails
+    :ivar all_recommendation_details: The list of all benefit recommendations with the
+     recommendation details.
+    :vartype all_recommendation_details: ~azure.mgmt.costmanagement.models.AllSavingsList
+    :ivar management_group_id: Fully-qualified identifier of the management group that this
+     management group scope recommendation is for, of the format
+     /providers/Microsoft.Management/managementGroups/{managementGroupId}. Applicable only if
+     recommendation is for 'ManagementGroup' scope.
+    :vartype management_group_id: str
+    :ivar tenant_id: The tenant ID associated with the management group. Populated only when
+     managementGroupId is populated.
+    :vartype tenant_id: str
+    :ivar scope: ManagementGroup benefit scope. Required. Management group scope recommendation.
+    :vartype scope: str or ~azure.mgmt.costmanagement.models.MANAGEMENT_GROUP
+    """
+
+    management_group_id: Optional[str] = rest_field(name="managementGroupId", visibility=["read"])
+    """Fully-qualified identifier of the management group that this management group scope
+     recommendation is for, of the format
+     /providers/Microsoft.Management/managementGroups/{managementGroupId}. Applicable only if
+     recommendation is for 'ManagementGroup' scope."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID associated with the management group. Populated only when managementGroupId is
+     populated."""
+    scope: Literal[Scope.MANAGEMENT_GROUP] = rest_discriminator(name="scope", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """ManagementGroup benefit scope. Required. Management group scope recommendation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        look_back_period: Optional[Union[str, "_models.LookBackPeriod"]] = None,
+        usage: Optional["_models.RecommendationUsageDetails"] = None,
+        term: Optional[Union[str, "_models.Term"]] = None,
+        commitment_granularity: Optional[Union[str, "_models.Grain"]] = None,
+        recommendation_details: Optional["_models.AllSavingsBenefitDetails"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.scope = Scope.MANAGEMENT_GROUP  # type: ignore
+
+
+class MarkupRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Markup rule.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.costmanagement.models.SystemData
+    :ivar properties: Markup rule properties.
+    :vartype properties: ~azure.mgmt.costmanagement.models.MarkupRuleProperties
+    """
+
+    properties: Optional["_models.MarkupRuleProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Markup rule properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.MarkupRuleProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MarkupRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of the markup rule.
+
+    :ivar description: The description of the markup rule.
+    :vartype description: str
+    :ivar percentage: The markup percentage of the rule. Required.
+    :vartype percentage: float
+    :ivar start_date: Starting date of the markup rule. Required.
+    :vartype start_date: ~datetime.datetime
+    :ivar end_date: Ending date of the markup rule.
+    :vartype end_date: ~datetime.datetime
+    :ivar customer_details: Customer information for the markup rule. Required.
+    :vartype customer_details: ~azure.mgmt.costmanagement.models.CustomerMetadata
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the markup rule."""
+    percentage: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The markup percentage of the rule. Required."""
+    start_date: datetime.datetime = rest_field(
+        name="startDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Starting date of the markup rule. Required."""
+    end_date: Optional[datetime.datetime] = rest_field(
+        name="endDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Ending date of the markup rule."""
+    customer_details: "_models.CustomerMetadata" = rest_field(
+        name="customerDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Customer information for the markup rule. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        percentage: float,
+        start_date: datetime.datetime,
+        customer_details: "_models.CustomerMetadata",
+        description: Optional[str] = None,
+        end_date: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -4880,7 +5111,7 @@ class MCAPriceSheetProperties(_Model):
      priceType as Consumption. Other price types include ReservedInstance and Savings Plan."""
 
 
-class Notification(_Model):
+class Notification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The notification associated with a budget.
 
     Supported for CategoryType(s): Cost, ReservationUtilization.
@@ -5050,7 +5281,7 @@ class Notification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotificationProperties(_Model):
+class NotificationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the scheduled action notification.
 
     :ivar to: Array of email addresses. Required.
@@ -5132,7 +5363,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OperationStatus(_Model):
+class OperationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of the long running operation.
 
     :ivar status: The status of the long running operation. Known values are: "Running",
@@ -5189,7 +5420,7 @@ class OperationStatus(_Model):
             super().__setattr__(key, value)
 
 
-class PivotProperties(_Model):
+class PivotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Each pivot must contain a 'type' and 'name'.
 
     :ivar type: Data type to show in view. Known values are: "Dimension" and "TagKey".
@@ -5224,7 +5455,7 @@ class PivotProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PricesheetDownloadProperties(_Model):
+class PricesheetDownloadProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The URL to download the generated report.
 
     :ivar expiry_time: The time at which report URL becomes invalid/expires in UTC e.g.
@@ -5266,7 +5497,7 @@ class PricesheetDownloadProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryAggregation(_Model):
+class QueryAggregation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The aggregation expression to be used in the query.
 
     :ivar name: The name of the column to aggregate. Required.
@@ -5301,7 +5532,7 @@ class QueryAggregation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryColumn(_Model):
+class QueryColumn(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """QueryColumn properties.
 
     :ivar name: The name of column.
@@ -5334,7 +5565,7 @@ class QueryColumn(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryComparisonExpression(_Model):
+class QueryComparisonExpression(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The comparison expression to be used in the query.
 
     :ivar name: The name of the column to use in comparison. Required.
@@ -5376,7 +5607,7 @@ class QueryComparisonExpression(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryDataset(_Model):
+class QueryDataset(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of data present in the query.
 
     :ivar granularity: The granularity of rows in the query. Known values are: "Daily" and
@@ -5441,7 +5672,7 @@ class QueryDataset(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryDatasetConfiguration(_Model):
+class QueryDatasetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration of dataset in the query.
 
     :ivar columns: Array of column names to be included in the query. Any valid query column name
@@ -5471,7 +5702,7 @@ class QueryDatasetConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryDefinition(_Model):
+class QueryDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a query.
 
     :ivar type: The type of the query. Required. Known values are: "Usage", "ActualCost",
@@ -5526,7 +5757,7 @@ class QueryDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryFilter(_Model):
+class QueryFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The filter expression to be used in the export.
 
     :ivar and_property: The logical "AND" expression. Must have at least 2 items.
@@ -5577,7 +5808,7 @@ class QueryFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryGrouping(_Model):
+class QueryGrouping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The group by expression to be used in the query.
 
     :ivar type: Has type of the column to group. Required. Known values are: "TagKey" and
@@ -5611,7 +5842,7 @@ class QueryGrouping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryProperties(_Model):
+class QueryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Query properties.
 
     :ivar next_link: The link (url) to the next page of results.
@@ -5651,7 +5882,7 @@ class QueryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryResult(CostManagementResource):
+class QueryResult(CostManagementResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of query. It contains all columns listed under groupings and aggregation.
 
     :ivar id: Resource Id.
@@ -5715,7 +5946,7 @@ class QueryResult(CostManagementResource):
             super().__setattr__(key, value)
 
 
-class QueryTimePeriod(_Model):
+class QueryTimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The start and end date for pulling data for the query.
 
     :ivar from_property: The start date to pull data from. Required.
@@ -5750,7 +5981,7 @@ class QueryTimePeriod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationUsageDetails(_Model):
+class RecommendationUsageDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """On-demand charges between firstConsumptionDate and lastConsumptionDate that were used for
     computing benefit recommendations.
 
@@ -5789,7 +6020,7 @@ class RecommendationUsageDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReportConfigAggregation(_Model):
+class ReportConfigAggregation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The aggregation expression to be used in the report.
 
     :ivar name: The name of the column to aggregate. Required.
@@ -5824,7 +6055,7 @@ class ReportConfigAggregation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReportConfigComparisonExpression(_Model):
+class ReportConfigComparisonExpression(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The comparison expression to be used in the report.
 
     :ivar name: The name of the column to use in comparison. Required.
@@ -5867,7 +6098,7 @@ class ReportConfigComparisonExpression(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReportConfigDataset(_Model):
+class ReportConfigDataset(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of data present in the report.
 
     :ivar granularity: The granularity of rows in the report. Known values are: "Daily" and
@@ -5939,7 +6170,7 @@ class ReportConfigDataset(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReportConfigDatasetConfiguration(_Model):
+class ReportConfigDatasetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration of dataset in the report.
 
     :ivar columns: Array of column names to be included in the report. Any valid report column name
@@ -5969,7 +6200,7 @@ class ReportConfigDatasetConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReportConfigDefinition(_Model):
+class ReportConfigDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a report config.
 
     :ivar type: The type of the report. Usage represents actual usage, forecast represents
@@ -6033,7 +6264,7 @@ class ReportConfigDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReportConfigFilter(_Model):
+class ReportConfigFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The filter expression to be used in the report.
 
     :ivar and_property: The logical "AND" expression. Must have at least 2 items.
@@ -6084,7 +6315,7 @@ class ReportConfigFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReportConfigGrouping(_Model):
+class ReportConfigGrouping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The group by expression to be used in the report.
 
     :ivar type: Has type of the column to group. Required. Known values are: "TagKey" and
@@ -6120,7 +6351,7 @@ class ReportConfigGrouping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReportConfigSorting(_Model):
+class ReportConfigSorting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The order by expression to be used in the report.
 
     :ivar direction: Direction of sort. Known values are: "Ascending" and "Descending".
@@ -6155,7 +6386,7 @@ class ReportConfigSorting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReportConfigTimePeriod(_Model):
+class ReportConfigTimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The start and end date for pulling data for the report.
 
     :ivar from_property: The start date to pull data from. Required.
@@ -6190,7 +6421,7 @@ class ReportConfigTimePeriod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReportManifest(_Model):
+class ReportManifest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The manifest of the report generated by the operation.
 
     :ivar manifest_version: The Manifest version.
@@ -6276,7 +6507,7 @@ class ReportManifest(_Model):
             super().__setattr__(key, value)
 
 
-class ReportURL(_Model):
+class ReportURL(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The URL to download the generated report.
 
     :ivar report_url: The CSV file from the reportUrl blob link consists of reservation usage data
@@ -6320,7 +6551,7 @@ class ReportURL(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequestContext(_Model):
+class RequestContext(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The context of the Cost Details request.
 
     :ivar request_scope: The request scope of the request.
@@ -6358,7 +6589,9 @@ class RequestContext(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SavingsPlanUtilizationSummary(BenefitUtilizationSummary, discriminator="SavingsPlan"):
+class SavingsPlanUtilizationSummary(
+    BenefitUtilizationSummary, discriminator="SavingsPlan"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Savings plan utilization summary resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6432,7 +6665,9 @@ class SavingsPlanUtilizationSummary(BenefitUtilizationSummary, discriminator="Sa
             super().__setattr__(key, value)
 
 
-class SavingsPlanUtilizationSummaryProperties(BenefitUtilizationSummaryProperties):
+class SavingsPlanUtilizationSummaryProperties(
+    BenefitUtilizationSummaryProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Savings plan utilization summary properties.
 
     :ivar arm_sku_name: ARM SKU name. For example, 'Compute_Savings_Plan' for savings plan.
@@ -6519,7 +6754,7 @@ class SavingsPlanUtilizationSummaryProperties(BenefitUtilizationSummaryPropertie
         super().__init__(*args, **kwargs)
 
 
-class ScheduledAction(ProxyResource):
+class ScheduledAction(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scheduled action definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6607,7 +6842,7 @@ class ScheduledAction(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ScheduledActionProperties(_Model):
+class ScheduledActionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the scheduled action.
 
     :ivar display_name: Scheduled action name. Required.
@@ -6716,7 +6951,7 @@ class ScheduledActionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduleProperties(_Model):
+class ScheduleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the schedule.
 
     :ivar frequency: Frequency of the schedule. Required. Known values are: "Daily", "Weekly", and
@@ -6796,7 +7031,7 @@ class ScheduleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Setting(ProxyResource):
+class Setting(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Setting definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6856,7 +7091,7 @@ class SettingsListResult(_Model):
 
 class SharedScopeBenefitRecommendationProperties(
     BenefitRecommendationProperties, discriminator="Shared"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of the benefit recommendation when scope is 'Shared'.
 
     :ivar first_consumption_date: The first usage date used for looking back for computing the
@@ -6925,7 +7160,7 @@ class SharedScopeBenefitRecommendationProperties(
 
 class SingleScopeBenefitRecommendationProperties(
     BenefitRecommendationProperties, discriminator="Single"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of the benefit recommendations when scope is 'Single'.
 
     :ivar first_consumption_date: The first usage date used for looking back for computing the
@@ -7004,7 +7239,9 @@ class SingleScopeBenefitRecommendationProperties(
         self.scope = Scope.SINGLE  # type: ignore
 
 
-class SourceCostAllocationResource(CostAllocationResource):
+class SourceCostAllocationResource(
+    CostAllocationResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source resources for cost allocation.
 
     :ivar resource_type: Type of resources contained in this cost allocation rule. Required. Known
@@ -7043,7 +7280,7 @@ class SourceCostAllocationResource(CostAllocationResource):
         super().__init__(*args, **kwargs)
 
 
-class Status(_Model):
+class Status(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of the long running operation.
 
     :ivar status: The status of the long running operation. Known values are: "InProgress",
@@ -7075,7 +7312,7 @@ class Status(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemAssignedServiceIdentity(_Model):
+class SystemAssignedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (either system assigned, or none).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -7119,7 +7356,7 @@ class SystemAssignedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -7186,7 +7423,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagInheritanceProperties(_Model):
+class TagInheritanceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the tag inheritance setting.
 
     :ivar prefer_container_tags: This property defines the behavior when an inherited tag being
@@ -7228,7 +7465,9 @@ class TagInheritanceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagInheritanceSetting(Setting, discriminator="taginheritance"):
+class TagInheritanceSetting(
+    Setting, discriminator="taginheritance"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag Inheritance Setting definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7274,7 +7513,9 @@ class TagInheritanceSetting(Setting, discriminator="taginheritance"):
         self.kind = SettingsKind.TAGINHERITANCE  # type: ignore
 
 
-class TargetCostAllocationResource(CostAllocationResource):
+class TargetCostAllocationResource(
+    CostAllocationResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target resources for cost allocation.
 
     :ivar resource_type: Type of resources contained in this cost allocation rule. Required. Known
@@ -7320,7 +7561,7 @@ class TargetCostAllocationResource(CostAllocationResource):
         super().__init__(*args, **kwargs)
 
 
-class View(ProxyResource):
+class View(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """States and configurations of Cost Analysis.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7368,7 +7609,7 @@ class View(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ViewProperties(_Model):
+class ViewProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the view.
 
     :ivar display_name: User input name of the view. Required.
