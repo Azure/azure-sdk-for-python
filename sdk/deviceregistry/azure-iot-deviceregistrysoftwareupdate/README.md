@@ -77,7 +77,8 @@ Service operations raise exceptions defined in
 
 ## Next steps
 
-Explore the available client operations and models in the [API reference](api.md).
+Explore the available client operations and models in the
+[API reference](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/deviceregistry/azure-iot-deviceregistrysoftwareupdate/api.md).
 
 ## Contributing
 
