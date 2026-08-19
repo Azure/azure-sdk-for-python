@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-06-30-preview/NodePools_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-01-preview/NodePools_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

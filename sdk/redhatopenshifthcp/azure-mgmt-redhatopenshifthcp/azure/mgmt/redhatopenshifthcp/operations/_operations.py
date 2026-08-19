@@ -36,6 +36,7 @@ from .. import models as _models, types as _types
 from .._configuration import RedHatOpenShiftClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -49,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +71,7 @@ def build_hcp_open_shift_clusters_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +100,7 @@ def build_hcp_open_shift_clusters_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -130,7 +131,7 @@ def build_hcp_open_shift_clusters_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -159,7 +160,7 @@ def build_hcp_open_shift_clusters_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RedHatOpenShift/hcpOpenShiftClusters/{hcpOpenShiftClusterName}"
     path_format_arguments = {
@@ -182,7 +183,7 @@ def build_hcp_open_shift_clusters_list_by_resource_group_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -209,7 +210,7 @@ def build_hcp_open_shift_clusters_list_by_subscription_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -235,7 +236,8 @@ def build_hcp_open_shift_clusters_request_admin_credential_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -252,6 +254,8 @@ def build_hcp_open_shift_clusters_request_admin_credential_request(  # pylint: d
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -262,7 +266,7 @@ def build_hcp_open_shift_clusters_revoke_credentials_request(  # pylint: disable
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RedHatOpenShift/hcpOpenShiftClusters/{hcpOpenShiftClusterName}/revokeCredentials"
     path_format_arguments = {
@@ -285,7 +289,7 @@ def build_node_pools_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -315,7 +319,7 @@ def build_node_pools_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -347,7 +351,7 @@ def build_node_pools_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -377,7 +381,7 @@ def build_node_pools_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RedHatOpenShift/hcpOpenShiftClusters/{hcpOpenShiftClusterName}/nodePools/{nodePoolName}"
     path_format_arguments = {
@@ -401,7 +405,7 @@ def build_node_pools_list_by_parent_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -433,7 +437,7 @@ def build_external_auths_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -467,7 +471,7 @@ def build_external_auths_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -503,7 +507,7 @@ def build_external_auths_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -537,7 +541,7 @@ def build_external_auths_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RedHatOpenShift/hcpOpenShiftClusters/{hcpOpenShiftClusterName}/externalAuths/{externalAuthName}"
     path_format_arguments = {
@@ -561,7 +565,7 @@ def build_external_auths_list_by_parent_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -589,7 +593,7 @@ def build_hcp_open_shift_versions_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -617,7 +621,7 @@ def build_hcp_open_shift_versions_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -646,7 +650,7 @@ def build_hcp_operator_identity_role_sets_list_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -673,7 +677,7 @@ def build_hcp_operator_identity_role_sets_get_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1688,8 +1692,30 @@ class HcpOpenShiftClustersOperations:  # pylint: disable=docstring-missing-param
 
         return ItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "hcp_open_shift_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
     def _request_admin_credential_initial(
-        self, resource_group_name: str, hcp_open_shift_cluster_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        hcp_open_shift_cluster_name: str,
+        body: Union[
+            _models.HcpOpenShiftClusterAdminCredentialRequest,
+            _types.HcpOpenShiftClusterAdminCredentialRequest,
+            IO[bytes],
+        ],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1699,16 +1725,26 @@ class HcpOpenShiftClustersOperations:  # pylint: disable=docstring-missing-param
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_hcp_open_shift_clusters_request_admin_credential_request(
             resource_group_name=resource_group_name,
             hcp_open_shift_cluster_name=hcp_open_shift_cluster_name,
             subscription_id=self._config.subscription_id,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -1749,9 +1785,15 @@ class HcpOpenShiftClustersOperations:  # pylint: disable=docstring-missing-param
 
         return deserialized  # type: ignore
 
-    @distributed_trace
+    @overload
     def begin_request_admin_credential(
-        self, resource_group_name: str, hcp_open_shift_cluster_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        hcp_open_shift_cluster_name: str,
+        body: _models.HcpOpenShiftClusterAdminCredentialRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.HcpOpenShiftClusterAdminCredential]:
         """Request a temporary admin kubeconfig for the cluster.
 
@@ -1760,15 +1802,123 @@ class HcpOpenShiftClustersOperations:  # pylint: disable=docstring-missing-param
         :type resource_group_name: str
         :param hcp_open_shift_cluster_name: The name of the HcpOpenShiftCluster. Required.
         :type hcp_open_shift_cluster_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterAdminCredentialRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: An instance of LROPoller that returns HcpOpenShiftClusterAdminCredential. The
          HcpOpenShiftClusterAdminCredential is compatible with MutableMapping
         :rtype:
          ~azure.core.polling.LROPoller[~azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterAdminCredential]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+
+    @overload
+    def begin_request_admin_credential(
+        self,
+        resource_group_name: str,
+        hcp_open_shift_cluster_name: str,
+        body: _types.HcpOpenShiftClusterAdminCredentialRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.HcpOpenShiftClusterAdminCredential]:
+        """Request a temporary admin kubeconfig for the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param hcp_open_shift_cluster_name: The name of the HcpOpenShiftCluster. Required.
+        :type hcp_open_shift_cluster_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.redhatopenshifthcp.types.HcpOpenShiftClusterAdminCredentialRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns HcpOpenShiftClusterAdminCredential. The
+         HcpOpenShiftClusterAdminCredential is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterAdminCredential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_request_admin_credential(
+        self,
+        resource_group_name: str,
+        hcp_open_shift_cluster_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.HcpOpenShiftClusterAdminCredential]:
+        """Request a temporary admin kubeconfig for the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param hcp_open_shift_cluster_name: The name of the HcpOpenShiftCluster. Required.
+        :type hcp_open_shift_cluster_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns HcpOpenShiftClusterAdminCredential. The
+         HcpOpenShiftClusterAdminCredential is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterAdminCredential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "hcp_open_shift_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def begin_request_admin_credential(
+        self,
+        resource_group_name: str,
+        hcp_open_shift_cluster_name: str,
+        body: Union[
+            _models.HcpOpenShiftClusterAdminCredentialRequest,
+            _types.HcpOpenShiftClusterAdminCredentialRequest,
+            IO[bytes],
+        ],
+        **kwargs: Any
+    ) -> LROPoller[_models.HcpOpenShiftClusterAdminCredential]:
+        """Request a temporary admin kubeconfig for the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param hcp_open_shift_cluster_name: The name of the HcpOpenShiftCluster. Required.
+        :type hcp_open_shift_cluster_name: str
+        :param body: The content of the action request. Is either a
+         HcpOpenShiftClusterAdminCredentialRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterAdminCredentialRequest or
+         ~azure.mgmt.redhatopenshifthcp.types.HcpOpenShiftClusterAdminCredentialRequest or IO[bytes]
+        :return: An instance of LROPoller that returns HcpOpenShiftClusterAdminCredential. The
+         HcpOpenShiftClusterAdminCredential is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterAdminCredential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HcpOpenShiftClusterAdminCredential] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1777,6 +1927,8 @@ class HcpOpenShiftClustersOperations:  # pylint: disable=docstring-missing-param
             raw_result = self._request_admin_credential_initial(
                 resource_group_name=resource_group_name,
                 hcp_open_shift_cluster_name=hcp_open_shift_cluster_name,
+                body=body,
+                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,

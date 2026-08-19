@@ -223,11 +223,36 @@ namespace azure.mgmt.redhatopenshifthcp.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
-        @distributed_trace_async
+        @overload
         async def begin_request_admin_credential(
                 self, 
                 resource_group_name: str, 
                 hcp_open_shift_cluster_name: str, 
+                body: HcpOpenShiftClusterAdminCredentialRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[HcpOpenShiftClusterAdminCredential]: ...
+
+        @overload
+        async def begin_request_admin_credential(
+                self, 
+                resource_group_name: str, 
+                hcp_open_shift_cluster_name: str, 
+                body: HcpOpenShiftClusterAdminCredentialRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[HcpOpenShiftClusterAdminCredential]: ...
+
+        @overload
+        async def begin_request_admin_credential(
+                self, 
+                resource_group_name: str, 
+                hcp_open_shift_cluster_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AsyncLROPoller[HcpOpenShiftClusterAdminCredential]: ...
 
@@ -807,6 +832,20 @@ namespace azure.mgmt.redhatopenshifthcp.models
     class azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterAdminCredential(_Model):
         expiration_timestamp: datetime
         kubeconfig: str
+
+
+    class azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterAdminCredentialRequest(_Model):
+        certificate_signing_request: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                certificate_signing_request: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterProperties(_Model):
@@ -1699,11 +1738,36 @@ namespace azure.mgmt.redhatopenshifthcp.operations
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
-        @distributed_trace
+        @overload
         def begin_request_admin_credential(
                 self, 
                 resource_group_name: str, 
                 hcp_open_shift_cluster_name: str, 
+                body: HcpOpenShiftClusterAdminCredentialRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[HcpOpenShiftClusterAdminCredential]: ...
+
+        @overload
+        def begin_request_admin_credential(
+                self, 
+                resource_group_name: str, 
+                hcp_open_shift_cluster_name: str, 
+                body: HcpOpenShiftClusterAdminCredentialRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[HcpOpenShiftClusterAdminCredential]: ...
+
+        @overload
+        def begin_request_admin_credential(
+                self, 
+                resource_group_name: str, 
+                hcp_open_shift_cluster_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> LROPoller[HcpOpenShiftClusterAdminCredential]: ...
 
@@ -2075,6 +2139,11 @@ namespace azure.mgmt.redhatopenshifthcp.types
         systemData: SystemData
         tags: dict[str, str]
         type: str
+
+
+    class azure.mgmt.redhatopenshifthcp.types.HcpOpenShiftClusterAdminCredentialRequest(TypedDict, total=False):
+        key "certificateSigningRequest": str
+        certificateSigningRequest: str
 
 
     class azure.mgmt.redhatopenshifthcp.types.HcpOpenShiftClusterProperties(TypedDict, total=False):

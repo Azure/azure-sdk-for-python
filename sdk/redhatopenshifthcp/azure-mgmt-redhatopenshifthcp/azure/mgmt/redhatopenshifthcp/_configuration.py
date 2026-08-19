@@ -35,7 +35,7 @@ class RedHatOpenShiftClientConfiguration:  # pylint: disable=too-many-instance-a
      None.
     :type cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-06-30-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-09-01-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -49,7 +49,7 @@ class RedHatOpenShiftClientConfiguration:  # pylint: disable=too-many-instance-a
         cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2026-06-30-preview")
+        api_version: str = kwargs.pop("api_version", "2026-09-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

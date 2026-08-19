@@ -264,6 +264,7 @@ class TestRedHatOpenShiftHcpOpenShiftClustersOperationsAsync(AzureMgmtRecordedTe
             await self.client.hcp_open_shift_clusters.begin_request_admin_credential(
                 resource_group_name=resource_group.name,
                 hcp_open_shift_cluster_name="str",
+                body={"certificateSigningRequest": "str"},
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -882,6 +882,38 @@ class HcpOpenShiftClusterAdminCredential(_Model):
     """Expiration timestamp for the kubeconfig's client certificate. Required."""
 
 
+class HcpOpenShiftClusterAdminCredentialRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """HCP cluster admin credential request body.
+
+    :ivar certificate_signing_request: PEM encoded certificate request.
+    :vartype certificate_signing_request: str
+    """
+
+    certificate_signing_request: Optional[str] = rest_field(
+        name="certificateSigningRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """PEM encoded certificate request."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        certificate_signing_request: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class HcpOpenShiftClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HCP cluster properties.
 

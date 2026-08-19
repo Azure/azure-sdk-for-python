@@ -494,6 +494,17 @@ class HcpOpenShiftCluster(TrackedResource):
     """The managed service identities assigned to this resource."""
 
 
+class HcpOpenShiftClusterAdminCredentialRequest(TypedDict, total=False):  # pylint: disable=name-too-long
+    """HCP cluster admin credential request body.
+
+    :ivar certificateSigningRequest: PEM encoded certificate request.
+    :vartype certificateSigningRequest: str
+    """
+
+    certificateSigningRequest: str
+    """PEM encoded certificate request."""
+
+
 class HcpOpenShiftClusterProperties(TypedDict, total=False):
     """HCP cluster properties.
 

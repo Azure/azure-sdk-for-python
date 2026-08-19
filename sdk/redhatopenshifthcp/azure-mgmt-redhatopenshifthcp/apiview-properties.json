@@ -24,6 +24,7 @@
         "azure.mgmt.redhatopenshifthcp.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
         "azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftCluster": "Microsoft.RedHatOpenShift.HcpOpenShiftCluster",
         "azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterAdminCredential": "Microsoft.RedHatOpenShift.HcpOpenShiftClusterAdminCredential",
+        "azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterAdminCredentialRequest": "Microsoft.RedHatOpenShift.HcpOpenShiftClusterAdminCredentialRequest",
         "azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftClusterProperties": "Microsoft.RedHatOpenShift.HcpOpenShiftClusterProperties",
         "azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftVersion": "Microsoft.RedHatOpenShift.HcpOpenShiftVersion",
         "azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftVersionProperties": "Microsoft.RedHatOpenShift.HcpOpenShiftVersionProperties",
@@ -130,5 +131,5 @@
         "azure.mgmt.redhatopenshifthcp.operations.HcpOperatorIdentityRoleSetsOperations.get": "Microsoft.RedHatOpenShift.HcpOperatorIdentityRoleSets.get",
         "azure.mgmt.redhatopenshifthcp.aio.operations.HcpOperatorIdentityRoleSetsOperations.get": "Microsoft.RedHatOpenShift.HcpOperatorIdentityRoleSets.get"
     },
-    "CrossLanguageVersion": "8446fd725b55"
+    "CrossLanguageVersion": "466c1d0d0b9a"
 }
