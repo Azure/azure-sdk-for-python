@@ -40,13 +40,13 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    AgentOptimizationEvaluatorRef,
+    AgentOptimizationJob,
+    AgentOptimizationJobInputs,
+    AgentOptimizationOptions,
+    AgentOptimizationReferenceDatasetInput,
     JobStatus,
-    OptimizationAgentIdentifier as AgentIdentifier,
-    OptimizationEvaluatorRef as EvaluatorRef,
-    OptimizationJob,
-    OptimizationJobInputs,
-    OptimizationOptions,
-    OptimizationReferenceDatasetInput as ReferenceDatasetInput,
+    OptimizedAgentIdentifier,
 )
 
 load_dotenv()
@@ -71,23 +71,16 @@ with (
     # 1. Create an optimization job without SDK polling.
     # ------------------------------------------------------------------
     print("Creating optimization job...")
-    created_jobs: list[OptimizationJob] = []
 
-    def raw_response_hook(response):
-        # Since `polling=False` is set below, it is guaranteed that `raw_response_hook` will be
-        # invoked once on the initial "201 Created" response, and `response` is of type `OptimizationJob`.
-        response.http_response.read()
-        created_jobs.append(OptimizationJob(response.http_response.json()))
-
-    job = OptimizationJob(
-        inputs=OptimizationJobInputs(
-            agent=AgentIdentifier(agent_name=agent_name),
-            train_dataset=ReferenceDatasetInput(
+    job = AgentOptimizationJob(
+        inputs=AgentOptimizationJobInputs(
+            agent=OptimizedAgentIdentifier(agent_name=agent_name),
+            train_dataset=AgentOptimizationReferenceDatasetInput(
                 name=dataset_name,
                 version=dataset_version,
             ),
-            evaluators=[EvaluatorRef(name=evaluator_name)],
-            options=OptimizationOptions(
+            evaluators=[AgentOptimizationEvaluatorRef(name=evaluator_name)],
+            options=AgentOptimizationOptions(
                 max_candidates=3,
                 eval_model=eval_model,
                 optimization_model=optimization_model,
@@ -95,14 +88,14 @@ with (
         )
     )
 
-    project_client.beta.agents.begin_create_optimization_job(
+    poller = project_client.beta.agents.begin_create_optimization_job(
         job=job,
         polling=False,
-        raw_response_hook=raw_response_hook,
     )
-    if not created_jobs:
-        raise RuntimeError("The create operation did not return an optimization job.")
-    job = created_jobs[0]
+    job_id = poller.details["job_id"]
+    if not job_id:
+        raise RuntimeError("The create operation did not return an optimization job ID.")
+    job = project_client.beta.agents.get_optimization_job(job_id=job_id)
     print(f"Created job: id={job.id}, status={job.status}")
 
     # ------------------------------------------------------------------
