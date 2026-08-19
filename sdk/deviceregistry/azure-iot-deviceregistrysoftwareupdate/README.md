@@ -9,7 +9,7 @@
 python -m pip install azure-iot-deviceregistrysoftwareupdate
 ```
 
-#### Prequisites
+#### Prerequisites
 
 - Python 3.10 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
@@ -43,15 +43,23 @@ Use the returned token credential to authenticate the client:
 ## Examples
 
 ```python
->>> from azure.iot.deviceregistrysoftwareupdate import DeviceRegistrySoftwareUpdateClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
+import os
 
->>> client = DeviceRegistrySoftwareUpdateClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> try:
-        <!-- write test code here -->
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
+from azure.iot.deviceregistrysoftwareupdate import DeviceRegistrySoftwareUpdateClient
+
+endpoint = os.environ["DEVICE_REGISTRY_SOFTWARE_UPDATE_ENDPOINT"]
+
+try:
+    with DeviceRegistrySoftwareUpdateClient(
+        endpoint=endpoint,
+        credential=DefaultAzureCredential(),
+    ) as client:
+        for device_class in client.device_classes.list():
+            print(device_class)
+except HttpResponseError as error:
+    print(f"Service request failed: {error}")
 
 ```
 

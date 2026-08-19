@@ -2,11 +2,6 @@
 # kept sorted alphabetically. The import of the central config is required.
 import:
   - ../../.vscode/cspell.json
-
-overrides:
-  - filename: sdk/deviceregistry/azure-iot-deviceregistrysoftwareupdate/_metadata.json
-    words:
-      - sudeviceregistry
-  - filename: sdk/deviceregistry/azure-iot-deviceregistrysoftwareupdate/azure/iot/deviceregistrysoftwareupdate/_utils/model_base.py
-    words:
-      - deser
+words:
+  - deser
+  - sudeviceregistry
