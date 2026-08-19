@@ -1,6 +1,6 @@
 # Release History
 
-## 1.10.0b1 (Unreleased)
+## 1.10.0b1 (2026-08-19)
 
 ### Features Added
 
@@ -9,10 +9,6 @@
   - `FeatureFlagClient` is available from `azure.appconfiguration` (sync) and `azure.appconfiguration.aio` (async).
   - Added the `FeatureFlag` model along with `FeatureFlagConditions`, `FeatureFilter`, `FeatureFlagVariantDefinition`, `FeatureFlagAllocation`, `FeatureFlagTelemetryConfiguration`, `PercentileAllocation`, `UserAllocation`, and `GroupAllocation`, plus the `RequirementType` and `StatusOverride` enums.
   - `FeatureFlagClient.list_labels()` always lists feature-flag labels, while `AzureAppConfigurationClient.list_labels()` always lists key-value labels.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
