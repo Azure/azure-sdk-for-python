@@ -40,6 +40,13 @@ Use the returned token credential to authenticate the client:
 >>> client = DeviceRegistrySoftwareUpdateClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
+## Key concepts
+
+The `DeviceRegistrySoftwareUpdateClient` provides access to two operation groups:
+
+- `device_classes` manages device classes.
+- `software_update` manages software updates and update files.
+
 ## Examples
 
 ```python
@@ -62,6 +69,15 @@ except HttpResponseError as error:
     print(f"Service request failed: {error}")
 
 ```
+
+## Troubleshooting
+
+Service operations raise exceptions defined in
+[Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
+
+## Next steps
+
+Explore the available client operations and models in the [API reference](api.md).
 
 ## Contributing
 
