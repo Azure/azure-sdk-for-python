@@ -393,13 +393,26 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> AgentDetails: ...
 
-        @distributed_trace_async
+        @overload
         async def upload_session_file(
                 self, 
                 agent_name: str, 
                 session_id: str, 
                 content: bytes, 
                 *, 
+                content_type: str = "application/octet-stream", 
+                path: str, 
+                **kwargs: Any
+            ) -> SessionFileWriteResult: ...
+
+        @overload
+        async def upload_session_file(
+                self, 
+                agent_name: str, 
+                session_id: str, 
+                content: IO[bytes], 
+                *, 
+                content_type: str = "application/octet-stream", 
                 path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
@@ -2379,7 +2392,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.A2ATool(Tool, discriminator='a2a'):
-        a2_a_version: Union[str, A2AProtocolVersion]
+        a2a_version: Union[str, A2AProtocolVersion]
         agent_card_path: Optional[str]
         base_url: Optional[str]
         project_connection_id: Optional[str]
@@ -2390,7 +2403,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                a2_a_version: Union[str, A2AProtocolVersion], 
+                a2a_version: Union[str, A2AProtocolVersion], 
                 agent_card_path: Optional[str] = ..., 
                 base_url: Optional[str] = ..., 
                 project_connection_id: Optional[str] = ..., 
@@ -2402,7 +2415,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.A2AToolboxTool(ToolboxTool, discriminator='a2a'):
-        a2_a_version: Union[str, A2AProtocolVersion]
+        a2a_version: Union[str, A2AProtocolVersion]
         agent_card_path: Optional[str]
         base_url: Optional[str]
         description: str
@@ -2416,7 +2429,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                a2_a_version: Union[str, A2AProtocolVersion], 
+                a2a_version: Union[str, A2AProtocolVersion], 
                 agent_card_path: Optional[str] = ..., 
                 base_url: Optional[str] = ..., 
                 description: Optional[str] = ..., 
@@ -3171,10 +3184,15 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.ApplyPatchToolParam(Tool, discriminator='apply_patch'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         type: Literal[ToolType.APPLY_PATCH]
 
         @overload
-        def __init__(self) -> None: ...
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...
+            ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -3845,6 +3863,11 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.CallableToolAllowedCaller(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DIRECT = "direct"
+        PROGRAMMATIC = "programmatic"
+
+
     class azure.ai.projects.models.CaptureStructuredOutputsTool(Tool, discriminator='capture_structured_outputs'):
         description: Optional[str]
         name: Optional[str]
@@ -3993,6 +4016,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.CodeInterpreterTool(Tool, discriminator='code_interpreter'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         container: Optional[Union[str, AutoCodeInterpreterToolParam]]
         description: Optional[str]
         name: Optional[str]
@@ -4003,6 +4027,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
                 container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ..., 
                 description: Optional[str] = ..., 
                 name: Optional[str] = ..., 
@@ -4014,6 +4039,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.CodeInterpreterToolboxTool(ToolboxTool, discriminator='code_interpreter'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         container: Optional[Union[str, AutoCodeInterpreterToolParam]]
         description: str
         name: str
@@ -4024,6 +4050,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
                 container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ..., 
                 description: Optional[str] = ..., 
                 name: Optional[str] = ..., 
@@ -4424,6 +4451,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.CustomToolParam(Tool, discriminator='custom'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         defer_loading: Optional[bool]
         description: Optional[str]
         format: Optional[CustomToolParamFormat]
@@ -4434,6 +4462,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
                 defer_loading: Optional[bool] = ..., 
                 description: Optional[str] = ..., 
                 format: Optional[CustomToolParamFormat] = ..., 
@@ -5883,6 +5912,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.FunctionShellToolParam(Tool, discriminator='shell'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         description: Optional[str]
         environment: Optional[FunctionShellToolParamEnvironment]
         name: Optional[str]
@@ -5893,6 +5923,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
                 description: Optional[str] = ..., 
                 environment: Optional[FunctionShellToolParamEnvironment] = ..., 
                 name: Optional[str] = ..., 
@@ -5954,9 +5985,11 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.FunctionTool(Tool, discriminator='function'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         defer_loading: Optional[bool]
         description: Optional[str]
         name: str
+        output_schema: Optional[dict[str, Any]]
         parameters: dict[str, Any]
         strict: bool
         type: Literal[ToolType.FUNCTION]
@@ -5965,9 +5998,11 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
                 defer_loading: Optional[bool] = ..., 
                 description: Optional[str] = ..., 
                 name: str, 
+                output_schema: Optional[dict[str, Any]] = ..., 
                 parameters: dict[str, Any], 
                 strict: bool
             ) -> None: ...
@@ -5977,9 +6012,11 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.FunctionToolParam(_Model):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         defer_loading: Optional[bool]
         description: Optional[str]
         name: str
+        output_schema: Optional[dict[str, Any]]
         parameters: Optional[EmptyModelParam]
         strict: Optional[bool]
         type: Literal["function"]
@@ -5988,9 +6025,11 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
                 defer_loading: Optional[bool] = ..., 
                 description: Optional[str] = ..., 
                 name: str, 
+                output_schema: Optional[dict[str, Any]] = ..., 
                 parameters: Optional[EmptyModelParam] = ..., 
                 strict: Optional[bool] = ...
             ) -> None: ...
@@ -6568,6 +6607,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.MCPTool(Tool, discriminator='mcp'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         allowed_tools: Optional[Union[list[str], MCPToolFilter]]
         authorization: Optional[str]
         connector_id: Optional[Literal["connector_dropbox", "connector_gmail", "connector_googlecalendar", "connector_googledrive", "connector_microsoftteams", "connector_outlookcalendar", "connector_outlookemail", "connector_sharepoint"]]
@@ -6579,12 +6619,14 @@ namespace azure.ai.projects.models
         server_label: str
         server_url: Optional[str]
         tool_configs: Optional[dict[str, ToolConfig]]
+        tunnel_id: Optional[str]
         type: Literal[ToolType.MCP]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
                 allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ..., 
                 authorization: Optional[str] = ..., 
                 connector_id: Optional[Literal[connector_dropbox, connector_gmail, connector_googlecalendar, connector_googledrive, connector_microsoftteams, connector_outlookcalendar, connector_outlookemail, connector_sharepoint]] = ..., 
@@ -6595,7 +6637,8 @@ namespace azure.ai.projects.models
                 server_description: Optional[str] = ..., 
                 server_label: str, 
                 server_url: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                tunnel_id: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -6635,6 +6678,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.MCPToolboxTool(ToolboxTool, discriminator='mcp'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         allowed_tools: Optional[Union[list[str], MCPToolFilter]]
         authorization: Optional[str]
         connector_id: Optional[Literal["connector_dropbox", "connector_gmail", "connector_googlecalendar", "connector_googledrive", "connector_microsoftteams", "connector_outlookcalendar", "connector_outlookemail", "connector_sharepoint"]]
@@ -6648,12 +6692,14 @@ namespace azure.ai.projects.models
         server_label: str
         server_url: Optional[str]
         tool_configs: dict[str, ToolConfig]
+        tunnel_id: Optional[str]
         type: Literal[ToolboxToolType.MCP]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
                 allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ..., 
                 authorization: Optional[str] = ..., 
                 connector_id: Optional[Literal[connector_dropbox, connector_gmail, connector_googlecalendar, connector_googledrive, connector_microsoftteams, connector_outlookcalendar, connector_outlookemail, connector_sharepoint]] = ..., 
@@ -6666,7 +6712,8 @@ namespace azure.ai.projects.models
                 server_description: Optional[str] = ..., 
                 server_label: str, 
                 server_url: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                tunnel_id: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -7537,6 +7584,16 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ProgrammaticToolCallingParam(Tool, discriminator='programmatic_tool_calling'):
+        type: Literal[ToolType.PROGRAMMATIC_TOOL_CALLING]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.PromotionInfo(_Model):
         agent_name: str
         agent_version: str
@@ -7735,21 +7792,40 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.Reasoning(_Model):
-        effort: Optional[Literal["none", "minimal", "low", "medium", "high", "xhigh"]]
+        context: Optional[Literal["auto", "current_turn", "all_turns"]]
+        effort: Optional[Union[str, ReasoningEffort]]
         generate_summary: Optional[Literal["auto", "concise", "detailed"]]
+        mode: Optional[Union[str, ReasoningModeEnum]]
         summary: Optional[Literal["auto", "concise", "detailed"]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                effort: Optional[Literal[none, minimal, low, medium, high, xhigh]] = ..., 
+                context: Optional[Literal[auto, current_turn, all_turns]] = ..., 
+                effort: Optional[Union[str, ReasoningEffort]] = ..., 
                 generate_summary: Optional[Literal[auto, concise, detailed]] = ..., 
+                mode: Optional[Union[str, ReasoningModeEnum]] = ..., 
                 summary: Optional[Literal[auto, concise, detailed]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HIGH = "high"
+        LOW = "low"
+        MAX = "max"
+        MEDIUM = "medium"
+        MINIMAL = "minimal"
+        NONE = "none"
+        XHIGH = "xhigh"
+
+
+    class azure.ai.projects.models.ReasoningModeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PRO = "pro"
+        STANDARD = "standard"
 
 
     class azure.ai.projects.models.RecurrenceSchedule(_Model):
@@ -7875,12 +7951,14 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.ResponseUsageInputTokensDetails(_Model):
+        cache_write_tokens: int
         cached_tokens: int
 
         @overload
         def __init__(
                 self, 
                 *, 
+                cache_write_tokens: int, 
                 cached_tokens: int
             ) -> None: ...
 
@@ -8502,6 +8580,16 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.SpecificProgrammaticToolCallingParam(ToolChoiceParam, discriminator='programmatic_tool_calling'):
+        type: Literal[ToolChoiceParamType.PROGRAMMATIC_TOOL_CALLING]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.StructuredInputDefinition(_Model):
         default_value: Optional[Any]
         description: Optional[str]
@@ -8909,6 +8997,7 @@ namespace azure.ai.projects.models
         FUNCTION = "function"
         IMAGE_GENERATION = "image_generation"
         MCP = "mcp"
+        PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"
         SHELL = "shell"
         WEB_SEARCH_PREVIEW = "web_search_preview"
         WEB_SEARCH_PREVIEW_2025_03_11 = "web_search_preview_2025_03_11"
@@ -9052,6 +9141,7 @@ namespace azure.ai.projects.models
         MEMORY_SEARCH_PREVIEW = "memory_search_preview"
         NAMESPACE = "namespace"
         OPENAPI = "openapi"
+        PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"
         SHAREPOINT_GROUNDING_PREVIEW = "sharepoint_grounding_preview"
         SHELL = "shell"
         TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
@@ -9972,13 +10062,26 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> AgentDetails: ...
 
-        @distributed_trace
+        @overload
         def upload_session_file(
                 self, 
                 agent_name: str, 
                 session_id: str, 
                 content: bytes, 
                 *, 
+                content_type: str = "application/octet-stream", 
+                path: str, 
+                **kwargs: Any
+            ) -> SessionFileWriteResult: ...
+
+        @overload
+        def upload_session_file(
+                self, 
+                agent_name: str, 
+                session_id: str, 
+                content: IO[bytes], 
+                *, 
+                content_type: str = "application/octet-stream", 
                 path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
