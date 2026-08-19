@@ -219,7 +219,7 @@ class FeatureFlagClient:
         *,
         accept_datetime: Optional[Union[datetime, str]] = None,
         **kwargs: Any,
-    ) -> Optional["FeatureFlag"]:
+    ) -> Optional[FeatureFlag]:
         """
         Get a feature flag from the service, identified by `name` and optionally `label`.
 
@@ -260,7 +260,7 @@ class FeatureFlagClient:
             return None
 
     @distributed_trace_async
-    async def add_feature_flag(self, feature_flag: "FeatureFlag", **kwargs: Any) -> "FeatureFlag":
+    async def add_feature_flag(self, feature_flag: FeatureFlag, **kwargs: Any) -> FeatureFlag:
         """Add a FeatureFlag instance into the Azure App Configuration service.
 
         :param feature_flag: The FeatureFlag object to be added
@@ -294,12 +294,12 @@ class FeatureFlagClient:
     @distributed_trace_async
     async def set_feature_flag(
         self,
-        feature_flag: "FeatureFlag",
+        feature_flag: FeatureFlag,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         *,
         etag: Optional[str] = None,
         **kwargs: Any,
-    ) -> "FeatureFlag":
+    ) -> FeatureFlag:
         """
         Create or update a feature flag via the dedicated feature flag endpoint.
 
@@ -315,15 +315,12 @@ class FeatureFlagClient:
         """
         error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
 
-        if etag is None:
-            etag = feature_flag.etag
-
         generated_feature_flag = feature_flag._to_generated()
         result = await self._impl.feature_flag_client.put_feature_flag(
             name=feature_flag.name,
             entity=generated_feature_flag,
             label=feature_flag.label,
-            etag=etag,
+            etag=etag or feature_flag.etag,
             match_condition=match_condition,
             error_map=error_map,
             **kwargs,
@@ -340,7 +337,7 @@ class FeatureFlagClient:
         etag: Optional[str] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
-    ) -> Union[None, "FeatureFlag"]:
+    ) -> Union[None, FeatureFlag]:
         """Delete a FeatureFlag if it exists
 
         :param name: The feature flag name to delete
@@ -391,7 +388,7 @@ class FeatureFlagClient:
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, FeatureFlagFields]]] = None,
         **kwargs: Any,
-    ) -> AsyncItemPaged["FeatureFlag"]:
+    ) -> AsyncItemPaged[FeatureFlag]:
         """
         Find the FeatureFlag revision history, optionally filtered by name, label, and tags.
 

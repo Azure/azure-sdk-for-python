@@ -208,7 +208,7 @@ class FeatureFlagClient:
         *,
         accept_datetime: Optional[Union[datetime, str]] = None,
         **kwargs: Any,
-    ) -> Union[None, "FeatureFlag"]:
+    ) -> Union[None, FeatureFlag]:
         """Get a FeatureFlag from Azure App Configuration service
 
         :param name: The feature flag name to retrieve
@@ -251,7 +251,7 @@ class FeatureFlagClient:
             return None
 
     @distributed_trace
-    def add_feature_flag(self, feature_flag: "FeatureFlag", **kwargs: Any) -> "FeatureFlag":
+    def add_feature_flag(self, feature_flag: FeatureFlag, **kwargs: Any) -> FeatureFlag:
         """Add a FeatureFlag instance into the Azure App Configuration service.
 
         :param feature_flag: The FeatureFlag object to be added
@@ -285,12 +285,12 @@ class FeatureFlagClient:
     @distributed_trace
     def set_feature_flag(
         self,
-        feature_flag: "FeatureFlag",
+        feature_flag: FeatureFlag,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         *,
         etag: Optional[str] = None,
         **kwargs: Any,
-    ) -> "FeatureFlag":
+    ) -> FeatureFlag:
         """Add or update a FeatureFlag.
         If the feature flag identified by name and label does not exist, this is a create.
         Otherwise this is an update.
@@ -345,7 +345,7 @@ class FeatureFlagClient:
         etag: Optional[str] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
-    ) -> Union[None, "FeatureFlag"]:
+    ) -> Union[None, FeatureFlag]:
         """Delete a FeatureFlag if it exists
 
         :param name: The feature flag name to delete
@@ -395,7 +395,7 @@ class FeatureFlagClient:
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, FeatureFlagFields]]] = None,
         **kwargs: Any,
-    ) -> ItemPaged["FeatureFlag"]:
+    ) -> ItemPaged[FeatureFlag]:
         """
         Find the FeatureFlag revision history, optionally filtered by name, label, and tags.
 
