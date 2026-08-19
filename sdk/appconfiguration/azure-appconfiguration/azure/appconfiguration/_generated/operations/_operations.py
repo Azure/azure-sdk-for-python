@@ -32,7 +32,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import AzureAppConfigurationClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -41,7 +41,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -263,7 +262,7 @@ def build_feature_flag_client_put_feature_flag_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop(
         "Accept",
@@ -284,7 +283,8 @@ def build_feature_flag_client_put_feature_flag_request(  # pylint: disable=name-
         _params["label"] = _SERIALIZER.query("label", label, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     if sync_token is not None:
         _headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1260,7 +1260,7 @@ def build_azure_app_configuration_check_revisions_request(  # pylint: disable=na
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class FeatureFlagClientOperations:
+class FeatureFlagClientOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2971,7 +2971,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     def _put_key_value(
         self,
         key: str,
-        entity: Optional[JSON] = None,
+        entity: Optional[_types.KeyValue] = None,
         *,
         content_type: str,
         label: Optional[str] = None,
@@ -2998,7 +2998,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     def _put_key_value(
         self,
         key: str,
-        entity: Optional[Union[_models.KeyValue, JSON, IO[bytes]]] = None,
+        entity: Optional[Union[_models.KeyValue, _types.KeyValue, IO[bytes]]] = None,
         *,
         label: Optional[str] = None,
         sync_token: Optional[str] = None,
@@ -3012,9 +3012,10 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
 
         :param key: The key of the key-value to create. Required.
         :type key: str
-        :param entity: The key-value to create. Is one of the following types: KeyValue, JSON,
-         IO[bytes] Default value is None.
-        :type entity: ~azure.appconfiguration._generated.models.KeyValue or JSON or IO[bytes]
+        :param entity: The key-value to create. Is either a KeyValue type or a IO[bytes] type. Default
+         value is None.
+        :type entity: ~azure.appconfiguration._generated.models.KeyValue or
+         ~azure.appconfiguration._generated.types.KeyValue or IO[bytes]
         :keyword label: The label of the key-value to create. Default value is None.
         :paramtype label: str
         :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
@@ -3687,7 +3688,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     def _create_snapshot_initial(
         self,
         name: str,
-        entity: Union[_models.Snapshot, JSON, IO[bytes]],
+        entity: Union[_models.Snapshot, _types.Snapshot, IO[bytes]],
         *,
         sync_token: Optional[str] = None,
         **kwargs: Any
@@ -3787,7 +3788,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
 
     @overload
     def begin_create_snapshot(
-        self, name: str, entity: JSON, *, content_type: str, sync_token: Optional[str] = None, **kwargs: Any
+        self, name: str, entity: _types.Snapshot, *, content_type: str, sync_token: Optional[str] = None, **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
@@ -3796,7 +3797,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
         :param name: The name of the key-value snapshot to create. Required.
         :type name: str
         :param entity: The key-value snapshot to create. Required.
-        :type entity: JSON
+        :type entity: ~azure.appconfiguration._generated.types.Snapshot
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Required.
         :paramtype content_type: str
@@ -3838,7 +3839,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     def begin_create_snapshot(
         self,
         name: str,
-        entity: Union[_models.Snapshot, JSON, IO[bytes]],
+        entity: Union[_models.Snapshot, _types.Snapshot, IO[bytes]],
         *,
         sync_token: Optional[str] = None,
         **kwargs: Any
@@ -3849,9 +3850,10 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
 
         :param name: The name of the key-value snapshot to create. Required.
         :type name: str
-        :param entity: The key-value snapshot to create. Is one of the following types: Snapshot, JSON,
-         IO[bytes] Required.
-        :type entity: ~azure.appconfiguration._generated.models.Snapshot or JSON or IO[bytes]
+        :param entity: The key-value snapshot to create. Is either a Snapshot type or a IO[bytes] type.
+         Required.
+        :type entity: ~azure.appconfiguration._generated.models.Snapshot or
+         ~azure.appconfiguration._generated.types.Snapshot or IO[bytes]
         :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
          None.
         :paramtype sync_token: str
@@ -3937,7 +3939,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     def _update_snapshot(
         self,
         name: str,
-        entity: JSON,
+        entity: _types.SnapshotUpdateParameters,
         *,
         content_type: str,
         sync_token: Optional[str] = None,
@@ -3962,7 +3964,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     def _update_snapshot(
         self,
         name: str,
-        entity: Union[_models.SnapshotUpdateParameters, JSON, IO[bytes]],
+        entity: Union[_models.SnapshotUpdateParameters, _types.SnapshotUpdateParameters, IO[bytes]],
         *,
         sync_token: Optional[str] = None,
         etag: Optional[str] = None,
@@ -3975,10 +3977,10 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
 
         :param name: The name of the key-value snapshot to update. Required.
         :type name: str
-        :param entity: The parameters used to update the snapshot. Is one of the following types:
-         SnapshotUpdateParameters, JSON, IO[bytes] Required.
-        :type entity: ~azure.appconfiguration._generated.models.SnapshotUpdateParameters or JSON or
-         IO[bytes]
+        :param entity: The parameters used to update the snapshot. Is either a SnapshotUpdateParameters
+         type or a IO[bytes] type. Required.
+        :type entity: ~azure.appconfiguration._generated.models.SnapshotUpdateParameters or
+         ~azure.appconfiguration._generated.types.SnapshotUpdateParameters or IO[bytes]
         :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
          None.
         :paramtype sync_token: str

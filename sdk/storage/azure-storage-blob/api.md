@@ -1389,6 +1389,7 @@ namespace azure.storage.blob
         delete: bool = False
         delete_previous_version: bool = False
         execute: Optional[bool]
+        list: Optional[bool]
         move: Optional[bool]
         permanent_delete: Optional[bool]
         read: bool = False
@@ -1407,6 +1408,7 @@ namespace azure.storage.blob
                 tag: bool = False, 
                 *, 
                 execute: Optional[bool] = ..., 
+                list: Optional[bool] = ..., 
                 move: Optional[bool] = ..., 
                 permanent_delete: Optional[bool] = ..., 
                 set_immutability_policy: Optional[bool] = ..., 
@@ -1779,7 +1781,9 @@ namespace azure.storage.blob
         def list_blob_names(
                 self, 
                 *, 
+                end_before: Optional[str] = ..., 
                 name_starts_with: Optional[str] = ..., 
+                response_format: Literal[auto, xml, arrow] = ..., 
                 results_per_page: Optional[int] = ..., 
                 start_from: Optional[str] = ..., 
                 timeout: Optional[int] = ..., 
@@ -1792,6 +1796,8 @@ namespace azure.storage.blob
                 name_starts_with: Optional[str] = None, 
                 include: Optional[Union[str, List[str]]] = None, 
                 *, 
+                end_before: Optional[str] = ..., 
+                response_format: Literal[auto, xml, arrow] = ..., 
                 results_per_page: Optional[int] = ..., 
                 start_from: Optional[str] = ..., 
                 timeout: Optional[int] = ..., 
@@ -1883,6 +1889,8 @@ namespace azure.storage.blob
                 include: Optional[Union[List[str], str]] = None, 
                 delimiter: str = "/", 
                 *, 
+                end_before: Optional[str] = ..., 
+                response_format: Literal[auto, xml, arrow] = ..., 
                 start_from: Optional[str] = ..., 
                 timeout: Optional[int] = ..., 
                 **kwargs: Any
@@ -4425,7 +4433,9 @@ namespace azure.storage.blob.aio
         def list_blob_names(
                 self, 
                 *, 
+                end_before: Optional[str] = ..., 
                 name_starts_with: Optional[str] = ..., 
+                response_format: Literal[auto, xml, arrow] = ..., 
                 results_per_page: Optional[int] = ..., 
                 start_from: Optional[str] = ..., 
                 timeout: Optional[int] = ..., 
@@ -4438,6 +4448,8 @@ namespace azure.storage.blob.aio
                 name_starts_with: Optional[str] = None, 
                 include: Optional[Union[str, List[str]]] = None, 
                 *, 
+                end_before: Optional[str] = ..., 
+                response_format: Literal[auto, xml, arrow] = ..., 
                 results_per_page: Optional[int] = ..., 
                 start_from: Optional[str] = ..., 
                 timeout: Optional[int] = ..., 
@@ -4529,6 +4541,8 @@ namespace azure.storage.blob.aio
                 include: Optional[Union[List[str], str]] = None, 
                 delimiter: str = "/", 
                 *, 
+                end_before: Optional[str] = ..., 
+                response_format: Literal[auto, xml, arrow] = ..., 
                 start_from: Optional[str] = ..., 
                 timeout: Optional[int] = ..., 
                 **kwargs: Any

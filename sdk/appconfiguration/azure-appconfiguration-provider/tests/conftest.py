@@ -74,7 +74,8 @@ def add_sanitizers(test_proxy):
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
     #  - AZSDK3447: $.key
-    remove_batch_sanitizers(["AZSDK3430", "AZSDK3447"])
+    #  - AZSDK3493: $..name (feature flag names, e.g. from the /ff resource, are not sensitive and are asserted on)
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3447", "AZSDK3493"])
 
 
 @pytest.fixture(autouse=True)

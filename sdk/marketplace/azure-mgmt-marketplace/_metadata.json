@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2025-01-01",
+  "apiVersions": {
+    "Microsoft.Marketplace": "2025-01-01"
+  },
+  "commit": "801a60cdad2669e8f824fedfbabbfe7f7093b940",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/marketplace/resource-manager/Microsoft.Marketplace/Marketplace",
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
+}

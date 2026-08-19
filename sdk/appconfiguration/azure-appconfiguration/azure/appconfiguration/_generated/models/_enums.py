@@ -83,12 +83,12 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RequirementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Requirement Type."""
+    """Controls how multiple feature-flag filters are combined."""
 
     ANY = "Any"
-    """Any."""
+    """Enables the feature flag when any filter matches."""
     ALL = "All"
-    """All."""
+    """Enables the feature flag only when all filters match."""
 
 
 class SnapshotComposition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -146,8 +146,8 @@ class StatusOverride(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status Override."""
 
     NONE = "None"
-    """None."""
+    """No status override."""
     ENABLED = "Enabled"
-    """Enabled."""
+    """Overrides the status to enabled."""
     DISABLED = "Disabled"
-    """Disabled."""
+    """Overrides the status to disabled."""

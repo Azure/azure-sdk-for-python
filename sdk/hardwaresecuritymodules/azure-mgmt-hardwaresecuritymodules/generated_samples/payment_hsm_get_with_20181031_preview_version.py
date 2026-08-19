@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-31/PaymentHsm_Get_With_2018-10-31Preview_Version.json
+# x-ms-original-file: 2025-12-01-preview/PaymentHsm_Get_With_2018-10-31Preview_Version.json
 if __name__ == "__main__":
     main()

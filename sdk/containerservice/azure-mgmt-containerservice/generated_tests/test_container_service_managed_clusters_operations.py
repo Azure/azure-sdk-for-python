@@ -391,6 +391,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                             "outboundIPs": {"publicIPs": [{"id": "str"}]},
                         },
                         "loadBalancerSku": "str",
+                        "natGatewayId": "str",
                         "natGatewayProfile": {
                             "effectiveOutboundIPs": [{"id": "str"}],
                             "idleTimeoutInMinutes": 0,
@@ -452,7 +453,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                     "provisioningState": "str",
                     "publicNetworkAccess": "str",
                     "resourceUID": "str",
-                    "schedulerProfile": {"schedulerInstanceProfiles": {"upstream": {"schedulerConfigMode": "str"}}},
+                    "schedulerProfile": {"upstream": {"schedulerConfigMode": "str"}},
                     "securityProfile": {
                         "azureKeyVaultKms": {
                             "enabled": bool,

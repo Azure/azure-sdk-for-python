@@ -23,7 +23,7 @@ from ._models import (
     AsyncConfigurationSettingPaged,
     FeatureFlag,
     FeatureFlagConditions,
-    FeatureFlagFilter,
+    FeatureFilter,
     FeatureFlagVariantDefinition,
     FeatureFlagAllocation,
     FeatureFlagTelemetryConfiguration,
@@ -35,10 +35,13 @@ from ._models import (
 )
 from ._generated.models import (
     SnapshotStatus,
+    FeatureFlagFields,
     LabelFields,
+    RequirementType,
     SnapshotFields,
     ConfigurationSettingFields,
     SnapshotComposition,
+    StatusOverride,
 )
 from ._version import VERSION
 from ._azure_appconfiguration_error import ResourceReadOnlyError
@@ -55,7 +58,9 @@ __all__ = [
     "SnapshotStatus",
     "SnapshotFields",
     "SnapshotComposition",
+    "FeatureFlagFields",
     "LabelFields",
+    "RequirementType",
     "ConfigurationSettingFields",
     "ConfigurationSettingsFilter",
     "ConfigurationSettingLabel",
@@ -63,7 +68,7 @@ __all__ = [
     "AsyncConfigurationSettingPaged",
     "FeatureFlag",
     "FeatureFlagConditions",
-    "FeatureFlagFilter",
+    "FeatureFilter",
     "FeatureFlagVariantDefinition",
     "FeatureFlagAllocation",
     "FeatureFlagTelemetryConfiguration",
@@ -72,6 +77,7 @@ __all__ = [
     "PercentileAllocation",
     "UserAllocation",
     "GroupAllocation",
+    "StatusOverride",
     "FILTER_PERCENTAGE",
     "FILTER_TARGETING",
     "FILTER_TIME_WINDOW",

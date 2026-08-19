@@ -9,7 +9,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union, cast
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeResource
 from azure.ai.ml._schema.compute.compute import ComputeSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
@@ -215,10 +215,10 @@ class NetworkSettings:
     """Network settings for a compute resource. If the workspace and VNet are in different resource groups,
     please provide the full URI for subnet and leave vnet_name as None.
 
-    :param vnet_name: The virtual network name.
-    :type vnet_name: Optional[str]
-    :param subnet: The subnet name.
-    :type subnet: Optional[str]
+    :keyword vnet_name: The virtual network name.
+    :paramtype vnet_name: Optional[str]
+    :keyword subnet: The subnet name.
+    :paramtype subnet: Optional[str]
 
     .. admonition:: Example:
 

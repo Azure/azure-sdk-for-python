@@ -25,13 +25,19 @@ from .exceptions import (
     OperationTimeoutError,
     SessionLockLostError,
 )
-from ._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
+from ._common.utils import (
+    create_properties,
+    strip_protocol_from_uri,
+    parse_sas_credential,
+    get_server_timeout_ms,
+)
 from ._common.constants import (
     CONTAINER_PREFIX,
     MANAGEMENT_PATH_SUFFIX,
     TOKEN_TYPE_SASTOKEN,
     MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
     ASSOCIATEDLINKPROPERTYNAME,
+    REQUEST_RESPONSE_TIMEOUT,
 )
 
 if TYPE_CHECKING:
@@ -252,8 +258,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
 
-        # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace: str = strip_protocol_from_uri(fully_qualified_namespace.strip())
+        # Keep the port for the non-TLS emulator; strip scheme/port/path otherwise.
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(
+            fully_qualified_namespace.strip(), strip_port=kwargs.get("use_tls", True)
+        )
         self._entity_name = entity_name
 
         subscription_name = kwargs.get("subscription_name")
@@ -496,6 +504,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 }
             except AttributeError:
                 pass
+
+        application_properties[REQUEST_RESPONSE_TIMEOUT] = self._amqp_transport.AMQP_UINT_VALUE(
+            get_server_timeout_ms(timeout)
+        )
 
         mgmt_msg = self._amqp_transport.create_mgmt_msg(
             message=message,

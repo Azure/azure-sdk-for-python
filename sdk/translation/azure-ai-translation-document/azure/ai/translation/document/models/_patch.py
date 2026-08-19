@@ -52,7 +52,7 @@ class DocumentTranslationInput:
         (see https://aka.ms/azsdk/documenttranslation/managed-identity).
     :param targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
-    :type targets: list[~azure.ai.translation.document.TranslationTarget]
+    :type targets: list[~azure.ai.translation.document.models.TranslationTarget]
     :keyword Optional[str] source_language: Language code for the source documents.
         If none is specified, the source language will be auto-detected for each document.
     :keyword Optional[str] prefix: A case-sensitive prefix string to filter documents in the source path for
@@ -62,7 +62,7 @@ class DocumentTranslationInput:
         translation. This is most often use for file extensions.
     :keyword storage_type: Storage type of the input documents source string. Possible values
         include: "Folder", "File".
-    :paramtype storage_type: Optional[str or ~azure.ai.translation.document.StorageInputType]
+    :paramtype storage_type: Optional[str or ~azure.ai.translation.document.models.StorageInputType]
     :keyword Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
@@ -149,6 +149,9 @@ class TranslationTarget(GeneratedTranslationTarget):
     :vartype target_url: str
     :ivar category_id: Category / custom system for translation request.
     :vartype category_id: str
+    :ivar deployment_name: Deployment name of the custom translation model for the translation
+     request.
+    :vartype deployment_name: str
     :ivar language: Target Language. Required.
     :vartype language: str
     :ivar glossaries: List of Glossary.
@@ -159,8 +162,8 @@ class TranslationTarget(GeneratedTranslationTarget):
 
     target_url: str
     """Location of the folder / container with your documents. Required."""
-    category_id: Optional[str]
-    """Category / custom system for translation request."""
+    deployment_name: Optional[str]
+    """Deployment name of the custom translation model for the translation request."""
     language: str
     """Target Language. Required."""
     glossaries: Optional[List["TranslationGlossary"]]
@@ -175,6 +178,7 @@ class TranslationTarget(GeneratedTranslationTarget):
         language: str,
         *,
         category_id: Optional[str] = None,
+        deployment_name: Optional[str] = None,
         glossaries: Optional[List["TranslationGlossary"]] = None,
         storage_source: Optional[Union[str, "_models.TranslationStorageSource"]] = None,
     ): ...
@@ -191,8 +195,23 @@ class TranslationTarget(GeneratedTranslationTarget):
         if not target and len(args) == 2:
             kwargs["target_url"] = args[0]
             kwargs["language"] = args[1]
+            args = ()
+        if "category_id" in kwargs:
+            kwargs["category"] = kwargs.pop("category_id")
 
         super().__init__(*args, **kwargs)
+
+    @property
+    def category_id(self) -> Optional[str]:
+        """Category / custom system for translation request.
+
+        :rtype: str or None
+        """
+        return self.category
+
+    @category_id.setter
+    def category_id(self, value: Optional[str]) -> None:
+        self.category = value
 
 
 class TranslationGlossary(GeneratedTranslationGlossary):
@@ -251,6 +270,7 @@ class TranslationGlossary(GeneratedTranslationGlossary):
         if not glossary and len(args) == 2:
             kwargs["glossary_url"] = args[0]
             kwargs["file_format"] = args[1]
+            args = ()
 
         super().__init__(*args, **kwargs)
 
@@ -281,6 +301,17 @@ class DocumentStatus(GeneratedDocumentStatus):
     :vartype id: str
     :ivar characters_charged: Character charged by the API.
     :vartype characters_charged: int
+    :ivar total_image_scans_succeeded: Total image scans succeeded.
+    :vartype total_image_scans_succeeded: int
+    :ivar total_image_scans_failed: Total image scans failed.
+    :vartype total_image_scans_failed: int
+    :ivar images_charged: Images charged by the API.
+    :vartype images_charged: int
+    :ivar image_characters_detected: Characters detected within images.
+    :vartype image_characters_detected: int
+    :ivar deployment_name: Deployment name of the custom translation model used for the
+     translation.
+    :vartype deployment_name: str
     """
 
     translated_document_url: Optional[str]
@@ -306,6 +337,16 @@ class DocumentStatus(GeneratedDocumentStatus):
     """Document Id. Required."""
     characters_charged: Optional[int]
     """Character charged by the API."""
+    total_image_scans_succeeded: Optional[int]
+    """Total image scans succeeded."""
+    total_image_scans_failed: Optional[int]
+    """Total image scans failed."""
+    images_charged: Optional[int]
+    """Images charged by the API."""
+    image_characters_detected: Optional[int]
+    """Characters detected within images."""
+    deployment_name: Optional[str]
+    """Deployment name of the custom translation model used for the translation."""
 
     @overload
     def __init__(
@@ -321,6 +362,11 @@ class DocumentStatus(GeneratedDocumentStatus):
         translated_document_url: Optional[str] = None,
         error: Optional["_models.DocumentTranslationError"] = None,
         characters_charged: Optional[int] = None,
+        total_image_scans_succeeded: Optional[int] = None,
+        total_image_scans_failed: Optional[int] = None,
+        images_charged: Optional[int] = None,
+        image_characters_detected: Optional[int] = None,
+        deployment_name: Optional[str] = None,
     ): ...
 
     @overload

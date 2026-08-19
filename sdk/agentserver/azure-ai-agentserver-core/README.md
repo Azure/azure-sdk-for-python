@@ -60,6 +60,36 @@ async def handle(request):
 app.run()
 ```
 
+### Per-request identity (multi-user sessions)
+
+On container protocol `2.0.0` a single agent session can serve **multiple users**. Each request carries `x-agent-user-id` (the user — partition state by it) and an opaque `x-agent-foundry-call-id` (the per-request caller identity). Read both via `get_request_context()`; the SDK forwards **only** the call ID on outbound Foundry calls — `x-agent-user-id` is never echoed. Forwarding the call ID lets a tool server resolve which user made the request and act on their behalf.
+
+```python
+import os
+
+import httpx
+from azure.ai.agentserver.core import get_request_context
+
+
+def foundry_headers() -> dict[str, str]:
+    # Echoes x-agent-foundry-call-id only; x-agent-user-id is never forwarded.
+    return dict(get_request_context().platform_headers())
+
+
+async def call_toolbox(query: str) -> str:
+    user_id = get_request_context().user_id  # for the container's OWN per-user state
+    # Attach the call ID PER CALL — a toolbox MCP session is long-lived and serves many
+    # users/turns, so never bake one call's ID into the client's static headers.
+    async with httpx.AsyncClient() as mcp:
+        resp = await mcp.post(
+            f"{os.environ['FOUNDRY_PROJECT_ENDPOINT']}/toolboxes/github/mcp",
+            headers={"Authorization": f"Bearer {get_agent_token()}", **foundry_headers()},
+            json={"jsonrpc": "2.0", "method": "tools/call",
+                  "params": {"name": "list_my_assigned_issues", "arguments": {}}},
+        )
+    return resp.text  # the toolbox resolved the caller from the call ID and acted as that user
+```
+
 ### Subclassing AgentServerHost
 
 For custom protocol implementations, subclass `AgentServerHost` and add routes:
@@ -96,6 +126,39 @@ async def on_shutdown():
     pass
 ```
 
+### Durable state storage
+
+`FoundryStateStore` is a durable, server-backed key-value store for agent state
+— session memory, per-user preferences, counters, and checkpoints — bound to
+one explicit, caller-named store, with single-item optimistic concurrency,
+tag-filtered key listing, and store-level TTL.
+
+```python
+from azure.ai.agentserver.core.storage import FoundryStateStore
+
+# Endpoint and credential resolve from FOUNDRY_PROJECT_ENDPOINT + DefaultAzureCredential.
+# get_or_create() resolves (or creates, on first use) the store in one call.
+store = await FoundryStateStore.get_or_create("checkpoints/thread-abc", user_isolation=True)
+async with store:
+    await store.set_item("step-1", {"done": False})
+    item = await store.get_item("step-1")
+    print(item.value)  # {"done": False}
+```
+
+> The default credential path uses `DefaultAzureCredential`, which requires the
+> optional `azure-identity` package (`pip install azure-identity`). Alternatively,
+> pass any `azure.core.credentials_async.AsyncTokenCredential` explicitly to
+> `get_or_create()` and `azure-identity` is not needed.
+
+Reads return typed `StateStoreItem` values; writes return typed item metadata and use
+single-item `If-Match` concurrency. Session/conversation scoping is expressed in
+the store name itself, and item expiry is controlled by the store's
+`item_ttl_seconds` setting. See the [Durable State Store Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/state-store-guide.md)
+for the full API, the store lifecycle, and common gotchas, and
+[state_store_sample.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/samples/state_store_sample.py)
+for a runnable end-to-end example.
+
+
 ### Configuring tracing
 
 Tracing is enabled automatically when an Application Insights connection string is available:
@@ -112,6 +175,49 @@ Or via environment variable:
 export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
 python my_agent.py
 ```
+
+OTLP export is enabled when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. HTTP/protobuf
+is the default protocol. To use an OTLP/gRPC collector, install the optional
+gRPC extra and set `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`:
+
+```bash
+pip install "azure-ai-agentserver-core[otlp-grpc]"
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
+export OTEL_EXPORTER_OTLP_PROTOCOL="grpc"
+python my_agent.py
+```
+
+### Resilient long-running agents
+
+The `@task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
+
+The resilient task subsystem is **opt-in**: call `set_resilient_tasks_enabled(True)` (before host startup, typically at import time) so the framework constructs the `TaskManager` and runs crash recovery. Without it, `.run()` / `.start()` raise `TaskManagerNotInitialized`.
+
+```python
+from azure.ai.agentserver.core.tasks import (
+    set_resilient_tasks_enabled,
+    task,
+    TaskContext,
+)
+
+# Opt in to the durable task subsystem (required for @task to run).
+set_resilient_tasks_enabled(True)
+
+@task(name="process_document")
+async def process_document(ctx: TaskContext[dict]) -> dict:
+    # ctx.entry_mode is "fresh" | "resumed" | "recovered".
+    # The framework re-invokes the handler from the top after a
+    # crash; ctx.input survives, so the handler picks up.
+    summary = await analyze(ctx.input["document_url"])
+    return {"summary": summary}
+
+result = await process_document.run(
+    task_id="doc-42", input={"document_url": "..."},
+)
+print(result)  # {"summary": "..."}
+```
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
 
 ## Troubleshooting
 
@@ -130,6 +236,7 @@ To report an issue with the client library, or request additional features, plea
 ## Next steps
 
 - Install [`azure-ai-agentserver-invocations`](https://pypi.org/project/azure-ai-agentserver-invocations/) to add the invocation protocol endpoints.
+- Read the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for crash-resilient long-running agents.
 - See the [container image spec](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver) for the full hosted agent contract.
 
 ## Contributing

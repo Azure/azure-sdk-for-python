@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
+import pytest
 from consts import (
     APPCONFIGURATION_ENDPOINT_STRING,
     APPCONFIGURATION_CONNECTION_STRING,
@@ -12,14 +13,17 @@ from consts import (
 from devtools_testutils import EnvironmentVariableLoader, set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from asynctestcase import AsyncAppConfigTestCase
+from azure.core.exceptions import ResourceNotFoundError
 from azure.appconfiguration import (
     FeatureFlag,
     FeatureFlagConditions,
-    FeatureFlagFilter,
+    FeatureFilter,
     FeatureFlagVariantDefinition,
     FeatureFlagAllocation,
     FeatureFlagTelemetryConfiguration,
     PercentileAllocation,
+    RequirementType,
+    StatusOverride,
     UserAllocation,
     GroupAllocation,
 )
@@ -116,9 +120,8 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
         """Test getting a non-existent feature flag."""
         client = self.create_client(appconfiguration_endpoint_string)
 
-        # Try to get a non-existent feature flag
-        result = await client.get_feature_flag("nonexistent_feature", label=None)
-        assert result is None
+        with pytest.raises(ResourceNotFoundError):
+            await client.get_feature_flag("nonexistent_feature", label=None)
         await client.close()
 
     @AppConfigPreparer()
@@ -174,8 +177,8 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
         await client.delete_feature_flag("test_feature_delete", label=created.label)
 
         # Verify it's deleted
-        result = await client.get_feature_flag("test_feature_delete", label=created.label)
-        assert result is None
+        with pytest.raises(ResourceNotFoundError):
+            await client.get_feature_flag("test_feature_delete", label=created.label)
         await client.close()
 
     @AppConfigPreparer()
@@ -194,7 +197,7 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
         updated = await client.set_feature_flag(created)
 
         # List revisions
-        revisions = [r async for r in client.list_feature_flag_revisions(feature_id_filter="test_feature_revisions")]
+        revisions = [r async for r in client.list_feature_flag_revisions(name_filter="test_feature_revisions")]
         assert len(revisions) >= 1  # At least one revision
         assert all("test_feature_revisions" in r.name for r in revisions)
 
@@ -240,12 +243,10 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
             enabled=True,
             description="A feature flag gated by client filters",
             conditions=FeatureFlagConditions(
-                requirement_type="All",
-                client_filters=[
-                    FeatureFlagFilter(
-                        name="Microsoft.TimeWindow", parameters={"Start": "Mon, 01 Jan 2024 00:00:00 GMT"}
-                    ),
-                    FeatureFlagFilter(name="Microsoft.Percentage", parameters={"Value": 50}),
+                requirement_type=RequirementType.ALL,
+                filters=[
+                    FeatureFilter(name="Microsoft.TimeWindow", parameters={"Start": "Mon, 01 Jan 2024 00:00:00 GMT"}),
+                    FeatureFilter(name="Microsoft.Percentage", parameters={"Value": 50}),
                 ],
             ),
         )
@@ -256,9 +257,9 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
         assert retrieved.description == "A feature flag gated by client filters"
         assert retrieved.conditions is not None
         assert retrieved.conditions.requirement_type == "All"
-        assert retrieved.conditions.client_filters is not None
-        assert len(retrieved.conditions.client_filters) == 2
-        filter_names = {f.name for f in retrieved.conditions.client_filters}
+        assert retrieved.conditions.filters is not None
+        assert len(retrieved.conditions.filters) == 2
+        filter_names = {f.name for f in retrieved.conditions.filters}
         assert "Microsoft.TimeWindow" in filter_names
         assert "Microsoft.Percentage" in filter_names
 
@@ -275,8 +276,8 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
             name="test_feature_variants",
             enabled=True,
             variants=[
-                FeatureFlagVariantDefinition(name="On", value="true", status_override="Enabled"),
-                FeatureFlagVariantDefinition(name="Off", value="false", status_override="Disabled"),
+                FeatureFlagVariantDefinition(name="On", value="true", status_override=StatusOverride.ENABLED),
+                FeatureFlagVariantDefinition(name="Off", value="false", status_override=StatusOverride.DISABLED),
             ],
             allocation=FeatureFlagAllocation(
                 default_when_enabled="On",
@@ -354,15 +355,15 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
             label="prod",
             description="A fully populated feature flag",
             conditions=FeatureFlagConditions(
-                requirement_type="Any",
-                client_filters=[
+                requirement_type=RequirementType.ANY,
+                filters=[
                     # Filter parameters are string-valued per the API spec (Record<string>).
-                    FeatureFlagFilter(name="Microsoft.Targeting", parameters={"Audience": "all-users"}),
+                    FeatureFilter(name="Microsoft.Targeting", parameters={"Audience": "all-users"}),
                 ],
             ),
             variants=[
                 FeatureFlagVariantDefinition(
-                    name="Large", value="large", content_type="text/plain", status_override="Enabled"
+                    name="Large", value="large", content_type="text/plain", status_override=StatusOverride.ENABLED
                 ),
                 FeatureFlagVariantDefinition(name="Small", value="small"),
             ],
@@ -387,8 +388,8 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
         assert retrieved.description == "A fully populated feature flag"
         assert retrieved.conditions is not None
         assert retrieved.conditions.requirement_type == "Any"
-        assert retrieved.conditions.client_filters is not None
-        assert retrieved.conditions.client_filters[0].name == "Microsoft.Targeting"
+        assert retrieved.conditions.filters is not None
+        assert retrieved.conditions.filters[0].name == "Microsoft.Targeting"
         assert retrieved.variants is not None
         assert len(retrieved.variants) == 2
         assert retrieved.variants[0].content_type == "text/plain"
@@ -434,7 +435,7 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
     @AppConfigPreparer()
     @recorded_by_proxy_async
     async def test_get_feature_flag_wrong_label(self, appconfiguration_endpoint_string):
-        """Negative test: getting a feature flag with a label it doesn't have returns None."""
+        """Getting a feature flag with a label it doesn't have raises ResourceNotFoundError."""
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         client = self.create_client(appconfiguration_endpoint_string)
 
@@ -442,61 +443,8 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
         await client.set_feature_flag(feature_flag)
         try:
             # The flag exists, but not under this label.
-            result = await client.get_feature_flag("test_feature_wrong_label", label="wrong_label")
-            assert result is None
+            with pytest.raises(ResourceNotFoundError):
+                await client.get_feature_flag("test_feature_wrong_label", label="wrong_label")
         finally:
             await client.delete_feature_flag("test_feature_wrong_label", label="real_label")
             await client.close()
-
-    @AppConfigPreparer()
-    @recorded_by_proxy_async
-    async def test_monitor_feature_flags_by_page_etag(self, appconfiguration_endpoint_string):
-        """Test etag-based change detection across feature flag pages via by_page(match_conditions=...)."""
-        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_client(appconfiguration_endpoint_string)
-
-        # prepare 200 feature flags -> multiple pages (100 feature flags per page)
-        for i in range(200):
-            await client.set_feature_flag(
-                FeatureFlag(name=f"monitor_ff_{str(i)}", enabled=True, label=f"monitor_label_{str(i)}")
-            )
-
-        # collect current page etags
-        match_conditions = []
-        items = client.list_feature_flags(name_filter="monitor_ff_*", label_filter="monitor_label_*")
-        iterator = items.by_page()
-        async for _ in iterator:
-            match_conditions.append(iterator.etag)
-        assert len(match_conditions) >= 2
-
-        # monitor without changes - unchanged pages are skipped (HTTP 304), so no pages are yielded
-        items = client.list_feature_flags(name_filter="monitor_ff_*", label_filter="monitor_label_*")
-        changed_pages = [page async for page in items.by_page(match_conditions=match_conditions)]
-        assert len(changed_pages) == 0
-
-        # modify a feature flag that lives on the first page
-        await client.set_feature_flag(FeatureFlag(name="monitor_ff_0", enabled=False, label="monitor_label_0"))
-
-        # monitor with the old etags - only the changed page is yielded
-        items = client.list_feature_flags(name_filter="monitor_ff_*", label_filter="monitor_label_*")
-        changed_pages = [page async for page in items.by_page(match_conditions=match_conditions)]
-        assert len(changed_pages) >= 1
-
-        # collect fresh etags; the first page etag changed while the page count is unchanged
-        new_match_conditions = []
-        items = client.list_feature_flags(name_filter="monitor_ff_*", label_filter="monitor_label_*")
-        iterator = items.by_page()
-        async for _ in iterator:
-            new_match_conditions.append(iterator.etag)
-        assert new_match_conditions[0] != match_conditions[0]
-        assert len(new_match_conditions) == len(match_conditions)
-
-        # monitoring with the fresh etags yields no changed pages
-        items = client.list_feature_flags(name_filter="monitor_ff_*", label_filter="monitor_label_*")
-        remaining = [page async for page in items.by_page(match_conditions=new_match_conditions)]
-        assert len(remaining) == 0
-
-        # clean up
-        for i in range(200):
-            await client.delete_feature_flag(f"monitor_ff_{str(i)}", label=f"monitor_label_{str(i)}")
-        await client.close()

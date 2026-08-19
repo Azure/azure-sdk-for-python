@@ -5,11 +5,13 @@
 
 from __future__ import annotations
 import functools
+import time
 from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast
 
 try:
     from uamqp import (
         constants,
+        AMQPClientAsync,
         SendClientAsync,
         ReceiveClientAsync,
     )
@@ -63,6 +65,28 @@ try:
             :param ~uamqp.async_ops.ConnectionAsync connection: uamqp Connection.
             """
             await connection.destroy_async()
+
+        @staticmethod
+        def create_mgmt_client_async(config: "Configuration", **kwargs: Any) -> "AMQPClientAsync": # pylint: disable=docstring-keyword-should-match-keyword-only
+            """Creates and returns an async uamqp AMQPClient for management-only operations.
+
+            :param ~azure.servicebus._common._configuration.Configuration config: The configuration.
+            :keyword JWTTokenAuthAsync auth: Required.
+            :keyword retry_policy: Required.
+            :keyword str client_name: Required.
+            :keyword dict properties: Required.
+            :return: AMQPClientAsync
+            :rtype: ~uamqp.AMQPClientAsync
+            """
+            retry_policy = kwargs.pop("retry_policy")
+            return AMQPClientAsync(
+                ("amqps://" if config.use_tls else "amqp://") + config.hostname,
+                debug=config.logging_enable,
+                error_policy=retry_policy,
+                keep_alive_interval=config.keep_alive,
+                encoding=config.encoding,
+                **kwargs,
+            )
 
         @staticmethod
         def create_send_client_async(config: "Configuration", **kwargs: Any) -> "SendClientAsync": # pylint:disable=docstring-keyword-should-match-keyword-only
@@ -191,10 +215,14 @@ try:
                     original_timeout = receiver._handler._timeout
                     receiver._handler._timeout = max_wait_time * UamqpTransport.TIMEOUT_FACTOR
                 try:
+                    start_time = time.time_ns()
                     message = await receiver._inner_anext()
                     links = get_receive_links(message)
-                    with receive_trace_context_manager(receiver, links=links):
-                        yield message
+                    # Close the receive span before yielding so its HTTP instrumentation
+                    # suppression does not leak into the caller's message processing.
+                    with receive_trace_context_manager(receiver, links=links, start_time=start_time):
+                        pass
+                    yield message
                 except StopAsyncIteration:
                     break
                 finally:
@@ -249,13 +277,31 @@ try:
             await handler.message_handler.reset_link_credit_async(link_credit)
 
         @staticmethod
+        async def drain_and_release_messages_async(handler: "ReceiveClientAsync") -> None:
+            """
+            No-op for uamqp: drain-on-close is only implemented for the pyamqp
+            transport (the default). uamqp is deprecated.
+            :param ReceiveClientAsync handler: The handler.
+            :rtype: None
+            """
+
+        @staticmethod
         async def settle_message_via_receiver_link_async(
             handler: "ReceiveClientAsync",
             message: "ServiceBusReceivedMessage",
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
+            *,
+            await_outcome: bool = False,
+            outcome_timeout: Optional[float] = None,
         ) -> None:
+            if await_outcome:
+                # uamqp cannot observe outcomes; fail loudly rather than return a false success.
+                raise NotImplementedError(
+                    "Awaiting the settlement outcome is not supported by the uamqp transport. "
+                    "Use the default pyamqp transport to enable it."
+                )
             await get_running_loop().run_in_executor(
                 None,
                 UamqpTransportAsync.settle_message_via_receiver_link_impl(

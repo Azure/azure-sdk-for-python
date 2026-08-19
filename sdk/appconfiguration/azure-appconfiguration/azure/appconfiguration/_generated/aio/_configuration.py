@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureAppConfigurationClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class AzureAppConfigurationClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for AzureAppConfigurationClient.
 
     Note that all parameters used to create this instance are saved as instance

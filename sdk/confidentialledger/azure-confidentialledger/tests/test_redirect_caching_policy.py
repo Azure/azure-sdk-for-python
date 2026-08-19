@@ -320,8 +320,7 @@ class TestRedirectCachingPolicy:
 
         warnings = [r for r in caplog.records if r.levelno == logging.WARNING]
         assert any(
-            "Refusing to follow redirect to disallowed target" in r.message
-            and UNRELATED_URL in r.message
+            "Refusing to follow redirect to disallowed target" in r.message and UNRELATED_URL in r.message
             for r in warnings
         ), f"Expected a block warning for {UNRELATED_URL}, got: {[r.message for r in warnings]}"
 
@@ -453,7 +452,6 @@ class TestAsyncRedirectCachingPolicy:
 
         warnings = [r for r in caplog.records if r.levelno == logging.WARNING]
         assert any(
-            "Refusing to follow redirect to disallowed target" in r.message
-            and UNRELATED_URL in r.message
+            "Refusing to follow redirect to disallowed target" in r.message and UNRELATED_URL in r.message
             for r in warnings
         ), f"Expected a block warning for {UNRELATED_URL}, got: {[r.message for r in warnings]}"

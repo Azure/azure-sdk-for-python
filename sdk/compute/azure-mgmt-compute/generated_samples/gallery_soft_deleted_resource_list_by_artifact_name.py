@@ -40,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-03-03/galleryExamples/GallerySoftDeletedResource_ListByArtifactName.json
+# x-ms-original-file: 2025-12-03/galleryExamples/GallerySoftDeletedResource_ListByArtifactName.json
 if __name__ == "__main__":
     main()

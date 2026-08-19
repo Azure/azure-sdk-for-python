@@ -24,11 +24,13 @@ from typing import (
 
 try:
     from uamqp import (
+        AMQPClient,
         BatchMessage,
         constants,
         MessageBodyType,
         Message,
         types,
+        c_uamqp,
         SendClient,
         ReceiveClient,
         Source,
@@ -59,6 +61,7 @@ try:
     from .._common.constants import (
         UAMQP_LIBRARY,
         DATETIMEOFFSET_EPOCH,
+        _X_OPT_PARTITION_KEY,
         RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
         RECEIVER_LINK_DEAD_LETTER_REASON,
         DEADLETTERNAME,
@@ -221,6 +224,19 @@ try:
                 return ErrorAction(retry=False)
             return super(_ServiceBusErrorPolicy, self).on_connection_error(error)
 
+    class _AMQPTimestamp(types.AMQPType):
+        """Wrap a raw millisecond int as an AMQP timestamp.
+
+        uamqp ships no ``AMQPTimestamp`` type, so a raw millisecond value (such
+        as the DateTime.MaxValue sentinel, which is year 10000 and cannot be a
+        ``datetime``) has no wrapper that tags it as a timestamp. Without this,
+        the value would be encoded as a plain integer and the service would not
+        recognise it as ``lastUpdatedTime``.
+        """
+
+        def _c_wrapper(self, value):  # pylint: disable=arguments-differ
+            return c_uamqp.timestamp_value(int(value))
+
     class UamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         """
         Class which defines uamqp-based methods used by the sender and receiver.
@@ -258,6 +274,8 @@ try:
         AMQP_LONG_VALUE: Callable = types.AMQPLong
         AMQP_ARRAY_VALUE: Callable = types.AMQPArray
         AMQP_UINT_VALUE: Callable = types.AMQPuInt
+        AMQP_INT_VALUE: Callable = types.AMQPInt
+        AMQP_TIMESTAMP_VALUE: Callable = _AMQPTimestamp
 
         # errors
         TIMEOUT_ERROR = compat.TimeoutException
@@ -527,6 +545,28 @@ try:
             connection.destroy()
 
         @staticmethod
+        def create_mgmt_client(config: "Configuration", **kwargs: Any) -> "AMQPClient": # pylint: disable=docstring-keyword-should-match-keyword-only
+            """Creates and returns a uamqp AMQPClient for management-only operations.
+
+            :param ~azure.servicebus._common._configuration.Configuration config: The configuration.
+            :keyword JWTTokenAuth auth: Required.
+            :keyword retry_policy: Required.
+            :keyword str client_name: Required.
+            :keyword dict properties: Required.
+            :return: AMQPClient
+            :rtype: ~uamqp.AMQPClient
+            """
+            retry_policy = kwargs.pop("retry_policy")
+            return AMQPClient(
+                ("amqps://" if config.use_tls else "amqp://") + config.hostname,
+                debug=config.logging_enable,
+                error_policy=retry_policy,
+                keep_alive_interval=config.keep_alive,
+                encoding=config.encoding,
+                **kwargs,
+            )
+
+        @staticmethod
         def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient": # pylint:disable=docstring-keyword-should-match-keyword-only
             """
             Creates and returns the uamqp SendClient.
@@ -617,6 +657,29 @@ try:
             """
             # pylint: disable=protected-access
             sb_message_batch._message._body_gen.append(outgoing_sb_message._message)
+
+        @staticmethod
+        def set_batch_envelope_properties(
+            batch_message: "BatchMessage",
+            message_id: Optional[str],
+            session_id: Optional[str],
+            partition_key: Optional[str],
+        ) -> None:
+            """
+            Populate the batch envelope's message_id/session_id properties and partition_key annotation
+            on the underlying uamqp BatchMessage.
+            :param uamqp.BatchMessage batch_message: The underlying uamqp batch message.
+            :param str or None message_id: The message_id of the first message in the batch.
+            :param str or None session_id: The session_id of the first message in the batch.
+            :param str or None partition_key: The partition_key of the first message in the batch.
+            :rtype: None
+            """
+            if message_id or session_id:
+                batch_message.properties = MessageProperties(message_id=message_id, group_id=session_id)
+            if partition_key:
+                annotations = batch_message.annotations or {}
+                annotations[_X_OPT_PARTITION_KEY] = partition_key
+                batch_message.annotations = annotations
 
         @staticmethod
         def create_source(source: "Source", session_filter: Optional[str]) -> "Source":
@@ -729,10 +792,14 @@ try:
                     original_timeout = receiver._handler._timeout
                     receiver._handler._timeout = max_wait_time * UamqpTransport.TIMEOUT_FACTOR
                 try:
+                    start_time = time.time_ns()
                     message = receiver._inner_next()
                     links = get_receive_links(message)
-                    with receive_trace_context_manager(receiver, links=links):
-                        yield message
+                    # Close the receive span before yielding so its HTTP instrumentation
+                    # suppression does not leak into the caller's message processing.
+                    with receive_trace_context_manager(receiver, links=links, start_time=start_time):
+                        pass
+                    yield message
                 except StopIteration:
                     break
                 finally:
@@ -824,6 +891,15 @@ try:
             """
             handler.message_handler.reset_link_credit(link_credit)
 
+        @staticmethod
+        def drain_and_release_messages(handler: "ReceiveClient") -> None:
+            """
+            No-op for uamqp: drain-on-close is only implemented for the pyamqp
+            transport (the default). uamqp is deprecated.
+            :param ~uamqp.ReceiveClient handler: The handler.
+            :rtype: None
+            """
+
         # Executes message settlement, implementation is in settle_message_via_receiver_link_impl
         # May be able to remove and just call methods in private method.
         @staticmethod
@@ -833,7 +909,16 @@ try:
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
+            *,
+            await_outcome: bool = False,
+            outcome_timeout: Optional[float] = None,
         ) -> None:
+            if await_outcome:
+                # uamqp cannot observe outcomes; fail loudly rather than return a false success.
+                raise NotImplementedError(
+                    "Awaiting the settlement outcome is not supported by the uamqp transport. "
+                    "Use the default pyamqp transport to enable it."
+                )
             UamqpTransport.settle_message_via_receiver_link_impl(
                 handler,
                 message,

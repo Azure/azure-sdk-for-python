@@ -27,6 +27,7 @@ from ._models import (
     CorsRule,
     DirectoryProperties,
     FileProperties,
+    FileRange,
     FileSasPermissions,
     Handle,
     Metrics,
@@ -41,6 +42,7 @@ from ._models import (
     SmbEncryptionInTransit,
     ShareProtocolSettings,
     ShareProtocols,
+    SignedIdentifier,
 )
 from ._generated.models import ShareAccessTier, ShareRootSquash
 
@@ -55,6 +57,7 @@ __all__ = [
     "DirectoryProperties",
     "ExponentialRetry",
     "FileProperties",
+    "FileRange",
     "FileSasPermissions",
     "generate_account_sas",
     "generate_file_sas",
@@ -81,6 +84,7 @@ __all__ = [
     "ShareSasPermissions",
     "ShareServiceClient",
     "ShareSmbSettings",
+    "SignedIdentifier",
     "SmbEncryptionInTransit",
     "SmbMultichannel",
     "StorageErrorCode",

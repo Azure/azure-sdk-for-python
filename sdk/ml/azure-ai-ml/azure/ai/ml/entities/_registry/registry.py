@@ -8,12 +8,12 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ManagedServiceIdentityType as RestManagedServiceIdentityType,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
-from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryProperties
+from azure.ai.ml._restclient.arm_ml_service.models import Registry as RestRegistry
+from azure.ai.ml._restclient.arm_ml_service.models import RegistryProperties
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
@@ -46,24 +46,24 @@ class Registry(Resource):
     ):
         """Azure ML registry.
 
-        :param name: Name of the registry. Must be globally unique and is immutable.
-        :type name: str
-        :param location: The location this registry resource is located in.
-        :type location: str
-        :param identity: registry's System Managed Identity
-        :type identity: ManagedServiceIdentity
-        :param tags: Tags of the registry.
-        :type tags: dict
-        :param public_network_access: Whether to allow public endpoint connectivity.
-        :type public_network_access: str
-        :param discovery_url: Backend service base url for the registry.
-        :type discovery_url: str
-        :param intellectual_property: **Experimental** Intellectual property publisher.
-        :type intellectual_property: ~azure.ai.ml.entities.IntellectualProperty
-        :param managed_resource_group: Managed resource group created for the registry.
-        :type managed_resource_group: str
-        :param mlflow_registry_uri: Ml flow tracking uri for the registry.
-        :type mlflow_registry_uri: str
+        :keyword name: Name of the registry. Must be globally unique and is immutable.
+        :paramtype name: str
+        :keyword location: The location this registry resource is located in.
+        :paramtype location: str
+        :keyword identity: registry's System Managed Identity
+        :paramtype identity: ManagedServiceIdentity
+        :keyword tags: Tags of the registry.
+        :paramtype tags: dict
+        :keyword public_network_access: Whether to allow public endpoint connectivity.
+        :paramtype public_network_access: str
+        :keyword discovery_url: Backend service base url for the registry.
+        :paramtype discovery_url: str
+        :keyword intellectual_property: **Experimental** Intellectual property publisher.
+        :paramtype intellectual_property: ~azure.ai.ml.entities.IntellectualProperty
+        :keyword managed_resource_group: Managed resource group created for the registry.
+        :paramtype managed_resource_group: str
+        :keyword mlflow_registry_uri: Ml flow tracking uri for the registry.
+        :paramtype mlflow_registry_uri: str
         :param region_details: Details of each region the registry is in.
         :type region_details: List[RegistryRegionDetails]
         :param kwargs: A dictionary of additional configuration parameters.
@@ -212,20 +212,24 @@ class Registry(Resource):
         # managed resource group to manage their internal sub-resources.
         # We always want the tags on this MRG to match those of the registry itself
         # to keep janitor policies aligned.
+        registry_properties = RegistryProperties(
+            public_network_access=self.public_network_access,
+            discovery_url=self.discovery_url,
+            intellectual_property_publisher=(
+                (self.intellectual_property.publisher) if self.intellectual_property else None
+            ),
+            managed_resource_group=self.managed_resource_group,
+            ml_flow_registry_uri=self.mlflow_registry_uri,
+            region_details=replication_locations,
+        )
+        # ``managed_resource_group_tags`` is not a typed field on the shared arm_ml_service
+        # RegistryProperties model (api-version 2025-12-01) but is part of the 2022-10-01-preview
+        # contract; set it via its wire key to preserve the old request body.
+        registry_properties["managedResourceGroupTags"] = self.tags
         return RestRegistry(
             name=self.name,
             location=self.location,
             identity=identity,
             tags=self.tags,
-            properties=RegistryProperties(
-                public_network_access=self.public_network_access,
-                discovery_url=self.discovery_url,
-                intellectual_property_publisher=(
-                    (self.intellectual_property.publisher) if self.intellectual_property else None
-                ),
-                managed_resource_group=self.managed_resource_group,
-                ml_flow_registry_uri=self.mlflow_registry_uri,
-                region_details=replication_locations,
-                managed_resource_group_tags=self.tags,
-            ),
+            properties=registry_properties,
         )

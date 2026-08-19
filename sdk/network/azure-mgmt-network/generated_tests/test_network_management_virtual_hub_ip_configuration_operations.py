@@ -26,7 +26,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             ip_config_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,11 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                         "location": "str",
                         "name": "str",
                         "properties": {
-                            "ddosSettings": {"ddosProtectionPlan": {"id": "str"}, "protectionMode": "str"},
+                            "ddosSettings": {
+                                "ddosCustomPolicy": {"id": "str"},
+                                "ddosProtectionPlan": {"id": "str"},
+                                "protectionMode": "str",
+                            },
                             "deleteOption": "str",
                             "dnsSettings": {
                                 "domainNameLabel": "str",
@@ -398,6 +402,12 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -477,6 +487,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "billingSku": "str",
                                                                         "customDnsConfigs": [
                                                                             {"fqdn": "str", "ipAddresses": ["str"]}
                                                                         ],
@@ -574,6 +585,12 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -629,6 +646,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "billingSku": "str",
                                                                                             "customDnsConfigs": [
                                                                                                 {
                                                                                                     "fqdn": "str",
@@ -737,6 +755,12 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1030,6 +1054,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                 "type": "str",
                                                             }
                                                         ],
+                                                        "billingSku": "str",
                                                         "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                         "customNetworkInterfaceName": "str",
                                                         "ipConfigurations": [
@@ -1247,6 +1272,12 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -1521,6 +1552,12 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -1594,6 +1631,12 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -1856,6 +1899,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                 "name": "str",
                                                 "properties": {
                                                     "disableBgpRoutePropagation": bool,
+                                                    "disablePeeringRoute": "str",
                                                     "provisioningState": "str",
                                                     "resourceGuid": "str",
                                                     "routes": [
@@ -1867,6 +1911,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                 "nextHopType": "str",
                                                                 "addressPrefix": "str",
                                                                 "hasBgpOverride": bool,
+                                                                "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                 "nextHopIpAddress": "str",
                                                                 "provisioningState": "str",
                                                             },
@@ -1940,7 +1985,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                     },
                                 },
                             },
-                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                            "ipTags": [{"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}],
                             "linkedPublicIPAddress": ...,
                             "migrationPhase": "str",
                             "natGateway": {
@@ -1950,6 +1995,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                 "name": "str",
                                 "properties": {
                                     "idleTimeoutInMinutes": 0,
+                                    "nat64": "str",
                                     "provisioningState": "str",
                                     "publicIpAddresses": [{"id": "str"}],
                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -1971,6 +2017,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                             "publicIPPrefix": {"id": "str"},
                             "resourceGuid": "str",
                             "servicePublicIPAddress": ...,
+                            "upgradedToV2": bool,
                         },
                         "sku": {"name": "str", "tier": "str"},
                         "tags": {"str": "str"},
@@ -2034,6 +2081,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                             "name": "str",
                                             "properties": {
                                                 "ddosSettings": {
+                                                    "ddosCustomPolicy": {"id": "str"},
                                                     "ddosProtectionPlan": {"id": "str"},
                                                     "protectionMode": "str",
                                                 },
@@ -2047,7 +2095,9 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                 "idleTimeoutInMinutes": 0,
                                                 "ipAddress": "str",
                                                 "ipConfiguration": ...,
-                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                "ipTags": [
+                                                    {"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}
+                                                ],
                                                 "linkedPublicIPAddress": ...,
                                                 "migrationPhase": "str",
                                                 "natGateway": {
@@ -2057,6 +2107,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                     "name": "str",
                                                     "properties": {
                                                         "idleTimeoutInMinutes": 0,
+                                                        "nat64": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
                                                         "publicIpAddressesV6": [{"id": "str"}],
@@ -2078,6 +2129,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                 "publicIPPrefix": {"id": "str"},
                                                 "resourceGuid": "str",
                                                 "servicePublicIPAddress": ...,
+                                                "upgradedToV2": bool,
                                             },
                                             "sku": {"name": "str", "tier": "str"},
                                             "tags": {"str": "str"},
@@ -2345,6 +2397,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -2369,7 +2422,13 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                             "subnet": ...,
                                                                         },
                                                                     },
-                                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "firstPartyServiceTagId": "str",
+                                                                            "ipTagType": "str",
+                                                                            "tag": "str",
+                                                                        }
+                                                                    ],
                                                                     "linkedPublicIPAddress": ...,
                                                                     "migrationPhase": "str",
                                                                     "natGateway": {
@@ -2379,6 +2438,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -2400,6 +2460,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                     "publicIPPrefix": {"id": "str"},
                                                                     "resourceGuid": "str",
                                                                     "servicePublicIPAddress": ...,
+                                                                    "upgradedToV2": bool,
                                                                 },
                                                                 "sku": {"name": "str", "tier": "str"},
                                                                 "tags": {"str": "str"},
@@ -2419,6 +2480,10 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -2439,6 +2504,9 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -2467,6 +2535,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -2480,6 +2549,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -2515,6 +2585,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -2581,6 +2652,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                 "type": "str",
                                                             }
                                                         ],
+                                                        "billingSku": "str",
                                                         "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                         "customNetworkInterfaceName": "str",
                                                         "ipConfigurations": [
@@ -2676,6 +2748,8 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                                    "enableConnectionTracking": bool,
                                                                     "gatewayLoadBalancer": {"id": "str"},
                                                                     "inboundNatPools": [{"id": "str"}],
                                                                     "inboundNatRules": [{"id": "str"}],
@@ -2696,6 +2770,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -2721,7 +2796,11 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -2732,6 +2811,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -2761,6 +2841,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -2806,6 +2887,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -2905,6 +2987,10 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -2925,6 +3011,9 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -2953,6 +3042,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -2966,6 +3056,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -2999,6 +3090,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -3163,6 +3255,9 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -3191,6 +3286,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -3204,6 +3300,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -3237,6 +3334,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -3347,6 +3445,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                 "type": "str",
                                             }
                                         ],
+                                        "billingSku": "str",
                                         "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                         "customNetworkInterfaceName": "str",
                                         "ipConfigurations": [
@@ -3533,6 +3632,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -3557,7 +3657,13 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                 "subnet": ...,
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -3567,6 +3673,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -3588,6 +3695,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -3607,6 +3715,12 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -3631,6 +3745,9 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -3659,6 +3776,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -3672,6 +3790,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -3709,6 +3828,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -3949,6 +4069,10 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"}
+                                                                        },
+                                                                        "enableConnectionTracking": bool,
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -3969,6 +4093,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -3994,7 +4119,11 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -4005,6 +4134,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -4036,6 +4166,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -4095,6 +4226,10 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -4115,6 +4250,9 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -4143,6 +4281,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -4156,6 +4295,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -4191,6 +4331,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -4362,6 +4503,9 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -4390,6 +4534,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -4403,6 +4548,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -4438,6 +4584,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -4521,6 +4668,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                 "name": "str",
                                 "properties": {
                                     "disableBgpRoutePropagation": bool,
+                                    "disablePeeringRoute": "str",
                                     "provisioningState": "str",
                                     "resourceGuid": "str",
                                     "routes": [
@@ -4532,6 +4680,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                 "nextHopType": "str",
                                                 "addressPrefix": "str",
                                                 "hasBgpOverride": bool,
+                                                "nextHop": {"nextHopIpAddresses": ["str"]},
                                                 "nextHopIpAddress": "str",
                                                 "provisioningState": "str",
                                             },
@@ -4606,7 +4755,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                 },
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -4619,7 +4768,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             ip_config_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -4631,7 +4780,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
         response = self.client.virtual_hub_ip_configuration.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

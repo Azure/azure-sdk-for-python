@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,21 +31,13 @@ def main():
     )
 
     response = client.health_models.begin_update(
-        resource_group_name="rgopenapi",
-        health_model_name="model1",
-        properties={
-            "identity": {
-                "type": "SystemAssigned, UserAssigned",
-                "userAssignedIdentities": {
-                    "/subscriptions/4980D7D5-4E07-47AD-AD34-E76C6BC9F061/resourceGroups/rgopenapi/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ua1": {}
-                },
-            },
-            "tags": {"key21": "menfkmseplchh"},
-        },
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        properties={"tags": {"environment": "production", "team": "online-store", "tier": "gold"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/HealthModels_Update.json
+# x-ms-original-file: 2026-05-01-preview/HealthModels_Update.json
 if __name__ == "__main__":
     main()

@@ -63,25 +63,25 @@ class _FailingProvider:
         input_items: Iterable[Any] | None,
         history_item_ids: Iterable[str] | None,
         *,
-        isolation: Any = None,
+        context: Any = None,
     ) -> None:
         self.create_called = True
         if self.fail_on_create:
             raise RuntimeError("Simulated storage failure")
-        return await self._inner.create_response(response, input_items, history_item_ids, isolation=isolation)
+        return await self._inner.create_response(response, input_items, history_item_ids, context=context)
 
-    async def update_response(self, response: Any, *, isolation: Any = None) -> None:
+    async def update_response(self, response: Any, *, context: Any = None) -> None:
         self.update_called = True
         if self.fail_on_update:
             raise RuntimeError("Simulated storage failure")
-        return await self._inner.update_response(response, isolation=isolation)
+        return await self._inner.update_response(response, context=context)
 
-    async def get_response(self, response_id: str, *, isolation: Any = None) -> Any:
-        return await self._inner.get_response(response_id, isolation=isolation)
+    async def get_response(self, response_id: str, *, context: Any = None) -> Any:
+        return await self._inner.get_response(response_id, context=context)
 
-    async def delete_response(self, response_id: str, *, isolation: Any = None) -> None:
+    async def delete_response(self, response_id: str, *, context: Any = None) -> None:
         self.delete_called = True
-        return await self._inner.delete_response(response_id, isolation=isolation)
+        return await self._inner.delete_response(response_id, context=context)
 
     async def get_history_item_ids(
         self,
@@ -89,9 +89,9 @@ class _FailingProvider:
         before: str | None,
         limit: int,
         *,
-        isolation: Any = None,
+        context: Any = None,
     ) -> list[str] | None:
-        return await self._inner.get_history_item_ids(response_id, before, limit, isolation=isolation)
+        return await self._inner.get_history_item_ids(response_id, before, limit, context=context)
 
     async def get_input_items(
         self,
@@ -99,23 +99,23 @@ class _FailingProvider:
         *,
         limit: int = 100,
         ascending: bool = True,
-        isolation: Any = None,
+        context: Any = None,
     ) -> list[Any]:
-        return await self._inner.get_input_items(response_id, limit=limit, ascending=ascending, isolation=isolation)
+        return await self._inner.get_input_items(response_id, limit=limit, ascending=ascending, context=context)
 
     # ResponseStreamProviderProtocol delegation
-    async def save_stream_events(self, response_id: str, events: Any, *, isolation: Any = None) -> None:
+    async def save_stream_events(self, response_id: str, events: Any, *, context: Any = None) -> None:
         if hasattr(self._inner, "save_stream_events"):
-            return await self._inner.save_stream_events(response_id, events, isolation=isolation)
+            return await self._inner.save_stream_events(response_id, events, context=context)
 
-    async def get_stream_events(self, response_id: str, *, isolation: Any = None) -> Any:
+    async def get_stream_events(self, response_id: str, *, context: Any = None) -> Any:
         if hasattr(self._inner, "get_stream_events"):
-            return await self._inner.get_stream_events(response_id, isolation=isolation)
+            return await self._inner.get_stream_events(response_id, context=context)
         return None
 
-    async def delete_stream_events(self, response_id: str, *, isolation: Any = None) -> None:
+    async def delete_stream_events(self, response_id: str, *, context: Any = None) -> None:
         if hasattr(self._inner, "delete_stream_events"):
-            return await self._inner.delete_stream_events(response_id, isolation=isolation)
+            return await self._inner.delete_stream_events(response_id, context=context)
 
 
 def _make_app_with_failing_provider(
@@ -278,7 +278,7 @@ class _AsyncAsgiClient:
 # ── Handlers ─────────────────────────────────────────────────────────────────
 
 
-def _simple_completed_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _simple_completed_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits created + output + completed."""
 
     async def _events():
@@ -480,8 +480,12 @@ class TestBgStreamPhase2UpdateFails:
         error = resp_data.get("error", {})
         assert error.get("code") == "storage_error"
 
-        # Output should be cleared
-        assert resp_data.get("output") == [] or resp_data.get("output") is None
+        # Output is PRESERVED: the handler owns the response object, and per the
+        # SOT behaviour contract a ``failed`` response's output "may be partial".
+        # The storage-error terminal overlays status+error onto the handler's
+        # snapshot rather than discarding the "Hello, world!" it produced.
+        output_items = resp_data.get("output") or []
+        assert any("Hello, world!" in str(item) for item in output_items), f"Output not preserved: {output_items}"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -531,7 +535,11 @@ class TestBgNonStreamPhase2UpdateFails:
         assert terminal_reached, f"Response did not reach terminal state, last: {terminal_body}"
         assert terminal_body["status"] == "failed"
         assert terminal_body.get("error", {}).get("code") == "storage_error"
-        assert terminal_body.get("output") == [] or terminal_body.get("output") is None
+        # Output is PRESERVED (SOT: a ``failed`` response's output "may be
+        # partial"); the storage-error terminal overlays onto the handler's
+        # snapshot rather than discarding its produced output.
+        output_items = terminal_body.get("output") or []
+        assert any("Hello, world!" in str(item) for item in output_items), f"Output not preserved: {output_items}"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

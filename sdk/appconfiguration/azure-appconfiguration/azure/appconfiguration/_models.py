@@ -28,6 +28,8 @@ from ._generated.models import (
     FeatureFlagVariantDefinition as _GeneratedFeatureFlagVariantDefinition,
     GroupAllocation as _GeneratedGroupAllocation,
     PercentileAllocation as _GeneratedPercentileAllocation,
+    RequirementType,
+    StatusOverride,
     UserAllocation as _GeneratedUserAllocation,
 )
 from ._generated._utils.model_base import _deserialize
@@ -72,17 +74,50 @@ class ConfigurationSetting(Model):
     kind = "Generic"
     content_type = None
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        key: Optional[str] = None,
+        label: Optional[str] = None,
+        value: Optional[str] = None,
+        etag: Optional[str] = None,
+        content_type: Optional[str] = None,
+        last_modified: Optional[datetime] = None,
+        read_only: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        description: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """
+        :keyword key: The key of the configuration setting.
+        :paramtype key: str or None
+        :keyword label: The label of the configuration setting.
+        :paramtype label: str or None
+        :keyword value: The value of the configuration setting.
+        :paramtype value: str or None
+        :keyword etag: A value representing the current state of the resource.
+        :paramtype etag: str or None
+        :keyword content_type: The content type of the configuration setting.
+        :paramtype content_type: str or None
+        :keyword last_modified: The last time the configuration setting was modified.
+        :paramtype last_modified: ~datetime.datetime or None
+        :keyword read_only: Whether the configuration setting is read-only.
+        :paramtype read_only: bool or None
+        :keyword tags: The tags assigned to the configuration setting.
+        :paramtype tags: dict[str, str] or None
+        :keyword description: The description of the configuration setting.
+        :paramtype description: str or None
+        """
         super(ConfigurationSetting, self).__init__(**kwargs)
-        self.key = kwargs.get("key", None)  # type: ignore[assignment]
-        self.label = kwargs.get("label", None)  # type: ignore[assignment]
-        self.value = kwargs.get("value", None)  # type: ignore[assignment]
-        self.etag = kwargs.get("etag", None)  # type: ignore[assignment]
-        self.content_type = kwargs.get("content_type", None)
-        self.last_modified = kwargs.get("last_modified", None)  # type: ignore[assignment]
-        self.read_only = kwargs.get("read_only", None)  # type: ignore[assignment]
-        self.tags = kwargs.get("tags", {})
-        self.description = kwargs.get("description", None)
+        self.key = key  # type: ignore[assignment]
+        self.label = label  # type: ignore[assignment]
+        self.value = value  # type: ignore[assignment]
+        self.etag = etag  # type: ignore[assignment]
+        self.content_type = content_type
+        self.last_modified = last_modified  # type: ignore[assignment]
+        self.read_only = read_only  # type: ignore[assignment]
+        self.tags = tags or {}
+        self.description = description
 
     @classmethod
     def _from_generated(cls, key_value: KeyValue) -> "ConfigurationSetting":
@@ -132,7 +167,19 @@ class ConfigurationSetting(Model):
 
 
 class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=too-many-instance-attributes
-    """A configuration setting that stores a feature flag value."""
+    """A configuration setting that stores a feature flag value.
+
+    :param feature_id: The identity of the configuration setting.
+    :type feature_id: str
+    :keyword enabled: The value indicating whether the feature flag is enabled.
+        A feature is OFF if enabled is false. If enabled is true, then the feature flag is evaluated
+        against its conditions to determine its state. Default value of this property is False.
+    :paramtype enabled: bool
+    :keyword filters: Filters that run on the client to determine whether the feature is enabled.
+        By default (requirement type "Any"), the feature is considered enabled if at least one filter
+        evaluates to true. With requirement type "All", every filter must evaluate to true.
+    :paramtype filters: list[dict[str, Any]] or None
+    """
 
     etag: str
     """A value representing the current state of the resource."""
@@ -142,10 +189,12 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     """The key of the configuration setting."""
     enabled: bool
     """The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
-        If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied."""
+        If enabled is true, then the feature flag is evaluated against its conditions/filters to determine
+        its state."""
     filters: Optional[List[Dict[str, Any]]]
-    """Filters that must run on the client and be evaluated as true for the feature
-        to be considered enabled."""
+    """Filters that run on the client to determine whether the feature is enabled. By default
+        (requirement type "Any"), the feature is considered enabled if at least one filter evaluates
+        to true. With requirement type "All", every filter must evaluate to true."""
     label: str
     """The label used to group this configuration setting with others."""
     display_name: str
@@ -187,11 +236,12 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         :param feature_id: The identity of the configuration setting.
         :type feature_id: str
         :keyword enabled: The value indicating whether the feature flag is enabled.
-            A feature is OFF if enabled is false. If enabled is true, then the feature is ON
-            if there are no conditions or if all conditions are satisfied. Default value of this property is False.
+            A feature is OFF if enabled is false. If enabled is true, then the feature flag is evaluated
+            against its conditions/filters to determine its state. Default value of this property is False.
         :paramtype enabled: bool
-        :keyword filters: Filters that must run on the client and be evaluated as true for the feature
-            to be considered enabled.
+        :keyword filters: Filters that run on the client to determine whether the feature is enabled.
+            By default (requirement type "Any"), the feature is considered enabled if at least one filter
+            evaluates to true. With requirement type "All", every filter must evaluate to true.
         :paramtype filters: list[dict[str, Any]] or None
         """
         if "value" in kwargs:
@@ -299,7 +349,13 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 
 
 class SecretReferenceConfigurationSetting(ConfigurationSetting):
-    """A configuration value that references a configuration setting secret."""
+    """A configuration value that references a configuration setting secret.
+
+    :param key: The key of the configuration setting.
+    :type key: str
+    :param secret_id: The URI of the secret referenced by this configuration setting.
+    :type secret_id: str
+    """
 
     etag: str
     """A value representing the current state of the resource."""
@@ -414,7 +470,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         )
 
 
-class FeatureFlagFilter:
+class FeatureFilter(Model):
     """A filter that conditionally enables or disables a feature flag.
 
     :ivar name: The name of the filter. Required.
@@ -428,6 +484,11 @@ class FeatureFlagFilter:
     parameters: Optional[Dict[str, str]]
     """The parameters used by the filter."""
 
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{str}"},
+    }
+
     def __init__(self, *, name: str, parameters: Optional[Dict[str, str]] = None) -> None:
         """
         :keyword name: The name of the filter. Required.
@@ -435,57 +496,62 @@ class FeatureFlagFilter:
         :keyword parameters: The parameters used by the filter.
         :paramtype parameters: dict[str, str] or None
         """
+        super().__init__()
         self.name = name
         self.parameters = parameters
 
     @classmethod
-    def _from_generated(cls, generated: _GeneratedFeatureFlagFilter) -> "FeatureFlagFilter":
+    def _from_generated(cls, generated: _GeneratedFeatureFlagFilter) -> "FeatureFilter":
         return cls(name=generated.name, parameters=generated.parameters)
 
     def _to_generated(self) -> _GeneratedFeatureFlagFilter:
         return _GeneratedFeatureFlagFilter(name=self.name, parameters=self.parameters)
 
 
-class FeatureFlagConditions:
+class FeatureFlagConditions(Model):
     """The conditions that must be met for a feature flag to be enabled.
 
     :ivar requirement_type: The requirement type for the conditions. Known values are: "Any" and
      "All".
-    :vartype requirement_type: str or None
-    :ivar client_filters: The filters that will conditionally enable or disable the flag.
-    :vartype client_filters: list[~azure.appconfiguration.FeatureFlagFilter] or None
+    :vartype requirement_type: str or ~azure.appconfiguration.RequirementType or None
+    :ivar filters: The filters that will conditionally enable or disable the flag.
+    :vartype filters: list[~azure.appconfiguration.FeatureFilter] or None
     """
 
-    requirement_type: Optional[str]
+    requirement_type: Optional[Union[str, RequirementType]]
     """The requirement type for the conditions. Known values are: "Any" and "All"."""
-    client_filters: Optional[List[FeatureFlagFilter]]
+    filters: Optional[List[FeatureFilter]]
     """The filters that will conditionally enable or disable the flag."""
+
+    _attribute_map = {
+        "requirement_type": {"key": "requirement_type", "type": "RequirementType"},
+        "filters": {"key": "filters", "type": "[FeatureFilter]"},
+    }
 
     def __init__(
         self,
         *,
-        requirement_type: Optional[str] = None,
-        client_filters: Optional[List[FeatureFlagFilter]] = None,
+        requirement_type: Optional[Union[str, RequirementType]] = None,
+        filters: Optional[List[FeatureFilter]] = None,
     ) -> None:
         """
         :keyword requirement_type: The requirement type for the conditions. Known values are: "Any"
          and "All".
-        :paramtype requirement_type: str or None
-        :keyword client_filters: The filters that will conditionally enable or disable the flag.
-        :paramtype client_filters: list[~azure.appconfiguration.FeatureFlagFilter] or None
+        :paramtype requirement_type: str or ~azure.appconfiguration.RequirementType or None
+        :keyword filters: The filters that will conditionally enable or disable the flag.
+        :paramtype filters: list[~azure.appconfiguration.FeatureFilter] or None
         """
+        super().__init__()
         self.requirement_type = requirement_type
-        self.client_filters = client_filters
+        self.filters = filters
 
     @classmethod
     def _from_generated(cls, generated: _GeneratedFeatureFlagConditions) -> "FeatureFlagConditions":
         # pylint:disable=protected-access
         return cls(
             requirement_type=generated.requirement_type,
-            client_filters=(
-                [FeatureFlagFilter._from_generated(f) for f in generated.filters]
-                if generated.filters is not None
-                else None
+            filters=(
+                [FeatureFilter._from_generated(f) for f in generated.filters] if generated.filters is not None else None
             ),
         )
 
@@ -493,11 +559,11 @@ class FeatureFlagConditions:
         # pylint:disable=protected-access
         return _GeneratedFeatureFlagConditions(
             requirement_type=self.requirement_type,
-            filters=([f._to_generated() for f in self.client_filters] if self.client_filters is not None else None),
+            filters=([f._to_generated() for f in self.filters] if self.filters is not None else None),
         )
 
 
-class FeatureFlagVariantDefinition:
+class FeatureFlagVariantDefinition(Model):
     """A variant of a feature flag.
 
     :ivar name: The name of the variant. Required.
@@ -508,7 +574,7 @@ class FeatureFlagVariantDefinition:
     :vartype content_type: str or None
     :ivar status_override: Determines if the variant should override the status of the flag. Known
      values are: "None", "Enabled", and "Disabled".
-    :vartype status_override: str or None
+    :vartype status_override: str or ~azure.appconfiguration.StatusOverride or None
     """
 
     name: str
@@ -517,8 +583,15 @@ class FeatureFlagVariantDefinition:
     """The value of the variant."""
     content_type: Optional[str]
     """The content type of the value stored within the key-value."""
-    status_override: Optional[str]
+    status_override: Optional[Union[str, StatusOverride]]
     """Determines if the variant should override the status of the flag."""
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "content_type": {"key": "content_type", "type": "str"},
+        "status_override": {"key": "status_override", "type": "StatusOverride"},
+    }
 
     def __init__(
         self,
@@ -526,7 +599,7 @@ class FeatureFlagVariantDefinition:
         name: str,
         value: Optional[str] = None,
         content_type: Optional[str] = None,
-        status_override: Optional[str] = None,
+        status_override: Optional[Union[str, StatusOverride]] = None,
     ) -> None:
         """
         :keyword name: The name of the variant. Required.
@@ -537,8 +610,9 @@ class FeatureFlagVariantDefinition:
         :paramtype content_type: str or None
         :keyword status_override: Determines if the variant should override the status of the flag.
          Known values are: "None", "Enabled", and "Disabled".
-        :paramtype status_override: str or None
+        :paramtype status_override: str or ~azure.appconfiguration.StatusOverride or None
         """
+        super().__init__()
         self.name = name
         self.value = value
         self.content_type = content_type
@@ -562,7 +636,7 @@ class FeatureFlagVariantDefinition:
         )
 
 
-class PercentileAllocation:
+class PercentileAllocation(Model):
     """Allocates a percentile range of users to a variant.
 
     :ivar variant: The variant to allocate these percentiles to. Required.
@@ -580,6 +654,12 @@ class PercentileAllocation:
     percentile_to: float
     """The upper bounds for this percentile allocation. Required."""
 
+    _attribute_map = {
+        "variant": {"key": "variant", "type": "str"},
+        "percentile_from": {"key": "from", "type": "float"},
+        "percentile_to": {"key": "to", "type": "float"},
+    }
+
     def __init__(self, *, variant: str, percentile_from: float, percentile_to: float) -> None:
         """
         :keyword variant: The variant to allocate these percentiles to. Required.
@@ -589,6 +669,7 @@ class PercentileAllocation:
         :keyword percentile_to: The upper bounds for this percentile allocation. Required.
         :paramtype percentile_to: float
         """
+        super().__init__()
         self.variant = variant
         self.percentile_from = percentile_from
         self.percentile_to = percentile_to
@@ -609,7 +690,7 @@ class PercentileAllocation:
         )
 
 
-class UserAllocation:
+class UserAllocation(Model):
     """Allocates specific users to a variant.
 
     :ivar variant: The variant to allocate these users to. Required.
@@ -623,6 +704,11 @@ class UserAllocation:
     users: List[str]
     """The users to get this variant. Required."""
 
+    _attribute_map = {
+        "variant": {"key": "variant", "type": "str"},
+        "users": {"key": "users", "type": "[str]"},
+    }
+
     def __init__(self, *, variant: str, users: List[str]) -> None:
         """
         :keyword variant: The variant to allocate these users to. Required.
@@ -630,6 +716,7 @@ class UserAllocation:
         :keyword users: The users to get this variant. Required.
         :paramtype users: list[str]
         """
+        super().__init__()
         self.variant = variant
         self.users = users
 
@@ -641,7 +728,7 @@ class UserAllocation:
         return _GeneratedUserAllocation(variant=self.variant, users=self.users)
 
 
-class GroupAllocation:
+class GroupAllocation(Model):
     """Allocates specific groups to a variant.
 
     :ivar variant: The variant to allocate these groups to. Required.
@@ -655,6 +742,11 @@ class GroupAllocation:
     groups: List[str]
     """The groups to get this variant. Required."""
 
+    _attribute_map = {
+        "variant": {"key": "variant", "type": "str"},
+        "groups": {"key": "groups", "type": "[str]"},
+    }
+
     def __init__(self, *, variant: str, groups: List[str]) -> None:
         """
         :keyword variant: The variant to allocate these groups to. Required.
@@ -662,6 +754,7 @@ class GroupAllocation:
         :keyword groups: The groups to get this variant. Required.
         :paramtype groups: list[str]
         """
+        super().__init__()
         self.variant = variant
         self.groups = groups
 
@@ -673,7 +766,7 @@ class GroupAllocation:
         return _GeneratedGroupAllocation(variant=self.variant, groups=self.groups)
 
 
-class FeatureFlagAllocation:
+class FeatureFlagAllocation(Model):
     """Defines how to allocate variants based on context.
 
     :ivar default_when_disabled: The default variant to use when disabled.
@@ -703,6 +796,15 @@ class FeatureFlagAllocation:
     seed: Optional[str]
     """The seed used for random allocation."""
 
+    _attribute_map = {
+        "default_when_disabled": {"key": "default_when_disabled", "type": "str"},
+        "default_when_enabled": {"key": "default_when_enabled", "type": "str"},
+        "percentile": {"key": "percentile", "type": "[PercentileAllocation]"},
+        "user": {"key": "user", "type": "[UserAllocation]"},
+        "group": {"key": "group", "type": "[GroupAllocation]"},
+        "seed": {"key": "seed", "type": "str"},
+    }
+
     def __init__(
         self,
         *,
@@ -727,6 +829,7 @@ class FeatureFlagAllocation:
         :keyword seed: The seed used for random allocation.
         :paramtype seed: str or None
         """
+        super().__init__()
         self.default_when_disabled = default_when_disabled
         self.default_when_enabled = default_when_enabled
         self.percentile = percentile
@@ -764,7 +867,7 @@ class FeatureFlagAllocation:
         )
 
 
-class FeatureFlagTelemetryConfiguration:
+class FeatureFlagTelemetryConfiguration(Model):
     """The telemetry configuration of a feature flag.
 
     :ivar enabled: The enabled state of the telemetry. Required.
@@ -778,6 +881,11 @@ class FeatureFlagTelemetryConfiguration:
     metadata: Optional[Dict[str, str]]
     """The metadata to include on outbound telemetry."""
 
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+        "metadata": {"key": "metadata", "type": "{str}"},
+    }
+
     def __init__(self, *, enabled: bool, metadata: Optional[Dict[str, str]] = None) -> None:
         """
         :keyword enabled: The enabled state of the telemetry. Required.
@@ -785,6 +893,7 @@ class FeatureFlagTelemetryConfiguration:
         :keyword metadata: The metadata to include on outbound telemetry.
         :paramtype metadata: dict[str, str] or None
         """
+        super().__init__()
         self.enabled = enabled
         self.metadata = metadata
 
@@ -833,10 +942,10 @@ class FeatureFlag(Model):  # pylint: disable=too-many-instance-attributes
         "enabled": {"key": "enabled", "type": "bool"},
         "label": {"key": "label", "type": "str"},
         "description": {"key": "description", "type": "str"},
-        "conditions": {"key": "conditions", "type": "object"},
-        "variants": {"key": "variants", "type": "[object]"},
-        "allocation": {"key": "allocation", "type": "object"},
-        "telemetry": {"key": "telemetry", "type": "object"},
+        "conditions": {"key": "conditions", "type": "FeatureFlagConditions"},
+        "variants": {"key": "variants", "type": "[FeatureFlagVariantDefinition]"},
+        "allocation": {"key": "allocation", "type": "FeatureFlagAllocation"},
+        "telemetry": {"key": "telemetry", "type": "FeatureFlagTelemetryConfiguration"},
         "tags": {"key": "tags", "type": "{str}"},
         "last_modified": {"key": "last_modified", "type": "iso-8601"},
         "etag": {"key": "etag", "type": "str"},
@@ -844,9 +953,9 @@ class FeatureFlag(Model):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        name: str,
         *,
-        enabled: Optional[bool] = None,
+        name: str,
+        enabled: bool = False,
         label: Optional[str] = None,
         description: Optional[str] = None,
         conditions: Optional[FeatureFlagConditions] = None,
@@ -860,7 +969,7 @@ class FeatureFlag(Model):  # pylint: disable=too-many-instance-attributes
         :param name: The name of the feature flag.
         :type name: str
         :keyword enabled: The enabled state of the feature flag. Default is False.
-        :paramtype enabled: bool or None
+        :paramtype enabled: bool
         :keyword label: The label the feature flag belongs to.
         :paramtype label: str or None
         :keyword description: The description of the feature flag.
@@ -878,7 +987,7 @@ class FeatureFlag(Model):  # pylint: disable=too-many-instance-attributes
         """
         super().__init__(**kwargs)
         self.name = name
-        self.enabled = enabled if enabled is not None else False
+        self.enabled = enabled
         self.label = label
         self.description = description
         self.conditions = conditions
@@ -948,7 +1057,15 @@ class FeatureFlag(Model):  # pylint: disable=too-many-instance-attributes
 
 
 class ConfigurationSettingsFilter:
-    """Enables filtering of configuration settings."""
+    """Enables filtering of configuration settings.
+
+    :keyword key: Filters configuration settings by their key field. Required.
+    :paramtype key: str
+    :keyword label: Filters configuration settings by their label field.
+    :paramtype label: str or None
+    :keyword tags: Filters key-values by their tags field.
+    :paramtype tags: list[str] or None
+    """
 
     key: str
     """Filters configuration settings by their key field. Required."""
@@ -972,7 +1089,25 @@ class ConfigurationSettingsFilter:
 
 
 class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
-    """A point-in-time snapshot of configuration settings."""
+    """A point-in-time snapshot of configuration settings.
+
+    :param filters: A list of filters used to filter the key-values included in the configuration snapshot.
+        Required.
+    :type filters: list[~azure.appconfiguration.ConfigurationSettingsFilter]
+    :keyword composition_type: The composition type describes how the key-values within the configuration
+        snapshot are composed. The 'key' composition type ensures there are no two key-values
+        containing the same key. The 'key_label' composition type ensures there are no two key-values
+        containing the same key and label. Known values are: "key" and "key_label".
+    :paramtype composition_type: str or None
+    :keyword retention_period: The amount of time, in seconds, that a configuration snapshot will remain in the
+        archived state before expiring. This property is only writable during the creation of a configuration
+        snapshot. If not specified, the default lifetime of key-value revisions will be used.
+    :paramtype retention_period: int or None
+    :keyword tags: The tags of the configuration snapshot.
+    :paramtype tags: dict[str, str] or None
+    :keyword description: The description of the configuration snapshot.
+    :paramtype description: str or None
+    """
 
     name: Optional[str]
     """The name of the configuration snapshot."""
@@ -1127,7 +1262,11 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
 
 
 class ConfigurationSettingLabel:
-    """The label info of a configuration setting."""
+    """The label info of a configuration setting.
+
+    :keyword name: The configuration setting label name.
+    :paramtype name: str or None
+    """
 
     name: Optional[str]
     """The name of the ConfigurationSetting label."""
@@ -1145,7 +1284,11 @@ def _return_deserialized_and_headers(_, deserialized, response_headers):
 
 
 class ConfigurationSettingPropertiesPagedBase:  # pylint:disable=too-many-instance-attributes
-    """Base class for iterable of ConfigurationSetting properties."""
+    """Base class for iterable of ConfigurationSetting properties.
+
+    :param command: The command to execute for pagination.
+    :type command: Callable
+    """
 
     etag: str
     """The current etag"""
@@ -1215,7 +1358,11 @@ class ConfigurationSettingPropertiesPagedBase:  # pylint:disable=too-many-instan
 class ConfigurationSettingPropertiesPaged(
     ConfigurationSettingPropertiesPagedBase, PageIterator
 ):  # pylint:disable=too-many-instance-attributes
-    """An iterable of ConfigurationSetting properties."""
+    """An iterable of ConfigurationSetting properties.
+
+    :param command: The command to execute for pagination.
+    :type command: Callable
+    """
 
     def __init__(self, command: Callable, **kwargs: Any):
         super().__init__(command, **kwargs)
@@ -1276,7 +1423,11 @@ class ConfigurationSettingPropertiesPaged(
 class ConfigurationSettingPropertiesPagedAsync(
     ConfigurationSettingPropertiesPagedBase, AsyncPageIterator
 ):  # pylint:disable=too-many-instance-attributes
-    """An iterable of ConfigurationSetting properties."""
+    """An iterable of ConfigurationSetting properties.
+
+    :param command: The command to execute for pagination.
+    :type command: Callable
+    """
 
     def __init__(self, command: Callable, **kwargs: Any):
         ConfigurationSettingPropertiesPagedBase.__init__(self, command, **kwargs)

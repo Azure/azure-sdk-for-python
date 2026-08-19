@@ -2,8 +2,9 @@
 
 The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and supports two transports on the same host:
 
-- **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`.
+- **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`, `GET /invocations/docs/asyncapi.{json,yaml}`.
 - **WebSocket** (`invocations_ws` protocol) — full-duplex streaming at `/invocations_ws`, registered with `@app.ws_handler`.
+- **Voice Live Bridge** — an experimental typed event relay in the `azure.ai.agentserver.invocations.voice` submodule, layered on `invocations_ws`.
 
 ## Getting started
 
@@ -38,6 +39,8 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 | `GET` | `/invocations/{invocation_id}` | No | Retrieve invocation status or result |
 | `POST` | `/invocations/{invocation_id}/cancel` | No | Cancel a running invocation |
 | `GET` | `/invocations/docs/openapi.json` | No | Serve the agent's OpenAPI 3.x spec |
+| `GET` | `/invocations/docs/asyncapi.json` | No | Serve the agent's AsyncAPI 3.x spec (JSON) |
+| `GET` | `/invocations/docs/asyncapi.yaml` | No | Serve the agent's AsyncAPI 3.x spec (YAML) |
 | `WS`   | `/invocations_ws` | No | Full-duplex WebSocket transport (`invocations_ws` protocol) |
 
 ### Request and response headers
@@ -65,6 +68,8 @@ Inside handler functions, the SDK sets these attributes on `request.state`:
 
 - `request.state.invocation_id` — The invocation ID (echoed or generated).
 - `request.state.session_id` — The resolved session ID (POST /invocations only).
+- `request.state.user_id` — The per-user ID from `x-agent-user-id` (container protocol `2.0.0`); use for per-user state.
+- `request.state.call_id` — The per-request call ID from `x-agent-foundry-call-id` (protocol `2.0.0`); forward on outbound Foundry calls.
 
 ### Distributed tracing
 
@@ -91,6 +96,42 @@ app = InvocationAgentServerHost()
 async def handle(request: Request) -> Response:
     data = await request.json()
     return JSONResponse({"greeting": f"Hello, {data['name']}!"})
+
+app.run()
+```
+
+### Multi-user session (per-request call ID)
+
+On container protocol `2.0.0` a single agent session can serve **multiple users**. Forwarding the per-request `x-agent-foundry-call-id` on outbound toolbox calls lets the tool server resolve *which* user made this request and act on their behalf. (`x-agent-user-id` is never forwarded; the tool resolves the user from the call ID server-side. Use `request.state.user_id` only for the container's own per-user state.)
+
+```python
+import os
+
+import httpx
+from azure.ai.agentserver.core import get_request_context
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+
+app = InvocationAgentServerHost()
+
+
+@app.invoke_handler
+async def handle(request: Request) -> Response:
+    # platform_headers() echoes x-agent-foundry-call-id only (never x-agent-user-id).
+    headers = get_request_context().platform_headers()
+
+    # Toolbox / MCP — attach the call ID PER CALL (the MCP session is shared across users/turns).
+    async with httpx.AsyncClient() as mcp:
+        resp = await mcp.post(
+            f"{os.environ['FOUNDRY_PROJECT_ENDPOINT']}/toolboxes/github/mcp",
+            headers={"Authorization": f"Bearer {get_agent_token()}", **headers},  # get_agent_token(): the agent's managed-identity token
+            json={"jsonrpc": "2.0", "method": "tools/call",
+                  "params": {"name": "list_my_assigned_issues", "arguments": {}}},
+        )
+        # The toolbox resolved the caller from the call ID and returned THIS user's issues.
+
+    return JSONResponse(resp.json())
 
 app.run()
 ```
@@ -187,6 +228,39 @@ app = InvocationAgentServerHost(openapi_spec={
 })
 ```
 
+### Serving an AsyncAPI spec
+
+AsyncAPI is the companion to OpenAPI for streaming/bidirectional surfaces (e.g. the
+`invocations_ws` WebSocket protocol) that OpenAPI cannot express. Pass either or both
+representations to enable the discovery endpoints:
+
+```python
+app = InvocationAgentServerHost(
+    asyncapi_spec_json={
+        "asyncapi": "3.0.0",
+        "info": {"title": "My Agent", "version": "1.0.0"},
+        "channels": { ... },
+        "operations": { ... },
+    },
+    asyncapi_spec_yaml="""asyncapi: 3.0.0
+info:
+  title: My Agent
+  version: 1.0.0
+channels:
+  ...
+""",
+)
+```
+
+Each representation is served at its own path:
+
+- `GET /invocations/docs/asyncapi.json` — `application/json`
+- `GET /invocations/docs/asyncapi.yaml` — `application/yaml`
+
+The path extension is authoritative for the returned content type (no `Accept`
+negotiation, no format conversion). If you only pass one, the other returns `404`.
+Serving both is recommended for tooling compatibility.
+
 ## WebSocket protocol (`invocations_ws`)
 
 The same `InvocationAgentServerHost` object also exposes a WebSocket transport at `/invocations_ws`. Container authors do not install or import a second package — registering an `@app.ws_handler` is the only step. A multi-protocol agent shares one host, one session, and one process.
@@ -236,10 +310,107 @@ The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`.
 
 [starlette-ws]: https://www.starlette.io/websockets/
 
+## Typed Voice Live Bridge submodule (preview)
+
+`VoiceAgentServerHost` provides typed `on_<event>` decorators over the existing
+`invocations_ws` transport. Each callback receives an immutable event and a
+send-only `Session`:
+
+```python
+from azure.ai.agentserver.invocations.voice import (
+    ResponseCreated,
+    ResponseDone,
+    ResponseOutputTextDone,
+    Session,
+    SessionReady,
+    SessionRejected,
+    SessionStart,
+    UserMessage,
+    VoiceAgentServerHost,
+    new_item_id,
+    new_response_id,
+)
+
+app = VoiceAgentServerHost()
+
+
+@app.on_session_start
+async def on_session_start(session: Session, event: SessionStart) -> None:
+    if event.protocol_version != "1.0":
+        await session.send(
+            SessionRejected(code="protocol_mismatch", retriable=False)
+        )
+        return
+    # Restore durable application state here when event.reconnect is true.
+    await session.send(SessionReady())
+
+
+@app.on_user_message
+async def on_user_message(session: Session, event: UserMessage) -> None:
+    response_id = new_response_id()
+    item_id = new_item_id()
+    await session.send(
+        ResponseCreated(response_id=response_id, in_reply_to=(event.item_id,))
+    )
+    await session.send(
+        ResponseOutputTextDone(
+            response_id=response_id,
+            item_id=item_id,
+            text="Hello from the hosted text agent.",
+        )
+    )
+    await session.send(ResponseDone(response_id=response_id))
+```
+
+The submodule is deliberately a thin typed event relay. It decodes one inbound frame,
+dispatches the corresponding callback, encodes explicit outbound messages, and
+serializes concurrent WebSocket writes. It does **not** own pending responses,
+terminal arbitration, timeout/cancel operations, generation tasks, history, or
+reconnect state.
+
+When the peer or proxy closes the WebSocket, `@app.on_disconnect` receives a
+local `SessionDisconnected` event. This callback represents only the observed
+peer disconnect.
+
+`@app.on_connection_terminating` is the common cleanup signal for every
+in-process exit from the connection handler, including peer disconnect, local
+protocol close, callback failure, transport failure, and task cancellation. It
+is synchronous so applications can promptly call `Task.cancel()` or set their
+own stop signals without making WebSocket teardown wait for asynchronous
+cleanup. The callback must be non-blocking and must not send frames. The SDK
+invokes it once as each connection handler unwinds, and applications must keep
+their signaling idempotent. The SDK does not retain, join, or guarantee
+completion of application-owned tasks.
+
+For the Voice WebSocket relay, shutdown cancellation remains cancellation while
+the SDK is awaiting WebSocket accept or receive, even if the ASGI transport
+returns normally or translates the cancellation into a standard exception. This
+guarantee requires the transport operation to eventually settle after receiving
+cancellation; a transport that suppresses cancellation and never returns is
+outside the contract.
+
+After repeated cancellation requests, the Voice endpoint is guaranteed to remain
+cancelled. The exact nested `asyncio.CancelledError` instance or message selected
+from a transport-defined exception graph is unspecified.
+
+Voice callback cancellation is cooperative. A callback that catches
+`asyncio.CancelledError` must re-raise it after its own cleanup. If application
+code catches cancellation and returns normally, recovery is outside the SDK
+contract; the SDK does not forcibly terminate or retain that callback.
+
+For full-duplex streaming, the agent creates and owns a generation task, returns
+from `on_user_message`, and cancels that task from `on_barge_in`,
+`on_response_cancelled`, `on_response_timeout`, or
+`on_connection_terminating`. Each task remains responsible for its own
+asynchronous resource cleanup. See the complete
+[`basic_voice_agent`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/basic_voice_agent)
+sample.
+
 ### Reference: configuration
 
 | Environment variable | Default | Description |
 |---|---|---|
+| `SSE_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected interval, in seconds, for SSE comments on idle `POST /invocations` streams. `0` disables keep-alive. Surfaced on `app.config.sse_keepalive_interval`. |
 | `WS_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected WebSocket Ping interval, in seconds. `0` disables keep-alive. Surfaced on `app.config.ws_ping_interval` and wired into Hypercorn's `websocket_ping_interval` by `AgentServerHost`. |
 
 ### Reference: close codes
@@ -266,6 +437,7 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 | [async_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/async_invoke_agent/) | Long-running operations with polling and cancellation |
 | [ws_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_invoke_agent/) | Combined `POST /invocations` (HTTP) and `/invocations_ws` (WebSocket) host |
 | [ws_bidirectional_streaming_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_bidirectional_streaming_agent/) | Full-duplex `/invocations_ws` agent: concurrent token streams + mid-flight cancel (relies on the SDK's WS protocol Ping/Pong keep-alive, not application-level heartbeats) |
+| [basic_voice_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/basic_voice_agent/) | Typed Voice Live Bridge callbacks with developer-owned full-duplex streaming and cancellation |
 
 ## Contributing
 

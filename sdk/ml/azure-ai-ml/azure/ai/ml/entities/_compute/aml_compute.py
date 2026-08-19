@@ -6,8 +6,8 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import AmlCompute as AmlComputeRest
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import AmlCompute as AmlComputeRest
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AmlComputeProperties,
     ComputeResource,
     ResourceId,
@@ -28,13 +28,13 @@ from .compute import Compute, NetworkSettings
 class AmlComputeSshSettings:
     """SSH settings to access a AML compute target.
 
-    :param admin_username: SSH user name.
-    :type admin_username: str
-    :param admin_password: SSH user password. Defaults to None.
-    :type admin_password: str
-    :param ssh_key_value: The SSH RSA private key. Use "ssh-keygen -t
+    :keyword admin_username: SSH user name.
+    :paramtype admin_username: str
+    :keyword admin_password: SSH user password. Defaults to None.
+    :paramtype admin_password: str
+    :keyword ssh_key_value: The SSH RSA private key. Use "ssh-keygen -t
         rsa -b 2048" to generate your SSH key pairs. Defaults to None.
-    :type ssh_key_value: Optional[str]
+    :paramtype ssh_key_value: Optional[str]
 
     .. admonition:: Example:
 
@@ -76,41 +76,41 @@ class AmlComputeSshSettings:
 class AmlCompute(Compute):
     """AzureML Compute resource.
 
-    :param name: Name of the compute resource.
-    :type name: str
-    :param description: Description of the compute resource.
-    :type description: Optional[str]
-    :param size: Size of the compute. Defaults to None.
-    :type size: Optional[str]
-    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
-    :type tags: Optional[dict[str, str]]
-    :param ssh_settings: SSH settings to access the AzureML compute cluster.
-    :type ssh_settings: Optional[~azure.ai.ml.entities.AmlComputeSshSettings]
-    :param network_settings: Virtual network settings for the AzureML compute cluster.
-    :type network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
-    :param idle_time_before_scale_down: Node idle time before scaling down. Defaults to None.
-    :type idle_time_before_scale_down: Optional[int]
-    :param identity: The identities that are associated with the compute cluster.
-    :type identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
-    :param tier: Virtual Machine tier. Accepted values include: "Dedicated", "LowPriority". Defaults to None.
-    :type tier: Optional[str]
-    :param min_instances: Minimum number of instances. Defaults to None.
-    :type min_instances: Optional[int]
-    :param max_instances: Maximum number of instances. Defaults to None.
-    :type max_instances: Optional[int]
-    :param ssh_public_access_enabled: State of the public SSH port. Accepted values are:
+    :keyword name: Name of the compute resource.
+    :paramtype name: str
+    :keyword description: Description of the compute resource.
+    :paramtype description: Optional[str]
+    :keyword size: Size of the compute. Defaults to None.
+    :paramtype size: Optional[str]
+    :keyword tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :paramtype tags: Optional[dict[str, str]]
+    :keyword ssh_settings: SSH settings to access the AzureML compute cluster.
+    :paramtype ssh_settings: Optional[~azure.ai.ml.entities.AmlComputeSshSettings]
+    :keyword network_settings: Virtual network settings for the AzureML compute cluster.
+    :paramtype network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
+    :keyword idle_time_before_scale_down: Node idle time before scaling down. Defaults to None.
+    :paramtype idle_time_before_scale_down: Optional[int]
+    :keyword identity: The identities that are associated with the compute cluster.
+    :paramtype identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
+    :keyword tier: Virtual Machine tier. Accepted values include: "Dedicated", "LowPriority". Defaults to None.
+    :paramtype tier: Optional[str]
+    :keyword min_instances: Minimum number of instances. Defaults to None.
+    :paramtype min_instances: Optional[int]
+    :keyword max_instances: Maximum number of instances. Defaults to None.
+    :paramtype max_instances: Optional[int]
+    :keyword ssh_public_access_enabled: State of the public SSH port. Accepted values are:
         * False - Indicates that the public SSH port is closed on all nodes of the cluster.
         * True - Indicates that the public SSH port is open on all nodes of the cluster.
         * None - Indicates that the public SSH port is closed on all nodes of the cluster if VNet is defined,
         else is open all public nodes.
         It can be None only during cluster creation time. After creation it will be either True or False.
         Defaults to None.
-    :type ssh_public_access_enabled: Optional[bool]
-    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Accepted values are:
+    :paramtype ssh_public_access_enabled: Optional[bool]
+    :keyword enable_node_public_ip: Enable or disable node public IP address provisioning. Accepted values are:
         * True - Indicates that the compute nodes will have public IPs provisioned.
         * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
         Defaults to True.
-    :type enable_node_public_ip: bool
+    :paramtype enable_node_public_ip: bool
 
     .. admonition:: Example:
 
@@ -203,7 +203,11 @@ class AmlCompute(Compute):
             identity=(
                 IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None
             ),
-            created_on=prop.additional_properties.get("createdOn", None),
+            created_on=(
+                prop.additional_properties.get("createdOn", None)
+                if hasattr(prop, "additional_properties")
+                else prop.get("createdOn") if hasattr(prop, "get") else None
+            ),
             enable_node_public_ip=(
                 prop.properties.enable_node_public_ip if prop.properties.enable_node_public_ip is not None else True
             ),
@@ -260,6 +264,10 @@ class AmlCompute(Compute):
             remote_login_port_public_access=remote_login_public_access,
             enable_node_public_ip=self.enable_node_public_ip,
         )
+        # osType defaulted to "Linux" on the legacy 2022-12-01-preview model and was serialized on the
+        # wire; it was @removed from the shared arm_ml_service model (api-version 2025-12-01). Set it via
+        # its wire key to preserve the old wire body.
+        aml_prop["osType"] = "Linux"
 
         aml_comp = AmlComputeRest(
             description=self.description,

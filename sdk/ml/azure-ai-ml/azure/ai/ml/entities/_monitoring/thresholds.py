@@ -6,18 +6,14 @@
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     CategoricalDataDriftMetricThreshold,
     CategoricalDataQualityMetricThreshold,
     CategoricalPredictionDriftMetricThreshold,
-    ClassificationModelPerformanceMetricThreshold,
     CustomMetricThreshold,
     DataDriftMetricThresholdBase,
     DataQualityMetricThresholdBase,
     FeatureAttributionMetricThreshold,
-    GenerationSafetyQualityMetricThreshold,
-    GenerationTokenStatisticsMetricThreshold,
-    ModelPerformanceMetricThresholdBase,
     MonitoringThreshold,
     NumericalDataDriftMetricThreshold,
     NumericalDataQualityMetricThreshold,
@@ -40,14 +36,18 @@ class MetricThreshold(RestTranslatableMixin):
 class NumericalDriftMetrics(RestTranslatableMixin):
     """Numerical Drift Metrics
 
-    :param jensen_shannon_distance: The Jensen-Shannon distance between the two distributions
+    :keyword jensen_shannon_distance: The Jensen-Shannon distance between the two distributions
     :paramtype jensen_shannon_distance: float
-    :param normalized_wasserstein_distance: The normalized Wasserstein distance between the two distributions
+    :keyword normalized_wasserstein_distance: The normalized Wasserstein distance between the two distributions
     :paramtype normalized_wasserstein_distance: float
-    :param population_stability_index: The population stability index between the two distributions
+    :keyword population_stability_index: The population stability index between the two distributions
     :paramtype population_stability_index: float
-    :param two_sample_kolmogorov_smirnov_test: The two sample Kolmogorov-Smirnov test between the two distributions
+    :keyword two_sample_kolmogorov_smirnov_test: The two sample Kolmogorov-Smirnov test between the two distributions
     :paramtype two_sample_kolmogorov_smirnov_test: float
+    :keyword metric: The name of the metric to apply the threshold to.
+    :paramtype metric: str
+    :keyword metric_threshold: The threshold value for the selected metric.
+    :paramtype metric_threshold: float
     """
 
     def __init__(
@@ -109,11 +109,11 @@ class NumericalDriftMetrics(RestTranslatableMixin):
 class CategoricalDriftMetrics(RestTranslatableMixin):
     """Categorical Drift Metrics
 
-    :param jensen_shannon_distance: The Jensen-Shannon distance between the two distributions
+    :keyword jensen_shannon_distance: The Jensen-Shannon distance between the two distributions
     :paramtype jensen_shannon_distance: float
-    :param population_stability_index: The population stability index between the two distributions
+    :keyword population_stability_index: The population stability index between the two distributions
     :paramtype population_stability_index: float
-    :param pearsons_chi_squared_test: The Pearson's Chi-Squared test between the two distributions
+    :keyword pearsons_chi_squared_test: The Pearson's Chi-Squared test between the two distributions
     :paramtype pearsons_chi_squared_test: float
     """
 
@@ -167,10 +167,16 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
 class DataDriftMetricThreshold(MetricThreshold):
     """Data drift metric threshold
 
-    :param numerical: Numerical drift metrics
+    :keyword numerical: Numerical drift metrics
     :paramtype numerical: ~azure.ai.ml.entities.NumericalDriftMetrics
-    :param categorical: Categorical drift metrics
+    :keyword categorical: Categorical drift metrics
     :paramtype categorical: ~azure.ai.ml.entities.CategoricalDriftMetrics
+    :keyword data_type: The feature type of the metric threshold. Defaults to None.
+    :paramtype data_type: Optional[~azure.ai.ml.constants.MonitorFeatureType]
+    :keyword threshold: The threshold value. Defaults to None.
+    :paramtype threshold: Optional[float]
+    :keyword metric: The metric name. Defaults to None.
+    :paramtype metric: Optional[str]
     """
 
     def __init__(
@@ -244,10 +250,14 @@ class DataDriftMetricThreshold(MetricThreshold):
 class PredictionDriftMetricThreshold(MetricThreshold):
     """Prediction drift metric threshold
 
-    :param numerical: Numerical drift metrics
+    :keyword numerical: Numerical drift metrics
     :paramtype numerical: ~azure.ai.ml.entities.NumericalDriftMetrics
-    :param categorical: Categorical drift metrics
+    :keyword categorical: Categorical drift metrics
     :paramtype categorical: ~azure.ai.ml.entities.CategoricalDriftMetrics
+    :keyword data_type: The feature type of the metric threshold. Defaults to None.
+    :paramtype data_type: Optional[~azure.ai.ml.constants.MonitorFeatureType]
+    :keyword threshold: The threshold value. Defaults to None.
+    :paramtype threshold: Optional[float]
     """
 
     def __init__(
@@ -323,11 +333,11 @@ class PredictionDriftMetricThreshold(MetricThreshold):
 class DataQualityMetricsNumerical(RestTranslatableMixin):
     """Data Quality Numerical Metrics
 
-    :param null_value_rate: The null value rate
+    :keyword null_value_rate: The null value rate
     :paramtype null_value_rate: float
-    :param data_type_error_rate: The data type error rate
+    :keyword data_type_error_rate: The data type error rate
     :paramtype data_type_error_rate: float
-    :param out_of_bounds_rate: The out of bounds rate
+    :keyword out_of_bounds_rate: The out of bounds rate
     :paramtype out_of_bounds_rate: float
     """
 
@@ -395,11 +405,11 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
 class DataQualityMetricsCategorical(RestTranslatableMixin):
     """Data Quality Categorical Metrics
 
-    :param null_value_rate: The null value rate
+    :keyword null_value_rate: The null value rate
     :paramtype null_value_rate: float
-    :param data_type_error_rate: The data type error rate
+    :keyword data_type_error_rate: The data type error rate
     :paramtype data_type_error_rate: float
-    :param out_of_bounds_rate: The out of bounds rate
+    :keyword out_of_bounds_rate: The out of bounds rate
     :paramtype out_of_bounds_rate: float
     """
 
@@ -467,10 +477,16 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
 class DataQualityMetricThreshold(MetricThreshold):
     """Data quality metric threshold
 
-    :param numerical: Numerical data quality metrics
+    :keyword numerical: Numerical data quality metrics
     :paramtype numerical: ~azure.ai.ml.entities.DataQualityMetricsNumerical
-    :param categorical: Categorical data quality metrics
+    :keyword categorical: Categorical data quality metrics
     :paramtype categorical: ~azure.ai.ml.entities.DataQualityMetricsCategorical
+    :keyword data_type: The feature type of the metric threshold. Defaults to None.
+    :paramtype data_type: Optional[~azure.ai.ml.constants.MonitorFeatureType]
+    :keyword threshold: The threshold value. Defaults to None.
+    :paramtype threshold: Optional[float]
+    :keyword metric_name: The metric name. Defaults to None.
+    :paramtype metric_name: Optional[str]
     """
 
     def __init__(
@@ -551,8 +567,10 @@ class DataQualityMetricThreshold(MetricThreshold):
 class FeatureAttributionDriftMetricThreshold(MetricThreshold):
     """Feature attribution drift metric threshold
 
-    :param normalized_discounted_cumulative_gain: The threshold value for metric.
+    :keyword normalized_discounted_cumulative_gain: The threshold value for metric.
     :paramtype normalized_discounted_cumulative_gain: float
+    :keyword threshold: The threshold value. Defaults to None.
+    :paramtype threshold: Optional[float]
     """
 
     def __init__(
@@ -613,8 +631,10 @@ class ModelPerformanceClassificationThresholds(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj) -> "ModelPerformanceClassificationThresholds":
+        # The wire is a plain dict (the model is not in arm_ml_service); read via keys.
+        threshold = obj.get("threshold") if hasattr(obj, "get") else None
         return cls(
-            accuracy=obj.threshold.value if obj.threshold else None,
+            accuracy=threshold["value"] if threshold else None,
         )
 
 
@@ -684,15 +704,18 @@ class ModelPerformanceMetricThreshold(RestTranslatableMixin):
             result = "[" + thresholds[0] + "]"
         return result
 
-    def _to_rest_object(self, **kwargs) -> ModelPerformanceMetricThresholdBase:
-        threshold = MonitoringThreshold(value=0.9)
-        return ClassificationModelPerformanceMetricThreshold(
-            metric="Accuracy",
-            threshold=threshold,
-        )
+    def _to_rest_object(self, **kwargs) -> Dict:
+        # ``ClassificationModelPerformanceMetricThreshold`` / ``ModelPerformanceMetricThresholdBase`` do not exist
+        # in the shared arm_ml_service model. Build the 2023-06-01-preview wire shape directly. The polymorphic
+        # ``modelType`` discriminator ("Classification") that the old autorest model emitted is set explicitly.
+        return {
+            "metric": "Accuracy",
+            "modelType": "Classification",
+            "threshold": {"value": 0.9},
+        }
 
     @classmethod
-    def _from_rest_object(cls, obj: ModelPerformanceMetricThresholdBase) -> "ModelPerformanceMetricThreshold":
+    def _from_rest_object(cls, obj: Any) -> "ModelPerformanceMetricThreshold":
         return cls(
             classification=ModelPerformanceClassificationThresholds._from_rest_object(obj),
             regression=None,
@@ -703,11 +726,11 @@ class ModelPerformanceMetricThreshold(RestTranslatableMixin):
 class CustomMonitoringMetricThreshold(MetricThreshold):
     """Feature attribution drift metric threshold
 
-    :param metric_name: The metric to calculate
-    :type metric_name: str
-    :param threshold: The threshold value. If None, a default value will be set
+    :keyword metric_name: The metric to calculate
+    :paramtype metric_name: str
+    :keyword threshold: The threshold value. If None, a default value will be set
         depending on the selected metric.
-    :type threshold: float
+    :paramtype threshold: float
     """
 
     def __init__(
@@ -734,15 +757,15 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
 class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  # pylint: disable=name-too-long
     """Generation safety quality metric threshold
 
-    :param groundedness: The groundedness metric threshold
+    :keyword groundedness: The groundedness metric threshold
     :paramtype groundedness: Dict[str, float]
-    :param relevance: The relevance metric threshold
+    :keyword relevance: The relevance metric threshold
     :paramtype relevance: Dict[str, float]
-    :param coherence: The coherence metric threshold
+    :keyword coherence: The coherence metric threshold
     :paramtype coherence: Dict[str, float]
-    :param fluency: The fluency metric threshold
+    :keyword fluency: The fluency metric threshold
     :paramtype fluency: Dict[str, float]
-    :param similarity: The similarity metric threshold
+    :keyword similarity: The similarity metric threshold
     :paramtype similarity: Dict[str, float]
     """
 
@@ -761,102 +784,85 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
         self.fluency = fluency
         self.similarity = similarity
 
-    def _to_rest_object(self) -> GenerationSafetyQualityMetricThreshold:
+    def _to_rest_object(self) -> List[Dict]:
+        # ``GenerationSafetyQualityMetricThreshold`` does not exist in the shared arm_ml_service model. Build the
+        # 2023-06-01-preview wire shape directly as plain dicts. ``float(...)`` preserves the old autorest behavior
+        # of serializing the ``MonitoringThreshold.value`` field as a float (e.g. the default ``3`` -> ``3.0``).
         metric_thresholds = []
         if self.groundedness:
             if "acceptable_groundedness_score_per_instance" in self.groundedness:
-                acceptable_threshold = MonitoringThreshold(
-                    value=self.groundedness["acceptable_groundedness_score_per_instance"]
-                )
+                acceptable_value = self.groundedness["acceptable_groundedness_score_per_instance"]
             else:
-                acceptable_threshold = MonitoringThreshold(value=3)
+                acceptable_value = 3
             metric_thresholds.append(
-                GenerationSafetyQualityMetricThreshold(
-                    metric="AcceptableGroundednessScorePerInstance", threshold=acceptable_threshold
-                )
+                {"metric": "AcceptableGroundednessScorePerInstance", "threshold": {"value": float(acceptable_value)}}
             )
-            aggregated_threshold = MonitoringThreshold(value=self.groundedness["aggregated_groundedness_pass_rate"])
             metric_thresholds.append(
-                GenerationSafetyQualityMetricThreshold(
-                    metric="AggregatedGroundednessPassRate", threshold=aggregated_threshold
-                )
+                {
+                    "metric": "AggregatedGroundednessPassRate",
+                    "threshold": {"value": float(self.groundedness["aggregated_groundedness_pass_rate"])},
+                }
             )
         if self.relevance:
             if "acceptable_relevance_score_per_instance" in self.relevance:
-                acceptable_threshold = MonitoringThreshold(
-                    value=self.relevance["acceptable_relevance_score_per_instance"]
-                )
+                acceptable_value = self.relevance["acceptable_relevance_score_per_instance"]
             else:
-                acceptable_threshold = MonitoringThreshold(value=3)
+                acceptable_value = 3
             metric_thresholds.append(
-                GenerationSafetyQualityMetricThreshold(
-                    metric="AcceptableRelevanceScorePerInstance", threshold=acceptable_threshold
-                )
+                {"metric": "AcceptableRelevanceScorePerInstance", "threshold": {"value": float(acceptable_value)}}
             )
-            aggregated_threshold = MonitoringThreshold(value=self.relevance["aggregated_relevance_pass_rate"])
             metric_thresholds.append(
-                GenerationSafetyQualityMetricThreshold(
-                    metric="AggregatedRelevancePassRate", threshold=aggregated_threshold
-                )
+                {
+                    "metric": "AggregatedRelevancePassRate",
+                    "threshold": {"value": float(self.relevance["aggregated_relevance_pass_rate"])},
+                }
             )
         if self.coherence:
             if "acceptable_coherence_score_per_instance" in self.coherence:
-                acceptable_threshold = MonitoringThreshold(
-                    value=self.coherence["acceptable_coherence_score_per_instance"]
-                )
+                acceptable_value = self.coherence["acceptable_coherence_score_per_instance"]
             else:
-                acceptable_threshold = MonitoringThreshold(value=3)
+                acceptable_value = 3
             metric_thresholds.append(
-                GenerationSafetyQualityMetricThreshold(
-                    metric="AcceptableCoherenceScorePerInstance", threshold=acceptable_threshold
-                )
+                {"metric": "AcceptableCoherenceScorePerInstance", "threshold": {"value": float(acceptable_value)}}
             )
-            aggregated_threshold = MonitoringThreshold(value=self.coherence["aggregated_coherence_pass_rate"])
             metric_thresholds.append(
-                GenerationSafetyQualityMetricThreshold(
-                    metric="AggregatedCoherencePassRate", threshold=aggregated_threshold
-                )
+                {
+                    "metric": "AggregatedCoherencePassRate",
+                    "threshold": {"value": float(self.coherence["aggregated_coherence_pass_rate"])},
+                }
             )
         if self.fluency:
             if "acceptable_fluency_score_per_instance" in self.fluency:
-                acceptable_threshold = MonitoringThreshold(value=self.fluency["acceptable_fluency_score_per_instance"])
+                acceptable_value = self.fluency["acceptable_fluency_score_per_instance"]
             else:
-                acceptable_threshold = MonitoringThreshold(value=3)
+                acceptable_value = 3
             metric_thresholds.append(
-                GenerationSafetyQualityMetricThreshold(
-                    metric="AcceptableFluencyScorePerInstance", threshold=acceptable_threshold
-                )
+                {"metric": "AcceptableFluencyScorePerInstance", "threshold": {"value": float(acceptable_value)}}
             )
-            aggregated_threshold = MonitoringThreshold(value=self.fluency["aggregated_fluency_pass_rate"])
             metric_thresholds.append(
-                GenerationSafetyQualityMetricThreshold(
-                    metric="AggregatedFluencyPassRate", threshold=aggregated_threshold
-                )
+                {
+                    "metric": "AggregatedFluencyPassRate",
+                    "threshold": {"value": float(self.fluency["aggregated_fluency_pass_rate"])},
+                }
             )
         if self.similarity:
             if "acceptable_similarity_score_per_instance" in self.similarity:
-                acceptable_threshold = MonitoringThreshold(
-                    value=self.similarity["acceptable_similarity_score_per_instance"]
-                )
+                acceptable_value = self.similarity["acceptable_similarity_score_per_instance"]
             else:
-                acceptable_threshold = MonitoringThreshold(value=3)
+                acceptable_value = 3
             metric_thresholds.append(
-                GenerationSafetyQualityMetricThreshold(
-                    metric="AcceptableSimilarityScorePerInstance", threshold=acceptable_threshold
-                )
+                {"metric": "AcceptableSimilarityScorePerInstance", "threshold": {"value": float(acceptable_value)}}
             )
-            aggregated_threshold = MonitoringThreshold(value=self.similarity["aggregated_similarity_pass_rate"])
             metric_thresholds.append(
-                GenerationSafetyQualityMetricThreshold(
-                    metric="AggregatedSimilarityPassRate", threshold=aggregated_threshold
-                )
+                {
+                    "metric": "AggregatedSimilarityPassRate",
+                    "threshold": {"value": float(self.similarity["aggregated_similarity_pass_rate"])},
+                }
             )
         return metric_thresholds
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: GenerationSafetyQualityMetricThreshold
-    ) -> "GenerationSafetyQualityMonitoringMetricThreshold":
+    def _from_rest_object(cls, obj: Any) -> "GenerationSafetyQualityMonitoringMetricThreshold":
         groundedness = {}
         relevance = {}
         coherence = {}
@@ -864,26 +870,29 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
         similarity = {}
 
         for threshold in obj:
-            if threshold.metric == "AcceptableGroundednessScorePerInstance":
-                groundedness["acceptable_groundedness_score_per_instance"] = threshold.threshold.value
-            if threshold.metric == "AcceptableRelevanceScorePerInstance":
-                relevance["acceptable_relevance_score_per_instance"] = threshold.threshold.value
-            if threshold.metric == "AcceptableCoherenceScorePerInstance":
-                coherence["acceptable_coherence_score_per_instance"] = threshold.threshold.value
-            if threshold.metric == "AcceptableFluencyScorePerInstance":
-                fluency["acceptable_fluency_score_per_instance"] = threshold.threshold.value
-            if threshold.metric == "AcceptableSimilarityScorePerInstance":
-                similarity["acceptable_similarity_score_per_instance"] = threshold.threshold.value
-            if threshold.metric == "AggregatedGroundednessPassRate":
-                groundedness["aggregated_groundedness_pass_rate"] = threshold.threshold.value
-            if threshold.metric == "AggregatedRelevancePassRate":
-                relevance["aggregated_relevance_pass_rate"] = threshold.threshold.value
-            if threshold.metric == "AggregatedCoherencePassRate":
-                coherence["aggregated_coherence_pass_rate"] = threshold.threshold.value
-            if threshold.metric == "AggregatedFluencyPassRate":
-                fluency["aggregated_fluency_pass_rate"] = threshold.threshold.value
-            if threshold.metric == "AggregatedSimilarityPassRate":
-                similarity["aggregated_similarity_pass_rate"] = threshold.threshold.value
+            # The wire is a list of plain dicts (the model is not in arm_ml_service); read via keys.
+            metric = threshold["metric"]
+            value = threshold["threshold"]["value"]
+            if metric == "AcceptableGroundednessScorePerInstance":
+                groundedness["acceptable_groundedness_score_per_instance"] = value
+            if metric == "AcceptableRelevanceScorePerInstance":
+                relevance["acceptable_relevance_score_per_instance"] = value
+            if metric == "AcceptableCoherenceScorePerInstance":
+                coherence["acceptable_coherence_score_per_instance"] = value
+            if metric == "AcceptableFluencyScorePerInstance":
+                fluency["acceptable_fluency_score_per_instance"] = value
+            if metric == "AcceptableSimilarityScorePerInstance":
+                similarity["acceptable_similarity_score_per_instance"] = value
+            if metric == "AggregatedGroundednessPassRate":
+                groundedness["aggregated_groundedness_pass_rate"] = value
+            if metric == "AggregatedRelevancePassRate":
+                relevance["aggregated_relevance_pass_rate"] = value
+            if metric == "AggregatedCoherencePassRate":
+                coherence["aggregated_coherence_pass_rate"] = value
+            if metric == "AggregatedFluencyPassRate":
+                fluency["aggregated_fluency_pass_rate"] = value
+            if metric == "AggregatedSimilarityPassRate":
+                similarity["aggregated_similarity_pass_rate"] = value
 
         return cls(
             groundedness=groundedness if groundedness else None,
@@ -907,6 +916,8 @@ class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin):  #
     :ivar threshold: Gets or sets the threshold value.
      If null, a default value will be set depending on the selected metric.
     :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
+    :keyword totaltoken: The per-group total token count thresholds. Defaults to None.
+    :paramtype totaltoken: Optional[Dict[str, float]]
     """
 
     def __init__(
@@ -916,34 +927,34 @@ class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin):  #
     ):
         self.totaltoken = totaltoken
 
-    def _to_rest_object(self) -> GenerationSafetyQualityMetricThreshold:
-        metric_thresholds = []
+    def _to_rest_object(self) -> List[Dict]:
+        # ``GenerationTokenStatisticsMetricThreshold`` / ``GenerationSafetyQualityMetricThreshold`` do not exist in
+        # the shared arm_ml_service model. Build the 2023-06-01-preview wire shape directly. ``float(...)`` keeps the
+        # old autorest float serialization of ``MonitoringThreshold.value``.
+        metric_thresholds: List[Dict] = []
         if self.totaltoken:
             if "total_token_count" in self.totaltoken:
-                acceptable_threshold = MonitoringThreshold(value=self.totaltoken["total_token_count"])
+                acceptable_value = self.totaltoken["total_token_count"]
             else:
-                acceptable_threshold = MonitoringThreshold(value=3)
+                acceptable_value = 3
+            metric_thresholds.append({"metric": "TotalTokenCount", "threshold": {"value": float(acceptable_value)}})
             metric_thresholds.append(
-                GenerationTokenStatisticsMetricThreshold(metric="TotalTokenCount", threshold=acceptable_threshold)
-            )
-            acceptable_threshold_per_group = MonitoringThreshold(value=self.totaltoken["total_token_count_per_group"])
-            metric_thresholds.append(
-                GenerationSafetyQualityMetricThreshold(
-                    metric="TotalTokenCountPerGroup", threshold=acceptable_threshold_per_group
-                )
+                {
+                    "metric": "TotalTokenCountPerGroup",
+                    "threshold": {"value": float(self.totaltoken["total_token_count_per_group"])},
+                }
             )
         return metric_thresholds
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: GenerationTokenStatisticsMetricThreshold
-    ) -> "GenerationTokenStatisticsMonitorMetricThreshold":
+    def _from_rest_object(cls, obj: Any) -> "GenerationTokenStatisticsMonitorMetricThreshold":
+        # The wire is a list of plain dicts (the model is not in arm_ml_service); read via keys.
         totaltoken = {}
         for threshold in obj:
-            if threshold.metric == "TotalTokenCount":
-                totaltoken["total_token_count"] = threshold.threshold.value
-            if threshold.metric == "TotalTokenCountPerGroup":
-                totaltoken["total_token_count_per_group"] = threshold.threshold.value
+            if threshold["metric"] == "TotalTokenCount":
+                totaltoken["total_token_count"] = threshold["threshold"]["value"]
+            if threshold["metric"] == "TotalTokenCountPerGroup":
+                totaltoken["total_token_count_per_group"] = threshold["threshold"]["value"]
 
         return cls(
             totaltoken=totaltoken if totaltoken else None,
