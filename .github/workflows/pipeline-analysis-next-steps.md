@@ -35,10 +35,11 @@ on:
             core.info("Skipping analysis because no Azure Pipelines suites failed.");
             return;
           }
-          const repositoryName = `${context.repo.owner}/${context.repo.repo}`.toLowerCase();
+          const repositoryName = `${context.repo.owner}/${context.repo.repo}`;
+          const repositoryId = context.payload.repository.id;
           const prNumbers = [...new Set(
             suite.pull_requests
-              .filter(candidate => candidate.base?.repo?.full_name?.toLowerCase() === repositoryName)
+              .filter(candidate => candidate.base?.repo?.id === repositoryId)
               .map(candidate => candidate.number)
           )];
           const pulls = await Promise.all(prNumbers.map(async pullNumber => {
@@ -115,14 +116,16 @@ pre-agent-steps:
       import sys
 
       with open(sys.argv[1], encoding="utf-8") as event_file:
-          suite = json.load(event_file)["check_suite"]
+          event = json.load(event_file)
+          suite = event["check_suite"]
 
       print(suite["head_sha"])
-      repository = sys.argv[2].lower()
+      repository = sys.argv[2]
+      repository_id = event["repository"]["id"]
       numbers = {
           pull["number"]
           for pull in suite["pull_requests"]
-          if pull.get("base", {}).get("repo", {}).get("full_name", "").lower() == repository
+          if pull.get("base", {}).get("repo", {}).get("id") == repository_id
       }
       for number in sorted(numbers):
           print(number)
