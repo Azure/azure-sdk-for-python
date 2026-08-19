@@ -16,7 +16,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_scale_set_create_with_lifecycle_hooks_profile.py
+    python virtual_machine_scale_set_create_with_spot_plus_priority_flex.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,47 +37,54 @@ def main():
         parameters={
             "location": "westus",
             "properties": {
-                "lifecycleHooksProfile": {
-                    "lifecycleHooks": [
-                        {
-                            "defaultAction": "Approve",
-                            "type": "UpgradeAutoOSRollingBatchStarting",
-                            "waitDuration": "PT20M",
-                        }
-                    ]
+                "orchestrationMode": "Flexible",
+                "platformFaultDomainCount": 1,
+                "priorityMixPolicy": {"baseRegularPriorityCount": 4, "regularPriorityPercentageAboveBase": 50},
+                "singlePlacementGroup": False,
+                "skuProfile": {
+                    "allocationStrategy": "CapacityOptimized",
+                    "vmSizes": [{"name": "Standard_D8s_v5"}, {"name": "Standard_E16s_v5"}, {"name": "Standard_D2s_v5"}],
                 },
                 "virtualMachineProfile": {
+                    "billingProfile": {"maxPrice": -1},
+                    "evictionPolicy": "Deallocate",
                     "networkProfile": {
+                        "networkApiVersion": "2020-11-01",
                         "networkInterfaceConfigurations": [
                             {
                                 "name": "{vmss-name}",
                                 "properties": {
+                                    "enableAcceleratedNetworking": False,
                                     "enableIPForwarding": True,
                                     "ipConfigurations": [
                                         {
                                             "name": "{vmss-name}",
                                             "properties": {
+                                                "applicationGatewayBackendAddressPools": [],
+                                                "loadBalancerBackendAddressPools": [],
+                                                "primary": True,
+                                                "publicIPAddressConfiguration": {
+                                                    "name": "{vmss-name}",
+                                                    "properties": {"idleTimeoutInMinutes": 15},
+                                                },
                                                 "subnet": {
                                                     "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Network/virtualNetworks/{existing-virtual-network-name}/subnets/{existing-subnet-name}"
-                                                }
+                                                },
                                             },
                                         }
                                     ],
                                     "primary": True,
                                 },
                             }
-                        ]
+                        ],
                     },
-                    "osProfile": {
-                        "adminPassword": "{your-password}",
-                        "adminUsername": "{your-username}",
-                        "computerNamePrefix": "{vmss-name}",
-                    },
+                    "osProfile": {"adminUsername": "{your-username}", "computerNamePrefix": "{vmss-name}"},
+                    "priority": "SpotPlus",
                     "storageProfile": {
                         "imageReference": {
-                            "offer": "WindowsServer",
-                            "publisher": "MicrosoftWindowsServer",
-                            "sku": "2016-Datacenter",
+                            "offer": "0001-com-ubuntu-server-focal",
+                            "publisher": "Canonical",
+                            "sku": "20_04-lts-gen2",
                             "version": "latest",
                         },
                         "osDisk": {
@@ -88,12 +95,12 @@ def main():
                     },
                 },
             },
-            "sku": {"capacity": 4, "name": "Standard_D1_v2", "tier": "Standard"},
+            "sku": {"capacity": 10, "name": "Mix"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithLifecycleHooksProfile.json
+# x-ms-original-file: 2026-04-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithSpotPlusPriorityFlex.json
 if __name__ == "__main__":
     main()

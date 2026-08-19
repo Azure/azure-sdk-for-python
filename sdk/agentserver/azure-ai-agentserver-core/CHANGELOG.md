@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0b2 (2026-08-18)
+
+### Other Changes
+
+- Updated the hosted task provider's `Foundry-Features` opt-in header from `Routines=V1Preview` to `Routines=V2Preview` to align with the `agentserver-persistence` contract. #48617
+
 ## 2.1.0b1 (2026-08-11)
 
 ### Features Added
