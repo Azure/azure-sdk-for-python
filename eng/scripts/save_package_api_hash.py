@@ -35,13 +35,15 @@ def main() -> None:
         package_info = json.loads(package_info_path.read_text(encoding="utf-8-sig"))
         package_name = package_info["Name"]
         package_artifact_dir = artifact_dir / package_name
-        token_path = package_artifact_dir / f"{package_name}_python.json"
-        if not token_path.is_file():
-            print(f"API token was not found for {package_name}; skipping ApiHash update")
+        token_file = package_artifact_dir / f"{package_name}_python.json"
+        # API stub generation intentionally omits management-plane packages, so they have no token file.
+        # Revisit this behavior if management-plane packages are included in API stub generation.
+        if not token_file.is_file():
+            print(f"API token file was not found for {package_name}; skipping ApiHash update")
             continue
 
         subprocess.run(
-            ["pwsh", str(export_script), "-TokenJsonPath", str(token_path), "-OutputPath", str(package_artifact_dir)],
+            ["pwsh", str(export_script), "-TokenJsonPath", str(token_file), "-OutputPath", str(package_artifact_dir)],
             check=True,
         )
         extract_metadata(package_artifact_dir / "api.md")

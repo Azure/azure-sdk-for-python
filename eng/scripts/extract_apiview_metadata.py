@@ -11,7 +11,8 @@ _METADATA_PATTERN = re.compile(
 
 
 def extract_metadata(api_markdown_path: pathlib.Path) -> Dict[str, str]:
-    file_text = api_markdown_path.read_text(encoding="utf-8-sig")
+    with api_markdown_path.open(encoding="utf-8-sig", newline="") as api_markdown_file:
+        file_text = api_markdown_file.read()
     line_ending = "\r\n" if "\r\n" in file_text else "\n"
     lines = re.split(r"\r?\n", file_text)
 
