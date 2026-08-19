@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0b2 (2026-08-19)
+
+### Bugs Fixed
+
+- Fixed local response providers to retain the newest conversation history items when applying the history limit.
+
 ## 2.1.0b1 (2026-08-11)
 
 ### Breaking Changes
@@ -23,7 +29,6 @@
 
 - Restored JSON-string encoding for response-level `internal_metadata` so resilient response checkpoints round-trip through Foundry storage.
 - Restored `get_request_context()` identity values while stored Responses handlers run inside durable tasks.
-- Fixed local response providers to retain the newest conversation history items when applying the history limit.
 
 ### Other Changes
 
