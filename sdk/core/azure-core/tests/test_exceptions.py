@@ -23,10 +23,12 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import pytest
 import json
-import requests
 from unittest.mock import Mock
+
+import pytest
+import requests
+from utils import HTTP_REQUESTS
 
 # module under test
 from azure.core.exceptions import (
@@ -36,10 +38,11 @@ from azure.core.exceptions import (
     SerializationError,
     DeserializationError,
 )
+
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.transport._base import _HttpResponseBase as PipelineTransportHttpResponseBase
 from azure.core.rest._http_response_impl import _HttpResponseBaseImpl as RestHttpResponseBase
-from utils import HTTP_REQUESTS
 
 
 class PipelineTransportMockResponse(PipelineTransportHttpResponseBase):
@@ -240,8 +243,8 @@ class TestExceptions(object):
         assert exp.code == "501"
         assert exp.message == "Unsupported functionality"
         assert exp.target is None
-        assert exp.details == []
-        assert exp.innererror == {}
+        assert not exp.details
+        assert not exp.innererror
 
     @pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
     def test_broken_odata_details(self, mock_response):
@@ -259,7 +262,8 @@ class TestExceptions(object):
                             "code": "Conflict",
                             "message": "The maximum number of Free ServerFarms allowed in a Subscription is 10.",
                             "extendedCode": "59301",
-                            "messageTemplate": "The maximum number of {0} ServerFarms allowed in a Subscription is {1}.",
+                            "messageTemplate": "The maximum number of {0} ServerFarms allowed "
+                            "in a Subscription is {1}.",
                             "parameters": ["Free", "10"],
                             "innerErrors": None,
                         }
@@ -291,9 +295,9 @@ class TestExceptions(object):
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
-        assert (
-            str(ex.value)
-            == 'Operation returned an invalid status \'BAD REQUEST\'\nContent: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]}}'
+        assert str(ex.value) == (
+            "Operation returned an invalid status 'BAD REQUEST'\n"
+            'Content: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]}}'
         )
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -302,9 +306,9 @@ class TestExceptions(object):
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
-        assert (
-            str(ex.value)
-            == 'Operation returned an invalid status \'BAD REQUEST\'\nContent: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]'
+        assert str(ex.value) == (
+            "Operation returned an invalid status 'BAD REQUEST'\n"
+            'Content: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]'
         )
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

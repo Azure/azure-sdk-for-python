@@ -19,6 +19,7 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import BlobPreparer
+from test_helpers import _deterministic_urandom
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
@@ -127,7 +128,6 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    @mock.patch("os.urandom", mock_urandom)
     def test_validate_encryption_chunked_upload(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -148,7 +148,8 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         content = b"a" * 5 * 1024
 
         # Act
-        blob.upload_blob(content, overwrite=True)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            blob.upload_blob(content, overwrite=True)
 
         blob.require_encryption = False
         blob.key_encryption_key = None
@@ -388,6 +389,55 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         assert "Decryption failed." in str(e.value)
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_encryption_v2_v1_downgrade_mid_download(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper("key1")
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
+            require_encryption=True,
+            encryption_version="2.0",
+            key_encryption_key=kek,
+        )
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b"abcd" * 2 * MiB  # 8 MiB spans multiple encryption regions -> multiple download requests
+
+        blob.upload_blob(content, overwrite=True)
+
+        # Build tampered metadata that downgrades the blob from V2 to V1
+        metadata = blob.get_blob_properties().metadata
+        tampered = loads(metadata["encryptiondata"])
+        tampered["EncryptionAgent"]["Protocol"] = "1.0"
+        tampered["EncryptionAgent"]["EncryptionAlgorithm"] = "AES_CBC_256"
+        tampered["ContentEncryptionIV"] = base64.b64encode(os.urandom(16)).decode("utf-8")
+        tampered_header = dumps(tampered)
+
+        # Simulate the service returning downgraded (V1) encryption metadata partway through the
+        # download by tampering with the response headers of every request after the initial one.
+        from azure.storage.blob import _download as download_module
+
+        real_process_content = download_module.process_content
+        call_count = {"value": 0}
+
+        def tampering_process_content(data, start_offset, end_offset, encryption, expected_encryption_data):
+            call_count["value"] += 1
+            if call_count["value"] > 1:
+                data.response.headers["x-ms-meta-encryptiondata"] = tampered_header
+            return real_process_content(data, start_offset, end_offset, encryption, expected_encryption_data)
+
+        # Act / Assert
+        with mock.patch.object(download_module, "process_content", tampering_process_content):
+            with pytest.raises(HttpResponseError) as e:
+                blob.download_blob().readall()
+
     @BlobPreparer()
     @recorded_by_proxy
     @mock.patch("os.urandom", mock_urandom)
@@ -473,7 +523,6 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    @mock.patch("os.urandom", mock_urandom)
     def test_put_blob_single_region_chunked(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -494,7 +543,8 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         content = b"abcde" * 1024
 
         # Act
-        blob.upload_blob(content, overwrite=True)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            blob.upload_blob(content, overwrite=True)
         data = blob.download_blob().readall()
 
         # Assert

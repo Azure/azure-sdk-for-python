@@ -15,12 +15,12 @@ from .data_asset import DataAsset
 class DeploymentCollection:
     """Collection entity
 
-    :param enabled: Is logging for this collection enabled. Possible values include: 'true', 'false'.
-    :type enabled: str
-    :param data: Data asset id associated with collection logging.
-    :type data: str
-    :param client_id: Client ID associated with collection logging.
-    :type client_id: str
+    :keyword enabled: Is logging for this collection enabled. Possible values include: 'true', 'false'.
+    :paramtype enabled: str
+    :keyword data: Data asset id associated with collection logging.
+    :paramtype data: str
+    :keyword client_id: Client ID associated with collection logging.
+    :paramtype client_id: str
 
     """
 

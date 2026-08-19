@@ -78,7 +78,7 @@
 
 # ServiceLabel: %Cognitive - Content Safety
 # PRLabel: %Cognitive - Content Safety
-/sdk/contentsafety/    @mengaims
+/sdk/contentsafety/    @Azure/azure-sdk-write-contentsafety
 
 # PRLabel: %Cognitive - Content Understanding
 /sdk/contentunderstanding/    @bojunehsu @yungshinlintw
@@ -225,6 +225,13 @@
 # ServiceLabel: %Digital Twins
 # PRLabel: %Digital Twins
 /sdk/digitaltwins/    @Aashish93-stack @johngallardo @Satya-Kolluri @sjiherzig
+
+# AzureSdkOwners: @ahall-msft
+# ServiceLabel: %Discovery
+# ServiceOwners: @ahall-msft
+
+# PRLabel: %Discovery
+/sdk/discovery/    @ahall-msft
 
 # PRLabel: %Document Intelligence
 /sdk/documentintelligence/    @bojunehsu @yungshinlintw
@@ -756,10 +763,10 @@
 # ServiceOwners: @amber-yujueWang @rhurey @xitzhang @pankopon @emilyjiji
 
 # PRLabel: %Storage
-/sdk/storage/    @jalauzon-msft @vincenttran-msft @weirongw23-msft
+/sdk/storage/    @jalauzon-msft @vincenttran-msft @weirongw23-msft @anjaliratnam-msft
 
 # ServiceLabel: %Storage
-# ServiceOwners: @jalauzon-msft @vincenttran-msft
+# ServiceOwners: @jalauzon-msft @vincenttran-msft @weirongw23-msft @anjaliratnam-msft
 
 # PRLabel: %Synapse
 /sdk/synapse/    @wanyang7 @yanjungao718

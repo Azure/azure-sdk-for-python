@@ -10,15 +10,18 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import os
 import logging
-from typing import List, Any, Optional
+from typing import List, Any, Optional, cast
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, DefaultAsyncHttpxClient
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
 from .._patch import (
     _AuthSecretsFilter,
+    _OpenAIAuthSecretsFilter,
+    _LoggingAsyncByteStream,
     _build_openai_user_agent,
+    _log_streaming_response_notice,
     _resolve_openai_base_url,
     _resolve_openai_default_headers,
     _resolve_openai_query_params,
@@ -26,7 +29,9 @@ from .._patch import (
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 
+_OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
 logger = logging.getLogger(__name__)
+_openai_transport_logger = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -93,6 +98,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             azure_logger.setLevel(logging.DEBUG)
             console_handler = logging.StreamHandler(stream=sys.stdout)
             console_handler.addFilter(_AuthSecretsFilter())
+            console_handler.addFilter(_OpenAIAuthSecretsFilter())
             azure_logger.addHandler(console_handler)
             # Exclude detailed logs for network calls associated with getting Entra ID token.
             logging.getLogger("azure.identity").setLevel(logging.ERROR)
@@ -100,6 +106,11 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             # turn on non-redacted logs by passing 'logging_enable=True' to the client constructor
             # (which are implemented as a separate logging policy)
             logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
+
+            openai_transport_logger = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
+            openai_transport_logger.setLevel(logging.DEBUG)
+            openai_transport_logger.propagate = False
+            openai_transport_logger.addHandler(console_handler)
 
             kwargs.setdefault("logging_enable", self._console_logging_enabled)
 
@@ -135,9 +146,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         """
         if "http_client" in kwargs:
             return kwargs.pop("http_client")
-        if self._console_logging_enabled:
-            return httpx.AsyncClient(transport=_OpenAILoggingTransport())
-        return None
+
+        logging_kwargs = getattr(self, "_kwargs", {})
+        logging_enabled = bool(logging_kwargs.get("logging_enable", False))
+        return DefaultAsyncHttpxClient(transport=_OpenAILoggingTransport(logging_enabled=logging_enabled))
 
     @distributed_trace
     def get_openai_client(
@@ -222,12 +234,18 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
     AZURE_AI_PROJECTS_CONSOLE_LOGGING environment variable.
     """
 
+    def __init__(self, *, logging_enabled: bool) -> None:
+        super().__init__()
+        self._logging_enabled = logging_enabled
+
     def _sanitize_auth_header(self, headers):
         """Sanitize authorization and api-key headers by redacting sensitive information.
 
         :param headers: Dictionary of HTTP headers to sanitize
         :type headers: dict
         """
+        if self._logging_enabled:
+            return
 
         if "authorization" in headers:
             auth_value = headers["authorization"]
@@ -235,6 +253,11 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
                 headers["authorization"] = auth_value[:7] + "<REDACTED>"
             else:
                 headers["authorization"] = "<ERROR>"
+
+    @staticmethod
+    def _is_streaming_response(response: httpx.Response) -> bool:
+        content_type = response.headers.get("content-type", "").lower()
+        return "text/event-stream" in content_type
 
     async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
         """
@@ -248,31 +271,40 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
         :rtype: httpx.Response
         """
 
-        print(f"\n==> Request:\n{request.method} {request.url}")
+        _openai_transport_logger.debug("\n==> Request:\n%s %s", request.method, request.url)
         headers = dict(request.headers)
         self._sanitize_auth_header(headers)
-        print("Headers:")
+        _openai_transport_logger.debug("Headers:")
         for key, value in sorted(headers.items()):
-            print(f"  {key}: {value}")
+            if not self._logging_enabled and key.lower() == "api-key":
+                value = "<REDACTED>"
+            _openai_transport_logger.debug("  %s: %s", key, value)
 
         self._log_request_body(request)
 
         response = await super().handle_async_request(request)
 
-        print(f"\n<== Response:\n{response.status_code} {response.reason_phrase}")
-        print("Headers:")
+        _openai_transport_logger.debug("\n<== Response:\n%s %s", response.status_code, response.reason_phrase)
+        _openai_transport_logger.debug("Headers:")
         for key, value in sorted(dict(response.headers).items()):
-            print(f"  {key}: {value}")
+            _openai_transport_logger.debug("  %s: %s", key, value)
 
-        content = await response.aread()
-        if content is None or content == b"":
-            print("Body: [No content]")
+        if self._is_streaming_response(response):
+            if _log_streaming_response_notice(self._logging_enabled):
+                response.stream = _LoggingAsyncByteStream(cast(httpx.AsyncByteStream, response.stream))
         else:
-            try:
-                print(f"Body:\n {content.decode('utf-8')}")
-            except Exception:  # pylint: disable=broad-exception-caught
-                print(f"Body (raw):\n  {content!r}")
-        print("\n")
+            content = await response.aread()
+            if content is None or content == b"":
+                _openai_transport_logger.debug("Body: [No content]")
+            else:
+                if self._logging_enabled:
+                    try:
+                        _openai_transport_logger.debug("Body:\n %s", content.decode("utf-8"))
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        _openai_transport_logger.debug("Body (raw):\n  %r", content)
+                else:
+                    _openai_transport_logger.debug("Body: [Content exists]")
+        _openai_transport_logger.debug("\n")
 
         return response
 
@@ -286,29 +318,32 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
         # Check content-type header to identify file uploads
         content_type = request.headers.get("content-type", "").lower()
         if "multipart/form-data" in content_type:
-            print("Body: [Multipart form data - file upload, not logged]")
+            _openai_transport_logger.debug("Body: [Multipart form data - file upload, not logged]")
             return
 
         # Safely check if content exists without accessing it
         if not hasattr(request, "content"):
-            print("Body: [No content attribute]")
+            _openai_transport_logger.debug("Body: [No content attribute]")
             return
 
         # Very careful content access - wrap in try-catch immediately
         try:
             content = request.content
         except Exception as access_error:  # pylint: disable=broad-exception-caught
-            print(f"Body: [Cannot access content: {access_error}]")
+            _openai_transport_logger.debug("Body: [Cannot access content: %s]", access_error)
             return
 
         if content is None or content == b"":
-            print("Body: [No content]")
+            _openai_transport_logger.debug("Body: [No content]")
             return
 
-        try:
-            print(f"Body:\n  {content.decode('utf-8')}")
-        except Exception:  # pylint: disable=broad-exception-caught
-            print(f"Body (raw):\n  {content!r}")
+        if self._logging_enabled:
+            try:
+                _openai_transport_logger.debug("Body:\n  %s", content.decode("utf-8"))
+            except Exception:  # pylint: disable=broad-exception-caught
+                _openai_transport_logger.debug("Body (raw):\n  %r", content)
+        else:
+            _openai_transport_logger.debug("Body: [Content exists]")
 
 
 __all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level

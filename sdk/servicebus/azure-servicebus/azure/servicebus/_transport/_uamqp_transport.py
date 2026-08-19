@@ -24,11 +24,13 @@ from typing import (
 
 try:
     from uamqp import (
+        AMQPClient,
         BatchMessage,
         constants,
         MessageBodyType,
         Message,
         types,
+        c_uamqp,
         SendClient,
         ReceiveClient,
         Source,
@@ -222,6 +224,19 @@ try:
                 return ErrorAction(retry=False)
             return super(_ServiceBusErrorPolicy, self).on_connection_error(error)
 
+    class _AMQPTimestamp(types.AMQPType):
+        """Wrap a raw millisecond int as an AMQP timestamp.
+
+        uamqp ships no ``AMQPTimestamp`` type, so a raw millisecond value (such
+        as the DateTime.MaxValue sentinel, which is year 10000 and cannot be a
+        ``datetime``) has no wrapper that tags it as a timestamp. Without this,
+        the value would be encoded as a plain integer and the service would not
+        recognise it as ``lastUpdatedTime``.
+        """
+
+        def _c_wrapper(self, value):  # pylint: disable=arguments-differ
+            return c_uamqp.timestamp_value(int(value))
+
     class UamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         """
         Class which defines uamqp-based methods used by the sender and receiver.
@@ -259,6 +274,8 @@ try:
         AMQP_LONG_VALUE: Callable = types.AMQPLong
         AMQP_ARRAY_VALUE: Callable = types.AMQPArray
         AMQP_UINT_VALUE: Callable = types.AMQPuInt
+        AMQP_INT_VALUE: Callable = types.AMQPInt
+        AMQP_TIMESTAMP_VALUE: Callable = _AMQPTimestamp
 
         # errors
         TIMEOUT_ERROR = compat.TimeoutException
@@ -526,6 +543,28 @@ try:
             :param ~uamqp.Connection connection: uamqp or pyamqp Connection.
             """
             connection.destroy()
+
+        @staticmethod
+        def create_mgmt_client(config: "Configuration", **kwargs: Any) -> "AMQPClient": # pylint: disable=docstring-keyword-should-match-keyword-only
+            """Creates and returns a uamqp AMQPClient for management-only operations.
+
+            :param ~azure.servicebus._common._configuration.Configuration config: The configuration.
+            :keyword JWTTokenAuth auth: Required.
+            :keyword retry_policy: Required.
+            :keyword str client_name: Required.
+            :keyword dict properties: Required.
+            :return: AMQPClient
+            :rtype: ~uamqp.AMQPClient
+            """
+            retry_policy = kwargs.pop("retry_policy")
+            return AMQPClient(
+                ("amqps://" if config.use_tls else "amqp://") + config.hostname,
+                debug=config.logging_enable,
+                error_policy=retry_policy,
+                keep_alive_interval=config.keep_alive,
+                encoding=config.encoding,
+                **kwargs,
+            )
 
         @staticmethod
         def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient": # pylint:disable=docstring-keyword-should-match-keyword-only
@@ -870,7 +909,16 @@ try:
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
+            *,
+            await_outcome: bool = False,
+            outcome_timeout: Optional[float] = None,
         ) -> None:
+            if await_outcome:
+                # uamqp cannot observe outcomes; fail loudly rather than return a false success.
+                raise NotImplementedError(
+                    "Awaiting the settlement outcome is not supported by the uamqp transport. "
+                    "Use the default pyamqp transport to enable it."
+                )
             UamqpTransport.settle_message_via_receiver_link_impl(
                 handler,
                 message,

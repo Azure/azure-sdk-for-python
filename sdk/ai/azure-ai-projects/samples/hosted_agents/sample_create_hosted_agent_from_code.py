@@ -64,7 +64,7 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 use_remote_build = os.environ.get("FOUNDRY_HOSTED_AGENT_REMOTE_BUILD", "true").strip().lower() == "true"
-agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME") or "MyHostedAgent"
 
 dependency_resolution, code_zip_stream = select_basic_agent_code_zip(use_remote_build)
 original_agent_endpoint = None

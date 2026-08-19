@@ -39,7 +39,7 @@ namespace azure.ai.agentserver.activity
 
         def add_middleware(
                 self, 
-                middleware_class: _MiddlewareFactory[P], 
+                middleware_class: MiddlewareFactory[P], 
                 *args: args, 
                 **kwargs: kwargs
             ) -> None: ...
@@ -69,6 +69,8 @@ namespace azure.ai.agentserver.activity
                 name: str | None = None
             ) -> None: ...
 
+        def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None: ...
+
         def register_server_version(self, version_segment: str) -> None: ...
 
         def run(
@@ -84,9 +86,6 @@ namespace azure.ai.agentserver.activity
             ) -> None: ...
 
         def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
-
-        @staticmethod
-        async def sse_keepalive_stream(iterator: AsyncIterable[_Content], interval: int) -> AsyncIterator[_Content]: ...
 
         def url_path_for(
                 self, 
@@ -107,15 +106,6 @@ namespace azure.ai.agentserver.activity
                 item_ttl_seconds: int | None = ...
             ) -> None: ...
 
-        def __init_subclass__(
-                cls, 
-                *args, 
-                **kwargs
-            ): ...
-
-        @classmethod
-        def _proto_hook(cls, other): ...
-
         async def aclose(self) -> None: ...
 
         async def delete(self, keys: list[str]) -> None: ...
@@ -126,11 +116,11 @@ namespace azure.ai.agentserver.activity
                 self, 
                 keys: list[str], 
                 *, 
-                target_cls: Type[StoreItemT] | None = ..., 
+                target_cls: type[StoreItemT], 
                 **kwargs
             ) -> dict[str, StoreItemT]: ...
 
-        async def write(self, changes: dict[str, StoreItemT]) -> None: ...
+        async def write(self, changes: dict[str, StoreItem]) -> None: ...
 
 
 ```

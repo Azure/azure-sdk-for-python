@@ -1,19 +1,11 @@
 # Release History
 
-## 1.1.0 (2026-06-15)
+## 1.1.0 (2026-08-05)
 
 ### Features Added
 
-- Regenerated client from TypeSpec specification. The library now uses the unified
-  `azure.core` HTTP pipeline and shares model infrastructure with other modern
-  Azure Python SDKs.
-
-### Other Changes
-
-- Migrated source of truth from Swagger to TypeSpec
-  (`specification/deviceupdate/data-plane/duiothub`).
-- Updated minimum required `azure-core` to `1.37.0`.
-- Dropped support for Python 3.8 and 3.9; minimum supported Python is 3.10.
+- Regenerated the client library from the TypeSpec specification for the Device Update for IoT Hub `2026-06-01` GA API version.
+- Added support for configuring TLS-secured update payload downloads through the `downloadSecurity` property when creating or updating a deployment.
 
 ## 1.0.0 (2022-09-09)
 
