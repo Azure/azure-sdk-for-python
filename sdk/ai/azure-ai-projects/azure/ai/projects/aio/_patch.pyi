@@ -53,7 +53,7 @@ from ..models import (
 )
 
 class _AzureAsyncEvalRuns(AsyncRuns):
-    async def create(
+    async def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         eval_id: str,
         *,
@@ -77,7 +77,7 @@ class _AzureAsyncEvalRuns(AsyncRuns):
     ) -> RunCreateResponse: ...
 
 class _AzureAsyncEvals(AsyncEvals):
-    async def create(
+    async def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         *,
         data_source_config: Union[

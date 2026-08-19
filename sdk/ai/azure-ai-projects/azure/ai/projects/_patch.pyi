@@ -54,7 +54,7 @@ from .models import (
 )
 
 class _AzureEvalRuns(Runs):
-    def create(
+    def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         eval_id: str,
         *,
@@ -78,7 +78,7 @@ class _AzureEvalRuns(Runs):
     ) -> RunCreateResponse: ...
 
 class _AzureEvals(Evals):
-    def create(
+    def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         *,
         data_source_config: Union[

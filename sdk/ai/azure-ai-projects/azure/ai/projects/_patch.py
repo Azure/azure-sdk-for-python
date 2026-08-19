@@ -305,7 +305,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         logging_kwargs = getattr(self, "_kwargs", {})
         logging_enabled = bool(logging_kwargs.get("logging_enable", False))
-        return DefaultHttpxClient(transport=_OpenAILoggingTransport(logging_enabled=logging_enabled))
+        return DefaultHttpxClient(
+            transport=_OpenAILoggingTransport(logging_enabled=logging_enabled)
+        )  # type: ignore[arg-type]
 
     @distributed_trace
     def get_openai_client(

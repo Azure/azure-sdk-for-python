@@ -4,9 +4,9 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 154 unique public methods:
+There are a total of 153 unique public methods:
 - 5 stable methods on the client
-- 68 stable methods on top-level sub-clients
+- 67 stable methods on top-level sub-clients
 - 81 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
@@ -22,7 +22,6 @@ There are a total of 154 unique public methods:
 | `indexes` | IndexesOperations | 5 |
 | `telemetry` | TelemetryOperations | 1 |
 | `toolboxes` | ToolboxesOperations | 8 |
-| `voice_agent_web_socket` | VoiceAgentWebSocketOperations | 1 |
 
 ### Nested sub-clients (beta operations)
 
@@ -133,8 +132,6 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .toolboxes.list
 .toolboxes.list_versions
 .toolboxes.update
-
-.voice_agent_web_socket.connect_voice_agent
 ```
 
 ## Beta methods on nested sub-clients
