@@ -934,9 +934,6 @@ def _is_sampling_rejection(message: Optional[str]) -> bool:
     return message.lower() == "telemetry sampled out."
 
 
-
-
-
 # mypy: disable-error-code="union-attr"
 def _get_authentication_credential(
     **kwargs: Any,
