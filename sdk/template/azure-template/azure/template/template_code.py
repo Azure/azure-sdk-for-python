@@ -8,8 +8,3 @@
 def template_main() -> bool:
     print("Package code.")
     return True
-
-
-def template_alt() -> bool:
-    print("Package code alt.")
-    return True
