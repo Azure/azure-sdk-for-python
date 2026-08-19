@@ -3,11 +3,11 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Any, Dict
+from typing import Dict
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
 from azure.ai.evaluation._evaluators._common._validators import (
     MessagesOrQueryResponseInputValidator,
     ValidatorInterface,
@@ -148,35 +148,15 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     def _convert_kwargs_to_eval_input(self, **kwargs):
         """Convert keyword arguments to evaluation input, with validation.
 
-        Normalize a bare ``messages=[...]`` kwarg (plus any scalar adjuncts the SDK
-        batch engine may forward alongside it) into a ``conversation={...}`` dict so
-        the base ``_derive_conversation_converter`` can extract per-turn q/r for the
-        judge. This mirrors the shape ACA/RAISvc produce when a customer's
-        ``data_mapping`` targets ``messages`` plus top-level ``context`` /
-        ``ground_truth`` / ``tool_definitions`` fields.
+        Normalize a bare ``messages=[...]`` kwarg (plus optional scalar
+        ``context`` / ``ground_truth`` / ``tool_definitions``) into
+        ``conversation={...}`` via ``hoist_messages_to_conversation`` so
+        the base ``_derive_conversation_converter`` handles per-turn q/r
+        extraction. Falls back to the original single-turn q/r/ground_truth
+        validation when no conversation/messages were provided.
         """
-        conversation = kwargs.get("conversation")
-        messages = kwargs.get("messages")
-        if conversation is None and messages is not None:
-            conv: Dict[str, Any] = {"messages": messages}
-            context = kwargs.pop("context", None)
-            if context is not None:
-                conv["context"] = context
-            tool_definitions = kwargs.pop("tool_definitions", None)
-            if tool_definitions is not None:
-                conv["tool_definitions"] = tool_definitions
-            # Top-level ground_truth: stamp onto assistant turns lacking their own,
-            # so the base converter picks it up as per-response ground_truth.
-            ground_truth = kwargs.pop("ground_truth", None)
-            if ground_truth is not None and isinstance(messages, list):
-                for m in messages:
-                    if isinstance(m, dict) and m.get("role") == "assistant" and "ground_truth" not in m:
-                        m["ground_truth"] = ground_truth
-            kwargs["conversation"] = conv
-            kwargs.pop("messages", None)
-            return super()._convert_kwargs_to_eval_input(**kwargs)
-
-        if conversation is not None:
+        hoist_messages_to_conversation(kwargs)
+        if kwargs.get("conversation") is not None:
             return super()._convert_kwargs_to_eval_input(**kwargs)
 
         query = kwargs.get("query")

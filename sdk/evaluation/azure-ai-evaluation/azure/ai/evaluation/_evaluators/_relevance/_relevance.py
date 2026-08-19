@@ -4,7 +4,7 @@
 import logging
 import math
 import os
-from typing import Any, Dict, Union, List
+from typing import Dict, Union, List
 
 from typing_extensions import overload, override
 
@@ -12,7 +12,7 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 from ..._common.utils import reformat_conversation_history, reformat_agent_response
 
 from azure.ai.evaluation._model_configurations import Conversation
-from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
 from azure.ai.evaluation._evaluators._common._validators import (
     ConversationValidator,
     MessagesOrQueryResponseInputValidator,
@@ -166,33 +166,12 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
 
     @override
     def _convert_kwargs_to_eval_input(self, **kwargs):
-        """Normalize a bare ``messages=[...]`` kwarg (plus any scalar adjuncts the SDK
-        batch engine may forward alongside it) into a ``conversation={...}`` dict, so
-        the base ``_derive_conversation_converter`` can extract per-turn q/r for the
-        judge. This mirrors the shape ACA/RAISvc produce when a customer's
-        ``data_mapping`` targets ``messages`` plus top-level ``context`` /
-        ``ground_truth`` / ``tool_definitions`` fields — otherwise the base class
-        rejects the combination as "both conversation and individual inputs"."""
-        conversation = kwargs.get("conversation")
-        messages = kwargs.get("messages")
-        if conversation is None and messages is not None:
-            conv: Dict[str, Any] = {"messages": messages}
-            context = kwargs.pop("context", None)
-            if context is not None:
-                conv["context"] = context
-            tool_definitions = kwargs.pop("tool_definitions", None)
-            if tool_definitions is not None:
-                conv["tool_definitions"] = tool_definitions
-            # Top-level ground_truth: stamp onto assistant turns that don't already
-            # carry one, so the base converter's per-response ground_truth extractor
-            # picks it up.
-            ground_truth = kwargs.pop("ground_truth", None)
-            if ground_truth is not None and isinstance(messages, list):
-                for m in messages:
-                    if isinstance(m, dict) and m.get("role") == "assistant" and "ground_truth" not in m:
-                        m["ground_truth"] = ground_truth
-            kwargs["conversation"] = conv
-            kwargs.pop("messages", None)
+        """Normalize a bare ``messages=[...]`` kwarg (plus optional scalar
+        ``context`` / ``ground_truth`` / ``tool_definitions``) into
+        ``conversation={...}`` so the base ``_derive_conversation_converter``
+        can extract per-turn q/r for the judge. Shared with other evaluators
+        via ``hoist_messages_to_conversation``."""
+        hoist_messages_to_conversation(kwargs)
         return super()._convert_kwargs_to_eval_input(**kwargs)
 
     @override
