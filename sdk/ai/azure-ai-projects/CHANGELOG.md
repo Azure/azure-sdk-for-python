@@ -58,6 +58,7 @@ Breaking changes in beta classes:
 * Removed enums: `OptimizationMode`, `OptimizationStrategy`.
 * Removed properties `has_blob`, `skill_id`, `metadata` from class `SkillDetails`.
 * Properties `instance_type`, `properties`, `shm_size` and `docker_args` on class `JobResourceConfiguration` are now read-only and can no longer be set when creating a job. The service infers them from the target compute cluster and still returns them on read. `instance_count` remains settable and is used to request whole nodes on a CPU cluster.
+* Property `asset_name` on class `Output` is now required. The service no longer falls back to the outputs dictionary key (the mount name) when registering an output asset, and rejects any job output that does not specify an asset name.
 
 ### Bugs Fixed
 

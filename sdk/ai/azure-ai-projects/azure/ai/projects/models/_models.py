@@ -12349,7 +12349,7 @@ class Output(_Model):
     :ivar mode: Output Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
      "Download", "Direct", and "Upload".
     :vartype mode: str or ~azure.ai.projects.models.InputOutputModes
-    :ivar asset_name: Name of the output data asset to register.
+    :ivar asset_name: Name of the output data asset to register. Required.
     :vartype asset_name: str
     :ivar asset_version: Version of the output data asset to register.
     :vartype asset_version: str
@@ -12371,8 +12371,8 @@ class Output(_Model):
     )
     """Output Asset Delivery Mode. Known values are: \"ReadOnlyMount\", \"ReadWriteMount\",
      \"Download\", \"Direct\", and \"Upload\"."""
-    asset_name: Optional[str] = rest_field(name="assetName", visibility=["read", "create", "update", "delete", "query"])
-    """Name of the output data asset to register."""
+    asset_name: str = rest_field(name="assetName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the output data asset to register. Required."""
     asset_version: Optional[str] = rest_field(
         name="assetVersion", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12391,8 +12391,8 @@ class Output(_Model):
         self,
         *,
         type: Union[str, "_models.AssetTypes"],
+        asset_name: str,
         mode: Optional[Union[str, "_models.InputOutputModes"]] = None,
-        asset_name: Optional[str] = None,
         asset_version: Optional[str] = None,
         uri: Optional[str] = None,
         base_model_id: Optional[str] = None,

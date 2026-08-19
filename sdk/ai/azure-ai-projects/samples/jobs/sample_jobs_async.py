@@ -89,7 +89,15 @@ async def main() -> None:
             environment_image_reference=environment_image,
             compute=compute_id,
             inputs={"src": Input(path="./data", type=AssetTypes.URI_FOLDER)},
-            outputs={"output": Output(type=AssetTypes.URI_FOLDER, mode=InputOutputModes.READ_WRITE_MOUNT)},
+            # The dictionary key ("output") is the mount name used in the command above.
+            # `asset_name` is the name the output is registered under, and is required.
+            outputs={
+                "output": Output(
+                    type=AssetTypes.URI_FOLDER,
+                    mode=InputOutputModes.READ_WRITE_MOUNT,
+                    asset_name="my-trained-model",
+                )
+            },
             resources=JobResourceConfiguration(instance_count=1),
             priority=JobPriority.MID,
             tags={"sample": "true"},
