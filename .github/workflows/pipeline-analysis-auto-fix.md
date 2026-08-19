@@ -43,7 +43,7 @@ on:
             issue_number: Number(process.env.PR_NUMBER),
             per_page: 100,
           });
-          const requestedStatus = "**Automated fix:** In progress";
+          const requestedStatus = "**Automated fix:** Requested";
           const matches = comments.filter(comment =>
             comment.user?.login === "github-actions[bot]" &&
             comment.body?.includes(runUrl) &&
@@ -210,7 +210,7 @@ safe-outputs:
               }
               const fixPrUrl = `${process.env.GITHUB_SERVER_URL}/${context.repo.owner}/${context.repo.repo}/pull/${process.env.FIX_PR_NUMBER}`;
               const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.PARENT_RUN_ID}`;
-              const requestedStatus = "**Automated fix:** In progress";
+              const requestedStatus = "**Automated fix:** Requested";
               const comments = await github.paginate(github.rest.issues.listComments, {
                 ...context.repo,
                 issue_number: Number(process.env.SOURCE_PR_NUMBER),

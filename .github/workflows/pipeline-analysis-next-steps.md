@@ -216,12 +216,46 @@ jobs:
       run_analysis: ${{ steps.analysis_gate.outputs.run_analysis }}
       pr_number: ${{ steps.analysis_gate.outputs.pr_number }}
       head_sha: ${{ steps.analysis_gate.outputs.head_sha }}
+  safe_outputs:
+    permissions:
+      pull-requests: read
+    pre-steps:
+      - name: Resolve trusted comment target
+        id: comment_target
+        uses: actions/github-script@v9.0.0
+        with:
+          script: |
+            const suite = context.payload.check_suite;
+            const repositoryId = context.payload.repository.id;
+            const prNumbers = [...new Set(
+              suite.pull_requests
+                .filter(candidate => candidate.base?.repo?.id === repositoryId)
+                .map(candidate => candidate.number)
+            )];
+            const pulls = await Promise.all(prNumbers.map(async pullNumber => {
+              const { data: pull } = await github.rest.pulls.get({
+                ...context.repo,
+                pull_number: pullNumber,
+              });
+              return pull;
+            }));
+            const matchingPulls = pulls.filter(
+              pull => pull.state === "open" && pull.head.sha === suite.head_sha
+            );
+            if (matchingPulls.length !== 1) {
+              core.setFailed(
+                `Expected exactly one open pull request in ${context.repo.owner}/${context.repo.repo} at ${suite.head_sha}; found ${matchingPulls.length}.`
+              );
+              return;
+            }
+            core.setOutput("pr_number", String(matchingPulls[0].number));
 
 safe-outputs:
   noop:
     report-as-issue: false
   add-comment:
     max: 1
+    target: ${{ steps.comment_target.outputs.pr_number }}
     hide-older-comments: true
   dispatch-workflow:
     workflows:
@@ -300,7 +334,7 @@ safe-outputs:
 </details>
 
 <for fixable failures only:>
-**Automated fix:** In progress
+**Automated fix:** Requested
 
 <for non-fixable failures only:>
 > Copilot detected the failing pipeline and generated the analysis above. To have it attempt a
