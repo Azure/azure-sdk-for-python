@@ -34,6 +34,8 @@ from azure.appconfiguration.provider._constants import (
     METADATA_KEY,
     ETAG_KEY,
     FEATURE_FLAG_REFERENCE_KEY,
+    FEATURE_MANAGEMENT_KEY,
+    FEATURE_FLAG_KEY,
 )
 from azure.appconfiguration.provider._refresh_timer import _RefreshTimer
 
@@ -514,13 +516,17 @@ class TestProcessEnhancedFeatureFlag(unittest.TestCase):
         self.assertEqual(result["conditions"]["client_filters"][0]["parameters"], {"Value": "50"})
 
     def test_process_enhanced_feature_flag_with_variants_and_allocation(self):
-        """Test processing an enhanced feature flag with variants and allocation."""
+        """Test processing an enhanced feature flag with variants and allocation. Variant values, like regular
+        key-value settings, are raw strings on the wire: a variant with a JSON content type is parsed into a JSON
+        object, while a variant with no (or non-JSON) content type is kept as the raw string."""
         feature_flag = FeatureFlag(
             name="MyFeature",
             enabled=True,
             variants=[
-                FeatureFlagVariantDefinition(name="Control", value={"key": "control_value"}),
-                FeatureFlagVariantDefinition(name="Test", value={"key": "test_value"}, content_type="application/json"),
+                FeatureFlagVariantDefinition(name="Control", value="control_value"),
+                FeatureFlagVariantDefinition(
+                    name="Test", value='{"key": "test_value"}', content_type="application/json"
+                ),
             ],
             allocation=FeatureFlagAllocation(
                 default_when_disabled="Control",
@@ -536,8 +542,11 @@ class TestProcessEnhancedFeatureFlag(unittest.TestCase):
 
         self.assertEqual(len(result["variants"]), 2)
         self.assertEqual(result["variants"][0]["name"], "Control")
-        self.assertEqual(result["variants"][0]["configuration_value"], {"key": "control_value"})
+        # No content type: falls back to the raw string value, unparsed.
+        self.assertEqual(result["variants"][0]["configuration_value"], "control_value")
         self.assertEqual(result["variants"][1]["content_type"], "application/json")
+        # JSON content type: the raw string value is parsed into a JSON object.
+        self.assertEqual(result["variants"][1]["configuration_value"], {"key": "test_value"})
 
         allocation = result["allocation"]
         self.assertEqual(allocation["default_when_disabled"], "Control")
@@ -546,6 +555,26 @@ class TestProcessEnhancedFeatureFlag(unittest.TestCase):
         self.assertEqual(allocation["user"], [{"variant": "Test", "users": ["user1"]}])
         self.assertEqual(allocation["group"], [{"variant": "Test", "groups": ["group1"]}])
         self.assertEqual(allocation["seed"], "1234")
+
+    def test_process_enhanced_feature_flag_invalid_variant_json_raises_value_error(self):
+        """If a variant's content type claims JSON but its value is invalid JSON, processing the enhanced feature
+        flag should raise a clear ValueError identifying the offending flag, chained from the underlying
+        JSONDecodeError."""
+        feature_flag = FeatureFlag(
+            name="InvalidVariant",
+            enabled=True,
+            variants=[
+                FeatureFlagVariantDefinition(
+                    name="Variant", value="{ invalid json", content_type="application/json"
+                )
+            ],
+        )
+
+        with self.assertRaises(ValueError) as context:
+            self.provider._process_enhanced_feature_flag(feature_flag)
+
+        self.assertIn("InvalidVariant", str(context.exception))
+        self.assertIsInstance(context.exception.__cause__, json.JSONDecodeError)
 
     def test_process_enhanced_feature_flag_with_telemetry_and_tags(self):
         """Test processing an enhanced feature flag with telemetry settings and tags."""
@@ -582,6 +611,57 @@ class TestProcessEnhancedFeatureFlag(unittest.TestCase):
         # The enhanced feature flag reference uses the "ff" path segment, not "kv".
         self.assertIn("/ff/MyFeature", metadata[FEATURE_FLAG_REFERENCE_KEY])
         self.assertIn("?label=prod", metadata[FEATURE_FLAG_REFERENCE_KEY])
+
+
+class TestParseVariantValue(unittest.TestCase):
+    """Test the _parse_variant_value static method, used to interpret an enhanced feature flag variant's raw
+    string value based on its content type, mirroring how regular key-value settings are processed."""
+
+    def test_json_content_type_parses_object(self):
+        result = AzureAppConfigurationProviderBase._parse_variant_value('{"key": "value"}', "application/json")
+        self.assertEqual(result, {"key": "value"})
+
+    def test_json_content_type_parses_array(self):
+        result = AzureAppConfigurationProviderBase._parse_variant_value("[1, 2, 3]", "application/json")
+        self.assertEqual(result, [1, 2, 3])
+
+    def test_json_content_type_with_charset_parses_object(self):
+        result = AzureAppConfigurationProviderBase._parse_variant_value(
+            '{"key": "value"}', "application/json; charset=utf-8"
+        )
+        self.assertEqual(result, {"key": "value"})
+
+    def test_json_content_type_with_structured_suffix_parses_object(self):
+        """Content types using the '+json' structured syntax suffix (e.g. a vendor-specific media type) are
+        also treated as JSON."""
+        result = AzureAppConfigurationProviderBase._parse_variant_value(
+            '{"key": "value"}', "application/vnd.microsoft.appconfig.ff+json"
+        )
+        self.assertEqual(result, {"key": "value"})
+
+    def test_no_content_type_falls_back_to_raw_string(self):
+        result = AzureAppConfigurationProviderBase._parse_variant_value("plain_value", None)
+        self.assertEqual(result, "plain_value")
+
+    def test_non_json_content_type_falls_back_to_raw_string(self):
+        result = AzureAppConfigurationProviderBase._parse_variant_value("plain_value", "text/plain")
+        self.assertEqual(result, "plain_value")
+
+    def test_text_json_content_type_is_not_treated_as_json(self):
+        """'text/json' is not an 'application/*' JSON media type, so it should be treated as a raw string, even
+        though it contains the substring 'json'."""
+        result = AzureAppConfigurationProviderBase._parse_variant_value("{ invalid json", "text/json")
+        self.assertEqual(result, "{ invalid json")
+
+    def test_json_content_type_with_invalid_json_raises(self):
+        """If the content type claims JSON but the value is not valid JSON, parsing should raise instead of
+        silently falling back to the raw string."""
+        with self.assertRaises(json.JSONDecodeError):
+            AzureAppConfigurationProviderBase._parse_variant_value("not valid json", "application/json")
+
+    def test_none_value_returns_none(self):
+        result = AzureAppConfigurationProviderBase._parse_variant_value(None, "application/json")
+        self.assertIsNone(result)
 
 
 class TestUpdateEnhancedFeatureFlagTelemetryMetadata(unittest.TestCase):
@@ -659,7 +739,7 @@ class TestProcessAndMergeFeatureFlags(unittest.TestCase):
     empty list (loaded this round, zero found)."""
 
     def setUp(self):
-        self.provider = AzureAppConfigurationProviderBase(endpoint="https://test.azconfig.io")
+        self.provider = AzureAppConfigurationProviderBase(endpoint="https://test.azconfig.io", feature_flag_enabled=True)
 
     def test_enhanced_feature_flags_none_preserves_previous_processed_flags(self):
         feature_flag = FeatureFlag(name="MyFeature", enabled=True)
@@ -678,6 +758,56 @@ class TestProcessAndMergeFeatureFlags(unittest.TestCase):
         # An explicitly empty list means the endpoint was queried and returned zero feature flags.
         self.provider._process_and_merge_feature_flags({}, [], None, [])
         self.assertEqual(self.provider._processed_enhanced_feature_flags, [])
+
+    def test_kv_feature_flags_none_preserves_previous_processed_flags(self):
+        """Same as the enhanced-flag case above, but for key-value based feature flags: passing None (not
+        refreshed this round) must not clear or overwrite the previously cached key-value feature flags."""
+        kv_flag = FeatureFlagConfigurationSetting(feature_id="MyFeature", enabled=True, label=NULL_CHAR)
+        self.provider._process_and_merge_feature_flags({}, [], [kv_flag], None)
+        self.assertEqual(len(self.provider._processed_kv_feature_flags), 1)
+
+        # Passing None again should leave the previously processed key-value feature flags untouched.
+        self.provider._process_and_merge_feature_flags({}, [], None, None)
+        self.assertEqual(len(self.provider._processed_kv_feature_flags), 1)
+
+    def test_kv_feature_flags_explicit_empty_list_clears_previous_processed_flags(self):
+        """An explicitly empty list for key-value feature flags means the store was queried and returned zero
+        feature flags, so the previously cached key-value feature flags should be cleared."""
+        kv_flag = FeatureFlagConfigurationSetting(feature_id="MyFeature", enabled=True, label=NULL_CHAR)
+        self.provider._process_and_merge_feature_flags({}, [], [kv_flag], None)
+        self.assertEqual(len(self.provider._processed_kv_feature_flags), 1)
+
+        self.provider._process_and_merge_feature_flags({}, [], [], None)
+        self.assertEqual(self.provider._processed_kv_feature_flags, [])
+
+    def test_both_none_preserves_merged_result_unchanged(self):
+        """When neither source was refreshed (both None), the merge step should be skipped entirely and the
+        previously merged/processed feature flag list should be returned untouched."""
+        kv_flag = FeatureFlagConfigurationSetting(feature_id="KvFeature", enabled=True, label=NULL_CHAR)
+        enhanced_flag = FeatureFlag(name="EnhancedFeature", enabled=False)
+
+        settings = self.provider._process_and_merge_feature_flags({}, [], [kv_flag], [enhanced_flag])
+        previous_merged = settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY]
+        self.assertEqual(len(previous_merged), 2)
+
+        # Neither source refreshed this round: the previously merged list is passed through as
+        # processed_feature_flags and should come back unchanged.
+        settings = self.provider._process_and_merge_feature_flags(
+            {}, previous_merged, None, None
+        )
+        self.assertEqual(settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY], previous_merged)
+
+    def test_only_kv_refreshed_still_merges_with_cached_enhanced_flags(self):
+        """If only key-value feature flags are refreshed (enhanced is None), the merge should still combine the
+        newly refreshed kv flags with the previously cached enhanced feature flags."""
+        enhanced_flag = FeatureFlag(name="EnhancedFeature", enabled=True)
+        self.provider._process_and_merge_feature_flags({}, [], [], [enhanced_flag])
+        self.assertEqual(len(self.provider._processed_enhanced_feature_flags), 1)
+
+        kv_flag = FeatureFlagConfigurationSetting(feature_id="KvFeature", enabled=True, label=NULL_CHAR)
+        settings = self.provider._process_and_merge_feature_flags({}, [], [kv_flag], None)
+        merged_ids = {ff["id"] for ff in settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY]}
+        self.assertEqual(merged_ids, {"KvFeature", "EnhancedFeature"})
 
 
 if __name__ == "__main__":

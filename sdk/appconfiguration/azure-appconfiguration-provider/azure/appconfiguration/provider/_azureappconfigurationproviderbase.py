@@ -495,20 +495,24 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         feature_flags: Optional[List[FeatureFlagConfigurationSetting]],
         enhanced_feature_flags: Optional[List[FeatureFlag]] = None,
     ) -> Dict[str, Any]:
-        if feature_flags or enhanced_feature_flags is not None:
+        if feature_flags is not None or enhanced_feature_flags is not None:
             # Reset feature flag usage
             self._tracing_context.reset_feature_filter_usage()
 
-        if feature_flags:
+        if feature_flags is not None:
+            # Only overwrite the cached key-value feature flags when a refresh actually occurred. This preserves
+            # the previous state (including an intentional empty list) when this source wasn't refreshed.
             self._processed_kv_feature_flags = [self._process_kv_feature_flag(ff) for ff in feature_flags]
 
         if enhanced_feature_flags is not None:
+            # Only overwrite the cached enhanced feature flags when a refresh actually occurred, so the previous
+            # state is carried over when this source wasn't refreshed.
             self._processed_enhanced_feature_flags = [
                 self._process_enhanced_feature_flag(ff) for ff in enhanced_feature_flags
             ]
         self._tracing_context.uses_enhanced_feature_flags = bool(enhanced_feature_flags)
 
-        if feature_flags or enhanced_feature_flags is not None:
+        if feature_flags is not None or enhanced_feature_flags is not None:
             processed_feature_flags = self._merge_feature_flags(
                 self._processed_kv_feature_flags, self._processed_enhanced_feature_flags
             )
@@ -559,6 +563,25 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             # Feature flag value is not a valid JSON
             return {}
 
+    @staticmethod
+    def _parse_variant_value(value: Optional[str], content_type: Optional[str]) -> Any:
+        """
+        Parses an enhanced feature flag variant's raw string value, similar to how a regular key-value setting's
+        value is processed. If the variant's content type indicates JSON, the value is parsed and returned as a
+        JSON object; otherwise the raw string value is returned unchanged.
+
+        :param value: The variant's raw value, as returned by the enhanced feature flag endpoint.
+        :type value: Optional[str]
+        :param content_type: The variant's content type.
+        :type content_type: Optional[str]
+        :return: The parsed JSON object if the content type is JSON, otherwise the original raw value.
+        :rtype: Any
+        :raises json.JSONDecodeError: If the content type indicates JSON but the value is not valid JSON.
+        """
+        if not isinstance(value, str) or not is_json_content_type(content_type or ""):
+            return value
+        return json.loads(value)
+
     def _process_enhanced_feature_flag(self, feature_flag: FeatureFlag) -> Dict[str, Any]:
         """
         Convert an enhanced feature flag, loaded from the enhanced feature flag endpoint, into a dictionary that
@@ -594,15 +617,18 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                 feature_flag_value["conditions"] = conditions_value
 
         if feature_flag.variants:
-            feature_flag_value["variants"] = [
-                {
-                    "name": variant.name,
-                    "configuration_value": variant.value,
-                    "content_type": variant.content_type,
-                    "status_override": variant.status_override,
-                }
-                for variant in feature_flag.variants
-            ]
+            try:
+                feature_flag_value["variants"] = [
+                    {
+                        "name": variant.name,
+                        "configuration_value": self._parse_variant_value(variant.value, variant.content_type),
+                        "content_type": variant.content_type,
+                        "status_override": variant.status_override,
+                    }
+                    for variant in feature_flag.variants
+                ]
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Enhanced feature flag '{feature_flag.name}' has an invalid variant value.") from e
 
         if feature_flag.allocation:
             allocation_value: Dict[str, Any] = {}

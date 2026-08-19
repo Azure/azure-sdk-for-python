@@ -144,19 +144,23 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if self._feature_flag_refresh_enabled and self._feature_flag_refresh_timer.needs_refresh():
                 feature_flag_refresh_attempted = True
 
-                if not self._feature_flag_page_etags or client.check_feature_flag_page_etags(
+                # Key-value based feature flags and enhanced feature flags are separate resource types with their
+                # own change-detection state, but if either indicates a change, both are reloaded and re-merged
+                # together to guarantee the merged result is always correct and internally consistent.
+                feature_flags_changed = not self._feature_flag_page_etags or client.check_feature_flag_page_etags(
                     self._feature_flag_selectors, self._feature_flag_page_etags, headers=headers, **kwargs
-                ):
+                )
+                enhanced_feature_flags_changed = (
+                    not self._enhanced_feature_flag_etags
+                    or client.check_enhanced_feature_flag_etags(
+                        self._enhanced_feature_flag_selectors, self._enhanced_feature_flag_etags, headers=headers, **kwargs
+                    )
+                )
+
+                if feature_flags_changed or enhanced_feature_flags_changed:
                     feature_flags, feature_flag_page_etags = client.load_feature_flags(
                         self._feature_flag_selectors, headers=headers, **kwargs
                     )
-
-                # Enhanced feature flags are loaded independently of the key-value based feature flags, using their
-                # own page-level etag state, since they are a separate resource type with a separate
-                # change-detection mechanism.
-                if not self._enhanced_feature_flag_etags or client.check_enhanced_feature_flag_etags(
-                    self._enhanced_feature_flag_selectors, self._enhanced_feature_flag_etags, headers=headers, **kwargs
-                ):
                     enhanced_feature_flags, enhanced_feature_flag_etags = client.load_enhanced_feature_flags(
                         self._enhanced_feature_flag_selectors, headers=headers, **kwargs
                     )
@@ -187,7 +191,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._refresh_timer.reset()
             if self._feature_flag_refresh_enabled and feature_flag_refresh_attempted:
                 self._feature_flag_refresh_timer.reset()
-            if (settings_refreshed or feature_flags or enhanced_feature_flags) and self._on_refresh_success:
+            if (
+                settings_refreshed or feature_flags is not None or enhanced_feature_flags is not None
+            ) and self._on_refresh_success:
                 self._on_refresh_success()
         except AzureError as e:
             logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
