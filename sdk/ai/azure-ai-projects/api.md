@@ -369,7 +369,7 @@ namespace azure.ai.projects.aio.operations
         async def create_session(
                 self, 
                 agent_name: str, 
-                body: CreateSessionRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -449,7 +449,7 @@ namespace azure.ai.projects.aio.operations
         async def create_version_from_manifest(
                 self, 
                 agent_name: str, 
-                body: CreateAgentVersionFromManifestRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -548,7 +548,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def generate_agent(
                 self, 
-                body: GenerateAgentRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -665,7 +665,7 @@ namespace azure.ai.projects.aio.operations
         async def update_details(
                 self, 
                 agent_name: str, 
-                body: PatchAgentObjectRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -727,7 +727,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def begin_create_optimization_job(
                 self, 
-                job: AgentOptimizationJob, 
+                job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -799,7 +799,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def begin_create_generation_job(
                 self, 
-                job: DataGenerationJob, 
+                job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -870,7 +870,7 @@ namespace azure.ai.projects.aio.operations
         async def create(
                 self, 
                 name: str, 
-                taxonomy: EvaluationTaxonomy, 
+                taxonomy: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -923,7 +923,7 @@ namespace azure.ai.projects.aio.operations
         async def update(
                 self, 
                 name: str, 
-                taxonomy: EvaluationTaxonomy, 
+                taxonomy: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -961,7 +961,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def begin_create_generation_job(
                 self, 
-                job: EvaluatorGenerationJob, 
+                job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -999,7 +999,7 @@ namespace azure.ai.projects.aio.operations
         async def create_version(
                 self, 
                 name: str, 
-                evaluator_version: EvaluatorVersion, 
+                evaluator_version: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1046,7 +1046,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 name: str, 
                 version: str, 
-                credential_request: EvaluatorCredentialRequest, 
+                credential_request: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1123,7 +1123,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 name: str, 
                 version: str, 
-                pending_upload_request: PendingUploadRequest, 
+                pending_upload_request: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1156,7 +1156,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 name: str, 
                 version: str, 
-                evaluator_version: EvaluatorVersion, 
+                evaluator_version: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1194,7 +1194,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def generate(
                 self, 
-                insight: Insight, 
+                insight: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1287,7 +1287,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def create(
                 self, 
-                body: CreateMemoryStoreRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1318,7 +1318,7 @@ namespace azure.ai.projects.aio.operations
         async def create_memory(
                 self, 
                 name: str, 
-                body: CreateMemoryRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1363,7 +1363,7 @@ namespace azure.ai.projects.aio.operations
         async def delete_scope(
                 self, 
                 name: str, 
-                body: DeleteScopeRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1422,7 +1422,7 @@ namespace azure.ai.projects.aio.operations
         def list_memories(
                 self, 
                 name: str, 
-                body: ListMemoriesRequest, 
+                body: JSON, 
                 *, 
                 before: Optional[str] = ..., 
                 content_type: str = "application/json", 
@@ -1494,7 +1494,7 @@ namespace azure.ai.projects.aio.operations
         async def update(
                 self, 
                 name: str, 
-                body: UpdateMemoryStoreRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1526,7 +1526,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 name: str, 
                 memory_id: str, 
-                body: UpdateMemoryRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1618,7 +1618,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 name: str, 
                 version: str, 
-                credential_request: ModelCredentialRequest, 
+                credential_request: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1661,7 +1661,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 name: str, 
                 version: str, 
-                model_version: ModelVersion, 
+                model_version: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1694,7 +1694,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 name: str, 
                 version: str, 
-                pending_upload_request: ModelPendingUploadRequest, 
+                pending_upload_request: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1727,7 +1727,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 name: str, 
                 version: str, 
-                model_version_update: UpdateModelVersionRequest, 
+                model_version_update: JSON, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -1785,7 +1785,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def create(
                 self, 
-                red_team: RedTeam, 
+                red_team: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1836,7 +1836,7 @@ namespace azure.ai.projects.aio.operations
         async def create_or_update(
                 self, 
                 routine_name: str, 
-                body: CreateOrUpdateRoutineRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1880,7 +1880,7 @@ namespace azure.ai.projects.aio.operations
         async def dispatch(
                 self, 
                 routine_name: str, 
-                body: DispatchRoutineAsyncRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1914,9 +1914,9 @@ namespace azure.ai.projects.aio.operations
         def list(
                 self, 
                 *, 
-                before: Optional[str] = ..., 
+                after: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
-                order: Optional[str] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[Routine]: ...
 
@@ -1925,10 +1925,10 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 routine_name: str, 
                 *, 
-                before: Optional[str] = ..., 
+                after: Optional[str] = ..., 
                 filter: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
-                order: Optional[str] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[RoutineRun]: ...
 
@@ -1955,7 +1955,7 @@ namespace azure.ai.projects.aio.operations
         async def create_or_update(
                 self, 
                 schedule_id: str, 
-                schedule: Schedule, 
+                schedule: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2036,7 +2036,7 @@ namespace azure.ai.projects.aio.operations
         async def create(
                 self, 
                 name: str, 
-                body: CreateSkillVersionRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2064,7 +2064,7 @@ namespace azure.ai.projects.aio.operations
         async def create_from_files(
                 self, 
                 name: str, 
-                content: CreateSkillVersionFromFilesBody, 
+                content: JSON, 
                 **kwargs: Any
             ) -> SkillVersion: ...
 
@@ -2148,7 +2148,7 @@ namespace azure.ai.projects.aio.operations
         async def update(
                 self, 
                 name: str, 
-                body: UpdateSkillRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2225,7 +2225,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 name: str, 
                 version: str, 
-                dataset_version: DatasetVersion, 
+                dataset_version: JSON, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -2292,7 +2292,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 name: str, 
                 version: str, 
-                pending_upload_request: PendingUploadRequest, 
+                pending_upload_request: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2446,7 +2446,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 name: str, 
                 version: str, 
-                index: Index, 
+                index: JSON, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -2524,7 +2524,7 @@ namespace azure.ai.projects.aio.operations
         async def create_version(
                 self, 
                 name: str, 
-                body: CreateToolboxVersionRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2605,7 +2605,7 @@ namespace azure.ai.projects.aio.operations
         async def update(
                 self, 
                 name: str, 
-                body: UpdateToolboxRequest1, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3556,21 +3556,21 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.AzureAIAgentTargetParam(TypedDict, total=False):
-        key "name": Required[str]
         key "tool_descriptions": List[ToolDescriptionParam]
-        key "type": Required[Literal["azure_ai_agent"]]
         key "version": str
+        name: Required[str]
+        type: Required[Literal["azure_ai_agent"]]
 
 
     class azure.ai.projects.models.AzureAIBenchmarkPreviewEvalRunDataSource(TypedDict, total=False):
         key "input_messages": InputMessagesItemReference
-        key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
-        key "type": Required[Literal["azure_ai_benchmark_preview"]]
+        target: Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
+        type: Required[Literal["azure_ai_benchmark_preview"]]
 
 
     class azure.ai.projects.models.AzureAIDataSourceConfig(TypedDict, total=False):
-        key "scenario": Required[str]
-        key "type": Required[Literal["azure_ai_source"]]
+        scenario: Required[str]
+        type: Required[Literal["azure_ai_source"]]
 
 
     class azure.ai.projects.models.AzureAIModelTarget(EvaluationTarget, discriminator='azure_ai_model'):
@@ -3593,14 +3593,14 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.AzureAIModelTargetParam(TypedDict, total=False):
         key "model": str
         key "sampling_params": ModelSamplingConfigParam
-        key "type": Required[Literal["azure_ai_model"]]
+        type: Required[Literal["azure_ai_model"]]
 
 
     class azure.ai.projects.models.AzureAIResponsesEvalRunDataSource(TypedDict, total=False):
         key "event_configuration_id": str
-        key "item_generation_params": Required[ResponseRetrievalItemGenerationParams]
         key "max_runs_hourly": int
-        key "type": Required[Literal["azure_ai_responses"]]
+        item_generation_params: Required[ResponseRetrievalItemGenerationParams]
+        type: Required[Literal["azure_ai_responses"]]
 
 
     class azure.ai.projects.models.AzureAISearchIndex(Index, discriminator='AzureSearch'):
@@ -4354,12 +4354,14 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.ContainerConfiguration(_Model):
         image: str
+        registry_connection_id: Optional[str]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                image: str
+                image: str, 
+                registry_connection_id: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -4848,7 +4850,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         SIMPLE_QNA = "simple_qna"
-        TASK_GENERATION = "task_generation"
+        SIMULATION_SEED = "simulation_seed"
         TOOL_USE = "tool_use"
         TRACES = "traces"
 
@@ -5208,13 +5210,13 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.EvalCsvFileIdSource(TypedDict, total=False):
-        key "id": Required[str]
-        key "type": Required[Literal["file_id"]]
+        id: Required[str]
+        type: Required[Literal["file_id"]]
 
 
     class azure.ai.projects.models.EvalCsvRunDataSource(TypedDict, total=False):
-        key "source": Required[EvalCsvFileIdSource]
-        key "type": Required[Literal["csv"]]
+        source: Required[EvalCsvFileIdSource]
+        type: Required[Literal["csv"]]
 
 
     class azure.ai.projects.models.EvalResult(_Model):
@@ -8981,9 +8983,9 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.RedTeamEvalRunDataSource(TypedDict, total=False):
-        key "item_generation_params": Required[Any]
-        key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
-        key "type": Required[Literal["azure_ai_red_team"]]
+        item_generation_params: Required[Any]
+        target: Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
+        type: Required[Literal["azure_ai_red_team"]]
 
 
     class azure.ai.projects.models.RedTeamTargetConfig(_Model):
@@ -9020,10 +9022,10 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.ResponseRetrievalItemGenerationParams(TypedDict, total=False):
-        key "data_mapping": Required[Dict[str, str]]
         key "max_num_turns": int
-        key "source": Required[Union[SourceFileContent, SourceFileID]]
-        key "type": Required[Literal["response_retrieval"]]
+        data_mapping: Required[Dict[str, str]]
+        source: Required[Union[SourceFileContent, SourceFileID]]
+        type: Required[Literal["response_retrieval"]]
 
 
     class azure.ai.projects.models.ResponseUsageInputTokensDetails(_Model):
@@ -9528,6 +9530,25 @@ namespace azure.ai.projects.models
         SHORT_ANSWER = "short_answer"
 
 
+    class azure.ai.projects.models.SimulationSeedDataGenerationJobOptions(DataGenerationJobOptions, discriminator='simulation_seed'):
+        max_samples: int
+        model_options: DataGenerationModelOptions
+        train_split: float
+        type: Literal[DataGenerationJobType.SIMULATION_SEED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_samples: int, 
+                model_options: Optional[DataGenerationModelOptions] = ..., 
+                train_split: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.SkillDetails(_Model):
         created_at: datetime
         default_version: str
@@ -9688,29 +9709,10 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.TargetCompletionEvalRunDataSource(TypedDict, total=False):
-        key "input_messages": Required[InputMessagesItemReference]
-        key "source": Required[Union[SourceFileContent, SourceFileID]]
-        key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
-        key "type": Required[Literal["azure_ai_target_completions"]]
-
-
-    class azure.ai.projects.models.TaskGenerationDataGenerationJobOptions(DataGenerationJobOptions, discriminator='task_generation'):
-        max_samples: int
-        model_options: DataGenerationModelOptions
-        train_split: float
-        type: Literal[DataGenerationJobType.TASK_GENERATION]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                max_samples: int, 
-                model_options: Optional[DataGenerationModelOptions] = ..., 
-                train_split: Optional[float] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+        input_messages: Required[InputMessagesItemReference]
+        source: Required[Union[SourceFileContent, SourceFileID]]
+        target: Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
+        type: Required[Literal["azure_ai_target_completions"]]
 
 
     class azure.ai.projects.models.TaxonomyCategory(_Model):
@@ -9841,11 +9843,11 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.TestingCriterionAzureAIEvaluator(TypedDict, total=False):
         key "data_mapping": Dict[str, str]
-        key "evaluator_name": Required[str]
         key "evaluator_version": str
         key "initialization_parameters": Dict[str, Any]
-        key "name": Required[str]
-        key "type": Required[Literal["azure_ai_evaluator"]]
+        evaluator_name: Required[str]
+        name: Required[str]
+        type: Required[Literal["azure_ai_evaluator"]]
 
 
     class azure.ai.projects.models.TextResponseFormat(_Model):
@@ -10417,6 +10419,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.TracesDataGenerationJobOptions(DataGenerationJobOptions, discriminator='traces'):
         max_samples: int
         model_options: DataGenerationModelOptions
+        redact_private_content: Optional[bool]
         train_split: float
         type: Literal[DataGenerationJobType.TRACES]
 
@@ -10426,6 +10429,7 @@ namespace azure.ai.projects.models
                 *, 
                 max_samples: int, 
                 model_options: Optional[DataGenerationModelOptions] = ..., 
+                redact_private_content: Optional[bool] = ..., 
                 train_split: Optional[float] = ...
             ) -> None: ...
 
@@ -10491,7 +10495,7 @@ namespace azure.ai.projects.models
         key "lookback_hours": int
         key "max_traces": int
         key "trace_ids": List[str]
-        key "type": Required[Literal["azure_ai_traces_preview"]]
+        type: Required[Literal["azure_ai_traces_preview"]]
 
 
     class azure.ai.projects.models.TranscriptTextUsageDuration(CreateTranscriptionResponseJsonUsage, discriminator='duration'):
@@ -12401,6 +12405,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.VoiceAgentServerEventSessionCreated(_Model):
+        conversation_id: Optional[str]
         event_id: str
         session: VoiceAgentSessionResponseConfig
         type: Literal[RealtimeServerEventType.SESSION_CREATED]
@@ -12409,6 +12414,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                conversation_id: Optional[str] = ..., 
                 event_id: str, 
                 session: VoiceAgentSessionResponseConfig, 
                 type: Literal[RealtimeServerEventType.SESSION_CREATED]
@@ -13967,7 +13973,7 @@ namespace azure.ai.projects.operations
         def create_session(
                 self, 
                 agent_name: str, 
-                body: CreateSessionRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14047,7 +14053,7 @@ namespace azure.ai.projects.operations
         def create_version_from_manifest(
                 self, 
                 agent_name: str, 
-                body: CreateAgentVersionFromManifestRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14146,7 +14152,7 @@ namespace azure.ai.projects.operations
         @overload
         def generate_agent(
                 self, 
-                body: GenerateAgentRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14263,7 +14269,7 @@ namespace azure.ai.projects.operations
         def update_details(
                 self, 
                 agent_name: str, 
-                body: PatchAgentObjectRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -14325,7 +14331,7 @@ namespace azure.ai.projects.operations
         @overload
         def begin_create_optimization_job(
                 self, 
-                job: AgentOptimizationJob, 
+                job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -14397,7 +14403,7 @@ namespace azure.ai.projects.operations
         @overload
         def begin_create_generation_job(
                 self, 
-                job: DataGenerationJob, 
+                job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -14468,7 +14474,7 @@ namespace azure.ai.projects.operations
         def create(
                 self, 
                 name: str, 
-                taxonomy: EvaluationTaxonomy, 
+                taxonomy: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14521,7 +14527,7 @@ namespace azure.ai.projects.operations
         def update(
                 self, 
                 name: str, 
-                taxonomy: EvaluationTaxonomy, 
+                taxonomy: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14559,7 +14565,7 @@ namespace azure.ai.projects.operations
         @overload
         def begin_create_generation_job(
                 self, 
-                job: EvaluatorGenerationJob, 
+                job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -14597,7 +14603,7 @@ namespace azure.ai.projects.operations
         def create_version(
                 self, 
                 name: str, 
-                evaluator_version: EvaluatorVersion, 
+                evaluator_version: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14644,7 +14650,7 @@ namespace azure.ai.projects.operations
                 self, 
                 name: str, 
                 version: str, 
-                credential_request: EvaluatorCredentialRequest, 
+                credential_request: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14721,7 +14727,7 @@ namespace azure.ai.projects.operations
                 self, 
                 name: str, 
                 version: str, 
-                pending_upload_request: PendingUploadRequest, 
+                pending_upload_request: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14754,7 +14760,7 @@ namespace azure.ai.projects.operations
                 self, 
                 name: str, 
                 version: str, 
-                evaluator_version: EvaluatorVersion, 
+                evaluator_version: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14792,7 +14798,7 @@ namespace azure.ai.projects.operations
         @overload
         def generate(
                 self, 
-                insight: Insight, 
+                insight: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14885,7 +14891,7 @@ namespace azure.ai.projects.operations
         @overload
         def create(
                 self, 
-                body: CreateMemoryStoreRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14916,7 +14922,7 @@ namespace azure.ai.projects.operations
         def create_memory(
                 self, 
                 name: str, 
-                body: CreateMemoryRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14961,7 +14967,7 @@ namespace azure.ai.projects.operations
         def delete_scope(
                 self, 
                 name: str, 
-                body: DeleteScopeRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15020,7 +15026,7 @@ namespace azure.ai.projects.operations
         def list_memories(
                 self, 
                 name: str, 
-                body: ListMemoriesRequest, 
+                body: JSON, 
                 *, 
                 before: Optional[str] = ..., 
                 content_type: str = "application/json", 
@@ -15092,7 +15098,7 @@ namespace azure.ai.projects.operations
         def update(
                 self, 
                 name: str, 
-                body: UpdateMemoryStoreRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15124,7 +15130,7 @@ namespace azure.ai.projects.operations
                 self, 
                 name: str, 
                 memory_id: str, 
-                body: UpdateMemoryRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15218,7 +15224,7 @@ namespace azure.ai.projects.operations
                 self, 
                 name: str, 
                 version: str, 
-                credential_request: ModelCredentialRequest, 
+                credential_request: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15261,7 +15267,7 @@ namespace azure.ai.projects.operations
                 self, 
                 name: str, 
                 version: str, 
-                model_version: ModelVersion, 
+                model_version: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15294,7 +15300,7 @@ namespace azure.ai.projects.operations
                 self, 
                 name: str, 
                 version: str, 
-                pending_upload_request: ModelPendingUploadRequest, 
+                pending_upload_request: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15327,7 +15333,7 @@ namespace azure.ai.projects.operations
                 self, 
                 name: str, 
                 version: str, 
-                model_version_update: UpdateModelVersionRequest, 
+                model_version_update: JSON, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -15385,7 +15391,7 @@ namespace azure.ai.projects.operations
         @overload
         def create(
                 self, 
-                red_team: RedTeam, 
+                red_team: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15436,7 +15442,7 @@ namespace azure.ai.projects.operations
         def create_or_update(
                 self, 
                 routine_name: str, 
-                body: CreateOrUpdateRoutineRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15480,7 +15486,7 @@ namespace azure.ai.projects.operations
         def dispatch(
                 self, 
                 routine_name: str, 
-                body: DispatchRoutineAsyncRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15514,9 +15520,9 @@ namespace azure.ai.projects.operations
         def list(
                 self, 
                 *, 
-                before: Optional[str] = ..., 
+                after: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
-                order: Optional[str] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[Routine]: ...
 
@@ -15525,10 +15531,10 @@ namespace azure.ai.projects.operations
                 self, 
                 routine_name: str, 
                 *, 
-                before: Optional[str] = ..., 
+                after: Optional[str] = ..., 
                 filter: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
-                order: Optional[str] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[RoutineRun]: ...
 
@@ -15555,7 +15561,7 @@ namespace azure.ai.projects.operations
         def create_or_update(
                 self, 
                 schedule_id: str, 
-                schedule: Schedule, 
+                schedule: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15636,7 +15642,7 @@ namespace azure.ai.projects.operations
         def create(
                 self, 
                 name: str, 
-                body: CreateSkillVersionRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15664,7 +15670,7 @@ namespace azure.ai.projects.operations
         def create_from_files(
                 self, 
                 name: str, 
-                content: CreateSkillVersionFromFilesBody, 
+                content: JSON, 
                 **kwargs: Any
             ) -> SkillVersion: ...
 
@@ -15748,7 +15754,7 @@ namespace azure.ai.projects.operations
         def update(
                 self, 
                 name: str, 
-                body: UpdateSkillRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15825,7 +15831,7 @@ namespace azure.ai.projects.operations
                 self, 
                 name: str, 
                 version: str, 
-                dataset_version: DatasetVersion, 
+                dataset_version: JSON, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -15892,7 +15898,7 @@ namespace azure.ai.projects.operations
                 self, 
                 name: str, 
                 version: str, 
-                pending_upload_request: PendingUploadRequest, 
+                pending_upload_request: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16046,7 +16052,7 @@ namespace azure.ai.projects.operations
                 self, 
                 name: str, 
                 version: str, 
-                index: Index, 
+                index: JSON, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -16124,7 +16130,7 @@ namespace azure.ai.projects.operations
         def create_version(
                 self, 
                 name: str, 
-                body: CreateToolboxVersionRequest, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16205,7 +16211,7 @@ namespace azure.ai.projects.operations
         def update(
                 self, 
                 name: str, 
-                body: UpdateToolboxRequest1, 
+                body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16274,12 +16280,11 @@ namespace azure.ai.projects.types
         key "base_url": str
         key "project_connection_id": str
         key "send_credentials_for_agent_card": bool
-        key "type": Required[Literal[ToolType.A2A_PREVIEW]]
         agent_card_path: str
         base_url: str
         project_connection_id: str
         send_credentials_for_agent_card: bool
-        type: Literal[ToolType.A2A_PREVIEW]
+        type: Required[Literal[ToolType.A2A_PREVIEW]]
 
 
     class azure.ai.projects.types.A2APreviewToolboxTool(TypedDict, total=False):
@@ -16289,7 +16294,7 @@ namespace azure.ai.projects.types
         key "name": str
         key "project_connection_id": str
         key "send_credentials_for_agent_card": bool
-        key "type": Required[Literal[ToolboxToolType.A2A_PREVIEW]]
+        key "tool_configs": dict[str, ToolConfig]
         agent_card_path: str
         base_url: str
         description: str
@@ -16297,7 +16302,7 @@ namespace azure.ai.projects.types
         project_connection_id: str
         send_credentials_for_agent_card: bool
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.A2A_PREVIEW]
+        type: Required[Literal[ToolboxToolType.A2A_PREVIEW]]
 
 
     class azure.ai.projects.types.A2AProtocolConfiguration(TypedDict, total=False):
@@ -16324,10 +16329,8 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.AgentBlueprintReference(TypedDict, total=False):
-        key "blueprint_id": Required[str]
-        key "type": Required[Literal[AgentBlueprintReferenceType.MANAGED_AGENT_IDENTITY_BLUEPRINT]]
-        blueprint_id: str
-        type: Literal[AgentBlueprintReferenceType.MANAGED_AGENT_IDENTITY_BLUEPRINT]
+        blueprint_id: Required[str]
+        type: Required[Literal[AgentBlueprintReferenceType.MANAGED_AGENT_IDENTITY_BLUEPRINT]]
 
 
     class azure.ai.projects.types.AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -16336,49 +16339,41 @@ namespace azure.ai.projects.types
 
     class azure.ai.projects.types.AgentCard(TypedDict, total=False):
         key "description": str
-        key "skills": Required[list[AgentCardSkill]]
-        key "version": Required[str]
         description: str
-        skills: list[AgentCardSkill]
-        version: str
+        skills: Required[list[AgentCardSkill]]
+        version: Required[str]
 
 
     class azure.ai.projects.types.AgentCardSkill(TypedDict, total=False):
         key "description": str
-        key "id": Required[str]
-        key "name": Required[str]
+        key "examples": list[str]
+        key "tags": list[str]
         description: str
         examples: list[str]
-        id: str
-        name: str
+        id: Required[str]
+        name: Required[str]
         tags: list[str]
 
 
     class azure.ai.projects.types.AgentClusterInsightRequest(TypedDict, total=False):
-        key "agentName": Required[str]
-        key "modelConfiguration": ForwardRef('InsightModelConfiguration', module='types')
-        key "type": Required[Literal[InsightType.AGENT_CLUSTER_INSIGHT]]
-        agentName: str
+        key "modelConfiguration": ForwardRef('InsightModelConfiguration')
+        agentName: Required[str]
         modelConfiguration: InsightModelConfiguration
-        type: Literal[InsightType.AGENT_CLUSTER_INSIGHT]
+        type: Required[Literal[InsightType.AGENT_CLUSTER_INSIGHT]]
 
 
     class azure.ai.projects.types.AgentClusterInsightResult(TypedDict, total=False):
-        key "clusterInsight": Required[ClusterInsightResult]
-        key "type": Required[Literal[InsightType.AGENT_CLUSTER_INSIGHT]]
-        clusterInsight: ClusterInsightResult
-        type: Literal[InsightType.AGENT_CLUSTER_INSIGHT]
+        clusterInsight: Required[ClusterInsightResult]
+        type: Required[Literal[InsightType.AGENT_CLUSTER_INSIGHT]]
 
 
     class azure.ai.projects.types.AgentDataGenerationJobSource(TypedDict, total=False):
-        key "agent_name": Required[str]
         key "agent_version": str
         key "description": str
-        key "type": Required[Literal[DataGenerationJobSourceType.AGENT]]
-        agent_name: str
+        agent_name: Required[str]
         agent_version: str
         description: str
-        type: Literal[DataGenerationJobSourceType.AGENT]
+        type: Required[Literal[DataGenerationJobSourceType.AGENT]]
 
 
     class azure.ai.projects.types.AgentEndpointAuthorizationSchemeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -16389,22 +16384,21 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.AgentEndpointConfig(TypedDict, total=False):
-        key "protocol_configuration": ForwardRef('ProtocolConfiguration', module='types')
-        key "version_selector": ForwardRef('VersionSelector', module='types')
+        key "authorization_schemes": list[AgentEndpointAuthorizationScheme]
+        key "protocol_configuration": ForwardRef('ProtocolConfiguration')
+        key "version_selector": ForwardRef('VersionSelector')
         authorization_schemes: list[AgentEndpointAuthorizationScheme]
         protocol_configuration: ProtocolConfiguration
         version_selector: VersionSelector
 
 
     class azure.ai.projects.types.AgentEvaluatorGenerationJobSource(TypedDict, total=False):
-        key "agent_name": Required[str]
         key "agent_version": str
         key "description": str
-        key "type": Required[Literal[EvaluatorGenerationJobSourceType.AGENT]]
-        agent_name: str
+        agent_name: Required[str]
         agent_version: str
         description: str
-        type: Literal[EvaluatorGenerationJobSourceType.AGENT]
+        type: Required[Literal[EvaluatorGenerationJobSourceType.AGENT]]
 
 
     class azure.ai.projects.types.AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -16416,28 +16410,24 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.AgentOptimizationCandidate(TypedDict, total=False):
-        key "avg_score": Required[float]
-        key "avg_tokens": Required[float]
         key "candidate_id": str
         key "eval_id": str
         key "eval_run_id": str
-        key "name": Required[str]
-        key "promotion": ForwardRef('PromotionInfo', module='types')
-        avg_score: float
-        avg_tokens: float
+        key "mutations": dict[str, Any]
+        key "promotion": ForwardRef('PromotionInfo')
+        avg_score: Required[float]
+        avg_tokens: Required[float]
         candidate_id: str
         eval_id: str
         eval_run_id: str
         mutations: dict[str, Any]
-        name: str
+        name: Required[str]
         promotion: PromotionInfo
 
 
     class azure.ai.projects.types.AgentOptimizationDatasetCriterion(TypedDict, total=False):
-        key "instruction": Required[str]
-        key "name": Required[str]
-        instruction: str
-        name: str
+        instruction: Required[str]
+        name: Required[str]
 
 
     class azure.ai.projects.types.AgentOptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -16446,6 +16436,7 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.AgentOptimizationDatasetItem(TypedDict, total=False):
+        key "criteria": list[AgentOptimizationDatasetCriterion]
         key "desired_num_turns": int
         key "ground_truth": str
         key "query": str
@@ -16456,64 +16447,53 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.AgentOptimizationEvaluatorRef(TypedDict, total=False):
-        key "name": Required[str]
         key "version": str
-        name: str
+        name: Required[str]
         version: str
 
 
     class azure.ai.projects.types.AgentOptimizationInlineDatasetInput(TypedDict, total=False):
-        key "items": Required[list[AgentOptimizationDatasetItem]]
-        key "type": Required[Literal[AgentOptimizationDatasetInputType.INLINE]]
-        items: list[AgentOptimizationDatasetItem]
-        type: Literal[AgentOptimizationDatasetInputType.INLINE]
+        items: Required[list[AgentOptimizationDatasetItem]]
+        type: Required[Literal[AgentOptimizationDatasetInputType.INLINE]]
 
 
     class azure.ai.projects.types.AgentOptimizationJob(TypedDict, total=False):
-        key "created_at": Required[int]
-        key "error": ForwardRef('ApiError', module='types')
-        key "id": Required[str]
-        key "inputs": ForwardRef('AgentOptimizationJobInputs', module='types')
-        key "progress": ForwardRef('AgentOptimizationJobProgress', module='types')
-        key "result": ForwardRef('AgentOptimizationJobResult', module='types')
-        key "status": Required[Union[str, JobStatus]]
-        key "updated_at": Required[int]
-        created_at: int
+        key "error": ForwardRef('ApiError')
+        key "inputs": ForwardRef('AgentOptimizationJobInputs')
+        key "progress": ForwardRef('AgentOptimizationJobProgress')
+        key "result": ForwardRef('AgentOptimizationJobResult')
+        key "warnings": list[str]
+        created_at: Required[int]
         error: ApiError
-        id: str
+        id: Required[str]
         inputs: AgentOptimizationJobInputs
         progress: AgentOptimizationJobProgress
         result: AgentOptimizationJobResult
-        status: Union[str, JobStatus]
-        updated_at: int
+        status: Required[Union[str, JobStatus]]
+        updated_at: Required[int]
         warnings: list[str]
 
 
     class azure.ai.projects.types.AgentOptimizationJobInputs(TypedDict, total=False):
-        key "agent": Required[OptimizedAgentIdentifier]
-        key "evaluators": Required[list[AgentOptimizationEvaluatorRef]]
-        key "options": ForwardRef('AgentOptimizationOptions', module='types')
-        key "train_dataset": Required[AgentOptimizationDatasetInput]
-        key "validation_dataset": ForwardRef('AgentOptimizationDatasetInput', module='types')
-        agent: OptimizedAgentIdentifier
-        evaluators: list[AgentOptimizationEvaluatorRef]
+        key "options": ForwardRef('AgentOptimizationOptions')
+        key "validation_dataset": ForwardRef('AgentOptimizationDatasetInput')
+        agent: Required[OptimizedAgentIdentifier]
+        evaluators: Required[list[AgentOptimizationEvaluatorRef]]
         options: AgentOptimizationOptions
-        train_dataset: AgentOptimizationDatasetInput
+        train_dataset: Required[AgentOptimizationDatasetInput]
         validation_dataset: AgentOptimizationDatasetInput
 
 
     class azure.ai.projects.types.AgentOptimizationJobProgress(TypedDict, total=False):
-        key "best_score": Required[float]
-        key "candidates_completed": Required[int]
-        key "elapsed_seconds": Required[float]
-        best_score: float
-        candidates_completed: int
-        elapsed_seconds: float
+        best_score: Required[float]
+        candidates_completed: Required[int]
+        elapsed_seconds: Required[float]
 
 
     class azure.ai.projects.types.AgentOptimizationJobResult(TypedDict, total=False):
         key "baseline": str
         key "best": str
+        key "candidates": list[AgentOptimizationCandidate]
         baseline: str
         best: str
         candidates: list[AgentOptimizationCandidate]
@@ -16524,6 +16504,7 @@ namespace azure.ai.projects.types
         key "evaluation_level": Union[str, EvaluationLevel]
         key "max_candidates": int
         key "max_stalls": int
+        key "optimization_config": dict[str, Any]
         key "optimization_model": str
         eval_model: str
         evaluation_level: Union[str, EvaluationLevel]
@@ -16534,42 +16515,37 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.AgentOptimizationReferenceDatasetInput(TypedDict, total=False):
-        key "name": Required[str]
-        key "type": Required[Literal[AgentOptimizationDatasetInputType.REFERENCE]]
         key "version": str
-        name: str
-        type: Literal[AgentOptimizationDatasetInputType.REFERENCE]
+        name: Required[str]
+        type: Required[Literal[AgentOptimizationDatasetInputType.REFERENCE]]
         version: str
 
 
     class azure.ai.projects.types.AgentTaxonomyInput(TypedDict, total=False):
-        key "riskCategories": Required[list[Union[str, RiskCategory]]]
-        key "target": Required[EvaluationTarget]
-        key "type": Required[Literal[EvaluationTaxonomyInputType.AGENT]]
-        riskCategories: list[Union[str, RiskCategory]]
-        target: EvaluationTarget
-        type: Literal[EvaluationTaxonomyInputType.AGENT]
+        riskCategories: Required[list[Union[str, RiskCategory]]]
+        target: Required[EvaluationTarget]
+        type: Required[Literal[EvaluationTaxonomyInputType.AGENT]]
 
 
     class azure.ai.projects.types.ApiError(TypedDict, total=False):
-        key "code": Required[Optional[str]]
-        key "message": Required[str]
+        key "additionalInfo": dict[str, Any]
+        key "debugInfo": dict[str, Any]
+        key "details": list[ApiError]
         key "param": Optional[str]
         key "type": str
         additionalInfo: dict[str, Any]
-        code: str
+        code: Required[Optional[str]]
         debugInfo: dict[str, Any]
         details: list[ApiError]
-        message: str
+        message: Required[str]
         param: str
         type: str
 
 
     class azure.ai.projects.types.ApplyPatchToolParam(TypedDict, total=False):
         key "allowed_callers": Optional[list[Union[str, CallableToolAllowedCaller]]]
-        key "type": Required[Literal[ToolType.APPLY_PATCH]]
         allowed_callers: list[Union[str, CallableToolAllowedCaller]]
-        type: Literal[ToolType.APPLY_PATCH]
+        type: Required[Literal[ToolType.APPLY_PATCH]]
 
 
     class azure.ai.projects.types.ApproximateLocation(TypedDict, total=False):
@@ -16577,291 +16553,248 @@ namespace azure.ai.projects.types
         key "country": Optional[str]
         key "region": Optional[str]
         key "timezone": Optional[str]
-        key "type": Required[Literal["approximate"]]
         city: str
         country: str
         region: str
         timezone: str
-        type: Literal[approximate]
+        type: Required[Literal["approximate"]]
 
 
     class azure.ai.projects.types.ArtifactProfile(TypedDict, total=False):
-        key "category": Required[Union[str, FoundryModelArtifactProfileCategory]]
-        category: Union[str, FoundryModelArtifactProfileCategory]
+        key "signals": list[Union[str, FoundryModelArtifactProfileSignal]]
+        category: Required[Union[str, FoundryModelArtifactProfileCategory]]
         signals: list[Union[str, FoundryModelArtifactProfileSignal]]
 
 
     class azure.ai.projects.types.AutoCodeInterpreterToolParam(TypedDict, total=False):
+        key "file_ids": list[str]
         key "memory_limit": Optional[Union[str, ContainerMemoryLimit]]
-        key "network_policy": ForwardRef('ContainerNetworkPolicyParam', module='types')
-        key "type": Required[Literal["auto"]]
+        key "network_policy": ForwardRef('ContainerNetworkPolicyParam')
         file_ids: list[str]
         memory_limit: Union[str, ContainerMemoryLimit]
         network_policy: ContainerNetworkPolicyParam
-        type: Literal[auto]
+        type: Required[Literal["auto"]]
 
 
     class azure.ai.projects.types.AzureAIAgentTarget(TypedDict, total=False):
-        key "name": Required[str]
-        key "type": Required[Literal["azure_ai_agent"]]
+        key "tool_descriptions": list[ToolDescription]
+        key "tools": list[Tool]
         key "version": str
-        name: str
+        name: Required[str]
         tool_descriptions: list[ToolDescription]
         tools: list[Tool]
-        type: Literal[azure_ai_agent]
+        type: Required[Literal["azure_ai_agent"]]
         version: str
 
 
     class azure.ai.projects.types.AzureAIModelTarget(TypedDict, total=False):
         key "model": str
-        key "sampling_params": ForwardRef('ModelSamplingParams', module='types')
-        key "type": Required[Literal["azure_ai_model"]]
+        key "sampling_params": ForwardRef('ModelSamplingParams')
         model: str
         sampling_params: ModelSamplingParams
-        type: Literal[azure_ai_model]
+        type: Required[Literal["azure_ai_model"]]
 
 
     class azure.ai.projects.types.AzureAISearchIndex(TypedDict, total=False):
-        key "connectionName": Required[str]
         key "description": str
-        key "fieldMapping": ForwardRef('FieldMapping', module='types')
+        key "fieldMapping": ForwardRef('FieldMapping')
         key "id": str
-        key "indexName": Required[str]
-        key "name": Required[str]
-        key "type": Required[Literal[IndexType.AZURE_SEARCH]]
-        key "version": Required[str]
-        connectionName: str
+        key "tags": dict[str, str]
+        connectionName: Required[str]
         description: str
         fieldMapping: FieldMapping
         id: str
-        indexName: str
-        name: str
+        indexName: Required[str]
+        name: Required[str]
         tags: dict[str, str]
-        type: Literal[IndexType.AZURE_SEARCH]
-        version: str
+        type: Required[Literal[IndexType.AZURE_SEARCH]]
+        version: Required[str]
 
 
     class azure.ai.projects.types.AzureAISearchTool(TypedDict, total=False):
-        key "azure_ai_search": Required[AzureAISearchToolResource]
         key "description": str
         key "name": str
-        key "type": Required[Literal[ToolType.AZURE_AI_SEARCH]]
-        azure_ai_search: AzureAISearchToolResource
+        key "tool_configs": dict[str, ToolConfig]
+        azure_ai_search: Required[AzureAISearchToolResource]
         description: str
         name: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolType.AZURE_AI_SEARCH]
+        type: Required[Literal[ToolType.AZURE_AI_SEARCH]]
 
 
     class azure.ai.projects.types.AzureAISearchToolResource(TypedDict, total=False):
-        key "indexes": Required[list[AISearchIndexResource]]
-        indexes: list[AISearchIndexResource]
+        indexes: Required[list[AISearchIndexResource]]
 
 
     class azure.ai.projects.types.AzureAISearchToolboxTool(TypedDict, total=False):
-        key "azure_ai_search": Required[AzureAISearchToolResource]
         key "description": str
         key "name": str
-        key "type": Required[Literal[ToolboxToolType.AZURE_AI_SEARCH]]
-        azure_ai_search: AzureAISearchToolResource
+        key "tool_configs": dict[str, ToolConfig]
+        azure_ai_search: Required[AzureAISearchToolResource]
         description: str
         name: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.AZURE_AI_SEARCH]
+        type: Required[Literal[ToolboxToolType.AZURE_AI_SEARCH]]
 
 
     class azure.ai.projects.types.AzureFunctionBinding(TypedDict, total=False):
-        key "storage_queue": Required[AzureFunctionStorageQueue]
-        key "type": Required[Literal["storage_queue"]]
-        storage_queue: AzureFunctionStorageQueue
-        type: Literal[storage_queue]
+        storage_queue: Required[AzureFunctionStorageQueue]
+        type: Required[Literal["storage_queue"]]
 
 
     class azure.ai.projects.types.AzureFunctionDefinition(TypedDict, total=False):
-        key "function": Required[AzureFunctionDefinitionFunction]
-        key "input_binding": Required[AzureFunctionBinding]
-        key "output_binding": Required[AzureFunctionBinding]
-        function: AzureFunctionDefinitionFunction
-        input_binding: AzureFunctionBinding
-        output_binding: AzureFunctionBinding
+        function: Required[AzureFunctionDefinitionFunction]
+        input_binding: Required[AzureFunctionBinding]
+        output_binding: Required[AzureFunctionBinding]
 
 
     class azure.ai.projects.types.AzureFunctionDefinitionFunction(TypedDict, total=False):
         key "description": str
-        key "name": Required[str]
-        key "parameters": Required[dict[str, Any]]
         description: str
-        name: str
-        parameters: dict[str, Any]
+        name: Required[str]
+        parameters: Required[dict[str, Any]]
 
 
     class azure.ai.projects.types.AzureFunctionStorageQueue(TypedDict, total=False):
-        key "queue_name": Required[str]
-        key "queue_service_endpoint": Required[str]
-        queue_name: str
-        queue_service_endpoint: str
+        queue_name: Required[str]
+        queue_service_endpoint: Required[str]
 
 
     class azure.ai.projects.types.AzureFunctionTool(TypedDict, total=False):
-        key "azure_function": Required[AzureFunctionDefinition]
-        key "type": Required[Literal[ToolType.AZURE_FUNCTION]]
-        azure_function: AzureFunctionDefinition
+        key "tool_configs": dict[str, ToolConfig]
+        azure_function: Required[AzureFunctionDefinition]
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolType.AZURE_FUNCTION]
+        type: Required[Literal[ToolType.AZURE_FUNCTION]]
 
 
     class azure.ai.projects.types.AzureOpenAIModelConfiguration(TypedDict, total=False):
-        key "modelDeploymentName": Required[str]
-        key "type": Required[Literal["AzureOpenAIModel"]]
-        modelDeploymentName: str
-        type: Literal[AzureOpenAIModel]
+        modelDeploymentName: Required[str]
+        type: Required[Literal["AzureOpenAIModel"]]
 
 
     class azure.ai.projects.types.BingCustomSearchConfiguration(TypedDict, total=False):
         key "count": int
         key "freshness": str
-        key "instance_name": Required[str]
         key "market": str
-        key "project_connection_id": Required[str]
         key "set_lang": str
         count: int
         freshness: str
-        instance_name: str
+        instance_name: Required[str]
         market: str
-        project_connection_id: str
+        project_connection_id: Required[str]
         set_lang: str
 
 
     class azure.ai.projects.types.BingCustomSearchPreviewTool(TypedDict, total=False):
-        key "bing_custom_search_preview": Required[BingCustomSearchToolParameters]
-        key "type": Required[Literal[ToolType.BING_CUSTOM_SEARCH_PREVIEW]]
-        bing_custom_search_preview: BingCustomSearchToolParameters
-        type: Literal[ToolType.BING_CUSTOM_SEARCH_PREVIEW]
+        bing_custom_search_preview: Required[BingCustomSearchToolParameters]
+        type: Required[Literal[ToolType.BING_CUSTOM_SEARCH_PREVIEW]]
 
 
     class azure.ai.projects.types.BingCustomSearchToolParameters(TypedDict, total=False):
-        key "search_configurations": Required[list[BingCustomSearchConfiguration]]
-        search_configurations: list[BingCustomSearchConfiguration]
+        search_configurations: Required[list[BingCustomSearchConfiguration]]
 
 
     class azure.ai.projects.types.BingGroundingSearchConfiguration(TypedDict, total=False):
         key "count": int
         key "freshness": str
         key "market": str
-        key "project_connection_id": Required[str]
         key "set_lang": str
         count: int
         freshness: str
         market: str
-        project_connection_id: str
+        project_connection_id: Required[str]
         set_lang: str
 
 
     class azure.ai.projects.types.BingGroundingSearchToolParameters(TypedDict, total=False):
-        key "search_configurations": Required[list[BingGroundingSearchConfiguration]]
-        search_configurations: list[BingGroundingSearchConfiguration]
+        search_configurations: Required[list[BingGroundingSearchConfiguration]]
 
 
     class azure.ai.projects.types.BingGroundingTool(TypedDict, total=False):
-        key "bing_grounding": Required[BingGroundingSearchToolParameters]
         key "description": str
         key "name": str
-        key "type": Required[Literal[ToolType.BING_GROUNDING]]
-        bing_grounding: BingGroundingSearchToolParameters
+        key "tool_configs": dict[str, ToolConfig]
+        bing_grounding: Required[BingGroundingSearchToolParameters]
         description: str
         name: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolType.BING_GROUNDING]
+        type: Required[Literal[ToolType.BING_GROUNDING]]
 
 
     class azure.ai.projects.types.BotServiceAuthorizationScheme(TypedDict, total=False):
-        key "type": Required[Literal[AgentEndpointAuthorizationSchemeType.BOT_SERVICE]]
-        type: Literal[AgentEndpointAuthorizationSchemeType.BOT_SERVICE]
+        type: Required[Literal[AgentEndpointAuthorizationSchemeType.BOT_SERVICE]]
 
 
     class azure.ai.projects.types.BotServiceRbacAuthorizationScheme(TypedDict, total=False):
-        key "type": Required[Literal[AgentEndpointAuthorizationSchemeType.BOT_SERVICE_RBAC]]
-        type: Literal[AgentEndpointAuthorizationSchemeType.BOT_SERVICE_RBAC]
+        type: Required[Literal[AgentEndpointAuthorizationSchemeType.BOT_SERVICE_RBAC]]
 
 
     class azure.ai.projects.types.BotServiceTenantAuthorizationScheme(TypedDict, total=False):
-        key "type": Required[Literal[AgentEndpointAuthorizationSchemeType.BOT_SERVICE_TENANT]]
-        type: Literal[AgentEndpointAuthorizationSchemeType.BOT_SERVICE_TENANT]
+        type: Required[Literal[AgentEndpointAuthorizationSchemeType.BOT_SERVICE_TENANT]]
 
 
     class azure.ai.projects.types.BrowserAutomationPreviewTool(TypedDict, total=False):
-        key "browser_automation_preview": Required[BrowserAutomationToolParameters]
-        key "type": Required[Literal[ToolType.BROWSER_AUTOMATION_PREVIEW]]
-        browser_automation_preview: BrowserAutomationToolParameters
-        type: Literal[ToolType.BROWSER_AUTOMATION_PREVIEW]
+        browser_automation_preview: Required[BrowserAutomationToolParameters]
+        type: Required[Literal[ToolType.BROWSER_AUTOMATION_PREVIEW]]
 
 
     class azure.ai.projects.types.BrowserAutomationPreviewToolboxTool(TypedDict, total=False):
-        key "browser_automation_preview": Required[BrowserAutomationToolParameters]
         key "description": str
         key "name": str
-        key "type": Required[Literal[ToolboxToolType.BROWSER_AUTOMATION_PREVIEW]]
-        browser_automation_preview: BrowserAutomationToolParameters
+        key "tool_configs": dict[str, ToolConfig]
+        browser_automation_preview: Required[BrowserAutomationToolParameters]
         description: str
         name: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.BROWSER_AUTOMATION_PREVIEW]
+        type: Required[Literal[ToolboxToolType.BROWSER_AUTOMATION_PREVIEW]]
 
 
     class azure.ai.projects.types.BrowserAutomationToolConnectionParameters(TypedDict, total=False):
-        key "project_connection_id": Required[str]
-        project_connection_id: str
+        project_connection_id: Required[str]
 
 
     class azure.ai.projects.types.BrowserAutomationToolParameters(TypedDict, total=False):
-        key "connection": Required[BrowserAutomationToolConnectionParameters]
-        connection: BrowserAutomationToolConnectionParameters
+        connection: Required[BrowserAutomationToolConnectionParameters]
 
 
     class azure.ai.projects.types.CaptureStructuredOutputsTool(TypedDict, total=False):
         key "description": str
         key "name": str
-        key "outputs": Required[StructuredOutputDefinition]
-        key "type": Required[Literal[ToolType.CAPTURE_STRUCTURED_OUTPUTS]]
+        key "tool_configs": dict[str, ToolConfig]
         description: str
         name: str
-        outputs: StructuredOutputDefinition
+        outputs: Required[StructuredOutputDefinition]
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolType.CAPTURE_STRUCTURED_OUTPUTS]
+        type: Required[Literal[ToolType.CAPTURE_STRUCTURED_OUTPUTS]]
 
 
     class azure.ai.projects.types.ChartCoordinate(TypedDict, total=False):
-        key "size": Required[int]
-        key "x": Required[int]
-        key "y": Required[int]
-        size: int
-        x: int
-        y: int
+        size: Required[int]
+        x: Required[int]
+        y: Required[int]
 
 
     class azure.ai.projects.types.ClusterInsightResult(TypedDict, total=False):
-        key "clusters": Required[list[InsightCluster]]
-        key "summary": Required[InsightSummary]
-        clusters: list[InsightCluster]
+        key "coordinates": dict[str, ChartCoordinate]
+        clusters: Required[list[InsightCluster]]
         coordinates: dict[str, ChartCoordinate]
-        summary: InsightSummary
+        summary: Required[InsightSummary]
 
 
     class azure.ai.projects.types.ClusterTokenUsage(TypedDict, total=False):
-        key "inputTokenUsage": Required[int]
-        key "outputTokenUsage": Required[int]
-        key "totalTokenUsage": Required[int]
-        inputTokenUsage: int
-        outputTokenUsage: int
-        totalTokenUsage: int
+        inputTokenUsage: Required[int]
+        outputTokenUsage: Required[int]
+        totalTokenUsage: Required[int]
 
 
     class azure.ai.projects.types.CodeBasedEvaluatorDefinition(TypedDict, total=False):
         key "blob_uri": str
         key "code_text": str
+        key "data_schema": dict[str, Any]
         key "entry_point": str
         key "image_tag": str
-        key "type": Required[Literal[EvaluatorDefinitionType.CODE]]
+        key "init_parameters": dict[str, Any]
+        key "metrics": dict[str, EvaluatorMetric]
         blob_uri: str
         code_text: str
         data_schema: dict[str, Any]
@@ -16869,18 +16802,15 @@ namespace azure.ai.projects.types
         image_tag: str
         init_parameters: dict[str, Any]
         metrics: dict[str, EvaluatorMetric]
-        type: Literal[EvaluatorDefinitionType.CODE]
+        type: Required[Literal[EvaluatorDefinitionType.CODE]]
 
 
     class azure.ai.projects.types.CodeConfiguration(TypedDict, total=False):
         key "content_hash": str
-        key "dependency_resolution": Required[Union[str, CodeDependencyResolution]]
-        key "entry_point": Required[list[str]]
-        key "runtime": Required[str]
         content_hash: str
-        dependency_resolution: Union[str, CodeDependencyResolution]
-        entry_point: list[str]
-        runtime: str
+        dependency_resolution: Required[Union[str, CodeDependencyResolution]]
+        entry_point: Required[list[str]]
+        runtime: Required[str]
 
 
     class azure.ai.projects.types.CodeInterpreterTool(TypedDict, total=False):
@@ -16888,13 +16818,13 @@ namespace azure.ai.projects.types
         key "container": Union[str, AutoCodeInterpreterToolParam]
         key "description": str
         key "name": str
-        key "type": Required[Literal[ToolType.CODE_INTERPRETER]]
+        key "tool_configs": dict[str, ToolConfig]
         allowed_callers: list[Union[str, CallableToolAllowedCaller]]
         container: Union[str, AutoCodeInterpreterToolParam]
         description: str
         name: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolType.CODE_INTERPRETER]
+        type: Required[Literal[ToolType.CODE_INTERPRETER]]
 
 
     class azure.ai.projects.types.CodeInterpreterToolboxTool(TypedDict, total=False):
@@ -16902,83 +16832,68 @@ namespace azure.ai.projects.types
         key "container": Union[str, AutoCodeInterpreterToolParam]
         key "description": str
         key "name": str
-        key "type": Required[Literal[ToolboxToolType.CODE_INTERPRETER]]
+        key "tool_configs": dict[str, ToolConfig]
         allowed_callers: list[Union[str, CallableToolAllowedCaller]]
         container: Union[str, AutoCodeInterpreterToolParam]
         description: str
         name: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.CODE_INTERPRETER]
+        type: Required[Literal[ToolboxToolType.CODE_INTERPRETER]]
 
 
     class azure.ai.projects.types.ComparisonFilter(TypedDict, total=False):
-        key "key": Required[str]
-        key "type": Required[Literal["eq", "ne", "gt", "gte", "lt", "lte", "in", "nin"]]
-        key "value": Required[Union[str, float, bool, list[Union[str, float]]]]
-        key: str
-        type: Literal[eq, ne, gt, gte, lt, lte, in, nin]
-        value: Union[str, float, bool, list[Union[str, float]]]
+        key: Required[str]
+        type: Required[Literal["eq", "ne", "gt", "gte", "lt", "lte", "in", "nin"]]
+        value: Required[Union[str, float, bool, list[Union[str, float]]]]
 
 
     class azure.ai.projects.types.CompoundFilter(TypedDict, total=False):
-        key "filters": Required[list[Union[ComparisonFilter, Any]]]
-        key "type": Required[Literal["and", "or"]]
-        filters: list[Union[ComparisonFilter, Any]]
-        type: Literal[and, or]
+        filters: Required[list[Union[ComparisonFilter, Any]]]
+        type: Required[Literal["and", "or"]]
 
 
     class azure.ai.projects.types.ComputerTool(TypedDict, total=False):
-        key "type": Required[Literal[ToolType.COMPUTER]]
-        type: Literal[ToolType.COMPUTER]
+        type: Required[Literal[ToolType.COMPUTER]]
 
 
     class azure.ai.projects.types.ComputerUsePreviewTool(TypedDict, total=False):
-        key "display_height": Required[int]
-        key "display_width": Required[int]
-        key "environment": Required[Union[str, ComputerEnvironment]]
-        key "type": Required[Literal[ToolType.COMPUTER_USE_PREVIEW]]
-        display_height: int
-        display_width: int
-        environment: Union[str, ComputerEnvironment]
-        type: Literal[ToolType.COMPUTER_USE_PREVIEW]
+        display_height: Required[int]
+        display_width: Required[int]
+        environment: Required[Union[str, ComputerEnvironment]]
+        type: Required[Literal[ToolType.COMPUTER_USE_PREVIEW]]
 
 
     class azure.ai.projects.types.ContainerAutoParam(TypedDict, total=False):
+        key "file_ids": list[str]
         key "memory_limit": Optional[Union[str, ContainerMemoryLimit]]
-        key "network_policy": ForwardRef('ContainerNetworkPolicyParam', module='types')
-        key "type": Required[Literal[FunctionShellToolParamEnvironmentType.CONTAINER_AUTO]]
+        key "network_policy": ForwardRef('ContainerNetworkPolicyParam')
+        key "skills": list[ContainerSkill]
         file_ids: list[str]
         memory_limit: Union[str, ContainerMemoryLimit]
         network_policy: ContainerNetworkPolicyParam
         skills: list[ContainerSkill]
-        type: Literal[FunctionShellToolParamEnvironmentType.CONTAINER_AUTO]
+        type: Required[Literal[FunctionShellToolParamEnvironmentType.CONTAINER_AUTO]]
 
 
     class azure.ai.projects.types.ContainerConfiguration(TypedDict, total=False):
-        key "image": Required[str]
-        image: str
+        image: Required[str]
 
 
     class azure.ai.projects.types.ContainerNetworkPolicyAllowlistParam(TypedDict, total=False):
-        key "allowed_domains": Required[list[str]]
-        key "type": Required[Literal[ContainerNetworkPolicyParamType.ALLOWLIST]]
-        allowed_domains: list[str]
+        key "domain_secrets": list[ContainerNetworkPolicyDomainSecretParam]
+        allowed_domains: Required[list[str]]
         domain_secrets: list[ContainerNetworkPolicyDomainSecretParam]
-        type: Literal[ContainerNetworkPolicyParamType.ALLOWLIST]
+        type: Required[Literal[ContainerNetworkPolicyParamType.ALLOWLIST]]
 
 
     class azure.ai.projects.types.ContainerNetworkPolicyDisabledParam(TypedDict, total=False):
-        key "type": Required[Literal[ContainerNetworkPolicyParamType.DISABLED]]
-        type: Literal[ContainerNetworkPolicyParamType.DISABLED]
+        type: Required[Literal[ContainerNetworkPolicyParamType.DISABLED]]
 
 
     class azure.ai.projects.types.ContainerNetworkPolicyDomainSecretParam(TypedDict, total=False):
-        key "domain": Required[str]
-        key "name": Required[str]
-        key "value": Required[str]
-        domain: str
-        name: str
-        value: str
+        domain: Required[str]
+        name: Required[str]
+        value: Required[str]
 
 
     class azure.ai.projects.types.ContainerNetworkPolicyParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -16992,85 +16907,72 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.ContinuousEvaluationRuleAction(TypedDict, total=False):
-        key "evalId": Required[str]
         key "maxHourlyRuns": int
         key "samplingRate": float
-        key "type": Required[Literal[EvaluationRuleActionType.CONTINUOUS_EVALUATION]]
-        evalId: str
+        evalId: Required[str]
         maxHourlyRuns: int
         samplingRate: float
-        type: Literal[EvaluationRuleActionType.CONTINUOUS_EVALUATION]
+        type: Required[Literal[EvaluationRuleActionType.CONTINUOUS_EVALUATION]]
 
 
     class azure.ai.projects.types.CosmosDBIndex(TypedDict, total=False):
-        key "connectionName": Required[str]
-        key "containerName": Required[str]
-        key "databaseName": Required[str]
         key "description": str
-        key "embeddingConfiguration": Required[EmbeddingConfiguration]
-        key "fieldMapping": Required[FieldMapping]
         key "id": str
-        key "name": Required[str]
-        key "type": Required[Literal[IndexType.COSMOS_DB]]
-        key "version": Required[str]
-        connectionName: str
-        containerName: str
-        databaseName: str
+        key "tags": dict[str, str]
+        connectionName: Required[str]
+        containerName: Required[str]
+        databaseName: Required[str]
         description: str
-        embeddingConfiguration: EmbeddingConfiguration
-        fieldMapping: FieldMapping
+        embeddingConfiguration: Required[EmbeddingConfiguration]
+        fieldMapping: Required[FieldMapping]
         id: str
-        name: str
+        name: Required[str]
         tags: dict[str, str]
-        type: Literal[IndexType.COSMOS_DB]
-        version: str
+        type: Required[Literal[IndexType.COSMOS_DB]]
+        version: Required[str]
 
 
     class azure.ai.projects.types.CreateAgentVersionFromManifestRequest(TypedDict, total=False):
         key "description": str
-        key "manifest_id": Required[str]
-        key "parameter_values": Required[dict[str, Any]]
+        key "metadata": dict[str, str]
         description: str
-        manifest_id: str
+        manifest_id: Required[str]
         metadata: dict[str, str]
-        parameter_values: dict[str, Any]
+        parameter_values: Required[dict[str, Any]]
 
 
     class azure.ai.projects.types.CreateAgentVersionRequest(TypedDict, total=False):
-        key "blueprint_reference": ForwardRef('AgentBlueprintReference', module='types')
-        key "definition": Required[AgentDefinition]
+        key "blueprint_reference": ForwardRef('AgentBlueprintReference')
         key "description": str
         key "draft": bool
+        key "metadata": dict[str, str]
         blueprint_reference: AgentBlueprintReference
-        definition: AgentDefinition
+        definition: Required[AgentDefinition]
         description: str
         draft: bool
         metadata: dict[str, str]
 
 
     class azure.ai.projects.types.CreateMemoryRequest(TypedDict, total=False):
-        key "content": Required[str]
-        key "kind": Required[Union[str, MemoryItemKind]]
-        key "scope": Required[str]
-        content: str
-        kind: Union[str, MemoryItemKind]
-        scope: str
+        content: Required[str]
+        kind: Required[Union[str, MemoryItemKind]]
+        scope: Required[str]
 
 
     class azure.ai.projects.types.CreateMemoryStoreRequest(TypedDict, total=False):
-        key "definition": Required[MemoryStoreDefinition]
         key "description": str
-        key "name": Required[str]
-        definition: MemoryStoreDefinition
+        key "metadata": dict[str, str]
+        definition: Required[MemoryStoreDefinition]
         description: str
         metadata: dict[str, str]
-        name: str
+        name: Required[str]
 
 
     class azure.ai.projects.types.CreateOrUpdateRoutineRequest(TypedDict, total=False):
-        key "action": ForwardRef('RoutineAction', module='types')
+        key "action": ForwardRef('RoutineAction')
         key "description": str
         key "enabled": bool
+        key "triggers": dict[str, RoutineTrigger]
         action: RoutineAction
         description: str
         enabled: bool
@@ -17079,34 +16981,33 @@ namespace azure.ai.projects.types
 
     class azure.ai.projects.types.CreateSessionRequest(TypedDict, total=False):
         key "agent_session_id": str
-        key "version_indicator": Required[VersionIndicator]
         agent_session_id: str
-        version_indicator: VersionIndicator
+        version_indicator: Required[VersionIndicator]
 
 
     class azure.ai.projects.types.CreateSkillVersionFromFilesBody(TypedDict, total=False):
         key "default": bool
-        key "files": Required[list[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]]
         default: bool
-        files: list[FileType]
+        files: Required[list[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]]
 
 
     class azure.ai.projects.types.CreateSkillVersionRequest(TypedDict, total=False):
         key "default": bool
-        key "inline_content": ForwardRef('SkillInlineContent', module='types')
+        key "inline_content": ForwardRef('SkillInlineContent')
         default: bool
         inline_content: SkillInlineContent
 
 
     class azure.ai.projects.types.CreateToolboxVersionRequest(TypedDict, total=False):
         key "description": str
-        key "policies": ForwardRef('ToolboxPolicies', module='types')
-        key "tools": Required[list[ToolboxTool]]
+        key "metadata": dict[str, str]
+        key "policies": ForwardRef('ToolboxPolicies')
+        key "skills": list[ToolboxSkill]
         description: str
         metadata: dict[str, str]
         policies: ToolboxPolicies
         skills: list[ToolboxSkill]
-        tools: list[ToolboxTool]
+        tools: Required[list[ToolboxTool]]
 
 
     class azure.ai.projects.types.CreateTranscriptionResponseJsonUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -17116,55 +17017,44 @@ namespace azure.ai.projects.types
 
     class azure.ai.projects.types.CronTrigger(TypedDict, total=False):
         key "endTime": str
-        key "expression": Required[str]
         key "startTime": str
         key "timeZone": str
-        key "type": Required[Literal[TriggerType.CRON]]
         endTime: str
-        expression: str
+        expression: Required[str]
         startTime: str
         timeZone: str
-        type: Literal[TriggerType.CRON]
+        type: Required[Literal[TriggerType.CRON]]
 
 
     class azure.ai.projects.types.CustomGrammarFormatParam(TypedDict, total=False):
-        key "definition": Required[str]
-        key "syntax": Required[Union[str, GrammarSyntax1]]
-        key "type": Required[Literal[CustomToolParamFormatType.GRAMMAR]]
-        definition: str
-        syntax: Union[str, GrammarSyntax1]
-        type: Literal[CustomToolParamFormatType.GRAMMAR]
+        definition: Required[str]
+        syntax: Required[Union[str, GrammarSyntax1]]
+        type: Required[Literal[CustomToolParamFormatType.GRAMMAR]]
 
 
     class azure.ai.projects.types.CustomRoutineTrigger(TypedDict, total=False):
         key "event_name": str
-        key "parameters": Required[dict[str, Any]]
-        key "provider": Required[str]
-        key "type": Required[Literal[RoutineTriggerType.CUSTOM]]
         event_name: str
-        parameters: dict[str, Any]
-        provider: str
-        type: Literal[RoutineTriggerType.CUSTOM]
+        parameters: Required[dict[str, Any]]
+        provider: Required[str]
+        type: Required[Literal[RoutineTriggerType.CUSTOM]]
 
 
     class azure.ai.projects.types.CustomTextFormatParam(TypedDict, total=False):
-        key "type": Required[Literal[CustomToolParamFormatType.TEXT]]
-        type: Literal[CustomToolParamFormatType.TEXT]
+        type: Required[Literal[CustomToolParamFormatType.TEXT]]
 
 
     class azure.ai.projects.types.CustomToolParam(TypedDict, total=False):
         key "allowed_callers": Optional[list[Union[str, CallableToolAllowedCaller]]]
         key "defer_loading": bool
         key "description": str
-        key "format": ForwardRef('CustomToolParamFormat', module='types')
-        key "name": Required[str]
-        key "type": Required[Literal[ToolType.CUSTOM]]
+        key "format": ForwardRef('CustomToolParamFormat')
         allowed_callers: list[Union[str, CallableToolAllowedCaller]]
         defer_loading: bool
         description: str
         format: CustomToolParamFormat
-        name: str
-        type: Literal[ToolType.CUSTOM]
+        name: Required[str]
+        type: Required[Literal[ToolType.CUSTOM]]
 
 
     class azure.ai.projects.types.CustomToolParamFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -17173,45 +17063,37 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.DailyRecurrenceSchedule(TypedDict, total=False):
-        key "hours": Required[list[int]]
-        key "type": Required[Literal[RecurrenceType.DAILY]]
-        hours: list[int]
-        type: Literal[RecurrenceType.DAILY]
+        hours: Required[list[int]]
+        type: Required[Literal[RecurrenceType.DAILY]]
 
 
     class azure.ai.projects.types.DataGenerationJob(TypedDict, total=False):
-        key "created_at": Required[int]
-        key "error": ForwardRef('ApiError', module='types')
+        key "error": ForwardRef('ApiError')
         key "finished_at": int
-        key "id": Required[str]
-        key "inputs": ForwardRef('DataGenerationJobInputs', module='types')
-        key "result": ForwardRef('DataGenerationJobResult', module='types')
-        key "status": Required[Union[str, JobStatus]]
-        created_at: int
+        key "inputs": ForwardRef('DataGenerationJobInputs')
+        key "result": ForwardRef('DataGenerationJobResult')
+        created_at: Required[int]
         error: ApiError
         finished_at: int
-        id: str
+        id: Required[str]
         inputs: DataGenerationJobInputs
         result: DataGenerationJobResult
-        status: Union[str, JobStatus]
+        status: Required[Union[str, JobStatus]]
 
 
     class azure.ai.projects.types.DataGenerationJobInputs(TypedDict, total=False):
-        key "name": Required[str]
-        key "options": Required[DataGenerationJobOptions]
-        key "output_options": ForwardRef('DataGenerationJobOutputOptions', module='types')
-        key "scenario": Required[Union[str, DataGenerationJobScenario]]
-        key "sources": Required[list[DataGenerationJobSource]]
-        name: str
-        options: DataGenerationJobOptions
+        key "output_options": ForwardRef('DataGenerationJobOutputOptions')
+        name: Required[str]
+        options: Required[DataGenerationJobOptions]
         output_options: DataGenerationJobOutputOptions
-        scenario: Union[str, DataGenerationJobScenario]
-        sources: list[DataGenerationJobSource]
+        scenario: Required[Union[str, DataGenerationJobScenario]]
+        sources: Required[list[DataGenerationJobSource]]
 
 
     class azure.ai.projects.types.DataGenerationJobOutputOptions(TypedDict, total=False):
         key "description": str
         key "name": str
+        key "tags": dict[str, str]
         description: str
         name: str
         tags: dict[str, str]
@@ -17223,9 +17105,9 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.DataGenerationJobResult(TypedDict, total=False):
-        key "generated_samples": Required[int]
-        key "token_usage": ForwardRef('DataGenerationTokenUsage', module='types')
-        generated_samples: int
+        key "outputs": list[DataGenerationJobOutput]
+        key "token_usage": ForwardRef('DataGenerationTokenUsage')
+        generated_samples: Required[int]
         outputs: list[DataGenerationJobOutput]
         token_usage: DataGenerationTokenUsage
 
@@ -17239,55 +17121,47 @@ namespace azure.ai.projects.types
 
     class azure.ai.projects.types.DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         SIMPLE_QNA = "simple_qna"
-        TASK_GENERATION = "task_generation"
+        SIMULATION_SEED = "simulation_seed"
         TOOL_USE = "tool_use"
         TRACES = "traces"
 
 
     class azure.ai.projects.types.DataGenerationModelOptions(TypedDict, total=False):
-        key "model": Required[str]
-        model: str
+        model: Required[str]
 
 
     class azure.ai.projects.types.DataGenerationTokenUsage(TypedDict, total=False):
-        key "completion_tokens": Required[int]
-        key "prompt_tokens": Required[int]
-        key "total_tokens": Required[int]
-        completion_tokens: int
-        prompt_tokens: int
-        total_tokens: int
+        completion_tokens: Required[int]
+        prompt_tokens: Required[int]
+        total_tokens: Required[int]
 
 
     class azure.ai.projects.types.DatasetDataGenerationJobOutput(TypedDict, total=False):
         key "description": str
         key "id": str
         key "name": str
-        key "type": Required[Literal[DataGenerationJobOutputType.DATASET]]
+        key "tags": dict[str, str]
         key "version": str
         description: str
         id: str
         name: str
         tags: dict[str, str]
-        type: Literal[DataGenerationJobOutputType.DATASET]
+        type: Required[Literal[DataGenerationJobOutputType.DATASET]]
         version: str
 
 
     class azure.ai.projects.types.DatasetEvaluatorGenerationJobSource(TypedDict, total=False):
         key "description": str
-        key "name": Required[str]
-        key "type": Required[Literal[EvaluatorGenerationJobSourceType.DATASET]]
         key "version": str
         description: str
-        name: str
-        type: Literal[EvaluatorGenerationJobSourceType.DATASET]
+        name: Required[str]
+        type: Required[Literal[EvaluatorGenerationJobSourceType.DATASET]]
         version: str
 
 
     class azure.ai.projects.types.DatasetReference(TypedDict, total=False):
-        key "name": Required[str]
-        key "version": Required[str]
-        name: str
-        version: str
+        name: Required[str]
+        version: Required[str]
 
 
     class azure.ai.projects.types.DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -17296,149 +17170,108 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.DeleteScopeRequest(TypedDict, total=False):
-        key "scope": Required[str]
-        scope: str
+        scope: Required[str]
 
 
     class azure.ai.projects.types.Dimension(TypedDict, total=False):
         key "always_applicable": bool
-        key "description": Required[str]
-        key "id": Required[str]
-        key "weight": Required[int]
         always_applicable: bool
-        description: str
-        id: str
-        weight: int
+        description: Required[str]
+        id: Required[str]
+        weight: Required[int]
 
 
     class azure.ai.projects.types.DispatchRoutineAsyncRequest(TypedDict, total=False):
-        key "payload": ForwardRef('RoutineDispatchPayload', module='types')
+        key "payload": ForwardRef('RoutineDispatchPayload')
         payload: RoutineDispatchPayload
 
 
     class azure.ai.projects.types.EmbeddingConfiguration(TypedDict, total=False):
-        key "embeddingField": Required[str]
-        key "modelDeploymentName": Required[str]
-        embeddingField: str
-        modelDeploymentName: str
+        embeddingField: Required[str]
+        modelDeploymentName: Required[str]
 
 
     class azure.ai.projects.types.EmptyModelParam(TypedDict, total=False):
 
 
     class azure.ai.projects.types.EndpointBasedEvaluatorDefinition(TypedDict, total=False):
-        key "connection_name": Required[str]
-        key "type": Required[Literal[EvaluatorDefinitionType.ENDPOINT]]
-        connection_name: str
+        key "data_schema": dict[str, Any]
+        key "init_parameters": dict[str, Any]
+        key "metrics": dict[str, EvaluatorMetric]
+        connection_name: Required[str]
         data_schema: dict[str, Any]
         init_parameters: dict[str, Any]
         metrics: dict[str, EvaluatorMetric]
-        type: Literal[EvaluatorDefinitionType.ENDPOINT]
+        type: Required[Literal[EvaluatorDefinitionType.ENDPOINT]]
 
 
     class azure.ai.projects.types.EntraAuthorizationScheme(TypedDict, total=False):
-        key "type": Required[Literal[AgentEndpointAuthorizationSchemeType.ENTRA]]
-        type: Literal[AgentEndpointAuthorizationSchemeType.ENTRA]
+        type: Required[Literal[AgentEndpointAuthorizationSchemeType.ENTRA]]
 
 
     class azure.ai.projects.types.EvalResult(TypedDict, total=False):
-        key "name": Required[str]
-        key "passed": Required[bool]
-        key "score": Required[float]
-        key "type": Required[str]
-        name: str
-        passed: bool
-        score: float
-        type: str
+        name: Required[str]
+        passed: Required[bool]
+        score: Required[float]
+        type: Required[str]
 
 
     class azure.ai.projects.types.EvalRunResultCompareItem(TypedDict, total=False):
-        key "deltaEstimate": Required[float]
-        key "pValue": Required[float]
-        key "treatmentEffect": Required[Union[str, TreatmentEffectType]]
-        key "treatmentRunId": Required[str]
-        key "treatmentRunSummary": Required[EvalRunResultSummary]
-        deltaEstimate: float
-        pValue: float
-        treatmentEffect: Union[str, TreatmentEffectType]
-        treatmentRunId: str
-        treatmentRunSummary: EvalRunResultSummary
+        deltaEstimate: Required[float]
+        pValue: Required[float]
+        treatmentEffect: Required[Union[str, TreatmentEffectType]]
+        treatmentRunId: Required[str]
+        treatmentRunSummary: Required[EvalRunResultSummary]
 
 
     class azure.ai.projects.types.EvalRunResultComparison(TypedDict, total=False):
-        key "baselineRunSummary": Required[EvalRunResultSummary]
-        key "compareItems": Required[list[EvalRunResultCompareItem]]
-        key "evaluator": Required[str]
-        key "metric": Required[str]
-        key "testingCriteria": Required[str]
-        baselineRunSummary: EvalRunResultSummary
-        compareItems: list[EvalRunResultCompareItem]
-        evaluator: str
-        metric: str
-        testingCriteria: str
+        baselineRunSummary: Required[EvalRunResultSummary]
+        compareItems: Required[list[EvalRunResultCompareItem]]
+        evaluator: Required[str]
+        metric: Required[str]
+        testingCriteria: Required[str]
 
 
     class azure.ai.projects.types.EvalRunResultSummary(TypedDict, total=False):
-        key "average": Required[float]
-        key "runId": Required[str]
-        key "sampleCount": Required[int]
-        key "standardDeviation": Required[float]
-        average: float
-        runId: str
-        sampleCount: int
-        standardDeviation: float
+        average: Required[float]
+        runId: Required[str]
+        sampleCount: Required[int]
+        standardDeviation: Required[float]
 
 
     class azure.ai.projects.types.EvaluationComparisonInsightRequest(TypedDict, total=False):
-        key "baselineRunId": Required[str]
-        key "evalId": Required[str]
-        key "treatmentRunIds": Required[list[str]]
-        key "type": Required[Literal[InsightType.EVALUATION_COMPARISON]]
-        baselineRunId: str
-        evalId: str
-        treatmentRunIds: list[str]
-        type: Literal[InsightType.EVALUATION_COMPARISON]
+        baselineRunId: Required[str]
+        evalId: Required[str]
+        treatmentRunIds: Required[list[str]]
+        type: Required[Literal[InsightType.EVALUATION_COMPARISON]]
 
 
     class azure.ai.projects.types.EvaluationComparisonInsightResult(TypedDict, total=False):
-        key "comparisons": Required[list[EvalRunResultComparison]]
-        key "method": Required[str]
-        key "type": Required[Literal[InsightType.EVALUATION_COMPARISON]]
-        comparisons: list[EvalRunResultComparison]
-        method: str
-        type: Literal[InsightType.EVALUATION_COMPARISON]
+        comparisons: Required[list[EvalRunResultComparison]]
+        method: Required[str]
+        type: Required[Literal[InsightType.EVALUATION_COMPARISON]]
 
 
     class azure.ai.projects.types.EvaluationResultSample(TypedDict, total=False):
-        key "correlationInfo": Required[dict[str, Any]]
-        key "evaluationResult": Required[EvalResult]
-        key "features": Required[dict[str, Any]]
-        key "id": Required[str]
-        key "type": Required[Literal[SampleType.EVALUATION_RESULT_SAMPLE]]
-        correlationInfo: dict[str, Any]
-        evaluationResult: EvalResult
-        features: dict[str, Any]
-        id: str
-        type: Literal[SampleType.EVALUATION_RESULT_SAMPLE]
+        correlationInfo: Required[dict[str, Any]]
+        evaluationResult: Required[EvalResult]
+        features: Required[dict[str, Any]]
+        id: Required[str]
+        type: Required[Literal[SampleType.EVALUATION_RESULT_SAMPLE]]
 
 
     class azure.ai.projects.types.EvaluationRule(TypedDict, total=False):
-        key "action": Required[EvaluationRuleAction]
         key "description": str
         key "displayName": str
-        key "enabled": Required[bool]
-        key "eventType": Required[Union[str, EvaluationRuleEventType]]
-        key "filter": ForwardRef('EvaluationRuleFilter', module='types')
-        key "id": Required[str]
-        key "systemData": Required[dict[str, str]]
-        action: EvaluationRuleAction
+        key "filter": ForwardRef('EvaluationRuleFilter')
+        action: Required[EvaluationRuleAction]
         description: str
         displayName: str
-        enabled: bool
-        eventType: Union[str, EvaluationRuleEventType]
+        enabled: Required[bool]
+        eventType: Required[Union[str, EvaluationRuleEventType]]
         filter: EvaluationRuleFilter
-        id: str
-        systemData: dict[str, str]
+        id: Required[str]
+        systemData: Required[dict[str, str]]
 
 
     class azure.ai.projects.types.EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -17447,61 +17280,50 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.EvaluationRuleFilter(TypedDict, total=False):
-        key "agentName": Required[str]
-        agentName: str
+        agentName: Required[str]
 
 
     class azure.ai.projects.types.EvaluationRunClusterInsightRequest(TypedDict, total=False):
-        key "evalId": Required[str]
-        key "modelConfiguration": ForwardRef('InsightModelConfiguration', module='types')
-        key "runIds": Required[list[str]]
-        key "type": Required[Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]]
-        evalId: str
+        key "modelConfiguration": ForwardRef('InsightModelConfiguration')
+        evalId: Required[str]
         modelConfiguration: InsightModelConfiguration
-        runIds: list[str]
-        type: Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]
+        runIds: Required[list[str]]
+        type: Required[Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]]
 
 
     class azure.ai.projects.types.EvaluationRunClusterInsightResult(TypedDict, total=False):
-        key "clusterInsight": Required[ClusterInsightResult]
-        key "type": Required[Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]]
-        clusterInsight: ClusterInsightResult
-        type: Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]
+        clusterInsight: Required[ClusterInsightResult]
+        type: Required[Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]]
 
 
     class azure.ai.projects.types.EvaluationScheduleTask(TypedDict, total=False):
-        key "evalId": Required[str]
-        key "evalRun": Required[dict[str, Any]]
-        key "type": Required[Literal[ScheduleTaskType.EVALUATION]]
+        key "configuration": dict[str, str]
         configuration: dict[str, str]
-        evalId: str
-        evalRun: dict[str, Any]
-        type: Literal[ScheduleTaskType.EVALUATION]
+        evalId: Required[str]
+        evalRun: Required[dict[str, Any]]
+        type: Required[Literal[ScheduleTaskType.EVALUATION]]
 
 
     class azure.ai.projects.types.EvaluationTaxonomy(TypedDict, total=False):
         key "description": str
         key "id": str
-        key "name": Required[str]
-        key "taxonomyInput": Required[EvaluationTaxonomyInput]
-        key "version": Required[str]
+        key "properties": dict[str, str]
+        key "tags": dict[str, str]
+        key "taxonomyCategories": list[TaxonomyCategory]
         description: str
         id: str
-        name: str
+        name: Required[str]
         properties: dict[str, str]
         tags: dict[str, str]
         taxonomyCategories: list[TaxonomyCategory]
-        taxonomyInput: EvaluationTaxonomyInput
-        version: str
+        taxonomyInput: Required[EvaluationTaxonomyInput]
+        version: Required[str]
 
 
     class azure.ai.projects.types.EvaluationTaxonomyInput(TypedDict, total=False):
-        key "riskCategories": Required[list[Union[str, RiskCategory]]]
-        key "target": Required[EvaluationTarget]
-        key "type": Required[Literal[EvaluationTaxonomyInputType.AGENT]]
-        riskCategories: list[Union[str, RiskCategory]]
-        target: EvaluationTarget
-        type: Literal[EvaluationTaxonomyInputType.AGENT]
+        riskCategories: Required[list[Union[str, RiskCategory]]]
+        target: Required[EvaluationTarget]
+        type: Required[Literal[EvaluationTaxonomyInputType.AGENT]]
 
 
     class azure.ai.projects.types.EvaluationTaxonomyInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -17510,8 +17332,7 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.EvaluatorCredentialRequest(TypedDict, total=False):
-        key "blob_uri": Required[str]
-        blob_uri: str
+        blob_uri: Required[str]
 
 
     class azure.ai.projects.types.EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -17525,42 +17346,35 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.EvaluatorGenerationArtifacts(TypedDict, total=False):
-        key "dataset": Required[DatasetReference]
-        key "kinds": Required[list[str]]
-        dataset: DatasetReference
-        kinds: list[str]
+        dataset: Required[DatasetReference]
+        kinds: Required[list[str]]
 
 
     class azure.ai.projects.types.EvaluatorGenerationInputs(TypedDict, total=False):
         key "evaluator_description": str
         key "evaluator_display_name": str
-        key "evaluator_name": Required[str]
-        key "model": Required[str]
-        key "sources": Required[list[EvaluatorGenerationJobSource]]
         evaluator_description: str
         evaluator_display_name: str
-        evaluator_name: str
-        model: str
-        sources: list[EvaluatorGenerationJobSource]
+        evaluator_name: Required[str]
+        model: Required[str]
+        sources: Required[list[EvaluatorGenerationJobSource]]
 
 
     class azure.ai.projects.types.EvaluatorGenerationJob(TypedDict, total=False):
-        key "created_at": Required[int]
-        key "error": ForwardRef('ApiError', module='types')
+        key "error": ForwardRef('ApiError')
         key "finished_at": int
-        key "id": Required[str]
-        key "inputs": ForwardRef('EvaluatorGenerationInputs', module='types')
-        key "result": ForwardRef('EvaluatorVersion', module='types')
-        key "status": Required[Union[str, JobStatus]]
-        key "usage": ForwardRef('EvaluatorGenerationTokenUsage', module='types')
-        created_at: int
+        key "input_quality_warnings": list[RubricGenerationInputQualityWarning]
+        key "inputs": ForwardRef('EvaluatorGenerationInputs')
+        key "result": ForwardRef('EvaluatorVersion')
+        key "usage": ForwardRef('EvaluatorGenerationTokenUsage')
+        created_at: Required[int]
         error: ApiError
         finished_at: int
-        id: str
+        id: Required[str]
         input_quality_warnings: list[RubricGenerationInputQualityWarning]
         inputs: EvaluatorGenerationInputs
         result: EvaluatorVersion
-        status: Union[str, JobStatus]
+        status: Required[Union[str, JobStatus]]
         usage: EvaluatorGenerationTokenUsage
 
 
@@ -17572,12 +17386,9 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.EvaluatorGenerationTokenUsage(TypedDict, total=False):
-        key "input_tokens": Required[int]
-        key "output_tokens": Required[int]
-        key "total_tokens": Required[int]
-        input_tokens: int
-        output_tokens: int
-        total_tokens: int
+        input_tokens: Required[int]
+        output_tokens: Required[int]
+        total_tokens: Required[int]
 
 
     class azure.ai.projects.types.EvaluatorMetric(TypedDict, total=False):
@@ -17596,88 +17407,82 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.EvaluatorVersion(TypedDict, total=False):
-        key "categories": Required[list[Union[str, EvaluatorCategory]]]
-        key "created_at": Required[str]
-        key "created_by": Required[str]
-        key "definition": Required[EvaluatorDefinition]
         key "description": str
         key "display_name": str
-        key "evaluator_type": Required[Union[str, EvaluatorType]]
-        key "generation_artifacts": ForwardRef('EvaluatorGenerationArtifacts', module='types')
+        key "generation_artifacts": ForwardRef('EvaluatorGenerationArtifacts')
         key "generation_job_id": str
         key "id": str
-        key "modified_at": Required[str]
-        key "name": Required[str]
-        key "version": Required[str]
-        categories: list[Union[str, EvaluatorCategory]]
-        created_at: str
-        created_by: str
-        definition: EvaluatorDefinition
+        key "metadata": dict[str, str]
+        key "supported_evaluation_levels": list[Union[str, EvaluationLevel]]
+        key "tags": dict[str, str]
+        key "warnings": list[Union[str, GenerationWarningType]]
+        categories: Required[list[Union[str, EvaluatorCategory]]]
+        created_at: Required[str]
+        created_by: Required[str]
+        definition: Required[EvaluatorDefinition]
         description: str
         display_name: str
-        evaluator_type: Union[str, EvaluatorType]
+        evaluator_type: Required[Union[str, EvaluatorType]]
         generation_artifacts: EvaluatorGenerationArtifacts
         generation_job_id: str
         id: str
         metadata: dict[str, str]
-        modified_at: str
-        name: str
+        modified_at: Required[str]
+        name: Required[str]
         supported_evaluation_levels: list[Union[str, EvaluationLevel]]
         tags: dict[str, str]
-        version: str
+        version: Required[str]
         warnings: list[Union[str, GenerationWarningType]]
 
 
     class azure.ai.projects.types.ExternalAgentDefinition(TypedDict, total=False):
-        key "kind": Required[Literal[AgentKind.EXTERNAL]]
         key "otel_agent_id": str
-        key "rai_config": ForwardRef('RaiConfig', module='types')
-        kind: Literal[AgentKind.EXTERNAL]
+        key "rai_config": ForwardRef('RaiConfig')
+        kind: Required[Literal[AgentKind.EXTERNAL]]
         otel_agent_id: str
         rai_config: RaiConfig
 
 
     class azure.ai.projects.types.FabricDataAgentToolParameters(TypedDict, total=False):
+        key "project_connections": list[ToolProjectConnection]
         project_connections: list[ToolProjectConnection]
 
 
     class azure.ai.projects.types.FabricIQPreviewTool(TypedDict, total=False):
-        key "project_connection_id": Required[str]
         key "require_approval": Optional[Union[MCPToolRequireApproval, str]]
         key "server_label": str
         key "server_url": str
-        key "type": Required[Literal[ToolType.FABRIC_IQ_PREVIEW]]
-        project_connection_id: str
+        project_connection_id: Required[str]
         require_approval: Union[MCPToolRequireApproval, str]
         server_label: str
         server_url: str
-        type: Literal[ToolType.FABRIC_IQ_PREVIEW]
+        type: Required[Literal[ToolType.FABRIC_IQ_PREVIEW]]
 
 
     class azure.ai.projects.types.FabricIQPreviewToolboxTool(TypedDict, total=False):
         key "description": str
         key "name": str
-        key "project_connection_id": Required[str]
         key "require_approval": Optional[Union[MCPToolRequireApproval, str]]
         key "server_label": str
         key "server_url": str
-        key "type": Required[Literal[ToolboxToolType.FABRIC_IQ_PREVIEW]]
+        key "tool_configs": dict[str, ToolConfig]
         description: str
         name: str
-        project_connection_id: str
+        project_connection_id: Required[str]
         require_approval: Union[MCPToolRequireApproval, str]
         server_label: str
         server_url: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.FABRIC_IQ_PREVIEW]
+        type: Required[Literal[ToolboxToolType.FABRIC_IQ_PREVIEW]]
 
 
     class azure.ai.projects.types.FieldMapping(TypedDict, total=False):
-        key "contentFields": Required[list[str]]
         key "filepathField": str
+        key "metadataFields": list[str]
         key "titleField": str
         key "urlField": str
-        contentFields: list[str]
+        key "vectorFields": list[str]
+        contentFields: Required[list[str]]
         filepathField: str
         metadataFields: list[str]
         titleField: str
@@ -17686,41 +17491,33 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.FileDataGenerationJobOutput(TypedDict, total=False):
-        key "filename": Required[str]
-        key "id": Required[str]
-        key "type": Required[Literal[DataGenerationJobOutputType.FILE]]
-        filename: str
-        id: str
-        type: Literal[DataGenerationJobOutputType.FILE]
+        filename: Required[str]
+        id: Required[str]
+        type: Required[Literal[DataGenerationJobOutputType.FILE]]
 
 
     class azure.ai.projects.types.FileDataGenerationJobSource(TypedDict, total=False):
         key "description": str
-        key "id": Required[str]
-        key "type": Required[Literal[DataGenerationJobSourceType.FILE]]
         description: str
-        id: str
-        type: Literal[DataGenerationJobSourceType.FILE]
+        id: Required[str]
+        type: Required[Literal[DataGenerationJobSourceType.FILE]]
 
 
     class azure.ai.projects.types.FileDatasetVersion(TypedDict, total=False):
         key "connectionName": str
-        key "dataUri": Required[str]
         key "description": str
         key "id": str
         key "isReference": bool
-        key "name": Required[str]
-        key "type": Required[Literal[DatasetType.URI_FILE]]
-        key "version": Required[str]
+        key "tags": dict[str, str]
         connectionName: str
-        dataUri: str
+        dataUri: Required[str]
         description: str
         id: str
         isReference: bool
-        name: str
+        name: Required[str]
         tags: dict[str, str]
-        type: Literal[DatasetType.URI_FILE]
-        version: str
+        type: Required[Literal[DatasetType.URI_FILE]]
+        version: Required[str]
 
 
     class azure.ai.projects.types.FileSearchTool(TypedDict, total=False):
@@ -17728,17 +17525,16 @@ namespace azure.ai.projects.types
         key "filters": Optional[Filters]
         key "max_num_results": int
         key "name": str
-        key "ranking_options": ForwardRef('RankingOptions', module='types')
-        key "type": Required[Literal[ToolType.FILE_SEARCH]]
-        key "vector_store_ids": Required[list[str]]
+        key "ranking_options": ForwardRef('RankingOptions')
+        key "tool_configs": dict[str, ToolConfig]
         description: str
         filters: Filters
         max_num_results: int
         name: str
         ranking_options: RankingOptions
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolType.FILE_SEARCH]
-        vector_store_ids: list[str]
+        type: Required[Literal[ToolType.FILE_SEARCH]]
+        vector_store_ids: Required[list[str]]
 
 
     class azure.ai.projects.types.FileSearchToolboxTool(TypedDict, total=False):
@@ -17746,45 +17542,40 @@ namespace azure.ai.projects.types
         key "filters": Optional[Filters]
         key "max_num_results": int
         key "name": str
-        key "ranking_options": ForwardRef('RankingOptions', module='types')
-        key "type": Required[Literal[ToolboxToolType.FILE_SEARCH]]
+        key "ranking_options": ForwardRef('RankingOptions')
+        key "tool_configs": dict[str, ToolConfig]
+        key "vector_store_ids": list[str]
         description: str
         filters: Filters
         max_num_results: int
         name: str
         ranking_options: RankingOptions
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.FILE_SEARCH]
+        type: Required[Literal[ToolboxToolType.FILE_SEARCH]]
         vector_store_ids: list[str]
 
 
     class azure.ai.projects.types.FixedRatioVersionSelectionRule(TypedDict, total=False):
-        key "agent_version": Required[str]
-        key "traffic_percentage": Required[int]
-        key "type": Required[Literal[VersionSelectorType.FIXED_RATIO]]
-        agent_version: str
-        traffic_percentage: int
-        type: Literal[VersionSelectorType.FIXED_RATIO]
+        agent_version: Required[str]
+        traffic_percentage: Required[int]
+        type: Required[Literal[VersionSelectorType.FIXED_RATIO]]
 
 
     class azure.ai.projects.types.FolderDatasetVersion(TypedDict, total=False):
         key "connectionName": str
-        key "dataUri": Required[str]
         key "description": str
         key "id": str
         key "isReference": bool
-        key "name": Required[str]
-        key "type": Required[Literal[DatasetType.URI_FOLDER]]
-        key "version": Required[str]
+        key "tags": dict[str, str]
         connectionName: str
-        dataUri: str
+        dataUri: Required[str]
         description: str
         id: str
         isReference: bool
-        name: str
+        name: Required[str]
         tags: dict[str, str]
-        type: Literal[DatasetType.URI_FOLDER]
-        version: str
+        type: Required[Literal[DatasetType.URI_FOLDER]]
+        version: Required[str]
 
 
     class azure.ai.projects.types.FoundryModelWarning(TypedDict, total=False):
@@ -17799,26 +17590,24 @@ namespace azure.ai.projects.types
         key "description": str
         key "environment": Optional[FunctionShellToolParamEnvironment]
         key "name": str
-        key "type": Required[Literal[ToolType.SHELL]]
+        key "tool_configs": dict[str, ToolConfig]
         allowed_callers: list[Union[str, CallableToolAllowedCaller]]
         description: str
         environment: FunctionShellToolParamEnvironment
         name: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolType.SHELL]
+        type: Required[Literal[ToolType.SHELL]]
 
 
     class azure.ai.projects.types.FunctionShellToolParamEnvironmentContainerReferenceParam(TypedDict, total=False):
-        key "container_id": Required[str]
-        key "type": Required[Literal[FunctionShellToolParamEnvironmentType.CONTAINER_REFERENCE]]
-        container_id: str
-        type: Literal[FunctionShellToolParamEnvironmentType.CONTAINER_REFERENCE]
+        container_id: Required[str]
+        type: Required[Literal[FunctionShellToolParamEnvironmentType.CONTAINER_REFERENCE]]
 
 
     class azure.ai.projects.types.FunctionShellToolParamEnvironmentLocalEnvironmentParam(TypedDict, total=False):
-        key "type": Required[Literal[FunctionShellToolParamEnvironmentType.LOCAL]]
+        key "skills": list[LocalSkillParam]
         skills: list[LocalSkillParam]
-        type: Literal[FunctionShellToolParamEnvironmentType.LOCAL]
+        type: Required[Literal[FunctionShellToolParamEnvironmentType.LOCAL]]
 
 
     class azure.ai.projects.types.FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -17831,105 +17620,83 @@ namespace azure.ai.projects.types
         key "allowed_callers": Optional[list[Union[str, CallableToolAllowedCaller]]]
         key "defer_loading": bool
         key "description": Optional[str]
-        key "name": Required[str]
         key "output_schema": Optional[dict[str, Any]]
-        key "parameters": Required[Optional[dict[str, Any]]]
-        key "strict": Required[Optional[bool]]
-        key "type": Required[Literal[ToolType.FUNCTION]]
         allowed_callers: list[Union[str, CallableToolAllowedCaller]]
         defer_loading: bool
         description: str
-        name: str
+        name: Required[str]
         output_schema: dict[str, Any]
-        parameters: dict[str, Any]
-        strict: bool
-        type: Literal[ToolType.FUNCTION]
+        parameters: Required[Optional[dict[str, Any]]]
+        strict: Required[Optional[bool]]
+        type: Required[Literal[ToolType.FUNCTION]]
 
 
     class azure.ai.projects.types.FunctionToolParam(TypedDict, total=False):
         key "allowed_callers": Optional[list[Union[str, CallableToolAllowedCaller]]]
         key "defer_loading": bool
         key "description": Optional[str]
-        key "name": Required[str]
         key "output_schema": Optional[dict[str, Any]]
         key "parameters": Optional[EmptyModelParam]
         key "strict": Optional[bool]
-        key "type": Required[Literal["function"]]
         allowed_callers: list[Union[str, CallableToolAllowedCaller]]
         defer_loading: bool
         description: str
-        name: str
+        name: Required[str]
         output_schema: dict[str, Any]
         parameters: EmptyModelParam
         strict: bool
-        type: Literal[function]
+        type: Required[Literal["function"]]
 
 
     class azure.ai.projects.types.GenerateAgentRequest(TypedDict, total=False):
-        key "kind": Required[Union[str, AgentKind]]
-        kind: Union[str, AgentKind]
+        kind: Required[Union[str, AgentKind]]
 
 
     class azure.ai.projects.types.GitHubIssueRoutineTrigger(TypedDict, total=False):
-        key "connection_id": Required[str]
-        key "issue_event": Required[Union[str, GitHubIssueEvent]]
-        key "owner": Required[str]
-        key "repository": Required[str]
-        key "type": Required[Literal[RoutineTriggerType.GITHUB_ISSUE]]
-        connection_id: str
-        issue_event: Union[str, GitHubIssueEvent]
-        owner: str
-        repository: str
-        type: Literal[RoutineTriggerType.GITHUB_ISSUE]
+        connection_id: Required[str]
+        issue_event: Required[Union[str, GitHubIssueEvent]]
+        owner: Required[str]
+        repository: Required[str]
+        type: Required[Literal[RoutineTriggerType.GITHUB_ISSUE]]
 
 
     class azure.ai.projects.types.HeaderTelemetryEndpointAuth(TypedDict, total=False):
-        key "header_name": Required[str]
-        key "secret_id": Required[str]
-        key "secret_key": Required[str]
-        key "type": Required[Literal[TelemetryEndpointAuthType.HEADER]]
-        header_name: str
-        secret_id: str
-        secret_key: str
-        type: Literal[TelemetryEndpointAuthType.HEADER]
+        header_name: Required[str]
+        secret_id: Required[str]
+        secret_key: Required[str]
+        type: Required[Literal[TelemetryEndpointAuthType.HEADER]]
 
 
     class azure.ai.projects.types.HostedAgentDefinition(TypedDict, total=False):
-        key "code_configuration": ForwardRef('CodeConfiguration', module='types')
-        key "container_configuration": ForwardRef('ContainerConfiguration', module='types')
-        key "cpu": Required[str]
-        key "kind": Required[Literal[AgentKind.HOSTED]]
-        key "memory": Required[str]
-        key "rai_config": ForwardRef('RaiConfig', module='types')
-        key "telemetry_config": ForwardRef('TelemetryConfig', module='types')
+        key "code_configuration": ForwardRef('CodeConfiguration')
+        key "container_configuration": ForwardRef('ContainerConfiguration')
+        key "environment_variables": dict[str, str]
+        key "protocol_versions": list[ProtocolVersionRecord]
+        key "rai_config": ForwardRef('RaiConfig')
+        key "telemetry_config": ForwardRef('TelemetryConfig')
         code_configuration: CodeConfiguration
         container_configuration: ContainerConfiguration
-        cpu: str
+        cpu: Required[str]
         environment_variables: dict[str, str]
-        kind: Literal[AgentKind.HOSTED]
-        memory: str
+        kind: Required[Literal[AgentKind.HOSTED]]
+        memory: Required[str]
         protocol_versions: list[ProtocolVersionRecord]
         rai_config: RaiConfig
         telemetry_config: TelemetryConfig
 
 
     class azure.ai.projects.types.HourlyRecurrenceSchedule(TypedDict, total=False):
-        key "type": Required[Literal[RecurrenceType.HOURLY]]
-        type: Literal[RecurrenceType.HOURLY]
+        type: Required[Literal[RecurrenceType.HOURLY]]
 
 
     class azure.ai.projects.types.HumanEvaluationPreviewRuleAction(TypedDict, total=False):
-        key "templateId": Required[str]
-        key "type": Required[Literal[EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW]]
-        templateId: str
-        type: Literal[EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW]
+        templateId: Required[str]
+        type: Required[Literal[EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW]]
 
 
     class azure.ai.projects.types.HybridSearchOptions(TypedDict, total=False):
-        key "embedding_weight": Required[float]
-        key "text_weight": Required[float]
-        embedding_weight: float
-        text_weight: float
+        embedding_weight: Required[float]
+        text_weight: Required[float]
 
 
     class azure.ai.projects.types.ImageGenTool(TypedDict, total=False):
@@ -17937,7 +17704,7 @@ namespace azure.ai.projects.types
         key "background": Literal["transparent", "opaque", "auto"]
         key "description": str
         key "input_fidelity": Optional[Union[str, InputFidelity]]
-        key "input_image_mask": ForwardRef('ImageGenToolInputImageMask', module='types')
+        key "input_image_mask": ForwardRef('ImageGenToolInputImageMask')
         key "model": Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], str]
         key "moderation": Literal["auto", "low"]
         key "name": str
@@ -17946,7 +17713,7 @@ namespace azure.ai.projects.types
         key "partial_images": int
         key "quality": Literal["low", "medium", "high", "auto"]
         key "size": Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]
-        key "type": Required[Literal[ToolType.IMAGE_GENERATION]]
+        key "tool_configs": dict[str, ToolConfig]
         action: Union[str, ImageGenAction]
         background: Literal[transparent, opaque, auto]
         description: str
@@ -17961,7 +17728,7 @@ namespace azure.ai.projects.types
         quality: Literal[low, medium, high, auto]
         size: Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolType.IMAGE_GENERATION]
+        type: Required[Literal[ToolType.IMAGE_GENERATION]]
 
 
     class azure.ai.projects.types.ImageGenToolInputImageMask(TypedDict, total=False):
@@ -17978,94 +17745,66 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.InlineSkillParam(TypedDict, total=False):
-        key "description": Required[str]
-        key "name": Required[str]
-        key "source": Required[InlineSkillSourceParam]
-        key "type": Required[Literal[ContainerSkillType.INLINE]]
-        description: str
-        name: str
-        source: InlineSkillSourceParam
-        type: Literal[ContainerSkillType.INLINE]
+        description: Required[str]
+        name: Required[str]
+        source: Required[InlineSkillSourceParam]
+        type: Required[Literal[ContainerSkillType.INLINE]]
 
 
     class azure.ai.projects.types.InlineSkillSourceParam(TypedDict, total=False):
-        key "data": Required[str]
-        key "media_type": Required[Literal["application/zip"]]
-        key "type": Required[Literal["base64"]]
-        data: str
-        media_type: Literal[application/zip]
-        type: Literal[base64]
+        data: Required[str]
+        media_type: Required[Literal["application/zip"]]
+        type: Required[Literal["base64"]]
 
 
     class azure.ai.projects.types.Insight(TypedDict, total=False):
-        key "displayName": Required[str]
-        key "id": Required[str]
-        key "metadata": Required[InsightsMetadata]
-        key "request": Required[InsightRequest]
-        key "result": ForwardRef('InsightResult', module='types')
-        key "state": Required[Union[str, OperationState]]
-        displayName: str
-        id: str
-        metadata: InsightsMetadata
-        request: InsightRequest
+        key "result": ForwardRef('InsightResult')
+        displayName: Required[str]
+        id: Required[str]
+        metadata: Required[InsightsMetadata]
+        request: Required[InsightRequest]
         result: InsightResult
-        state: Union[str, OperationState]
+        state: Required[Union[str, OperationState]]
 
 
     class azure.ai.projects.types.InsightCluster(TypedDict, total=False):
-        key "description": Required[str]
-        key "id": Required[str]
-        key "label": Required[str]
-        key "suggestion": Required[str]
-        key "suggestionTitle": Required[str]
-        key "weight": Required[int]
-        description: str
-        id: str
-        label: str
+        key "samples": list[InsightSample]
+        key "subClusters": list[InsightCluster]
+        description: Required[str]
+        id: Required[str]
+        label: Required[str]
         samples: list[InsightSample]
         subClusters: list[InsightCluster]
-        suggestion: str
-        suggestionTitle: str
-        weight: int
+        suggestion: Required[str]
+        suggestionTitle: Required[str]
+        weight: Required[int]
 
 
     class azure.ai.projects.types.InsightModelConfiguration(TypedDict, total=False):
-        key "modelDeploymentName": Required[str]
-        modelDeploymentName: str
+        modelDeploymentName: Required[str]
 
 
     class azure.ai.projects.types.InsightSample(TypedDict, total=False):
-        key "correlationInfo": Required[dict[str, Any]]
-        key "evaluationResult": Required[EvalResult]
-        key "features": Required[dict[str, Any]]
-        key "id": Required[str]
-        key "type": Required[Literal[SampleType.EVALUATION_RESULT_SAMPLE]]
-        correlationInfo: dict[str, Any]
-        evaluationResult: EvalResult
-        features: dict[str, Any]
-        id: str
-        type: Literal[SampleType.EVALUATION_RESULT_SAMPLE]
+        correlationInfo: Required[dict[str, Any]]
+        evaluationResult: Required[EvalResult]
+        features: Required[dict[str, Any]]
+        id: Required[str]
+        type: Required[Literal[SampleType.EVALUATION_RESULT_SAMPLE]]
 
 
     class azure.ai.projects.types.InsightScheduleTask(TypedDict, total=False):
-        key "insight": Required[Insight]
-        key "type": Required[Literal[ScheduleTaskType.INSIGHT]]
+        key "configuration": dict[str, str]
         configuration: dict[str, str]
-        insight: Insight
-        type: Literal[ScheduleTaskType.INSIGHT]
+        insight: Required[Insight]
+        type: Required[Literal[ScheduleTaskType.INSIGHT]]
 
 
     class azure.ai.projects.types.InsightSummary(TypedDict, total=False):
-        key "method": Required[str]
-        key "sampleCount": Required[int]
-        key "uniqueClusterCount": Required[int]
-        key "uniqueSubclusterCount": Required[int]
-        key "usage": Required[ClusterTokenUsage]
-        method: str
-        sampleCount: int
-        uniqueClusterCount: int
-        uniqueSubclusterCount: int
-        usage: ClusterTokenUsage
+        method: Required[str]
+        sampleCount: Required[int]
+        uniqueClusterCount: Required[int]
+        uniqueSubclusterCount: Required[int]
+        usage: Required[ClusterTokenUsage]
 
 
     class azure.ai.projects.types.InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -18076,9 +17815,8 @@ namespace azure.ai.projects.types
 
     class azure.ai.projects.types.InsightsMetadata(TypedDict, total=False):
         key "completedAt": str
-        key "createdAt": Required[str]
         completedAt: str
-        createdAt: str
+        createdAt: Required[str]
 
 
     class azure.ai.projects.types.InvocationsProtocolConfiguration(TypedDict, total=False):
@@ -18088,10 +17826,8 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.InvokeAgentInvocationsApiDispatchPayload(TypedDict, total=False):
-        key "input": Required[Any]
-        key "type": Required[Literal[RoutineDispatchPayloadType.INVOKE_AGENT_INVOCATIONS_API]]
-        input: Any
-        type: Literal[RoutineDispatchPayloadType.INVOKE_AGENT_INVOCATIONS_API]
+        input: Required[Any]
+        type: Required[Literal[RoutineDispatchPayloadType.INVOKE_AGENT_INVOCATIONS_API]]
 
 
     class azure.ai.projects.types.InvokeAgentInvocationsApiRoutineAction(TypedDict, total=False):
@@ -18099,19 +17835,16 @@ namespace azure.ai.projects.types
         key "agent_name": str
         key "input": Any
         key "session_id": str
-        key "type": Required[Literal[RoutineActionType.INVOKE_AGENT_INVOCATIONS_API]]
         agent_endpoint_id: str
         agent_name: str
         input: Any
         session_id: str
-        type: Literal[RoutineActionType.INVOKE_AGENT_INVOCATIONS_API]
+        type: Required[Literal[RoutineActionType.INVOKE_AGENT_INVOCATIONS_API]]
 
 
     class azure.ai.projects.types.InvokeAgentResponsesApiDispatchPayload(TypedDict, total=False):
-        key "input": Required[Any]
-        key "type": Required[Literal[RoutineDispatchPayloadType.INVOKE_AGENT_RESPONSES_API]]
-        input: Any
-        type: Literal[RoutineDispatchPayloadType.INVOKE_AGENT_RESPONSES_API]
+        input: Required[Any]
+        type: Required[Literal[RoutineDispatchPayloadType.INVOKE_AGENT_RESPONSES_API]]
 
 
     class azure.ai.projects.types.InvokeAgentResponsesApiRoutineAction(TypedDict, total=False):
@@ -18119,60 +17852,51 @@ namespace azure.ai.projects.types
         key "agent_name": str
         key "conversation": str
         key "input": Any
-        key "type": Required[Literal[RoutineActionType.INVOKE_AGENT_RESPONSES_API]]
         agent_endpoint_id: str
         agent_name: str
         conversation: str
         input: Any
-        type: Literal[RoutineActionType.INVOKE_AGENT_RESPONSES_API]
+        type: Required[Literal[RoutineActionType.INVOKE_AGENT_RESPONSES_API]]
 
 
     class azure.ai.projects.types.ListMemoriesRequest(TypedDict, total=False):
-        key "scope": Required[str]
-        scope: str
+        scope: Required[str]
 
 
     class azure.ai.projects.types.LlmGeneratedVoiceGreetingConfig(TypedDict, total=False):
-        key "prompt": Required[str]
-        key "tool_choice": ForwardRef('VoiceAgentToolChoice', module='types')
-        key "type": Required[Literal["llm_generated"]]
-        prompt: str
+        key "tool_choice": ForwardRef('VoiceAgentToolChoice')
+        prompt: Required[str]
         tool_choice: VoiceAgentToolChoice
-        type: Literal[llm_generated]
+        type: Required[Literal["llm_generated"]]
 
 
     class azure.ai.projects.types.LocalShellToolParam(TypedDict, total=False):
         key "description": str
         key "name": str
-        key "type": Required[Literal[ToolType.LOCAL_SHELL]]
+        key "tool_configs": dict[str, ToolConfig]
         description: str
         name: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolType.LOCAL_SHELL]
+        type: Required[Literal[ToolType.LOCAL_SHELL]]
 
 
     class azure.ai.projects.types.LocalSkillParam(TypedDict, total=False):
-        key "description": Required[str]
-        key "name": Required[str]
-        key "path": Required[str]
-        description: str
-        name: str
-        path: str
+        description: Required[str]
+        name: Required[str]
+        path: Required[str]
 
 
     class azure.ai.projects.types.LogProbProperties(TypedDict, total=False):
-        key "bytes": Required[list[int]]
-        key "logprob": Required[float]
-        key "token": Required[str]
-        bytes: list[int]
-        logprob: float
-        token: str
+        bytes: Required[list[int]]
+        logprob: Required[float]
+        token: Required[str]
 
 
     class azure.ai.projects.types.LoraConfig(TypedDict, total=False):
         key "alpha": int
         key "dropout": float
         key "rank": int
+        key "targetModules": list[str]
         alpha: int
         dropout: float
         rank: int
@@ -18182,12 +17906,10 @@ namespace azure.ai.projects.types
     class azure.ai.projects.types.MCPListToolsTool(TypedDict, total=False):
         key "annotations": Optional[MCPListToolsToolAnnotations]
         key "description": Optional[str]
-        key "input_schema": Required[MCPListToolsToolInputSchema]
-        key "name": Required[str]
         annotations: MCPListToolsToolAnnotations
         description: str
-        input_schema: MCPListToolsToolInputSchema
-        name: str
+        input_schema: Required[MCPListToolsToolInputSchema]
+        name: Required[str]
 
 
     class azure.ai.projects.types.MCPListToolsToolAnnotations(TypedDict, total=False):
@@ -18206,10 +17928,9 @@ namespace azure.ai.projects.types
         key "project_connection_id": str
         key "require_approval": Optional[Union[MCPToolRequireApproval, Literal["always"], Literal["never"]]]
         key "server_description": str
-        key "server_label": Required[str]
         key "server_url": str
+        key "tool_configs": dict[str, ToolConfig]
         key "tunnel_id": str
-        key "type": Required[Literal[ToolType.MCP]]
         allowed_callers: list[Union[str, CallableToolAllowedCaller]]
         allowed_tools: Union[list[str], MCPToolFilter]
         authorization: str
@@ -18219,22 +17940,23 @@ namespace azure.ai.projects.types
         project_connection_id: str
         require_approval: Union[MCPToolRequireApproval, Literal[always], Literal[never]]
         server_description: str
-        server_label: str
+        server_label: Required[str]
         server_url: str
         tool_configs: dict[str, ToolConfig]
         tunnel_id: str
-        type: Literal[ToolType.MCP]
+        type: Required[Literal[ToolType.MCP]]
 
 
     class azure.ai.projects.types.MCPToolFilter(TypedDict, total=False):
         key "read_only": bool
+        key "tool_names": list[str]
         read_only: bool
         tool_names: list[str]
 
 
     class azure.ai.projects.types.MCPToolRequireApproval(TypedDict, total=False):
-        key "always": ForwardRef('MCPToolFilter', module='types')
-        key "never": ForwardRef('MCPToolFilter', module='types')
+        key "always": ForwardRef('MCPToolFilter')
+        key "never": ForwardRef('MCPToolFilter')
         always: MCPToolFilter
         never: MCPToolFilter
 
@@ -18251,10 +17973,9 @@ namespace azure.ai.projects.types
         key "project_connection_id": str
         key "require_approval": Optional[Union[MCPToolRequireApproval, Literal["always"], Literal["never"]]]
         key "server_description": str
-        key "server_label": Required[str]
         key "server_url": str
+        key "tool_configs": dict[str, ToolConfig]
         key "tunnel_id": str
-        key "type": Required[Literal[ToolboxToolType.MCP]]
         allowed_callers: list[Union[str, CallableToolAllowedCaller]]
         allowed_tools: Union[list[str], MCPToolFilter]
         authorization: str
@@ -18266,34 +17987,29 @@ namespace azure.ai.projects.types
         project_connection_id: str
         require_approval: Union[MCPToolRequireApproval, Literal[always], Literal[never]]
         server_description: str
-        server_label: str
+        server_label: Required[str]
         server_url: str
         tool_configs: dict[str, ToolConfig]
         tunnel_id: str
-        type: Literal[ToolboxToolType.MCP]
+        type: Required[Literal[ToolboxToolType.MCP]]
 
 
     class azure.ai.projects.types.ManagedAgentIdentityBlueprintReference(TypedDict, total=False):
-        key "blueprint_id": Required[str]
-        key "type": Required[Literal[AgentBlueprintReferenceType.MANAGED_AGENT_IDENTITY_BLUEPRINT]]
-        blueprint_id: str
-        type: Literal[AgentBlueprintReferenceType.MANAGED_AGENT_IDENTITY_BLUEPRINT]
+        blueprint_id: Required[str]
+        type: Required[Literal[AgentBlueprintReferenceType.MANAGED_AGENT_IDENTITY_BLUEPRINT]]
 
 
     class azure.ai.projects.types.ManagedAzureAISearchIndex(TypedDict, total=False):
         key "description": str
         key "id": str
-        key "name": Required[str]
-        key "type": Required[Literal[IndexType.MANAGED_AZURE_SEARCH]]
-        key "vectorStoreId": Required[str]
-        key "version": Required[str]
+        key "tags": dict[str, str]
         description: str
         id: str
-        name: str
+        name: Required[str]
         tags: dict[str, str]
-        type: Literal[IndexType.MANAGED_AZURE_SEARCH]
-        vectorStoreId: str
-        version: str
+        type: Required[Literal[IndexType.MANAGED_AZURE_SEARCH]]
+        vectorStoreId: Required[str]
+        version: Required[str]
 
 
     class azure.ai.projects.types.McpProtocolConfiguration(TypedDict, total=False):
@@ -18305,50 +18021,39 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.MemorySearchPreviewTool(TypedDict, total=False):
-        key "memory_store_name": Required[str]
-        key "scope": Required[str]
-        key "search_options": ForwardRef('MemorySearchOptions', module='types')
-        key "type": Required[Literal[ToolType.MEMORY_SEARCH_PREVIEW]]
+        key "search_options": ForwardRef('MemorySearchOptions')
         key "update_delay": int
-        memory_store_name: str
-        scope: str
+        memory_store_name: Required[str]
+        scope: Required[str]
         search_options: MemorySearchOptions
-        type: Literal[ToolType.MEMORY_SEARCH_PREVIEW]
+        type: Required[Literal[ToolType.MEMORY_SEARCH_PREVIEW]]
         update_delay: int
 
 
     class azure.ai.projects.types.MemoryStoreDefaultDefinition(TypedDict, total=False):
-        key "chat_model": Required[str]
-        key "embedding_model": Required[str]
-        key "kind": Required[Literal[MemoryStoreKind.DEFAULT]]
-        key "options": ForwardRef('MemoryStoreDefaultOptions', module='types')
-        chat_model: str
-        embedding_model: str
-        kind: Literal[MemoryStoreKind.DEFAULT]
+        key "options": ForwardRef('MemoryStoreDefaultOptions')
+        chat_model: Required[str]
+        embedding_model: Required[str]
+        kind: Required[Literal[MemoryStoreKind.DEFAULT]]
         options: MemoryStoreDefaultOptions
 
 
     class azure.ai.projects.types.MemoryStoreDefaultOptions(TypedDict, total=False):
-        key "chat_summary_enabled": Required[bool]
         key "default_ttl_seconds": str
         key "procedural_memory_enabled": bool
         key "user_profile_details": str
-        key "user_profile_enabled": Required[bool]
-        chat_summary_enabled: bool
+        chat_summary_enabled: Required[bool]
         default_ttl_seconds: str
         procedural_memory_enabled: bool
         user_profile_details: str
-        user_profile_enabled: bool
+        user_profile_enabled: Required[bool]
 
 
     class azure.ai.projects.types.MemoryStoreDefinition(TypedDict, total=False):
-        key "chat_model": Required[str]
-        key "embedding_model": Required[str]
-        key "kind": Required[Literal[MemoryStoreKind.DEFAULT]]
-        key "options": ForwardRef('MemoryStoreDefaultOptions', module='types')
-        chat_model: str
-        embedding_model: str
-        kind: Literal[MemoryStoreKind.DEFAULT]
+        key "options": ForwardRef('MemoryStoreDefaultOptions')
+        chat_model: Required[str]
+        embedding_model: Required[str]
+        kind: Required[Literal[MemoryStoreKind.DEFAULT]]
         options: MemoryStoreDefaultOptions
 
 
@@ -18360,24 +18065,20 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.MicrosoftFabricPreviewTool(TypedDict, total=False):
-        key "fabric_dataagent_preview": Required[FabricDataAgentToolParameters]
-        key "type": Required[Literal[ToolType.FABRIC_DATAAGENT_PREVIEW]]
-        fabric_dataagent_preview: FabricDataAgentToolParameters
-        type: Literal[ToolType.FABRIC_DATAAGENT_PREVIEW]
+        fabric_dataagent_preview: Required[FabricDataAgentToolParameters]
+        type: Required[Literal[ToolType.FABRIC_DATAAGENT_PREVIEW]]
 
 
     class azure.ai.projects.types.ModelCredentialRequest(TypedDict, total=False):
-        key "blobUri": Required[str]
-        blobUri: str
+        blobUri: Required[str]
 
 
     class azure.ai.projects.types.ModelPendingUploadRequest(TypedDict, total=False):
         key "connectionName": str
         key "pendingUploadId": str
-        key "pendingUploadType": Required[Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE]]
         connectionName: str
         pendingUploadId: str
-        pendingUploadType: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE]
+        pendingUploadType: Required[Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE]]
 
 
     class azure.ai.projects.types.ModelSamplingParams(TypedDict, total=False):
@@ -18399,46 +18100,39 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.ModelVersion(TypedDict, total=False):
-        key "artifactProfile": ForwardRef('ArtifactProfile', module='types')
+        key "artifactProfile": ForwardRef('ArtifactProfile')
         key "baseModel": str
-        key "blobUri": Required[str]
         key "description": str
         key "id": str
-        key "loraConfig": ForwardRef('LoraConfig', module='types')
-        key "name": Required[str]
-        key "source": ForwardRef('ModelSourceData', module='types')
-        key "version": Required[str]
+        key "loraConfig": ForwardRef('LoraConfig')
+        key "source": ForwardRef('ModelSourceData')
+        key "tags": dict[str, str]
+        key "warnings": list[FoundryModelWarning]
         key "weightType": Union[str, FoundryModelWeightType]
         artifactProfile: ArtifactProfile
         baseModel: str
-        blobUri: str
+        blobUri: Required[str]
         description: str
         id: str
         loraConfig: LoraConfig
-        name: str
+        name: Required[str]
         source: ModelSourceData
         tags: dict[str, str]
-        version: str
+        version: Required[str]
         warnings: list[FoundryModelWarning]
         weightType: Union[str, FoundryModelWeightType]
 
 
     class azure.ai.projects.types.MonthlyRecurrenceSchedule(TypedDict, total=False):
-        key "daysOfMonth": Required[list[int]]
-        key "type": Required[Literal[RecurrenceType.MONTHLY]]
-        daysOfMonth: list[int]
-        type: Literal[RecurrenceType.MONTHLY]
+        daysOfMonth: Required[list[int]]
+        type: Required[Literal[RecurrenceType.MONTHLY]]
 
 
     class azure.ai.projects.types.NamespaceToolParam(TypedDict, total=False):
-        key "description": Required[str]
-        key "name": Required[str]
-        key "tools": Required[list[Union[FunctionToolParam, CustomToolParam]]]
-        key "type": Required[Literal[ToolType.NAMESPACE]]
-        description: str
-        name: str
-        tools: list[Union[FunctionToolParam, CustomToolParam]]
-        type: Literal[ToolType.NAMESPACE]
+        description: Required[str]
+        name: Required[str]
+        tools: Required[list[Union[FunctionToolParam, CustomToolParam]]]
+        type: Required[Literal[ToolType.NAMESPACE]]
 
 
     class azure.ai.projects.types.OmitPropertiesRealtimeResponse1(TypedDict, total=False):
@@ -18447,15 +18141,16 @@ namespace azure.ai.projects.types
         key "max_output_tokens": Union[int, Literal["inf"]]
         key "metadata": Optional[Metadata]
         key "object": Literal["response"]
+        key "output_modalities": list[Literal["text", "audio"]]
         key "status": Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]
-        key "status_details": ForwardRef('RealtimeResponseStatusDetails', module='types')
-        key "usage": ForwardRef('RealtimeResponseUsage', module='types')
+        key "status_details": ForwardRef('RealtimeResponseStatusDetails')
+        key "usage": ForwardRef('RealtimeResponseUsage')
         conversation_id: str
         id: str
         max_output_tokens: Union[int, Literal[inf]]
         metadata: Metadata
         object: Literal[response]
-        output_modalities: list[Literal["text", "audio"]]
+        output_modalities: list[Literal[text, audio]]
         status: Literal[completed, cancelled, failed, incomplete, in_progress]
         status_details: RealtimeResponseStatusDetails
         usage: RealtimeResponseUsage
@@ -18463,16 +18158,13 @@ namespace azure.ai.projects.types
 
     class azure.ai.projects.types.OneTimeTrigger(TypedDict, total=False):
         key "timeZone": str
-        key "triggerAt": Required[str]
-        key "type": Required[Literal[TriggerType.ONE_TIME]]
         timeZone: str
-        triggerAt: str
-        type: Literal[TriggerType.ONE_TIME]
+        triggerAt: Required[str]
+        type: Required[Literal[TriggerType.ONE_TIME]]
 
 
     class azure.ai.projects.types.OpenApiAnonymousAuthDetails(TypedDict, total=False):
-        key "type": Required[Literal[OpenApiAuthType.ANONYMOUS]]
-        type: Literal[OpenApiAuthType.ANONYMOUS]
+        type: Required[Literal[OpenApiAuthType.ANONYMOUS]]
 
 
     class azure.ai.projects.types.OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -18482,94 +18174,78 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.OpenApiFunctionDefinition(TypedDict, total=False):
-        key "auth": Required[OpenApiAuthDetails]
+        key "default_params": list[str]
         key "description": str
-        key "name": Required[str]
-        key "spec": Required[dict[str, Any]]
-        auth: OpenApiAuthDetails
+        key "functions": list[OpenApiFunctionDefinitionFunction]
+        auth: Required[OpenApiAuthDetails]
         default_params: list[str]
         description: str
         functions: list[OpenApiFunctionDefinitionFunction]
-        name: str
-        spec: dict[str, Any]
+        name: Required[str]
+        spec: Required[dict[str, Any]]
 
 
     class azure.ai.projects.types.OpenApiFunctionDefinitionFunction(TypedDict, total=False):
         key "description": str
-        key "name": Required[str]
-        key "parameters": Required[dict[str, Any]]
         description: str
-        name: str
-        parameters: dict[str, Any]
+        name: Required[str]
+        parameters: Required[dict[str, Any]]
 
 
     class azure.ai.projects.types.OpenApiManagedAuthDetails(TypedDict, total=False):
-        key "security_scheme": Required[OpenApiManagedSecurityScheme]
-        key "type": Required[Literal[OpenApiAuthType.MANAGED_IDENTITY]]
-        security_scheme: OpenApiManagedSecurityScheme
-        type: Literal[OpenApiAuthType.MANAGED_IDENTITY]
+        security_scheme: Required[OpenApiManagedSecurityScheme]
+        type: Required[Literal[OpenApiAuthType.MANAGED_IDENTITY]]
 
 
     class azure.ai.projects.types.OpenApiManagedSecurityScheme(TypedDict, total=False):
-        key "audience": Required[str]
-        audience: str
+        audience: Required[str]
 
 
     class azure.ai.projects.types.OpenApiProjectConnectionAuthDetails(TypedDict, total=False):
-        key "security_scheme": Required[OpenApiProjectConnectionSecurityScheme]
-        key "type": Required[Literal[OpenApiAuthType.PROJECT_CONNECTION]]
-        security_scheme: OpenApiProjectConnectionSecurityScheme
-        type: Literal[OpenApiAuthType.PROJECT_CONNECTION]
+        security_scheme: Required[OpenApiProjectConnectionSecurityScheme]
+        type: Required[Literal[OpenApiAuthType.PROJECT_CONNECTION]]
 
 
     class azure.ai.projects.types.OpenApiProjectConnectionSecurityScheme(TypedDict, total=False):
-        key "project_connection_id": Required[str]
-        project_connection_id: str
+        project_connection_id: Required[str]
 
 
     class azure.ai.projects.types.OpenApiTool(TypedDict, total=False):
-        key "openapi": Required[OpenApiFunctionDefinition]
-        key "type": Required[Literal[ToolType.OPENAPI]]
-        openapi: OpenApiFunctionDefinition
+        key "tool_configs": dict[str, ToolConfig]
+        openapi: Required[OpenApiFunctionDefinition]
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolType.OPENAPI]
+        type: Required[Literal[ToolType.OPENAPI]]
 
 
     class azure.ai.projects.types.OpenApiToolboxTool(TypedDict, total=False):
         key "description": str
         key "name": str
-        key "openapi": Required[OpenApiFunctionDefinition]
-        key "type": Required[Literal[ToolboxToolType.OPENAPI]]
+        key "tool_configs": dict[str, ToolConfig]
         description: str
         name: str
-        openapi: OpenApiFunctionDefinition
+        openapi: Required[OpenApiFunctionDefinition]
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.OPENAPI]
+        type: Required[Literal[ToolboxToolType.OPENAPI]]
 
 
     class azure.ai.projects.types.OptimizedAgentIdentifier(TypedDict, total=False):
-        key "agent_name": Required[str]
         key "agent_version": str
-        agent_name: str
+        agent_name: Required[str]
         agent_version: str
 
 
     class azure.ai.projects.types.OtlpTelemetryEndpoint(TypedDict, total=False):
-        key "auth": ForwardRef('TelemetryEndpointAuth', module='types')
-        key "data": Required[list[Union[str, TelemetryDataKind]]]
-        key "endpoint": Required[str]
-        key "kind": Required[Literal[TelemetryEndpointKind.OTLP]]
-        key "protocol": Required[Union[str, TelemetryTransportProtocol]]
+        key "auth": ForwardRef('TelemetryEndpointAuth')
         auth: TelemetryEndpointAuth
-        data: list[Union[str, TelemetryDataKind]]
-        endpoint: str
-        kind: Literal[TelemetryEndpointKind.OTLP]
-        protocol: Union[str, TelemetryTransportProtocol]
+        data: Required[list[Union[str, TelemetryDataKind]]]
+        endpoint: Required[str]
+        kind: Required[Literal[TelemetryEndpointKind.OTLP]]
+        protocol: Required[Union[str, TelemetryTransportProtocol]]
 
 
     class azure.ai.projects.types.PatchAgentObjectRequest(TypedDict, total=False):
-        key "agent_card": ForwardRef('AgentCard', module='types')
-        key "agent_endpoint": ForwardRef('AgentEndpointConfig', module='types')
+        key "agent_card": ForwardRef('AgentCard')
+        key "agent_endpoint": ForwardRef('AgentEndpointConfig')
         agent_card: AgentCard
         agent_endpoint: AgentEndpointConfig
 
@@ -18577,10 +18253,9 @@ namespace azure.ai.projects.types
     class azure.ai.projects.types.PendingUploadRequest(TypedDict, total=False):
         key "connectionName": str
         key "pendingUploadId": str
-        key "pendingUploadType": Required[Literal[PendingUploadType.BLOB_REFERENCE]]
         connectionName: str
         pendingUploadId: str
-        pendingUploadType: Literal[PendingUploadType.BLOB_REFERENCE]
+        pendingUploadType: Required[Literal[PendingUploadType.BLOB_REFERENCE]]
 
 
     class azure.ai.projects.types.PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -18590,37 +18265,33 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.PickPropertiesVoiceAudioConfig(TypedDict, total=False):
-        key "output": ForwardRef('VoiceAudioOutputConfig', module='types')
+        key "output": ForwardRef('VoiceAudioOutputConfig')
         output: VoiceAudioOutputConfig
 
 
     class azure.ai.projects.types.ProgrammaticToolCallingParam(TypedDict, total=False):
-        key "type": Required[Literal[ToolType.PROGRAMMATIC_TOOL_CALLING]]
-        type: Literal[ToolType.PROGRAMMATIC_TOOL_CALLING]
+        type: Required[Literal[ToolType.PROGRAMMATIC_TOOL_CALLING]]
 
 
     class azure.ai.projects.types.PromotionInfo(TypedDict, total=False):
-        key "agent_name": Required[str]
-        key "agent_version": Required[str]
-        key "promoted_at": Required[int]
-        agent_name: str
-        agent_version: str
-        promoted_at: int
+        agent_name: Required[str]
+        agent_version: Required[str]
+        promoted_at: Required[int]
 
 
     class azure.ai.projects.types.PromptAgentDefinition(TypedDict, total=False):
         key "instructions": Optional[str]
-        key "kind": Required[Literal[AgentKind.PROMPT]]
-        key "model": Required[str]
-        key "rai_config": ForwardRef('RaiConfig', module='types')
+        key "rai_config": ForwardRef('RaiConfig')
         key "reasoning": Optional[Reasoning]
+        key "structured_inputs": dict[str, StructuredInputDefinition]
         key "temperature": Optional[float]
-        key "text": ForwardRef('PromptAgentDefinitionTextOptions', module='types')
+        key "text": ForwardRef('PromptAgentDefinitionTextOptions')
         key "tool_choice": Union[str, ToolChoiceParam]
+        key "tools": list[Tool]
         key "top_p": Optional[float]
         instructions: str
-        kind: Literal[AgentKind.PROMPT]
-        model: str
+        kind: Required[Literal[AgentKind.PROMPT]]
+        model: Required[str]
         rai_config: RaiConfig
         reasoning: Reasoning
         structured_inputs: dict[str, StructuredInputDefinition]
@@ -18632,45 +18303,42 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.PromptAgentDefinitionTextOptions(TypedDict, total=False):
-        key "format": ForwardRef('TextResponseFormat', module='types')
+        key "format": ForwardRef('TextResponseFormat')
         format: TextResponseFormat
 
 
     class azure.ai.projects.types.PromptBasedEvaluatorDefinition(TypedDict, total=False):
-        key "prompt_text": Required[str]
-        key "type": Required[Literal[EvaluatorDefinitionType.PROMPT]]
+        key "data_schema": dict[str, Any]
+        key "init_parameters": dict[str, Any]
+        key "metrics": dict[str, EvaluatorMetric]
         data_schema: dict[str, Any]
         init_parameters: dict[str, Any]
         metrics: dict[str, EvaluatorMetric]
-        prompt_text: str
-        type: Literal[EvaluatorDefinitionType.PROMPT]
+        prompt_text: Required[str]
+        type: Required[Literal[EvaluatorDefinitionType.PROMPT]]
 
 
     class azure.ai.projects.types.PromptDataGenerationJobSource(TypedDict, total=False):
         key "description": str
-        key "prompt": Required[str]
-        key "type": Required[Literal[DataGenerationJobSourceType.PROMPT]]
         description: str
-        prompt: str
-        type: Literal[DataGenerationJobSourceType.PROMPT]
+        prompt: Required[str]
+        type: Required[Literal[DataGenerationJobSourceType.PROMPT]]
 
 
     class azure.ai.projects.types.PromptEvaluatorGenerationJobSource(TypedDict, total=False):
         key "description": str
-        key "prompt": Required[str]
-        key "type": Required[Literal[EvaluatorGenerationJobSourceType.PROMPT]]
         description: str
-        prompt: str
-        type: Literal[EvaluatorGenerationJobSourceType.PROMPT]
+        prompt: Required[str]
+        type: Required[Literal[EvaluatorGenerationJobSourceType.PROMPT]]
 
 
     class azure.ai.projects.types.ProtocolConfiguration(TypedDict, total=False):
-        key "a2a": ForwardRef('A2AProtocolConfiguration', module='types')
-        key "activity": ForwardRef('ActivityProtocolConfiguration', module='types')
-        key "invocations": ForwardRef('InvocationsProtocolConfiguration', module='types')
-        key "invocations_ws": ForwardRef('InvocationsWsProtocolConfiguration', module='types')
-        key "mcp": ForwardRef('McpProtocolConfiguration', module='types')
-        key "responses": ForwardRef('ResponsesProtocolConfiguration', module='types')
+        key "a2a": ForwardRef('A2AProtocolConfiguration')
+        key "activity": ForwardRef('ActivityProtocolConfiguration')
+        key "invocations": ForwardRef('InvocationsProtocolConfiguration')
+        key "invocations_ws": ForwardRef('InvocationsWsProtocolConfiguration')
+        key "mcp": ForwardRef('McpProtocolConfiguration')
+        key "responses": ForwardRef('ResponsesProtocolConfiguration')
         a2a: A2AProtocolConfiguration
         activity: ActivityProtocolConfiguration
         invocations: InvocationsProtocolConfiguration
@@ -18680,19 +18348,16 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.ProtocolVersionRecord(TypedDict, total=False):
-        key "protocol": Required[Union[str, AgentEndpointProtocol]]
-        key "version": Required[str]
-        protocol: Union[str, AgentEndpointProtocol]
-        version: str
+        protocol: Required[Union[str, AgentEndpointProtocol]]
+        version: Required[str]
 
 
     class azure.ai.projects.types.RaiConfig(TypedDict, total=False):
-        key "rai_policy_name": Required[str]
-        rai_policy_name: str
+        rai_policy_name: Required[str]
 
 
     class azure.ai.projects.types.RankingOptions(TypedDict, total=False):
-        key "hybrid_search": ForwardRef('HybridSearchOptions', module='types')
+        key "hybrid_search": ForwardRef('HybridSearchOptions')
         key "ranker": Union[str, RankerVersionType]
         key "score_threshold": float
         hybrid_search: HybridSearchOptions
@@ -18702,19 +18367,16 @@ namespace azure.ai.projects.types
 
     class azure.ai.projects.types.RealtimeAudioFormatsAudioPcm(TypedDict, total=False):
         key "rate": Literal[24000]
-        key "type": Required[Literal[RealtimeAudioFormatsType.AUDIO_PCM]]
         rate: Literal[24000]
-        type: Literal[RealtimeAudioFormatsType.AUDIO_PCM]
+        type: Required[Literal[RealtimeAudioFormatsType.AUDIO_PCM]]
 
 
     class azure.ai.projects.types.RealtimeAudioFormatsAudioPcma(TypedDict, total=False):
-        key "type": Required[Literal[RealtimeAudioFormatsType.AUDIO_PCMA]]
-        type: Literal[RealtimeAudioFormatsType.AUDIO_PCMA]
+        type: Required[Literal[RealtimeAudioFormatsType.AUDIO_PCMA]]
 
 
     class azure.ai.projects.types.RealtimeAudioFormatsAudioPcmu(TypedDict, total=False):
-        key "type": Required[Literal[RealtimeAudioFormatsType.AUDIO_PCMU]]
-        type: Literal[RealtimeAudioFormatsType.AUDIO_PCMU]
+        type: Required[Literal[RealtimeAudioFormatsType.AUDIO_PCMU]]
 
 
     class azure.ai.projects.types.RealtimeAudioFormatsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -18738,50 +18400,41 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.RealtimeConversationItemFunctionCall(TypedDict, total=False):
-        key "arguments": Required[str]
         key "call_id": str
         key "id": str
-        key "name": Required[str]
         key "object": Literal["item"]
         key "status": Literal["completed", "incomplete", "in_progress"]
-        key "type": Required[Literal[RealtimeConversationItemType.FUNCTION_CALL]]
-        arguments: str
+        arguments: Required[str]
         call_id: str
         id: str
-        name: str
+        name: Required[str]
         object: Literal[item]
         status: Literal[completed, incomplete, in_progress]
-        type: Literal[RealtimeConversationItemType.FUNCTION_CALL]
+        type: Required[Literal[RealtimeConversationItemType.FUNCTION_CALL]]
 
 
     class azure.ai.projects.types.RealtimeConversationItemFunctionCallOutput(TypedDict, total=False):
-        key "call_id": Required[str]
         key "id": str
         key "object": Literal["item"]
-        key "output": Required[str]
         key "status": Literal["completed", "incomplete", "in_progress"]
-        key "type": Required[Literal[RealtimeConversationItemType.FUNCTION_CALL_OUTPUT]]
-        call_id: str
+        call_id: Required[str]
         id: str
         object: Literal[item]
-        output: str
+        output: Required[str]
         status: Literal[completed, incomplete, in_progress]
-        type: Literal[RealtimeConversationItemType.FUNCTION_CALL_OUTPUT]
+        type: Required[Literal[RealtimeConversationItemType.FUNCTION_CALL_OUTPUT]]
 
 
     class azure.ai.projects.types.RealtimeConversationItemMessageAssistant(TypedDict, total=False):
-        key "content": Required[list[RealtimeConversationItemMessageAssistantContent]]
         key "id": str
         key "object": Literal["item"]
-        key "role": Required[Literal[RealtimeConversationItemMessageType.ASSISTANT]]
         key "status": Literal["completed", "incomplete", "in_progress"]
-        key "type": Required[Literal["message"]]
-        content: list[RealtimeConversationItemMessageAssistantContent]
+        content: Required[list[RealtimeConversationItemMessageAssistantContent]]
         id: str
         object: Literal[item]
-        role: Literal[RealtimeConversationItemMessageType.ASSISTANT]
+        role: Required[Literal[RealtimeConversationItemMessageType.ASSISTANT]]
         status: Literal[completed, incomplete, in_progress]
-        type: Literal[message]
+        type: Required[Literal["message"]]
 
 
     class azure.ai.projects.types.RealtimeConversationItemMessageAssistantContent(TypedDict, total=False):
@@ -18796,18 +18449,15 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.RealtimeConversationItemMessageSystem(TypedDict, total=False):
-        key "content": Required[list[RealtimeConversationItemMessageSystemContent]]
         key "id": str
         key "object": Literal["item"]
-        key "role": Required[Literal[RealtimeConversationItemMessageType.SYSTEM]]
         key "status": Literal["completed", "incomplete", "in_progress"]
-        key "type": Required[Literal["message"]]
-        content: list[RealtimeConversationItemMessageSystemContent]
+        content: Required[list[RealtimeConversationItemMessageSystemContent]]
         id: str
         object: Literal[item]
-        role: Literal[RealtimeConversationItemMessageType.SYSTEM]
+        role: Required[Literal[RealtimeConversationItemMessageType.SYSTEM]]
         status: Literal[completed, incomplete, in_progress]
-        type: Literal[message]
+        type: Required[Literal["message"]]
 
 
     class azure.ai.projects.types.RealtimeConversationItemMessageSystemContent(TypedDict, total=False):
@@ -18824,18 +18474,15 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.RealtimeConversationItemMessageUser(TypedDict, total=False):
-        key "content": Required[list[RealtimeConversationItemMessageUserContent]]
         key "id": str
         key "object": Literal["item"]
-        key "role": Required[Literal[RealtimeConversationItemMessageType.USER]]
         key "status": Literal["completed", "incomplete", "in_progress"]
-        key "type": Required[Literal["message"]]
-        content: list[RealtimeConversationItemMessageUserContent]
+        content: Required[list[RealtimeConversationItemMessageUserContent]]
         id: str
         object: Literal[item]
-        role: Literal[RealtimeConversationItemMessageType.USER]
+        role: Required[Literal[RealtimeConversationItemMessageType.USER]]
         status: Literal[completed, incomplete, in_progress]
-        type: Literal[message]
+        type: Required[Literal["message"]]
 
 
     class azure.ai.projects.types.RealtimeConversationItemMessageUserContent(TypedDict, total=False):
@@ -18865,7 +18512,7 @@ namespace azure.ai.projects.types
     class azure.ai.projects.types.RealtimeFunctionTool(TypedDict, total=False):
         key "description": str
         key "name": str
-        key "parameters": ForwardRef('RealtimeFunctionToolParameters', module='types')
+        key "parameters": ForwardRef('RealtimeFunctionToolParameters')
         key "type": Literal["function"]
         description: str
         name: str
@@ -18877,84 +18524,59 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.RealtimeMCPApprovalRequest(TypedDict, total=False):
-        key "arguments": Required[str]
-        key "id": Required[str]
-        key "name": Required[str]
-        key "server_label": Required[str]
-        key "type": Required[Literal[RealtimeConversationItemType.MCP_APPROVAL_REQUEST]]
-        arguments: str
-        id: str
-        name: str
-        server_label: str
-        type: Literal[RealtimeConversationItemType.MCP_APPROVAL_REQUEST]
+        arguments: Required[str]
+        id: Required[str]
+        name: Required[str]
+        server_label: Required[str]
+        type: Required[Literal[RealtimeConversationItemType.MCP_APPROVAL_REQUEST]]
 
 
     class azure.ai.projects.types.RealtimeMCPApprovalResponse(TypedDict, total=False):
-        key "approval_request_id": Required[str]
-        key "approve": Required[bool]
-        key "id": Required[str]
         key "reason": Optional[str]
-        key "type": Required[Literal[RealtimeConversationItemType.MCP_APPROVAL_RESPONSE]]
-        approval_request_id: str
-        approve: bool
-        id: str
+        approval_request_id: Required[str]
+        approve: Required[bool]
+        id: Required[str]
         reason: str
-        type: Literal[RealtimeConversationItemType.MCP_APPROVAL_RESPONSE]
+        type: Required[Literal[RealtimeConversationItemType.MCP_APPROVAL_RESPONSE]]
 
 
     class azure.ai.projects.types.RealtimeMCPHTTPError(TypedDict, total=False):
-        key "code": Required[int]
-        key "message": Required[str]
-        key "type": Required[Literal[RealtimeMcpErrorType.HTTP_ERROR]]
-        code: int
-        message: str
-        type: Literal[RealtimeMcpErrorType.HTTP_ERROR]
+        code: Required[int]
+        message: Required[str]
+        type: Required[Literal[RealtimeMcpErrorType.HTTP_ERROR]]
 
 
     class azure.ai.projects.types.RealtimeMCPListTools(TypedDict, total=False):
         key "id": str
-        key "server_label": Required[str]
-        key "tools": Required[list[MCPListToolsTool]]
-        key "type": Required[Literal[RealtimeConversationItemType.MCP_LIST_TOOLS]]
         id: str
-        server_label: str
-        tools: list[MCPListToolsTool]
-        type: Literal[RealtimeConversationItemType.MCP_LIST_TOOLS]
+        server_label: Required[str]
+        tools: Required[list[MCPListToolsTool]]
+        type: Required[Literal[RealtimeConversationItemType.MCP_LIST_TOOLS]]
 
 
     class azure.ai.projects.types.RealtimeMCPProtocolError(TypedDict, total=False):
-        key "code": Required[int]
-        key "message": Required[str]
-        key "type": Required[Literal[RealtimeMcpErrorType.PROTOCOL_ERROR]]
-        code: int
-        message: str
-        type: Literal[RealtimeMcpErrorType.PROTOCOL_ERROR]
+        code: Required[int]
+        message: Required[str]
+        type: Required[Literal[RealtimeMcpErrorType.PROTOCOL_ERROR]]
 
 
     class azure.ai.projects.types.RealtimeMCPToolCall(TypedDict, total=False):
         key "approval_request_id": Optional[str]
-        key "arguments": Required[str]
-        key "error": ForwardRef('RealtimeMCPError', module='types')
-        key "id": Required[str]
-        key "name": Required[str]
+        key "error": ForwardRef('RealtimeMCPError')
         key "output": Optional[str]
-        key "server_label": Required[str]
-        key "type": Required[Literal[RealtimeConversationItemType.MCP_CALL]]
         approval_request_id: str
-        arguments: str
+        arguments: Required[str]
         error: RealtimeMCPError
-        id: str
-        name: str
+        id: Required[str]
+        name: Required[str]
         output: str
-        server_label: str
-        type: Literal[RealtimeConversationItemType.MCP_CALL]
+        server_label: Required[str]
+        type: Required[Literal[RealtimeConversationItemType.MCP_CALL]]
 
 
     class azure.ai.projects.types.RealtimeMCPToolExecutionError(TypedDict, total=False):
-        key "message": Required[str]
-        key "type": Required[Literal[RealtimeMcpErrorType.TOOL_EXECUTION_ERROR]]
-        message: str
-        type: Literal[RealtimeMcpErrorType.TOOL_EXECUTION_ERROR]
+        message: Required[str]
+        type: Required[Literal[RealtimeMcpErrorType.TOOL_EXECUTION_ERROR]]
 
 
     class azure.ai.projects.types.RealtimeMcpErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -18969,7 +18591,7 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.RealtimeResponseStatusDetails(TypedDict, total=False):
-        key "error": ForwardRef('RealtimeResponseStatusDetailsError', module='types')
+        key "error": ForwardRef('RealtimeResponseStatusDetailsError')
         key "reason": Literal["turn_detected", "client_cancelled", "max_output_tokens", "content_filter"]
         key "type": Literal["completed", "cancelled", "failed", "incomplete"]
         error: RealtimeResponseStatusDetailsError
@@ -18985,9 +18607,9 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.RealtimeResponseUsage(TypedDict, total=False):
-        key "input_token_details": ForwardRef('RealtimeResponseUsageInputTokenDetails', module='types')
+        key "input_token_details": ForwardRef('RealtimeResponseUsageInputTokenDetails')
         key "input_tokens": int
-        key "output_token_details": ForwardRef('RealtimeResponseUsageOutputTokenDetails', module='types')
+        key "output_token_details": ForwardRef('RealtimeResponseUsageOutputTokenDetails')
         key "output_tokens": int
         key "total_tokens": int
         input_token_details: RealtimeResponseUsageInputTokenDetails
@@ -19000,7 +18622,7 @@ namespace azure.ai.projects.types
     class azure.ai.projects.types.RealtimeResponseUsageInputTokenDetails(TypedDict, total=False):
         key "audio_tokens": int
         key "cached_tokens": int
-        key "cached_tokens_details": ForwardRef('RealtimeResponseUsageInputTokenDetailsCachedTokensDetails', module='types')
+        key "cached_tokens_details": ForwardRef('RealtimeResponseUsageInputTokenDetailsCachedTokensDetails')
         key "image_tokens": int
         key "text_tokens": int
         audio_tokens: int
@@ -19027,20 +18649,13 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.RealtimeServerEvent(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "part": Required[RealtimeServerEventResponseContentPartAddedPart]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_ADDED]]
-        content_index: int
-        event_id: str
-        item_id: str
-        output_index: int
-        part: RealtimeServerEventResponseContentPartAddedPart
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_ADDED]
+        content_index: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        part: Required[RealtimeServerEventResponseContentPartAddedPart]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_ADDED]]
 
 
     class azure.ai.projects.types.RealtimeServerEventConversationItemInputAudioTranscriptionFailedError(TypedDict, total=False):
@@ -19055,25 +18670,20 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.RealtimeServerEventError(TypedDict, total=False):
-        key "error": Required[RealtimeServerEventErrorError]
-        key "event_id": Required[str]
-        key "type": Required[Literal["error"]]
-        error: RealtimeServerEventErrorError
-        event_id: str
-        type: Literal[error]
+        error: Required[RealtimeServerEventErrorError]
+        event_id: Required[str]
+        type: Required[Literal["error"]]
 
 
     class azure.ai.projects.types.RealtimeServerEventErrorError(TypedDict, total=False):
         key "code": Optional[str]
         key "event_id": Optional[str]
-        key "message": Required[str]
         key "param": Optional[str]
-        key "type": Required[str]
         code: str
         event_id: str
-        message: str
+        message: Required[str]
         param: str
-        type: str
+        type: Required[str]
 
 
     class azure.ai.projects.types.RealtimeServerEventRateLimitsUpdatedRateLimits(TypedDict, total=False):
@@ -19088,20 +18698,13 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.RealtimeServerEventResponseContentPartAdded(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "part": Required[RealtimeServerEventResponseContentPartAddedPart]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_ADDED]]
-        content_index: int
-        event_id: str
-        item_id: str
-        output_index: int
-        part: RealtimeServerEventResponseContentPartAddedPart
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_ADDED]
+        content_index: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        part: Required[RealtimeServerEventResponseContentPartAddedPart]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_ADDED]]
 
 
     class azure.ai.projects.types.RealtimeServerEventResponseContentPartAddedPart(TypedDict, total=False):
@@ -19179,17 +18782,14 @@ namespace azure.ai.projects.types
 
     class azure.ai.projects.types.RecurrenceTrigger(TypedDict, total=False):
         key "endTime": str
-        key "interval": Required[int]
-        key "schedule": Required[RecurrenceSchedule]
         key "startTime": str
         key "timeZone": str
-        key "type": Required[Literal[TriggerType.RECURRENCE]]
         endTime: str
-        interval: int
-        schedule: RecurrenceSchedule
+        interval: Required[int]
+        schedule: Required[RecurrenceSchedule]
         startTime: str
         timeZone: str
-        type: Literal[TriggerType.RECURRENCE]
+        type: Required[Literal[TriggerType.RECURRENCE]]
 
 
     class azure.ai.projects.types.RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -19201,40 +18801,40 @@ namespace azure.ai.projects.types
 
     class azure.ai.projects.types.RedTeam(TypedDict, total=False):
         key "applicationScenario": str
+        key "attackStrategies": list[Union[str, AttackStrategy]]
         key "displayName": str
-        key "id": Required[str]
         key "numTurns": int
+        key "properties": dict[str, str]
+        key "riskCategories": list[Union[str, RiskCategory]]
         key "simulationOnly": bool
         key "status": str
-        key "target": Required[RedTeamTargetConfig]
+        key "tags": dict[str, str]
         applicationScenario: str
         attackStrategies: list[Union[str, AttackStrategy]]
         displayName: str
-        id: str
+        id: Required[str]
         numTurns: int
         properties: dict[str, str]
         riskCategories: list[Union[str, RiskCategory]]
         simulationOnly: bool
         status: str
         tags: dict[str, str]
-        target: RedTeamTargetConfig
+        target: Required[RedTeamTargetConfig]
 
 
     class azure.ai.projects.types.RedTeamTargetConfig(TypedDict, total=False):
-        key "modelDeploymentName": Required[str]
-        key "type": Required[Literal["AzureOpenAIModel"]]
-        modelDeploymentName: str
-        type: Literal[AzureOpenAIModel]
+        modelDeploymentName: Required[str]
+        type: Required[Literal["AzureOpenAIModel"]]
 
 
     class azure.ai.projects.types.ReminderPreviewToolboxTool(TypedDict, total=False):
         key "description": str
         key "name": str
-        key "type": Required[Literal[ToolboxToolType.REMINDER_PREVIEW]]
+        key "tool_configs": dict[str, ToolConfig]
         description: str
         name: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.REMINDER_PREVIEW]
+        type: Required[Literal[ToolboxToolType.REMINDER_PREVIEW]]
 
 
     class azure.ai.projects.types.ResponsesProtocolConfiguration(TypedDict, total=False):
@@ -19258,27 +18858,24 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.RubricBasedEvaluatorDefinition(TypedDict, total=False):
-        key "dimensions": Required[list[Dimension]]
+        key "data_schema": dict[str, Any]
+        key "init_parameters": dict[str, Any]
+        key "metrics": dict[str, EvaluatorMetric]
         key "pass_threshold": float
-        key "type": Required[Literal[EvaluatorDefinitionType.RUBRIC]]
         data_schema: dict[str, Any]
-        dimensions: list[Dimension]
+        dimensions: Required[list[Dimension]]
         init_parameters: dict[str, Any]
         metrics: dict[str, EvaluatorMetric]
         pass_threshold: float
-        type: Literal[EvaluatorDefinitionType.RUBRIC]
+        type: Required[Literal[EvaluatorDefinitionType.RUBRIC]]
 
 
     class azure.ai.projects.types.RubricGenerationInputQualityWarning(TypedDict, total=False):
-        key "code": Required[Union[str, RubricGenerationInputQualityWarningCode]]
-        key "message": Required[str]
-        key "severity": Required[Union[str, RubricGenerationInputQualityWarningSeverity]]
-        key "source": Required[Union[str, RubricGenerationInputQualityWarningSource]]
         key "source_index": int
-        code: Union[str, RubricGenerationInputQualityWarningCode]
-        message: str
-        severity: Union[str, RubricGenerationInputQualityWarningSeverity]
-        source: Union[str, RubricGenerationInputQualityWarningSource]
+        code: Required[Union[str, RubricGenerationInputQualityWarningCode]]
+        message: Required[str]
+        severity: Required[Union[str, RubricGenerationInputQualityWarningSeverity]]
+        source: Required[Union[str, RubricGenerationInputQualityWarningSource]]
         source_index: int
 
 
@@ -19289,31 +18886,25 @@ namespace azure.ai.projects.types
     class azure.ai.projects.types.Schedule(TypedDict, total=False):
         key "description": str
         key "displayName": str
-        key "enabled": Required[bool]
-        key "id": Required[str]
+        key "properties": dict[str, str]
         key "provisioningStatus": Union[str, ScheduleProvisioningStatus]
-        key "systemData": Required[dict[str, str]]
-        key "task": Required[ScheduleTask]
-        key "trigger": Required[Trigger]
+        key "tags": dict[str, str]
         description: str
         displayName: str
-        enabled: bool
-        id: str
+        enabled: Required[bool]
+        id: Required[str]
         properties: dict[str, str]
         provisioningStatus: Union[str, ScheduleProvisioningStatus]
-        systemData: dict[str, str]
+        systemData: Required[dict[str, str]]
         tags: dict[str, str]
-        task: ScheduleTask
-        trigger: Trigger
+        task: Required[ScheduleTask]
+        trigger: Required[Trigger]
 
 
     class azure.ai.projects.types.ScheduleRoutineTrigger(TypedDict, total=False):
-        key "cron_expression": Required[str]
-        key "time_zone": Required[str]
-        key "type": Required[Literal[RoutineTriggerType.SCHEDULE]]
-        cron_expression: str
-        time_zone: str
-        type: Literal[RoutineTriggerType.SCHEDULE]
+        cron_expression: Required[str]
+        time_zone: Required[str]
+        type: Required[Literal[RoutineTriggerType.SCHEDULE]]
 
 
     class azure.ai.projects.types.ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -19322,79 +18913,82 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.SearchMemoriesRequest(TypedDict, total=False):
-        key "options": ForwardRef('MemorySearchOptions', module='types')
+        key "items": list[dict[str, Any]]
+        key "options": ForwardRef('MemorySearchOptions')
         key "previous_search_id": str
-        key "scope": Required[str]
         items: list[dict[str, Any]]
         options: MemorySearchOptions
         previous_search_id: str
-        scope: str
+        scope: Required[str]
 
 
     class azure.ai.projects.types.SharepointGroundingToolParameters(TypedDict, total=False):
+        key "project_connections": list[ToolProjectConnection]
         project_connections: list[ToolProjectConnection]
 
 
     class azure.ai.projects.types.SharepointPreviewTool(TypedDict, total=False):
-        key "sharepoint_grounding_preview": Required[SharepointGroundingToolParameters]
-        key "type": Required[Literal[ToolType.SHAREPOINT_GROUNDING_PREVIEW]]
-        sharepoint_grounding_preview: SharepointGroundingToolParameters
-        type: Literal[ToolType.SHAREPOINT_GROUNDING_PREVIEW]
+        sharepoint_grounding_preview: Required[SharepointGroundingToolParameters]
+        type: Required[Literal[ToolType.SHAREPOINT_GROUNDING_PREVIEW]]
 
 
     class azure.ai.projects.types.SimpleQnADataGenerationJobOptions(TypedDict, total=False):
-        key "max_samples": Required[int]
-        key "model_options": ForwardRef('DataGenerationModelOptions', module='types')
+        key "model_options": ForwardRef('DataGenerationModelOptions')
+        key "question_types": list[Union[str, SimpleQnAFineTuningQuestionType]]
         key "train_split": float
-        key "type": Required[Literal[DataGenerationJobType.SIMPLE_QNA]]
-        max_samples: int
+        max_samples: Required[int]
         model_options: DataGenerationModelOptions
         question_types: list[Union[str, SimpleQnAFineTuningQuestionType]]
         train_split: float
-        type: Literal[DataGenerationJobType.SIMPLE_QNA]
+        type: Required[Literal[DataGenerationJobType.SIMPLE_QNA]]
+
+
+    class azure.ai.projects.types.SimulationSeedDataGenerationJobOptions(TypedDict, total=False):
+        key "model_options": ForwardRef('DataGenerationModelOptions')
+        key "train_split": float
+        max_samples: Required[int]
+        model_options: DataGenerationModelOptions
+        train_split: float
+        type: Required[Literal[DataGenerationJobType.SIMULATION_SEED]]
 
 
     class azure.ai.projects.types.SkillInlineContent(TypedDict, total=False):
+        key "allowed_tools": list[str]
         key "compatibility": str
-        key "description": Required[str]
-        key "instructions": Required[str]
         key "license": str
+        key "metadata": dict[str, str]
         allowed_tools: list[str]
         compatibility: str
-        description: str
-        instructions: str
+        description: Required[str]
+        instructions: Required[str]
         license: str
         metadata: dict[str, str]
 
 
     class azure.ai.projects.types.SkillReferenceParam(TypedDict, total=False):
-        key "skill_id": Required[str]
-        key "type": Required[Literal[ContainerSkillType.SKILL_REFERENCE]]
         key "version": str
-        skill_id: str
-        type: Literal[ContainerSkillType.SKILL_REFERENCE]
+        skill_id: Required[str]
+        type: Required[Literal[ContainerSkillType.SKILL_REFERENCE]]
         version: str
 
 
     class azure.ai.projects.types.SpecificApplyPatchParam(TypedDict, total=False):
-        key "type": Required[Literal[ToolChoiceParamType.APPLY_PATCH]]
-        type: Literal[ToolChoiceParamType.APPLY_PATCH]
+        type: Required[Literal[ToolChoiceParamType.APPLY_PATCH]]
 
 
     class azure.ai.projects.types.SpecificFunctionShellParam(TypedDict, total=False):
-        key "type": Required[Literal[ToolChoiceParamType.SHELL]]
-        type: Literal[ToolChoiceParamType.SHELL]
+        type: Required[Literal[ToolChoiceParamType.SHELL]]
 
 
     class azure.ai.projects.types.SpecificProgrammaticToolCallingParam(TypedDict, total=False):
-        key "type": Required[Literal[ToolChoiceParamType.PROGRAMMATIC_TOOL_CALLING]]
-        type: Literal[ToolChoiceParamType.PROGRAMMATIC_TOOL_CALLING]
+        type: Required[Literal[ToolChoiceParamType.PROGRAMMATIC_TOOL_CALLING]]
 
 
     class azure.ai.projects.types.StructuredInputDefinition(TypedDict, total=False):
         key "default_value": Any
         key "description": str
         key "required": bool
+        key "schema": dict[str, Any]
         default_value: Any
         description: str
         required: bool
@@ -19402,80 +18996,51 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.StructuredOutputDefinition(TypedDict, total=False):
-        key "description": Required[str]
-        key "name": Required[str]
-        key "schema": Required[dict[str, Any]]
-        key "strict": Required[Optional[bool]]
-        description: str
-        name: str
-        schema: dict[str, Any]
-        strict: bool
-
-
-    class azure.ai.projects.types.TaskGenerationDataGenerationJobOptions(TypedDict, total=False):
-        key "max_samples": Required[int]
-        key "model_options": ForwardRef('DataGenerationModelOptions', module='types')
-        key "train_split": float
-        key "type": Required[Literal[DataGenerationJobType.TASK_GENERATION]]
-        max_samples: int
-        model_options: DataGenerationModelOptions
-        train_split: float
-        type: Literal[DataGenerationJobType.TASK_GENERATION]
+        description: Required[str]
+        name: Required[str]
+        schema: Required[dict[str, Any]]
+        strict: Required[Optional[bool]]
 
 
     class azure.ai.projects.types.TaxonomyCategory(TypedDict, total=False):
         key "description": str
-        key "id": Required[str]
-        key "name": Required[str]
-        key "riskCategory": Required[Union[str, RiskCategory]]
-        key "subCategories": Required[list[TaxonomySubCategory]]
+        key "properties": dict[str, str]
         description: str
-        id: str
-        name: str
+        id: Required[str]
+        name: Required[str]
         properties: dict[str, str]
-        riskCategory: Union[str, RiskCategory]
-        subCategories: list[TaxonomySubCategory]
+        riskCategory: Required[Union[str, RiskCategory]]
+        subCategories: Required[list[TaxonomySubCategory]]
 
 
     class azure.ai.projects.types.TaxonomySubCategory(TypedDict, total=False):
         key "description": str
-        key "enabled": Required[bool]
-        key "id": Required[str]
-        key "name": Required[str]
+        key "properties": dict[str, str]
         description: str
-        enabled: bool
-        id: str
-        name: str
+        enabled: Required[bool]
+        id: Required[str]
+        name: Required[str]
         properties: dict[str, str]
 
 
     class azure.ai.projects.types.TelemetryConfig(TypedDict, total=False):
-        key "endpoints": Required[list[TelemetryEndpoint]]
-        endpoints: list[TelemetryEndpoint]
+        endpoints: Required[list[TelemetryEndpoint]]
 
 
     class azure.ai.projects.types.TelemetryEndpoint(TypedDict, total=False):
-        key "auth": ForwardRef('TelemetryEndpointAuth', module='types')
-        key "data": Required[list[Union[str, TelemetryDataKind]]]
-        key "endpoint": Required[str]
-        key "kind": Required[Literal[TelemetryEndpointKind.OTLP]]
-        key "protocol": Required[Union[str, TelemetryTransportProtocol]]
+        key "auth": ForwardRef('TelemetryEndpointAuth')
         auth: TelemetryEndpointAuth
-        data: list[Union[str, TelemetryDataKind]]
-        endpoint: str
-        kind: Literal[TelemetryEndpointKind.OTLP]
-        protocol: Union[str, TelemetryTransportProtocol]
+        data: Required[list[Union[str, TelemetryDataKind]]]
+        endpoint: Required[str]
+        kind: Required[Literal[TelemetryEndpointKind.OTLP]]
+        protocol: Required[Union[str, TelemetryTransportProtocol]]
 
 
     class azure.ai.projects.types.TelemetryEndpointAuth(TypedDict, total=False):
-        key "header_name": Required[str]
-        key "secret_id": Required[str]
-        key "secret_key": Required[str]
-        key "type": Required[Literal[TelemetryEndpointAuthType.HEADER]]
-        header_name: str
-        secret_id: str
-        secret_key: str
-        type: Literal[TelemetryEndpointAuthType.HEADER]
+        header_name: Required[str]
+        secret_id: Required[str]
+        secret_key: Required[str]
+        type: Required[Literal[TelemetryEndpointAuthType.HEADER]]
 
 
     class azure.ai.projects.types.TelemetryEndpointAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -19487,10 +19052,8 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.TemplateVoiceGreetingConfig(TypedDict, total=False):
-        key "text": Required[str]
-        key "type": Required[Literal["template"]]
-        text: str
-        type: Literal[template]
+        text: Required[str]
+        type: Required[Literal["template"]]
 
 
     class azure.ai.projects.types.TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -19500,95 +19063,74 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.TextResponseFormatJsonObject(TypedDict, total=False):
-        key "type": Required[Literal[TextResponseFormatConfigurationType.JSON_OBJECT]]
-        type: Literal[TextResponseFormatConfigurationType.JSON_OBJECT]
+        type: Required[Literal[TextResponseFormatConfigurationType.JSON_OBJECT]]
 
 
     class azure.ai.projects.types.TextResponseFormatJsonSchema(TypedDict, total=False):
         key "description": str
-        key "name": Required[str]
-        key "schema": Required[dict[str, Any]]
         key "strict": Optional[bool]
-        key "type": Required[Literal[TextResponseFormatConfigurationType.JSON_SCHEMA]]
         description: str
-        name: str
-        schema: dict[str, Any]
+        name: Required[str]
+        schema: Required[dict[str, Any]]
         strict: bool
-        type: Literal[TextResponseFormatConfigurationType.JSON_SCHEMA]
+        type: Required[Literal[TextResponseFormatConfigurationType.JSON_SCHEMA]]
 
 
     class azure.ai.projects.types.TextResponseFormatText(TypedDict, total=False):
-        key "type": Required[Literal[TextResponseFormatConfigurationType.TEXT]]
-        type: Literal[TextResponseFormatConfigurationType.TEXT]
+        type: Required[Literal[TextResponseFormatConfigurationType.TEXT]]
 
 
     class azure.ai.projects.types.TimerRoutineTrigger(TypedDict, total=False):
         key "at": int
-        key "type": Required[Literal[RoutineTriggerType.TIMER]]
         at: int
-        type: Literal[RoutineTriggerType.TIMER]
+        type: Required[Literal[RoutineTriggerType.TIMER]]
 
 
     class azure.ai.projects.types.ToolChoiceAllowed(TypedDict, total=False):
-        key "mode": Required[Literal["auto", "required"]]
-        key "tools": Required[list[dict[str, Any]]]
-        key "type": Required[Literal[ToolChoiceParamType.ALLOWED_TOOLS]]
-        mode: Literal[auto, required]
-        tools: list[dict[str, Any]]
-        type: Literal[ToolChoiceParamType.ALLOWED_TOOLS]
+        mode: Required[Literal["auto", "required"]]
+        tools: Required[list[dict[str, Any]]]
+        type: Required[Literal[ToolChoiceParamType.ALLOWED_TOOLS]]
 
 
     class azure.ai.projects.types.ToolChoiceCodeInterpreter(TypedDict, total=False):
-        key "type": Required[Literal[ToolChoiceParamType.CODE_INTERPRETER]]
-        type: Literal[ToolChoiceParamType.CODE_INTERPRETER]
+        type: Required[Literal[ToolChoiceParamType.CODE_INTERPRETER]]
 
 
     class azure.ai.projects.types.ToolChoiceComputer(TypedDict, total=False):
-        key "type": Required[Literal[ToolChoiceParamType.COMPUTER]]
-        type: Literal[ToolChoiceParamType.COMPUTER]
+        type: Required[Literal[ToolChoiceParamType.COMPUTER]]
 
 
     class azure.ai.projects.types.ToolChoiceComputerUse(TypedDict, total=False):
-        key "type": Required[Literal[ToolChoiceParamType.COMPUTER_USE]]
-        type: Literal[ToolChoiceParamType.COMPUTER_USE]
+        type: Required[Literal[ToolChoiceParamType.COMPUTER_USE]]
 
 
     class azure.ai.projects.types.ToolChoiceComputerUsePreview(TypedDict, total=False):
-        key "type": Required[Literal[ToolChoiceParamType.COMPUTER_USE_PREVIEW]]
-        type: Literal[ToolChoiceParamType.COMPUTER_USE_PREVIEW]
+        type: Required[Literal[ToolChoiceParamType.COMPUTER_USE_PREVIEW]]
 
 
     class azure.ai.projects.types.ToolChoiceCustom(TypedDict, total=False):
-        key "name": Required[str]
-        key "type": Required[Literal[ToolChoiceParamType.CUSTOM]]
-        name: str
-        type: Literal[ToolChoiceParamType.CUSTOM]
+        name: Required[str]
+        type: Required[Literal[ToolChoiceParamType.CUSTOM]]
 
 
     class azure.ai.projects.types.ToolChoiceFileSearch(TypedDict, total=False):
-        key "type": Required[Literal[ToolChoiceParamType.FILE_SEARCH]]
-        type: Literal[ToolChoiceParamType.FILE_SEARCH]
+        type: Required[Literal[ToolChoiceParamType.FILE_SEARCH]]
 
 
     class azure.ai.projects.types.ToolChoiceFunction(TypedDict, total=False):
-        key "name": Required[str]
-        key "type": Required[Literal[ToolChoiceParamType.FUNCTION]]
-        name: str
-        type: Literal[ToolChoiceParamType.FUNCTION]
+        name: Required[str]
+        type: Required[Literal[ToolChoiceParamType.FUNCTION]]
 
 
     class azure.ai.projects.types.ToolChoiceImageGeneration(TypedDict, total=False):
-        key "type": Required[Literal[ToolChoiceParamType.IMAGE_GENERATION]]
-        type: Literal[ToolChoiceParamType.IMAGE_GENERATION]
+        type: Required[Literal[ToolChoiceParamType.IMAGE_GENERATION]]
 
 
     class azure.ai.projects.types.ToolChoiceMCP(TypedDict, total=False):
         key "name": Optional[str]
-        key "server_label": Required[str]
-        key "type": Required[Literal[ToolChoiceParamType.MCP]]
         name: str
-        server_label: str
-        type: Literal[ToolChoiceParamType.MCP]
+        server_label: Required[str]
+        type: Required[Literal[ToolChoiceParamType.MCP]]
 
 
     class azure.ai.projects.types.ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -19610,13 +19152,11 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.ToolChoiceWebSearchPreview(TypedDict, total=False):
-        key "type": Required[Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW]]
-        type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW]
+        type: Required[Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW]]
 
 
     class azure.ai.projects.types.ToolChoiceWebSearchPreview20250311(TypedDict, total=False):
-        key "type": Required[Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11]]
-        type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11]
+        type: Required[Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11]]
 
 
     class azure.ai.projects.types.ToolConfig(TypedDict, total=False):
@@ -19634,29 +19174,27 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.ToolProjectConnection(TypedDict, total=False):
-        key "project_connection_id": Required[str]
-        project_connection_id: str
+        project_connection_id: Required[str]
 
 
     class azure.ai.projects.types.ToolSearchToolParam(TypedDict, total=False):
         key "description": Optional[str]
         key "execution": Union[str, ToolSearchExecutionType]
         key "parameters": Optional[EmptyModelParam]
-        key "type": Required[Literal[ToolType.TOOL_SEARCH]]
         description: str
         execution: Union[str, ToolSearchExecutionType]
         parameters: EmptyModelParam
-        type: Literal[ToolType.TOOL_SEARCH]
+        type: Required[Literal[ToolType.TOOL_SEARCH]]
 
 
     class azure.ai.projects.types.ToolSearchToolboxTool(TypedDict, total=False):
         key "description": str
         key "name": str
-        key "type": Required[Literal[ToolboxToolType.TOOLBOX_SEARCH]]
+        key "tool_configs": dict[str, ToolConfig]
         description: str
         name: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.TOOLBOX_SEARCH]
+        type: Required[Literal[ToolboxToolType.TOOLBOX_SEARCH]]
 
 
     class azure.ai.projects.types.ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -19693,46 +19231,40 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.ToolUseFineTuningDataGenerationJobOptions(TypedDict, total=False):
-        key "max_samples": Required[int]
-        key "model_options": ForwardRef('DataGenerationModelOptions', module='types')
+        key "model_options": ForwardRef('DataGenerationModelOptions')
         key "train_split": float
-        key "type": Required[Literal[DataGenerationJobType.TOOL_USE]]
-        max_samples: int
+        max_samples: Required[int]
         model_options: DataGenerationModelOptions
         train_split: float
-        type: Literal[DataGenerationJobType.TOOL_USE]
+        type: Required[Literal[DataGenerationJobType.TOOL_USE]]
 
 
     class azure.ai.projects.types.ToolboxPolicies(TypedDict, total=False):
-        key "rai_config": ForwardRef('RaiConfig', module='types')
+        key "rai_config": ForwardRef('RaiConfig')
         rai_config: RaiConfig
 
 
     class azure.ai.projects.types.ToolboxSearchPreviewToolboxTool(TypedDict, total=False):
         key "description": str
         key "name": str
-        key "type": Required[Literal[ToolboxToolType.TOOLBOX_SEARCH_PREVIEW]]
+        key "tool_configs": dict[str, ToolConfig]
         description: str
         name: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.TOOLBOX_SEARCH_PREVIEW]
+        type: Required[Literal[ToolboxToolType.TOOLBOX_SEARCH_PREVIEW]]
 
 
     class azure.ai.projects.types.ToolboxSkill(TypedDict, total=False):
-        key "name": Required[str]
-        key "type": Required[Literal["skill_reference"]]
         key "version": str
-        name: str
-        type: Literal[skill_reference]
+        name: Required[str]
+        type: Required[Literal["skill_reference"]]
         version: str
 
 
     class azure.ai.projects.types.ToolboxSkillReference(TypedDict, total=False):
-        key "name": Required[str]
-        key "type": Required[Literal["skill_reference"]]
         key "version": str
-        name: str
-        type: Literal[skill_reference]
+        name: Required[str]
+        type: Required[Literal["skill_reference"]]
         version: str
 
 
@@ -19753,14 +19285,12 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.TracesDataGenerationJobOptions(TypedDict, total=False):
-        key "max_samples": Required[int]
-        key "model_options": ForwardRef('DataGenerationModelOptions', module='types')
+        key "model_options": ForwardRef('DataGenerationModelOptions')
         key "train_split": float
-        key "type": Required[Literal[DataGenerationJobType.TRACES]]
-        max_samples: int
+        max_samples: Required[int]
         model_options: DataGenerationModelOptions
         train_split: float
-        type: Literal[DataGenerationJobType.TRACES]
+        type: Required[Literal[DataGenerationJobType.TRACES]]
 
 
     class azure.ai.projects.types.TracesDataGenerationJobSource(TypedDict, total=False):
@@ -19769,15 +19299,13 @@ namespace azure.ai.projects.types
         key "agent_version": str
         key "description": str
         key "end_time": int
-        key "start_time": Required[int]
-        key "type": Required[Literal[DataGenerationJobSourceType.TRACES]]
         agent_id: str
         agent_name: str
         agent_version: str
         description: str
         end_time: int
-        start_time: int
-        type: Literal[DataGenerationJobSourceType.TRACES]
+        start_time: Required[int]
+        type: Required[Literal[DataGenerationJobSourceType.TRACES]]
 
 
     class azure.ai.projects.types.TracesEvaluatorGenerationJobSource(TypedDict, total=False):
@@ -19786,35 +19314,27 @@ namespace azure.ai.projects.types
         key "agent_version": str
         key "description": str
         key "end_time": int
-        key "start_time": Required[int]
-        key "type": Required[Literal[EvaluatorGenerationJobSourceType.TRACES]]
         agent_id: str
         agent_name: str
         agent_version: str
         description: str
         end_time: int
-        start_time: int
-        type: Literal[EvaluatorGenerationJobSourceType.TRACES]
+        start_time: Required[int]
+        type: Required[Literal[EvaluatorGenerationJobSourceType.TRACES]]
 
 
     class azure.ai.projects.types.TranscriptTextUsageDuration(TypedDict, total=False):
-        key "seconds": Required[str]
-        key "type": Required[Literal[CreateTranscriptionResponseJsonUsageType.DURATION]]
-        seconds: str
-        type: Literal[CreateTranscriptionResponseJsonUsageType.DURATION]
+        seconds: Required[str]
+        type: Required[Literal[CreateTranscriptionResponseJsonUsageType.DURATION]]
 
 
     class azure.ai.projects.types.TranscriptTextUsageTokens(TypedDict, total=False):
-        key "input_token_details": ForwardRef('TranscriptTextUsageTokensInputTokenDetails', module='types')
-        key "input_tokens": Required[int]
-        key "output_tokens": Required[int]
-        key "total_tokens": Required[int]
-        key "type": Required[Literal[CreateTranscriptionResponseJsonUsageType.TOKENS]]
+        key "input_token_details": ForwardRef('TranscriptTextUsageTokensInputTokenDetails')
         input_token_details: TranscriptTextUsageTokensInputTokenDetails
-        input_tokens: int
-        output_tokens: int
-        total_tokens: int
-        type: Literal[CreateTranscriptionResponseJsonUsageType.TOKENS]
+        input_tokens: Required[int]
+        output_tokens: Required[int]
+        total_tokens: Required[int]
+        type: Required[Literal[CreateTranscriptionResponseJsonUsageType.TOKENS]]
 
 
     class azure.ai.projects.types.TranscriptTextUsageTokensInputTokenDetails(TypedDict, total=False):
@@ -19831,52 +19351,48 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.UpdateMemoriesRequest(TypedDict, total=False):
+        key "items": list[dict[str, Any]]
         key "previous_update_id": str
-        key "scope": Required[str]
         key "update_delay": int
         items: list[dict[str, Any]]
         previous_update_id: str
-        scope: str
+        scope: Required[str]
         update_delay: int
 
 
     class azure.ai.projects.types.UpdateMemoryRequest(TypedDict, total=False):
-        key "content": Required[str]
-        content: str
+        content: Required[str]
 
 
     class azure.ai.projects.types.UpdateMemoryStoreRequest(TypedDict, total=False):
         key "description": str
+        key "metadata": dict[str, str]
         description: str
         metadata: dict[str, str]
 
 
     class azure.ai.projects.types.UpdateModelVersionRequest(TypedDict, total=False):
         key "description": str
+        key "tags": dict[str, str]
         description: str
         tags: dict[str, str]
 
 
     class azure.ai.projects.types.UpdateSkillRequest(TypedDict, total=False):
-        key "default_version": Required[str]
-        default_version: str
+        default_version: Required[str]
 
 
     class azure.ai.projects.types.UpdateToolboxRequest(TypedDict, total=False):
-        key "default_version": Required[str]
-        default_version: str
+        default_version: Required[str]
 
 
     class azure.ai.projects.types.UpdateToolboxRequest1(TypedDict, total=False):
-        key "default_version": Required[str]
-        default_version: str
+        default_version: Required[str]
 
 
     class azure.ai.projects.types.VersionIndicator(TypedDict, total=False):
-        key "agent_version": Required[str]
-        key "type": Required[Literal[VersionIndicatorType.VERSION_REF]]
-        agent_version: str
-        type: Literal[VersionIndicatorType.VERSION_REF]
+        agent_version: Required[str]
+        type: Required[Literal[VersionIndicatorType.VERSION_REF]]
 
 
     class azure.ai.projects.types.VersionIndicatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -19884,24 +19400,18 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.VersionRefIndicator(TypedDict, total=False):
-        key "agent_version": Required[str]
-        key "type": Required[Literal[VersionIndicatorType.VERSION_REF]]
-        agent_version: str
-        type: Literal[VersionIndicatorType.VERSION_REF]
+        agent_version: Required[str]
+        type: Required[Literal[VersionIndicatorType.VERSION_REF]]
 
 
     class azure.ai.projects.types.VersionSelectionRule(TypedDict, total=False):
-        key "agent_version": Required[str]
-        key "traffic_percentage": Required[int]
-        key "type": Required[Literal[VersionSelectorType.FIXED_RATIO]]
-        agent_version: str
-        traffic_percentage: int
-        type: Literal[VersionSelectorType.FIXED_RATIO]
+        agent_version: Required[str]
+        traffic_percentage: Required[int]
+        type: Required[Literal[VersionSelectorType.FIXED_RATIO]]
 
 
     class azure.ai.projects.types.VersionSelector(TypedDict, total=False):
-        key "version_selection_rules": Required[list[VersionSelectionRule]]
-        version_selection_rules: list[VersionSelectionRule]
+        version_selection_rules: Required[list[VersionSelectionRule]]
 
 
     class azure.ai.projects.types.VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -19910,16 +19420,16 @@ namespace azure.ai.projects.types
 
     class azure.ai.projects.types.VoiceAgentAnimationConfig(TypedDict, total=False):
         key "model_name": str
+        key "outputs": list[Union[str, VoiceAgentAnimationOutputType]]
         model_name: str
         outputs: list[Union[str, VoiceAgentAnimationOutputType]]
 
 
     class azure.ai.projects.types.VoiceAgentAvatarIceServer(TypedDict, total=False):
         key "credential": Optional[str]
-        key "urls": Required[list[str]]
         key "username": Optional[str]
         credential: str
-        urls: list[str]
+        urls: Required[list[str]]
         username: str
 
 
@@ -19948,19 +19458,17 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.VoiceAgentAvatarVideoCrop(TypedDict, total=False):
-        key "bottom_right": Required[list[int]]
-        key "top_left": Required[list[int]]
-        bottom_right: list[int]
-        top_left: list[int]
+        bottom_right: Required[list[int]]
+        top_left: Required[list[int]]
 
 
     class azure.ai.projects.types.VoiceAgentAvatarVideoParams(TypedDict, total=False):
-        key "background": ForwardRef('VoiceAgentAvatarVideoBackground', module='types')
+        key "background": ForwardRef('VoiceAgentAvatarVideoBackground')
         key "bitrate": int
         key "codec": Literal["h264"]
-        key "crop": ForwardRef('VoiceAgentAvatarVideoCrop', module='types')
+        key "crop": ForwardRef('VoiceAgentAvatarVideoCrop')
         key "gop_size": int
-        key "resolution": ForwardRef('VoiceAgentAvatarVideoResolution', module='types')
+        key "resolution": ForwardRef('VoiceAgentAvatarVideoResolution')
         background: VoiceAgentAvatarVideoBackground
         bitrate: int
         codec: Literal[h264]
@@ -19970,144 +19478,122 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.VoiceAgentAvatarVideoResolution(TypedDict, total=False):
-        key "height": Required[int]
-        key "width": Required[int]
-        height: int
-        width: int
+        height: Required[int]
+        width: Required[int]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventConversationItemCreate(TypedDict, total=False):
         key "event_id": str
-        key "item": Required[VoiceAgentCreateConversationItem]
         key "previous_item_id": str
-        key "type": Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_CREATE]]
         event_id: str
-        item: VoiceAgentCreateConversationItem
+        item: Required[VoiceAgentCreateConversationItem]
         previous_item_id: str
-        type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_CREATE]
+        type: Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_CREATE]]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventConversationItemDelete(TypedDict, total=False):
         key "event_id": str
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_DELETE]]
         event_id: str
-        item_id: str
-        type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_DELETE]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_DELETE]]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventConversationItemRetrieve(TypedDict, total=False):
         key "event_id": str
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_RETRIEVE]]
         event_id: str
-        item_id: str
-        type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_RETRIEVE]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_RETRIEVE]]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventConversationItemTruncate(TypedDict, total=False):
-        key "audio_end_ms": Required[int]
-        key "content_index": Required[int]
         key "event_id": str
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_TRUNCATE]]
-        audio_end_ms: int
-        content_index: int
+        audio_end_ms: Required[int]
+        content_index: Required[int]
         event_id: str
-        item_id: str
-        type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_TRUNCATE]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_TRUNCATE]]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventInputAudioBufferAppend(TypedDict, total=False):
-        key "audio": Required[str]
         key "event_id": str
-        key "type": Required[Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_APPEND]]
-        audio: str
+        audio: Required[str]
         event_id: str
-        type: Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_APPEND]
+        type: Required[Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_APPEND]]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventInputAudioBufferClear(TypedDict, total=False):
         key "event_id": str
-        key "type": Required[Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_CLEAR]]
         event_id: str
-        type: Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_CLEAR]
+        type: Required[Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_CLEAR]]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventInputAudioBufferCommit(TypedDict, total=False):
         key "event_id": str
-        key "type": Required[Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_COMMIT]]
         event_id: str
-        type: Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_COMMIT]
+        type: Required[Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_COMMIT]]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventOutputAudioBufferClear(TypedDict, total=False):
         key "event_id": str
-        key "type": Required[Literal[RealtimeClientEventType.OUTPUT_AUDIO_BUFFER_CLEAR]]
         event_id: str
-        type: Literal[RealtimeClientEventType.OUTPUT_AUDIO_BUFFER_CLEAR]
+        type: Required[Literal[RealtimeClientEventType.OUTPUT_AUDIO_BUFFER_CLEAR]]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventResponseCancel(TypedDict, total=False):
         key "event_id": str
         key "response_id": str
-        key "type": Required[Literal[RealtimeClientEventType.RESPONSE_CANCEL]]
         event_id: str
         response_id: str
-        type: Literal[RealtimeClientEventType.RESPONSE_CANCEL]
+        type: Required[Literal[RealtimeClientEventType.RESPONSE_CANCEL]]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventResponseCreate(TypedDict, total=False):
         key "event_id": str
-        key "response": ForwardRef('VoiceAgentResponseCreateParams', module='types')
-        key "type": Required[Literal[RealtimeClientEventType.RESPONSE_CREATE]]
+        key "response": ForwardRef('VoiceAgentResponseCreateParams')
         event_id: str
         response: VoiceAgentResponseCreateParams
-        type: Literal[RealtimeClientEventType.RESPONSE_CREATE]
+        type: Required[Literal[RealtimeClientEventType.RESPONSE_CREATE]]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventSessionAvatarConnect(TypedDict, total=False):
-        key "client_sdp": Required[str]
         key "event_id": str
-        key "type": Required[Literal["connect"]]
-        client_sdp: str
+        client_sdp: Required[str]
         event_id: str
-        type: Literal[connect]
+        type: Required[Literal["connect"]]
 
 
     class azure.ai.projects.types.VoiceAgentClientEventSessionUpdate(TypedDict, total=False):
         key "event_id": str
-        key "session": Required[VoiceAgentSessionUpdateConfig]
-        key "type": Required[Literal[RealtimeClientEventType.SESSION_UPDATE]]
         event_id: str
-        session: VoiceAgentSessionUpdateConfig
-        type: Literal[RealtimeClientEventType.SESSION_UPDATE]
+        session: Required[VoiceAgentSessionUpdateConfig]
+        type: Required[Literal[RealtimeClientEventType.SESSION_UPDATE]]
 
 
     class azure.ai.projects.types.VoiceAgentDefinition(TypedDict, total=False):
-        key "audio": ForwardRef('VoiceAudioConfig', module='types')
-        key "avatar": ForwardRef('VoiceAvatarConfig', module='types')
-        key "greeting": ForwardRef('VoiceGreetingConfig', module='types')
+        key "audio": ForwardRef('VoiceAudioConfig')
+        key "avatar": ForwardRef('VoiceAvatarConfig')
+        key "greeting": ForwardRef('VoiceGreetingConfig')
+        key "include": list[Union[str, VoiceAgentSessionIncludeOption]]
         key "instructions": str
-        key "interim_response": ForwardRef('VoiceAgentInterimResponse', module='types')
-        key "kind": Required[Literal[AgentKind.VOICE]]
-        key "max_output_tokens": ForwardRef('VoiceAgentMaxOutputTokens', module='types')
-        key "model": Required[str]
-        key "model_type": Required[Union[str, VoiceModelType]]
+        key "interim_response": ForwardRef('VoiceAgentInterimResponse')
+        key "max_output_tokens": ForwardRef('VoiceAgentMaxOutputTokens')
+        key "output_modalities": list[Union[str, VoiceOutputModality]]
         key "parallel_tool_calls": bool
-        key "rai_config": ForwardRef('RaiConfig', module='types')
+        key "rai_config": ForwardRef('RaiConfig')
         key "store": bool
-        key "tool_choice": ForwardRef('VoiceAgentToolChoice', module='types')
+        key "structured_inputs": dict[str, StructuredInputDefinition]
+        key "tool_choice": ForwardRef('VoiceAgentToolChoice')
+        key "tools": list[VoiceAgentTool]
         audio: VoiceAudioConfig
         avatar: VoiceAvatarConfig
         greeting: VoiceGreetingConfig
         include: list[Union[str, VoiceAgentSessionIncludeOption]]
         instructions: str
         interim_response: VoiceAgentInterimResponse
-        kind: Literal[AgentKind.VOICE]
+        kind: Required[Literal[AgentKind.VOICE]]
         max_output_tokens: VoiceAgentMaxOutputTokens
-        model: str
-        model_type: Union[str, VoiceModelType]
+        model: Required[str]
+        model_type: Required[Union[str, VoiceModelType]]
         output_modalities: list[Union[str, VoiceOutputModality]]
         parallel_tool_calls: bool
         rai_config: RaiConfig
@@ -20120,21 +19606,18 @@ namespace azure.ai.projects.types
     class azure.ai.projects.types.VoiceAgentEchoCancellation(TypedDict, total=False):
         key "channels": int
         key "reference_source": Union[str, VoiceAgentEchoCancellationReferenceSource]
-        key "type": Required[Literal["server_echo_cancellation"]]
         channels: int
         reference_source: Union[str, VoiceAgentEchoCancellationReferenceSource]
-        type: Literal[server_echo_cancellation]
+        type: Required[Literal["server_echo_cancellation"]]
 
 
     class azure.ai.projects.types.VoiceAgentFunctionTool(TypedDict, total=False):
         key "description": str
-        key "name": Required[str]
-        key "parameters": ForwardRef('RealtimeFunctionToolParameters', module='types')
-        key "type": Required[Literal["function"]]
+        key "parameters": ForwardRef('RealtimeFunctionToolParameters')
         description: str
-        name: str
+        name: Required[str]
         parameters: RealtimeFunctionToolParameters
-        type: Literal[function]
+        type: Required[Literal["function"]]
 
 
     class azure.ai.projects.types.VoiceAgentLlmInterimResponseConfig(TypedDict, total=False):
@@ -20142,13 +19625,13 @@ namespace azure.ai.projects.types
         key "latency_threshold_ms": int
         key "max_completion_tokens": int
         key "model": str
-        key "type": Required[Literal["llm_interim_response"]]
+        key "triggers": list[Union[str, VoiceAgentInterimResponseTrigger]]
         instructions: str
         latency_threshold_ms: int
         max_completion_tokens: int
         model: str
         triggers: list[Union[str, VoiceAgentInterimResponseTrigger]]
-        type: Literal[llm_interim_response]
+        type: Required[Literal["llm_interim_response"]]
 
 
     class azure.ai.projects.types.VoiceAgentMcpTool(TypedDict, total=False):
@@ -20161,9 +19644,8 @@ namespace azure.ai.projects.types
         key "require_approval": Optional[Union[MCPToolRequireApproval, Literal["always"], Literal["never"]]]
         key "response_scheduling": Union[str, VoiceAgentToolResponseScheduling]
         key "server_description": str
-        key "server_label": Required[str]
         key "server_url": str
-        key "type": Required[Literal["mcp"]]
+        key "tool_configs": dict[str, ToolConfig]
         allowed_callers: list[Union[str, CallableToolAllowedCaller]]
         allowed_tools: Union[list[str], MCPToolFilter]
         authorization: str
@@ -20173,22 +19655,24 @@ namespace azure.ai.projects.types
         require_approval: Union[MCPToolRequireApproval, Literal[always], Literal[never]]
         response_scheduling: Union[str, VoiceAgentToolResponseScheduling]
         server_description: str
-        server_label: str
+        server_label: Required[str]
         server_url: str
         tool_configs: dict[str, ToolConfig]
-        type: Literal[mcp]
+        type: Required[Literal["mcp"]]
 
 
     class azure.ai.projects.types.VoiceAgentRealtimeResponse(OmitPropertiesRealtimeResponse1):
-        key "audio": ForwardRef('VoiceResponseAudio', module='types')
+        key "audio": ForwardRef('VoiceResponseAudio')
         key "conversation_id": str
         key "id": str
         key "max_output_tokens": Union[int, Literal["inf"]]
         key "metadata": Optional[Metadata]
         key "object": Literal["response"]
+        key "output": list[VoiceAgentResponseItem]
+        key "output_modalities": list[Literal["text", "audio"]]
         key "status": Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]
-        key "status_details": ForwardRef('RealtimeResponseStatusDetails', module='types')
-        key "usage": ForwardRef('RealtimeResponseUsage', module='types')
+        key "status_details": ForwardRef('RealtimeResponseStatusDetails')
+        key "usage": ForwardRef('RealtimeResponseUsage')
         audio: VoiceResponseAudio
         conversation_id: str
         id: str
@@ -20196,23 +19680,26 @@ namespace azure.ai.projects.types
         metadata: Metadata
         object: Literal[response]
         output: list[VoiceAgentResponseItem]
-        output_modalities: list[Literal["text", "audio"]]
+        output_modalities: list[Literal[text, audio]]
         status: Literal[completed, cancelled, failed, incomplete, in_progress]
         status_details: RealtimeResponseStatusDetails
         usage: RealtimeResponseUsage
 
 
     class azure.ai.projects.types.VoiceAgentResponseCreateParams(TypedDict, total=False):
-        key "audio": ForwardRef('PickPropertiesVoiceAudioConfig', module='types')
+        key "audio": ForwardRef('PickPropertiesVoiceAudioConfig')
         key "conversation": Union[Literal["auto"], Literal["none"], str]
+        key "input": list[RealtimeConversationItem]
         key "instructions": str
         key "interim_response": Optional[VoiceAgentInterimResponse]
         key "max_output_tokens": Union[int, Literal["inf"]]
         key "metadata": Optional[Metadata]
+        key "output_modalities": list[Union[str, VoiceOutputModality]]
         key "parallel_tool_calls": bool
         key "pre_generated_assistant_message": Optional[RealtimeConversationItemMessageAssistant]
-        key "reasoning": ForwardRef('RealtimeReasoning', module='types')
+        key "reasoning": ForwardRef('RealtimeReasoning')
         key "tool_choice": Union[str, ToolChoiceOptions, ToolChoiceFunction, ToolChoiceMCP]
+        key "tools": list[Union[RealtimeFunctionTool, MCPTool]]
         audio: PickPropertiesVoiceAudioConfig
         conversation: Union[Literal[auto], Literal[none], str]
         input: list[RealtimeConversationItem]
@@ -20230,7 +19717,7 @@ namespace azure.ai.projects.types
 
     class azure.ai.projects.types.VoiceAgentResponseEventContentPart(TypedDict, total=False):
         key "audio": str
-        key "format": ForwardRef('VoiceAudioFormat', module='types')
+        key "format": ForwardRef('VoiceAudioFormat')
         key "text": str
         key "transcript": str
         key "type": Literal["audio", "text"]
@@ -20246,700 +19733,453 @@ namespace azure.ai.projects.types
         key "create_response": bool
         key "eagerness": Literal["low", "medium", "high", "auto"]
         key "interrupt_response": bool
-        key "type": Required[Literal[VoiceTurnDetectionType.SEMANTIC_VAD]]
         auto_truncate: bool
         create_response: bool
         eagerness: Literal[low, medium, high, auto]
         interrupt_response: bool
-        type: Literal[VoiceTurnDetectionType.SEMANTIC_VAD]
+        type: Required[Literal[VoiceTurnDetectionType.SEMANTIC_VAD]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventConversationItemAdded(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item": Required[VoiceAgentResponseItem]
         key "previous_item_id": Optional[str]
-        key "type": Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_ADDED]]
-        event_id: str
-        item: VoiceAgentResponseItem
+        event_id: Required[str]
+        item: Required[VoiceAgentResponseItem]
         previous_item_id: str
-        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_ADDED]
+        type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_ADDED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventConversationItemCreated(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item": Required[VoiceAgentResponseItem]
         key "previous_item_id": Optional[str]
-        key "type": Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_CREATED]]
-        event_id: str
-        item: VoiceAgentResponseItem
+        event_id: Required[str]
+        item: Required[VoiceAgentResponseItem]
         previous_item_id: str
-        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_CREATED]
+        type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_CREATED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventConversationItemDeleted(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_DELETED]]
-        event_id: str
-        item_id: str
-        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_DELETED]
+        event_id: Required[str]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_DELETED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventConversationItemDone(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item": Required[VoiceAgentResponseItem]
         key "previous_item_id": Optional[str]
-        key "type": Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_DONE]]
-        event_id: str
-        item: VoiceAgentResponseItem
+        event_id: Required[str]
+        item: Required[VoiceAgentResponseItem]
         previous_item_id: str
-        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_DONE]
+        type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_DONE]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
         key "logprobs": Optional[list[LogProbProperties]]
         key "phrases": Optional[list[VoiceAgentTranscriptionPhrase]]
-        key "transcript": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED]]
-        key "usage": Required[Union[TranscriptTextUsageTokens, TranscriptTextUsageDuration]]
-        content_index: int
-        event_id: str
-        item_id: str
+        content_index: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
         logprobs: list[LogProbProperties]
         phrases: list[VoiceAgentTranscriptionPhrase]
-        transcript: str
-        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED]
-        usage: Union[TranscriptTextUsageTokens, TranscriptTextUsageDuration]
+        transcript: Required[str]
+        type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED]]
+        usage: Required[Union[TranscriptTextUsageTokens, TranscriptTextUsageDuration]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventConversationItemInputAudioTranscriptionDelta(TypedDict, total=False):
         key "content_index": int
         key "delta": str
-        key "event_id": Required[str]
-        key "item_id": Required[str]
         key "logprobs": Optional[list[LogProbProperties]]
-        key "type": Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA]]
         content_index: int
         delta: str
-        event_id: str
-        item_id: str
+        event_id: Required[str]
+        item_id: Required[str]
         logprobs: list[LogProbProperties]
-        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA]
+        type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventConversationItemInputAudioTranscriptionFailed(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "error": Required[RealtimeServerEventConversationItemInputAudioTranscriptionFailedError]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED]]
-        content_index: int
-        error: RealtimeServerEventConversationItemInputAudioTranscriptionFailedError
-        event_id: str
-        item_id: str
-        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED]
+        content_index: Required[int]
+        error: Required[RealtimeServerEventConversationItemInputAudioTranscriptionFailedError]
+        event_id: Required[str]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventConversationItemInputAudioTranscriptionSegment(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "end": Required[float]
-        key "event_id": Required[str]
-        key "id": Required[str]
-        key "item_id": Required[str]
-        key "speaker": Required[str]
-        key "start": Required[float]
-        key "text": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT]]
-        content_index: int
-        end: float
-        event_id: str
-        id: str
-        item_id: str
-        speaker: str
-        start: float
-        text: str
-        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT]
+        content_index: Required[int]
+        end: Required[float]
+        event_id: Required[str]
+        id: Required[str]
+        item_id: Required[str]
+        speaker: Required[str]
+        start: Required[float]
+        text: Required[str]
+        type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventConversationItemRetrieved(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item": Required[VoiceAgentResponseItem]
-        key "type": Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_RETRIEVED]]
-        event_id: str
-        item: VoiceAgentResponseItem
-        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_RETRIEVED]
+        event_id: Required[str]
+        item: Required[VoiceAgentResponseItem]
+        type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_RETRIEVED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventConversationItemTruncated(TypedDict, total=False):
-        key "audio_end_ms": Required[int]
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item": ForwardRef('RealtimeConversationItemMessageAssistant', module='types')
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_TRUNCATED]]
-        audio_end_ms: int
-        content_index: int
-        event_id: str
+        key "item": ForwardRef('RealtimeConversationItemMessageAssistant')
+        audio_end_ms: Required[int]
+        content_index: Required[int]
+        event_id: Required[str]
         item: RealtimeConversationItemMessageAssistant
-        item_id: str
-        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_TRUNCATED]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_TRUNCATED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventInputAudioBufferCleared(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_CLEARED]]
-        event_id: str
-        type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_CLEARED]
+        event_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_CLEARED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventInputAudioBufferCommitted(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item_id": Required[str]
         key "previous_item_id": Optional[str]
-        key "type": Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_COMMITTED]]
-        event_id: str
-        item_id: str
+        event_id: Required[str]
+        item_id: Required[str]
         previous_item_id: str
-        type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_COMMITTED]
+        type: Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_COMMITTED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventInputAudioBufferSpeechStarted(TypedDict, total=False):
-        key "audio_start_ms": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED]]
-        audio_start_ms: int
-        event_id: str
-        item_id: str
-        type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED]
+        audio_start_ms: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventInputAudioBufferSpeechStopped(TypedDict, total=False):
-        key "audio_end_ms": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED]]
-        audio_end_ms: int
-        event_id: str
-        item_id: str
-        type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED]
+        audio_end_ms: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventInputAudioBufferTimeoutTriggered(TypedDict, total=False):
-        key "audio_end_ms": Required[int]
-        key "audio_start_ms": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED]]
-        audio_end_ms: int
-        audio_start_ms: int
-        event_id: str
-        item_id: str
-        type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED]
+        audio_end_ms: Required[int]
+        audio_start_ms: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventMcpListToolsCompleted(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.MCP_LIST_TOOLS_COMPLETED]]
-        event_id: str
-        item_id: str
-        type: Literal[RealtimeServerEventType.MCP_LIST_TOOLS_COMPLETED]
+        event_id: Required[str]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.MCP_LIST_TOOLS_COMPLETED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventMcpListToolsFailed(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.MCP_LIST_TOOLS_FAILED]]
-        event_id: str
-        item_id: str
-        type: Literal[RealtimeServerEventType.MCP_LIST_TOOLS_FAILED]
+        event_id: Required[str]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.MCP_LIST_TOOLS_FAILED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventMcpListToolsInProgress(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.MCP_LIST_TOOLS_IN_PROGRESS]]
-        event_id: str
-        item_id: str
-        type: Literal[RealtimeServerEventType.MCP_LIST_TOOLS_IN_PROGRESS]
+        event_id: Required[str]
+        item_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.MCP_LIST_TOOLS_IN_PROGRESS]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventOutputAudioBufferCleared(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.OUTPUT_AUDIO_BUFFER_CLEARED]]
-        event_id: str
-        response_id: str
-        type: Literal[RealtimeServerEventType.OUTPUT_AUDIO_BUFFER_CLEARED]
+        event_id: Required[str]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.OUTPUT_AUDIO_BUFFER_CLEARED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventRateLimitsUpdated(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "rate_limits": Required[list[RealtimeServerEventRateLimitsUpdatedRateLimits]]
-        key "type": Required[Literal[RealtimeServerEventType.RATE_LIMITS_UPDATED]]
-        event_id: str
-        rate_limits: list[RealtimeServerEventRateLimitsUpdatedRateLimits]
-        type: Literal[RealtimeServerEventType.RATE_LIMITS_UPDATED]
+        event_id: Required[str]
+        rate_limits: Required[list[RealtimeServerEventRateLimitsUpdatedRateLimits]]
+        type: Required[Literal[RealtimeServerEventType.RATE_LIMITS_UPDATED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseAnimationBlendshapesDelta(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "frame_index": Required[int]
-        key "frames": Required[list[list[float]]]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal["delta"]]
-        content_index: int
-        event_id: str
-        frame_index: int
-        frames: list[list[float]]
-        item_id: str
-        output_index: int
-        response_id: str
-        type: Literal[delta]
+        content_index: Required[int]
+        event_id: Required[str]
+        frame_index: Required[int]
+        frames: Required[list[list[float]]]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal["delta"]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseAnimationBlendshapesDone(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal["done"]]
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        type: Literal[done]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal["done"]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseAnimationVisemeDelta(TypedDict, total=False):
-        key "audio_offset_ms": Required[int]
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal["delta"]]
-        key "viseme_id": Required[int]
-        audio_offset_ms: int
-        content_index: int
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        type: Literal[delta]
-        viseme_id: int
+        audio_offset_ms: Required[int]
+        content_index: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal["delta"]]
+        viseme_id: Required[int]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseAnimationVisemeDone(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal["done"]]
-        content_index: int
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        type: Literal[done]
+        content_index: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal["done"]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseAudioDelta(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "delta": Required[str]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DELTA]]
-        content_index: int
-        delta: str
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DELTA]
+        content_index: Required[int]
+        delta: Required[str]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DELTA]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseAudioDone(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DONE]]
-        content_index: int
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DONE]
+        content_index: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DONE]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseAudioTimestampDelta(TypedDict, total=False):
-        key "audio_duration_ms": Required[int]
-        key "audio_offset_ms": Required[int]
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "text": Required[str]
-        key "timestamp_type": Required[Literal["word"]]
-        key "type": Required[Literal["delta"]]
-        audio_duration_ms: int
-        audio_offset_ms: int
-        content_index: int
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        text: str
-        timestamp_type: Literal[word]
-        type: Literal[delta]
+        audio_duration_ms: Required[int]
+        audio_offset_ms: Required[int]
+        content_index: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        text: Required[str]
+        timestamp_type: Required[Literal["word"]]
+        type: Required[Literal["delta"]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseAudioTimestampDone(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal["done"]]
-        content_index: int
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        type: Literal[done]
+        content_index: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal["done"]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseAudioTranscriptDelta(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "delta": Required[str]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA]]
-        content_index: int
-        delta: str
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA]
+        content_index: Required[int]
+        delta: Required[str]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseAudioTranscriptDone(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "transcript": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE]]
-        content_index: int
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        transcript: str
-        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE]
+        content_index: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        transcript: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseContentPartDone(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "part": Required[VoiceAgentResponseEventContentPart]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_DONE]]
-        content_index: int
-        event_id: str
-        item_id: str
-        output_index: int
-        part: VoiceAgentResponseEventContentPart
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_DONE]
+        content_index: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        part: Required[VoiceAgentResponseEventContentPart]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_DONE]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseCreated(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "response": Required[VoiceAgentRealtimeResponse]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_CREATED]]
-        event_id: str
-        response: VoiceAgentRealtimeResponse
-        type: Literal[RealtimeServerEventType.RESPONSE_CREATED]
+        event_id: Required[str]
+        response: Required[VoiceAgentRealtimeResponse]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_CREATED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseDone(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "response": Required[VoiceAgentRealtimeResponse]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_DONE]]
-        event_id: str
-        response: VoiceAgentRealtimeResponse
-        type: Literal[RealtimeServerEventType.RESPONSE_DONE]
+        event_id: Required[str]
+        response: Required[VoiceAgentRealtimeResponse]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_DONE]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseFunctionCallArgumentsDelta(TypedDict, total=False):
-        key "call_id": Required[str]
-        key "delta": Required[str]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA]]
-        call_id: str
-        delta: str
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA]
+        call_id: Required[str]
+        delta: Required[str]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseFunctionCallArgumentsDone(TypedDict, total=False):
-        key "arguments": Required[str]
-        key "call_id": Required[str]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "name": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE]]
-        arguments: str
-        call_id: str
-        event_id: str
-        item_id: str
-        name: str
-        output_index: int
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE]
+        arguments: Required[str]
+        call_id: Required[str]
+        event_id: Required[str]
+        item_id: Required[str]
+        name: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseMcpCallArgumentsDelta(TypedDict, total=False):
-        key "delta": Required[str]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
         key "obfuscation": Optional[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA]]
-        delta: str
-        event_id: str
-        item_id: str
+        delta: Required[str]
+        event_id: Required[str]
+        item_id: Required[str]
         obfuscation: str
-        output_index: int
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseMcpCallArgumentsDone(TypedDict, total=False):
-        key "arguments": Required[str]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE]]
-        arguments: str
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE]
+        arguments: Required[str]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseMcpCallCompleted(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_COMPLETED]]
-        event_id: str
-        item_id: str
-        output_index: int
-        type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_COMPLETED]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_COMPLETED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseMcpCallFailed(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_FAILED]]
-        event_id: str
-        item_id: str
-        output_index: int
-        type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_FAILED]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_FAILED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseMcpCallInProgress(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_IN_PROGRESS]]
-        event_id: str
-        item_id: str
-        output_index: int
-        type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_IN_PROGRESS]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_IN_PROGRESS]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseOutputItemAdded(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item": Required[VoiceAgentResponseItem]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_ADDED]]
-        event_id: str
-        item: VoiceAgentResponseItem
-        output_index: int
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_ADDED]
+        event_id: Required[str]
+        item: Required[VoiceAgentResponseItem]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_ADDED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseOutputItemDone(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "item": Required[VoiceAgentResponseItem]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_DONE]]
-        event_id: str
-        item: VoiceAgentResponseItem
-        output_index: int
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_DONE]
+        event_id: Required[str]
+        item: Required[VoiceAgentResponseItem]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_DONE]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseTextDelta(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "delta": Required[str]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DELTA]]
-        content_index: int
-        delta: str
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DELTA]
+        content_index: Required[int]
+        delta: Required[str]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DELTA]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseTextDone(TypedDict, total=False):
-        key "content_index": Required[int]
-        key "event_id": Required[str]
-        key "item_id": Required[str]
-        key "output_index": Required[int]
-        key "response_id": Required[str]
-        key "text": Required[str]
-        key "type": Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DONE]]
-        content_index: int
-        event_id: str
-        item_id: str
-        output_index: int
-        response_id: str
-        text: str
-        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DONE]
+        content_index: Required[int]
+        event_id: Required[str]
+        item_id: Required[str]
+        output_index: Required[int]
+        response_id: Required[str]
+        text: Required[str]
+        type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DONE]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventResponseVideoDelta(TypedDict, total=False):
-        key "codec": Required[str]
-        key "delta": Required[str]
-        key "event_id": Required[str]
-        key "output_index": Required[int]
-        key "type": Required[Literal["delta"]]
-        codec: str
-        delta: str
-        event_id: str
-        output_index: int
-        type: Literal[delta]
+        codec: Required[str]
+        delta: Required[str]
+        event_id: Required[str]
+        output_index: Required[int]
+        type: Required[Literal["delta"]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventSessionAvatarConnecting(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "server_sdp": Required[str]
-        key "type": Required[Literal["connecting"]]
-        event_id: str
-        server_sdp: str
-        type: Literal[connecting]
+        event_id: Required[str]
+        server_sdp: Required[str]
+        type: Required[Literal["connecting"]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventSessionAvatarSwitchToIdle(TypedDict, total=False):
-        key "event_id": Required[str]
         key "turn_id": str
-        key "type": Required[Literal["switch_to_idle"]]
-        event_id: str
+        event_id: Required[str]
         turn_id: str
-        type: Literal[switch_to_idle]
+        type: Required[Literal["switch_to_idle"]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventSessionAvatarSwitchToSpeaking(TypedDict, total=False):
-        key "event_id": Required[str]
         key "turn_id": str
-        key "type": Required[Literal["switch_to_speaking"]]
-        event_id: str
+        event_id: Required[str]
         turn_id: str
-        type: Literal[switch_to_speaking]
+        type: Required[Literal["switch_to_speaking"]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventSessionCreated(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "session": Required[VoiceAgentSessionResponseConfig]
-        key "type": Required[Literal[RealtimeServerEventType.SESSION_CREATED]]
-        event_id: str
-        session: VoiceAgentSessionResponseConfig
-        type: Literal[RealtimeServerEventType.SESSION_CREATED]
+        event_id: Required[str]
+        session: Required[VoiceAgentSessionResponseConfig]
+        type: Required[Literal[RealtimeServerEventType.SESSION_CREATED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventSessionUpdated(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "session": Required[VoiceAgentSessionResponseConfig]
-        key "type": Required[Literal[RealtimeServerEventType.SESSION_UPDATED]]
-        event_id: str
-        session: VoiceAgentSessionResponseConfig
-        type: Literal[RealtimeServerEventType.SESSION_UPDATED]
+        event_id: Required[str]
+        session: Required[VoiceAgentSessionResponseConfig]
+        type: Required[Literal[RealtimeServerEventType.SESSION_UPDATED]]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventWarning(TypedDict, total=False):
-        key "event_id": Required[str]
-        key "type": Required[Literal["warning"]]
-        key "warning": Required[VoiceAgentServerEventWarningDetails]
-        event_id: str
-        type: Literal[warning]
-        warning: VoiceAgentServerEventWarningDetails
+        event_id: Required[str]
+        type: Required[Literal["warning"]]
+        warning: Required[VoiceAgentServerEventWarningDetails]
 
 
     class azure.ai.projects.types.VoiceAgentServerEventWarningDetails(TypedDict, total=False):
         key "code": str
-        key "message": Required[str]
         key "param": str
         code: str
-        message: str
+        message: Required[str]
         param: str
 
 
     class azure.ai.projects.types.VoiceAgentSessionAvatarConfig(VoiceAvatarConfig):
-        key "character": Required[str]
         key "customized": bool
         key "ice_servers": Optional[list[VoiceAgentAvatarIceServer]]
         key "model": str
         key "output_audit_audio": bool
         key "output_protocol": Union[str, VoiceAvatarOutputProtocol]
-        key "scene": ForwardRef('VoiceAgentAvatarScene', module='types')
+        key "scene": ForwardRef('VoiceAgentAvatarScene')
         key "style": str
-        key "type": Required[Union[str, VoiceAvatarType]]
-        key "video": ForwardRef('VoiceAgentAvatarVideoParams', module='types')
-        character: str
+        key "video": ForwardRef('VoiceAgentAvatarVideoParams')
+        character: Required[str]
         customized: bool
         ice_servers: list[VoiceAgentAvatarIceServer]
         model: str
@@ -20947,62 +20187,65 @@ namespace azure.ai.projects.types
         output_protocol: Union[str, VoiceAvatarOutputProtocol]
         scene: VoiceAgentAvatarScene
         style: str
-        type: Union[str, VoiceAvatarType]
+        type: Required[Union[str, VoiceAvatarType]]
         video: VoiceAgentAvatarVideoParams
 
 
     class azure.ai.projects.types.VoiceAgentSessionResponseConfig(TypedDict, total=False):
-        key "animation": ForwardRef('VoiceAgentAnimationConfig', module='types')
-        key "audio": ForwardRef('VoiceAudioConfig', module='types')
-        key "avatar": ForwardRef('VoiceAgentSessionAvatarConfig', module='types')
+        key "animation": ForwardRef('VoiceAgentAnimationConfig')
+        key "audio": ForwardRef('VoiceAudioConfig')
+        key "avatar": ForwardRef('VoiceAgentSessionAvatarConfig')
         key "expires_at": Optional[int]
-        key "greeting": ForwardRef('VoiceGreetingConfig', module='types')
-        key "id": Required[str]
+        key "greeting": ForwardRef('VoiceGreetingConfig')
+        key "include": list[Union[str, VoiceAgentSessionIncludeOption]]
         key "instructions": str
-        key "interim_response": ForwardRef('VoiceAgentInterimResponse', module='types')
-        key "max_output_tokens": ForwardRef('VoiceAgentMaxOutputTokens', module='types')
-        key "model": Required[str]
-        key "object": Required[Literal["session"]]
+        key "interim_response": ForwardRef('VoiceAgentInterimResponse')
+        key "max_output_tokens": ForwardRef('VoiceAgentMaxOutputTokens')
+        key "metadata": dict[str, str]
+        key "output_modalities": list[Union[str, VoiceOutputModality]]
         key "parallel_tool_calls": bool
-        key "reasoning": ForwardRef('RealtimeReasoning', module='types')
+        key "reasoning": ForwardRef('RealtimeReasoning')
         key "temperature": float
-        key "tool_choice": ForwardRef('VoiceAgentToolChoice', module='types')
-        key "type": Required[Literal["realtime"]]
+        key "tool_choice": ForwardRef('VoiceAgentToolChoice')
+        key "tools": list[VoiceAgentTool]
         animation: VoiceAgentAnimationConfig
         audio: VoiceAudioConfig
         avatar: VoiceAgentSessionAvatarConfig
         expires_at: int
         greeting: VoiceGreetingConfig
-        id: str
+        id: Required[str]
         include: list[Union[str, VoiceAgentSessionIncludeOption]]
         instructions: str
         interim_response: VoiceAgentInterimResponse
         max_output_tokens: VoiceAgentMaxOutputTokens
         metadata: dict[str, str]
-        model: str
-        object: Literal[session]
+        model: Required[str]
+        object: Required[Literal["session"]]
         output_modalities: list[Union[str, VoiceOutputModality]]
         parallel_tool_calls: bool
         reasoning: RealtimeReasoning
         temperature: float
         tool_choice: VoiceAgentToolChoice
         tools: list[VoiceAgentTool]
-        type: Literal[realtime]
+        type: Required[Literal["realtime"]]
 
 
     class azure.ai.projects.types.VoiceAgentSessionUpdateConfig(TypedDict, total=False):
-        key "animation": ForwardRef('VoiceAgentAnimationConfig', module='types')
-        key "audio": ForwardRef('VoiceAudioConfig', module='types')
-        key "avatar": ForwardRef('VoiceAgentSessionAvatarConfig', module='types')
-        key "greeting": ForwardRef('VoiceGreetingConfig', module='types')
+        key "animation": ForwardRef('VoiceAgentAnimationConfig')
+        key "audio": ForwardRef('VoiceAudioConfig')
+        key "avatar": ForwardRef('VoiceAgentSessionAvatarConfig')
+        key "greeting": ForwardRef('VoiceGreetingConfig')
+        key "include": list[Union[str, VoiceAgentSessionIncludeOption]]
         key "instructions": str
-        key "interim_response": ForwardRef('VoiceAgentInterimResponse', module='types')
-        key "max_output_tokens": ForwardRef('VoiceAgentMaxOutputTokens', module='types')
+        key "interim_response": ForwardRef('VoiceAgentInterimResponse')
+        key "max_output_tokens": ForwardRef('VoiceAgentMaxOutputTokens')
+        key "metadata": dict[str, str]
+        key "output_modalities": list[Union[str, VoiceOutputModality]]
         key "parallel_tool_calls": bool
-        key "reasoning": ForwardRef('RealtimeReasoning', module='types')
+        key "reasoning": ForwardRef('RealtimeReasoning')
         key "temperature": float
-        key "tool_choice": ForwardRef('VoiceAgentToolChoice', module='types')
-        key "type": Required[Literal["realtime"]]
+        key "tool_choice": ForwardRef('VoiceAgentToolChoice')
+        key "tools": list[VoiceAgentTool]
         animation: VoiceAgentAnimationConfig
         audio: VoiceAudioConfig
         avatar: VoiceAgentSessionAvatarConfig
@@ -21018,78 +20261,69 @@ namespace azure.ai.projects.types
         temperature: float
         tool_choice: VoiceAgentToolChoice
         tools: list[VoiceAgentTool]
-        type: Literal[realtime]
+        type: Required[Literal["realtime"]]
 
 
     class azure.ai.projects.types.VoiceAgentStaticInterimResponseConfig(TypedDict, total=False):
         key "latency_threshold_ms": int
-        key "type": Required[Literal["static_interim_response"]]
+        key "texts": list[str]
+        key "triggers": list[Union[str, VoiceAgentInterimResponseTrigger]]
         latency_threshold_ms: int
         texts: list[str]
         triggers: list[Union[str, VoiceAgentInterimResponseTrigger]]
-        type: Literal[static_interim_response]
+        type: Required[Literal["static_interim_response"]]
 
 
     class azure.ai.projects.types.VoiceAgentTranscriptionPhrase(TypedDict, total=False):
         key "confidence": Optional[float]
-        key "duration_milliseconds": Required[int]
         key "locale": Optional[str]
-        key "offset_milliseconds": Required[int]
-        key "text": Required[str]
         key "words": Optional[list[VoiceAgentTranscriptionWord]]
         confidence: float
-        duration_milliseconds: int
+        duration_milliseconds: Required[int]
         locale: str
-        offset_milliseconds: int
-        text: str
+        offset_milliseconds: Required[int]
+        text: Required[str]
         words: list[VoiceAgentTranscriptionWord]
 
 
     class azure.ai.projects.types.VoiceAgentTranscriptionWord(TypedDict, total=False):
-        key "duration_milliseconds": Required[int]
-        key "offset_milliseconds": Required[int]
-        key "text": Required[str]
-        duration_milliseconds: int
-        offset_milliseconds: int
-        text: str
+        duration_milliseconds: Required[int]
+        offset_milliseconds: Required[int]
+        text: Required[str]
 
 
     class azure.ai.projects.types.VoiceAssistantMessageItem(TypedDict, total=False):
-        key "content": Required[list[RealtimeConversationItemMessageAssistantContent]]
         key "created_at": int
         key "id": str
         key "object": Literal["item"]
         key "response_id": str
-        key "role": Required[Literal[RealtimeConversationItemMessageType.ASSISTANT]]
         key "status": Literal["completed", "incomplete", "in_progress"]
-        key "type": Required[Literal[VoiceConversationItemType.MESSAGE]]
-        content: list[RealtimeConversationItemMessageAssistantContent]
+        content: Required[list[RealtimeConversationItemMessageAssistantContent]]
         created_at: int
         id: str
         object: Literal[item]
         response_id: str
-        role: Literal[RealtimeConversationItemMessageType.ASSISTANT]
+        role: Required[Literal[RealtimeConversationItemMessageType.ASSISTANT]]
         status: Literal[completed, incomplete, in_progress]
-        type: Literal[VoiceConversationItemType.MESSAGE]
+        type: Required[Literal[VoiceConversationItemType.MESSAGE]]
 
 
     class azure.ai.projects.types.VoiceAudioConfig(TypedDict, total=False):
-        key "input": ForwardRef('VoiceAudioInputConfig', module='types')
-        key "output": ForwardRef('VoiceAudioOutputConfig', module='types')
+        key "input": ForwardRef('VoiceAudioInputConfig')
+        key "output": ForwardRef('VoiceAudioOutputConfig')
         input: VoiceAudioInputConfig
         output: VoiceAudioOutputConfig
 
 
     class azure.ai.projects.types.VoiceAudioFormat(TypedDict, total=False):
         key "rate": int
-        key "type": Required[Union[str, VoiceAudioFormatType]]
         rate: int
-        type: Union[str, VoiceAudioFormatType]
+        type: Required[Union[str, VoiceAudioFormatType]]
 
 
     class azure.ai.projects.types.VoiceAudioInputConfig(TypedDict, total=False):
         key "echo_cancellation": Optional[VoiceAgentEchoCancellation]
-        key "format": ForwardRef('VoiceAudioFormat', module='types')
+        key "format": ForwardRef('VoiceAudioFormat')
         key "noise_reduction": Optional[VoiceNoiseReduction]
         key "transcription": Optional[VoiceInputTranscription]
         key "turn_detection": Optional[VoiceAgentTurnDetection]
@@ -21104,9 +20338,11 @@ namespace azure.ai.projects.types
         key "custom_lexicon_url": str
         key "custom_text_normalization_url": str
         key "custom_voice_endpoint_id": str
-        key "format": ForwardRef('VoiceAudioFormat', module='types')
+        key "format": ForwardRef('VoiceAudioFormat')
+        key "output_audio_timestamp_types": list[Union[str, VoiceAudioTimestampType]]
         key "personal_voice_model": str
         key "pitch": str
+        key "prefer_locales": list[str]
         key "speed": float
         key "style": str
         key "voice": str
@@ -21132,23 +20368,21 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.VoiceAvatarConfig(TypedDict, total=False):
-        key "character": Required[str]
         key "customized": bool
         key "model": str
         key "output_audit_audio": bool
         key "output_protocol": Union[str, VoiceAvatarOutputProtocol]
-        key "scene": ForwardRef('VoiceAgentAvatarScene', module='types')
+        key "scene": ForwardRef('VoiceAgentAvatarScene')
         key "style": str
-        key "type": Required[Union[str, VoiceAvatarType]]
-        key "video": ForwardRef('VoiceAgentAvatarVideoParams', module='types')
-        character: str
+        key "video": ForwardRef('VoiceAgentAvatarVideoParams')
+        character: Required[str]
         customized: bool
         model: str
         output_audit_audio: bool
         output_protocol: Union[str, VoiceAvatarOutputProtocol]
         scene: VoiceAgentAvatarScene
         style: str
-        type: Union[str, VoiceAvatarType]
+        type: Required[Union[str, VoiceAvatarType]]
         video: VoiceAgentAvatarVideoParams
 
 
@@ -21163,7 +20397,6 @@ namespace azure.ai.projects.types
         key "silence_duration_ms": str
         key "speech_duration_ms": str
         key "threshold": float
-        key "type": Required[Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD_EN]]
         auto_truncate: bool
         create_response: bool
         end_of_utterance_detection: VoiceEndOfUtteranceDetection
@@ -21174,7 +20407,7 @@ namespace azure.ai.projects.types
         silence_duration_ms: str
         speech_duration_ms: str
         threshold: float
-        type: Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD_EN]
+        type: Required[Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD_EN]]
 
 
     class azure.ai.projects.types.VoiceAzureSemanticVadMultilingualTurnDetection(TypedDict, total=False):
@@ -21183,12 +20416,12 @@ namespace azure.ai.projects.types
         key "end_of_utterance_detection": Optional[VoiceEndOfUtteranceDetection]
         key "idle_timeout_ms": str
         key "interrupt_response": bool
+        key "languages": list[str]
         key "prefix_padding_ms": str
         key "remove_filler_words": bool
         key "silence_duration_ms": str
         key "speech_duration_ms": str
         key "threshold": float
-        key "type": Required[Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL]]
         auto_truncate: bool
         create_response: bool
         end_of_utterance_detection: VoiceEndOfUtteranceDetection
@@ -21200,7 +20433,7 @@ namespace azure.ai.projects.types
         silence_duration_ms: str
         speech_duration_ms: str
         threshold: float
-        type: Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL]
+        type: Required[Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL]]
 
 
     class azure.ai.projects.types.VoiceAzureSemanticVadTurnDetection(TypedDict, total=False):
@@ -21209,12 +20442,12 @@ namespace azure.ai.projects.types
         key "end_of_utterance_detection": Optional[VoiceEndOfUtteranceDetection]
         key "idle_timeout_ms": str
         key "interrupt_response": bool
+        key "languages": list[str]
         key "prefix_padding_ms": str
         key "remove_filler_words": bool
         key "silence_duration_ms": str
         key "speech_duration_ms": str
         key "threshold": float
-        key "type": Required[Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD]]
         auto_truncate: bool
         create_response: bool
         end_of_utterance_detection: VoiceEndOfUtteranceDetection
@@ -21226,7 +20459,7 @@ namespace azure.ai.projects.types
         silence_duration_ms: str
         speech_duration_ms: str
         threshold: float
-        type: Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD]
+        type: Required[Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD]]
 
 
     class azure.ai.projects.types.VoiceConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -21240,153 +20473,129 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.VoiceEndOfUtteranceDetection(TypedDict, total=False):
-        key "model": Required[Union[str, VoiceEndOfUtteranceDetectionModel]]
         key "threshold_level": Union[str, VoiceEndOfUtteranceThresholdLevel]
         key "timeout_ms": str
-        model: Union[str, VoiceEndOfUtteranceDetectionModel]
+        model: Required[Union[str, VoiceEndOfUtteranceDetectionModel]]
         threshold_level: Union[str, VoiceEndOfUtteranceThresholdLevel]
         timeout_ms: str
 
 
     class azure.ai.projects.types.VoiceFunctionCallItem(TypedDict, total=False):
-        key "arguments": Required[str]
         key "call_id": str
         key "created_at": int
         key "id": str
-        key "name": Required[str]
         key "object": Literal["item"]
         key "response_id": str
         key "status": Literal["completed", "incomplete", "in_progress"]
-        key "type": Required[Literal[VoiceConversationItemType.FUNCTION_CALL]]
-        arguments: str
+        arguments: Required[str]
         call_id: str
         created_at: int
         id: str
-        name: str
+        name: Required[str]
         object: Literal[item]
         response_id: str
         status: Literal[completed, incomplete, in_progress]
-        type: Literal[VoiceConversationItemType.FUNCTION_CALL]
+        type: Required[Literal[VoiceConversationItemType.FUNCTION_CALL]]
 
 
     class azure.ai.projects.types.VoiceFunctionCallOutputItem(TypedDict, total=False):
-        key "call_id": Required[str]
         key "created_at": int
         key "id": str
         key "name": str
         key "object": Literal["item"]
-        key "output": Required[str]
         key "response_id": str
         key "status": Literal["completed", "incomplete", "in_progress"]
-        key "type": Required[Literal[VoiceConversationItemType.FUNCTION_CALL_OUTPUT]]
-        call_id: str
+        call_id: Required[str]
         created_at: int
         id: str
         name: str
         object: Literal[item]
-        output: str
+        output: Required[str]
         response_id: str
         status: Literal[completed, incomplete, in_progress]
-        type: Literal[VoiceConversationItemType.FUNCTION_CALL_OUTPUT]
+        type: Required[Literal[VoiceConversationItemType.FUNCTION_CALL_OUTPUT]]
 
 
     class azure.ai.projects.types.VoiceInputTranscription(TypedDict, total=False):
+        key "custom_speech": dict[str, str]
         key "delay": Literal["minimal", "low", "medium", "high", "xhigh"]
         key "language": str
-        key "model": Required[Union[str, VoiceInputTranscriptionModel]]
+        key "phrase_list": list[str]
         key "prompt": str
         custom_speech: dict[str, str]
         delay: Literal[minimal, low, medium, high, xhigh]
         language: str
-        model: Union[str, VoiceInputTranscriptionModel]
+        model: Required[Union[str, VoiceInputTranscriptionModel]]
         phrase_list: list[str]
         prompt: str
 
 
     class azure.ai.projects.types.VoiceMcpApprovalRequestItem(TypedDict, total=False):
-        key "arguments": Required[str]
         key "created_at": int
-        key "id": Required[str]
-        key "name": Required[str]
         key "response_id": str
-        key "server_label": Required[str]
-        key "type": Required[Literal[VoiceConversationItemType.MCP_APPROVAL_REQUEST]]
-        arguments: str
+        arguments: Required[str]
         created_at: int
-        id: str
-        name: str
+        id: Required[str]
+        name: Required[str]
         response_id: str
-        server_label: str
-        type: Literal[VoiceConversationItemType.MCP_APPROVAL_REQUEST]
+        server_label: Required[str]
+        type: Required[Literal[VoiceConversationItemType.MCP_APPROVAL_REQUEST]]
 
 
     class azure.ai.projects.types.VoiceMcpApprovalResponseItem(TypedDict, total=False):
-        key "approval_request_id": Required[str]
-        key "approve": Required[bool]
         key "created_at": int
-        key "id": Required[str]
         key "reason": Optional[str]
         key "response_id": str
-        key "type": Required[Literal[VoiceConversationItemType.MCP_APPROVAL_RESPONSE]]
-        approval_request_id: str
-        approve: bool
+        approval_request_id: Required[str]
+        approve: Required[bool]
         created_at: int
-        id: str
+        id: Required[str]
         reason: str
         response_id: str
-        type: Literal[VoiceConversationItemType.MCP_APPROVAL_RESPONSE]
+        type: Required[Literal[VoiceConversationItemType.MCP_APPROVAL_RESPONSE]]
 
 
     class azure.ai.projects.types.VoiceMcpCallItem(TypedDict, total=False):
         key "approval_request_id": Optional[str]
-        key "arguments": Required[str]
         key "created_at": int
-        key "error": ForwardRef('RealtimeMCPError', module='types')
-        key "id": Required[str]
-        key "name": Required[str]
+        key "error": ForwardRef('RealtimeMCPError')
         key "output": Optional[str]
         key "response_id": str
-        key "server_label": Required[str]
-        key "type": Required[Literal[VoiceConversationItemType.MCP_CALL]]
         approval_request_id: str
-        arguments: str
+        arguments: Required[str]
         created_at: int
         error: RealtimeMCPError
-        id: str
-        name: str
+        id: Required[str]
+        name: Required[str]
         output: str
         response_id: str
-        server_label: str
-        type: Literal[VoiceConversationItemType.MCP_CALL]
+        server_label: Required[str]
+        type: Required[Literal[VoiceConversationItemType.MCP_CALL]]
 
 
     class azure.ai.projects.types.VoiceMcpListToolsItem(TypedDict, total=False):
         key "created_at": int
         key "id": str
         key "response_id": str
-        key "server_label": Required[str]
-        key "tools": Required[list[MCPListToolsTool]]
-        key "type": Required[Literal[VoiceConversationItemType.MCP_LIST_TOOLS]]
         created_at: int
         id: str
         response_id: str
-        server_label: str
-        tools: list[MCPListToolsTool]
-        type: Literal[VoiceConversationItemType.MCP_LIST_TOOLS]
+        server_label: Required[str]
+        tools: Required[list[MCPListToolsTool]]
+        type: Required[Literal[VoiceConversationItemType.MCP_LIST_TOOLS]]
 
 
     class azure.ai.projects.types.VoiceNoiseReduction(TypedDict, total=False):
-        key "type": Required[Union[str, VoiceNoiseReductionType]]
-        type: Union[str, VoiceNoiseReductionType]
+        type: Required[Union[str, VoiceNoiseReductionType]]
 
 
     class azure.ai.projects.types.VoiceResponseAudio(TypedDict, total=False):
-        key "output": ForwardRef('VoiceResponseAudioOutput', module='types')
+        key "output": ForwardRef('VoiceResponseAudioOutput')
         output: VoiceResponseAudioOutput
 
 
     class azure.ai.projects.types.VoiceResponseAudioOutput(TypedDict, total=False):
-        key "format": ForwardRef('RealtimeAudioFormats', module='types')
+        key "format": ForwardRef('RealtimeAudioFormats')
         key "voice": str
         key "voice_locale": str
         key "voice_type": str
@@ -21406,7 +20615,6 @@ namespace azure.ai.projects.types
         key "silence_duration_ms": int
         key "speech_duration_ms": int
         key "threshold": float
-        key "type": Required[Literal[VoiceTurnDetectionType.SERVER_VAD]]
         auto_truncate: bool
         create_response: bool
         end_of_utterance_detection: VoiceEndOfUtteranceDetection
@@ -21416,46 +20624,38 @@ namespace azure.ai.projects.types
         silence_duration_ms: int
         speech_duration_ms: int
         threshold: float
-        type: Literal[VoiceTurnDetectionType.SERVER_VAD]
+        type: Required[Literal[VoiceTurnDetectionType.SERVER_VAD]]
 
 
     class azure.ai.projects.types.VoiceSystemMessageItem(TypedDict, total=False):
-        key "content": Required[list[RealtimeConversationItemMessageSystemContent]]
         key "created_at": int
         key "id": str
         key "object": Literal["item"]
         key "response_id": str
-        key "role": Required[Literal[RealtimeConversationItemMessageType.SYSTEM]]
         key "status": Literal["completed", "incomplete", "in_progress"]
-        key "type": Required[Literal[VoiceConversationItemType.MESSAGE]]
-        content: list[RealtimeConversationItemMessageSystemContent]
+        content: Required[list[RealtimeConversationItemMessageSystemContent]]
         created_at: int
         id: str
         object: Literal[item]
         response_id: str
-        role: Literal[RealtimeConversationItemMessageType.SYSTEM]
+        role: Required[Literal[RealtimeConversationItemMessageType.SYSTEM]]
         status: Literal[completed, incomplete, in_progress]
-        type: Literal[VoiceConversationItemType.MESSAGE]
+        type: Required[Literal[VoiceConversationItemType.MESSAGE]]
 
 
     class azure.ai.projects.types.VoiceSystemTool(TypedDict, total=False):
         key "description": str
-        key "name": Required[Union[str, VoiceSystemToolName]]
-        key "type": Required[Literal["system"]]
         description: str
-        name: Union[str, VoiceSystemToolName]
-        type: Literal[system]
+        name: Required[Union[str, VoiceSystemToolName]]
+        type: Required[Literal["system"]]
 
 
     class azure.ai.projects.types.VoiceToolboxTool(TypedDict, total=False):
         key "response_scheduling": Union[str, VoiceAgentToolResponseScheduling]
-        key "toolbox_name": Required[str]
-        key "toolbox_version": Required[str]
-        key "type": Required[Literal["toolbox"]]
         response_scheduling: Union[str, VoiceAgentToolResponseScheduling]
-        toolbox_name: str
-        toolbox_version: str
-        type: Literal[toolbox]
+        toolbox_name: Required[str]
+        toolbox_version: Required[str]
+        type: Required[Literal["toolbox"]]
 
 
     class azure.ai.projects.types.VoiceTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -21467,22 +20667,19 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.VoiceUserMessageItem(TypedDict, total=False):
-        key "content": Required[list[RealtimeConversationItemMessageUserContent]]
         key "created_at": int
         key "id": str
         key "object": Literal["item"]
         key "response_id": str
-        key "role": Required[Literal[RealtimeConversationItemMessageType.USER]]
         key "status": Literal["completed", "incomplete", "in_progress"]
-        key "type": Required[Literal[VoiceConversationItemType.MESSAGE]]
-        content: list[RealtimeConversationItemMessageUserContent]
+        content: Required[list[RealtimeConversationItemMessageUserContent]]
         created_at: int
         id: str
         object: Literal[item]
         response_id: str
-        role: Literal[RealtimeConversationItemMessageType.USER]
+        role: Required[Literal[RealtimeConversationItemMessageType.USER]]
         status: Literal[completed, incomplete, in_progress]
-        type: Literal[VoiceConversationItemType.MESSAGE]
+        type: Required[Literal[VoiceConversationItemType.MESSAGE]]
 
 
     class azure.ai.projects.types.WebSearchApproximateLocation(TypedDict, total=False):
@@ -21490,38 +20687,35 @@ namespace azure.ai.projects.types
         key "country": Optional[str]
         key "region": Optional[str]
         key "timezone": Optional[str]
-        key "type": Required[Literal["approximate"]]
         city: str
         country: str
         region: str
         timezone: str
-        type: Literal[approximate]
+        type: Required[Literal["approximate"]]
 
 
     class azure.ai.projects.types.WebSearchConfiguration(TypedDict, total=False):
-        key "instance_name": Required[str]
-        key "project_connection_id": Required[str]
-        instance_name: str
-        project_connection_id: str
+        instance_name: Required[str]
+        project_connection_id: Required[str]
 
 
     class azure.ai.projects.types.WebSearchPreviewTool(TypedDict, total=False):
+        key "search_content_types": list[Union[str, SearchContentType]]
         key "search_context_size": Union[str, SearchContextSize]
-        key "type": Required[Literal[ToolType.WEB_SEARCH_PREVIEW]]
         key "user_location": Optional[ApproximateLocation]
         search_content_types: list[Union[str, SearchContentType]]
         search_context_size: Union[str, SearchContextSize]
-        type: Literal[ToolType.WEB_SEARCH_PREVIEW]
+        type: Required[Literal[ToolType.WEB_SEARCH_PREVIEW]]
         user_location: ApproximateLocation
 
 
     class azure.ai.projects.types.WebSearchTool(TypedDict, total=False):
-        key "custom_search_configuration": ForwardRef('WebSearchConfiguration', module='types')
+        key "custom_search_configuration": ForwardRef('WebSearchConfiguration')
         key "description": str
         key "filters": Optional[WebSearchToolFilters]
         key "name": str
         key "search_context_size": Literal["low", "medium", "high"]
-        key "type": Required[Literal[ToolType.WEB_SEARCH]]
+        key "tool_configs": dict[str, ToolConfig]
         key "user_location": Optional[WebSearchApproximateLocation]
         custom_search_configuration: WebSearchConfiguration
         description: str
@@ -21529,7 +20723,7 @@ namespace azure.ai.projects.types
         name: str
         search_context_size: Literal[low, medium, high]
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolType.WEB_SEARCH]
+        type: Required[Literal[ToolType.WEB_SEARCH]]
         user_location: WebSearchApproximateLocation
 
 
@@ -21539,12 +20733,12 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.WebSearchToolboxTool(TypedDict, total=False):
-        key "custom_search_configuration": ForwardRef('WebSearchConfiguration', module='types')
+        key "custom_search_configuration": ForwardRef('WebSearchConfiguration')
         key "description": str
         key "filters": Optional[WebSearchToolFilters]
         key "name": str
         key "search_context_size": Literal["low", "medium", "high"]
-        key "type": Required[Literal[ToolboxToolType.WEB_SEARCH]]
+        key "tool_configs": dict[str, ToolConfig]
         key "user_location": Optional[WebSearchApproximateLocation]
         custom_search_configuration: WebSearchConfiguration
         description: str
@@ -21552,41 +20746,35 @@ namespace azure.ai.projects.types
         name: str
         search_context_size: Literal[low, medium, high]
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.WEB_SEARCH]
+        type: Required[Literal[ToolboxToolType.WEB_SEARCH]]
         user_location: WebSearchApproximateLocation
 
 
     class azure.ai.projects.types.WeeklyRecurrenceSchedule(TypedDict, total=False):
-        key "daysOfWeek": Required[list[Union[str, DayOfWeek]]]
-        key "type": Required[Literal[RecurrenceType.WEEKLY]]
-        daysOfWeek: list[Union[str, DayOfWeek]]
-        type: Literal[RecurrenceType.WEEKLY]
+        daysOfWeek: Required[list[Union[str, DayOfWeek]]]
+        type: Required[Literal[RecurrenceType.WEEKLY]]
 
 
     class azure.ai.projects.types.WorkIQPreviewTool(TypedDict, total=False):
-        key "project_connection_id": Required[str]
-        key "type": Required[Literal[ToolType.WORK_IQ_PREVIEW]]
-        project_connection_id: str
-        type: Literal[ToolType.WORK_IQ_PREVIEW]
+        project_connection_id: Required[str]
+        type: Required[Literal[ToolType.WORK_IQ_PREVIEW]]
 
 
     class azure.ai.projects.types.WorkIQPreviewToolboxTool(TypedDict, total=False):
         key "description": str
         key "name": str
-        key "project_connection_id": Required[str]
-        key "type": Required[Literal[ToolboxToolType.WORK_IQ_PREVIEW]]
+        key "tool_configs": dict[str, ToolConfig]
         description: str
         name: str
-        project_connection_id: str
+        project_connection_id: Required[str]
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.WORK_IQ_PREVIEW]
+        type: Required[Literal[ToolboxToolType.WORK_IQ_PREVIEW]]
 
 
     class azure.ai.projects.types.WorkflowAgentDefinition(TypedDict, total=False):
-        key "kind": Required[Literal[AgentKind.WORKFLOW]]
-        key "rai_config": ForwardRef('RaiConfig', module='types')
+        key "rai_config": ForwardRef('RaiConfig')
         key "workflow": str
-        kind: Literal[AgentKind.WORKFLOW]
+        kind: Required[Literal[AgentKind.WORKFLOW]]
         rai_config: RaiConfig
         workflow: str
 

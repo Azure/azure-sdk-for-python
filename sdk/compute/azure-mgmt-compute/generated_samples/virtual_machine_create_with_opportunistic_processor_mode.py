@@ -16,7 +16,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_create_with_adiff_os_disk_and_full_caching_enabled.py
+    python virtual_machine_create_with_opportunistic_processor_mode.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -36,9 +36,8 @@ def main():
         vm_name="myVM",
         parameters={
             "location": "westus",
-            "plan": {"name": "windows2016", "product": "windows-data-science-vm", "publisher": "microsoft-ads"},
             "properties": {
-                "hardwareProfile": {"vmSize": "Standard_DS1_v2"},
+                "hardwareProfile": {"processorMode": "Opportunistic", "vmSize": "Standard_D2s_v5"},
                 "networkProfile": {
                     "networkInterfaces": [
                         {
@@ -54,16 +53,15 @@ def main():
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "offer": "windows-data-science-vm",
-                        "publisher": "microsoft-ads",
-                        "sku": "windows2016",
+                        "offer": "WindowsServer",
+                        "publisher": "MicrosoftWindowsServer",
+                        "sku": "2019-Datacenter",
                         "version": "latest",
                     },
                     "osDisk": {
-                        "caching": "ReadOnly",
+                        "caching": "ReadWrite",
                         "createOption": "FromImage",
-                        "diffDiskSettings": {"enableFullCaching": True, "option": "Local", "placement": "TempDisk"},
-                        "managedDisk": {"storageAccountType": "Standard_LRS"},
+                        "managedDisk": {"storageAccountType": "Premium_LRS"},
                         "name": "myVMosdisk",
                     },
                 },
@@ -73,6 +71,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineExamples/VirtualMachine_Create_WithADiffOsDiskAndFullCachingEnabled.json
+# x-ms-original-file: 2026-04-01/virtualMachineExamples/VirtualMachine_Create_WithOpportunisticProcessorMode.json
 if __name__ == "__main__":
     main()
