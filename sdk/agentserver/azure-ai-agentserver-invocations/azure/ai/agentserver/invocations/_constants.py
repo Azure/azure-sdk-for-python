@@ -40,9 +40,18 @@ class InvocationsWSConstants:
     CLOSE_GOING_AWAY = 1001  # peer is leaving or restarting
     CLOSE_INTERNAL_ERROR = 1011  # handler raised an unhandled exception
     NORMAL_CLOSE_CODES = frozenset({CLOSE_NORMAL, CLOSE_GOING_AWAY})
+    PROTOCOL_CLOSE_CODES = frozenset({1002, 1003, 1007, 1008, 1009, 1010})
 
     # Structured-log ``extra`` keys.
     ATTR_SPAN_SESSION_ID = "azure.ai.agentserver.invocations_ws.session_id"
     ATTR_SPAN_CLOSE_CODE = "azure.ai.agentserver.invocations_ws.close_code"
     ATTR_SPAN_DURATION_MS = "azure.ai.agentserver.invocations_ws.duration_ms"
     ATTR_SPAN_ERROR_CODE = "azure.ai.agentserver.invocations_ws.error.code"
+
+
+def _classify_websocket_close_code(close_code: int) -> str:
+    if close_code in InvocationsWSConstants.NORMAL_CLOSE_CODES:
+        return "completed"
+    if close_code in InvocationsWSConstants.PROTOCOL_CLOSE_CODES:
+        return "protocol_error"
+    return "transport_error"

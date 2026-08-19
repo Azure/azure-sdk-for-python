@@ -20,6 +20,7 @@ from opentelemetry.trace import SpanContext, TraceFlags, TraceState
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
+from azure.ai.agentserver.invocations._constants import InvocationsWSConstants
 from azure.ai.agentserver.invocations.voice import (
     Session,
     SessionDisconnected,
@@ -581,12 +582,20 @@ def test_connection_termination_fact_is_visible_before_cleanup(spans, scenario, 
     [
         pytest.param(1000, SessionTermination.COMPLETED, id="normal-baseline"),
         pytest.param(1001, SessionTermination.COMPLETED, id="going-away"),
+        pytest.param(1002, SessionTermination.PROTOCOL_ERROR, id="protocol-error"),
+        pytest.param(1003, SessionTermination.PROTOCOL_ERROR, id="unsupported-data"),
+        pytest.param(1007, SessionTermination.PROTOCOL_ERROR, id="invalid-payload"),
+        pytest.param(1008, SessionTermination.PROTOCOL_ERROR, id="policy-violation"),
+        pytest.param(1009, SessionTermination.PROTOCOL_ERROR, id="message-too-big"),
+        pytest.param(1010, SessionTermination.PROTOCOL_ERROR, id="mandatory-extension"),
+        pytest.param(1011, SessionTermination.TRANSPORT_ERROR, id="internal-error-negative-control"),
         pytest.param(1006, SessionTermination.TRANSPORT_ERROR, id="abnormal-negative-control"),
     ],
 )
 async def test_peer_disconnect_classification_matches_cleanup_and_telemetry(
     spans,
     metric_reader,
+    caplog,
     close_code,
     expected_termination,
 ):
@@ -642,7 +651,8 @@ async def test_peer_disconnect_classification_matches_cleanup_and_telemetry(
         if point.attributes == expected_metric_attributes
     )
 
-    await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
 
     assert callback_order == ["terminating", "disconnect"]
     assert terminations == [expected_termination]
@@ -652,6 +662,9 @@ async def test_peer_disconnect_classification_matches_cleanup_and_telemetry(
     assert len(inbound_events) == 1
     assert [message["type"] for message in sent_messages] == ["websocket.accept"]
     assert Session._current(websocket) is None  # pylint: disable=protected-access
+    close_records = [record for record in caplog.records if record.getMessage() == "Voice connection closed"]
+    assert len(close_records) == 1
+    assert getattr(close_records[0], InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE) == close_code
 
     connection = _span_by_name(exporter, "agentserver.connection")
     assert connection.attributes["bridge.outcome"] == expected_outcome

@@ -14,7 +14,7 @@ from opentelemetry import (
     trace as otel_trace,
 )
 
-from .._constants import InvocationsWSConstants
+from .._constants import _classify_websocket_close_code
 from .._version import VERSION
 
 
@@ -299,13 +299,7 @@ def _connection_outcome(close_code: int, error_code: str | None) -> str:
     }
     if error_code is not None:
         return error_outcomes.get(error_code, "internal_error")
-    if close_code in InvocationsWSConstants.NORMAL_CLOSE_CODES:
-        outcome = "completed"
-    elif close_code in {1002, 1003, 1007, 1008, 1009, 1010}:
-        outcome = "protocol_error"
-    else:
-        outcome = "transport_error"
-    return outcome
+    return _classify_websocket_close_code(close_code)
 
 
 def _record_target_duration(

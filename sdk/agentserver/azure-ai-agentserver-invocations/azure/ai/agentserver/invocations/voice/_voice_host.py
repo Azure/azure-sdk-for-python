@@ -40,7 +40,7 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
     USER_ID,
 )
 
-from .._constants import InvocationsWSConstants
+from .._constants import InvocationsWSConstants, _classify_websocket_close_code
 from .._invocation import InvocationAgentServerHost
 from . import _session as _session_transport
 from ._codec import MAX_FRAME_BYTES, VoiceProtocolError, decode_inbound_message
@@ -432,17 +432,9 @@ def _commit_voice_session_termination(
     elif handler_error is not None:
         termination = SessionTermination.CALLBACK_ERROR
     elif disconnect_event is not None:
-        termination = (
-            SessionTermination.COMPLETED
-            if int(disconnect_event.code) in InvocationsWSConstants.NORMAL_CLOSE_CODES
-            else SessionTermination.TRANSPORT_ERROR
-        )
-    elif close_code in InvocationsWSConstants.NORMAL_CLOSE_CODES:
-        termination = SessionTermination.COMPLETED
-    elif close_code in {1002, 1003, 1007, 1008, 1009, 1010}:
-        termination = SessionTermination.PROTOCOL_ERROR
+        termination = SessionTermination(_classify_websocket_close_code(int(disconnect_event.code)))
     else:
-        termination = SessionTermination.TRANSPORT_ERROR
+        termination = SessionTermination(_classify_websocket_close_code(close_code))
     session._begin_termination(termination)
 
 
@@ -519,9 +511,7 @@ async def _receive_voice_event(
         reason = raw_reason if isinstance(raw_reason, str) else None
         _select_voice_close_code(websocket, code)
         session._begin_termination(  # pylint: disable=protected-access
-            SessionTermination.COMPLETED
-            if code in InvocationsWSConstants.NORMAL_CLOSE_CODES
-            else SessionTermination.TRANSPORT_ERROR
+            SessionTermination(_classify_websocket_close_code(code))
         )
         _begin_voice_termination(websocket, session)
         websocket.scope.setdefault(
