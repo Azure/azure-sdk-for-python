@@ -216,6 +216,11 @@ from ...operations._operations import (
     build_tenant_level_shared_gallery_invites_tenant_level_gallery_sharing_accept_request,
     build_tenant_level_shared_gallery_invites_tenant_level_gallery_sharing_reject_request,
     build_usage_list_request,
+    build_virtual_machine_diagnostic_run_commands_create_or_update_request,
+    build_virtual_machine_diagnostic_run_commands_delete_request,
+    build_virtual_machine_diagnostic_run_commands_diagnostic_list_by_virtual_machine_request,
+    build_virtual_machine_diagnostic_run_commands_get_by_virtual_machine_request,
+    build_virtual_machine_diagnostic_run_commands_update_request,
     build_virtual_machine_extension_images_get_request,
     build_virtual_machine_extension_images_list_types_request,
     build_virtual_machine_extension_images_list_versions_request,
@@ -255,6 +260,11 @@ from ...operations._operations import (
     build_virtual_machine_scale_set_rolling_upgrades_get_latest_request,
     build_virtual_machine_scale_set_rolling_upgrades_start_extension_upgrade_request,
     build_virtual_machine_scale_set_rolling_upgrades_start_os_upgrade_request,
+    build_virtual_machine_scale_set_vm_diagnostic_run_commands_create_or_update_request,
+    build_virtual_machine_scale_set_vm_diagnostic_run_commands_delete_request,
+    build_virtual_machine_scale_set_vm_diagnostic_run_commands_diagnostic_list_request,
+    build_virtual_machine_scale_set_vm_diagnostic_run_commands_get_request,
+    build_virtual_machine_scale_set_vm_diagnostic_run_commands_update_request,
     build_virtual_machine_scale_set_vm_extensions_create_or_update_request,
     build_virtual_machine_scale_set_vm_extensions_delete_request,
     build_virtual_machine_scale_set_vm_extensions_get_request,
@@ -297,6 +307,7 @@ from ...operations._operations import (
     build_virtual_machine_scale_sets_list_by_location_request,
     build_virtual_machine_scale_sets_list_request,
     build_virtual_machine_scale_sets_list_skus_request,
+    build_virtual_machine_scale_sets_migrate_vm_availability_zone_request,
     build_virtual_machine_scale_sets_perform_maintenance_request,
     build_virtual_machine_scale_sets_power_off_request,
     build_virtual_machine_scale_sets_reapply_request,
@@ -345,7 +356,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -373,7 +384,7 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -442,7 +453,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-methods
+class VirtualMachineScaleSetsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -494,7 +505,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSet] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_sets_get_request(
@@ -569,7 +580,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -769,7 +780,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineScaleSet] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -849,7 +860,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -1048,7 +1059,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineScaleSet] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -1119,7 +1130,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_sets_delete_request(
@@ -1189,7 +1200,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1248,7 +1259,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineScaleSet]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1332,7 +1343,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineScaleSet]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1421,7 +1432,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -1598,7 +1609,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1764,7 +1775,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -1830,7 +1841,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -2034,7 +2045,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -2106,7 +2117,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -2296,7 +2307,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -2386,7 +2397,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.RecoveryWalkResponse] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_sets_force_recovery_service_fabric_platform_update_domain_walk_request(
@@ -2463,7 +2474,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetInstanceView] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_sets_get_instance_view_request(
@@ -2532,7 +2543,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -2704,7 +2715,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -2769,7 +2780,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.UpgradeOperationHistoricalStatusInfo]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2860,7 +2871,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -3050,7 +3061,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -3119,7 +3130,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -3323,7 +3334,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -3385,7 +3396,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_sets_reapply_request(
@@ -3452,7 +3463,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3515,7 +3526,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -3693,7 +3704,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -3764,7 +3775,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_scale_set_reimage_input else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -3950,7 +3961,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_scale_set_reimage_input else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -4017,7 +4028,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -4195,7 +4206,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -4262,7 +4273,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -4436,7 +4447,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -4501,7 +4512,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -4666,7 +4677,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -4732,7 +4743,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineScaleSetSku]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -4823,7 +4834,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -4997,7 +5008,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_instance_i_ds else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -5049,7 +5060,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         params_added_on={
             "2025-04-01": ["api_version", "subscription_id", "resource_group_name", "vm_scale_set_name", "content_type"]
         },
-        api_versions_list=["2025-04-01", "2025-11-01", "2026-03-01"],
+        api_versions_list=["2025-04-01", "2025-11-01", "2026-03-01", "2026-04-01"],
     )
     async def _scale_out_initial(
         self,
@@ -5069,7 +5080,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -5214,7 +5225,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         params_added_on={
             "2025-04-01": ["api_version", "subscription_id", "resource_group_name", "vm_scale_set_name", "content_type"]
         },
-        api_versions_list=["2025-04-01", "2025-11-01", "2026-03-01"],
+        api_versions_list=["2025-04-01", "2025-11-01", "2026-03-01", "2026-04-01"],
     )
     async def begin_scale_out(
         self,
@@ -5241,7 +5252,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -5252,6 +5263,249 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "vm_scale_set_name", "content_type"]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def _migrate_vm_availability_zone_initial(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        body: Union[_models.MigrateVMAvailabilityZoneInput, _types.MigrateVMAvailabilityZoneInput, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_virtual_machine_scale_sets_migrate_vm_availability_zone_request(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_migrate_vm_availability_zone(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        body: _models.MigrateVMAvailabilityZoneInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Migrates one or more virtual machines in a VM scale set to an availability zone.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set. Required.
+        :type vm_scale_set_name: str
+        :param body: The input object for the MigrateVMAvailabilityZone API. Required.
+        :type body: ~azure.mgmt.compute.models.MigrateVMAvailabilityZoneInput
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_migrate_vm_availability_zone(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        body: _types.MigrateVMAvailabilityZoneInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Migrates one or more virtual machines in a VM scale set to an availability zone.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set. Required.
+        :type vm_scale_set_name: str
+        :param body: The input object for the MigrateVMAvailabilityZone API. Required.
+        :type body: ~azure.mgmt.compute.types.MigrateVMAvailabilityZoneInput
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_migrate_vm_availability_zone(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Migrates one or more virtual machines in a VM scale set to an availability zone.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set. Required.
+        :type vm_scale_set_name: str
+        :param body: The input object for the MigrateVMAvailabilityZone API. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "vm_scale_set_name", "content_type"]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def begin_migrate_vm_availability_zone(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        body: Union[_models.MigrateVMAvailabilityZoneInput, _types.MigrateVMAvailabilityZoneInput, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Migrates one or more virtual machines in a VM scale set to an availability zone.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set. Required.
+        :type vm_scale_set_name: str
+        :param body: The input object for the MigrateVMAvailabilityZone API. Is either a
+         MigrateVMAvailabilityZoneInput type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.compute.models.MigrateVMAvailabilityZoneInput or
+         ~azure.mgmt.compute.types.MigrateVMAvailabilityZoneInput or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._migrate_vm_availability_zone_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                body=body,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -5301,7 +5555,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineScaleSet]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -5372,7 +5626,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-long
+class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5426,7 +5680,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetExtension] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_extensions_get_request(
@@ -5496,7 +5750,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -5687,7 +5941,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineScaleSetExtension] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -5760,7 +6014,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -5952,7 +6206,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineScaleSetExtension] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -6018,7 +6272,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_extensions_delete_request(
@@ -6087,7 +6341,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -6150,7 +6404,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineScaleSetExtension]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -6222,7 +6476,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachineScaleSetLifeCycleHookEventsOperations:  # pylint: disable=name-too-long
+class VirtualMachineScaleSetLifeCycleHookEventsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6268,7 +6522,7 @@ class VirtualMachineScaleSetLifeCycleHookEventsOperations:  # pylint: disable=na
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VMScaleSetLifecycleHookEvent] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_life_cycle_hook_events_get_request(
@@ -6453,7 +6707,7 @@ class VirtualMachineScaleSetLifeCycleHookEventsOperations:  # pylint: disable=na
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VMScaleSetLifecycleHookEvent] = kwargs.pop("cls", None)
 
@@ -6531,7 +6785,7 @@ class VirtualMachineScaleSetLifeCycleHookEventsOperations:  # pylint: disable=na
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VMScaleSetLifecycleHookEvent]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -6603,7 +6857,7 @@ class VirtualMachineScaleSetLifeCycleHookEventsOperations:  # pylint: disable=na
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-long
+class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6660,7 +6914,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetVMExtension] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vm_extensions_get_request(
@@ -6732,7 +6986,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -6936,7 +7190,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineScaleSetVMExtension] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -7011,7 +7265,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -7215,7 +7469,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineScaleSetVMExtension] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -7286,7 +7540,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vm_extensions_delete_request(
@@ -7358,7 +7612,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -7440,7 +7694,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetVMExtensionsListResult] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vm_extensions_list_request(
@@ -7490,7 +7744,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
 
-class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
+class VirtualMachinesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7544,7 +7798,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachine] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_get_request(
@@ -7619,7 +7873,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -7823,7 +8077,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachine] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -7903,7 +8157,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -8102,7 +8356,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachine] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -8173,7 +8427,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_delete_request(
@@ -8243,7 +8497,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -8318,7 +8572,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachine]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -8421,7 +8675,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachine]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -8507,7 +8761,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_assess_patches_request(
@@ -8575,7 +8829,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineAssessPatchesResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -8641,7 +8895,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -8813,7 +9067,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.StorageProfile] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -8882,7 +9136,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -9059,7 +9313,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineCaptureResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -9124,7 +9378,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_convert_to_managed_disks_request(
@@ -9191,7 +9445,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -9236,7 +9490,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
     @api_version_validation(
         params_added_on={"2025-11-01": ["force_deallocate"]},
-        api_versions_list=["2024-11-01", "2025-04-01", "2025-11-01", "2026-03-01"],
+        api_versions_list=["2024-11-01", "2025-04-01", "2025-11-01", "2026-03-01", "2026-04-01"],
     )
     async def _deallocate_initial(
         self,
@@ -9258,7 +9512,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_deallocate_request(
@@ -9311,7 +9565,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2025-11-01": ["force_deallocate"]},
-        api_versions_list=["2024-11-01", "2025-04-01", "2025-11-01", "2026-03-01"],
+        api_versions_list=["2024-11-01", "2025-04-01", "2025-11-01", "2026-03-01", "2026-04-01"],
     )
     async def begin_deallocate(
         self,
@@ -9342,7 +9596,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -9416,7 +9670,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_generalize_request(
@@ -9470,7 +9724,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -9648,7 +9902,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineInstallPatchesResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -9726,7 +9980,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineInstanceView] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_instance_view_request(
@@ -9787,7 +10041,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_perform_maintenance_request(
@@ -9853,7 +10107,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -9910,7 +10164,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_power_off_request(
@@ -9982,7 +10236,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -10038,7 +10292,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_reapply_request(
@@ -10102,7 +10356,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -10157,7 +10411,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_redeploy_request(
@@ -10221,7 +10475,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -10284,7 +10538,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if parameters else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -10478,7 +10732,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if parameters else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -10537,7 +10791,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_restart_request(
@@ -10601,7 +10855,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -10680,7 +10934,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.RetrieveBootDiagnosticsDataResult] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_retrieve_boot_diagnostics_data_request(
@@ -10752,7 +11006,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_simulate_eviction_request(
@@ -10798,7 +11052,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machines_start_request(
@@ -10862,7 +11116,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -10924,7 +11178,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineSize]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -11013,7 +11267,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -11182,7 +11436,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RunCommandResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -11255,7 +11509,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if parameters else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -11430,7 +11684,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if parameters else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -11490,7 +11744,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachine]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -11561,7 +11815,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachineExtensionsOperations:
+class VirtualMachineExtensionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11614,7 +11868,7 @@ class VirtualMachineExtensionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineExtension] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_extensions_get_request(
@@ -11682,7 +11936,7 @@ class VirtualMachineExtensionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -11867,7 +12121,7 @@ class VirtualMachineExtensionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineExtension] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -11940,7 +12194,7 @@ class VirtualMachineExtensionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -12126,7 +12380,7 @@ class VirtualMachineExtensionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineExtension] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -12196,7 +12450,7 @@ class VirtualMachineExtensionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_extensions_delete_request(
@@ -12265,7 +12519,7 @@ class VirtualMachineExtensionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -12338,7 +12592,7 @@ class VirtualMachineExtensionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineExtensionsListResult] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_extensions_list_request(
@@ -12387,7 +12641,7 @@ class VirtualMachineExtensionsOperations:
         return deserialized  # type: ignore
 
 
-class VirtualMachineExtensionImagesOperations:
+class VirtualMachineExtensionImagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12434,7 +12688,7 @@ class VirtualMachineExtensionImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineExtensionImage] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_extension_images_get_request(
@@ -12508,7 +12762,7 @@ class VirtualMachineExtensionImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineExtensionImage]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_extension_images_list_types_request(
@@ -12556,6 +12810,10 @@ class VirtualMachineExtensionImagesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-04-01": ["expand"]},
+        api_versions_list=["2024-11-01", "2025-04-01", "2025-11-01", "2026-03-01", "2026-04-01"],
+    )
     async def list_versions(
         self,
         location: str,
@@ -12565,6 +12823,7 @@ class VirtualMachineExtensionImagesOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
+        expand: Optional[Union[str, _models.ListVersionsExpandOptions]] = None,
         **kwargs: Any
     ) -> List[_models.VirtualMachineExtensionImage]:
         """Gets a list of virtual machine extension image versions.
@@ -12581,6 +12840,10 @@ class VirtualMachineExtensionImagesOperations:
         :paramtype top: int
         :keyword orderby: Default value is None.
         :paramtype orderby: str
+        :keyword expand: Expand the response to include additional read-only metadata. Allowed values:
+         ``properties`` — returns extended metadata (``releaseCategory``, ``urgencyLevel``,
+         ``runProfile``). "properties" Default value is None.
+        :paramtype expand: str or ~azure.mgmt.compute.models.ListVersionsExpandOptions
         :return: list of VirtualMachineExtensionImage
         :rtype: list[~azure.mgmt.compute.models.VirtualMachineExtensionImage]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12596,7 +12859,7 @@ class VirtualMachineExtensionImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineExtensionImage]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_extension_images_list_versions_request(
@@ -12607,6 +12870,7 @@ class VirtualMachineExtensionImagesOperations:
             filter=filter,
             top=top,
             orderby=orderby,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -12648,7 +12912,7 @@ class VirtualMachineExtensionImagesOperations:
         return deserialized  # type: ignore
 
 
-class AvailabilitySetsOperations:
+class AvailabilitySetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12689,7 +12953,7 @@ class AvailabilitySetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.AvailabilitySet] = kwargs.pop("cls", None)
 
         _request = build_availability_sets_get_request(
@@ -12851,7 +13115,7 @@ class AvailabilitySetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AvailabilitySet] = kwargs.pop("cls", None)
 
@@ -13023,7 +13287,7 @@ class AvailabilitySetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AvailabilitySet] = kwargs.pop("cls", None)
 
@@ -13104,7 +13368,7 @@ class AvailabilitySetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_availability_sets_delete_request(
@@ -13152,7 +13416,7 @@ class AvailabilitySetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.AvailabilitySet]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -13238,7 +13502,7 @@ class AvailabilitySetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.AvailabilitySet]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -13327,7 +13591,7 @@ class AvailabilitySetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineSize]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -13526,7 +13790,7 @@ class AvailabilitySetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -13596,7 +13860,7 @@ class AvailabilitySetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_availability_sets_cancel_migration_to_virtual_machine_scale_set_request(
@@ -13754,7 +14018,7 @@ class AvailabilitySetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -13818,7 +14082,7 @@ class AvailabilitySetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if parameters else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -13995,7 +14259,7 @@ class AvailabilitySetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if parameters else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -14043,7 +14307,7 @@ class AvailabilitySetsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ProximityPlacementGroupsOperations:
+class ProximityPlacementGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14094,7 +14358,7 @@ class ProximityPlacementGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.ProximityPlacementGroup] = kwargs.pop("cls", None)
 
         _request = build_proximity_placement_groups_get_request(
@@ -14260,7 +14524,7 @@ class ProximityPlacementGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ProximityPlacementGroup] = kwargs.pop("cls", None)
 
@@ -14435,7 +14699,7 @@ class ProximityPlacementGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ProximityPlacementGroup] = kwargs.pop("cls", None)
 
@@ -14516,7 +14780,7 @@ class ProximityPlacementGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_proximity_placement_groups_delete_request(
@@ -14567,7 +14831,7 @@ class ProximityPlacementGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.ProximityPlacementGroup]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -14649,7 +14913,7 @@ class ProximityPlacementGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.ProximityPlacementGroup]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -14719,7 +14983,7 @@ class ProximityPlacementGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DedicatedHostGroupsOperations:
+class DedicatedHostGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14772,7 +15036,7 @@ class DedicatedHostGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.DedicatedHostGroup] = kwargs.pop("cls", None)
 
         _request = build_dedicated_host_groups_get_request(
@@ -14947,7 +15211,7 @@ class DedicatedHostGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DedicatedHostGroup] = kwargs.pop("cls", None)
 
@@ -15119,7 +15383,7 @@ class DedicatedHostGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DedicatedHostGroup] = kwargs.pop("cls", None)
 
@@ -15200,7 +15464,7 @@ class DedicatedHostGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_dedicated_host_groups_delete_request(
@@ -15251,7 +15515,7 @@ class DedicatedHostGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.DedicatedHostGroup]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -15333,7 +15597,7 @@ class DedicatedHostGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.DedicatedHostGroup]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -15403,7 +15667,7 @@ class DedicatedHostGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DedicatedHostsOperations:
+class DedicatedHostsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15459,7 +15723,7 @@ class DedicatedHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.DedicatedHost] = kwargs.pop("cls", None)
 
         _request = build_dedicated_hosts_get_request(
@@ -15527,7 +15791,7 @@ class DedicatedHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -15709,7 +15973,7 @@ class DedicatedHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DedicatedHost] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -15780,7 +16044,7 @@ class DedicatedHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -15961,7 +16225,7 @@ class DedicatedHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DedicatedHost] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -16031,7 +16295,7 @@ class DedicatedHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_dedicated_hosts_delete_request(
@@ -16100,7 +16364,7 @@ class DedicatedHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -16163,7 +16427,7 @@ class DedicatedHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.DedicatedHost]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -16256,7 +16520,7 @@ class DedicatedHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -16342,7 +16606,7 @@ class DedicatedHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_dedicated_hosts_redeploy_request(
@@ -16414,7 +16678,7 @@ class DedicatedHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -16472,7 +16736,7 @@ class DedicatedHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_dedicated_hosts_restart_request(
@@ -16544,7 +16808,7 @@ class DedicatedHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -16589,7 +16853,7 @@ class DedicatedHostsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ImagesOperations:
+class ImagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16634,7 +16898,7 @@ class ImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.Image] = kwargs.pop("cls", None)
 
         _request = build_images_get_request(
@@ -16700,7 +16964,7 @@ class ImagesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -16869,7 +17133,7 @@ class ImagesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Image] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -16938,7 +17202,7 @@ class ImagesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -17107,7 +17371,7 @@ class ImagesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Image] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -17170,7 +17434,7 @@ class ImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_images_delete_request(
@@ -17234,7 +17498,7 @@ class ImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -17292,7 +17556,7 @@ class ImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.Image]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -17374,7 +17638,7 @@ class ImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.Image]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -17444,7 +17708,7 @@ class ImagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorePointCollectionsOperations:
+class RestorePointCollectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17496,7 +17760,7 @@ class RestorePointCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.RestorePointCollection] = kwargs.pop("cls", None)
 
         _request = build_restore_point_collections_get_request(
@@ -17670,7 +17934,7 @@ class RestorePointCollectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RestorePointCollection] = kwargs.pop("cls", None)
 
@@ -17845,7 +18109,7 @@ class RestorePointCollectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RestorePointCollection] = kwargs.pop("cls", None)
 
@@ -17916,7 +18180,7 @@ class RestorePointCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_restore_point_collections_delete_request(
@@ -17983,7 +18247,7 @@ class RestorePointCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -18041,7 +18305,7 @@ class RestorePointCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.RestorePointCollection]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -18125,7 +18389,7 @@ class RestorePointCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.RestorePointCollection]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -18195,7 +18459,7 @@ class RestorePointCollectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorePointsOperations:
+class RestorePointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18249,7 +18513,7 @@ class RestorePointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.RestorePoint] = kwargs.pop("cls", None)
 
         _request = build_restore_points_get_request(
@@ -18317,7 +18581,7 @@ class RestorePointsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -18502,7 +18766,7 @@ class RestorePointsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RestorePoint] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -18572,7 +18836,7 @@ class RestorePointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_restore_points_delete_request(
@@ -18641,7 +18905,7 @@ class RestorePointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -18686,7 +18950,7 @@ class RestorePointsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class CapacityReservationGroupsOperations:
+class CapacityReservationGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18741,7 +19005,7 @@ class CapacityReservationGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.CapacityReservationGroup] = kwargs.pop("cls", None)
 
         _request = build_capacity_reservation_groups_get_request(
@@ -18916,7 +19180,7 @@ class CapacityReservationGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CapacityReservationGroup] = kwargs.pop("cls", None)
 
@@ -19099,7 +19363,7 @@ class CapacityReservationGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CapacityReservationGroup] = kwargs.pop("cls", None)
 
@@ -19183,7 +19447,7 @@ class CapacityReservationGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_capacity_reservation_groups_delete_request(
@@ -19244,7 +19508,7 @@ class CapacityReservationGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.CapacityReservationGroup]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -19348,7 +19612,7 @@ class CapacityReservationGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.CapacityReservationGroup]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -19420,7 +19684,7 @@ class CapacityReservationGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CapacityReservationsOperations:
+class CapacityReservationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19475,7 +19739,7 @@ class CapacityReservationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.CapacityReservation] = kwargs.pop("cls", None)
 
         _request = build_capacity_reservations_get_request(
@@ -19543,7 +19807,7 @@ class CapacityReservationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -19733,7 +19997,7 @@ class CapacityReservationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CapacityReservation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -19804,7 +20068,7 @@ class CapacityReservationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -19986,7 +20250,7 @@ class CapacityReservationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CapacityReservation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -20056,7 +20320,7 @@ class CapacityReservationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_capacity_reservations_delete_request(
@@ -20116,8 +20380,12 @@ class CapacityReservationsOperations:
         """The operation to delete a capacity reservation. This operation is allowed only when all the
         associated resources are disassociated from the capacity reservation. Please refer to
         `https://aka.ms/CapacityReservation <https://aka.ms/CapacityReservation>`_ for more details.
-        Note: Block capacity reservations cannot be deleted after it has been successfully allocated
-        until the schedule end time.
+        Note: Block capacity reservations cannot be deleted after they have been successfully allocated
+        until the schedule end time. Future capacity reservations (Minimum API version: 2026-04-01) can
+        be deleted if their reservation state is one of: Pending, Declined, FulfillmentFailed, or
+        Approved. Otherwise, Future capacity reservations in the Committed, Live, or PartiallyFulfilled
+        state cannot be deleted until minimumCommitmentDays have elapsed since their scheduled start
+        date.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -20133,7 +20401,7 @@ class CapacityReservationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -20206,7 +20474,7 @@ class CapacityReservationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.CapacityReservation]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -20279,7 +20547,7 @@ class CapacityReservationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class InterconnectBlocksOperations:
+class InterconnectBlocksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20331,7 +20599,7 @@ class InterconnectBlocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.InterconnectBlock] = kwargs.pop("cls", None)
 
         _request = build_interconnect_blocks_get_request(
@@ -20397,7 +20665,7 @@ class InterconnectBlocksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -20570,7 +20838,7 @@ class InterconnectBlocksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.InterconnectBlock] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -20639,7 +20907,7 @@ class InterconnectBlocksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -20812,7 +21080,7 @@ class InterconnectBlocksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.InterconnectBlock] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -20877,7 +21145,7 @@ class InterconnectBlocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_interconnect_blocks_delete_request(
@@ -20944,7 +21212,7 @@ class InterconnectBlocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -21004,7 +21272,7 @@ class InterconnectBlocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.InterconnectBlock]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -21086,7 +21354,7 @@ class InterconnectBlocksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.InterconnectBlock]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -21156,7 +21424,7 @@ class InterconnectBlocksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachineRunCommandsOperations:
+class VirtualMachineRunCommandsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21210,7 +21478,7 @@ class VirtualMachineRunCommandsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineRunCommand] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_run_commands_get_by_virtual_machine_request(
@@ -21278,7 +21546,7 @@ class VirtualMachineRunCommandsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -21463,7 +21731,7 @@ class VirtualMachineRunCommandsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineRunCommand] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -21534,7 +21802,7 @@ class VirtualMachineRunCommandsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -21718,7 +21986,7 @@ class VirtualMachineRunCommandsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineRunCommand] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -21788,7 +22056,7 @@ class VirtualMachineRunCommandsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_run_commands_delete_request(
@@ -21857,7 +22125,7 @@ class VirtualMachineRunCommandsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -21922,7 +22190,7 @@ class VirtualMachineRunCommandsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineRunCommand]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -22008,7 +22276,7 @@ class VirtualMachineRunCommandsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.RunCommandDocumentBase]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -22105,7 +22373,7 @@ class VirtualMachineRunCommandsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.RunCommandDocument] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_run_commands_get_request(
@@ -22153,7 +22421,7 @@ class VirtualMachineRunCommandsOperations:
         return deserialized  # type: ignore
 
 
-class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too-long
+class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22210,7 +22478,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineRunCommand] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vm_run_commands_get_request(
@@ -22280,7 +22548,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -22478,7 +22746,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineRunCommand] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -22551,7 +22819,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -22745,7 +23013,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineRunCommand] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -22816,7 +23084,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vm_run_commands_delete_request(
@@ -22888,7 +23156,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -22962,7 +23230,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineRunCommand]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -23036,7 +23304,1912 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DisksOperations:
+class VirtualMachineDiagnosticRunCommandsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.aio.ComputeManagementClient`'s
+        :attr:`virtual_machine_diagnostic_run_commands` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_name",
+                "run_command_name",
+                "expand",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def get_by_virtual_machine(
+        self,
+        resource_group_name: str,
+        vm_name: str,
+        run_command_name: str,
+        *,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.VirtualMachineDiagnosticRunCommand:
+        """The operation to get the diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_name: The name of the VirtualMachine. Required.
+        :type vm_name: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :keyword expand: The expand expression to apply on the operation. Default value is None.
+        :paramtype expand: str
+        :return: VirtualMachineDiagnosticRunCommand. The VirtualMachineDiagnosticRunCommand is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.models.VirtualMachineDiagnosticRunCommand
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        cls: ClsType[_models.VirtualMachineDiagnosticRunCommand] = kwargs.pop("cls", None)
+
+        _request = build_virtual_machine_diagnostic_run_commands_get_by_virtual_machine_request(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            run_command_name=run_command_name,
+            subscription_id=self._config.subscription_id,
+            expand=expand,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VirtualMachineDiagnosticRunCommand, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_name",
+                "run_command_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        vm_name: str,
+        run_command_name: str,
+        run_command: Union[
+            _models.VirtualMachineDiagnosticRunCommand, _types.VirtualMachineDiagnosticRunCommand, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(run_command, (IOBase, bytes)):
+            _content = run_command
+        else:
+            _content = json.dumps(run_command, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_virtual_machine_diagnostic_run_commands_create_or_update_request(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            run_command_name=run_command_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        vm_name: str,
+        run_command_name: str,
+        run_command: _models.VirtualMachineDiagnosticRunCommand,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to create or update the diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_name: The name of the VirtualMachine. Required.
+        :type vm_name: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Create Virtual Machine Diagnostic RunCommand
+         operation. Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineDiagnosticRunCommand
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        vm_name: str,
+        run_command_name: str,
+        run_command: _types.VirtualMachineDiagnosticRunCommand,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to create or update the diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_name: The name of the VirtualMachine. Required.
+        :type vm_name: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Create Virtual Machine Diagnostic RunCommand
+         operation. Required.
+        :type run_command: ~azure.mgmt.compute.types.VirtualMachineDiagnosticRunCommand
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        vm_name: str,
+        run_command_name: str,
+        run_command: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to create or update the diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_name: The name of the VirtualMachine. Required.
+        :type vm_name: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Create Virtual Machine Diagnostic RunCommand
+         operation. Required.
+        :type run_command: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_name",
+                "run_command_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        vm_name: str,
+        run_command_name: str,
+        run_command: Union[
+            _models.VirtualMachineDiagnosticRunCommand, _types.VirtualMachineDiagnosticRunCommand, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to create or update the diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_name: The name of the VirtualMachine. Required.
+        :type vm_name: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Create Virtual Machine Diagnostic RunCommand
+         operation. Is either a VirtualMachineDiagnosticRunCommand type or a IO[bytes] type. Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineDiagnosticRunCommand or
+         ~azure.mgmt.compute.types.VirtualMachineDiagnosticRunCommand or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                vm_name=vm_name,
+                run_command_name=run_command_name,
+                run_command=run_command,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_name",
+                "run_command_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        vm_name: str,
+        run_command_name: str,
+        run_command: Union[_models.VirtualMachineRunCommandUpdate, _types.VirtualMachineRunCommandUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(run_command, (IOBase, bytes)):
+            _content = run_command
+        else:
+            _content = json.dumps(run_command, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_virtual_machine_diagnostic_run_commands_update_request(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            run_command_name=run_command_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        vm_name: str,
+        run_command_name: str,
+        run_command: _models.VirtualMachineRunCommandUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to update the diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_name: The name of the VirtualMachine. Required.
+        :type vm_name: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Update Virtual Machine Diagnostic RunCommand
+         operation. Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        vm_name: str,
+        run_command_name: str,
+        run_command: _types.VirtualMachineRunCommandUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to update the diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_name: The name of the VirtualMachine. Required.
+        :type vm_name: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Update Virtual Machine Diagnostic RunCommand
+         operation. Required.
+        :type run_command: ~azure.mgmt.compute.types.VirtualMachineRunCommandUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        vm_name: str,
+        run_command_name: str,
+        run_command: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to update the diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_name: The name of the VirtualMachine. Required.
+        :type vm_name: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Update Virtual Machine Diagnostic RunCommand
+         operation. Required.
+        :type run_command: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_name",
+                "run_command_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        vm_name: str,
+        run_command_name: str,
+        run_command: Union[_models.VirtualMachineRunCommandUpdate, _types.VirtualMachineRunCommandUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to update the diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_name: The name of the VirtualMachine. Required.
+        :type vm_name: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Update Virtual Machine Diagnostic RunCommand
+         operation. Is either a VirtualMachineRunCommandUpdate type or a IO[bytes] type. Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate or
+         ~azure.mgmt.compute.types.VirtualMachineRunCommandUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                vm_name=vm_name,
+                run_command_name=run_command_name,
+                run_command=run_command,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "vm_name", "run_command_name"]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, vm_name: str, run_command_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_virtual_machine_diagnostic_run_commands_delete_request(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            run_command_name=run_command_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "vm_name", "run_command_name"]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, vm_name: str, run_command_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to delete the diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_name: The name of the VirtualMachine. Required.
+        :type vm_name: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                vm_name=vm_name,
+                run_command_name=run_command_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "vm_name", "expand", "accept"]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    def diagnostic_list_by_virtual_machine(
+        self, resource_group_name: str, vm_name: str, *, expand: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.VirtualMachineDiagnosticRunCommand"]:
+        """The operation to get all diagnostic run commands of a Virtual Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_name: The name of the VirtualMachine. Required.
+        :type vm_name: str
+        :keyword expand: The expand expression to apply on the operation. Default value is None.
+        :paramtype expand: str
+        :return: An iterator like instance of VirtualMachineDiagnosticRunCommand
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.models.VirtualMachineDiagnosticRunCommand]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        cls: ClsType[List[_models.VirtualMachineDiagnosticRunCommand]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_virtual_machine_diagnostic_run_commands_diagnostic_list_by_virtual_machine_request(
+                    resource_group_name=resource_group_name,
+                    vm_name=vm_name,
+                    subscription_id=self._config.subscription_id,
+                    expand=expand,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VirtualMachineDiagnosticRunCommand],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class VirtualMachineScaleSetVMDiagnosticRunCommandsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.aio.ComputeManagementClient`'s
+        :attr:`virtual_machine_scale_set_vm_diagnostic_run_commands` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_scale_set_name",
+                "instance_id",
+                "run_command_name",
+                "expand",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        run_command_name: str,
+        *,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.VirtualMachineDiagnosticRunCommand:
+        """The operation to get the VMSS VM diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VirtualMachineScaleSet. Required.
+        :type vm_scale_set_name: str
+        :param instance_id: The name of the VirtualMachineScaleSetVM. Required.
+        :type instance_id: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :keyword expand: The expand expression to apply on the operation. Default value is None.
+        :paramtype expand: str
+        :return: VirtualMachineDiagnosticRunCommand. The VirtualMachineDiagnosticRunCommand is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.models.VirtualMachineDiagnosticRunCommand
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        cls: ClsType[_models.VirtualMachineDiagnosticRunCommand] = kwargs.pop("cls", None)
+
+        _request = build_virtual_machine_scale_set_vm_diagnostic_run_commands_get_request(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_id=instance_id,
+            run_command_name=run_command_name,
+            subscription_id=self._config.subscription_id,
+            expand=expand,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VirtualMachineDiagnosticRunCommand, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_scale_set_name",
+                "instance_id",
+                "run_command_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        run_command_name: str,
+        run_command: Union[
+            _models.VirtualMachineDiagnosticRunCommand, _types.VirtualMachineDiagnosticRunCommand, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(run_command, (IOBase, bytes)):
+            _content = run_command
+        else:
+            _content = json.dumps(run_command, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_virtual_machine_scale_set_vm_diagnostic_run_commands_create_or_update_request(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_id=instance_id,
+            run_command_name=run_command_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        run_command_name: str,
+        run_command: _models.VirtualMachineDiagnosticRunCommand,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to create or update the VMSS VM diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VirtualMachineScaleSet. Required.
+        :type vm_scale_set_name: str
+        :param instance_id: The name of the VirtualMachineScaleSetVM. Required.
+        :type instance_id: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Create Virtual Machine Diagnostic RunCommand
+         operation. Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineDiagnosticRunCommand
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        run_command_name: str,
+        run_command: _types.VirtualMachineDiagnosticRunCommand,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to create or update the VMSS VM diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VirtualMachineScaleSet. Required.
+        :type vm_scale_set_name: str
+        :param instance_id: The name of the VirtualMachineScaleSetVM. Required.
+        :type instance_id: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Create Virtual Machine Diagnostic RunCommand
+         operation. Required.
+        :type run_command: ~azure.mgmt.compute.types.VirtualMachineDiagnosticRunCommand
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        run_command_name: str,
+        run_command: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to create or update the VMSS VM diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VirtualMachineScaleSet. Required.
+        :type vm_scale_set_name: str
+        :param instance_id: The name of the VirtualMachineScaleSetVM. Required.
+        :type instance_id: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Create Virtual Machine Diagnostic RunCommand
+         operation. Required.
+        :type run_command: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_scale_set_name",
+                "instance_id",
+                "run_command_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        run_command_name: str,
+        run_command: Union[
+            _models.VirtualMachineDiagnosticRunCommand, _types.VirtualMachineDiagnosticRunCommand, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to create or update the VMSS VM diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VirtualMachineScaleSet. Required.
+        :type vm_scale_set_name: str
+        :param instance_id: The name of the VirtualMachineScaleSetVM. Required.
+        :type instance_id: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Create Virtual Machine Diagnostic RunCommand
+         operation. Is either a VirtualMachineDiagnosticRunCommand type or a IO[bytes] type. Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineDiagnosticRunCommand or
+         ~azure.mgmt.compute.types.VirtualMachineDiagnosticRunCommand or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                instance_id=instance_id,
+                run_command_name=run_command_name,
+                run_command=run_command,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_scale_set_name",
+                "instance_id",
+                "run_command_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        run_command_name: str,
+        run_command: Union[_models.VirtualMachineRunCommandUpdate, _types.VirtualMachineRunCommandUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(run_command, (IOBase, bytes)):
+            _content = run_command
+        else:
+            _content = json.dumps(run_command, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_virtual_machine_scale_set_vm_diagnostic_run_commands_update_request(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_id=instance_id,
+            run_command_name=run_command_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        run_command_name: str,
+        run_command: _models.VirtualMachineRunCommandUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to update the VMSS VM diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VirtualMachineScaleSet. Required.
+        :type vm_scale_set_name: str
+        :param instance_id: The name of the VirtualMachineScaleSetVM. Required.
+        :type instance_id: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Resource create parameters. Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        run_command_name: str,
+        run_command: _types.VirtualMachineRunCommandUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to update the VMSS VM diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VirtualMachineScaleSet. Required.
+        :type vm_scale_set_name: str
+        :param instance_id: The name of the VirtualMachineScaleSetVM. Required.
+        :type instance_id: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Resource create parameters. Required.
+        :type run_command: ~azure.mgmt.compute.types.VirtualMachineRunCommandUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        run_command_name: str,
+        run_command: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to update the VMSS VM diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VirtualMachineScaleSet. Required.
+        :type vm_scale_set_name: str
+        :param instance_id: The name of the VirtualMachineScaleSetVM. Required.
+        :type instance_id: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Resource create parameters. Required.
+        :type run_command: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_scale_set_name",
+                "instance_id",
+                "run_command_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        run_command_name: str,
+        run_command: Union[_models.VirtualMachineRunCommandUpdate, _types.VirtualMachineRunCommandUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to update the VMSS VM diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VirtualMachineScaleSet. Required.
+        :type vm_scale_set_name: str
+        :param instance_id: The name of the VirtualMachineScaleSetVM. Required.
+        :type instance_id: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :param run_command: Resource create parameters. Is either a VirtualMachineRunCommandUpdate type
+         or a IO[bytes] type. Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate or
+         ~azure.mgmt.compute.types.VirtualMachineRunCommandUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                instance_id=instance_id,
+                run_command_name=run_command_name,
+                run_command=run_command,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_scale_set_name",
+                "instance_id",
+                "run_command_name",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, run_command_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_virtual_machine_scale_set_vm_diagnostic_run_commands_delete_request(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_id=instance_id,
+            run_command_name=run_command_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_scale_set_name",
+                "instance_id",
+                "run_command_name",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, run_command_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """The operation to delete the VMSS VM diagnostic run command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VirtualMachineScaleSet. Required.
+        :type vm_scale_set_name: str
+        :param instance_id: The name of the VirtualMachineScaleSetVM. Required.
+        :type instance_id: str
+        :param run_command_name: The name of the VirtualMachineDiagnosticRunCommand. Required.
+        :type run_command_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                vm_scale_set_name=vm_scale_set_name,
+                instance_id=instance_id,
+                run_command_name=run_command_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vm_scale_set_name",
+                "instance_id",
+                "expand",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    def diagnostic_list(
+        self,
+        resource_group_name: str,
+        vm_scale_set_name: str,
+        instance_id: str,
+        *,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.VirtualMachineDiagnosticRunCommand"]:
+        """The operation to get all diagnostic run commands of an instance in Virtual Machine Scaleset.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VirtualMachineScaleSet. Required.
+        :type vm_scale_set_name: str
+        :param instance_id: The name of the VirtualMachineScaleSetVM. Required.
+        :type instance_id: str
+        :keyword expand: The expand expression to apply on the operation. Default value is None.
+        :paramtype expand: str
+        :return: An iterator like instance of VirtualMachineDiagnosticRunCommand
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.models.VirtualMachineDiagnosticRunCommand]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        cls: ClsType[List[_models.VirtualMachineDiagnosticRunCommand]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_virtual_machine_scale_set_vm_diagnostic_run_commands_diagnostic_list_request(
+                    resource_group_name=resource_group_name,
+                    vm_scale_set_name=vm_scale_set_name,
+                    instance_id=instance_id,
+                    subscription_id=self._config.subscription_id,
+                    expand=expand,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VirtualMachineDiagnosticRunCommand],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class DisksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24269,7 +26442,7 @@ class DisksOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DiskAccessesOperations:
+class DiskAccessesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25800,7 +27973,7 @@ class DiskAccessesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DiskEncryptionSetsOperations:
+class DiskEncryptionSetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26774,7 +28947,7 @@ class DiskEncryptionSetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SnapshotsOperations:
+class SnapshotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28599,7 +30772,7 @@ class SnapshotsOperations:
         )
 
 
-class GalleriesOperations:
+class GalleriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29473,7 +31646,7 @@ class GalleriesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GalleryImagesOperations:
+class GalleryImagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30299,7 +32472,7 @@ class GalleryImagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GalleryImageVersionsOperations:
+class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31199,7 +33372,7 @@ class GalleryImageVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GalleryApplicationsOperations:
+class GalleryApplicationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32038,7 +34211,7 @@ class GalleryApplicationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GalleryApplicationVersionsOperations:
+class GalleryApplicationVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32969,7 +35142,7 @@ class GalleryApplicationVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GalleryScriptsOperations:
+class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33909,7 +36082,7 @@ class GalleryScriptsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GalleryScriptVersionsOperations:
+class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34938,7 +37111,7 @@ class GalleryScriptVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-long
+class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -35801,7 +37974,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name-too-long
+class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -36734,7 +38907,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SharedGalleriesOperations:
+class SharedGalleriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -36911,7 +39084,7 @@ class SharedGalleriesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SharedGalleryImagesOperations:
+class SharedGalleryImagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37102,7 +39275,7 @@ class SharedGalleryImagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SharedGalleryImageVersionsOperations:
+class SharedGalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37311,7 +39484,7 @@ class SharedGalleryImageVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CommunityGalleriesOperations:
+class CommunityGalleriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37399,7 +39572,7 @@ class CommunityGalleriesOperations:
         return deserialized  # type: ignore
 
 
-class CommunityGalleryImagesOperations:
+class CommunityGalleryImagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37581,7 +39754,7 @@ class CommunityGalleryImagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CommunityGalleryImageVersionsOperations:
+class CommunityGalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37778,7 +39951,7 @@ class CommunityGalleryImageVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SharedGalleryInvitesOperations:
+class SharedGalleryInvitesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38100,7 +40273,7 @@ class SharedGalleryInvitesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class TenantLevelSharedGalleryInvitesOperations:  # pylint: disable=name-too-long
+class TenantLevelSharedGalleryInvitesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38396,7 +40569,7 @@ class TenantLevelSharedGalleryInvitesOperations:  # pylint: disable=name-too-lon
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ResourceSkusOperations:
+class ResourceSkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38504,7 +40677,7 @@ class ResourceSkusOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-too-long
+class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38535,7 +40708,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_rolling_upgrades_start_extension_upgrade_request(
@@ -38603,7 +40776,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -38660,7 +40833,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_rolling_upgrades_start_os_upgrade_request(
@@ -38728,7 +40901,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -38785,7 +40958,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_rolling_upgrades_cancel_request(
@@ -38851,7 +41024,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -38921,7 +41094,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.RollingUpgradeStatusInfo] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_rolling_upgrades_get_latest_request(
@@ -38969,7 +41142,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         return deserialized  # type: ignore
 
 
-class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-methods
+class VirtualMachineScaleSetVMsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -39026,7 +41199,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetVM] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_get_request(
@@ -39103,7 +41276,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -39319,7 +41492,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineScaleSetVM] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -39393,7 +41566,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_delete_request(
@@ -39472,7 +41645,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -39553,7 +41726,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineScaleSetVM]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -39641,7 +41814,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_approve_rolling_upgrade_request(
@@ -39709,7 +41882,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -39767,7 +41940,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_deallocate_request(
@@ -39838,7 +42011,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -39911,7 +42084,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineScaleSetVMInstanceView] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_get_instance_view_request(
@@ -39984,7 +42157,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_scale_set_vm_reimage_input else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
@@ -40179,7 +42352,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if vm_scale_set_vm_reimage_input else None
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -40241,7 +42414,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_reimage_all_request(
@@ -40311,7 +42484,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -40383,7 +42556,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_simulate_eviction_request(
@@ -40437,7 +42610,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -40623,7 +42796,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.StorageProfile] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -40689,7 +42862,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_perform_maintenance_request(
@@ -40758,7 +42931,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -40822,7 +42995,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_power_off_request(
@@ -40904,7 +43077,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -40963,7 +43136,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_redeploy_request(
@@ -41033,7 +43206,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -41091,7 +43264,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_restart_request(
@@ -41160,7 +43333,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -41244,7 +43417,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.RetrieveBootDiagnosticsDataResult] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_retrieve_boot_diagnostics_data_request(
@@ -41307,7 +43480,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_scale_set_vms_start_request(
@@ -41376,7 +43549,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -41439,7 +43612,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -41621,7 +43794,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RunCommandResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -41674,7 +43847,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         )
 
 
-class SshPublicKeysOperations:
+class SshPublicKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -41717,7 +43890,7 @@ class SshPublicKeysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.SshPublicKeyResource] = kwargs.pop("cls", None)
 
         _request = build_ssh_public_keys_get_request(
@@ -41879,7 +44052,7 @@ class SshPublicKeysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SshPublicKeyResource] = kwargs.pop("cls", None)
 
@@ -42051,7 +44224,7 @@ class SshPublicKeysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SshPublicKeyResource] = kwargs.pop("cls", None)
 
@@ -42132,7 +44305,7 @@ class SshPublicKeysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_ssh_public_keys_delete_request(
@@ -42184,7 +44357,7 @@ class SshPublicKeysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.SshPublicKeyResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -42267,7 +44440,7 @@ class SshPublicKeysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.SshPublicKeyResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -42465,7 +44638,7 @@ class SshPublicKeysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if parameters else None
         cls: ClsType[_models.SshPublicKeyGenerateKeyPairResult] = kwargs.pop("cls", None)
@@ -42527,7 +44700,7 @@ class SshPublicKeysOperations:
         return deserialized  # type: ignore
 
 
-class UsageOperations:
+class UsageOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -42558,7 +44731,7 @@ class UsageOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.Usage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -42629,7 +44802,7 @@ class UsageOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachineSizesOperations:
+class VirtualMachineSizesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -42660,7 +44833,7 @@ class VirtualMachineSizesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineSize]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -42731,7 +44904,7 @@ class VirtualMachineSizesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachineImagesEdgeZoneOperations:
+class VirtualMachineImagesEdgeZoneOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -42773,7 +44946,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_edge_zone_list_publishers_request(
@@ -42848,7 +45021,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_edge_zone_list_offers_request(
@@ -42926,7 +45099,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_edge_zone_list_skus_request(
@@ -43025,7 +45198,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_edge_zone_list_request(
@@ -43111,7 +45284,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineImage] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_edge_zone_get_request(
@@ -43163,7 +45336,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         return deserialized  # type: ignore
 
 
-class VirtualMachineImagesOperations:
+class VirtualMachineImagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -43206,7 +45379,7 @@ class VirtualMachineImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VmImagesInEdgeZoneListResult] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_list_by_edge_zone_request(
@@ -43274,7 +45447,7 @@ class VirtualMachineImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_list_publishers_request(
@@ -43345,7 +45518,7 @@ class VirtualMachineImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_list_offers_request(
@@ -43419,7 +45592,7 @@ class VirtualMachineImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_list_skus_request(
@@ -43512,7 +45685,7 @@ class VirtualMachineImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_list_request(
@@ -43608,7 +45781,7 @@ class VirtualMachineImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[List[_models.VirtualMachineImage]] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_list_with_properties_request(
@@ -43691,7 +45864,7 @@ class VirtualMachineImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.VirtualMachineImage] = kwargs.pop("cls", None)
 
         _request = build_virtual_machine_images_get_request(
@@ -43742,7 +45915,7 @@ class VirtualMachineImagesOperations:
         return deserialized  # type: ignore
 
 
-class LogAnalyticsOperations:
+class LogAnalyticsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -43776,7 +45949,7 @@ class LogAnalyticsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -43936,7 +46109,7 @@ class LogAnalyticsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LogAnalyticsOperationResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -44003,7 +46176,7 @@ class LogAnalyticsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -44160,7 +46333,7 @@ class LogAnalyticsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LogAnalyticsOperationResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -44211,7 +46384,7 @@ class LogAnalyticsOperations:
         )
 
 
-class DiskRestorePointOperations:
+class DiskRestorePointOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -44831,7 +47004,7 @@ class DiskRestorePointOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class SoftDeletedResourceOperations:
+class SoftDeletedResourceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -44948,7 +47121,7 @@ class SoftDeletedResourceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GallerySharingProfileOperations:
+class GallerySharingProfileOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

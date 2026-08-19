@@ -16,7 +16,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_scale_set_create_with_automatic_sku_migration_policy.py
+    python virtual_machine_scale_set_create_with_deterministic_processor_mode.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,17 +37,10 @@ def main():
         parameters={
             "location": "westus",
             "properties": {
-                "orchestrationMode": "Flexible",
-                "priorityMixPolicy": {"baseRegularPriorityCount": 4, "regularPriorityPercentageAboveBase": 50},
-                "singlePlacementGroup": False,
-                "skuProfile": {
-                    "allocationStrategy": "CapacityOptimized",
-                    "automaticSkuMigrationPolicy": {"enabled": True},
-                    "vmSizes": [{"name": "Standard_D8s_v5"}, {"name": "Standard_E16s_v5"}, {"name": "Standard_D2s_v5"}],
-                },
+                "overprovision": True,
+                "upgradePolicy": {"mode": "Manual"},
                 "virtualMachineProfile": {
-                    "billingProfile": {"maxPrice": -1},
-                    "evictionPolicy": "Deallocate",
+                    "hardwareProfile": {"processorMode": "Deterministic"},
                     "networkProfile": {
                         "networkInterfaceConfigurations": [
                             {
@@ -74,12 +67,11 @@ def main():
                         "adminUsername": "{your-username}",
                         "computerNamePrefix": "{vmss-name}",
                     },
-                    "priority": "Spot",
                     "storageProfile": {
                         "imageReference": {
                             "offer": "WindowsServer",
                             "publisher": "MicrosoftWindowsServer",
-                            "sku": "2016-Datacenter",
+                            "sku": "2019-Datacenter",
                             "version": "latest",
                         },
                         "osDisk": {
@@ -90,12 +82,12 @@ def main():
                     },
                 },
             },
-            "sku": {"capacity": 10, "name": "Mix"},
+            "sku": {"capacity": 3, "name": "Standard_E2pds_v8", "tier": "Standard"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithAutomaticSkuMigrationPolicy.json
+# x-ms-original-file: 2026-04-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithDeterministicProcessorMode.json
 if __name__ == "__main__":
     main()
