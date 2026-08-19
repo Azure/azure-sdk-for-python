@@ -47,7 +47,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 tool = A2ATool(
-    a2_a_version="1.0",
+    a2a_version="1.0",
     project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
 )
 # If the connection is missing target, we need to set the A2A endpoint URL.
