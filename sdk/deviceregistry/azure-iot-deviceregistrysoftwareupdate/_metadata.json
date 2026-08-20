@@ -3,7 +3,7 @@
   "apiVersions": {
     "DeviceRegistrySoftwareUpdateClient": "2026-11-02-preview"
   },
-  "commit": "be4f14d4492f9f60eb6cabf3a93cce8a7cef803c",
+  "commit": "8c2ef8e2a537cb4e276817306b3a5f2aa20c69d8",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/deviceupdate/data-plane/sudeviceregistry",
   "emitterVersion": "0.63.5",
