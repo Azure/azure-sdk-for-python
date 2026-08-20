@@ -2,6 +2,11 @@
 
 ## 2.5.0 (2026-08-20)
 
+### Dependency update
+
+* Dependency on `openai` has changed to `openai>=3.0.0`, which requires `httpx2` instead of `httpx`.
+* Support for Python 3.9 was dropped. The new minimum supported Python version is 3.10.
+
 ### Features Added
 
 * Added stable Agent-to-Agent (A2A) tools `A2ATool` and `A2AToolboxTool`, with the new `A2AProtocolVersion` enum for selecting protocol version `1.0`.
@@ -15,9 +20,7 @@
 
 ### Breaking Changes
 
-* Raised the minimum supported `openai` package version from `2.8.0` to `3.0.0`. The OpenAI client transport now uses `httpx2` instead of `httpx`; custom `http_client` implementations passed to `get_openai_client()` must use compatible `httpx2.Client`, `httpx2.AsyncClient`, and transport types.
-
-All remaining breaking changes are associated with beta features.
+All breaking changes are associated with beta features.
 
 * Methods `.beta.routines.list` and `.beta.routines.list_runs` replaced the `before` argument with `after` and now use the service-provided `next_link` for continuation.
 * Renamed class `TaskGenerationDataGenerationJobOptions` to `SimulationSeedDataGenerationJobOptions`. The corresponding `DataGenerationJobType.TASK_GENERATION` enum member was renamed to `DataGenerationJobType.SIMULATION_SEED`, and its wire value changed from `task_generation` to `simulation_seed`.
