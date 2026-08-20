@@ -566,6 +566,37 @@ namespace azure.mgmt.platformvalidation.models
         PUBLIC = "Public"
 
 
+    @dataclass(frozen=True)
+    class azure.mgmt.platformvalidation.models.CertificationPackageReference:
+        additional_properties: Mapping[str, Any]
+        architecture_type: str
+        os_type: str
+        recommended_vm_sizes: Sequence[str]
+        storage_profile: StorageProfile
+        vm_generation_type: str
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(
+                os_type: str,
+                vm_generation_type: str,
+                architecture_type: str,
+                recommended_vm_sizes: Sequence[str],
+                storage_profile: StorageProfile,
+                additional_properties: Mapping[str, Any]
+            ) -> None: ...
+
+        def __post_init__(self) -> None: ...
+
+        def __repr__() -> None: ...
+
+        def __setattr__() -> None: ...
+
+
     class azure.mgmt.platformvalidation.models.CloudValidation(TrackedResource):
         id: str
         location: str
@@ -651,6 +682,25 @@ namespace azure.mgmt.platformvalidation.models
         USER = "User"
 
 
+    @dataclass(frozen=True)
+    class azure.mgmt.platformvalidation.models.DiskImage:
+        source_vhd_uri: str
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(source_vhd_uri: str) -> None: ...
+
+        def __post_init__(self) -> None: ...
+
+        def __repr__() -> None: ...
+
+        def __setattr__() -> None: ...
+
+
     class azure.mgmt.platformvalidation.models.ErrorAdditionalInfo(_Model):
         info: Optional[Any]
         type: Optional[str]
@@ -676,6 +726,35 @@ namespace azure.mgmt.platformvalidation.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    @dataclass(frozen=True)
+    class azure.mgmt.platformvalidation.models.ExecutionPlanConfiguration:
+        API_VERSION: ClassVar[str] = microsoft.validate/executionPlan.v0
+        KIND: ClassVar[str] = ExecutionPlan
+        certification_package_reference: CertificationPackageReference
+        name: str
+        steps: Sequence[ValidationStep]
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(
+                name: str,
+                certification_package_reference: CertificationPackageReference,
+                steps: Sequence[ValidationStep]
+            ) -> None: ...
+
+        def __post_init__(self) -> None: ...
+
+        def __repr__() -> None: ...
+
+        def __setattr__() -> None: ...
+
+        def to_json(self) -> str: ...
 
 
     class azure.mgmt.platformvalidation.models.ExecutionPlanRun(ProxyResource):
@@ -848,6 +927,26 @@ namespace azure.mgmt.platformvalidation.models
         SUCCEEDED = "Succeeded"
 
 
+    @dataclass(frozen=True)
+    class azure.mgmt.platformvalidation.models.StorageProfile:
+        data_disk_images: Sequence[DiskImage]
+        os_disk_image: DiskImage
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(os_disk_image: DiskImage, data_disk_images: Sequence[DiskImage]) -> None: ...
+
+        def __post_init__(self) -> None: ...
+
+        def __repr__() -> None: ...
+
+        def __setattr__() -> None: ...
+
+
     class azure.mgmt.platformvalidation.models.SystemData(_Model):
         created_at: Optional[datetime]
         created_by: Optional[str]
@@ -1013,6 +1112,40 @@ namespace azure.mgmt.platformvalidation.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    @dataclass(frozen=True)
+    class azure.mgmt.platformvalidation.models.ValidationStep:
+        inputs: Optional[Mapping[str, Any]]
+        name: str
+        test_ref: str
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(
+                name: str,
+                test_ref: str,
+                inputs: Optional[Mapping[str, Any]]
+            ) -> None: ...
+
+        def __post_init__(self) -> None: ...
+
+        def __repr__() -> None: ...
+
+        def __setattr__() -> None: ...
+
+        @classmethod
+        def test(
+                cls,
+                *,
+                inputs: Optional[Mapping[str, Any]] = ...,
+                name: str,
+                test_ref: str
+            ) -> ValidationStep: ...
 
 
     class azure.mgmt.platformvalidation.models.ValidationTest(ProxyResource):
@@ -1773,34 +1906,29 @@ namespace azure.mgmt.platformvalidation.types
         key "id": str
         key "location": Required[str]
         key "name": str
-        key "properties": ForwardRef('CloudValidationProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
         location: str
         name: str
-        properties: CloudValidationProperties
-        systemData: SystemData
+        properties: ForwardRef('CloudValidationProperties', module='types')
+        systemData: ForwardRef('SystemData', module='types')
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.platformvalidation.types.CloudValidationProperties(TypedDict, total=False):
         key "description": str
-        key "error": ForwardRef('ErrorDetail', module='types')
-        key "managedOnBehalfOfConfiguration": ForwardRef('ManagedOnBehalfOfConfiguration', module='types')
         key "overallState": Union[str, CloudValidationOverallState]
         key "provisioningState": Union[str, ProvisioningState]
         description: str
-        error: ErrorDetail
-        managedOnBehalfOfConfiguration: ManagedOnBehalfOfConfiguration
+        error: ForwardRef('ErrorDetail', module='types')
+        managedOnBehalfOfConfiguration: ForwardRef('ManagedOnBehalfOfConfiguration', module='types')
         overallState: Union[str, CloudValidationOverallState]
         provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.platformvalidation.types.CloudValidationUpdate(TypedDict, total=False):
-        key "properties": ForwardRef('CloudValidationUpdateProperties', module='types')
-        properties: CloudValidationUpdateProperties
+        properties: ForwardRef('CloudValidationUpdateProperties', module='types')
         tags: dict[str, str]
 
 
@@ -1832,36 +1960,32 @@ namespace azure.mgmt.platformvalidation.types
     class azure.mgmt.platformvalidation.types.ExecutionPlanRun(ProxyResource):
         key "id": str
         key "name": str
-        key "properties": ForwardRef('ExecutionPlanRunProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
         name: str
-        properties: ExecutionPlanRunProperties
-        systemData: SystemData
+        properties: ForwardRef('ExecutionPlanRunProperties', module='types')
+        systemData: ForwardRef('SystemData', module='types')
         type: str
 
 
     class azure.mgmt.platformvalidation.types.ExecutionPlanRunProperties(TypedDict, total=False):
         key "completedAt": str
         key "description": str
-        key "error": ForwardRef('ErrorDetail', module='types')
         key "planConfigurationSnapshot": str
         key "provisioningState": Union[str, ExecutionPlanRunProvisioningState]
         key "reportedAt": str
         key "startedAt": str
         key "status": Union[str, ExecutionPlanRunStatus]
-        key "testRunSummary": ForwardRef('TestRunSummary', module='types')
         completedAt: str
         description: str
-        error: ErrorDetail
+        error: ForwardRef('ErrorDetail', module='types')
         planConfigurationSnapshot: str
         provisioningState: Union[str, ExecutionPlanRunProvisioningState]
         reportedAt: str
         startedAt: str
         status: Union[str, ExecutionPlanRunStatus]
         testRunIds: list[str]
-        testRunSummary: TestRunSummary
+        testRunSummary: ForwardRef('TestRunSummary', module='types')
 
 
     class azure.mgmt.platformvalidation.types.ManagedOnBehalfOfConfiguration(TypedDict, total=False):
@@ -1876,22 +2000,20 @@ namespace azure.mgmt.platformvalidation.types
     class azure.mgmt.platformvalidation.types.ProxyResource(Resource):
         key "id": str
         key "name": str
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
         name: str
-        systemData: SystemData
+        systemData: ForwardRef('SystemData', module='types')
         type: str
 
 
     class azure.mgmt.platformvalidation.types.Resource(TypedDict, total=False):
         key "id": str
         key "name": str
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
         name: str
-        systemData: SystemData
+        systemData: ForwardRef('SystemData', module='types')
         type: str
 
 
@@ -1929,12 +2051,11 @@ namespace azure.mgmt.platformvalidation.types
         key "id": str
         key "location": Required[str]
         key "name": str
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
         location: str
         name: str
-        systemData: SystemData
+        systemData: ForwardRef('SystemData', module='types')
         tags: dict[str, str]
         type: str
 
@@ -1943,27 +2064,24 @@ namespace azure.mgmt.platformvalidation.types
         key "id": str
         key "location": Required[str]
         key "name": str
-        key "properties": ForwardRef('ValidationExecutionPlanProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
         location: str
         name: str
-        properties: ValidationExecutionPlanProperties
-        systemData: SystemData
+        properties: ForwardRef('ValidationExecutionPlanProperties', module='types')
+        systemData: ForwardRef('SystemData', module='types')
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.platformvalidation.types.ValidationExecutionPlanProperties(TypedDict, total=False):
         key "description": str
-        key "error": ForwardRef('ErrorDetail', module='types')
         key "overallState": Union[str, ValidationExecutionPlanOverallState]
         key "planConfigurationJson": str
         key "planConfigurationUri": str
         key "provisioningState": Union[str, ValidationExecutionPlanProvisioningState]
         description: str
-        error: ErrorDetail
+        error: ForwardRef('ErrorDetail', module='types')
         overallState: Union[str, ValidationExecutionPlanOverallState]
         planConfigurationJson: str
         planConfigurationUri: str
@@ -1971,8 +2089,7 @@ namespace azure.mgmt.platformvalidation.types
 
 
     class azure.mgmt.platformvalidation.types.ValidationExecutionPlanUpdate(TypedDict, total=False):
-        key "properties": ForwardRef('ValidationExecutionPlanUpdateProperties', module='types')
-        properties: ValidationExecutionPlanUpdateProperties
+        properties: ForwardRef('ValidationExecutionPlanUpdateProperties', module='types')
         tags: dict[str, str]
 
 
@@ -2011,19 +2128,16 @@ namespace azure.mgmt.platformvalidation.types
     class azure.mgmt.platformvalidation.types.ValidationTestRun(ProxyResource):
         key "id": str
         key "name": str
-        key "properties": ForwardRef('ValidationTestRunProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
         name: str
-        properties: ValidationTestRunProperties
-        systemData: SystemData
+        properties: ForwardRef('ValidationTestRunProperties', module='types')
+        systemData: ForwardRef('SystemData', module='types')
         type: str
 
 
     class azure.mgmt.platformvalidation.types.ValidationTestRunProperties(TypedDict, total=False):
         key "completedAt": str
-        key "error": ForwardRef('ErrorDetail', module='types')
         key "inputsJson": str
         key "provisioningState": Union[str, ValidationTestRunProvisioningState]
         key "reportedAt": str
@@ -2031,7 +2145,7 @@ namespace azure.mgmt.platformvalidation.types
         key "status": Union[str, ValidationTestRunStatus]
         key "testId": str
         completedAt: str
-        error: ErrorDetail
+        error: ForwardRef('ErrorDetail', module='types')
         failureDetails: list[ValidationTestFailureDetails]
         inputsJson: str
         passDetails: list[ValidationTestPassDetails]
