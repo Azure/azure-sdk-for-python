@@ -66,7 +66,10 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
     :type body: Optional[Union[str, bytes]]
 
     :keyword application_properties: The user defined properties on the message.
-    :paramtype application_properties: Dict[str, Union[int or float or bool or
+     Keys may be ``str`` or ``bytes``. Note that when a message is received, the
+     keys and any string values are returned as ``bytes`` - see the
+     ``application_properties`` property for details.
+    :paramtype application_properties: Dict[Union[str, bytes], Union[int or float or bool or
      bytes or str or uuid.UUID or datetime or None]]
     :keyword Optional[str] session_id: The session identifier of the message for a sessionful entity.
     :keyword Optional[str] message_id: The id to identify the message.
@@ -288,6 +291,27 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
     @property
     def application_properties(self) -> Optional[Dict[Union[str, bytes], PrimitiveTypes]]:
         """The user defined properties on the message.
+
+        .. note::
+            When a message is received, the keys and any string values in this
+            dictionary are returned as ``bytes``, not ``str`` (for example
+            ``{b"order_id": b"12345"}``). The property is ``None`` when the
+            message carries no application properties, so guard for that before
+            indexing. Access received properties using bytes keys, and decode
+            string values as needed::
+
+                props = message.application_properties or {}
+                value = props.get(b"order_id")
+                if isinstance(value, bytes):
+                    value = value.decode("utf-8")
+
+            Non-string values are returned as decoded by the AMQP layer:
+            ``int``, ``bool``, ``float`` and :class:`uuid.UUID` keep their
+            native types, while an AMQP timestamp is returned as an integer
+            (milliseconds since the Unix epoch), not a
+            :class:`datetime.datetime`. The same bytes behavior applies to the
+            raw AMQP ``annotations`` and ``delivery_annotations`` accessed
+            through ``raw_amqp_message``.
 
         :rtype: dict[str or bytes, PrimitiveTypes] or None
         """

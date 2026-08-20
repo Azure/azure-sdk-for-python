@@ -910,7 +910,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_tag: bytes,
         outcome: Literal["accepted"],
         *,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -920,7 +922,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_tag: bytes,
         outcome: Literal["released"],
         *,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -931,7 +935,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         outcome: Literal["rejected"],
         *,
         error: Optional[AMQPError] = None,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -944,7 +950,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_failed: Optional[bool] = None,
         undeliverable_here: Optional[bool] = None,
         message_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -956,13 +964,17 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         *,
         section_number: int,
         section_offset: int,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     async def settle_messages_async(
         self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs
     ):
         batchable = kwargs.pop("batchable", None)
+        await_outcome = kwargs.pop("await_outcome", False)
+        outcome_timeout = kwargs.pop("outcome_timeout", None)
         if outcome.lower() == "accepted":
             state: Outcomes = Accepted()
         elif outcome.lower() == "released":
@@ -984,8 +996,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             first_delivery_id=first,
             last_delivery_id=last,
             delivery_tag=delivery_tag,
-            settled=True,
+            settled=not await_outcome,
             delivery_state=state,
             batchable=batchable,
             wait=True,
+            await_outcome=await_outcome,
+            outcome_timeout=outcome_timeout,
         )
