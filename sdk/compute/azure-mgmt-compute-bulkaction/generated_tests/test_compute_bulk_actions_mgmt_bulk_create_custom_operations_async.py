@@ -345,10 +345,16 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperationsAsync(AzureMgmtRecorde
                         "capacityType": "str",
                         "createdTime": "2020-02-20 00:00:00",
                         "executionParameters": {
+                            "capacityRecommendationParameters": {
+                                "availabilityZones": bool,
+                                "desiredLocations": ["str"],
+                                "desiredSizes": ["str"],
+                            },
                             "optimizationPreference": "str",
                             "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                             "verifyVmAgentHealth": bool,
                         },
+                        "minCapacity": 0,
                         "overridesProfile": {
                             "overrides": [
                                 {
@@ -649,7 +655,9 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperationsAsync(AzureMgmtRecorde
                             ],
                             "virtualMachineNamePrefix": "str",
                         },
+                        "partialFulfillmentPolicy": {"fulfilledCapacity": 0, "mode": "str", "reason": "str"},
                         "provisioningState": "str",
+                        "resources": [{"virtualMachineInfo": {"name": "str", "vmSize": "str", "zone": "str"}}],
                         "vmSizesProfile": [
                             {
                                 "name": "str",
@@ -997,6 +1005,18 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperationsAsync(AzureMgmtRecorde
                 name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_bulk_create_custom_virtual_machines_get_operation_status(self, resource_group):
+        response = await self.client.bulk_create_custom.virtual_machines_get_operation_status(
+            resource_group_name=resource_group.name,
+            location="str",
+            name="str",
+        )
 
         # please add some check logic here by yourself
         # ...

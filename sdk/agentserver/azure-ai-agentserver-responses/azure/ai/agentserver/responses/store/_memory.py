@@ -286,20 +286,22 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         *,
         context: PlatformContext | None = None,
     ) -> list[str]:
-        """Resolve history item IDs from previous response and/or conversation scope.
+        """Resolve item IDs from previous response and/or conversation scope.
 
-        Collects history item IDs from the previous response chain and/or
-        all responses within the given conversation, up to *limit*.
+        Collects history, input, and output item IDs from the previous
+        response chain and/or all responses within the given conversation.
+        When over *limit*, keeps the most recent N item IDs from the
+        resolved chain, preserving chronological order in the returned slice.
 
         :param previous_response_id: Optional response ID to chain history from.
         :type previous_response_id: str | None
         :param conversation_id: Optional conversation ID to scope history lookup.
         :type conversation_id: str | None
-        :param limit: Maximum number of history item IDs to return.
+        :param limit: Maximum number of item IDs to return (most recent N).
         :type limit: int
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
-        :returns: A list of history item IDs within the given scope.
+        :returns: A list of item IDs from the resolved chain.
         :rtype: list[str]
         """
         async with self._locked():
@@ -325,7 +327,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
             if limit <= 0:
                 return []
-            return resolved[:limit]
+            # Keep the most recent N item IDs from the resolved chain,
+            # preserving chronological order in the returned slice.
+            return resolved[-limit:]
 
     async def create_execution(self, execution: ResponseExecution, *, ttl_seconds: int | None = None) -> None:
         """Create a new execution and replay container for ``execution.response_id``.
