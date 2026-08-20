@@ -58,7 +58,7 @@ jobs:
 
           mkdir -p "$tooling_dir/eng/common/scripts" "$tooling_dir/eng/scripts"
           cp "$source_repo/eng/common/scripts/Export-APIViewMarkdown.ps1" "$tooling_dir/eng/common/scripts/Export-APIViewMarkdown.ps1"
-          cp "$source_repo/eng/scripts/Extract-APIViewMetadata-Python.ps1" "$tooling_dir/eng/scripts/Extract-APIViewMetadata-Python.ps1"
+          cp "$source_repo/eng/scripts/extract_apiview_metadata.py" "$tooling_dir/eng/scripts/extract_apiview_metadata.py"
 
           python -m pip install --upgrade pip
           python -m pip install virtualenv
