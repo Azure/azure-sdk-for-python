@@ -922,23 +922,6 @@ class RealtimeConversationItemMessageType(str, Enum, metaclass=CaseInsensitiveEn
     """ASSISTANT."""
 
 
-class RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of RealtimeConversationItemType."""
-
-    FUNCTION_CALL = "function_call"
-    """FUNCTION_CALL."""
-    FUNCTION_CALL_OUTPUT = "function_call_output"
-    """FUNCTION_CALL_OUTPUT."""
-    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
-    """MCP_APPROVAL_RESPONSE."""
-    MCP_LIST_TOOLS = "mcp_list_tools"
-    """MCP_LIST_TOOLS."""
-    MCP_CALL = "mcp_call"
-    """MCP_CALL."""
-    MCP_APPROVAL_REQUEST = "mcp_approval_request"
-    """MCP_APPROVAL_REQUEST."""
-
-
 class RealtimeMcpErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of RealtimeMcpErrorType."""
 
@@ -1704,12 +1687,12 @@ class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The lifecycle status of a persisted voice conversation:
 
     * `in_progress`: the live session is active, or post-session persistence finalization is
-      pending.
+    pending.
     * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
-      max-duration `1001` close, or a client or network disconnect that the service can still
-      finalize.
+    max-duration `1001`
+    close, or a client or network disconnect that the service can still finalize.
     * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
-      finalization.
+    finalization.
     """
 
     IN_PROGRESS = "in_progress"
@@ -1750,9 +1733,10 @@ class VoiceEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnum
 
 
 class VoiceInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The input-audio transcription model. Mirrors the transcription models supported by the managed
-    voice backend, covering the OpenAI Realtime transcription models plus the Azure and MAI models.
-    Additional values may be added over time.
+    """The input-audio transcription model identifier. This is a model name, not a Foundry deployment
+    name. Mirrors the transcription models supported by the managed voice backend, covering the
+    OpenAI Realtime transcription models plus the Azure and MAI models. Additional values may be
+    added over time.
     """
 
     WHISPER1 = "whisper-1"
@@ -1834,3 +1818,20 @@ class VoiceTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """English-optimized Azure semantic voice activity detection."""
     AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"
     """Multilingual Azure semantic voice activity detection."""
+
+
+class VoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The voice implementation. Additional values may be added over time."""
+
+    OPENAI = "openai"
+    """An OpenAI voice."""
+    AZURE_STANDARD = "azure-standard"
+    """An Azure standard voice."""
+    AZURE_CUSTOM = "azure-custom"
+    """An Azure custom voice."""
+    AZURE_PERSONAL = "azure-personal"
+    """An Azure personal voice."""
+    AVATAR_VOICE_SYNC = "avatar-voice-sync"
+    """A voice synchronized with an avatar."""
+    AZURE_REALTIME_NATIVE = "azure-realtime-native"
+    """An Azure native realtime voice."""

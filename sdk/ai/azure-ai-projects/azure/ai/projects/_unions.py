@@ -12,7 +12,9 @@ if TYPE_CHECKING:
     from . import models as _models
 Filters = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
 RoutineRunStatus = str
-VoiceAgentToolChoice = Union[str, "_models.ToolChoiceOptions", "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"]
+VoiceAgentToolChoice = Union[
+    Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
+]
 VoiceAgentTurnDetection = Union[
     "_models.VoiceServerVadTurnDetection",
     "_models.VoiceAgentSemanticVadTurnDetection",
@@ -24,25 +26,4 @@ VoiceAgentMaxOutputTokens = Union[int, Literal["inf"]]
 VoiceAgentInterimResponse = Union[
     "_models.VoiceAgentStaticInterimResponseConfig", "_models.VoiceAgentLlmInterimResponseConfig"
 ]
-VoiceAgentRequestConversationItem = Union[
-    "_models.RealtimeConversationItemMessageSystem",
-    "_models.RealtimeConversationItemMessageUser",
-    "_models.RealtimeConversationItemMessageAssistant",
-    "_models.RealtimeConversationItemFunctionCall",
-    "_models.RealtimeConversationItemFunctionCallOutput",
-]
-VoiceAgentCreateConversationItem = Union["VoiceAgentRequestConversationItem", "_models.RealtimeMCPApprovalResponse"]
-VoiceAgentResponseMessageItem = Union[
-    "_models.RealtimeConversationItemMessageSystem",
-    "_models.RealtimeConversationItemMessageUser",
-    "_models.RealtimeConversationItemMessageAssistant",
-]
-VoiceAgentResponseItem = Union[
-    "VoiceAgentResponseMessageItem",
-    "_models.VoiceFunctionCallItem",
-    "_models.VoiceFunctionCallOutputItem",
-    "_models.VoiceMcpListToolsItem",
-    "_models.VoiceMcpCallItem",
-    "_models.VoiceMcpApprovalRequestItem",
-    "_models.VoiceMcpApprovalResponseItem",
-]
+GenerateAgentRequest = "_models.GenerateVoiceAgentRequest"

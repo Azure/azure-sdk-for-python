@@ -93,12 +93,12 @@ ClientEvent = Union[
 
 # The conversation item variants accepted by ``conversation.item.create``.
 ConversationItem = Union[
-    _models.RealtimeConversationItemMessageSystem,
-    _models.RealtimeConversationItemMessageUser,
-    _models.RealtimeConversationItemMessageAssistant,
-    _models.RealtimeConversationItemFunctionCall,
-    _models.RealtimeConversationItemFunctionCallOutput,
-    _models.RealtimeMCPApprovalResponse,
+    _models.VoiceSystemMessageItem,
+    _models.VoiceUserMessageItem,
+    _models.VoiceAssistantMessageItem,
+    _models.VoiceFunctionCallItem,
+    _models.VoiceFunctionCallOutputItem,
+    _models.VoiceMcpApprovalResponseItem,
     Mapping[str, Any],
 ]
 
@@ -394,12 +394,12 @@ class ConversationItemResource(_BaseResource):
         """Insert an item into the conversation.
 
         :keyword item: The conversation item to create.
-        :paramtype item: ~azure.ai.projects.models.RealtimeConversationItemMessageSystem or
-         ~azure.ai.projects.models.RealtimeConversationItemMessageUser or
-         ~azure.ai.projects.models.RealtimeConversationItemMessageAssistant or
-         ~azure.ai.projects.models.RealtimeConversationItemFunctionCall or
-         ~azure.ai.projects.models.RealtimeConversationItemFunctionCallOutput or
-         ~azure.ai.projects.models.RealtimeMCPApprovalResponse or Mapping[str, Any]
+        :paramtype item: ~azure.ai.projects.models.VoiceSystemMessageItem or
+         ~azure.ai.projects.models.VoiceUserMessageItem or
+         ~azure.ai.projects.models.VoiceAssistantMessageItem or
+         ~azure.ai.projects.models.VoiceFunctionCallItem or
+         ~azure.ai.projects.models.VoiceFunctionCallOutputItem or
+         ~azure.ai.projects.models.VoiceMcpApprovalResponseItem or Mapping[str, Any]
         :keyword previous_item_id: The ID of the preceding item after which the new item will be
          inserted. Default value is None.
         :paramtype previous_item_id: str or None

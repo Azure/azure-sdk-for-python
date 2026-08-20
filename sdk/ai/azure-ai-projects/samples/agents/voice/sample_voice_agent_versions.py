@@ -28,7 +28,7 @@ import os
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import VoiceAgentDefinition
+from azure.ai.projects.models import VoiceAgentDefinition, VoiceModelType
 
 load_dotenv()
 
@@ -39,7 +39,7 @@ agent_name = "sample-versioned-voice-agent"
 
 def make_definition(instructions: str) -> VoiceAgentDefinition:
     # Each version differs only by its instructions; the rest is identical.
-    return VoiceAgentDefinition(model_type="managed", model=model, instructions=instructions)
+    return VoiceAgentDefinition(model_type=VoiceModelType.MANAGED, model=model, instructions=instructions)
 
 
 with (

@@ -16,7 +16,7 @@ DESCRIPTION:
        `response.create` so the agent can finish its reply using the tool output.
 
 USAGE:
-    python sample_voice_agent_function_tool.py
+    python sample_voice_agent_live_function_tool.py
 
     Before running the sample:
 
@@ -37,8 +37,6 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    RealtimeConversationItemFunctionCallOutput,
-    RealtimeConversationItemMessageUser,
     RealtimeConversationItemMessageUserContent,
     RealtimeFunctionTool,
     RealtimeServerEventError,
@@ -46,7 +44,10 @@ from azure.ai.projects.models import (
     VoiceAgentServerEventResponseDone,
     VoiceAgentServerEventResponseFunctionCallArgumentsDone,
     VoiceAgentServerEventResponseTextDone,
+    VoiceFunctionCallOutputItem,
+    VoiceModelType,
     VoiceOutputModality,
+    VoiceUserMessageItem,
 )
 
 load_dotenv()
@@ -78,7 +79,7 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
     """
     with client.realtime.connect(agent_name=agent_name) as conn:
         conn.conversation.item.create(
-            item=RealtimeConversationItemMessageUser(
+            item=VoiceUserMessageItem(
                 content=[RealtimeConversationItemMessageUserContent(type="input_text", text=prompt)]
             )
         )
@@ -95,9 +96,7 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
                 else:
                     result = json.dumps({"error": f"Unknown tool: {event.name}"})
 
-                conn.conversation.item.create(
-                    item=RealtimeConversationItemFunctionCallOutput(call_id=event.call_id, output=result)
-                )
+                conn.conversation.item.create(item=VoiceFunctionCallOutputItem(call_id=event.call_id, output=result))
                 conn.response.create()
             elif isinstance(event, VoiceAgentServerEventResponseTextDone):
                 # The sample agent uses a text-only output modality, so the
@@ -142,7 +141,7 @@ def main() -> None:
             project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=VoiceAgentDefinition(
-                    model_type="managed",
+                    model_type=VoiceModelType.MANAGED,
                     model="gpt-realtime",
                     instructions=(
                         "You are a helpful voice assistant. Use the get_weather tool when the "
@@ -154,9 +153,7 @@ def main() -> None:
             )
             print(f"Created voice agent: {agent_name}")
 
-            _run_turn_with_tool_support(
-                project_client, agent_name, "What's the weather like in Seattle right now?"
-            )
+            _run_turn_with_tool_support(project_client, agent_name, "What's the weather like in Seattle right now?")
         finally:
             project_client.agents.delete(agent_name=agent_name)
             print(f"Deleted voice agent: {agent_name}")

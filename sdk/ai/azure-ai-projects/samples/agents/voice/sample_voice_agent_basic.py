@@ -37,10 +37,13 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    AgentKind,
     VoiceAgentDefinition,
     VoiceAudioConfig,
     VoiceAudioOutputConfig,
+    VoiceModelType,
     VoiceOutputModality,
+    VoiceType,
 )
 
 load_dotenv()
@@ -57,11 +60,11 @@ with (
         definition = VoiceAgentDefinition(
             # `managed` uses a service-hosted model; use `self_deployed` with a Foundry
             # deployment name to bring your own model.
-            model_type="managed",
+            model_type=VoiceModelType.MANAGED,
             model=model,
             instructions="You are a friendly voice assistant. Keep replies short and natural.",
             audio=VoiceAudioConfig(
-                output=VoiceAudioOutputConfig(voice="en-US-AvaNeural", voice_type="azure-standard"),
+                output=VoiceAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
             ),
             output_modalities=[VoiceOutputModality.AUDIO],
             # Persist conversations so the transcript and audio can be read back later
@@ -76,14 +79,14 @@ with (
         print(f"Retrieved voice agent: {agent.name} (state={agent.state})")
 
         print("Voice agents in this project:")
-        for item in project_client.agents.list(kind="voice"):
+        for item in project_client.agents.list(kind=AgentKind.VOICE):
             print(f"  - {item.name}")
 
         # Each update produces a new immutable version.
         updated_version = project_client.agents.create_version(
             agent_name=agent_name,
             definition=VoiceAgentDefinition(
-                model_type="managed",
+                model_type=VoiceModelType.MANAGED,
                 model=model,
                 instructions="You are a friendly voice assistant. Always greet the caller warmly.",
                 audio=definition.audio,

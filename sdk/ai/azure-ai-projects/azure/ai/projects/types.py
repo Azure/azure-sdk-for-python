@@ -37,7 +37,6 @@ from .models._enums import (
     RealtimeAudioFormatsType,
     RealtimeClientEventType,
     RealtimeConversationItemMessageType,
-    RealtimeConversationItemType,
     RealtimeMcpErrorType,
     RealtimeServerEventType,
     RecurrenceType,
@@ -123,6 +122,7 @@ if TYPE_CHECKING:
         VoiceNoiseReductionType,
         VoiceOutputModality,
         VoiceSystemToolName,
+        VoiceType,
     )
 
 
@@ -329,10 +329,10 @@ class AgentClusterInsightRequest(TypedDict, total=False):
 
     :ivar type: The type of request. Required. Cluster Insight on an Agent.
     :vartype type: Literal[InsightType.AGENT_CLUSTER_INSIGHT]
-    :ivar agentName: Identifier for the agent. Required.
-    :vartype agentName: str
-    :ivar modelConfiguration: Configuration of the model used in the insight generation.
-    :vartype modelConfiguration: "InsightModelConfiguration"
+    :ivar agent_name: Identifier for the agent. Required.
+    :vartype agent_name: str
+    :ivar model_configuration: Configuration of the model used in the insight generation.
+    :vartype model_configuration: "InsightModelConfiguration"
     """
 
     type: Required[Literal[InsightType.AGENT_CLUSTER_INSIGHT]]
@@ -348,8 +348,8 @@ class AgentClusterInsightResult(TypedDict, total=False):
 
     :ivar type: The type of insights result. Required. Cluster Insight on an Agent.
     :vartype type: Literal[InsightType.AGENT_CLUSTER_INSIGHT]
-    :ivar clusterInsight: Required.
-    :vartype clusterInsight: "ClusterInsightResult"
+    :ivar cluster_insight: Required.
+    :vartype cluster_insight: "ClusterInsightResult"
     """
 
     type: Required[Literal[InsightType.AGENT_CLUSTER_INSIGHT]]
@@ -535,8 +535,8 @@ class AgentOptimizationInlineDatasetInput(TypedDict, total=False):
     :ivar type: Dataset input type discriminator. Required. Inline dataset — items are provided
      directly in the request body.
     :vartype type: Literal[AgentOptimizationDatasetInputType.INLINE]
-    :ivar items: Dataset items. Required.
-    :vartype items: list["AgentOptimizationDatasetItem"]
+    :ivar dataset_items: Dataset items. Required.
+    :vartype dataset_items: list["AgentOptimizationDatasetItem"]
     """
 
     type: Required[Literal[AgentOptimizationDatasetInputType.INLINE]]
@@ -747,8 +747,8 @@ class AgentTaxonomyInput(TypedDict, total=False):
     :vartype type: Literal[EvaluationTaxonomyInputType.AGENT]
     :ivar target: Target configuration for the agent. Required.
     :vartype target: "EvaluationTarget"
-    :ivar riskCategories: List of risk categories to evaluate against. Required.
-    :vartype riskCategories: list[Union[str, "RiskCategory"]]
+    :ivar risk_categories: List of risk categories to evaluate against. Required.
+    :vartype risk_categories: list[Union[str, "RiskCategory"]]
     """
 
     type: Required[Literal[EvaluationTaxonomyInputType.AGENT]]
@@ -807,10 +807,10 @@ class ApiError(TypedDict, total=False):
     :vartype type: str
     :ivar details:
     :vartype details: list["ApiError"]
-    :ivar additionalInfo:
-    :vartype additionalInfo: dict[str, Any]
-    :ivar debugInfo:
-    :vartype debugInfo: dict[str, Any]
+    :ivar additional_info:
+    :vartype additional_info: dict[str, Any]
+    :ivar debug_info:
+    :vartype debug_info: dict[str, Any]
     """
 
     code: Required[Optional[str]]
@@ -966,12 +966,12 @@ class AzureAISearchIndex(TypedDict, total=False):
     :vartype tags: dict[str, str]
     :ivar type: Type of index. Required. Azure search.
     :vartype type: Literal[IndexType.AZURE_SEARCH]
-    :ivar connectionName: Name of connection to Azure AI Search. Required.
-    :vartype connectionName: str
-    :ivar indexName: Name of index in Azure AI Search resource to attach. Required.
-    :vartype indexName: str
-    :ivar fieldMapping: Field mapping configuration.
-    :vartype fieldMapping: "FieldMapping"
+    :ivar connection_name: Name of connection to Azure AI Search. Required.
+    :vartype connection_name: str
+    :ivar index_name: Name of index in Azure AI Search resource to attach. Required.
+    :vartype index_name: str
+    :ivar field_mapping: Field mapping configuration.
+    :vartype field_mapping: "FieldMapping"
     """
 
     id: str
@@ -1171,10 +1171,10 @@ class AzureOpenAIModelConfiguration(TypedDict, total=False):
 
     :ivar type: Required. Default value is "AzureOpenAIModel".
     :vartype type: Literal["AzureOpenAIModel"]
-    :ivar modelDeploymentName: Deployment name for AOAI model. Example: gpt-4o if in AIServices or
-     connection based ``connection_name/deployment_name`` (e.g. ``my-aoai-connection/gpt-4o``).
+    :ivar model_deployment_name: Deployment name for AOAI model. Example: gpt-4o if in AIServices
+     or connection based ``connection_name/deployment_name`` (e.g. ``my-aoai-connection/gpt-4o``).
      Required.
-    :vartype modelDeploymentName: str
+    :vartype model_deployment_name: str
     """
 
     type: Required[Literal["AzureOpenAIModel"]]
@@ -1533,12 +1533,12 @@ class ClusterInsightResult(TypedDict, total=False):
 class ClusterTokenUsage(TypedDict, total=False):
     """Token usage for cluster analysis.
 
-    :ivar inputTokenUsage: input token usage. Required.
-    :vartype inputTokenUsage: int
-    :ivar outputTokenUsage: output token usage. Required.
-    :vartype outputTokenUsage: int
-    :ivar totalTokenUsage: total token usage. Required.
-    :vartype totalTokenUsage: int
+    :ivar input_token_usage: input token usage. Required.
+    :vartype input_token_usage: int
+    :ivar output_token_usage: output token usage. Required.
+    :vartype output_token_usage: int
+    :ivar total_token_usage: total token usage. Required.
+    :vartype total_token_usage: int
     """
 
     inputTokenUsage: Required[int]
@@ -1840,10 +1840,24 @@ class ContainerConfiguration(TypedDict, total=False):
 
     :ivar image: The container image for the hosted agent. Required.
     :vartype image: str
+    :ivar registry_connection_id: The id (or name) of the Foundry project connection that provides
+     the credentials used to authenticate to the private container registry hosting ``image``. The
+     connection abstracts the auth mechanism — for example a managed-identity-federated token
+     exchange, or a username/token secret — so registry credentials are never part of the agent
+     definition. Omit for public images or registries already reachable by the platform's default
+     identity (for example, Azure Container Registry).
+    :vartype registry_connection_id: str
     """
 
     image: Required[str]
     """The container image for the hosted agent. Required."""
+    registry_connection_id: str
+    """The id (or name) of the Foundry project connection that provides the credentials used to
+     authenticate to the private container registry hosting ``image``. The connection abstracts the
+     auth mechanism — for example a managed-identity-federated token exchange, or a username/token
+     secret — so registry credentials are never part of the agent definition. Omit for public images
+     or registries already reachable by the platform's default identity (for example, Azure
+     Container Registry)."""
 
 
 class ContainerNetworkPolicyAllowlistParam(TypedDict, total=False):
@@ -1902,14 +1916,14 @@ class ContinuousEvaluationRuleAction(TypedDict, total=False):
 
     :ivar type: Required. Continuous evaluation.
     :vartype type: Literal[EvaluationRuleActionType.CONTINUOUS_EVALUATION]
-    :ivar evalId: Eval Id to add continuous evaluation runs to. Required.
-    :vartype evalId: str
-    :ivar maxHourlyRuns: Maximum number of evaluation runs allowed per hour.
-    :vartype maxHourlyRuns: int
-    :ivar samplingRate: Percentage (0-100] chance that a matching event triggers an evaluation.
+    :ivar eval_id: Eval Id to add continuous evaluation runs to. Required.
+    :vartype eval_id: str
+    :ivar max_hourly_runs: Maximum number of evaluation runs allowed per hour.
+    :vartype max_hourly_runs: int
+    :ivar sampling_rate: Percentage (0-100] chance that a matching event triggers an evaluation.
      When omitted, the service-default is to evaluate every event, which is equivalent to setting a
      sampling rate of 100.
-    :vartype samplingRate: float
+    :vartype sampling_rate: float
     """
 
     type: Required[Literal[EvaluationRuleActionType.CONTINUOUS_EVALUATION]]
@@ -1939,16 +1953,16 @@ class CosmosDBIndex(TypedDict, total=False):
     :vartype tags: dict[str, str]
     :ivar type: Type of index. Required. CosmosDB.
     :vartype type: Literal[IndexType.COSMOS_DB]
-    :ivar connectionName: Name of connection to CosmosDB. Required.
-    :vartype connectionName: str
-    :ivar databaseName: Name of the CosmosDB Database. Required.
-    :vartype databaseName: str
-    :ivar containerName: Name of CosmosDB Container. Required.
-    :vartype containerName: str
-    :ivar embeddingConfiguration: Embedding model configuration. Required.
-    :vartype embeddingConfiguration: "EmbeddingConfiguration"
-    :ivar fieldMapping: Field mapping configuration. Required.
-    :vartype fieldMapping: "FieldMapping"
+    :ivar connection_name: Name of connection to CosmosDB. Required.
+    :vartype connection_name: str
+    :ivar database_name: Name of the CosmosDB Database. Required.
+    :vartype database_name: str
+    :ivar container_name: Name of CosmosDB Container. Required.
+    :vartype container_name: str
+    :ivar embedding_configuration: Embedding model configuration. Required.
+    :vartype embedding_configuration: "EmbeddingConfiguration"
+    :ivar field_mapping: Field mapping configuration. Required.
+    :vartype field_mapping: "FieldMapping"
     """
 
     id: str
@@ -2001,12 +2015,12 @@ class CronTrigger(TypedDict, total=False):
     :vartype type: Literal[TriggerType.CRON]
     :ivar expression: Cron expression that defines the schedule frequency. Required.
     :vartype expression: str
-    :ivar timeZone: Time zone for the cron schedule. Defaults to ``UTC``.
-    :vartype timeZone: str
-    :ivar startTime: Start time for the cron schedule in ISO 8601 format.
-    :vartype startTime: str
-    :ivar endTime: End time for the cron schedule in ISO 8601 format.
-    :vartype endTime: str
+    :ivar time_zone: Time zone for the cron schedule. Defaults to ``UTC``.
+    :vartype time_zone: str
+    :ivar start_time: Start time for the cron schedule in ISO 8601 format.
+    :vartype start_time: str
+    :ivar end_time: End time for the cron schedule in ISO 8601 format.
+    :vartype end_time: str
     """
 
     type: Required[Literal[TriggerType.CRON]]
@@ -2388,11 +2402,11 @@ class Dimension(TypedDict, total=False):
 class EmbeddingConfiguration(TypedDict, total=False):
     """Embedding configuration class.
 
-    :ivar modelDeploymentName: Deployment name of embedding model. It can point to a model
+    :ivar model_deployment_name: Deployment name of embedding model. It can point to a model
      deployment either in the parent AIServices or a connection. Required.
-    :vartype modelDeploymentName: str
-    :ivar embeddingField: Embedding field. Required.
-    :vartype embeddingField: str
+    :vartype model_deployment_name: str
+    :ivar embedding_field: Embedding field. Required.
+    :vartype embedding_field: str
     """
 
     modelDeploymentName: Required[str]
@@ -2486,17 +2500,17 @@ class EvalResult(TypedDict, total=False):
 class EvalRunResultCompareItem(TypedDict, total=False):
     """Metric comparison for a treatment against the baseline.
 
-    :ivar treatmentRunId: The treatment run ID. Required.
-    :vartype treatmentRunId: str
-    :ivar treatmentRunSummary: Summary statistics of the treatment run. Required.
-    :vartype treatmentRunSummary: "EvalRunResultSummary"
-    :ivar deltaEstimate: Estimated difference between treatment and baseline. Required.
-    :vartype deltaEstimate: float
-    :ivar pValue: P-value for the treatment effect. Required.
-    :vartype pValue: float
-    :ivar treatmentEffect: Type of treatment effect. Required. Known values are: "TooFewSamples",
+    :ivar treatment_run_id: The treatment run ID. Required.
+    :vartype treatment_run_id: str
+    :ivar treatment_run_summary: Summary statistics of the treatment run. Required.
+    :vartype treatment_run_summary: "EvalRunResultSummary"
+    :ivar delta_estimate: Estimated difference between treatment and baseline. Required.
+    :vartype delta_estimate: float
+    :ivar p_value: P-value for the treatment effect. Required.
+    :vartype p_value: float
+    :ivar treatment_effect: Type of treatment effect. Required. Known values are: "TooFewSamples",
      "Inconclusive", "Changed", "Improved", and "Degraded".
-    :vartype treatmentEffect: Union[str, "TreatmentEffectType"]
+    :vartype treatment_effect: Union[str, "TreatmentEffectType"]
     """
 
     treatmentRunId: Required[str]
@@ -2515,16 +2529,16 @@ class EvalRunResultCompareItem(TypedDict, total=False):
 class EvalRunResultComparison(TypedDict, total=False):
     """Comparison results for treatment runs against the baseline.
 
-    :ivar testingCriteria: Name of the testing criteria. Required.
-    :vartype testingCriteria: str
+    :ivar testing_criteria: Name of the testing criteria. Required.
+    :vartype testing_criteria: str
     :ivar metric: Metric being evaluated. Required.
     :vartype metric: str
     :ivar evaluator: Name of the evaluator for this testing criteria. Required.
     :vartype evaluator: str
-    :ivar baselineRunSummary: Summary statistics of the baseline run. Required.
-    :vartype baselineRunSummary: "EvalRunResultSummary"
-    :ivar compareItems: List of comparison results for each treatment run. Required.
-    :vartype compareItems: list["EvalRunResultCompareItem"]
+    :ivar baseline_run_summary: Summary statistics of the baseline run. Required.
+    :vartype baseline_run_summary: "EvalRunResultSummary"
+    :ivar compare_items: List of comparison results for each treatment run. Required.
+    :vartype compare_items: list["EvalRunResultCompareItem"]
     """
 
     testingCriteria: Required[str]
@@ -2542,14 +2556,14 @@ class EvalRunResultComparison(TypedDict, total=False):
 class EvalRunResultSummary(TypedDict, total=False):
     """Summary statistics of a metric in an evaluation run.
 
-    :ivar runId: The evaluation run ID. Required.
-    :vartype runId: str
-    :ivar sampleCount: Number of samples in the evaluation run. Required.
-    :vartype sampleCount: int
+    :ivar run_id: The evaluation run ID. Required.
+    :vartype run_id: str
+    :ivar sample_count: Number of samples in the evaluation run. Required.
+    :vartype sample_count: int
     :ivar average: Average value of the metric in the evaluation run. Required.
     :vartype average: float
-    :ivar standardDeviation: Standard deviation of the metric in the evaluation run. Required.
-    :vartype standardDeviation: float
+    :ivar standard_deviation: Standard deviation of the metric in the evaluation run. Required.
+    :vartype standard_deviation: float
     """
 
     runId: Required[str]
@@ -2567,12 +2581,12 @@ class EvaluationComparisonInsightRequest(TypedDict, total=False):
 
     :ivar type: The type of request. Required. Evaluation Comparison.
     :vartype type: Literal[InsightType.EVALUATION_COMPARISON]
-    :ivar evalId: Identifier for the evaluation. Required.
-    :vartype evalId: str
-    :ivar baselineRunId: The baseline run ID for comparison. Required.
-    :vartype baselineRunId: str
-    :ivar treatmentRunIds: List of treatment run IDs for comparison. Required.
-    :vartype treatmentRunIds: list[str]
+    :ivar eval_id: Identifier for the evaluation. Required.
+    :vartype eval_id: str
+    :ivar baseline_run_id: The baseline run ID for comparison. Required.
+    :vartype baseline_run_id: str
+    :ivar treatment_run_ids: List of treatment run IDs for comparison. Required.
+    :vartype treatment_run_ids: list[str]
     """
 
     type: Required[Literal[InsightType.EVALUATION_COMPARISON]]
@@ -2611,12 +2625,12 @@ class EvaluationResultSample(TypedDict, total=False):
     :vartype id: str
     :ivar features: Features to help with additional filtering of data in UX. Required.
     :vartype features: dict[str, Any]
-    :ivar correlationInfo: Info about the correlation for the analysis sample. Required.
-    :vartype correlationInfo: dict[str, Any]
+    :ivar correlation_info: Info about the correlation for the analysis sample. Required.
+    :vartype correlation_info: dict[str, Any]
     :ivar type: Evaluation Result Sample Type. Required. A sample from the evaluation result.
     :vartype type: Literal[SampleType.EVALUATION_RESULT_SAMPLE]
-    :ivar evaluationResult: Evaluation result for the analysis sample. Required.
-    :vartype evaluationResult: "EvalResult"
+    :ivar evaluation_result: Evaluation result for the analysis sample. Required.
+    :vartype evaluation_result: "EvalResult"
     """
 
     id: Required[str]
@@ -2636,21 +2650,21 @@ class EvaluationRule(TypedDict, total=False):
 
     :ivar id: Unique identifier for the evaluation rule. Required.
     :vartype id: str
-    :ivar displayName: Display Name for the evaluation rule.
-    :vartype displayName: str
+    :ivar display_name: Display Name for the evaluation rule.
+    :vartype display_name: str
     :ivar description: Description for the evaluation rule.
     :vartype description: str
     :ivar action: Definition of the evaluation rule action. Required.
     :vartype action: "EvaluationRuleAction"
     :ivar filter: Filter condition of the evaluation rule.
     :vartype filter: "EvaluationRuleFilter"
-    :ivar eventType: Event type that the evaluation rule applies to. Required. Known values are:
+    :ivar event_type: Event type that the evaluation rule applies to. Required. Known values are:
      "responseCompleted" and "manual".
-    :vartype eventType: Union[str, "EvaluationRuleEventType"]
+    :vartype event_type: Union[str, "EvaluationRuleEventType"]
     :ivar enabled: Indicates whether the evaluation rule is enabled. Default is true. Required.
     :vartype enabled: bool
-    :ivar systemData: System metadata for the evaluation rule. Required.
-    :vartype systemData: dict[str, str]
+    :ivar system_data: System metadata for the evaluation rule. Required.
+    :vartype system_data: dict[str, str]
     """
 
     id: Required[str]
@@ -2675,8 +2689,8 @@ class EvaluationRule(TypedDict, total=False):
 class EvaluationRuleFilter(TypedDict, total=False):
     """Evaluation filter model.
 
-    :ivar agentName: Filter by agent name. Required.
-    :vartype agentName: str
+    :ivar agent_name: Filter by agent name. Required.
+    :vartype agent_name: str
     """
 
     agentName: Required[str]
@@ -2688,12 +2702,12 @@ class EvaluationRunClusterInsightRequest(TypedDict, total=False):
 
     :ivar type: The type of insights request. Required. Insights on an Evaluation run result.
     :vartype type: Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]
-    :ivar evalId: Evaluation Id for the insights. Required.
-    :vartype evalId: str
-    :ivar runIds: List of evaluation run IDs for the insights. Required.
-    :vartype runIds: list[str]
-    :ivar modelConfiguration: Configuration of the model used in the insight generation.
-    :vartype modelConfiguration: "InsightModelConfiguration"
+    :ivar eval_id: Evaluation Id for the insights. Required.
+    :vartype eval_id: str
+    :ivar run_ids: List of evaluation run IDs for the insights. Required.
+    :vartype run_ids: list[str]
+    :ivar model_configuration: Configuration of the model used in the insight generation.
+    :vartype model_configuration: "InsightModelConfiguration"
     """
 
     type: Required[Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]]
@@ -2711,8 +2725,8 @@ class EvaluationRunClusterInsightResult(TypedDict, total=False):
 
     :ivar type: The type of insights result. Required. Insights on an Evaluation run result.
     :vartype type: Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]
-    :ivar clusterInsight: Required.
-    :vartype clusterInsight: "ClusterInsightResult"
+    :ivar cluster_insight: Required.
+    :vartype cluster_insight: "ClusterInsightResult"
     """
 
     type: Required[Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]]
@@ -2728,10 +2742,10 @@ class EvaluationScheduleTask(TypedDict, total=False):
     :vartype configuration: dict[str, str]
     :ivar type: Required. Evaluation task.
     :vartype type: Literal[ScheduleTaskType.EVALUATION]
-    :ivar evalId: Identifier of the evaluation group. Required.
-    :vartype evalId: str
-    :ivar evalRun: The evaluation run payload. Required.
-    :vartype evalRun: dict[str, Any]
+    :ivar eval_id: Identifier of the evaluation group. Required.
+    :vartype eval_id: str
+    :ivar eval_run: The evaluation run payload. Required.
+    :vartype eval_run: dict[str, Any]
     """
 
     configuration: dict[str, str]
@@ -2757,10 +2771,10 @@ class EvaluationTaxonomy(TypedDict, total=False):
     :vartype description: str
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
-    :ivar taxonomyInput: Input configuration for the evaluation taxonomy. Required.
-    :vartype taxonomyInput: "EvaluationTaxonomyInput"
-    :ivar taxonomyCategories: List of taxonomy categories.
-    :vartype taxonomyCategories: list["TaxonomyCategory"]
+    :ivar taxonomy_input: Input configuration for the evaluation taxonomy. Required.
+    :vartype taxonomy_input: "EvaluationTaxonomyInput"
+    :ivar taxonomy_categories: List of taxonomy categories.
+    :vartype taxonomy_categories: list["TaxonomyCategory"]
     :ivar properties: Additional properties for the evaluation taxonomy.
     :vartype properties: dict[str, str]
     """
@@ -3221,18 +3235,18 @@ class FabricIQPreviewToolboxTool(TypedDict, total=False):
 class FieldMapping(TypedDict, total=False):
     """Field mapping configuration class.
 
-    :ivar contentFields: List of fields with text content. Required.
-    :vartype contentFields: list[str]
-    :ivar filepathField: Path of file to be used as a source of text content.
-    :vartype filepathField: str
-    :ivar titleField: Field containing the title of the document.
-    :vartype titleField: str
-    :ivar urlField: Field containing the url of the document.
-    :vartype urlField: str
-    :ivar vectorFields: List of fields with vector content.
-    :vartype vectorFields: list[str]
-    :ivar metadataFields: List of fields with metadata content.
-    :vartype metadataFields: list[str]
+    :ivar content_fields: List of fields with text content. Required.
+    :vartype content_fields: list[str]
+    :ivar filepath_field: Path of file to be used as a source of text content.
+    :vartype filepath_field: str
+    :ivar title_field: Field containing the title of the document.
+    :vartype title_field: str
+    :ivar url_field: Field containing the url of the document.
+    :vartype url_field: str
+    :ivar vector_fields: List of fields with vector content.
+    :vartype vector_fields: list[str]
+    :ivar metadata_fields: List of fields with metadata content.
+    :vartype metadata_fields: list[str]
     """
 
     contentFields: Required[list[str]]
@@ -3294,16 +3308,16 @@ class FileDataGenerationJobSource(TypedDict, total=False):
 class FileDatasetVersion(TypedDict, total=False):
     """FileDatasetVersion Definition.
 
-    :ivar dataUri: URI of the data (`example <https://go.microsoft.com/fwlink/?linkid=2202330>`_).
+    :ivar data_uri: URI of the data (`example <https://go.microsoft.com/fwlink/?linkid=2202330>`_).
      Required.
-    :vartype dataUri: str
-    :ivar isReference: Indicates if the dataset holds a reference to the storage, or the dataset
+    :vartype data_uri: str
+    :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
      version is deleted.
-    :vartype isReference: bool
-    :ivar connectionName: The Azure Storage Account connection name. Required if
+    :vartype is_reference: bool
+    :ivar connection_name: The Azure Storage Account connection name. Required if
      startPendingUploadVersion was not called before creating the Dataset.
-    :vartype connectionName: str
+    :vartype connection_name: str
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -3449,16 +3463,16 @@ class FixedRatioVersionSelectionRule(TypedDict, total=False):
 class FolderDatasetVersion(TypedDict, total=False):
     """FileDatasetVersion Definition.
 
-    :ivar dataUri: URI of the data (`example <https://go.microsoft.com/fwlink/?linkid=2202330>`_).
+    :ivar data_uri: URI of the data (`example <https://go.microsoft.com/fwlink/?linkid=2202330>`_).
      Required.
-    :vartype dataUri: str
-    :ivar isReference: Indicates if the dataset holds a reference to the storage, or the dataset
+    :vartype data_uri: str
+    :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
      version is deleted.
-    :vartype isReference: bool
-    :ivar connectionName: The Azure Storage Account connection name. Required if
+    :vartype is_reference: bool
+    :ivar connection_name: The Azure Storage Account connection name. Required if
      startPendingUploadVersion was not called before creating the Dataset.
-    :vartype connectionName: str
+    :vartype connection_name: str
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -3643,6 +3657,70 @@ class FunctionToolParam(TypedDict, total=False):
     allowed_callers: Optional[list[Union[str, "CallableToolAllowedCaller"]]]
 
 
+class GenerateVoiceAgentRequest(TypedDict, total=False):
+    """The inputs for generating a voice agent. Only ``kind`` and ``name`` are always required. The
+    authoring service expands these inputs into a full, editable ``VoiceAgentDefinition``, which is
+    then created through ``POST /agents``. The generated ``instructions`` and audio/voice settings
+    are stored as separate fields on the resulting agent definition, so the caller can edit or
+    override any of them afterward via standard agent versioning.
+
+    :ivar kind: The agent kind. Always ``voice``. Required. VOICE.
+    :vartype kind: Literal[AgentKind.VOICE]
+    :ivar name: The unique name for the agent to create. Must be a non-empty DNS-like agent name.
+     Required.
+    :vartype name: str
+    :ivar model_type: Optional inference mode. When omitted, the authoring service uses
+     ``managed``. When supplied, use ``managed`` or ``self_deployed``. Known values are: "managed"
+     and "self_deployed".
+    :vartype model_type: Union[str, "VoiceModelType"]
+    :ivar model: Optional model identifier. Required when ``model_type`` is ``self_deployed``;
+     optional when ``model_type`` is ``managed`` or omitted. The service never invents a customer
+     deployment name.
+    :vartype model: str
+    :ivar use_case: An optional authoring use case. An empty string is accepted.
+    :vartype use_case: str
+    :ivar goal: An optional natural-language description of what the agent should do. When
+     supplied, it seeds the generated instructions.
+    :vartype goal: str
+    :ivar description: An optional agent description. The authoring service resolves its fallback
+     when omitted.
+    :vartype description: str
+    :ivar tools: Optional tools carried through verbatim onto the generated agent (see
+     ``VoiceAgentTool``).
+    :vartype tools: list["VoiceAgentTool"]
+    :ivar draft: (Preview) When ``true``, the generated voice agent is created as a draft — an
+     editable, unpublished version the caller can review and refine before publishing it via the
+     standard create/version path. The service defaults to ``false`` if a value is not specified by
+     the caller, in which case the agent is created and published normally.
+    :vartype draft: bool
+    """
+
+    kind: Required[Literal[AgentKind.VOICE]]
+    """The agent kind. Always ``voice``. Required. VOICE."""
+    name: Required[str]
+    """The unique name for the agent to create. Must be a non-empty DNS-like agent name. Required."""
+    model_type: Union[str, "VoiceModelType"]
+    """Optional inference mode. When omitted, the authoring service uses ``managed``. When supplied,
+     use ``managed`` or ``self_deployed``. Known values are: \"managed\" and \"self_deployed\"."""
+    model: str
+    """Optional model identifier. Required when ``model_type`` is ``self_deployed``; optional when
+     ``model_type`` is ``managed`` or omitted. The service never invents a customer deployment name."""
+    use_case: str
+    """An optional authoring use case. An empty string is accepted."""
+    goal: str
+    """An optional natural-language description of what the agent should do. When supplied, it seeds
+     the generated instructions."""
+    description: str
+    """An optional agent description. The authoring service resolves its fallback when omitted."""
+    tools: list["VoiceAgentTool"]
+    """Optional tools carried through verbatim onto the generated agent (see ``VoiceAgentTool``)."""
+    draft: bool
+    """(Preview) When ``true``, the generated voice agent is created as a draft — an editable,
+     unpublished version the caller can review and refine before publishing it via the standard
+     create/version path. The service defaults to ``false`` if a value is not specified by the
+     caller, in which case the agent is created and published normally."""
+
+
 class GitHubIssueRoutineTrigger(TypedDict, total=False):
     """A GitHub issue routine trigger.
 
@@ -3769,8 +3847,8 @@ class HumanEvaluationPreviewRuleAction(TypedDict, total=False):
 
     :ivar type: Required. Human evaluation preview.
     :vartype type: Literal[EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW]
-    :ivar templateId: Human evaluation template Id. Required.
-    :vartype templateId: str
+    :ivar template_id: Human evaluation template Id. Required.
+    :vartype template_id: str
     """
 
     type: Required[Literal[EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW]]
@@ -3966,15 +4044,15 @@ class InlineSkillSourceParam(TypedDict, total=False):
 class Insight(TypedDict, total=False):
     """The response body for cluster insights.
 
-    :ivar id: The unique identifier for the insights report. Required.
-    :vartype id: str
+    :ivar insight_id: The unique identifier for the insights report. Required.
+    :vartype insight_id: str
     :ivar metadata: Metadata about the insights report. Required.
     :vartype metadata: "InsightsMetadata"
     :ivar state: The current state of the insights. Required. Known values are: "NotStarted",
      "Running", "Succeeded", "Failed", and "Canceled".
     :vartype state: Union[str, "OperationState"]
-    :ivar displayName: User friendly display name for the insight. Required.
-    :vartype displayName: str
+    :ivar display_name: User friendly display name for the insight. Required.
+    :vartype display_name: str
     :ivar request: Request for the insights analysis. Required.
     :vartype request: "InsightRequest"
     :ivar result: The result of the insights report.
@@ -4005,15 +4083,15 @@ class InsightCluster(TypedDict, total=False):
     :vartype label: str
     :ivar suggestion: Suggestion for the cluster. Required.
     :vartype suggestion: str
-    :ivar suggestionTitle: The title of the suggestion for the cluster. Required.
-    :vartype suggestionTitle: str
+    :ivar suggestion_title: The title of the suggestion for the cluster. Required.
+    :vartype suggestion_title: str
     :ivar description: Description of the analysis cluster. Required.
     :vartype description: str
     :ivar weight: The weight of the analysis cluster. This indicate number of samples in the
      cluster. Required.
     :vartype weight: int
-    :ivar subClusters: List of subclusters within this cluster. Empty if no subclusters exist.
-    :vartype subClusters: list["InsightCluster"]
+    :ivar sub_clusters: List of subclusters within this cluster. Empty if no subclusters exist.
+    :vartype sub_clusters: list["InsightCluster"]
     :ivar samples: List of samples that belong to this cluster. Empty if samples are part of
      subclusters.
     :vartype samples: list["InsightSample"]
@@ -4040,9 +4118,10 @@ class InsightCluster(TypedDict, total=False):
 class InsightModelConfiguration(TypedDict, total=False):
     """Configuration of the model used in the insight generation.
 
-    :ivar modelDeploymentName: The model deployment to be evaluated. Accepts either the deployment
-     name alone or with the connection name as '{connectionName}/<modelDeploymentName>'. Required.
-    :vartype modelDeploymentName: str
+    :ivar model_deployment_name: The model deployment to be evaluated. Accepts either the
+     deployment name alone or with the connection name as '{connectionName}/<modelDeploymentName>'.
+     Required.
+    :vartype model_deployment_name: str
     """
 
     modelDeploymentName: Required[str]
@@ -4072,10 +4151,10 @@ class InsightScheduleTask(TypedDict, total=False):
 class InsightsMetadata(TypedDict, total=False):
     """Metadata about the insights.
 
-    :ivar createdAt: The timestamp when the insights were created. Required.
-    :vartype createdAt: str
-    :ivar completedAt: The timestamp when the insights were completed.
-    :vartype completedAt: str
+    :ivar created_at: The timestamp when the insights were created. Required.
+    :vartype created_at: str
+    :ivar completed_at: The timestamp when the insights were completed.
+    :vartype completed_at: str
     """
 
     createdAt: Required[str]
@@ -4087,12 +4166,12 @@ class InsightsMetadata(TypedDict, total=False):
 class InsightSummary(TypedDict, total=False):
     """Summary of the error cluster analysis.
 
-    :ivar sampleCount: Total number of samples analyzed. Required.
-    :vartype sampleCount: int
-    :ivar uniqueSubclusterCount: Total number of unique subcluster labels. Required.
-    :vartype uniqueSubclusterCount: int
-    :ivar uniqueClusterCount: Total number of unique clusters. Required.
-    :vartype uniqueClusterCount: int
+    :ivar sample_count: Total number of samples analyzed. Required.
+    :vartype sample_count: int
+    :ivar unique_subcluster_count: Total number of unique subcluster labels. Required.
+    :vartype unique_subcluster_count: int
+    :ivar unique_cluster_count: Total number of unique clusters. Required.
+    :vartype unique_cluster_count: int
     :ivar method: Method used for clustering. Required.
     :vartype method: str
     :ivar usage: Token usage while performing clustering analysis. Required.
@@ -4228,8 +4307,8 @@ class LlmGeneratedVoiceGreetingConfig(TypedDict, total=False):
     :ivar prompt: The Handlebars prompt that guides the opening turn. Required.
     :vartype prompt: str
     :ivar tool_choice: The tool-selection policy for the opening response. Defaults to ``none``. Is
-     one of the following types: Union[str, "_models.ToolChoiceOptions"], ToolChoiceFunction,
-     ToolChoiceMCP
+     one of the following types: Literal["none"], Literal["auto"], Literal["required"],
+     ToolChoiceFunction, ToolChoiceMCP
     :vartype tool_choice: "_unions.VoiceAgentToolChoice"
     """
 
@@ -4239,7 +4318,8 @@ class LlmGeneratedVoiceGreetingConfig(TypedDict, total=False):
     """The Handlebars prompt that guides the opening turn. Required."""
     tool_choice: "_unions.VoiceAgentToolChoice"
     """The tool-selection policy for the opening response. Defaults to ``none``. Is one of the
-     following types: Union[str, \"_models.ToolChoiceOptions\"], ToolChoiceFunction, ToolChoiceMCP"""
+     following types: Literal[\"none\"], Literal[\"auto\"], Literal[\"required\"],
+     ToolChoiceFunction, ToolChoiceMCP"""
 
 
 class LocalShellToolParam(TypedDict, total=False):
@@ -4313,9 +4393,9 @@ class LoraConfig(TypedDict, total=False):
     :vartype rank: int
     :ivar alpha: LoRA scaling factor (α). Positive integer; typically 2× the rank.
     :vartype alpha: int
-    :ivar targetModules: Model layers modified by the adapter (e.g., q_proj, v_proj). Auto-detected
-     from adapter_config.json if omitted.
-    :vartype targetModules: list[str]
+    :ivar target_modules: Model layers modified by the adapter (e.g., q_proj, v_proj).
+     Auto-detected from adapter_config.json if omitted.
+    :vartype target_modules: list[str]
     :ivar dropout: Dropout rate used during training. Informational — not used at serving time.
     :vartype dropout: float
     """
@@ -4361,8 +4441,8 @@ class ManagedAzureAISearchIndex(TypedDict, total=False):
     :vartype tags: dict[str, str]
     :ivar type: Type of index. Required. Managed Azure Search.
     :vartype type: Literal[IndexType.MANAGED_AZURE_SEARCH]
-    :ivar vectorStoreId: Vector store id of managed index. Required.
-    :vartype vectorStoreId: str
+    :ivar vector_store_id: Vector store id of managed index. Required.
+    :vartype vector_store_id: str
     """
 
     id: str
@@ -4824,8 +4904,8 @@ class MicrosoftFabricPreviewTool(TypedDict, total=False):
 class ModelCredentialRequest(TypedDict, total=False):
     """Request to fetch credentials for a model asset.
 
-    :ivar blobUri: Blob URI of the model asset to fetch credentials for. Required.
-    :vartype blobUri: str
+    :ivar blob_uri: Blob URI of the model asset to fetch credentials for. Required.
+    :vartype blob_uri: str
     """
 
     blobUri: Required[str]
@@ -4835,14 +4915,14 @@ class ModelCredentialRequest(TypedDict, total=False):
 class ModelPendingUploadRequest(TypedDict, total=False):
     """Represents a request for a pending upload of a model version.
 
-    :ivar pendingUploadId: If PendingUploadId is not provided, a random GUID will be used.
-    :vartype pendingUploadId: str
-    :ivar connectionName: Azure Storage Account connection name to use for generating temporary SAS
-     token.
-    :vartype connectionName: str
-    :ivar pendingUploadType: The type of pending upload. Only TemporaryBlobReference is supported
+    :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
+    :vartype pending_upload_id: str
+    :ivar connection_name: Azure Storage Account connection name to use for generating temporary
+     SAS token.
+    :vartype connection_name: str
+    :ivar pending_upload_type: The type of pending upload. Only TemporaryBlobReference is supported
      for models. Required. Temporary blob reference.
-    :vartype pendingUploadType: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE]
+    :vartype pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE]
     """
 
     pendingUploadId: str
@@ -4881,11 +4961,11 @@ class ModelSamplingParams(TypedDict, total=False):
 class ModelSourceData(TypedDict, total=False):
     """Source information for the model.
 
-    :ivar sourceType: The source type of the model. Known values are: "LocalUpload" and
+    :ivar source_type: The source type of the model. Known values are: "LocalUpload" and
      "TrainingJob".
-    :vartype sourceType: Union[str, "FoundryModelSourceType"]
-    :ivar jobId: The job ID that produced this model.
-    :vartype jobId: str
+    :vartype source_type: Union[str, "FoundryModelSourceType"]
+    :ivar job_id: The job ID that produced this model.
+    :vartype job_id: str
     """
 
     sourceType: Union[str, "FoundryModelSourceType"]
@@ -4897,21 +4977,21 @@ class ModelSourceData(TypedDict, total=False):
 class ModelVersion(TypedDict, total=False):
     """Model Version Definition.
 
-    :ivar blobUri: URI of the model artifact in blob storage. Required.
-    :vartype blobUri: str
-    :ivar weightType: The weight type of the model. Known values are: "FullWeight", "LoRA", and
+    :ivar blob_uri: URI of the model artifact in blob storage. Required.
+    :vartype blob_uri: str
+    :ivar weight_type: The weight type of the model. Known values are: "FullWeight", "LoRA", and
      "DraftModel".
-    :vartype weightType: Union[str, "FoundryModelWeightType"]
-    :ivar baseModel: Base model asset ID.
-    :vartype baseModel: str
+    :vartype weight_type: Union[str, "FoundryModelWeightType"]
+    :ivar base_model: Base model asset ID.
+    :vartype base_model: str
     :ivar source: The source of the model.
     :vartype source: "ModelSourceData"
-    :ivar loraConfig: Adapter-specific configuration. Required when weight_type is lora; ignored
+    :ivar lora_config: Adapter-specific configuration. Required when weight_type is lora; ignored
      otherwise. May be auto-populated from adapter_config.json when present in the uploaded files —
      user-provided values take precedence over auto-detected values.
-    :vartype loraConfig: "LoraConfig"
-    :ivar artifactProfile: The artifact profile of the model.
-    :vartype artifactProfile: "ArtifactProfile"
+    :vartype lora_config: "LoraConfig"
+    :ivar artifact_profile: The artifact profile of the model.
+    :vartype artifact_profile: "ArtifactProfile"
     :ivar warnings: Service-computed advisory warnings derived from the artifact profile.
     :vartype warnings: list["FoundryModelWarning"]
     :ivar id: Asset ID, a unique identifier for the asset.
@@ -4959,8 +5039,8 @@ class MonthlyRecurrenceSchedule(TypedDict, total=False):
 
     :ivar type: Monthly recurrence type. Required. Monthly recurrence pattern.
     :vartype type: Literal[RecurrenceType.MONTHLY]
-    :ivar daysOfMonth: Days of the month for the recurrence schedule. Required.
-    :vartype daysOfMonth: list[int]
+    :ivar days_of_month: Days of the month for the recurrence schedule. Required.
+    :vartype days_of_month: list[int]
     """
 
     type: Required[Literal[RecurrenceType.MONTHLY]]
@@ -5065,10 +5145,10 @@ class OneTimeTrigger(TypedDict, total=False):
 
     :ivar type: Required. One-time trigger.
     :vartype type: Literal[TriggerType.ONE_TIME]
-    :ivar triggerAt: Date and time for the one-time trigger in ISO 8601 format. Required.
-    :vartype triggerAt: str
-    :ivar timeZone: Time zone for the one-time trigger. Defaults to ``UTC``.
-    :vartype timeZone: str
+    :ivar trigger_at: Date and time for the one-time trigger in ISO 8601 format. Required.
+    :vartype trigger_at: str
+    :ivar time_zone: Time zone for the one-time trigger. Defaults to ``UTC``.
+    :vartype time_zone: str
     """
 
     type: Required[Literal[TriggerType.ONE_TIME]]
@@ -5300,14 +5380,14 @@ class OtlpTelemetryEndpoint(TypedDict, total=False):
 class PendingUploadRequest(TypedDict, total=False):
     """Represents a request for a pending upload.
 
-    :ivar pendingUploadId: If PendingUploadId is not provided, a random GUID will be used.
-    :vartype pendingUploadId: str
-    :ivar connectionName: Azure Storage Account connection name to use for generating temporary SAS
-     token.
-    :vartype connectionName: str
-    :ivar pendingUploadType: The type of pending upload. Required. Deprecated: the service never
+    :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
+    :vartype pending_upload_id: str
+    :ivar connection_name: Azure Storage Account connection name to use for generating temporary
+     SAS token.
+    :vartype connection_name: str
+    :ivar pending_upload_type: The type of pending upload. Required. Deprecated: the service never
      read this value and silently ignored it. Use TemporaryBlobReference instead.
-    :vartype pendingUploadType: Literal[PendingUploadType.BLOB_REFERENCE]
+    :vartype pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE]
     """
 
     pendingUploadId: str
@@ -5646,123 +5726,6 @@ class RealtimeAudioFormatsAudioPcmu(TypedDict, total=False):
     """Required. AUDIO_PCMU."""
 
 
-class RealtimeConversationItemFunctionCall(TypedDict, total=False):
-    """Realtime function call item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``function_call``. Required. FUNCTION_CALL.
-    :vartype type: Literal[RealtimeConversationItemType.FUNCTION_CALL]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar call_id: The ID of the function call.
-    :vartype call_id: str
-    :ivar name: The name of the function being called. Required.
-    :vartype name: str
-    :ivar arguments: The arguments of the function call. This is a JSON-encoded string representing
-     the arguments passed to the function, for example ``{"arg1": "value1", "arg2": 42}``. Required.
-    :vartype arguments: str
-    """
-
-    id: str
-    """The unique ID of the item. This may be provided by the client or generated by the server."""
-    object: Literal["realtime.item"]
-    """Identifier for the API object being returned - always ``realtime.item``. Optional when creating
-     a new item. Default value is \"realtime.item\"."""
-    type: Required[Literal[RealtimeConversationItemType.FUNCTION_CALL]]
-    """The type of the item. Always ``function_call``. Required. FUNCTION_CALL."""
-    status: Literal["completed", "incomplete", "in_progress"]
-    """The status of the item. Has no effect on the conversation. Is one of the following types:
-     Literal[\"completed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    call_id: str
-    """The ID of the function call."""
-    name: Required[str]
-    """The name of the function being called. Required."""
-    arguments: Required[str]
-    """The arguments of the function call. This is a JSON-encoded string representing the arguments
-     passed to the function, for example ``{\"arg1\": \"value1\", \"arg2\": 42}``. Required."""
-
-
-class RealtimeConversationItemFunctionCallOutput(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Realtime function call output item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``function_call_output``. Required.
-     FUNCTION_CALL_OUTPUT.
-    :vartype type: Literal[RealtimeConversationItemType.FUNCTION_CALL_OUTPUT]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar call_id: The ID of the function call this output is for. Required.
-    :vartype call_id: str
-    :ivar output: The output of the function call, this is free text and can contain any
-     information or simply be empty. Required.
-    :vartype output: str
-    """
-
-    id: str
-    """The unique ID of the item. This may be provided by the client or generated by the server."""
-    object: Literal["realtime.item"]
-    """Identifier for the API object being returned - always ``realtime.item``. Optional when creating
-     a new item. Default value is \"realtime.item\"."""
-    type: Required[Literal[RealtimeConversationItemType.FUNCTION_CALL_OUTPUT]]
-    """The type of the item. Always ``function_call_output``. Required. FUNCTION_CALL_OUTPUT."""
-    status: Literal["completed", "incomplete", "in_progress"]
-    """The status of the item. Has no effect on the conversation. Is one of the following types:
-     Literal[\"completed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    call_id: Required[str]
-    """The ID of the function call this output is for. Required."""
-    output: Required[str]
-    """The output of the function call, this is free text and can contain any information or simply be
-     empty. Required."""
-
-
-class RealtimeConversationItemMessageAssistant(TypedDict, total=False):
-    """Realtime assistant message item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``message``. Required. Default value is "message".
-    :vartype type: Literal["message"]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar role: The role of the message sender. Always ``assistant``. Required. ASSISTANT.
-    :vartype role: Literal[RealtimeConversationItemMessageType.ASSISTANT]
-    :ivar content: The content of the message. Required.
-    :vartype content: list["RealtimeConversationItemMessageAssistantContent"]
-    """
-
-    id: str
-    """The unique ID of the item. This may be provided by the client or generated by the server."""
-    object: Literal["realtime.item"]
-    """Identifier for the API object being returned - always ``realtime.item``. Optional when creating
-     a new item. Default value is \"realtime.item\"."""
-    type: Required[Literal["message"]]
-    """The type of the item. Always ``message``. Required. Default value is \"message\"."""
-    status: Literal["completed", "incomplete", "in_progress"]
-    """The status of the item. Has no effect on the conversation. Is one of the following types:
-     Literal[\"completed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    role: Required[Literal[RealtimeConversationItemMessageType.ASSISTANT]]
-    """The role of the message sender. Always ``assistant``. Required. ASSISTANT."""
-    content: Required[list["RealtimeConversationItemMessageAssistantContent"]]
-    """The content of the message. Required."""
-
-
 class RealtimeConversationItemMessageAssistantContent(TypedDict, total=False):  # pylint: disable=name-too-long
     """RealtimeConversationItemMessageAssistantContent.
 
@@ -5783,42 +5746,6 @@ class RealtimeConversationItemMessageAssistantContent(TypedDict, total=False):  
     transcript: str
 
 
-class RealtimeConversationItemMessageSystem(TypedDict, total=False):
-    """Realtime system message item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``message``. Required. Default value is "message".
-    :vartype type: Literal["message"]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar role: The role of the message sender. Always ``system``. Required. SYSTEM.
-    :vartype role: Literal[RealtimeConversationItemMessageType.SYSTEM]
-    :ivar content: The content of the message. Required.
-    :vartype content: list["RealtimeConversationItemMessageSystemContent"]
-    """
-
-    id: str
-    """The unique ID of the item. This may be provided by the client or generated by the server."""
-    object: Literal["realtime.item"]
-    """Identifier for the API object being returned - always ``realtime.item``. Optional when creating
-     a new item. Default value is \"realtime.item\"."""
-    type: Required[Literal["message"]]
-    """The type of the item. Always ``message``. Required. Default value is \"message\"."""
-    status: Literal["completed", "incomplete", "in_progress"]
-    """The status of the item. Has no effect on the conversation. Is one of the following types:
-     Literal[\"completed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    role: Required[Literal[RealtimeConversationItemMessageType.SYSTEM]]
-    """The role of the message sender. Always ``system``. Required. SYSTEM."""
-    content: Required[list["RealtimeConversationItemMessageSystemContent"]]
-    """The content of the message. Required."""
-
-
 class RealtimeConversationItemMessageSystemContent(TypedDict, total=False):  # pylint: disable=name-too-long
     """RealtimeConversationItemMessageSystemContent.
 
@@ -5831,42 +5758,6 @@ class RealtimeConversationItemMessageSystemContent(TypedDict, total=False):  # p
     type: Literal["input_text"]
     """Default value is \"input_text\"."""
     text: str
-
-
-class RealtimeConversationItemMessageUser(TypedDict, total=False):
-    """Realtime user message item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``message``. Required. Default value is "message".
-    :vartype type: Literal["message"]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar role: The role of the message sender. Always ``user``. Required. USER.
-    :vartype role: Literal[RealtimeConversationItemMessageType.USER]
-    :ivar content: The content of the message. Required.
-    :vartype content: list["RealtimeConversationItemMessageUserContent"]
-    """
-
-    id: str
-    """The unique ID of the item. This may be provided by the client or generated by the server."""
-    object: Literal["realtime.item"]
-    """Identifier for the API object being returned - always ``realtime.item``. Optional when creating
-     a new item. Default value is \"realtime.item\"."""
-    type: Required[Literal["message"]]
-    """The type of the item. Always ``message``. Required. Default value is \"message\"."""
-    status: Literal["completed", "incomplete", "in_progress"]
-    """The status of the item. Has no effect on the conversation. Is one of the following types:
-     Literal[\"completed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    role: Required[Literal[RealtimeConversationItemMessageType.USER]]
-    """The role of the message sender. Always ``user``. Required. USER."""
-    content: Required[list["RealtimeConversationItemMessageUserContent"]]
-    """The content of the message. Required."""
 
 
 class RealtimeConversationItemMessageUserContent(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -5927,61 +5818,6 @@ class RealtimeFunctionToolParameters(TypedDict, total=False):
     """RealtimeFunctionToolParameters."""
 
 
-class RealtimeMCPApprovalRequest(TypedDict, total=False):
-    """Realtime MCP approval request.
-
-    :ivar type: The type of the item. Always ``mcp_approval_request``. Required.
-     MCP_APPROVAL_REQUEST.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_APPROVAL_REQUEST]
-    :ivar id: The unique ID of the approval request. Required.
-    :vartype id: str
-    :ivar server_label: The label of the MCP server making the request. Required.
-    :vartype server_label: str
-    :ivar name: The name of the tool to run. Required.
-    :vartype name: str
-    :ivar arguments: A JSON string of arguments for the tool. Required.
-    :vartype arguments: str
-    """
-
-    type: Required[Literal[RealtimeConversationItemType.MCP_APPROVAL_REQUEST]]
-    """The type of the item. Always ``mcp_approval_request``. Required. MCP_APPROVAL_REQUEST."""
-    id: Required[str]
-    """The unique ID of the approval request. Required."""
-    server_label: Required[str]
-    """The label of the MCP server making the request. Required."""
-    name: Required[str]
-    """The name of the tool to run. Required."""
-    arguments: Required[str]
-    """A JSON string of arguments for the tool. Required."""
-
-
-class RealtimeMCPApprovalResponse(TypedDict, total=False):
-    """Realtime MCP approval response.
-
-    :ivar type: The type of the item. Always ``mcp_approval_response``. Required.
-     MCP_APPROVAL_RESPONSE.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_APPROVAL_RESPONSE]
-    :ivar id: The unique ID of the approval response. Required.
-    :vartype id: str
-    :ivar approval_request_id: The ID of the approval request being answered. Required.
-    :vartype approval_request_id: str
-    :ivar approve: Whether the request was approved. Required.
-    :vartype approve: bool
-    :ivar reason:
-    :vartype reason: str
-    """
-
-    type: Required[Literal[RealtimeConversationItemType.MCP_APPROVAL_RESPONSE]]
-    """The type of the item. Always ``mcp_approval_response``. Required. MCP_APPROVAL_RESPONSE."""
-    id: Required[str]
-    """The unique ID of the approval response. Required."""
-    approval_request_id: Required[str]
-    """The ID of the approval request being answered. Required."""
-    approve: Required[bool]
-    """Whether the request was approved. Required."""
-    reason: Optional[str]
-
-
 class RealtimeMCPHTTPError(TypedDict, total=False):
     """Realtime MCP HTTP error.
 
@@ -6001,29 +5837,6 @@ class RealtimeMCPHTTPError(TypedDict, total=False):
     """Required."""
 
 
-class RealtimeMCPListTools(TypedDict, total=False):
-    """Realtime MCP list tools.
-
-    :ivar type: The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_LIST_TOOLS]
-    :ivar id: The unique ID of the list.
-    :vartype id: str
-    :ivar server_label: The label of the MCP server. Required.
-    :vartype server_label: str
-    :ivar tools: The tools available on the server. Required.
-    :vartype tools: list["MCPListToolsTool"]
-    """
-
-    type: Required[Literal[RealtimeConversationItemType.MCP_LIST_TOOLS]]
-    """The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS."""
-    id: str
-    """The unique ID of the list."""
-    server_label: Required[str]
-    """The label of the MCP server. Required."""
-    tools: Required[list["MCPListToolsTool"]]
-    """The tools available on the server. Required."""
-
-
 class RealtimeMCPProtocolError(TypedDict, total=False):
     """Realtime MCP protocol error.
 
@@ -6041,42 +5854,6 @@ class RealtimeMCPProtocolError(TypedDict, total=False):
     """Required."""
     message: Required[str]
     """Required."""
-
-
-class RealtimeMCPToolCall(TypedDict, total=False):
-    """Realtime MCP tool call.
-
-    :ivar type: The type of the item. Always ``mcp_call``. Required. MCP_CALL.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_CALL]
-    :ivar id: The unique ID of the tool call. Required.
-    :vartype id: str
-    :ivar server_label: The label of the MCP server running the tool. Required.
-    :vartype server_label: str
-    :ivar name: The name of the tool that was run. Required.
-    :vartype name: str
-    :ivar arguments: A JSON string of the arguments passed to the tool. Required.
-    :vartype arguments: str
-    :ivar approval_request_id:
-    :vartype approval_request_id: str
-    :ivar output:
-    :vartype output: str
-    :ivar error:
-    :vartype error: "RealtimeMCPError"
-    """
-
-    type: Required[Literal[RealtimeConversationItemType.MCP_CALL]]
-    """The type of the item. Always ``mcp_call``. Required. MCP_CALL."""
-    id: Required[str]
-    """The unique ID of the tool call. Required."""
-    server_label: Required[str]
-    """The label of the MCP server running the tool. Required."""
-    name: Required[str]
-    """The name of the tool that was run. Required."""
-    arguments: Required[str]
-    """A JSON string of the arguments passed to the tool. Required."""
-    approval_request_id: Optional[str]
-    output: Optional[str]
-    error: "RealtimeMCPError"
 
 
 class RealtimeMCPToolExecutionError(TypedDict, total=False):
@@ -6397,12 +6174,12 @@ class RecurrenceTrigger(TypedDict, total=False):
 
     :ivar type: Type of the trigger. Required. Recurrence based trigger.
     :vartype type: Literal[TriggerType.RECURRENCE]
-    :ivar startTime: Start time for the recurrence schedule in ISO 8601 format.
-    :vartype startTime: str
-    :ivar endTime: End time for the recurrence schedule in ISO 8601 format.
-    :vartype endTime: str
-    :ivar timeZone: Time zone for the recurrence schedule. Defaults to ``UTC``.
-    :vartype timeZone: str
+    :ivar start_time: Start time for the recurrence schedule in ISO 8601 format.
+    :vartype start_time: str
+    :ivar end_time: End time for the recurrence schedule in ISO 8601 format.
+    :vartype end_time: str
+    :ivar time_zone: Time zone for the recurrence schedule. Defaults to ``UTC``.
+    :vartype time_zone: str
     :ivar interval: Interval for the recurrence schedule. Required.
     :vartype interval: int
     :ivar schedule: Recurrence schedule for the recurrence trigger. Required.
@@ -6426,23 +6203,23 @@ class RecurrenceTrigger(TypedDict, total=False):
 class RedTeam(TypedDict, total=False):
     """Red team details.
 
-    :ivar id: Identifier of the red team run. Required.
-    :vartype id: str
-    :ivar displayName: Name of the red-team run.
-    :vartype displayName: str
-    :ivar numTurns: Number of simulation rounds.
-    :vartype numTurns: int
-    :ivar attackStrategies: List of attack strategies or nested lists of attack strategies.
-    :vartype attackStrategies: list[Union[str, "AttackStrategy"]]
-    :ivar simulationOnly: Simulation-only or Simulation + Evaluation. If ``true`` the scan outputs
+    :ivar name: Identifier of the red team run. Required.
+    :vartype name: str
+    :ivar display_name: Name of the red-team run.
+    :vartype display_name: str
+    :ivar num_turns: Number of simulation rounds.
+    :vartype num_turns: int
+    :ivar attack_strategies: List of attack strategies or nested lists of attack strategies.
+    :vartype attack_strategies: list[Union[str, "AttackStrategy"]]
+    :ivar simulation_only: Simulation-only or Simulation + Evaluation. If ``true`` the scan outputs
      conversation not evaluation result. The service defaults to ``false`` if a value is not
      specified by the caller.
-    :vartype simulationOnly: bool
-    :ivar riskCategories: List of risk categories to generate attack objectives for.
-    :vartype riskCategories: list[Union[str, "RiskCategory"]]
-    :ivar applicationScenario: Application scenario for the red team operation, to generate
+    :vartype simulation_only: bool
+    :ivar risk_categories: List of risk categories to generate attack objectives for.
+    :vartype risk_categories: list[Union[str, "RiskCategory"]]
+    :ivar application_scenario: Application scenario for the red team operation, to generate
      scenario specific attacks.
-    :vartype applicationScenario: str
+    :vartype application_scenario: str
     :ivar tags: Red team's tags. Unlike properties, tags are fully mutable.
     :vartype tags: dict[str, str]
     :ivar properties: Red team's properties. Unlike tags, properties are add-only. Once added, a
@@ -6610,17 +6387,17 @@ class RubricGenerationInputQualityWarning(TypedDict, total=False):
 class Schedule(TypedDict, total=False):
     """Schedule model.
 
-    :ivar id: Identifier of the schedule. Required.
-    :vartype id: str
-    :ivar displayName: Name of the schedule.
-    :vartype displayName: str
+    :ivar schedule_id: Identifier of the schedule. Required.
+    :vartype schedule_id: str
+    :ivar display_name: Name of the schedule.
+    :vartype display_name: str
     :ivar description: Description of the schedule.
     :vartype description: str
     :ivar enabled: Enabled status of the schedule. Required.
     :vartype enabled: bool
-    :ivar provisioningStatus: Provisioning status of the schedule. Known values are: "Creating",
+    :ivar provisioning_status: Provisioning status of the schedule. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", and "Failed".
-    :vartype provisioningStatus: Union[str, "ScheduleProvisioningStatus"]
+    :vartype provisioning_status: Union[str, "ScheduleProvisioningStatus"]
     :ivar trigger: Trigger for the schedule. Required.
     :vartype trigger: "Trigger"
     :ivar task: Task for the schedule. Required.
@@ -6630,8 +6407,8 @@ class Schedule(TypedDict, total=False):
     :ivar properties: Schedule's properties. Unlike tags, properties are add-only. Once added, a
      property cannot be removed.
     :vartype properties: dict[str, str]
-    :ivar systemData: System metadata for the resource. Required.
-    :vartype systemData: dict[str, str]
+    :ivar system_data: System metadata for the resource. Required.
+    :vartype system_data: dict[str, str]
     """
 
     id: Required[str]
@@ -6738,6 +6515,35 @@ class SimpleQnADataGenerationJobOptions(TypedDict, total=False):
      answers between user and agent."""
     question_types: list[Union[str, "SimpleQnAFineTuningQuestionType"]]
     """The question types to generate. Used only for fine-tuning scenarios."""
+
+
+class SimulationSeedDataGenerationJobOptions(TypedDict, total=False):
+    """The options for a simulation seed data generation job. Use with multiturn evaluation scenarios
+    and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
+    ``category``, ``test_case_description``, and ``desired_num_turns``.
+
+    :ivar max_samples: Maximum number of samples to generate. Required.
+    :vartype max_samples: int
+    :ivar train_split: The proportion of the generated data to be used for training when the data
+     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
+    :vartype train_split: float
+    :ivar model_options: The LLM model options.
+    :vartype model_options: "DataGenerationModelOptions"
+    :ivar type: The data generation job type, which is SimulationSeed for this model. Required.
+     Simulation seed for evaluation scenarios.
+    :vartype type: Literal[DataGenerationJobType.SIMULATION_SEED]
+    """
+
+    max_samples: Required[int]
+    """Maximum number of samples to generate. Required."""
+    train_split: float
+    """The proportion of the generated data to be used for training when the data is used for
+     fine-tuning. The rest will be used for validation. Value should be between 0 and 1."""
+    model_options: "DataGenerationModelOptions"
+    """The LLM model options."""
+    type: Required[Literal[DataGenerationJobType.SIMULATION_SEED]]
+    """The data generation job type, which is SimulationSeed for this model. Required. Simulation seed
+     for evaluation scenarios."""
 
 
 class SkillInlineContent(TypedDict, total=False):
@@ -6879,35 +6685,6 @@ class StructuredOutputDefinition(TypedDict, total=False):
     """Whether to enforce strict validation. Default ``true``. Required."""
 
 
-class SimulationSeedDataGenerationJobOptions(TypedDict, total=False):
-    """The options for a simulation seed data generation job. Use with multiturn evaluation scenarios
-    and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
-    ``category``, ``test_case_description``, and ``desired_num_turns``.
-
-    :ivar max_samples: Maximum number of samples to generate. Required.
-    :vartype max_samples: int
-    :ivar train_split: The proportion of the generated data to be used for training when the data
-     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
-    :vartype train_split: float
-    :ivar model_options: The LLM model options.
-    :vartype model_options: "DataGenerationModelOptions"
-    :ivar type: The data generation job type, which is SimulationSeed for this model. Required.
-     Simulation seed for evaluation scenarios.
-    :vartype type: Literal[DataGenerationJobType.SIMULATION_SEED]
-    """
-
-    max_samples: Required[int]
-    """Maximum number of samples to generate. Required."""
-    train_split: float
-    """The proportion of the generated data to be used for training when the data is used for
-     fine-tuning. The rest will be used for validation. Value should be between 0 and 1."""
-    model_options: "DataGenerationModelOptions"
-    """The LLM model options."""
-    type: Required[Literal[DataGenerationJobType.SIMULATION_SEED]]
-    """The data generation job type, which is SimulationSeed for this model. Required. Simulation seed
-     for evaluation scenarios."""
-
-
 class TaxonomyCategory(TypedDict, total=False):
     """Taxonomy category definition.
 
@@ -6917,13 +6694,13 @@ class TaxonomyCategory(TypedDict, total=False):
     :vartype name: str
     :ivar description: Description of the taxonomy category.
     :vartype description: str
-    :ivar riskCategory: Risk category associated with this taxonomy category. Required. Known
+    :ivar risk_category: Risk category associated with this taxonomy category. Required. Known
      values are: "HateUnfairness", "Violence", "Sexual", "SelfHarm", "ProtectedMaterial",
      "CodeVulnerability", "UngroundedAttributes", "ProhibitedActions", "SensitiveDataLeakage", and
      "TaskAdherence".
-    :vartype riskCategory: Union[str, "RiskCategory"]
-    :ivar subCategories: List of taxonomy sub categories. Required.
-    :vartype subCategories: list["TaxonomySubCategory"]
+    :vartype risk_category: Union[str, "RiskCategory"]
+    :ivar sub_categories: List of taxonomy sub categories. Required.
+    :vartype sub_categories: list["TaxonomySubCategory"]
     :ivar properties: Additional properties for the taxonomy category.
     :vartype properties: dict[str, str]
     """
@@ -7453,6 +7230,9 @@ class TracesDataGenerationJobOptions(TypedDict, total=False):
     :ivar type: The data generation job type, which is Traces for this model. Required. Single turn
      query and response from agent traces.
     :vartype type: Literal[DataGenerationJobType.TRACES]
+    :ivar redact_private_content: Whether to redact private content from traces. When omitted or
+     set to true, private content is redacted. Set to false to opt out of redaction.
+    :vartype redact_private_content: bool
     """
 
     max_samples: Required[int]
@@ -7465,6 +7245,9 @@ class TracesDataGenerationJobOptions(TypedDict, total=False):
     type: Required[Literal[DataGenerationJobType.TRACES]]
     """The data generation job type, which is Traces for this model. Required. Single turn query and
      response from agent traces."""
+    redact_private_content: bool
+    """Whether to redact private content from traces. When omitted or set to true, private content is
+     redacted. Set to false to opt out of redaction."""
 
 
 class TracesDataGenerationJobSource(TypedDict, total=False):
@@ -7765,8 +7548,6 @@ class VoiceAgentAvatarVideoParams(TypedDict, total=False):
 
     :ivar bitrate:
     :vartype bitrate: int
-    :ivar codec: Default value is "h264".
-    :vartype codec: Literal["h264"]
     :ivar crop:
     :vartype crop: "VoiceAgentAvatarVideoCrop"
     :ivar resolution:
@@ -7778,8 +7559,6 @@ class VoiceAgentAvatarVideoParams(TypedDict, total=False):
     """
 
     bitrate: int
-    codec: Literal["h264"]
-    """Default value is \"h264\"."""
     crop: "VoiceAgentAvatarVideoCrop"
     resolution: "VoiceAgentAvatarVideoResolution"
     background: "VoiceAgentAvatarVideoBackground"
@@ -7815,9 +7594,8 @@ class VoiceAgentClientEventConversationItemCreate(TypedDict, total=False):  # py
      allows an item to be inserted mid-conversation. If the ID cannot be found, an error will be
      returned and the item will not be added.
     :vartype previous_item_id: str
-    :ivar item: The conversation item to create. Required. Is either a
-     "_unions.VoiceAgentRequestConversationItem" type or a RealtimeMCPApprovalResponse type.
-    :vartype item: "_unions.VoiceAgentCreateConversationItem"
+    :ivar item: The conversation item to create. Required.
+    :vartype item: "VoiceConversationItem"
     """
 
     event_id: str
@@ -7830,9 +7608,8 @@ class VoiceAgentClientEventConversationItemCreate(TypedDict, total=False):  # py
      added to the beginning of the conversation. If set to an existing ID, it allows an item to be
      inserted mid-conversation. If the ID cannot be found, an error will be returned and the item
      will not be added."""
-    item: Required["_unions.VoiceAgentCreateConversationItem"]
-    """The conversation item to create. Required. Is either a
-     \"_unions.VoiceAgentRequestConversationItem\" type or a RealtimeMCPApprovalResponse type."""
+    item: Required["VoiceConversationItem"]
+    """The conversation item to create. Required."""
 
 
 class VoiceAgentClientEventConversationItemDelete(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -8118,7 +7895,8 @@ class VoiceAgentDefinition(TypedDict, total=False):
     :ivar tool_choice: How the model chooses tools for generated responses. ``none`` prevents tool
      calls, ``auto`` lets the model decide, ``required`` requires at least one tool call, and a
      specific function or MCP tool can be selected with an object. Defaults to ``auto``. Is one of
-     the following types: Union[str, "_models.ToolChoiceOptions"], ToolChoiceFunction, ToolChoiceMCP
+     the following types: Literal["none"], Literal["auto"], Literal["required"], ToolChoiceFunction,
+     ToolChoiceMCP
     :vartype tool_choice: "_unions.VoiceAgentToolChoice"
     :ivar parallel_tool_calls: Whether the model may call multiple tools in parallel.
     :vartype parallel_tool_calls: bool
@@ -8183,7 +7961,7 @@ class VoiceAgentDefinition(TypedDict, total=False):
     """How the model chooses tools for generated responses. ``none`` prevents tool calls, ``auto``
      lets the model decide, ``required`` requires at least one tool call, and a specific function or
      MCP tool can be selected with an object. Defaults to ``auto``. Is one of the following types:
-     Union[str, \"_models.ToolChoiceOptions\"], ToolChoiceFunction, ToolChoiceMCP"""
+     Literal[\"none\"], Literal[\"auto\"], Literal[\"required\"], ToolChoiceFunction, ToolChoiceMCP"""
     parallel_tool_calls: bool
     """Whether the model may call multiple tools in parallel."""
     structured_inputs: dict[str, "StructuredInputDefinition"]
@@ -8255,7 +8033,7 @@ class VoiceAgentLlmInterimResponseConfig(TypedDict, total=False):
     :ivar triggers: Conditions that may trigger one interim response.
     :vartype triggers: list[Union[str, "VoiceAgentInterimResponseTrigger"]]
     :ivar latency_threshold_ms: The latency threshold in milliseconds.
-    :vartype latency_threshold_ms: int
+    :vartype latency_threshold_ms: str
     :ivar type: Required. Default value is "llm_interim_response".
     :vartype type: Literal["llm_interim_response"]
     :ivar model: The model used to generate interim responses.
@@ -8268,7 +8046,7 @@ class VoiceAgentLlmInterimResponseConfig(TypedDict, total=False):
 
     triggers: list[Union[str, "VoiceAgentInterimResponseTrigger"]]
     """Conditions that may trigger one interim response."""
-    latency_threshold_ms: int
+    latency_threshold_ms: str
     """The latency threshold in milliseconds."""
     type: Required[Literal["llm_interim_response"]]
     """Required. Default value is \"llm_interim_response\"."""
@@ -8388,13 +8166,13 @@ class VoiceAgentRealtimeResponse(OmitPropertiesRealtimeResponse1):
      locale, and format fields under ``output``.
     :vartype audio: "VoiceResponseAudio"
     :ivar output: The items produced by the live response.
-    :vartype output: list["_unions.VoiceAgentResponseItem"]
+    :vartype output: list["VoiceConversationItem"]
     """
 
     audio: "VoiceResponseAudio"
     """The audio configuration used by the live response, including flat voice provider, locale, and
      format fields under ``output``."""
-    output: list["_unions.VoiceAgentResponseItem"]
+    output: list["VoiceConversationItem"]
     """The items produced by the live response."""
 
 
@@ -8434,18 +8212,15 @@ class VoiceAgentResponseCreateParams(TypedDict, total=False):
     :vartype conversation: Union[Literal["auto"], Literal["none"], str]
     :ivar metadata:
     :vartype metadata: "Metadata"
-    :ivar input: Input items to include in the prompt for the model. Using this field creates a new
-     context for this Response instead of using the default conversation. An empty array ``[]`` will
-     clear the context for this Response. Note that this can include references to items that
-     previously appeared in the session using their id.
-    :vartype input: list["RealtimeConversationItem"]
     :ivar output_modalities: Modalities that the response may return.
     :vartype output_modalities: list[Union[str, "VoiceOutputModality"]]
     :ivar audio: Response-specific audio settings.
     :vartype audio: "PickPropertiesVoiceAudioConfig"
+    :ivar input: Conversation items used as inline response input.
+    :vartype input: list["VoiceConversationItem"]
     :ivar pre_generated_assistant_message: A pre-generated assistant message used to begin the
      response.
-    :vartype pre_generated_assistant_message: "RealtimeConversationItemMessageAssistant"
+    :vartype pre_generated_assistant_message: "VoiceAssistantMessageItem"
     :ivar interim_response: Interim-response settings for this response. Is either a
      VoiceAgentStaticInterimResponseConfig type or a VoiceAgentLlmInterimResponseConfig type.
     :vartype interim_response: "_unions.VoiceAgentInterimResponse"
@@ -8482,16 +8257,13 @@ class VoiceAgentResponseCreateParams(TypedDict, total=False):
      response which will not add items to default conversation. Is one of the following types:
      Literal[\"auto\"], Literal[\"none\"], str"""
     metadata: Optional["Metadata"]
-    input: list["RealtimeConversationItem"]
-    """Input items to include in the prompt for the model. Using this field creates a new context for
-     this Response instead of using the default conversation. An empty array ``[]`` will clear the
-     context for this Response. Note that this can include references to items that previously
-     appeared in the session using their id."""
     output_modalities: list[Union[str, "VoiceOutputModality"]]
     """Modalities that the response may return."""
     audio: "PickPropertiesVoiceAudioConfig"
     """Response-specific audio settings."""
-    pre_generated_assistant_message: Optional["RealtimeConversationItemMessageAssistant"]
+    input: list["VoiceConversationItem"]
+    """Conversation items used as inline response input."""
+    pre_generated_assistant_message: Optional["VoiceAssistantMessageItem"]
     """A pre-generated assistant message used to begin the response."""
     interim_response: Optional["_unions.VoiceAgentInterimResponse"]
     """Interim-response settings for this response. Is either a VoiceAgentStaticInterimResponseConfig
@@ -8560,11 +8332,8 @@ class VoiceAgentServerEventConversationItemAdded(TypedDict, total=False):  # pyl
     :vartype type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_ADDED]
     :ivar previous_item_id:
     :vartype previous_item_id: str
-    :ivar item: The item added to the conversation. Required. Is one of the following types:
-     "_unions.VoiceAgentResponseMessageItem", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceAgentResponseItem"
+    :ivar item: The item added to the conversation. Required.
+    :vartype item: "VoiceConversationItem"
     """
 
     event_id: Required[str]
@@ -8572,11 +8341,8 @@ class VoiceAgentServerEventConversationItemAdded(TypedDict, total=False):  # pyl
     type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_ADDED]]
     """The event type, must be ``conversation.item.added``. Required. CONVERSATION_ITEM_ADDED."""
     previous_item_id: Optional[str]
-    item: Required["_unions.VoiceAgentResponseItem"]
-    """The item added to the conversation. Required. Is one of the following types:
-     \"_unions.VoiceAgentResponseMessageItem\", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem"""
+    item: Required["VoiceConversationItem"]
+    """The item added to the conversation. Required."""
 
 
 class VoiceAgentServerEventConversationItemCreated(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -8589,11 +8355,8 @@ class VoiceAgentServerEventConversationItemCreated(TypedDict, total=False):  # p
     :vartype type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_CREATED]
     :ivar previous_item_id:
     :vartype previous_item_id: str
-    :ivar item: The created conversation item. Required. Is one of the following types:
-     "_unions.VoiceAgentResponseMessageItem", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceAgentResponseItem"
+    :ivar item: The created conversation item. Required.
+    :vartype item: "VoiceConversationItem"
     """
 
     event_id: Required[str]
@@ -8601,11 +8364,8 @@ class VoiceAgentServerEventConversationItemCreated(TypedDict, total=False):  # p
     type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_CREATED]]
     """The event type, must be ``conversation.item.created``. Required. CONVERSATION_ITEM_CREATED."""
     previous_item_id: Optional[str]
-    item: Required["_unions.VoiceAgentResponseItem"]
-    """The created conversation item. Required. Is one of the following types:
-     \"_unions.VoiceAgentResponseMessageItem\", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem"""
+    item: Required["VoiceConversationItem"]
+    """The created conversation item. Required."""
 
 
 class VoiceAgentServerEventConversationItemDeleted(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -8638,11 +8398,8 @@ class VoiceAgentServerEventConversationItemDone(TypedDict, total=False):  # pyli
     :vartype type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_DONE]
     :ivar previous_item_id:
     :vartype previous_item_id: str
-    :ivar item: The completed conversation item. Required. Is one of the following types:
-     "_unions.VoiceAgentResponseMessageItem", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceAgentResponseItem"
+    :ivar item: The completed conversation item. Required.
+    :vartype item: "VoiceConversationItem"
     """
 
     event_id: Required[str]
@@ -8650,11 +8407,8 @@ class VoiceAgentServerEventConversationItemDone(TypedDict, total=False):  # pyli
     type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_DONE]]
     """The event type, must be ``conversation.item.done``. Required. CONVERSATION_ITEM_DONE."""
     previous_item_id: Optional[str]
-    item: Required["_unions.VoiceAgentResponseItem"]
-    """The completed conversation item. Required. Is one of the following types:
-     \"_unions.VoiceAgentResponseMessageItem\", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem"""
+    item: Required["VoiceConversationItem"]
+    """The completed conversation item. Required."""
 
 
 class VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted(
@@ -8827,22 +8581,16 @@ class VoiceAgentServerEventConversationItemRetrieved(TypedDict, total=False):  #
     :ivar type: The event type, must be ``conversation.item.retrieved``. Required.
      CONVERSATION_ITEM_RETRIEVED.
     :vartype type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_RETRIEVED]
-    :ivar item: The retrieved conversation item. Required. Is one of the following types:
-     "_unions.VoiceAgentResponseMessageItem", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceAgentResponseItem"
+    :ivar item: The retrieved conversation item. Required.
+    :vartype item: "VoiceConversationItem"
     """
 
     event_id: Required[str]
     """The unique ID of the server event. Required."""
     type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_RETRIEVED]]
     """The event type, must be ``conversation.item.retrieved``. Required. CONVERSATION_ITEM_RETRIEVED."""
-    item: Required["_unions.VoiceAgentResponseItem"]
-    """The retrieved conversation item. Required. Is one of the following types:
-     \"_unions.VoiceAgentResponseMessageItem\", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem"""
+    item: Required["VoiceConversationItem"]
+    """The retrieved conversation item. Required."""
 
 
 class VoiceAgentServerEventConversationItemTruncated(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -8861,7 +8609,7 @@ class VoiceAgentServerEventConversationItemTruncated(TypedDict, total=False):  #
      Required.
     :vartype audio_end_ms: int
     :ivar item: The assistant message after truncation, when the service returns the updated item.
-    :vartype item: "RealtimeConversationItemMessageAssistant"
+    :vartype item: "VoiceAssistantMessageItem"
     """
 
     event_id: Required[str]
@@ -8874,7 +8622,7 @@ class VoiceAgentServerEventConversationItemTruncated(TypedDict, total=False):  #
     """The index of the content part that was truncated. Required."""
     audio_end_ms: Required[int]
     """The duration up to which the audio was truncated, in milliseconds. Required."""
-    item: "RealtimeConversationItemMessageAssistant"
+    item: "VoiceAssistantMessageItem"
     """The assistant message after truncation, when the service returns the updated item."""
 
 
@@ -9190,7 +8938,7 @@ class VoiceAgentServerEventResponseAnimationVisemeDelta(TypedDict, total=False):
     :ivar content_index: Required.
     :vartype content_index: int
     :ivar audio_offset_ms: Required.
-    :vartype audio_offset_ms: int
+    :vartype audio_offset_ms: str
     :ivar viseme_id: Required.
     :vartype viseme_id: int
     """
@@ -9207,7 +8955,7 @@ class VoiceAgentServerEventResponseAnimationVisemeDelta(TypedDict, total=False):
     """Required."""
     content_index: Required[int]
     """Required."""
-    audio_offset_ms: Required[int]
+    audio_offset_ms: Required[str]
     """Required."""
     viseme_id: Required[int]
     """Required."""
@@ -9328,9 +9076,9 @@ class VoiceAgentServerEventResponseAudioTimestampDelta(TypedDict, total=False): 
     :ivar content_index: Required.
     :vartype content_index: int
     :ivar audio_offset_ms: Required.
-    :vartype audio_offset_ms: int
+    :vartype audio_offset_ms: str
     :ivar audio_duration_ms: Required.
-    :vartype audio_duration_ms: int
+    :vartype audio_duration_ms: str
     :ivar text: Required.
     :vartype text: str
     :ivar timestamp_type: Required. Default value is "word".
@@ -9349,9 +9097,9 @@ class VoiceAgentServerEventResponseAudioTimestampDelta(TypedDict, total=False): 
     """Required."""
     content_index: Required[int]
     """Required."""
-    audio_offset_ms: Required[int]
+    audio_offset_ms: Required[str]
     """Required."""
-    audio_duration_ms: Required[int]
+    audio_duration_ms: Required[str]
     """Required."""
     text: Required[str]
     """Required."""
@@ -9770,11 +9518,8 @@ class VoiceAgentServerEventResponseOutputItemAdded(TypedDict, total=False):  # p
     :vartype response_id: str
     :ivar output_index: The index of the output item in the Response. Required.
     :vartype output_index: int
-    :ivar item: The output item that was added. Required. Is one of the following types:
-     "_unions.VoiceAgentResponseMessageItem", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceAgentResponseItem"
+    :ivar item: The output item that was added. Required.
+    :vartype item: "VoiceConversationItem"
     """
 
     event_id: Required[str]
@@ -9785,11 +9530,8 @@ class VoiceAgentServerEventResponseOutputItemAdded(TypedDict, total=False):  # p
     """The ID of the Response to which the item belongs. Required."""
     output_index: Required[int]
     """The index of the output item in the Response. Required."""
-    item: Required["_unions.VoiceAgentResponseItem"]
-    """The output item that was added. Required. Is one of the following types:
-     \"_unions.VoiceAgentResponseMessageItem\", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem"""
+    item: Required["VoiceConversationItem"]
+    """The output item that was added. Required."""
 
 
 class VoiceAgentServerEventResponseOutputItemDone(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -9804,11 +9546,8 @@ class VoiceAgentServerEventResponseOutputItemDone(TypedDict, total=False):  # py
     :vartype response_id: str
     :ivar output_index: The index of the output item in the Response. Required.
     :vartype output_index: int
-    :ivar item: The output item that finished streaming. Required. Is one of the following types:
-     "_unions.VoiceAgentResponseMessageItem", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceAgentResponseItem"
+    :ivar item: The output item that finished streaming. Required.
+    :vartype item: "VoiceConversationItem"
     """
 
     event_id: Required[str]
@@ -9819,11 +9558,8 @@ class VoiceAgentServerEventResponseOutputItemDone(TypedDict, total=False):  # py
     """The ID of the Response to which the item belongs. Required."""
     output_index: Required[int]
     """The index of the output item in the Response. Required."""
-    item: Required["_unions.VoiceAgentResponseItem"]
-    """The output item that finished streaming. Required. Is one of the following types:
-     \"_unions.VoiceAgentResponseMessageItem\", VoiceFunctionCallItem, VoiceFunctionCallOutputItem,
-     VoiceMcpListToolsItem, VoiceMcpCallItem, VoiceMcpApprovalRequestItem,
-     VoiceMcpApprovalResponseItem"""
+    item: Required["VoiceConversationItem"]
+    """The output item that finished streaming. Required."""
 
 
 class VoiceAgentServerEventResponseTextDelta(TypedDict, total=False):
@@ -9987,6 +9723,9 @@ class VoiceAgentServerEventSessionCreated(TypedDict, total=False):
     :vartype event_id: str
     :ivar type: The event type, must be ``session.created``. Required. SESSION_CREATED.
     :vartype type: Literal[RealtimeServerEventType.SESSION_CREATED]
+    :ivar conversation_id: The id of the persisted conversation. Only present when conversation
+     persistence is enabled for the session.
+    :vartype conversation_id: str
     :ivar session: The initial effective voice-agent session configuration. Required.
     :vartype session: "VoiceAgentSessionResponseConfig"
     """
@@ -9995,6 +9734,9 @@ class VoiceAgentServerEventSessionCreated(TypedDict, total=False):
     """The unique ID of the server event. Required."""
     type: Required[Literal[RealtimeServerEventType.SESSION_CREATED]]
     """The event type, must be ``session.created``. Required. SESSION_CREATED."""
+    conversation_id: str
+    """The id of the persisted conversation. Only present when conversation persistence is enabled for
+     the session."""
     session: Required["VoiceAgentSessionResponseConfig"]
     """The initial effective voice-agent session configuration. Required."""
 
@@ -10152,7 +9894,7 @@ class VoiceAgentSessionResponseConfig(TypedDict, total=False):
     :ivar tools: Tools available to the session.
     :vartype tools: list["VoiceAgentTool"]
     :ivar tool_choice: Tool-selection behavior for the session. Is one of the following types:
-     Union[str, "_models.ToolChoiceOptions"], ToolChoiceFunction, ToolChoiceMCP
+     Literal["none"], Literal["auto"], Literal["required"], ToolChoiceFunction, ToolChoiceMCP
     :vartype tool_choice: "_unions.VoiceAgentToolChoice"
     :ivar reasoning: Reasoning settings for compatible realtime models.
     :vartype reasoning: "RealtimeReasoning"
@@ -10198,8 +9940,8 @@ class VoiceAgentSessionResponseConfig(TypedDict, total=False):
     tools: list["VoiceAgentTool"]
     """Tools available to the session."""
     tool_choice: "_unions.VoiceAgentToolChoice"
-    """Tool-selection behavior for the session. Is one of the following types: Union[str,
-     \"_models.ToolChoiceOptions\"], ToolChoiceFunction, ToolChoiceMCP"""
+    """Tool-selection behavior for the session. Is one of the following types: Literal[\"none\"],
+     Literal[\"auto\"], Literal[\"required\"], ToolChoiceFunction, ToolChoiceMCP"""
     reasoning: "RealtimeReasoning"
     """Reasoning settings for compatible realtime models."""
     parallel_tool_calls: bool
@@ -10246,7 +9988,7 @@ class VoiceAgentSessionUpdateConfig(TypedDict, total=False):
     :ivar tools: Tools available to the session.
     :vartype tools: list["VoiceAgentTool"]
     :ivar tool_choice: Tool-selection behavior for the session. Is one of the following types:
-     Union[str, "_models.ToolChoiceOptions"], ToolChoiceFunction, ToolChoiceMCP
+     Literal["none"], Literal["auto"], Literal["required"], ToolChoiceFunction, ToolChoiceMCP
     :vartype tool_choice: "_unions.VoiceAgentToolChoice"
     :ivar reasoning: Reasoning settings for compatible realtime models.
     :vartype reasoning: "RealtimeReasoning"
@@ -10283,8 +10025,8 @@ class VoiceAgentSessionUpdateConfig(TypedDict, total=False):
     tools: list["VoiceAgentTool"]
     """Tools available to the session."""
     tool_choice: "_unions.VoiceAgentToolChoice"
-    """Tool-selection behavior for the session. Is one of the following types: Union[str,
-     \"_models.ToolChoiceOptions\"], ToolChoiceFunction, ToolChoiceMCP"""
+    """Tool-selection behavior for the session. Is one of the following types: Literal[\"none\"],
+     Literal[\"auto\"], Literal[\"required\"], ToolChoiceFunction, ToolChoiceMCP"""
     reasoning: "RealtimeReasoning"
     """Reasoning settings for compatible realtime models."""
     parallel_tool_calls: bool
@@ -10306,7 +10048,7 @@ class VoiceAgentStaticInterimResponseConfig(TypedDict, total=False):
     :ivar triggers: Conditions that may trigger one interim response.
     :vartype triggers: list[Union[str, "VoiceAgentInterimResponseTrigger"]]
     :ivar latency_threshold_ms: The latency threshold in milliseconds.
-    :vartype latency_threshold_ms: int
+    :vartype latency_threshold_ms: str
     :ivar type: Required. Default value is "static_interim_response".
     :vartype type: Literal["static_interim_response"]
     :ivar texts: Candidate text values for the interim response.
@@ -10315,7 +10057,7 @@ class VoiceAgentStaticInterimResponseConfig(TypedDict, total=False):
 
     triggers: list[Union[str, "VoiceAgentInterimResponseTrigger"]]
     """Conditions that may trigger one interim response."""
-    latency_threshold_ms: int
+    latency_threshold_ms: str
     """The latency threshold in milliseconds."""
     type: Required[Literal["static_interim_response"]]
     """Required. Default value is \"static_interim_response\"."""
@@ -10328,9 +10070,9 @@ class VoiceAgentTranscriptionPhrase(TypedDict, total=False):
 
     :ivar offset_milliseconds: The phrase offset from the beginning of the audio, in milliseconds.
      Required.
-    :vartype offset_milliseconds: int
+    :vartype offset_milliseconds: str
     :ivar duration_milliseconds: The phrase duration in milliseconds. Required.
-    :vartype duration_milliseconds: int
+    :vartype duration_milliseconds: str
     :ivar text: The transcribed phrase text. Required.
     :vartype text: str
     :ivar words: Word-level timing details, when available.
@@ -10341,9 +10083,9 @@ class VoiceAgentTranscriptionPhrase(TypedDict, total=False):
     :vartype confidence: float
     """
 
-    offset_milliseconds: Required[int]
+    offset_milliseconds: Required[str]
     """The phrase offset from the beginning of the audio, in milliseconds. Required."""
-    duration_milliseconds: Required[int]
+    duration_milliseconds: Required[str]
     """The phrase duration in milliseconds. Required."""
     text: Required[str]
     """The transcribed phrase text. Required."""
@@ -10362,16 +10104,16 @@ class VoiceAgentTranscriptionWord(TypedDict, total=False):
     :vartype text: str
     :ivar offset_milliseconds: The word offset from the beginning of the audio, in milliseconds.
      Required.
-    :vartype offset_milliseconds: int
+    :vartype offset_milliseconds: str
     :ivar duration_milliseconds: The word duration in milliseconds. Required.
-    :vartype duration_milliseconds: int
+    :vartype duration_milliseconds: str
     """
 
     text: Required[str]
     """The transcribed word text. Required."""
-    offset_milliseconds: Required[int]
+    offset_milliseconds: Required[str]
     """The word offset from the beginning of the audio, in milliseconds. Required."""
-    duration_milliseconds: Required[int]
+    duration_milliseconds: Required[str]
     """The word duration in milliseconds. Required."""
 
 
@@ -10500,14 +10242,13 @@ class VoiceAudioOutputConfig(TypedDict, total=False):
 
     * `openai`: `voice` and `speed`.
     * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
-      `custom_lexicon_url`,
-      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    `custom_lexicon_url`,
+    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
     * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
-      `personal_voice_model`; the voice name is derived from the avatar.
+    `personal_voice_model`; the voice name is derived from the avatar.
     * `azure-realtime-native`: `voice` and `speed`.
-
     `format` and `output_audio_timestamp_types` apply to every voice type.
 
     :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
@@ -10517,10 +10258,9 @@ class VoiceAudioOutputConfig(TypedDict, total=False):
      ``azure-custom``, ``azure-personal``, and ``azure-realtime-native``. It does not apply to
      ``avatar-voice-sync``, which derives the voice name from the avatar.
     :vartype voice: str
-    :ivar voice_type: The voice implementation. Known values are ``openai``, ``azure-standard``,
-     ``azure-custom``, ``azure-personal``, ``avatar-voice-sync``, and ``azure-realtime-native``. The
-     string is extensible so future values do not require SDK type changes.
-    :vartype voice_type: str
+    :ivar voice_type: The voice implementation. Known values are: "openai", "azure-standard",
+     "azure-custom", "azure-personal", "avatar-voice-sync", and "azure-realtime-native".
+    :vartype voice_type: Union[str, "VoiceType"]
     :ivar voice_locale: The enforced BCP-47 output locale. Applies to ``azure-standard``,
      ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
     :vartype voice_locale: str
@@ -10564,10 +10304,9 @@ class VoiceAudioOutputConfig(TypedDict, total=False):
     """The voice name or identifier. Applies to ``openai``, ``azure-standard``, ``azure-custom``,
      ``azure-personal``, and ``azure-realtime-native``. It does not apply to ``avatar-voice-sync``,
      which derives the voice name from the avatar."""
-    voice_type: str
-    """The voice implementation. Known values are ``openai``, ``azure-standard``, ``azure-custom``,
-     ``azure-personal``, ``avatar-voice-sync``, and ``azure-realtime-native``. The string is
-     extensible so future values do not require SDK type changes."""
+    voice_type: Union[str, "VoiceType"]
+    """The voice implementation. Known values are: \"openai\", \"azure-standard\", \"azure-custom\",
+     \"azure-personal\", \"avatar-voice-sync\", and \"azure-realtime-native\"."""
     voice_locale: str
     """The enforced BCP-47 output locale. Applies to ``azure-standard``, ``azure-custom``,
      ``azure-personal``, and ``avatar-voice-sync``."""
@@ -10919,12 +10658,12 @@ class VoiceInputTranscription(TypedDict, total=False):
      ``gpt-realtime-whisper`` in GA Realtime sessions. Is one of the following types:
      Literal["minimal"], Literal["low"], Literal["medium"], Literal["high"], Literal["xhigh"]
     :vartype delay: Literal["minimal", "low", "medium", "high", "xhigh"]
-    :ivar model: The transcription model to use. Required. Known values are: "whisper-1",
-     "gpt-realtime-whisper", "gpt-4o-transcribe", "gpt-4o-mini-transcribe",
-     "gpt-4o-transcribe-diarize", "gpt-transcribe", "gpt-live-transcribe", "mai-transcribe", and
-     "azure-speech".
+    :ivar model: The transcription model identifier. Configure customer custom speech deployments
+     in ``custom_speech``. Required. Known values are: "whisper-1", "gpt-realtime-whisper",
+     "gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize", "gpt-transcribe",
+     "gpt-live-transcribe", "mai-transcribe", and "azure-speech".
     :vartype model: Union[str, "VoiceInputTranscriptionModel"]
-    :ivar custom_speech: Optional custom speech model configuration, keyed by locale.
+    :ivar custom_speech: Optional customer custom speech deployment configuration, keyed by locale.
     :vartype custom_speech: dict[str, str]
     :ivar phrase_list: Optional phrase hints that bias recognition toward domain terms.
     :vartype phrase_list: list[str]
@@ -10946,12 +10685,12 @@ class VoiceInputTranscription(TypedDict, total=False):
      GA Realtime sessions. Is one of the following types: Literal[\"minimal\"], Literal[\"low\"],
      Literal[\"medium\"], Literal[\"high\"], Literal[\"xhigh\"]"""
     model: Required[Union[str, "VoiceInputTranscriptionModel"]]
-    """The transcription model to use. Required. Known values are: \"whisper-1\",
-     \"gpt-realtime-whisper\", \"gpt-4o-transcribe\", \"gpt-4o-mini-transcribe\",
-     \"gpt-4o-transcribe-diarize\", \"gpt-transcribe\", \"gpt-live-transcribe\", \"mai-transcribe\",
-     and \"azure-speech\"."""
+    """The transcription model identifier. Configure customer custom speech deployments in
+     ``custom_speech``. Required. Known values are: \"whisper-1\", \"gpt-realtime-whisper\",
+     \"gpt-4o-transcribe\", \"gpt-4o-mini-transcribe\", \"gpt-4o-transcribe-diarize\",
+     \"gpt-transcribe\", \"gpt-live-transcribe\", \"mai-transcribe\", and \"azure-speech\"."""
     custom_speech: dict[str, str]
-    """Optional custom speech model configuration, keyed by locale."""
+    """Optional customer custom speech deployment configuration, keyed by locale."""
     phrase_list: list[str]
     """Optional phrase hints that bias recognition toward domain terms."""
 
@@ -11131,8 +10870,9 @@ class VoiceResponseAudioOutput(TypedDict, total=False):
     :ivar voice: The voice name used for the response's audio output.
     :vartype voice: str
     :ivar voice_type: The extensible provider/type of the voice used for the response's audio
-     output.
-    :vartype voice_type: str
+     output. Known values are: "openai", "azure-standard", "azure-custom", "azure-personal",
+     "avatar-voice-sync", and "azure-realtime-native".
+    :vartype voice_type: Union[str, "VoiceType"]
     :ivar voice_locale: The BCP-47 locale of the voice used for the response's audio output.
     :vartype voice_locale: str
     :ivar format: The audio format used for the response's audio output.
@@ -11141,8 +10881,10 @@ class VoiceResponseAudioOutput(TypedDict, total=False):
 
     voice: str
     """The voice name used for the response's audio output."""
-    voice_type: str
-    """The extensible provider/type of the voice used for the response's audio output."""
+    voice_type: Union[str, "VoiceType"]
+    """The extensible provider/type of the voice used for the response's audio output. Known values
+     are: \"openai\", \"azure-standard\", \"azure-custom\", \"azure-personal\",
+     \"avatar-voice-sync\", and \"azure-realtime-native\"."""
     voice_locale: str
     """The BCP-47 locale of the voice used for the response's audio output."""
     format: "RealtimeAudioFormats"
@@ -11171,7 +10913,7 @@ class VoiceServerVadTurnDetection(TypedDict, total=False):
     :vartype type: Literal[VoiceTurnDetectionType.SERVER_VAD]
     :ivar speech_duration_ms: Minimum speech duration required to trigger detection, in
      milliseconds.
-    :vartype speech_duration_ms: int
+    :vartype speech_duration_ms: str
     :ivar end_of_utterance_detection: Semantic end-of-utterance detection configuration. Set to
      null to disable it.
     :vartype end_of_utterance_detection: "VoiceEndOfUtteranceDetection"
@@ -11187,7 +10929,7 @@ class VoiceServerVadTurnDetection(TypedDict, total=False):
     idle_timeout_ms: Optional[int]
     type: Required[Literal[VoiceTurnDetectionType.SERVER_VAD]]
     """Required. Server-side voice activity detection."""
-    speech_duration_ms: int
+    speech_duration_ms: str
     """Minimum speech duration required to trigger detection, in milliseconds."""
     end_of_utterance_detection: Optional["VoiceEndOfUtteranceDetection"]
     """Semantic end-of-utterance detection configuration. Set to null to disable it."""
@@ -11507,8 +11249,8 @@ class WeeklyRecurrenceSchedule(TypedDict, total=False):
 
     :ivar type: Weekly recurrence type. Required. Weekly recurrence pattern.
     :vartype type: Literal[RecurrenceType.WEEKLY]
-    :ivar daysOfWeek: Days of the week for the recurrence schedule. Required.
-    :vartype daysOfWeek: list[Union[str, "DayOfWeek"]]
+    :ivar days_of_week: Days of the week for the recurrence schedule. Required.
+    :vartype days_of_week: list[Union[str, "DayOfWeek"]]
     """
 
     type: Required[Literal[RecurrenceType.WEEKLY]]
@@ -11518,7 +11260,10 @@ class WeeklyRecurrenceSchedule(TypedDict, total=False):
 
 
 class WorkflowAgentDefinition(TypedDict, total=False):
-    """The workflow agent definition.
+    """The workflow agent definition. Microsoft Foundry is retiring workflows on December 1, 2026. If
+    you're looking to build new workflows, use Microsoft Agent Framework. To migrate existing
+    workflows, see the `Migration guide
+    <https://learn.microsoft.com/azure/foundry/agents/concepts/workflow#migration-guide>`_.
 
     :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
     :vartype rai_config: "RaiConfig"
@@ -11652,8 +11397,8 @@ class UpdateMemoriesRequest(TypedDict, total=False):
     :ivar scope: The namespace that logically groups and isolates memories, such as a user ID.
      Required.
     :vartype scope: str
-    :ivar items: Conversation items to be stored in memory.
-    :vartype items: list[dict[str, Any]]
+    :ivar items_property: Conversation items to be stored in memory.
+    :vartype items_property: list[dict[str, Any]]
     :ivar previous_update_id: The unique ID of the previous update request, enabling incremental
      memory updates from where the last operation left off.
     :vartype previous_update_id: str
@@ -11796,19 +11541,6 @@ class CreateSkillVersionRequest(TypedDict, total=False):
     """Inline skill content for simple skills without file uploads. Foundry-specific extension."""
     default: bool
     """Whether to set this version as the default."""
-
-
-class GenerateAgentRequest(TypedDict, total=False):
-    """GenerateAgentRequest.
-
-    :ivar kind: The kind of agent to generate. Required. Known values are: "prompt", "hosted",
-     "workflow", "external", and "voice".
-    :vartype kind: Union[str, "AgentKind"]
-    """
-
-    kind: Required[Union[str, "AgentKind"]]
-    """The kind of agent to generate. Required. Known values are: \"prompt\", \"hosted\",
-     \"workflow\", \"external\", and \"voice\"."""
 
 
 class CreateAgentVersionRequest(TypedDict, total=False):
@@ -12080,17 +11812,6 @@ MemoryStoreDefinition = Union[MemoryStoreDefaultDefinition]
 OpenApiAuthDetails = Union[OpenApiAnonymousAuthDetails, OpenApiManagedAuthDetails, OpenApiProjectConnectionAuthDetails]
 TelemetryEndpoint = Union[OtlpTelemetryEndpoint]
 RealtimeAudioFormats = Union[RealtimeAudioFormatsAudioPcm, RealtimeAudioFormatsAudioPcma, RealtimeAudioFormatsAudioPcmu]
-RealtimeConversationItem = Union[
-    RealtimeConversationItemFunctionCall,
-    RealtimeConversationItemFunctionCallOutput,
-    RealtimeMCPApprovalRequest,
-    RealtimeMCPApprovalResponse,
-    RealtimeMCPToolCall,
-    RealtimeMCPListTools,
-]
-RealtimeConversationItemMessage = Union[
-    RealtimeConversationItemMessageAssistant, RealtimeConversationItemMessageSystem, RealtimeConversationItemMessageUser
-]
 RealtimeMCPError = Union[RealtimeMCPHTTPError, RealtimeMCPProtocolError, RealtimeMCPToolExecutionError]
 RealtimeServerEvent = Union[RealtimeServerEventResponseContentPartAdded]
 ToolChoiceParam = Union[

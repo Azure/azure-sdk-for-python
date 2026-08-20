@@ -6,16 +6,19 @@
 
 """
 DESCRIPTION:
-    End-to-end typed conversation against an existing voice agent, using the
-    ``client.realtime`` namespace added on top of the generated
-    azure-ai-projects client (see ``azure.ai.projects.aio.AsyncRealtime``).
+    End-to-end typed conversation using the ``client.realtime`` namespace added
+    on top of the generated azure-ai-projects client (see
+    ``azure.ai.projects.aio.AsyncRealtime``).
 
-      1. Hold a typed, multi-turn conversation: each prompt is sent as a
-         ``RealtimeConversationItemMessageUser`` and the reply streams back as
+      1. Generate a starter voice agent (see sample_voice_agent_generate.py),
+         then publish a version with `store=True` so the conversation can be
+         read back afterward.
+      2. Hold a typed, multi-turn conversation: each prompt is sent as a
+         ``VoiceUserMessageItem`` and the reply streams back as
          typed audio and transcript events. Blank line (or ``exit`` / ``quit``)
          ends it.
-      2. Read the persisted conversation back (requires the agent to have been
-         created with `store=True`; see sample_voice_agent_basic.py).
+      3. Fetch the persisted conversation back by id.
+      4. Delete the agent created for this sample.
 
     Reply audio is PCM16, mono, 24 kHz and plays through the speakers when
     ``pyaudio`` is installed; runs headless otherwise. For a hands-free mic
@@ -29,9 +32,8 @@ USAGE:
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - Foundry project endpoint:
        https://<account>.services.ai.azure.com/api/projects/<project>
-    2) FOUNDRY_VOICE_AGENT_NAME (required) - name of an existing voice agent to
-       converse with (created with `store=True` to persist conversations; see
-       sample_voice_agent_basic.py).
+    2) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the agent created by this
+       sample. Defaults to "sample-live-text-conversation-agent-async".
 
     Authenticates with DefaultAzureCredential, so sign in first (e.g. `az login`).
 """
@@ -40,18 +42,24 @@ import asyncio
 import os
 from typing import Final, Optional
 
+from dotenv import load_dotenv
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    RealtimeConversationItemMessageUser,
+    AgentKind,
+    GenerateVoiceAgentRequest,
     RealtimeConversationItemMessageUserContent,
+    VoiceAgentDefinition,
     VoiceAgentServerEventResponseAudioDelta,
     VoiceAgentServerEventResponseAudioTranscriptDone,
     VoiceAgentServerEventResponseDone,
     VoiceAgentServerEventSessionCreated,
     RealtimeServerEventError,
+    VoiceUserMessageItem,
 )
+
+load_dotenv()
 
 # Seconds to wait for the agent to finish its reply.
 _RESPONSE_TIMEOUT: Final = 45
@@ -164,7 +172,7 @@ async def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Op
 
                 # Send the turn and ask the agent to respond.
                 await conn.conversation.item.create(
-                    item=RealtimeConversationItemMessageUser(
+                    item=VoiceUserMessageItem(
                         content=[RealtimeConversationItemMessageUserContent(type="input_text", text=prompt)]
                     )
                 )
@@ -215,28 +223,61 @@ async def _read_conversation(client: AIProjectClient, agent_name: str, conversat
 
 async def text_conversation() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-    agent_name = os.environ["FOUNDRY_VOICE_AGENT_NAME"]
+    agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-live-text-conversation-agent-async"
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
         try:
-            # 1) Hold the realtime conversation against the existing agent.
+            # 1) Generate a starter voice agent (see sample_voice_agent_generate.py).
+            generated = await project_client.agents.generate_agent(
+                GenerateVoiceAgentRequest(kind=AgentKind.VOICE, name=agent_name)
+            )
+            definition = generated.versions.latest.definition  # type: ignore[attr-defined]
+
+            # 2) Publish a new version with conversation persistence enabled (`store=True`) so the
+            #    session's conversation can be fetched back by id afterward.
+            await project_client.agents.create_version(
+                agent_name=agent_name,
+                definition=VoiceAgentDefinition(
+                    model_type=definition.model_type,
+                    model=definition.model,
+                    instructions=definition.instructions,
+                    store=True,
+                ),
+            )
+
+            # 3) Hold the realtime conversation against the freshly created agent.
             print(f"Starting realtime session with agent: {agent_name}")
             conversation_id = await _run_text_conversation(project_client, agent_name)
 
-            # 2) Read the persisted conversation back.
+            # 4) Fetch the persisted conversation back by id.
             if conversation_id:
                 print(f"Reading persisted conversation {conversation_id}...")
                 try:
                     await _read_conversation(project_client, agent_name, conversation_id)
                 except HttpResponseError as e:
                     print(f"Could not read conversation: {e.status_code} {e.reason}")
+                # To fetch this session's audio afterward, use
+                # `project_client.agent_endpoint_conversations`:
+                #   - get_agent_conversation_audio(agent_name, conversation_id) for the merged
+                #     whole-call stereo recording's metadata, then
+                #     get_agent_conversation_audio_content(agent_name, conversation_id) to stream
+                #     the WAV bytes.
+                #   - get_agent_conversation_item_audio(agent_name, conversation_id, item_id) for a
+                #     single turn's audio metadata, then
+                #     get_agent_conversation_item_audio_content(agent_name, conversation_id, item_id)
+                #     to stream that turn's bytes.
+                # See sample_voice_agent_read_conversation_audio.py for a full example.
             else:
                 print("No conversation id was returned; nothing to read.")
         except HttpResponseError as e:
             print(f"Service responded with an error: {e.status_code} {e.reason}")
+        finally:
+            # 5) Clean up the agent created for this sample.
+            await project_client.agents.delete(agent_name=agent_name)
+            print(f"Deleted voice agent: {agent_name}")
 
 
 if __name__ == "__main__":

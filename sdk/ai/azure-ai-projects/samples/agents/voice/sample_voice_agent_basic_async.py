@@ -31,7 +31,7 @@ import os
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import VoiceAgentDefinition
+from azure.ai.projects.models import AgentKind, VoiceAgentDefinition, VoiceModelType
 
 load_dotenv()
 
@@ -49,7 +49,7 @@ async def main() -> None:
             created_version = await project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=VoiceAgentDefinition(
-                    model_type="managed",
+                    model_type=VoiceModelType.MANAGED,
                     model=model,
                     instructions="You are a friendly voice assistant. Keep replies short and natural.",
                     # Persist conversations so they can be read back later. Defaults to False.
@@ -62,7 +62,7 @@ async def main() -> None:
             print(f"Retrieved voice agent: {agent.name}")
 
             print("Voice agents in this project:")
-            async for item in project_client.agents.list(kind="voice"):
+            async for item in project_client.agents.list(kind=AgentKind.VOICE):
                 print(f"  - {item.name}")
         finally:
             await project_client.agents.delete(agent_name=agent_name)

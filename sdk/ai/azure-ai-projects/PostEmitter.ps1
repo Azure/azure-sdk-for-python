@@ -186,6 +186,47 @@ for ($i = 0; $i -lt $lines.Length; $i++) {
 }
 Set-Content $f $lines
 
+# Fix pyright errors on generate_agent caused by a known typespec-python emitter bug: when a
+# discriminated union has exactly one member, the emitter emits `GenerateAgentRequest =
+# "_models.GenerateVoiceAgentRequest"` in _unions.py (a bare string, not wrapped in Union[...] like
+# every other alias in that file), and generates only a single @overload for generate_agent instead
+# of 0 or 2+. Confirmed present in both @azure-tools/typespec-python 0.63.4-dev.11 and 0.64.0-dev.6
+# (latest mirrored builds as of 2026-08-19) - a real upstream codegen bug, not fixable here at the
+# TypeSpec/source level. Silence the two resulting pyright errors rather than hand-restructure
+# generated code.
+$files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
+foreach ($f in $files) {
+    $lines = Get-Content $f
+    $out = New-Object System.Collections.Generic.List[string]
+    for ($i = 0; $i -lt $lines.Length; $i++) {
+        # Drop the redundant lone @overload stub for generate_agent (invalid: pyright/mypy both
+        # require 0 or 2+ overloads, never exactly 1). This exists because the "use union
+        # generation request" TypeSpec commit made GenerateAgentRequest a union of exactly one
+        # member, and the emitter doesn't collapse that back to a plain (non-overloaded) method.
+        if ($lines[$i] -match '^\s*@overload\s*$' -and $lines[$i + 1] -match '(async )?def generate_agent\(') {
+            # Skip past the docstring's closing triple-quote (find the second occurrence of a
+            # lone closing-quote line after the opening one).
+            $quoteCount = 0
+            $j = $i
+            while ($quoteCount -lt 2) {
+                if ($lines[$j] -match '"""') { $quoteCount++ }
+                $j++
+            }
+            # Skip the blank line separating the stub from the concrete implementation.
+            while ($lines[$j].Trim() -eq '') { $j++ }
+            $i = $j - 1
+            continue
+        }
+        $out.Add($lines[$i])
+    }
+    Set-Content $f $out
+}
+foreach ($f in $files) {
+    $c = Get-Content $f -Raw
+    $c = $c -replace '(def generate_agent\(self, body: )"_unions\.GenerateAgentRequest"', '${1}_models.GenerateVoiceAgentRequest'
+    Set-Content $f $c -NoNewline
+}
+
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .

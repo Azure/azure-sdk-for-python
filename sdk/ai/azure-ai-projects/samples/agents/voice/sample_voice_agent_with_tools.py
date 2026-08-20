@@ -45,15 +45,18 @@ from azure.ai.projects.models import (
     VoiceAgentMcpTool,
     VoiceAudioConfig,
     VoiceAudioFormat,
+    VoiceAudioFormatType,
     VoiceAudioInputConfig,
     VoiceAudioOutputConfig,
     VoiceInputTranscription,
+    VoiceInputTranscriptionModel,
     VoiceModelType,
     VoiceOutputModality,
     VoiceServerVadTurnDetection,
     VoiceSystemTool,
     VoiceSystemToolName,
     VoiceToolboxTool,
+    VoiceType,
 )
 
 load_dotenv()
@@ -108,16 +111,16 @@ definition = VoiceAgentDefinition(
         # auto-responds when the caller stops speaking, plus input-audio
         # transcription so user speech is transcribed.
         input=VoiceAudioInputConfig(
-            format=VoiceAudioFormat(type="audio/pcm", rate=24000),
+            format=VoiceAudioFormat(type=VoiceAudioFormatType.PCM, rate=24000),
             turn_detection=VoiceServerVadTurnDetection(
                 threshold=0.5,
                 prefix_padding_ms=300,
                 silence_duration_ms=500,
             ),
-            transcription=VoiceInputTranscription(model="whisper-1"),
+            transcription=VoiceInputTranscription(model=VoiceInputTranscriptionModel.WHISPER1),
         ),
         # Output (agent speech) side: the voice the agent speaks with.
-        output=VoiceAudioOutputConfig(voice="en-US-AvaNeural", voice_type="azure-standard"),
+        output=VoiceAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
     ),
     output_modalities=[VoiceOutputModality.AUDIO],
     # Attach the self-contained tools. `_example_mcp_tool` and `_example_toolbox_tool`
