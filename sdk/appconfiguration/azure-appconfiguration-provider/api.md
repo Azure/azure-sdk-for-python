@@ -8,7 +8,7 @@ namespace azure.appconfiguration.provider
             *, 
             feature_flag_enabled: bool = False, 
             feature_flag_refresh_enabled: bool = False, 
-            feature_flag_selectors: Optional[List[SettingSelector]] = ..., 
+            feature_flag_selectors: Optional[Union[List[SettingSelector], List[FeatureFlagSelector]]] = ..., 
             key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = ..., 
             keyvault_client_configs: Optional[Mapping[str, JSON]] = ..., 
             keyvault_credential: Optional[TokenCredential] = ..., 
@@ -31,7 +31,7 @@ namespace azure.appconfiguration.provider
             connection_string: str, 
             feature_flag_enabled: bool = False, 
             feature_flag_refresh_enabled: bool = False, 
-            feature_flag_selectors: Optional[List[SettingSelector]] = ..., 
+            feature_flag_selectors: Optional[Union[List[SettingSelector], List[FeatureFlagSelector]]] = ..., 
             key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = ..., 
             keyvault_client_configs: Optional[Mapping[str, JSON]] = ..., 
             keyvault_credential: Optional[TokenCredential] = ..., 
@@ -68,6 +68,17 @@ namespace azure.appconfiguration.provider
         def refresh(self, **kwargs) -> None: ...
 
 
+    class azure.appconfiguration.provider.FeatureFlagSelector:
+
+        def __init__(
+                self, 
+                *, 
+                label_filter: Optional[str] = NULL_CHAR, 
+                name_filter: Optional[str] = ..., 
+                tag_filters: Optional[List[str]] = ...
+            ): ...
+
+
     class azure.appconfiguration.provider.SettingSelector:
 
         def __init__(
@@ -94,7 +105,7 @@ namespace azure.appconfiguration.provider.aio
             *, 
             feature_flag_enabled: bool = False, 
             feature_flag_refresh_enabled: bool = False, 
-            feature_flag_selectors: Optional[List[SettingSelector]] = ..., 
+            feature_flag_selectors: Optional[Union[List[SettingSelector], List[FeatureFlagSelector]]] = ..., 
             key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = ..., 
             keyvault_client_configs: Optional[Mapping[str, JSON]] = ..., 
             keyvault_credential: Optional[AsyncTokenCredential] = ..., 
@@ -117,7 +128,7 @@ namespace azure.appconfiguration.provider.aio
             connection_string: str, 
             feature_flag_enabled: bool = False, 
             feature_flag_refresh_enabled: bool = False, 
-            feature_flag_selectors: Optional[List[SettingSelector]] = ..., 
+            feature_flag_selectors: Optional[Union[List[SettingSelector], List[FeatureFlagSelector]]] = ..., 
             key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = ..., 
             keyvault_client_configs: Optional[Mapping[str, JSON]] = ..., 
             keyvault_credential: Optional[AsyncTokenCredential] = ..., 

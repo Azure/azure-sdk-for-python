@@ -15,6 +15,15 @@ FEATURE_FLAG_REFERENCE_KEY = "FeatureFlagReference"
 ALLOCATION_ID_KEY = "AllocationId"
 ETAG_KEY = "ETag"
 
+# Identifier field required by the feature management library's schema for every feature flag entry.
+FEATURE_FLAG_ID_FIELD = "id"
+# Path segment used to build the feature flag reference URL for feature flags loaded from the key-value store.
+FEATURE_FLAG_KV_REFERENCE_SEGMENT = "kv"
+# Path segment used to build the feature flag reference URL for enhanced feature flags.
+ENHANCED_FEATURE_FLAG_REFERENCE_SEGMENT = "ff"
+# The minimum service API version required to use provider.
+REQUIRED_API_VERSION = "2026-05-01-preview"
+
 # ------------------------------------------------------------------------
 # Environment Variable Constants
 # ------------------------------------------------------------------------
