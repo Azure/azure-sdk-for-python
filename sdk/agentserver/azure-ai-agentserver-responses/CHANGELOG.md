@@ -6,6 +6,10 @@
 
 - `get_history_item_ids` on `InMemoryResponseProvider` and `FileResponseStore` now keeps the newest item IDs when applying `limit`. (#48514)
 
+### Other Changes
+
+- Constrained runtime, development, and sample dependencies to compatible release lines.
+
 ## 2.1.0b2 (2026-08-20)
 
 ### Bugs Fixed
