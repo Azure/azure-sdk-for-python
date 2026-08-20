@@ -67,6 +67,46 @@ _Unset: Any = object()
 
 logger = logging.getLogger(__name__)
 
+
+class _InstrumentedAsyncRawResponse:
+    """Proxy preserving the raw response interface while delegating iteration to an instrumented stream."""
+
+    def __init__(self, raw_response, wrapped_stream):
+        self._raw_response = raw_response
+        self._wrapped_stream = wrapped_stream
+
+    def parse(self):
+        return self._wrapped_stream
+
+    def __aiter__(self):
+        return self._wrapped_stream.__aiter__()
+
+    async def __anext__(self):
+        return await self._wrapped_stream.__anext__()
+
+    def __getattr__(self, name):
+        return getattr(self._raw_response, name)
+
+
+class _InstrumentedSyncRawResponse:
+    """Proxy preserving the raw response interface while delegating iteration to an instrumented stream."""
+
+    def __init__(self, raw_response, wrapped_stream):
+        self._raw_response = raw_response
+        self._wrapped_stream = wrapped_stream
+
+    def parse(self):
+        return self._wrapped_stream
+
+    def __iter__(self):
+        return self._wrapped_stream.__iter__()
+
+    def __next__(self):
+        return self._wrapped_stream.__next__()
+
+    def __getattr__(self, name):
+        return getattr(self._raw_response, name)
+
 try:  # pylint: disable=unused-import
     # pylint: disable = no-name-in-module
     from opentelemetry.trace import StatusCode
@@ -2063,6 +2103,20 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # For streaming, don't use context manager - let wrapper handle span lifecycle
             try:
                 result = function(*args, **kwargs)
+                # Detect with_raw_response path (result is APIResponse/LegacyAPIResponse)
+                if hasattr(result, "parse"):
+                    parsed = result.parse()
+                    wrapped_stream = self._wrap_streaming_response(
+                        parsed,
+                        span,
+                        kwargs,
+                        start_time,
+                        operation_name,
+                        server_address,
+                        port,
+                        model,
+                    )
+                    return _InstrumentedSyncRawResponse(result, wrapped_stream)
                 result = self._wrap_streaming_response(
                     result,
                     span,
@@ -2229,6 +2283,22 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # For streaming, don't use context manager - let wrapper handle span lifecycle
             try:
                 result = await function(*args, **kwargs)
+                # Detect with_raw_response path (result is APIResponse/LegacyAPIResponse)
+                if hasattr(result, "parse"):
+                    parsed = result.parse()
+                    if hasattr(parsed, "__await__"):
+                        parsed = await parsed
+                    wrapped_stream = self._wrap_async_streaming_response(
+                        parsed,
+                        span,
+                        kwargs,
+                        start_time,
+                        operation_name,
+                        server_address,
+                        port,
+                        model,
+                    )
+                    return _InstrumentedAsyncRawResponse(result, wrapped_stream)
                 result = self._wrap_async_streaming_response(
                     result,
                     span,
