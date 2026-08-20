@@ -1012,12 +1012,12 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperationsAsync(AzureMgmtRecorde
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_bulk_create_custom_virtual_machines_get_operation_status(self, resource_group):
-        response = await self.client.bulk_create_custom.virtual_machines_get_operation_status(
+        response = self.client.bulk_create_custom.virtual_machines_get_operation_status(
             resource_group_name=resource_group.name,
             location="str",
             name="str",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 

@@ -5513,7 +5513,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
     )
     def virtual_machines_get_operation_status(
         self, resource_group_name: str, location: str, name: str, **kwargs: Any
-    ) -> _models.GetOperationStatusResponse:
+    ) -> ItemPaged["_models.ResourceOperation"]:
         """Gets the operation status for virtual machines in a BulkCreateCustom operation.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5523,11 +5523,15 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
         :type location: str
         :param name: The name of the BulkCreateCustom. The value must be an UUID. Required.
         :type name: str
-        :return: GetOperationStatusResponse. The GetOperationStatusResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.compute.bulkaction.models.GetOperationStatusResponse
+        :return: An iterator like instance of ResourceOperation
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ResourceOperation]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5536,55 +5540,80 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.GetOperationStatusResponse] = kwargs.pop("cls", None)
+                _request = build_bulk_create_custom_virtual_machines_get_operation_status_request(
+                    resource_group_name=resource_group_name,
+                    location=location,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_bulk_create_custom_virtual_machines_get_operation_status_request(
-            resource_group_name=resource_group_name,
-            location=location,
-            name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ResourceOperation],
+                deserialized.get("results", []),
             )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.GetOperationStatusResponse, response.json())
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        return deserialized  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     @api_version_validation(

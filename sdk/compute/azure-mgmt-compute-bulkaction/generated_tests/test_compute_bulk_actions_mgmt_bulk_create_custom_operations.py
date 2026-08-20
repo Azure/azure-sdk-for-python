@@ -978,7 +978,7 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
             location="str",
             name="str",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 

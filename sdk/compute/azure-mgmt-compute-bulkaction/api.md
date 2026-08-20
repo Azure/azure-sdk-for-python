@@ -175,15 +175,15 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
                 **kwargs: Any
             ) -> AsyncItemPaged[LocationBasedBulkCreateCustom]: ...
 
-        @distributed_trace_async
+        @distributed_trace
         @api_version_validation(method_added_on='2026-08-06-preview', params_added_on={'2026-08-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-08-06-preview'])
-        async def virtual_machines_get_operation_status(
+        def virtual_machines_get_operation_status(
                 self, 
                 resource_group_name: str, 
                 location: str, 
                 name: str, 
                 **kwargs: Any
-            ) -> GetOperationStatusResponse: ...
+            ) -> AsyncItemPaged[ResourceOperation]: ...
 
 
     class azure.mgmt.compute.bulkaction.aio.operations.LaunchBulkInstancesOperationOperations:
@@ -4920,7 +4920,7 @@ namespace azure.mgmt.compute.bulkaction.operations
                 location: str, 
                 name: str, 
                 **kwargs: Any
-            ) -> GetOperationStatusResponse: ...
+            ) -> ItemPaged[ResourceOperation]: ...
 
 
     class azure.mgmt.compute.bulkaction.operations.LaunchBulkInstancesOperationOperations:
