@@ -100,6 +100,8 @@ async def main() -> None:
             },
             resources=JobResourceConfiguration(instance_count=1),
             priority=JobPriority.MID,
+            # Groups related runs together. If omitted, the service uses "Default".
+            experiment_name="my-experiment",
             tags={"sample": "true"},
         )
         created_job = await project_client.beta.jobs.create_or_update(name=job_name, job=job)

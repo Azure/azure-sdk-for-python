@@ -3805,6 +3805,9 @@ class CommandJob(JobProperties, discriminator="Command"):
     :vartype description: str
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
+    :ivar experiment_name: Name of the experiment the job belongs to. If omitted, the service uses
+     "Default".
+    :vartype experiment_name: str
     :ivar properties: The asset property dictionary.
     :vartype properties: dict[str, str]
     :ivar code: Code asset reference.
@@ -3856,6 +3859,10 @@ class CommandJob(JobProperties, discriminator="Command"):
     """The asset description text."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tag dictionary. Tags can be added, removed, and updated."""
+    experiment_name: Optional[str] = rest_field(
+        name="experimentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the experiment the job belongs to. If omitted, the service uses \"Default\"."""
     properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The asset property dictionary."""
     code: Optional[str] = rest_field(name="codeId", visibility=["read", "create", "update", "delete", "query"])
@@ -3922,6 +3929,7 @@ class CommandJob(JobProperties, discriminator="Command"):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
+        experiment_name: Optional[str] = None,
         properties: Optional[dict[str, str]] = None,
         code: Optional[str] = None,
         inputs: Optional[dict[str, "_models.Input"]] = None,

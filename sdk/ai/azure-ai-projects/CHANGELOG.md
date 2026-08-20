@@ -25,6 +25,7 @@
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
 * New `.beta.jobs` sub-client with CommandJob operations: `create_or_update`, `get`, `list`, `begin_delete`, `begin_cancel`, `validate`, `show_services`, `stream`, `download`.
 * New optional `priority` property on class `CommandJob`, typed as the new `JobPriority` enum (`LOW`, `MID`, `HIGH`). If omitted, the service defaults to `LOW`.
+* New optional `experiment_name` property on class `CommandJob`, used to group related runs. If omitted, the service uses `Default`.
 
 
 ### Breaking Changes

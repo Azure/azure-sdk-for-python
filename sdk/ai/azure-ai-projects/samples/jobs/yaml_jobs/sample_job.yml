@@ -13,5 +13,7 @@ outputs:
     type: uri_folder
     mode: ReadWriteMount
     asset_name: sample-yaml-job-output
+# Groups related runs together. If omitted, the service uses "Default".
+experiment_name: my-experiment
 tags:
   sample: "true"
