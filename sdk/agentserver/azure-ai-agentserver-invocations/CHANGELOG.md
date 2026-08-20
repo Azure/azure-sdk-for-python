@@ -2,6 +2,10 @@
 
 ## 1.1.0b2 (Unreleased)
 
+### Samples
+
+- Updated the resilient LangGraph sample to require `langchain-core` 1.6.0 or later.
+
 ### Other Changes
 
 - Constrained `azure-ai-agentserver-core` to the compatible 2.1 release line and added an upper bound to `azure-core`.
