@@ -1,5 +1,26 @@
 # Release History
 
+## 3.1.0b1 (2026-08-20)
+
+### Features Added
+
+  - Client `QuotaMgmtClient` added operation group `incoming_quota_transfers`
+  - Client `QuotaMgmtClient` added operation group `quota_transfers`
+  - Added model `ApprovalRecord`
+  - Added model `CancellationRecord`
+  - Added model `IncomingQuotaTransfer`
+  - Added model `IncomingQuotaTransferApproveRequest`
+  - Added model `IncomingQuotaTransferProperties`
+  - Added model `IncomingQuotaTransferRejectRequest`
+  - Added model `QuotaTransfer`
+  - Added model `QuotaTransferCancelRequest`
+  - Added model `QuotaTransferProperties`
+  - Added model `RejectionRecord`
+  - Added enum `TransferProvisioningState`
+  - Added enum `TransferStatus`
+  - Added operation group `IncomingQuotaTransfersOperations`
+  - Added operation group `QuotaTransfersOperations`
+
 ## 3.0.1 (2025-10-09)
 
 ### Bugs Fixed
