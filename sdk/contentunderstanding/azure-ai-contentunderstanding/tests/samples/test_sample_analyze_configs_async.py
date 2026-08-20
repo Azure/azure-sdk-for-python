@@ -30,7 +30,10 @@ USAGE:
 import os
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from testpreparer_async import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBaseAsync,
+)
 
 
 class TestSampleAnalyzeConfigsAsync(ContentUnderstandingClientTestBaseAsync):
@@ -72,7 +75,9 @@ class TestSampleAnalyzeConfigsAsync(ContentUnderstandingClientTestBaseAsync):
 
         # Analyze with prebuilt-documentSearch which has formulas, layout, and OCR enabled
         poller = await client.begin_analyze_binary(
-            analyzer_id="prebuilt-documentSearch", binary_input=file_bytes, content_type="application/pdf"
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_type="application/pdf",
         )
 
         result = await poller.result()

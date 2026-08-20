@@ -9,6 +9,9 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Extend OneSettings configuration evaluation to parse JSON-encoded feature settings and support explicit string
+  override values, list-valued matching conditions, and caller-specified value conversion while preserving existing
+  boolean feature-flag behavior.
 
 ## 1.0.0b56 (2026-08-06)
 

@@ -22,6 +22,7 @@ keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
 
 dependencies = [
     "azure-ai-agentserver-core>=2.1.0b1",
+    "azure-core>=1.37.0",
     # Constraint on the transitive aiohttp: the `--pre` CI install otherwise
     # resolves the unbuildable aiohttp 4.0.0a1 alpha. Cap must be <4.0.0a0
     # (<4.0.0 still admits 4.0.0a1 under PEP 440).
@@ -64,6 +65,9 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 
 [tool.setuptools.package-data]
 "azure.ai.agentserver.invocations" = ["py.typed"]
+
+[tool.azure-sdk-conda]
+in_bundle = false
 
 [tool.azure-sdk-build]
 analyze_python_version = "3.11"
