@@ -11,8 +11,6 @@
 
 ### Breaking Changes
 
-  - Method `AlertRuleOperations.begin_trigger_rule_run` changed return type from `AsyncLROPoller[AlertRule]` to `AsyncLROPoller[None]`
-  - Method `WatchlistsOperations.begin_delete` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[Watchlist]`
   - Method `AlertRuleOperations.begin_trigger_rule_run` changed return type from `LROPoller[AlertRule]` to `LROPoller[None]`
   - Method `WatchlistsOperations.begin_delete` changed return type from `LROPoller[None]` to `LROPoller[Watchlist]`
 
