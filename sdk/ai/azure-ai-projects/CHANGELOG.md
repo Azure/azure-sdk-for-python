@@ -1,5 +1,15 @@
 # Release History
 
+## 2.5.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 2.5.0 (2026-08-20)
 
 ### Dependency update
