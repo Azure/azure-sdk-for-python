@@ -32,7 +32,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
@@ -195,7 +195,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class BetaOperations:  # pylint: disable=docstring-missing-param,too-many-instance-attributes
+class BetaOperations:  # pylint: disable=too-many-instance-attributes
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -227,7 +227,7 @@ class BetaOperations:  # pylint: disable=docstring-missing-param,too-many-instan
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
-class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
+class AgentsOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -612,7 +612,12 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
     @overload
     async def create_version(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: _types.CreateAgentVersionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create an agent version.
 
@@ -626,7 +631,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          * Must not exceed 63 characters. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateAgentVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -664,7 +669,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
     async def create_version(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateAgentVersionRequest, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
         metadata: Optional[dict[str, str]] = None,
@@ -684,8 +689,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateAgentVersionRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateAgentVersionRequest or IO[bytes]
         :keyword definition: The agent definition. This can be a prompt, workflow, hosted, external, or
          voice agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
@@ -832,7 +838,12 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
     @overload
     async def create_version_from_manifest(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: _types.CreateAgentVersionFromManifestRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create an agent version from manifest.
 
@@ -846,7 +857,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          * Must not exceed 63 characters. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateAgentVersionFromManifestRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -884,7 +895,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
     async def create_version_from_manifest(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateAgentVersionFromManifestRequest, IO[bytes]] = _Unset,
         *,
         manifest_id: str = _Unset,
         parameter_values: dict[str, Any] = _Unset,
@@ -903,8 +914,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateAgentVersionFromManifestRequest,
+         IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateAgentVersionFromManifestRequest or IO[bytes]
         :keyword manifest_id: The manifest ID to import the agent version from. Required.
         :paramtype manifest_id: str
         :keyword parameter_values: The inputs to the manifest that will result in a fully materialized
@@ -1283,7 +1295,12 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
     @overload
     async def update_details(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: _types.PatchAgentObjectRequest,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.AgentDetails:
         """Update an agent endpoint.
 
@@ -1292,7 +1309,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.PatchAgentObjectRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1325,7 +1342,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
     async def update_details(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.PatchAgentObjectRequest, IO[bytes]] = _Unset,
         *,
         agent_endpoint: Optional[_models.AgentEndpointConfig] = None,
         agent_card: Optional[_models.AgentCard] = None,
@@ -1337,8 +1354,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, PatchAgentObjectRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.PatchAgentObjectRequest or IO[bytes]
         :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
         :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
         :keyword agent_card: Optional agent card for the agent. Default value is None.
@@ -1426,14 +1443,19 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
     ) -> _models.AgentVersionDetails: ...
     @overload
     async def _create_version_from_code(
-        self, agent_name: str, content: JSON, *, code_zip_sha256: str, **kwargs: Any
+        self,
+        agent_name: str,
+        content: _types._CreateAgentVersionFromCodeContent,
+        *,
+        code_zip_sha256: str,
+        **kwargs: Any
     ) -> _models.AgentVersionDetails: ...
 
     @distributed_trace_async
     async def _create_version_from_code(
         self,
         agent_name: str,
-        content: Union[_models._models._CreateAgentVersionFromCodeContent, JSON],
+        content: Union[_models._models._CreateAgentVersionFromCodeContent, _types._CreateAgentVersionFromCodeContent],
         *,
         code_zip_sha256: str,
         **kwargs: Any
@@ -1452,9 +1474,10 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param content: The content multipart request content. Is either a
-         _CreateAgentVersionFromCodeContent type or a JSON type. Required.
-        :type content: ~azure.ai.projects.models._models._CreateAgentVersionFromCodeContent or JSON
+        :param content: The content multipart request content. Is one of the following types:
+         _CreateAgentVersionFromCodeContent Required.
+        :type content: ~azure.ai.projects.models._models._CreateAgentVersionFromCodeContent or
+         ~azure.ai.projects.types._CreateAgentVersionFromCodeContent
         :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
          detection (dedup) and integrity verification. Required.
         :paramtype code_zip_sha256: str
@@ -1751,7 +1774,12 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
     @overload
     async def create_session(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: _types.CreateSessionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentSessionResource:
         """Create a session.
 
@@ -1762,7 +1790,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param agent_name: The name of the agent to create a session for. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateSessionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1797,7 +1825,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
     async def create_session(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateSessionRequest, IO[bytes]] = _Unset,
         *,
         version_indicator: _models.VersionIndicator = _Unset,
         agent_session_id: Optional[str] = None,
@@ -1811,8 +1839,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
         :param agent_name: The name of the agent to create a session for. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateSessionRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateSessionRequest or IO[bytes]
         :keyword version_indicator: Determines which agent version backs the session. Required.
         :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
         :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
@@ -2277,16 +2305,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
         return deserialized  # type: ignore
 
-    @overload
+    @distributed_trace_async
     async def upload_session_file(
-        self,
-        agent_name: str,
-        session_id: str,
-        content: bytes,
-        *,
-        path: str,
-        content_type: str = "application/octet-stream",
-        **kwargs: Any
+        self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
     ) -> _models.SessionFileWriteResult:
         """Upload a session file.
 
@@ -2299,65 +2320,6 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :type session_id: str
         :param content: Required.
         :type content: bytes
-        :keyword path: The destination file path within the sandbox, relative to the session home
-         directory. Required.
-        :paramtype path: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/octet-stream".
-        :paramtype content_type: str
-        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def upload_session_file(
-        self,
-        agent_name: str,
-        session_id: str,
-        content: IO[bytes],
-        *,
-        path: str,
-        content_type: str = "application/octet-stream",
-        **kwargs: Any
-    ) -> _models.SessionFileWriteResult:
-        """Upload a session file.
-
-        Uploads binary file content to the specified path in the session sandbox. The service stores
-        the file relative to the session home directory and rejects payloads larger than 50 MB.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
-        :param content: Required.
-        :type content: IO[bytes]
-        :keyword path: The destination file path within the sandbox, relative to the session home
-         directory. Required.
-        :paramtype path: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/octet-stream".
-        :paramtype content_type: str
-        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def upload_session_file(
-        self, agent_name: str, session_id: str, content: Union[bytes, IO[bytes]], *, path: str, **kwargs: Any
-    ) -> _models.SessionFileWriteResult:
-        """Upload a session file.
-
-        Uploads binary file content to the specified path in the session sandbox. The service stores
-        the file relative to the session home directory and rejects payloads larger than 50 MB.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
-        :param content: Is either a bytes type or a IO[bytes] type. Required.
-        :type content: bytes or IO[bytes]
         :keyword path: The destination file path within the sandbox, relative to the session home
          directory. Required.
         :paramtype path: str
@@ -2376,10 +2338,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
         cls: ClsType[_models.SessionFileWriteResult] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/octet-stream"
         _content = content
 
         _request = build_agents_upload_session_file_request(
@@ -2679,7 +2640,1169 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
+class VoiceAgentWebSocketOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`voice_agent_web_socket` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def connect_voice_agent(
+        self,
+        agent_name: str,
+        *,
+        agent_session_id: Optional[str] = None,
+        store: Optional[bool] = None,
+        agent_version_override: Optional[str] = None,
+        websocket_subprotocol: Optional[Union[str, _models.VoiceAgentWebSocketSubprotocol]] = None,
+        structured_inputs: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """Connect to a voice agent.
+
+        Connects to a voice agent over WebSocket. The client must send an HTTP GET with ``Upgrade:
+        websocket``
+        headers. The optional ``realtime`` subprotocol is the only accepted subprotocol value.
+
+        If the target agent is disabled, the HTTP WebSocket handshake fails before the ``101 Switching
+        Protocols``
+        upgrade. The service returns ``409 Conflict`` using the shared Foundry ``ApiErrorResponse``
+        shape with
+        ``error.code = agent_disabled``. This failure is terminal until the caller enables the agent.
+
+        :param agent_name: The name of the voice agent. Required.
+        :type agent_name: str
+        :keyword agent_session_id: An optional identifier used to correlate the voice session. Default
+         value is None.
+        :paramtype agent_session_id: str
+        :keyword store: Whether to persist the conversation created by this WebSocket session. If
+         omitted, the service honors the
+         persisted voice agent definition's configured ``store`` value. If supplied, this value
+         overrides the
+         definition's ``store`` setting for this session only. Default value is None.
+        :paramtype store: bool
+        :keyword agent_version_override: Selects a specific version of the voice agent for this
+         session. Default value is None.
+        :paramtype agent_version_override: str
+        :keyword websocket_subprotocol: The requested WebSocket subprotocol. Omit this header or
+         request exactly ``realtime``. "realtime" Default value is None.
+        :paramtype websocket_subprotocol: str or
+         ~azure.ai.projects.models.VoiceAgentWebSocketSubprotocol
+        :keyword structured_inputs: A JSON object that maps structured-input names to their values for
+         this session. Default value is None.
+        :paramtype structured_inputs: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_voice_agent_web_socket_connect_voice_agent_request(
+            agent_name=agent_name,
+            agent_session_id=agent_session_id,
+            store=store,
+            agent_version_override=agent_version_override,
+            websocket_subprotocol=websocket_subprotocol,
+            structured_inputs=structured_inputs,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [101]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Sec-WebSocket-Protocol"] = self._deserialize(
+            "str", response.headers.get("Sec-WebSocket-Protocol")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+
+class AgentEndpointConversationsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`agent_endpoint_conversations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list_agent_conversations(
+        self,
+        agent_name: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.VoiceConversation"]:
+        """List voice agent conversations.
+
+        Returns the conversations persisted for the specified voice agent endpoint. Conversations are
+        present only when the agent definition has ``store = true``.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VoiceConversation
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.VoiceConversation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VoiceConversation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversations_request(
+                agent_name=agent_name,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VoiceConversation],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_agent_conversation(
+        self, agent_name: str, conversation_id: str, **kwargs: Any
+    ) -> _models.VoiceConversation:
+        """Get a voice agent conversation.
+
+        Retrieves a single conversation recorded for the specified voice agent endpoint by its id.
+        Returns ``404`` when the conversation was not persisted (``store = false``) or does not exist.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation to retrieve. Required.
+        :type conversation_id: str
+        :return: VoiceConversation. The VoiceConversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceConversation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceConversation] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceConversation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_agent_conversation(self, agent_name: str, conversation_id: str, **kwargs: Any) -> None:
+        """Delete a voice agent conversation.
+
+        Deletes a conversation and all of its stored data — responses, items, and any audio (cascade).
+        This is the customer's explicit data-deletion control for voice conversations.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation to delete. Required.
+        :type conversation_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_delete_agent_conversation_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list_agent_conversation_responses(
+        self,
+        agent_name: str,
+        conversation_id: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.VoiceResponse"]:
+        """List responses in a voice agent conversation.
+
+        Returns a paged collection of the responses (model inference turns) recorded for the specified
+        conversation. The per-response ``output`` projection may be omitted here; use the
+        response-items route for the canonical paged output. Returns ``404`` when the conversation was
+        not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose responses are listed. Required.
+        :type conversation_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VoiceResponse
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.VoiceResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VoiceResponse]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversation_responses_request(
+                agent_name=agent_name,
+                conversation_id=conversation_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VoiceResponse],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_agent_conversation_response(
+        self, agent_name: str, conversation_id: str, response_id: str, **kwargs: Any
+    ) -> _models.VoiceResponse:
+        """Get a voice agent conversation response.
+
+        Retrieves a single response from the specified conversation by its id, including its ``output``
+        items, ``usage``, and status. Returns ``404`` when the conversation or response was not
+        persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the response. Required.
+        :type conversation_id: str
+        :param response_id: The id of the response to retrieve. Required.
+        :type response_id: str
+        :return: VoiceResponse. The VoiceResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceResponse] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_response_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            response_id=response_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_agent_conversation_response_items(
+        self,
+        agent_name: str,
+        conversation_id: str,
+        response_id: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.VoiceConversationItem"]:
+        """List items produced by a voice agent conversation response.
+
+        Returns a paged collection of the output items produced by a specific response (the response's
+        output projection). For the complete ordered conversation history — including user input and
+        client-created tool outputs — use the conversation items route instead. Returns ``404`` when
+        the conversation or response was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the response. Required.
+        :type conversation_id: str
+        :param response_id: The id of the response whose output items are listed. Required.
+        :type response_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VoiceConversationItem
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.VoiceConversationItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VoiceConversationItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversation_response_items_request(
+                agent_name=agent_name,
+                conversation_id=conversation_id,
+                response_id=response_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VoiceConversationItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_agent_conversation_items(
+        self,
+        agent_name: str,
+        conversation_id: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.VoiceConversationItem"]:
+        """List items in a voice agent conversation.
+
+        Returns a paged collection of items — the complete ordered conversation history, including user
+        input, assistant output, and client-created tool outputs (transcripts + tool events). Returns
+        ``404`` when the conversation was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose items are listed. Required.
+        :type conversation_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VoiceConversationItem
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.VoiceConversationItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VoiceConversationItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversation_items_request(
+                agent_name=agent_name,
+                conversation_id=conversation_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VoiceConversationItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_agent_conversation_item(
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> _models.VoiceConversationItem:
+        """Get a voice agent conversation item.
+
+        Retrieves a single item from the specified conversation by its id, including its transcript. An
+        ``input_audio``/``output_audio`` content part indicates that audio is available for the item;
+        the canonical per-item audio metadata is the ``/items/{item_id}/audio`` resource, and the bytes
+        are streamed by ``/items/{item_id}/audio/content``. Returns ``404`` when the conversation or
+        item was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item to retrieve. Required.
+        :type item_id: str
+        :return: VoiceConversationItem. The VoiceConversationItem is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceConversationItem
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceConversationItem] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceConversationItem, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_agent_conversation_item_audio(
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> _models.VoiceItemAudioResponse:
+        """Get a voice agent conversation item's audio metadata.
+
+        Returns metadata for a single conversation item's audio segment, including the common playback
+        facts (role, format/codec, sample rate, channels, offset, duration) for both Foundry-managed
+        and bring-your-own-storage (BYOS) recordings; for BYOS the response additionally includes
+        ``blob_uri``, the URI of the recording in the customer's own storage (no SAS) that the customer
+        downloads with their own credentials. Requires the conversation to have persisted audio
+        (``store = true``); returns ``404`` when the conversation, item, or its audio was not
+        persisted.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item whose audio metadata is retrieved. Required.
+        :type item_id: str
+        :return: VoiceItemAudioResponse. The VoiceItemAudioResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceItemAudioResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceItemAudioResponse] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_audio_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceItemAudioResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_agent_conversation_item_audio_content(  # pylint: disable=name-too-long
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Stream a voice agent conversation item's audio.
+
+        Streams a single conversation item's audio as a WAV (``audio/wav``) byte stream through the
+        service (no SAS URL). This route serves Foundry-managed storage only. For
+        bring-your-own-storage (BYOS) recordings the bytes are not proxied — the caller must download
+        directly from customer storage using the ``blob_uri`` returned by the item's ``/audio``
+        metadata route — so this route returns ``409 Conflict`` for BYOS recordings. Returns ``404``
+        when the conversation, item, or its audio was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item whose audio is streamed. Required.
+        :type item_id: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_audio_content_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_agent_conversation_audio(
+        self, agent_name: str, conversation_id: str, **kwargs: Any
+    ) -> _models.VoiceRecordingResponse:
+        """Get a voice agent conversation's merged recording metadata.
+
+        Returns metadata for the whole-call merged stereo recording (user audio on the left channel,
+        agent audio on the right). The common metadata (format, sample rate, channels, channel layout,
+        duration) is returned for both Foundry-managed and bring-your-own-storage (BYOS) recordings;
+        for BYOS the response additionally includes ``blob_uri``, the URI of the recording in the
+        customer's own storage (no SAS) that the customer downloads with their own credentials. The
+        recording is built once from the per-turn segments after persistence finalization succeeds.
+        While the conversation is ``in_progress``, this route returns retriable ``409 Conflict`` with
+        ``error.code = recording_not_ready`` and a ``Retry-After`` header when retry guidance is
+        available. When the conversation is ``failed``, it returns terminal ``409 Conflict`` with
+        ``error.code = recording_unavailable``. For a ``completed`` conversation, metadata is available
+        subject to the existing BYOS behavior. Requires the conversation to have persisted audio
+        (``store = true``); otherwise returns ``404``.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose merged recording metadata is
+         retrieved. Required.
+        :type conversation_id: str
+        :return: VoiceRecordingResponse. The VoiceRecordingResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceRecordingResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceRecordingResponse] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_audio_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceRecordingResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_agent_conversation_audio_content(
+        self, agent_name: str, conversation_id: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Stream a voice agent conversation's merged recording.
+
+        Streams the whole-call merged stereo recording as a WAV (``audio/wav``) byte stream through the
+        service (no SAS URL). This route serves Foundry-managed storage only. For
+        bring-your-own-storage (BYOS) recordings the bytes are not proxied — the caller must download
+        directly from customer storage using the ``blob_uri`` returned by the metadata route — so this
+        route returns ``409 Conflict`` for BYOS recordings. While the conversation is ``in_progress``,
+        this route returns retriable ``409 Conflict`` with ``error.code = recording_not_ready`` and a
+        ``Retry-After`` header when retry guidance is available. When the conversation is ``failed``,
+        it returns terminal ``409 Conflict`` with ``error.code = recording_unavailable``. For a
+        ``completed`` conversation, content is available subject to the existing BYOS behavior. A
+        conversation without persisted audio (``store = false``) returns ``404``.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose merged recording is streamed.
+         Required.
+        :type conversation_id: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_audio_content_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class EvaluationRulesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2831,7 +3954,7 @@ class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def create_or_update(
-        self, id: str, evaluation_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, id: str, evaluation_rule: _types.EvaluationRule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -2840,7 +3963,7 @@ class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
-        :type evaluation_rule: JSON
+        :type evaluation_rule: ~azure.ai.projects.types.EvaluationRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2871,7 +3994,7 @@ class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def create_or_update(
-        self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
+        self, id: str, evaluation_rule: Union[_models.EvaluationRule, _types.EvaluationRule, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -2879,9 +4002,10 @@ class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
 
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
-        :param evaluation_rule: Evaluation rule resource. Is one of the following types:
-         EvaluationRule, JSON, IO[bytes] Required.
-        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or JSON or IO[bytes]
+        :param evaluation_rule: Evaluation rule resource. Is either a EvaluationRule type or a
+         IO[bytes] type. Required.
+        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or
+         ~azure.ai.projects.types.EvaluationRule or IO[bytes]
         :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3056,7 +4180,7 @@ class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ConnectionsOperations:  # pylint: disable=docstring-missing-param
+class ConnectionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3317,7 +4441,7 @@ class ConnectionsOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatasetsOperations:  # pylint: disable=docstring-missing-param
+class DatasetsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3671,7 +4795,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        dataset_version: JSON,
+        dataset_version: _types.DatasetVersion,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -3685,7 +4809,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
         :param dataset_version: The DatasetVersion to create or update. Required.
-        :type dataset_version: JSON
+        :type dataset_version: ~azure.ai.projects.types.DatasetVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -3724,7 +4848,11 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def create_or_update(
-        self, name: str, version: str, dataset_version: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        dataset_version: Union[_models.DatasetVersion, _types.DatasetVersion, IO[bytes]],
+        **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create or update a version.
 
@@ -3734,9 +4862,10 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
-        :param dataset_version: The DatasetVersion to create or update. Is one of the following types:
-         DatasetVersion, JSON, IO[bytes] Required.
-        :type dataset_version: ~azure.ai.projects.models.DatasetVersion or JSON or IO[bytes]
+        :param dataset_version: The DatasetVersion to create or update. Is either a DatasetVersion type
+         or a IO[bytes] type. Required.
+        :type dataset_version: ~azure.ai.projects.models.DatasetVersion or
+         ~azure.ai.projects.types.DatasetVersion or IO[bytes]
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3836,7 +4965,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        pending_upload_request: JSON,
+        pending_upload_request: _types.PendingUploadRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3850,7 +4979,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
         :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: JSON
+        :type pending_upload_request: ~azure.ai.projects.types.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3892,7 +5021,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
+        pending_upload_request: Union[_models.PendingUploadRequest, _types.PendingUploadRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a pending upload.
@@ -3903,10 +5032,10 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param pending_upload_request: The pending upload request parameters. Is one of the following
-         types: PendingUploadRequest, JSON, IO[bytes] Required.
-        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
-         IO[bytes]
+        :param pending_upload_request: The pending upload request parameters. Is either a
+         PendingUploadRequest type or a IO[bytes] type. Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or
+         ~azure.ai.projects.types.PendingUploadRequest or IO[bytes]
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4040,7 +5169,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class DeploymentsOperations:  # pylint: disable=docstring-missing-param
+class DeploymentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4235,7 +5364,7 @@ class DeploymentsOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class IndexesOperations:  # pylint: disable=docstring-missing-param
+class IndexesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4586,7 +5715,13 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def create_or_update(
-        self, name: str, version: str, index: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        index: _types.Index,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Index:
         """Create or update a version.
 
@@ -4597,7 +5732,7 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
         :param version: The specific version id of the Index to create or update. Required.
         :type version: str
         :param index: The Index to create or update. Required.
-        :type index: JSON
+        :type index: ~azure.ai.projects.types.Index
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -4636,7 +5771,7 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def create_or_update(
-        self, name: str, version: str, index: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, version: str, index: Union[_models.Index, _types.Index, IO[bytes]], **kwargs: Any
     ) -> _models.Index:
         """Create or update a version.
 
@@ -4646,9 +5781,9 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param version: The specific version id of the Index to create or update. Required.
         :type version: str
-        :param index: The Index to create or update. Is one of the following types: Index, JSON,
-         IO[bytes] Required.
-        :type index: ~azure.ai.projects.models.Index or JSON or IO[bytes]
+        :param index: The Index to create or update. Is either a Index type or a IO[bytes] type.
+         Required.
+        :type index: ~azure.ai.projects.models.Index or ~azure.ai.projects.types.Index or IO[bytes]
         :return: Index. The Index is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4716,7 +5851,7 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class ToolboxesOperations:  # pylint: disable=docstring-missing-param
+class ToolboxesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4776,7 +5911,12 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def create_version(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: _types.CreateToolboxVersionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ToolboxVersionObject:
         """Create a new version of a toolbox.
 
@@ -4786,7 +5926,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
          Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateToolboxVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4820,7 +5960,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
     async def create_version(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateToolboxVersionRequest, IO[bytes]] = _Unset,
         *,
         tools: List[_models.ToolboxTool] = _Unset,
         description: Optional[str] = None,
@@ -4836,8 +5976,9 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
          Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateToolboxVersionRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateToolboxVersionRequest or IO[bytes]
         :keyword tools: The list of tools to include in this version. Required.
         :paramtype tools: list[~azure.ai.projects.models.ToolboxTool]
         :keyword description: A human-readable description of the toolbox. Default value is None.
@@ -5279,7 +6420,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.UpdateToolboxRequest1, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
@@ -5288,7 +6429,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the toolbox to update. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateToolboxRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5319,7 +6460,12 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def update(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, default_version: str = _Unset, **kwargs: Any
+        self,
+        name: str,
+        body: Union[JSON, _types.UpdateToolboxRequest1, IO[bytes]] = _Unset,
+        *,
+        default_version: str = _Unset,
+        **kwargs: Any
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
@@ -5327,8 +6473,8 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
 
         :param name: The name of the toolbox to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, UpdateToolboxRequest1, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateToolboxRequest1 or IO[bytes]
         :keyword default_version: The version identifier that the toolbox should point to. When set,
          the toolbox's default version will resolve to this version instead of the latest. Required.
         :paramtype default_version: str
@@ -5518,7 +6664,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-param
+class BetaEvaluationTaxonomiesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5769,7 +6915,7 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
 
     @overload
     async def create(
-        self, name: str, taxonomy: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, taxonomy: _types.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -5778,7 +6924,7 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
         :param taxonomy: The evaluation taxonomy. Required.
-        :type taxonomy: JSON
+        :type taxonomy: ~azure.ai.projects.types.EvaluationTaxonomy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5809,7 +6955,10 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
 
     @distributed_trace_async
     async def create(
-        self, name: str, taxonomy: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        taxonomy: Union[_models.EvaluationTaxonomy, _types.EvaluationTaxonomy, IO[bytes]],
+        **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -5817,9 +6966,10 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param taxonomy: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy,
-         JSON, IO[bytes] Required.
-        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
+        :param taxonomy: The evaluation taxonomy. Is either a EvaluationTaxonomy type or a IO[bytes]
+         type. Required.
+        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or
+         ~azure.ai.projects.types.EvaluationTaxonomy or IO[bytes]
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5907,7 +7057,7 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
 
     @overload
     async def update(
-        self, name: str, taxonomy: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, taxonomy: _types.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -5916,7 +7066,7 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
         :param taxonomy: The evaluation taxonomy. Required.
-        :type taxonomy: JSON
+        :type taxonomy: ~azure.ai.projects.types.EvaluationTaxonomy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5947,7 +7097,10 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
 
     @distributed_trace_async
     async def update(
-        self, name: str, taxonomy: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        taxonomy: Union[_models.EvaluationTaxonomy, _types.EvaluationTaxonomy, IO[bytes]],
+        **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -5955,9 +7108,10 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param taxonomy: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy,
-         JSON, IO[bytes] Required.
-        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
+        :param taxonomy: The evaluation taxonomy. Is either a EvaluationTaxonomy type or a IO[bytes]
+         type. Required.
+        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or
+         ~azure.ai.projects.types.EvaluationTaxonomy or IO[bytes]
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6024,7 +7178,7 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
         return deserialized  # type: ignore
 
 
-class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
+class BetaEvaluatorsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6401,7 +7555,12 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def create_version(
-        self, name: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        evaluator_version: _types.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Create an evaluator version.
 
@@ -6410,7 +7569,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the resource. Required.
         :type name: str
         :param evaluator_version: Required.
-        :type evaluator_version: JSON
+        :type evaluator_version: ~azure.ai.projects.types.EvaluatorVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6441,7 +7600,10 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def create_version(
-        self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        evaluator_version: Union[_models.EvaluatorVersion, _types.EvaluatorVersion, IO[bytes]],
+        **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Create an evaluator version.
 
@@ -6449,9 +7611,9 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param evaluator_version: Is one of the following types: EvaluatorVersion, JSON, IO[bytes]
-         Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
+        :param evaluator_version: Is either a EvaluatorVersion type or a IO[bytes] type. Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or
+         ~azure.ai.projects.types.EvaluatorVersion or IO[bytes]
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6547,7 +7709,13 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def update_version(
-        self, name: str, version: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        evaluator_version: _types.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Update an evaluator version.
 
@@ -6558,7 +7726,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param version: The version of the EvaluatorVersion to update. Required.
         :type version: str
         :param evaluator_version: Evaluator resource. Required.
-        :type evaluator_version: JSON
+        :type evaluator_version: ~azure.ai.projects.types.EvaluatorVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6600,7 +7768,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
+        evaluator_version: Union[_models.EvaluatorVersion, _types.EvaluatorVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Update an evaluator version.
@@ -6611,9 +7779,10 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param version: The version of the EvaluatorVersion to update. Required.
         :type version: str
-        :param evaluator_version: Evaluator resource. Is one of the following types: EvaluatorVersion,
-         JSON, IO[bytes] Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
+        :param evaluator_version: Evaluator resource. Is either a EvaluatorVersion type or a IO[bytes]
+         type. Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or
+         ~azure.ai.projects.types.EvaluatorVersion or IO[bytes]
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6714,7 +7883,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        pending_upload_request: JSON,
+        pending_upload_request: _types.PendingUploadRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6729,7 +7898,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
         :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: JSON
+        :type pending_upload_request: ~azure.ai.projects.types.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6772,7 +7941,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
+        pending_upload_request: Union[_models.PendingUploadRequest, _types.PendingUploadRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a pending upload.
@@ -6784,10 +7953,10 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
-        :param pending_upload_request: The pending upload request parameters. Is one of the following
-         types: PendingUploadRequest, JSON, IO[bytes] Required.
-        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
-         IO[bytes]
+        :param pending_upload_request: The pending upload request parameters. Is either a
+         PendingUploadRequest type or a IO[bytes] type. Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or
+         ~azure.ai.projects.types.PendingUploadRequest or IO[bytes]
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6892,7 +8061,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        credential_request: JSON,
+        credential_request: _types.EvaluatorCredentialRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6907,7 +8076,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
         :param credential_request: The credential request parameters. Required.
-        :type credential_request: JSON
+        :type credential_request: ~azure.ai.projects.types.EvaluatorCredentialRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6950,7 +8119,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        credential_request: Union[_models.EvaluatorCredentialRequest, JSON, IO[bytes]],
+        credential_request: Union[_models.EvaluatorCredentialRequest, _types.EvaluatorCredentialRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatasetCredential:
         """Get evaluator credentials.
@@ -6962,10 +8131,10 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
-        :param credential_request: The credential request parameters. Is one of the following types:
-         EvaluatorCredentialRequest, JSON, IO[bytes] Required.
-        :type credential_request: ~azure.ai.projects.models.EvaluatorCredentialRequest or JSON or
-         IO[bytes]
+        :param credential_request: The credential request parameters. Is either a
+         EvaluatorCredentialRequest type or a IO[bytes] type. Required.
+        :type credential_request: ~azure.ai.projects.models.EvaluatorCredentialRequest or
+         ~azure.ai.projects.types.EvaluatorCredentialRequest or IO[bytes]
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7038,7 +8207,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
     async def _create_generation_job_initial(
         self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.EvaluatorGenerationJob, _types.EvaluatorGenerationJob, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -7138,7 +8307,12 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def begin_create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+        self,
+        job: _types.EvaluatorGenerationJob,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.EvaluatorVersion]:
         """Create an evaluator generation job.
 
@@ -7146,7 +8320,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         from the provided source materials asynchronously.
 
         :param job: The job to create. Required.
-        :type job: JSON
+        :type job: ~azure.ai.projects.types.EvaluatorGenerationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -7190,7 +8364,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace_async
     async def begin_create_generation_job(
         self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.EvaluatorGenerationJob, _types.EvaluatorGenerationJob, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -7200,9 +8374,10 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :param job: The job to create. Is either a EvaluatorGenerationJob type or a IO[bytes] type.
+         Required.
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or
+         ~azure.ai.projects.types.EvaluatorGenerationJob or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -7557,7 +8732,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
+class BetaInsightsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7595,7 +8770,7 @@ class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def generate(
-        self, insight: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, insight: _types.Insight, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Insight:
         """Generate insights.
 
@@ -7603,7 +8778,7 @@ class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
          settings. Required.
-        :type insight: JSON
+        :type insight: ~azure.ai.projects.types.Insight
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7632,14 +8807,17 @@ class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
         """
 
     @distributed_trace_async
-    async def generate(self, insight: Union[_models.Insight, JSON, IO[bytes]], **kwargs: Any) -> _models.Insight:
+    async def generate(
+        self, insight: Union[_models.Insight, _types.Insight, IO[bytes]], **kwargs: Any
+    ) -> _models.Insight:
         """Generate insights.
 
         Generates an insights report from the provided evaluation configuration.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
-         settings. Is one of the following types: Insight, JSON, IO[bytes] Required.
-        :type insight: ~azure.ai.projects.models.Insight or JSON or IO[bytes]
+         settings. Is either a Insight type or a IO[bytes] type. Required.
+        :type insight: ~azure.ai.projects.models.Insight or ~azure.ai.projects.types.Insight or
+         IO[bytes]
         :return: Insight. The Insight is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7902,7 +9080,7 @@ class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
+class BetaMemoryStoresOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7953,14 +9131,14 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def create(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.CreateMemoryStoreRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         Creates a memory store resource with the provided configuration.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateMemoryStoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7990,7 +9168,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace_async
     async def create(
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateMemoryStoreRequest, IO[bytes]] = _Unset,
         *,
         name: str = _Unset,
         definition: _models.MemoryStoreDefinition = _Unset,
@@ -8002,8 +9180,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
         Creates a memory store resource with the provided configuration.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateMemoryStoreRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateMemoryStoreRequest or IO[bytes]
         :keyword name: The name of the memory store. Required.
         :paramtype name: str
         :keyword definition: The memory store definition. Required.
@@ -8119,7 +9297,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.UpdateMemoryStoreRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
@@ -8128,7 +9306,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the memory store to update. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateMemoryStoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8161,7 +9339,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     async def update(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.UpdateMemoryStoreRequest, IO[bytes]] = _Unset,
         *,
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
@@ -8173,8 +9351,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
         :param name: The name of the memory store to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, UpdateMemoryStoreRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateMemoryStoreRequest or IO[bytes]
         :keyword description: A human-readable description of the memory store. Default value is None.
         :paramtype description: str
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
@@ -8492,7 +9670,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     ) -> _models.MemoryStoreSearchResult: ...
     @overload
     async def _search_memories(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.SearchMemoriesRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResult: ...
     @overload
     async def _search_memories(
@@ -8503,7 +9681,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     async def _search_memories(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.SearchMemoriesRequest, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
@@ -8517,8 +9695,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
         :param name: The name of the memory store to search. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SearchMemoriesRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.SearchMemoriesRequest or IO[bytes]
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -8606,7 +9784,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     async def _update_memories_initial(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.UpdateMemoriesRequest, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
@@ -8702,7 +9880,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
     async def _begin_update_memories(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.UpdateMemoriesRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
     async def _begin_update_memories(
@@ -8713,7 +9891,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     async def _begin_update_memories(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.UpdateMemoriesRequest, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
@@ -8728,8 +9906,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
         :param name: The name of the memory store to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, UpdateMemoriesRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateMemoriesRequest or IO[bytes]
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -8835,7 +10013,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def delete_scope(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.DeleteScopeRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete memories by scope.
 
@@ -8844,7 +10022,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the memory store. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.DeleteScopeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8877,7 +10055,12 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def delete_scope(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, scope: str = _Unset, **kwargs: Any
+        self,
+        name: str,
+        body: Union[JSON, _types.DeleteScopeRequest, IO[bytes]] = _Unset,
+        *,
+        scope: str = _Unset,
+        **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete memories by scope.
 
@@ -8885,8 +10068,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
         :param name: The name of the memory store. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, DeleteScopeRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.DeleteScopeRequest or IO[bytes]
         :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
          user ID. Required.
         :paramtype scope: str
@@ -9000,7 +10183,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def create_memory(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.CreateMemoryRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryItem:
         """Create a memory item.
 
@@ -9009,7 +10192,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the memory store. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateMemoryRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9042,7 +10225,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     async def create_memory(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateMemoryRequest, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
         content: str = _Unset,
@@ -9055,8 +10238,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
         :param name: The name of the memory store. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateMemoryRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateMemoryRequest or IO[bytes]
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -9167,7 +10350,13 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def update_memory(
-        self, name: str, memory_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        memory_id: str,
+        body: _types.UpdateMemoryRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.MemoryItem:
         """Update a memory item.
 
@@ -9178,7 +10367,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param memory_id: The ID of the memory item to update. Required.
         :type memory_id: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateMemoryRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9211,7 +10400,13 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def update_memory(
-        self, name: str, memory_id: str, body: Union[JSON, IO[bytes]] = _Unset, *, content: str = _Unset, **kwargs: Any
+        self,
+        name: str,
+        memory_id: str,
+        body: Union[JSON, _types.UpdateMemoryRequest, IO[bytes]] = _Unset,
+        *,
+        content: str = _Unset,
+        **kwargs: Any
     ) -> _models.MemoryItem:
         """Update a memory item.
 
@@ -9221,8 +10416,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param memory_id: The ID of the memory item to update. Required.
         :type memory_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, UpdateMemoryRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateMemoryRequest or IO[bytes]
         :keyword content: The updated content of the memory. Required.
         :paramtype content: str
         :return: MemoryItem. The MemoryItem is compatible with MutableMapping
@@ -9421,7 +10616,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     def list_memories(
         self,
         name: str,
-        body: JSON,
+        body: _types.ListMemoriesRequest,
         *,
         kind: Optional[Union[str, _models.MemoryItemKind]] = None,
         limit: Optional[int] = None,
@@ -9437,7 +10632,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the memory store. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.ListMemoriesRequest
         :keyword kind: The kind of the memory item. Known values are: "user_profile", "chat_summary",
          and "procedural". Default value is None.
         :paramtype kind: str or ~azure.ai.projects.models.MemoryItemKind
@@ -9513,7 +10708,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     def list_memories(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.ListMemoriesRequest, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
         kind: Optional[Union[str, _models.MemoryItemKind]] = None,
@@ -9528,8 +10723,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
 
         :param name: The name of the memory store. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, ListMemoriesRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.ListMemoriesRequest or IO[bytes]
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -9702,7 +10897,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class BetaModelsOperations:  # pylint: disable=docstring-missing-param
+class BetaModelsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10055,7 +11250,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        model_version_update: JSON,
+        model_version_update: _types.UpdateModelVersionRequest,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -10070,7 +11265,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
          Required.
         :type version: str
         :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
-        :type model_version_update: JSON
+        :type model_version_update: ~azure.ai.projects.types.UpdateModelVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -10113,7 +11308,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        model_version_update: Union[_models.UpdateModelVersionRequest, JSON, IO[bytes]],
+        model_version_update: Union[_models.UpdateModelVersionRequest, _types.UpdateModelVersionRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ModelVersion:
         """Update a model version.
@@ -10125,10 +11320,10 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param version: The specific version id of the UpdateModelVersionRequest to create or update.
          Required.
         :type version: str
-        :param model_version_update: The UpdateModelVersionRequest to create or update. Is one of the
-         following types: UpdateModelVersionRequest, JSON, IO[bytes] Required.
-        :type model_version_update: ~azure.ai.projects.models.UpdateModelVersionRequest or JSON or
-         IO[bytes]
+        :param model_version_update: The UpdateModelVersionRequest to create or update. Is either a
+         UpdateModelVersionRequest type or a IO[bytes] type. Required.
+        :type model_version_update: ~azure.ai.projects.models.UpdateModelVersionRequest or
+         ~azure.ai.projects.types.UpdateModelVersionRequest or IO[bytes]
         :return: ModelVersion. The ModelVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ModelVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10226,7 +11421,13 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def pending_create_version(
-        self, name: str, version: str, model_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        model_version: _types.ModelVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CreateAsyncResponse:
         """Create a model version async.
 
@@ -10238,7 +11439,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param version: Version of the model. Required.
         :type version: str
         :param model_version: Model version to create. Required.
-        :type model_version: JSON
+        :type model_version: ~azure.ai.projects.types.ModelVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10278,7 +11479,11 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def pending_create_version(
-        self, name: str, version: str, model_version: Union[_models.ModelVersion, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        model_version: Union[_models.ModelVersion, _types.ModelVersion, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CreateAsyncResponse:
         """Create a model version async.
 
@@ -10289,9 +11494,10 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param model_version: Model version to create. Is one of the following types: ModelVersion,
-         JSON, IO[bytes] Required.
-        :type model_version: ~azure.ai.projects.models.ModelVersion or JSON or IO[bytes]
+        :param model_version: Model version to create. Is either a ModelVersion type or a IO[bytes]
+         type. Required.
+        :type model_version: ~azure.ai.projects.models.ModelVersion or
+         ~azure.ai.projects.types.ModelVersion or IO[bytes]
         :return: CreateAsyncResponse. The CreateAsyncResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.CreateAsyncResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10395,7 +11601,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        pending_upload_request: JSON,
+        pending_upload_request: _types.ModelPendingUploadRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10409,7 +11615,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param version: Version of the model. Required.
         :type version: str
         :param pending_upload_request: The pending upload request request body. Required.
-        :type pending_upload_request: JSON
+        :type pending_upload_request: ~azure.ai.projects.types.ModelPendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10453,7 +11659,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        pending_upload_request: Union[_models.ModelPendingUploadRequest, JSON, IO[bytes]],
+        pending_upload_request: Union[_models.ModelPendingUploadRequest, _types.ModelPendingUploadRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ModelPendingUploadResponse:
         """Start a pending upload.
@@ -10464,10 +11670,10 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param pending_upload_request: The pending upload request request body. Is one of the following
-         types: ModelPendingUploadRequest, JSON, IO[bytes] Required.
-        :type pending_upload_request: ~azure.ai.projects.models.ModelPendingUploadRequest or JSON or
-         IO[bytes]
+        :param pending_upload_request: The pending upload request request body. Is either a
+         ModelPendingUploadRequest type or a IO[bytes] type. Required.
+        :type pending_upload_request: ~azure.ai.projects.models.ModelPendingUploadRequest or
+         ~azure.ai.projects.types.ModelPendingUploadRequest or IO[bytes]
         :return: ModelPendingUploadResponse. The ModelPendingUploadResponse is compatible with
          MutableMapping
         :rtype: ~azure.ai.projects.models.ModelPendingUploadResponse
@@ -10568,7 +11774,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        credential_request: JSON,
+        credential_request: _types.ModelCredentialRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10582,7 +11788,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param version: Version of the model. Required.
         :type version: str
         :param credential_request: The credential request request body. Required.
-        :type credential_request: JSON
+        :type credential_request: ~azure.ai.projects.types.ModelCredentialRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10624,7 +11830,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         self,
         name: str,
         version: str,
-        credential_request: Union[_models.ModelCredentialRequest, JSON, IO[bytes]],
+        credential_request: Union[_models.ModelCredentialRequest, _types.ModelCredentialRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatasetCredential:
         """Get model asset credentials.
@@ -10635,9 +11841,10 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param credential_request: The credential request request body. Is one of the following types:
-         ModelCredentialRequest, JSON, IO[bytes] Required.
-        :type credential_request: ~azure.ai.projects.models.ModelCredentialRequest or JSON or IO[bytes]
+        :param credential_request: The credential request request body. Is either a
+         ModelCredentialRequest type or a IO[bytes] type. Required.
+        :type credential_request: ~azure.ai.projects.models.ModelCredentialRequest or
+         ~azure.ai.projects.types.ModelCredentialRequest or IO[bytes]
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10705,7 +11912,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class BetaRedTeamsOperations:  # pylint: disable=docstring-missing-param
+class BetaRedTeamsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10894,13 +12101,15 @@ class BetaRedTeamsOperations:  # pylint: disable=docstring-missing-param
         """
 
     @overload
-    async def create(self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
+    async def create(
+        self, red_team: _types.RedTeam, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.RedTeam:
         """Create a redteam run.
 
         Submits a new redteam run for execution with the provided configuration.
 
         :param red_team: Redteam to be run. Required.
-        :type red_team: JSON
+        :type red_team: ~azure.ai.projects.types.RedTeam
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10928,14 +12137,16 @@ class BetaRedTeamsOperations:  # pylint: disable=docstring-missing-param
         """
 
     @distributed_trace_async
-    async def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
+    async def create(
+        self, red_team: Union[_models.RedTeam, _types.RedTeam, IO[bytes]], **kwargs: Any
+    ) -> _models.RedTeam:
         """Create a redteam run.
 
         Submits a new redteam run for execution with the provided configuration.
 
-        :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
-         Required.
-        :type red_team: ~azure.ai.projects.models.RedTeam or JSON or IO[bytes]
+        :param red_team: Redteam to be run. Is either a RedTeam type or a IO[bytes] type. Required.
+        :type red_team: ~azure.ai.projects.models.RedTeam or ~azure.ai.projects.types.RedTeam or
+         IO[bytes]
         :return: RedTeam. The RedTeam is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11005,7 +12216,7 @@ class BetaRedTeamsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
+class BetaRoutinesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11059,7 +12270,12 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def create_or_update(
-        self, routine_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        routine_name: str,
+        body: _types.CreateOrUpdateRoutineRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Routine:
         """Create or update a routine.
 
@@ -11068,7 +12284,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateOrUpdateRoutineRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11101,7 +12317,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
     async def create_or_update(
         self,
         routine_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateOrUpdateRoutineRequest, IO[bytes]] = _Unset,
         *,
         description: Optional[str] = None,
         enabled: Optional[bool] = None,
@@ -11115,8 +12331,9 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateOrUpdateRoutineRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateOrUpdateRoutineRequest or IO[bytes]
         :keyword description: A human-readable description of the routine. Default value is None.
         :paramtype description: str
         :keyword enabled: Whether the routine is enabled. Default value is None.
@@ -11718,7 +12935,12 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def dispatch(
-        self, routine_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        routine_name: str,
+        body: _types.DispatchRoutineAsyncRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
 
@@ -11727,7 +12949,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.DispatchRoutineAsyncRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11760,7 +12982,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
     async def dispatch(
         self,
         routine_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.DispatchRoutineAsyncRequest, IO[bytes]] = _Unset,
         *,
         payload: Optional[_models.RoutineDispatchPayload] = None,
         **kwargs: Any
@@ -11771,8 +12993,9 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, DispatchRoutineAsyncRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.projects.types.DispatchRoutineAsyncRequest or IO[bytes]
         :keyword payload: A direct action-input override sent downstream when testing a routine.
          Default value is None.
         :paramtype payload: ~azure.ai.projects.models.RoutineDispatchPayload
@@ -11849,7 +13072,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
+class BetaSchedulesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12104,7 +13327,7 @@ class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def create_or_update(
-        self, schedule_id: str, schedule: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, schedule_id: str, schedule: _types.Schedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update a schedule.
 
@@ -12113,7 +13336,7 @@ class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
         :param schedule: The resource instance. Required.
-        :type schedule: JSON
+        :type schedule: ~azure.ai.projects.types.Schedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12144,7 +13367,7 @@ class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def create_or_update(
-        self, schedule_id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
+        self, schedule_id: str, schedule: Union[_models.Schedule, _types.Schedule, IO[bytes]], **kwargs: Any
     ) -> _models.Schedule:
         """Create or update a schedule.
 
@@ -12152,9 +13375,10 @@ class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
-        :param schedule: The resource instance. Is one of the following types: Schedule, JSON,
-         IO[bytes] Required.
-        :type schedule: ~azure.ai.projects.models.Schedule or JSON or IO[bytes]
+        :param schedule: The resource instance. Is either a Schedule type or a IO[bytes] type.
+         Required.
+        :type schedule: ~azure.ai.projects.models.Schedule or ~azure.ai.projects.types.Schedule or
+         IO[bytes]
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12398,7 +13622,7 @@ class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
+class BetaSkillsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12597,7 +13821,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.UpdateSkillRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SkillDetails:
         """Update a skill.
 
@@ -12606,7 +13830,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the skill to update. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateSkillRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12637,7 +13861,12 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def update(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, default_version: str = _Unset, **kwargs: Any
+        self,
+        name: str,
+        body: Union[JSON, _types.UpdateSkillRequest, IO[bytes]] = _Unset,
+        *,
+        default_version: str = _Unset,
+        **kwargs: Any
     ) -> _models.SkillDetails:
         """Update a skill.
 
@@ -12645,8 +13874,8 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
 
         :param name: The name of the skill to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, UpdateSkillRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateSkillRequest or IO[bytes]
         :keyword default_version: The version identifier that the skill should point to. When set, the
          skill's default version will resolve to this version instead of the latest. Required.
         :paramtype default_version: str
@@ -12822,7 +14051,12 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def create(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: _types.CreateSkillVersionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SkillVersion:
         """Create a new version of a skill.
 
@@ -12831,7 +14065,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the skill. If the skill does not exist, it will be created. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateSkillVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12864,7 +14098,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
     async def create(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateSkillVersionRequest, IO[bytes]] = _Unset,
         *,
         inline_content: Optional[_models.SkillInlineContent] = None,
         default: Optional[bool] = None,
@@ -12876,8 +14110,9 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
 
         :param name: The name of the skill. If the skill does not exist, it will be created. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateSkillVersionRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateSkillVersionRequest or IO[bytes]
         :keyword inline_content: Inline skill content for simple skills without file uploads.
          Foundry-specific extension. Default value is None.
         :paramtype inline_content: ~azure.ai.projects.models.SkillInlineContent
@@ -12973,23 +14208,8 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         """
 
     @overload
-    async def create_from_files(self, name: str, content: JSON, **kwargs: Any) -> _models.SkillVersion:
-        """Create a skill version from uploaded files.
-
-        Creates a new version of a skill from uploaded files via multipart form data.
-
-        :param name: The name of the skill. Required.
-        :type name: str
-        :param content: The multipart request content. Required.
-        :type content: JSON
-        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
     async def create_from_files(
-        self, name: str, content: Union[_models.CreateSkillVersionFromFilesBody, JSON], **kwargs: Any
+        self, name: str, content: _types.CreateSkillVersionFromFilesBody, **kwargs: Any
     ) -> _models.SkillVersion:
         """Create a skill version from uploaded files.
 
@@ -12997,9 +14217,30 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
 
         :param name: The name of the skill. Required.
         :type name: str
-        :param content: The multipart request content. Is either a CreateSkillVersionFromFilesBody type
-         or a JSON type. Required.
-        :type content: ~azure.ai.projects.models.CreateSkillVersionFromFilesBody or JSON
+        :param content: The multipart request content. Required.
+        :type content: ~azure.ai.projects.types.CreateSkillVersionFromFilesBody
+        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_from_files(
+        self,
+        name: str,
+        content: Union[_models.CreateSkillVersionFromFilesBody, _types.CreateSkillVersionFromFilesBody],
+        **kwargs: Any
+    ) -> _models.SkillVersion:
+        """Create a skill version from uploaded files.
+
+        Creates a new version of a skill from uploaded files via multipart form data.
+
+        :param name: The name of the skill. Required.
+        :type name: str
+        :param content: The multipart request content. Is one of the following types:
+         CreateSkillVersionFromFilesBody Required.
+        :type content: ~azure.ai.projects.models.CreateSkillVersionFromFilesBody or
+         ~azure.ai.projects.types.CreateSkillVersionFromFilesBody
         :return: SkillVersion. The SkillVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13440,7 +14681,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
+class BetaDatasetsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13621,7 +14862,7 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
 
     async def _create_generation_job_initial(
         self,
-        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.DataGenerationJob, _types.DataGenerationJob, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -13720,14 +14961,19 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def begin_create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+        self,
+        job: _types.DataGenerationJob,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DataGenerationJobResult]:
         """Create a data generation job.
 
         Submits a new data generation job for asynchronous execution.
 
         :param job: The job to create. Required.
-        :type job: JSON
+        :type job: ~azure.ai.projects.types.DataGenerationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -13770,7 +15016,7 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace_async
     async def begin_create_generation_job(
         self,
-        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.DataGenerationJob, _types.DataGenerationJob, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -13779,9 +15025,10 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
 
         Submits a new data generation job for asynchronous execution.
 
-        :param job: The job to create. Is one of the following types: DataGenerationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob or JSON or IO[bytes]
+        :param job: The job to create. Is either a DataGenerationJob type or a IO[bytes] type.
+         Required.
+        :type job: ~azure.ai.projects.models.DataGenerationJob or
+         ~azure.ai.projects.types.DataGenerationJob or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -13970,7 +15217,7 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
+class BetaAgentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13989,7 +15236,7 @@ class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
 
     async def _create_optimization_job_initial(
         self,
-        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        job: Union[_models.AgentOptimizationJob, _types.AgentOptimizationJob, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -14090,7 +15337,12 @@ class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def begin_create_optimization_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+        self,
+        job: _types.AgentOptimizationJob,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
@@ -14098,7 +15350,7 @@ class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
         retry.
 
         :param job: The job to create. Required.
-        :type job: JSON
+        :type job: ~azure.ai.projects.types.AgentOptimizationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -14144,7 +15396,7 @@ class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace_async
     async def begin_create_optimization_job(
         self,
-        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        job: Union[_models.AgentOptimizationJob, _types.AgentOptimizationJob, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -14154,9 +15406,10 @@ class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
         retry.
 
-        :param job: The job to create. Is one of the following types: AgentOptimizationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.AgentOptimizationJob or JSON or IO[bytes]
+        :param job: The job to create. Is either a AgentOptimizationJob type or a IO[bytes] type.
+         Required.
+        :type job: ~azure.ai.projects.models.AgentOptimizationJob or
+         ~azure.ai.projects.types.AgentOptimizationJob or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str

@@ -328,6 +328,48 @@ class AgentsOperations(GeneratedAgentsOperations):
                         raise new_exc from exc
             raise
 
+    @distributed_trace_async
+    async def generate_agent(self, body: _models.GenerateVoiceAgentRequest, **kwargs: Any) -> _models.AgentDetails:  # type: ignore[override]
+        """Generate an agent.
+
+        Generates and creates an agent from kind-specific high-level inputs. The generated definition
+        remains fully editable through the standard agent versioning operations. When the client is
+        constructed with ``allow_preview=True``, the required preview opt-in header is added
+        automatically.
+
+        :param body: The kind-specific inputs for generating and creating an agent. Required.
+        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        if getattr(self._config, "allow_preview", False):
+            # Add Foundry-Features header if not already present
+            headers = kwargs.get("headers")
+            if headers is None:
+                kwargs["headers"] = {_FOUNDRY_FEATURES_HEADER_NAME: _AGENT_OPERATION_FEATURE_HEADERS}
+            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _AGENT_OPERATION_FEATURE_HEADERS
+                kwargs["headers"] = headers
+
+        try:
+            return await super().generate_agent(body, **kwargs)  # type: ignore[misc]
+        except HttpResponseError as exc:
+            if exc.status_code == 403 and not self._config.allow_preview and exc.model is not None:
+                api_error_response = exc.model
+                if hasattr(api_error_response, "error") and api_error_response.error is not None:
+                    if api_error_response.error.code == _PREVIEW_FEATURE_REQUIRED_CODE:
+                        new_exc = HttpResponseError(
+                            message=f"{exc.message} {_PREVIEW_FEATURE_ADDED_ERROR_MESSAGE}",
+                        )
+                        new_exc.status_code = exc.status_code
+                        new_exc.reason = exc.reason
+                        new_exc.response = exc.response
+                        new_exc.model = exc.model
+                        raise new_exc from exc
+            raise
+
 
 class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     """Custom async operations for beta agent optimization jobs."""
@@ -440,45 +482,3 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
         return AsyncAgentOptimizationLROPoller(  # type: ignore
             self._client, raw_result, get_long_running_output, polling_method
         )
-
-    @distributed_trace_async
-    async def generate_agent(self, body: _models.GenerateVoiceAgentRequest, **kwargs: Any) -> _models.AgentDetails:  # type: ignore[override]
-        """Generate an agent.
-
-        Generates and creates an agent from kind-specific high-level inputs. The generated definition
-        remains fully editable through the standard agent versioning operations. When the client is
-        constructed with ``allow_preview=True``, the required preview opt-in header is added
-        automatically.
-
-        :param body: The kind-specific inputs for generating and creating an agent. Required.
-        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-        if getattr(self._config, "allow_preview", False):
-            # Add Foundry-Features header if not already present
-            headers = kwargs.get("headers")
-            if headers is None:
-                kwargs["headers"] = {_FOUNDRY_FEATURES_HEADER_NAME: _AGENT_OPERATION_FEATURE_HEADERS}
-            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
-                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _AGENT_OPERATION_FEATURE_HEADERS
-                kwargs["headers"] = headers
-
-        try:
-            return await super().generate_agent(body, **kwargs)  # type: ignore[misc]
-        except HttpResponseError as exc:
-            if exc.status_code == 403 and not self._config.allow_preview and exc.model is not None:
-                api_error_response = exc.model
-                if hasattr(api_error_response, "error") and api_error_response.error is not None:
-                    if api_error_response.error.code == _PREVIEW_FEATURE_REQUIRED_CODE:
-                        new_exc = HttpResponseError(
-                            message=f"{exc.message} {_PREVIEW_FEATURE_ADDED_ERROR_MESSAGE}",
-                        )
-                        new_exc.status_code = exc.status_code
-                        new_exc.reason = exc.reason
-                        new_exc.response = exc.response
-                        new_exc.model = exc.model
-                        raise new_exc from exc
-            raise

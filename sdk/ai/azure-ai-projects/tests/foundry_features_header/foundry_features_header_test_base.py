@@ -86,6 +86,10 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
         "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
     ),
     pytest.param(
+        "agents.generate_agent",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
         "evaluation_rules.create_or_update",
         "Evaluations=V1Preview",
     ),

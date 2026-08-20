@@ -26,7 +26,36 @@ git restore pyproject.toml
 #   recursive-include samples *.py *.md
 git restore MANIFEST.in
 
-# Force streaming in get_session_log_stream for both sync and async operations.
+# Remove the generated `voice_agent_web_socket` operation group from the client's public surface
+# entirely (import, docstring, and __init__ assignment). The generated operation only performs a
+# plain HTTP GET (no WebSocket upgrade handshake) and discards the connection - it's not a usable
+# client and was never meant to be public (the real voice-agent WebSocket client is `.realtime`).
+$files = 'azure\ai\projects\_client.py', 'azure\ai\projects\aio\_client.py'
+foreach ($f in $files) {
+    $lines = Get-Content $f
+    $out = New-Object System.Collections.Generic.List[string]
+    $skipUntilCloseParen = $false
+    foreach ($line in $lines) {
+        if ($skipUntilCloseParen) {
+            if ($line -match '^\s*\)\s*$') { $skipUntilCloseParen = $false }
+            continue
+        }
+        if ($line -match '^\s*VoiceAgentWebSocketOperations,\s*$') { continue }
+        if ($line -match '^\s*:ivar voice_agent_web_socket:') { continue }
+        if ($line -match '^\s*:vartype voice_agent_web_socket:') { continue }
+        if ($line -match '^\s*self\.voice_agent_web_socket = VoiceAgentWebSocketOperations\(\s*$') {
+            $skipUntilCloseParen = $true
+            continue
+        }
+        $out.Add($line)
+    }
+    Set-Content $f $out
+}
+
+# get_session_log_stream must always treat the response as an SSE stream, but must still pop any
+# caller-supplied stream= kwarg first -- otherwise it collides with the explicit stream=_stream
+# argument passed to self._client._pipeline.run(), raising "got multiple values for keyword
+# argument 'stream'" (hit by samples calling get_session_log_stream(..., stream=True)).
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
     $lines = Get-Content $f
@@ -39,9 +68,9 @@ foreach ($f in $files) {
         if ($inFunc -and $lines[$i] -match '^\s*(async\s+)?def\s+\w+\(') {
             $inFunc = $false
         }
-        if ($inFunc -and $lines[$i] -match 'kwargs\.pop\(.+stream.+False\)') {
+        if ($inFunc -and $lines[$i] -match '^\s*_stream = (True|kwargs\.pop\(.+\))\s*$') {
             $indent = ([regex]::Match($lines[$i], '^\s*')).Value
-            $lines[$i] = $indent + '_stream = True'
+            $lines[$i] = $indent + '_stream = kwargs.pop("stream", True)'
         }
     }
     Set-Content $f $lines
@@ -85,6 +114,172 @@ foreach ($f in $files) {
     $c = $c -replace '(message\":\"No logs since)\r?\n\s+(last 60 seconds\"})', '$1 $2'
     Set-Content $f $c -NoNewline
 }
+
+# A block of code in the implementation of "list_memories", in both sync 
+# and async _operations.py files, needs to be moved up. It's emitted in the wrong place,
+# in the inline function named "prepare_request". Instead it should be moved up into the
+# main body of the "list_memories" method, right after the line `error_map.update(kwargs.pop("error_map", {}) or {})`.
+# If you don't do this, the PR pipeline will show failures in Pyright (`error: "body" is unbound (reportUnboundVariable)`)
+# and some tests will fail. This is the block of code that needs to move up:
+#            if body is _Unset:
+#                if scope is _Unset:
+#                    raise TypeError("missing required argument: scope")
+#                body = {"scope": scope}
+#                body = {k: v for k, v in body.items() if v is not None}
+# The block inside prepare_request has 12-space indentation; after moving to the main function body it needs 8-space indentation.
+# Strategy: Find the last list_memories method, then do a targeted string replacement that moves the block right after error_map.update.
+$oldPattern = @"
+        error_map.update(kwargs.pop("error_map", {}) or {})
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        def prepare_request(_continuation_token=None):
+            if body is _Unset:
+                if scope is _Unset:
+                    raise TypeError("missing required argument: scope")
+                body = {"scope": scope}
+                body = {k: v for k, v in body.items() if v is not None}
+
+            _request = build_beta_memory_stores_list_memories_request(
+"@
+$newPattern = @"
+        error_map.update(kwargs.pop("error_map", {}) or {})
+        if body is _Unset:
+            if scope is _Unset:
+                raise TypeError("missing required argument: scope")
+            body = {"scope": scope}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        def prepare_request(_continuation_token=None):
+            _request = build_beta_memory_stores_list_memories_request(
+"@
+$files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
+foreach ($f in $files) {
+    $c = Get-Content $f -Raw
+    # Find all occurrences of "def list_memories(" and get the index of the last one
+    $methodMatches = [regex]::Matches($c, 'def list_memories\(')
+    if ($methodMatches.Count -eq 0) { continue }
+    $lastMethodStart = $methodMatches[$methodMatches.Count - 1].Index
+    
+    # Find the pattern to replace - first occurrence after the last list_memories method
+    $patternEscaped = [regex]::Escape($oldPattern)
+    $patternMatches = [regex]::Matches($c, $patternEscaped)
+    $matchToReplace = $null
+    foreach ($m in $patternMatches) {
+        if ($m.Index -gt $lastMethodStart) {
+            $matchToReplace = $m
+            break
+        }
+    }
+    if ($matchToReplace -eq $null) { continue }
+    
+    # Replace only that specific occurrence
+    $c = $c.Substring(0, $matchToReplace.Index) + $newPattern + $c.Substring($matchToReplace.Index + $matchToReplace.Length)
+    
+    Set-Content $f $c -NoNewline
+}
+
+
+# GenerateAgentRequest is a single-member union in TypeSpec (only GenerateVoiceAgentRequest so
+# far), which makes the emitter produce exactly ONE @overload stub for generate_agent. That
+# triggers two pyright errors in both sync and async _operations.py:
+#   - reportInconsistentOverload: a function needs 0 or 2+ @overloads, never exactly 1.
+#   - reportInvalidTypeForm: the real impl's body param is typed as the bare forward-reference
+#     string "_unions.GenerateAgentRequest", which isn't a proper importable type (single-member
+#     unions are emitted as a plain runtime alias, not a type pyright can resolve).
+# Fix: drop the redundant single @overload stub entirely, and retype the real implementation's
+# body parameter with the concrete model type (matching the overload stub's own type). Add a new
+# @overload here (making it 2+) if a second voice/agent kind is ever added upstream instead.
+$oldPatternSync = @"
+    @overload
+    def generate_agent(
+        self, body: _models.GenerateVoiceAgentRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Generate an agent.
+
+        Generates and creates an agent from kind-specific high-level inputs. The generated definition
+        remains fully editable through the standard agent versioning operations.
+
+        :param body: The kind-specific inputs for generating and creating an agent. Required.
+        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def generate_agent(self, body: "_unions.GenerateAgentRequest", **kwargs: Any) -> _models.AgentDetails:
+"@
+$newPatternSync = @"
+    @distributed_trace
+    def generate_agent(self, body: _models.GenerateVoiceAgentRequest, **kwargs: Any) -> _models.AgentDetails:
+"@
+$oldPatternAsync = @"
+    @overload
+    async def generate_agent(
+        self, body: _models.GenerateVoiceAgentRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Generate an agent.
+
+        Generates and creates an agent from kind-specific high-level inputs. The generated definition
+        remains fully editable through the standard agent versioning operations.
+
+        :param body: The kind-specific inputs for generating and creating an agent. Required.
+        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def generate_agent(self, body: "_unions.GenerateAgentRequest", **kwargs: Any) -> _models.AgentDetails:
+"@
+$newPatternAsync = @"
+    @distributed_trace_async
+    async def generate_agent(self, body: _models.GenerateVoiceAgentRequest, **kwargs: Any) -> _models.AgentDetails:
+"@
+$f = 'azure\ai\projects\operations\_operations.py'
+$c = Get-Content $f -Raw
+$c = $c.Replace($oldPatternSync, $newPatternSync)
+Set-Content $f $c -NoNewline
+$f = 'azure\ai\projects\aio\operations\_operations.py'
+$c = Get-Content $f -Raw
+$c = $c.Replace($oldPatternAsync, $newPatternAsync)
+Set-Content $f $c -NoNewline
+
+# VoiceResponse narrows OmitPropertiesRealtimeResponse's optional `id`/`conversation_id`
+# (Optional[str]) to required `str`, per the TypeSpec spec's explicit "Required." docstrings --
+# an intentional Azure-specific tightening of OpenAI's generic realtime response template (a
+# persisted voice response always has both set). Pyright's reportIncompatibleVariableOverride
+# flags this because narrowing a *mutable* attribute's type in a subclass isn't sound in general,
+# but it's safe here by construction (the service never omits these for a persisted response).
+$f = 'azure\ai\projects\models\_models.py'
+$c = Get-Content $f -Raw
+$c = $c.Replace(
+    "    id: str = rest_field(visibility=[`"read`", `"create`", `"update`", `"delete`", `"query`"])`n    `"`"`"The unique id of the response. Required.`"`"`"",
+    "    id: str = rest_field(visibility=[`"read`", `"create`", `"update`", `"delete`", `"query`"])  # type: ignore[reportIncompatibleVariableOverride]`n    `"`"`"The unique id of the response. Required.`"`"`""
+)
+$c = $c.Replace(
+    "    conversation_id: str = rest_field(visibility=[`"read`", `"create`", `"update`", `"delete`", `"query`"])`n    `"`"`"The id of the conversation this response belongs to. Required.`"`"`"",
+    "    conversation_id: str = rest_field(visibility=[`"read`", `"create`", `"update`", `"delete`", `"query`"])  # type: ignore[reportIncompatibleVariableOverride]`n    `"`"`"The id of the conversation this response belongs to. Required.`"`"`""
+)
+Set-Content $f $c -NoNewline
 
 # Finishing by running 'black' tool to format code. 
 pip install black

@@ -61,6 +61,7 @@ from .models._enums import (
 if TYPE_CHECKING:
     from . import _unions
     from .models import (
+        A2AProtocolVersion,
         AgentEndpointProtocol,
         AttackStrategy,
         AzureAISearchQueryType,
@@ -264,6 +265,100 @@ class A2APreviewToolboxTool(TypedDict, total=False):
 
 class A2AProtocolConfiguration(TypedDict, total=False):
     """Configuration specific to the A2A protocol."""
+
+
+class A2ATool(TypedDict, total=False):
+    """An agent implementing the A2A protocol.
+
+    :ivar type: The type of the tool. Always ``"a2a"``. Required. A2_A.
+    :vartype type: Literal[ToolType.A2_A]
+    :ivar base_url: Base URL of the agent.
+    :vartype base_url: str
+    :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
+     provided, defaults to  ``/.well-known/agent-card.json``.
+    :vartype agent_card_path: str
+    :ivar project_connection_id: The connection ID in the project for the A2A server. The
+     connection stores authentication and other connection details needed to connect to the A2A
+     server.
+    :vartype project_connection_id: str
+    :ivar send_credentials_for_agent_card: When ``true``, Foundry sends its credentials when
+     fetching the remote agent's Agent Card. The service defaults to ``false`` if a value is not
+     specified by the caller (anonymous fetch).
+    :vartype send_credentials_for_agent_card: bool
+    :ivar a2a_version: The A2A protocol version supported by the agent. Required. "1.0"
+    :vartype a2a_version: Union[str, "A2AProtocolVersion"]
+    """
+
+    type: Required[Literal[ToolType.A2_A]]
+    """The type of the tool. Always ``\"a2a\"``. Required. A2_A."""
+    base_url: str
+    """Base URL of the agent."""
+    agent_card_path: str
+    """The path to the agent card relative to the ``base_url``. If not provided, defaults to
+     ``/.well-known/agent-card.json``."""
+    project_connection_id: str
+    """The connection ID in the project for the A2A server. The connection stores authentication and
+     other connection details needed to connect to the A2A server."""
+    send_credentials_for_agent_card: bool
+    """When ``true``, Foundry sends its credentials when fetching the remote agent's Agent Card. The
+     service defaults to ``false`` if a value is not specified by the caller (anonymous fetch)."""
+    a2a_version: Required[Union[str, "A2AProtocolVersion"]]
+    """The A2A protocol version supported by the agent. Required. \"1.0\""""
+
+
+class A2AToolboxTool(TypedDict, total=False):
+    """An A2A tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, "ToolConfig"]
+    :ivar type: Required. A2_A.
+    :vartype type: Literal[ToolboxToolType.A2_A]
+    :ivar base_url: Base URL of the agent.
+    :vartype base_url: str
+    :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
+     provided, defaults to  ``/.well-known/agent-card.json``.
+    :vartype agent_card_path: str
+    :ivar project_connection_id: The connection ID in the project for the A2A server. The
+     connection stores authentication and other connection details needed to connect to the A2A
+     server.
+    :vartype project_connection_id: str
+    :ivar send_credentials_for_agent_card: When ``true``, Foundry sends its credentials when
+     fetching the remote agent's Agent Card. The service defaults to ``false`` if a value is not
+     specified by the caller (anonymous fetch).
+    :vartype send_credentials_for_agent_card: bool
+    :ivar a2a_version: The A2A protocol version supported by the agent. Required. "1.0"
+    :vartype a2a_version: Union[str, "A2AProtocolVersion"]
+    """
+
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
+     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
+     runtime."""
+    type: Required[Literal[ToolboxToolType.A2_A]]
+    """Required. A2_A."""
+    base_url: str
+    """Base URL of the agent."""
+    agent_card_path: str
+    """The path to the agent card relative to the ``base_url``. If not provided, defaults to
+     ``/.well-known/agent-card.json``."""
+    project_connection_id: str
+    """The connection ID in the project for the A2A server. The connection stores authentication and
+     other connection details needed to connect to the A2A server."""
+    send_credentials_for_agent_card: bool
+    """When ``true``, Foundry sends its credentials when fetching the remote agent's Agent Card. The
+     service defaults to ``false`` if a value is not specified by the caller (anonymous fetch)."""
+    a2a_version: Required[Union[str, "A2AProtocolVersion"]]
+    """The A2A protocol version supported by the agent. Required. \"1.0\""""
 
 
 class ActivityProtocolConfiguration(TypedDict, total=False):
@@ -3806,6 +3901,9 @@ class HostedAgentDefinition(TypedDict, total=False):
     :ivar telemetry_config: Optional customer-supplied telemetry configuration for exporting
      container logs, traces, and metrics.
     :vartype telemetry_config: "TelemetryConfig"
+    :ivar session_configuration: Optional session defaults (for example, the idle timeout) applied
+     to sessions created for this agent version.
+    :vartype session_configuration: "SessionConfiguration"
     """
 
     rai_config: "RaiConfig"
@@ -3829,6 +3927,9 @@ class HostedAgentDefinition(TypedDict, total=False):
     telemetry_config: "TelemetryConfig"
     """Optional customer-supplied telemetry configuration for exporting container logs, traces, and
      metrics."""
+    session_configuration: "SessionConfiguration"
+    """Optional session defaults (for example, the idle timeout) applied to sessions created for this
+     agent version."""
 
 
 class HourlyRecurrenceSchedule(TypedDict, total=False):
@@ -6454,6 +6555,20 @@ class ScheduleRoutineTrigger(TypedDict, total=False):
      Required."""
     time_zone: Required[str]
     """An IANA or Windows time zone identifier for the schedule. Required."""
+
+
+class SessionConfiguration(TypedDict, total=False):
+    """Session defaults applied to sessions created for a hosted agent version.
+
+    :ivar idle_timeout_seconds: The idle duration, in seconds, before a session's sandbox is
+     suspended. Optional — when unset, the server default of 900 seconds is used. Must be between
+     300 and 3600 seconds (inclusive).
+    :vartype idle_timeout_seconds: str
+    """
+
+    idle_timeout_seconds: str
+    """The idle duration, in seconds, before a session's sandbox is suspended. Optional — when unset,
+     the server default of 900 seconds is used. Must be between 300 and 3600 seconds (inclusive)."""
 
 
 class SharepointGroundingToolParameters(TypedDict, total=False):
@@ -10241,12 +10356,14 @@ class VoiceAudioOutputConfig(TypedDict, total=False):
     Provider-specific fields are selected by ``voice_type``:
 
     * `openai`: `voice` and `speed`.
-    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`, `custom_lexicon_url`, `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
+    `custom_lexicon_url`,
+    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
-    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus `personal_voice_model`; the voice name is derived from the avatar.
+    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
+    `personal_voice_model`; the voice name is derived from the avatar.
     * `azure-realtime-native`: `voice` and `speed`.
-
     `format` and `output_audio_timestamp_types` apply to every voice type.
 
     :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
@@ -11070,6 +11187,78 @@ class VoiceUserMessageItem(TypedDict, total=False):
     """Required. USER."""
 
 
+class WebIQPreviewTool(TypedDict, total=False):
+    """A WebIQ server-side tool.
+
+    :ivar type: The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW.
+    :vartype type: Literal[ToolType.WEB_IQ_PREVIEW]
+    :ivar project_connection_id: The ID of the WebIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: The label of the WebIQ MCP server to connect to. When omitted, the service
+     defaults to connection name extracted from project_connection_id.
+    :vartype server_label: str
+    :ivar require_approval: Whether the agent requires approval before executing actions. When
+     omitted, the service defaults to "always". Is either a MCPToolRequireApproval type or a str
+     type.
+    :vartype require_approval: Union["MCPToolRequireApproval", str]
+    """
+
+    type: Required[Literal[ToolType.WEB_IQ_PREVIEW]]
+    """The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW."""
+    project_connection_id: Required[str]
+    """The ID of the WebIQ project connection. Required."""
+    server_label: str
+    """The label of the WebIQ MCP server to connect to. When omitted, the service defaults to
+     connection name extracted from project_connection_id."""
+    require_approval: Optional[Union["MCPToolRequireApproval", str]]
+    """Whether the agent requires approval before executing actions. When omitted, the service
+     defaults to \"always\". Is either a MCPToolRequireApproval type or a str type."""
+
+
+class WebIQPreviewToolboxTool(TypedDict, total=False):
+    """A WebIQ tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, "ToolConfig"]
+    :ivar type: Required. WEB_IQ_PREVIEW.
+    :vartype type: Literal[ToolboxToolType.WEB_IQ_PREVIEW]
+    :ivar project_connection_id: The ID of the WebIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: The label of the WebIQ MCP server to connect to. When omitted, the service
+     defaults to connection name extracted from project_connection_id.
+    :vartype server_label: str
+    :ivar require_approval: Whether the agent requires approval before executing actions. When
+     omitted, the service defaults to "always". Is either a MCPToolRequireApproval type or a str
+     type.
+    :vartype require_approval: Union["MCPToolRequireApproval", str]
+    """
+
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
+     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
+     runtime."""
+    type: Required[Literal[ToolboxToolType.WEB_IQ_PREVIEW]]
+    """Required. WEB_IQ_PREVIEW."""
+    project_connection_id: Required[str]
+    """The ID of the WebIQ project connection. Required."""
+    server_label: str
+    """The label of the WebIQ MCP server to connect to. When omitted, the service defaults to
+     connection name extracted from project_connection_id."""
+    require_approval: Optional[Union["MCPToolRequireApproval", str]]
+    """Whether the agent requires approval before executing actions. When omitted, the service
+     defaults to \"always\". Is either a MCPToolRequireApproval type or a str type."""
+
+
 class WebSearchApproximateLocation(TypedDict, total=False):
     """Web search approximate location.
 
@@ -11694,6 +11883,7 @@ class UpdateToolboxRequest1(TypedDict, total=False):
 
 
 Tool = Union[
+    A2ATool,
     A2APreviewTool,
     ApplyPatchToolParam,
     AzureAISearchTool,
@@ -11720,11 +11910,13 @@ Tool = Union[
     SharepointPreviewTool,
     FunctionShellToolParam,
     ToolSearchToolParam,
+    WebIQPreviewTool,
     WebSearchTool,
     WebSearchPreviewTool,
     WorkIQPreviewTool,
 ]
 ToolboxTool = Union[
+    A2AToolboxTool,
     A2APreviewToolboxTool,
     AzureAISearchToolboxTool,
     BrowserAutomationPreviewToolboxTool,
@@ -11736,6 +11928,7 @@ ToolboxTool = Union[
     ReminderPreviewToolboxTool,
     ToolSearchToolboxTool,
     ToolboxSearchPreviewToolboxTool,
+    WebIQPreviewToolboxTool,
     WebSearchToolboxTool,
     WorkIQPreviewToolboxTool,
 ]

@@ -333,6 +333,7 @@
         "azure.ai.projects.models.Schedule": "Azure.AI.Projects.Schedule",
         "azure.ai.projects.models.ScheduleRoutineTrigger": "Azure.AI.Projects.ScheduleRoutineTrigger",
         "azure.ai.projects.models.ScheduleRun": "Azure.AI.Projects.ScheduleRun",
+        "azure.ai.projects.models.SessionConfiguration": "Azure.AI.Projects.SessionConfiguration",
         "azure.ai.projects.models.SessionDirectoryEntry": "Azure.AI.Projects.SessionDirectoryEntry",
         "azure.ai.projects.models.SessionFileWriteResult": "Azure.AI.Projects.SessionFileWriteResponse",
         "azure.ai.projects.models.SessionLogEvent": "Azure.AI.Projects.SessionLogEvent",
@@ -516,6 +517,8 @@
         "azure.ai.projects.models.VoiceSystemTool": "Azure.AI.Projects.VoiceSystemTool",
         "azure.ai.projects.models.VoiceToolboxTool": "Azure.AI.Projects.VoiceToolboxTool",
         "azure.ai.projects.models.VoiceUserMessageItem": "Azure.AI.Projects.VoiceUserMessageItem",
+        "azure.ai.projects.models.WebIQPreviewTool": "Azure.AI.Projects.WebIQPreviewTool",
+        "azure.ai.projects.models.WebIQPreviewToolboxTool": "Azure.AI.Projects.WebIQPreviewToolboxTool",
         "azure.ai.projects.models.WebSearchApproximateLocation": "OpenAI.WebSearchApproximateLocation",
         "azure.ai.projects.models.WebSearchConfiguration": "Azure.AI.Projects.WebSearchConfiguration",
         "azure.ai.projects.models.WebSearchPreviewTool": "OpenAI.WebSearchPreviewTool",
@@ -781,5 +784,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "f23cc7b21030"
+    "CrossLanguageVersion": "ffc293e5009c"
 }
