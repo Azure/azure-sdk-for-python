@@ -418,8 +418,8 @@ class A2ATool(Tool, discriminator="a2a"):  # pylint: disable=docstring-keyword-s
      fetching the remote agent's Agent Card. The service defaults to ``false`` if a value is not
      specified by the caller (anonymous fetch).
     :vartype send_credentials_for_agent_card: bool
-    :ivar a2_a_version: The A2A protocol version supported by the agent. Required. "1.0"
-    :vartype a2_a_version: str or ~azure.ai.projects.models.A2AProtocolVersion
+    :ivar a2a_version: The A2A protocol version supported by the agent. Required. "1.0"
+    :vartype a2a_version: str or ~azure.ai.projects.models.A2AProtocolVersion
     """
 
     type: Literal[ToolType.A2_A] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -437,8 +437,8 @@ class A2ATool(Tool, discriminator="a2a"):  # pylint: disable=docstring-keyword-s
     )
     """When ``true``, Foundry sends its credentials when fetching the remote agent's Agent Card. The
      service defaults to ``false`` if a value is not specified by the caller (anonymous fetch)."""
-    a2_a_version: Union[str, "_models.A2AProtocolVersion"] = rest_field(
-        name="a2a_version", visibility=["read", "create", "update", "delete", "query"]
+    a2a_version: Union[str, "_models.A2AProtocolVersion"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """The A2A protocol version supported by the agent. Required. \"1.0\""""
 
@@ -446,7 +446,7 @@ class A2ATool(Tool, discriminator="a2a"):  # pylint: disable=docstring-keyword-s
     def __init__(
         self,
         *,
-        a2_a_version: Union[str, "_models.A2AProtocolVersion"],
+        a2a_version: Union[str, "_models.A2AProtocolVersion"],
         base_url: Optional[str] = None,
         agent_card_path: Optional[str] = None,
         project_connection_id: Optional[str] = None,
@@ -491,8 +491,8 @@ class A2AToolboxTool(ToolboxTool, discriminator="a2a"):  # pylint: disable=docst
      fetching the remote agent's Agent Card. The service defaults to ``false`` if a value is not
      specified by the caller (anonymous fetch).
     :vartype send_credentials_for_agent_card: bool
-    :ivar a2_a_version: The A2A protocol version supported by the agent. Required. "1.0"
-    :vartype a2_a_version: str or ~azure.ai.projects.models.A2AProtocolVersion
+    :ivar a2a_version: The A2A protocol version supported by the agent. Required. "1.0"
+    :vartype a2a_version: str or ~azure.ai.projects.models.A2AProtocolVersion
     """
 
     type: Literal[ToolboxToolType.A2_A] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -510,8 +510,8 @@ class A2AToolboxTool(ToolboxTool, discriminator="a2a"):  # pylint: disable=docst
     )
     """When ``true``, Foundry sends its credentials when fetching the remote agent's Agent Card. The
      service defaults to ``false`` if a value is not specified by the caller (anonymous fetch)."""
-    a2_a_version: Union[str, "_models.A2AProtocolVersion"] = rest_field(
-        name="a2a_version", visibility=["read", "create", "update", "delete", "query"]
+    a2a_version: Union[str, "_models.A2AProtocolVersion"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """The A2A protocol version supported by the agent. Required. \"1.0\""""
 
@@ -519,7 +519,7 @@ class A2AToolboxTool(ToolboxTool, discriminator="a2a"):  # pylint: disable=docst
     def __init__(
         self,
         *,
-        a2_a_version: Union[str, "_models.A2AProtocolVersion"],
+        a2a_version: Union[str, "_models.A2AProtocolVersion"],
         name: Optional[str] = None,
         description: Optional[str] = None,
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
@@ -14074,7 +14074,7 @@ class SimpleQnADataGenerationJobOptions(
 class SimulationSeedDataGenerationJobOptions(
     DataGenerationJobOptions, discriminator="simulation_seed"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The options for a simulation seed data generation job. Use with multiturn evaluation scenarios
+    """The options for a task generation data generation job. Use with multiturn evaluation scenarios
     and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
     ``category``, ``test_case_description``, and ``desired_num_turns``.
 
