@@ -15,7 +15,9 @@
 
 ### Breaking Changes
 
-All breaking changes are associated with beta features.
+* Raised the minimum supported `openai` package version from `2.8.0` to `3.0.0`. The OpenAI client transport now uses `httpx2` instead of `httpx`; custom `http_client` implementations passed to `get_openai_client()` must use compatible `httpx2.Client`, `httpx2.AsyncClient`, and transport types.
+
+All remaining breaking changes are associated with beta features.
 
 * Methods `.beta.routines.list` and `.beta.routines.list_runs` replaced the `before` argument with `after` and now use the service-provided `next_link` for continuation.
 * Renamed class `TaskGenerationDataGenerationJobOptions` to `SimulationSeedDataGenerationJobOptions`. The corresponding `DataGenerationJobType.TASK_GENERATION` enum member was renamed to `DataGenerationJobType.SIMULATION_SEED`, and its wire value changed from `task_generation` to `simulation_seed`.
