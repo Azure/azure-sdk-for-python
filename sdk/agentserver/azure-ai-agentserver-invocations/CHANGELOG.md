@@ -2,6 +2,11 @@
 
 ## 1.1.0b2 (Unreleased)
 
+### Samples
+
+- Updated the resilient LangGraph sample to current `langgraph`,
+  `langgraph-checkpoint-sqlite`, and `langchain-core` release lines.
+
 ### Other Changes
 
 - Constrained runtime, development, and sample dependencies to compatible release lines.
