@@ -15,7 +15,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python update_compute.py
+    python update_arc_deployment.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,22 +30,21 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.computes.begin_update(
-        resource_group_name="rgcognitiveservices",
-        account_name="myAccount",
-        compute_name="myCompute",
+    response = client.arc_deployments.begin_update(
+        resource_group_name="resourceGroupName",
+        account_name="accountName",
+        deployment_name="phi-3-arc",
         properties={
             "properties": {
-                "computeType": "Cluster",
-                "pools": [
-                    {"instanceType": "Standard_DS3_v2", "name": "default", "nodeCount": 4, "vmPriority": "Regular"}
-                ],
+                "nodeSelector": {"agentpool": "cpu"},
+                "replicas": 3,
+                "resources": {"limits": {"cpu": "4", "memory": "16Gi"}, "requests": {"cpu": "500m", "memory": "2Gi"}},
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-05-15-preview/UpdateCompute.json
+# x-ms-original-file: 2026-07-15-preview/UpdateArcDeployment.json
 if __name__ == "__main__":
     main()

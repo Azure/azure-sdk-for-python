@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,25 +30,23 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.computes.begin_create_or_update(
+    client.computes.begin_create_or_update(
         resource_group_name="rgcognitiveservices",
         account_name="myAccount",
         compute_name="myCompute",
         resource={
             "identity": {"type": "None"},
-            "location": "eastus",
             "properties": {
                 "computeType": "Cluster",
+                "location": "eastus",
                 "pools": [
                     {"instanceType": "Standard_DS3_v2", "name": "default", "nodeCount": 2, "vmPriority": "Regular"}
                 ],
-                "subnetArmId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rgcognitiveservices/providers/Microsoft.Network/virtualNetworks/myVnet/subnets/default",
             },
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2026-05-15-preview/PutCompute.json
+# x-ms-original-file: 2026-07-15-preview/PutCompute.json
 if __name__ == "__main__":
     main()
