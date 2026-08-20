@@ -193,13 +193,13 @@ safe-outputs:
                 core.setFailed("The source pull request branch is not in this repository and cannot be used as a base.");
                 return;
               }
-              core.info(`Retargeting fix pull request to ${process.env.DEFAULT_BRANCH} to trigger checks.`);
+              
               await github.rest.pulls.update({
                 ...context.repo,
                 pull_number: Number(process.env.FIX_PR_NUMBER),
                 base: process.env.DEFAULT_BRANCH,
               });
-              core.info(`Restoring fix pull request base to ${sourcePull.head.ref}.`);
+              
               await github.rest.pulls.update({
                 ...context.repo,
                 pull_number: Number(process.env.FIX_PR_NUMBER),
