@@ -21,6 +21,7 @@ from azure.appconfiguration.provider._request_tracing_context import (
     TARGETING_FILTER_NAMES,
     FEATURE_FLAG_USES_SEED_TAG,
     FEATURE_FLAG_USES_TELEMETRY_TAG,
+    ENHANCED_FEATURE_FLAG_TAG,
 )
 from azure.appconfiguration.provider._constants import (
     REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
@@ -513,3 +514,90 @@ class TestSnapshotReferenceTracking(unittest.TestCase):
         self.assertIn("UsesKeyVault", correlation_header)
         self.assertIn("Failover", correlation_header)
         self.assertIn(SNAPSHOT_REFERENCE_TAG, correlation_header)
+
+
+class TestEnhancedFeatureFlagTracking(unittest.TestCase):
+    """Test enhanced feature flag usage tracking in request tracing context."""
+
+    def test_enhanced_feature_flag_tag_constant(self):
+        """Test that the enhanced feature flag tag constant has the expected value."""
+        self.assertEqual(ENHANCED_FEATURE_FLAG_TAG, "EnhFF")
+
+    def test_initialization(self):
+        """Test that request tracing context initializes enhanced feature flag tracking to False."""
+        context = _RequestTracingContext()
+        self.assertFalse(context.uses_enhanced_feature_flags)
+
+    def test_set_enhanced_feature_flag_usage(self):
+        """Test setting enhanced feature flag usage in tracing context."""
+        context = _RequestTracingContext()
+
+        # Initially false
+        self.assertFalse(context.uses_enhanced_feature_flags)
+
+        # Set to true
+        context.uses_enhanced_feature_flags = True
+        self.assertTrue(context.uses_enhanced_feature_flags)
+
+        # Set back to false
+        context.uses_enhanced_feature_flags = False
+        self.assertFalse(context.uses_enhanced_feature_flags)
+
+    def test_correlation_context_without_enhanced_feature_flags(self):
+        """Test correlation context header when not using the enhanced feature flag endpoint."""
+        context = _RequestTracingContext()
+        context.uses_enhanced_feature_flags = False
+
+        headers = {}
+        updated_headers = context.update_correlation_context_header(
+            headers=headers,
+            request_type="Startup",
+            replica_count=0,
+            uses_key_vault=False,
+            feature_flag_enabled=False,
+            is_failover_request=False,
+        )
+
+        correlation_header = updated_headers.get("Correlation-Context", "")
+        self.assertIn("RequestType=Startup", correlation_header)
+        self.assertNotIn(ENHANCED_FEATURE_FLAG_TAG, correlation_header)
+
+    def test_correlation_context_with_enhanced_feature_flags(self):
+        """Test correlation context header when using the enhanced feature flag endpoint."""
+        context = _RequestTracingContext()
+        context.uses_enhanced_feature_flags = True
+
+        headers = {}
+        updated_headers = context.update_correlation_context_header(
+            headers=headers,
+            request_type="Startup",
+            replica_count=0,
+            uses_key_vault=False,
+            feature_flag_enabled=False,
+            is_failover_request=False,
+        )
+
+        correlation_header = updated_headers.get("Correlation-Context", "")
+        self.assertIn("RequestType=Startup", correlation_header)
+        self.assertIn(f"Features={ENHANCED_FEATURE_FLAG_TAG}", correlation_header)
+
+    def test_correlation_context_with_enhanced_feature_flags_and_snapshot_reference(self):
+        """Test correlation context header format when both enhanced feature flags and snapshot references are
+        used, verifying both feature tags are joined by the delimiter in the Features segment."""
+        context = _RequestTracingContext()
+        context.uses_enhanced_feature_flags = True
+        context.uses_snapshot_reference = True
+
+        headers = {}
+        updated_headers = context.update_correlation_context_header(
+            headers=headers,
+            request_type="Startup",
+            replica_count=0,
+            uses_key_vault=False,
+            feature_flag_enabled=False,
+            is_failover_request=False,
+        )
+
+        correlation_header = updated_headers.get("Correlation-Context", "")
+        self.assertIn(SNAPSHOT_REFERENCE_TAG, correlation_header)
+        self.assertIn(ENHANCED_FEATURE_FLAG_TAG, correlation_header)
