@@ -390,7 +390,7 @@ from azure.appconfiguration.provider import load
 # feature_management.feature_flags list as key-value based feature flags.
 config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True, **kwargs)
 feature_flags = config["feature_management"]["feature_flags"]
-enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("name") == "EnhancedFeatureBeta")
+enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("id") == "EnhancedFeatureBeta")
 print(enhanced_flag_beta["enabled"])
 ```
 
@@ -435,7 +435,7 @@ config = load(
     **kwargs,
 )
 feature_flags = config["feature_management"]["feature_flags"]
-enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("name") == "EnhancedFeatureBeta")
+enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("id") == "EnhancedFeatureBeta")
 print(enhanced_flag_beta["enabled"])
 ```
 

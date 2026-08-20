@@ -584,6 +584,34 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             return value
         return json.loads(value)
 
+    @staticmethod
+    def _parse_filter_parameter_value(value: Optional[str]) -> Any:
+        """
+        Parses a single enhanced feature flag filter parameter value as a best-effort attempt. Unlike variant
+        values, filter parameters don't have a content type, so there's no explicit signal that a value is
+        intended to be JSON. Only strings that look like a JSON object or array are attempted to be parsed;
+        if parsing fails, or the value doesn't look like an object/array, the original raw string is returned
+        unchanged. This avoids misinterpreting a customer's intentional string value (e.g. "true", "123", or a
+        plain string) as some other JSON type.
+
+        :param value: The filter parameter's raw string value.
+        :type value: Optional[str]
+        :return: The parsed JSON object/array if the value looks like JSON and parses successfully, otherwise
+            the original raw value.
+        :rtype: Any
+        """
+        if not isinstance(value, str):
+            return value
+        trimmed = value.strip()
+        if not trimmed or trimmed[0] not in "{[":
+            return value
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            # Not valid JSON after all: fall back to the original string, since the customer may have
+            # actually intended a literal string value.
+            return value
+
     def _process_enhanced_feature_flag(self, feature_flag: FeatureFlag) -> Dict[str, Any]:
         """
         Convert an enhanced feature flag, loaded from the enhanced feature flag endpoint, into a dictionary that
@@ -611,7 +639,17 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                 conditions_value["requirement_type"] = feature_flag.conditions.requirement_type
             if feature_flag.conditions.filters:
                 conditions_value["client_filters"] = [
-                    {"name": client_filter.name, "parameters": client_filter.parameters}
+                    {
+                        "name": client_filter.name,
+                        "parameters": (
+                            {
+                                key: self._parse_filter_parameter_value(value)
+                                for key, value in client_filter.parameters.items()
+                            }
+                            if client_filter.parameters
+                            else client_filter.parameters
+                        ),
+                    }
                     for client_filter in feature_flag.conditions.filters
                 ]
                 filter_names = [client_filter.name for client_filter in feature_flag.conditions.filters]

@@ -520,6 +520,63 @@ class TestProcessEnhancedFeatureFlag(unittest.TestCase):
         self.assertEqual(result["conditions"]["client_filters"][0]["name"], "Percentage")
         self.assertEqual(result["conditions"]["client_filters"][0]["parameters"], {"Value": "50"})
 
+    def test_process_enhanced_feature_flag_filter_parameter_json_object_is_parsed(self):
+        """Test that a filter parameter value that looks like a JSON object is parsed as JSON."""
+        feature_flag = FeatureFlag(
+            name="MyFeature",
+            enabled=True,
+            conditions=FeatureFlagConditions(
+                filters=[FeatureFilter(name="Audience", parameters={"Users": '{"a": 1}'})],
+            ),
+        )
+
+        result = self.provider._process_enhanced_feature_flag(feature_flag)
+
+        self.assertEqual(result["conditions"]["client_filters"][0]["parameters"], {"Users": {"a": 1}})
+
+    def test_process_enhanced_feature_flag_filter_parameter_json_array_is_parsed(self):
+        """Test that a filter parameter value that looks like a JSON array is parsed as JSON."""
+        feature_flag = FeatureFlag(
+            name="MyFeature",
+            enabled=True,
+            conditions=FeatureFlagConditions(
+                filters=[FeatureFilter(name="Audience", parameters={"Groups": "[1, 2, 3]"})],
+            ),
+        )
+
+        result = self.provider._process_enhanced_feature_flag(feature_flag)
+
+        self.assertEqual(result["conditions"]["client_filters"][0]["parameters"], {"Groups": [1, 2, 3]})
+
+    def test_process_enhanced_feature_flag_filter_parameter_invalid_json_falls_back_to_string(self):
+        """Test that a filter parameter value that looks like JSON but fails to parse falls back to the raw
+        string, rather than raising, since the customer may have intended a literal string value."""
+        feature_flag = FeatureFlag(
+            name="MyFeature",
+            enabled=True,
+            conditions=FeatureFlagConditions(
+                filters=[FeatureFilter(name="Audience", parameters={"Users": "{ invalid json"})],
+            ),
+        )
+
+        result = self.provider._process_enhanced_feature_flag(feature_flag)
+
+        self.assertEqual(result["conditions"]["client_filters"][0]["parameters"], {"Users": "{ invalid json"})
+
+    def test_process_enhanced_feature_flag_filter_parameter_plain_string_is_not_parsed(self):
+        """Test that a plain string filter parameter value (not starting with '{' or '[') is left unchanged."""
+        feature_flag = FeatureFlag(
+            name="MyFeature",
+            enabled=True,
+            conditions=FeatureFlagConditions(
+                filters=[FeatureFilter(name="Audience", parameters={"Region": "US"})],
+            ),
+        )
+
+        result = self.provider._process_enhanced_feature_flag(feature_flag)
+
+        self.assertEqual(result["conditions"]["client_filters"][0]["parameters"], {"Region": "US"})
+
     def test_process_enhanced_feature_flag_with_variants_and_allocation(self):
         """Test processing an enhanced feature flag with variants and allocation. Variant values, like regular
         key-value settings, are raw strings on the wire: a variant with a JSON content type is parsed into a JSON
@@ -569,9 +626,7 @@ class TestProcessEnhancedFeatureFlag(unittest.TestCase):
             name="InvalidVariant",
             enabled=True,
             variants=[
-                FeatureFlagVariantDefinition(
-                    name="Variant", value="{ invalid json", content_type="application/json"
-                )
+                FeatureFlagVariantDefinition(name="Variant", value="{ invalid json", content_type="application/json")
             ],
         )
 
@@ -657,6 +712,46 @@ class TestParseVariantValue(unittest.TestCase):
         though it contains the substring 'json'."""
         result = AzureAppConfigurationProviderBase._parse_variant_value("{ invalid json", "text/json")
         self.assertEqual(result, "{ invalid json")
+
+
+class TestParseFilterParameterValue(unittest.TestCase):
+    """Tests for _parse_filter_parameter_value, which parses enhanced feature flag filter parameter values as a
+    best-effort attempt, always falling back to the raw string on failure since filter parameters have no
+    content type to declare JSON intent (unlike variant values)."""
+
+    def test_json_object_is_parsed(self):
+        result = AzureAppConfigurationProviderBase._parse_filter_parameter_value('{"a": 1}')
+        self.assertEqual(result, {"a": 1})
+
+    def test_json_array_is_parsed(self):
+        result = AzureAppConfigurationProviderBase._parse_filter_parameter_value("[1, 2, 3]")
+        self.assertEqual(result, [1, 2, 3])
+
+    def test_invalid_json_object_falls_back_to_string(self):
+        result = AzureAppConfigurationProviderBase._parse_filter_parameter_value("{ invalid json")
+        self.assertEqual(result, "{ invalid json")
+
+    def test_invalid_json_array_falls_back_to_string(self):
+        result = AzureAppConfigurationProviderBase._parse_filter_parameter_value("[ invalid json")
+        self.assertEqual(result, "[ invalid json")
+
+    def test_plain_string_is_not_parsed(self):
+        result = AzureAppConfigurationProviderBase._parse_filter_parameter_value("US")
+        self.assertEqual(result, "US")
+
+    def test_empty_string_is_not_parsed(self):
+        result = AzureAppConfigurationProviderBase._parse_filter_parameter_value("")
+        self.assertEqual(result, "")
+
+    def test_json_literal_null_string_is_not_parsed(self):
+        """The literal string 'null' doesn't start with '{' or '[', so it should be left as a raw string, not
+        parsed into JSON null."""
+        result = AzureAppConfigurationProviderBase._parse_filter_parameter_value("null")
+        self.assertEqual(result, "null")
+
+    def test_non_string_value_is_returned_unchanged(self):
+        result = AzureAppConfigurationProviderBase._parse_filter_parameter_value(None)
+        self.assertIsNone(result)
 
     def test_json_content_type_with_invalid_json_raises(self):
         """If the content type claims JSON but the value is not valid JSON, parsing should raise instead of
@@ -744,7 +839,9 @@ class TestProcessAndMergeFeatureFlags(unittest.TestCase):
     empty list (loaded this round, zero found)."""
 
     def setUp(self):
-        self.provider = AzureAppConfigurationProviderBase(endpoint="https://test.azconfig.io", feature_flag_enabled=True)
+        self.provider = AzureAppConfigurationProviderBase(
+            endpoint="https://test.azconfig.io", feature_flag_enabled=True
+        )
 
     def test_enhanced_feature_flags_none_preserves_previous_processed_flags(self):
         feature_flag = FeatureFlag(name="MyFeature", enabled=True)
@@ -797,9 +894,7 @@ class TestProcessAndMergeFeatureFlags(unittest.TestCase):
 
         # Neither source refreshed this round: the previously merged list is passed through as
         # processed_feature_flags and should come back unchanged.
-        settings = self.provider._process_and_merge_feature_flags(
-            {}, previous_merged, None, None
-        )
+        settings = self.provider._process_and_merge_feature_flags({}, previous_merged, None, None)
         self.assertEqual(settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY], previous_merged)
 
     def test_only_kv_refreshed_still_merges_with_cached_enhanced_flags(self):

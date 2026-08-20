@@ -18,8 +18,8 @@ USAGE: python async_enhanced_feature_flag_sample.py
 import os
 import asyncio
 from sample_utilities import get_authority, get_credential, get_client_modifications
-from azure.appconfiguration.aio import FeatureFlagClient
-from azure.appconfiguration import FeatureFlag
+from azure.appconfiguration.aio import FeatureFlagClient  # type:ignore
+from azure.appconfiguration import FeatureFlag  # type:ignore
 from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector
 

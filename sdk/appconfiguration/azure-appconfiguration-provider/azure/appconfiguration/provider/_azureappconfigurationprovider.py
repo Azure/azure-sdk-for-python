@@ -96,6 +96,95 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
         self._configuration_mapper: Optional[Callable] = kwargs.pop("configuration_mapper", None)
 
+    def _refresh_configuration_settings(
+        self, client: ConfigurationClient, headers: Mapping[str, str], **kwargs
+    ) -> Tuple[List[ConfigurationSetting], List[List[str]], bool, bool, Mapping[Tuple[str, str], Optional[str]]]:
+        """
+        Refreshes configuration settings (excluding feature flags) using a single client, if a refresh is due.
+
+        :param client: The configuration client to attempt the refresh against.
+        :type client: ~azure.appconfiguration.provider.ConfigurationClient
+        :param headers: The correlation-context headers to include with the requests.
+        :type headers: Mapping[str, str]
+        :return: A tuple of (configuration_settings, page_etags, settings_refreshed, refresh_attempted,
+            updated_watched_settings).
+        :rtype: Tuple[List[ConfigurationSetting], List[List[str]], bool, bool,
+            Mapping[Tuple[str, str], Optional[str]]]
+        """
+        configuration_settings: List[ConfigurationSetting] = []
+        page_etags: List[List[str]] = []
+        settings_refreshed = False
+        refresh_attempted = False
+        updated_watched_settings: Mapping[Tuple[str, str], Optional[str]] = {}
+
+        if self._refresh_enabled and not self._watched_settings and self._refresh_timer.needs_refresh():
+            refresh_attempted = True
+
+            if client.check_page_etags(self._selects, self._page_etags, headers=headers, **kwargs):
+                configuration_settings, page_etags = client.load_configuration_settings(
+                    self._selects, headers=headers, **kwargs
+                )
+                settings_refreshed = True
+
+        elif self._refresh_enabled and self._watched_settings and self._refresh_timer.needs_refresh():
+            refresh_attempted = True
+
+            updated_watched_settings = client.get_updated_watched_settings(
+                self._watched_settings, headers=headers, **kwargs
+            )
+
+            if len(updated_watched_settings) > 0:
+                configuration_settings, _ = client.load_configuration_settings(self._selects, headers=headers, **kwargs)
+                settings_refreshed = True
+
+        return configuration_settings, page_etags, settings_refreshed, refresh_attempted, updated_watched_settings
+
+    def _refresh_feature_flags(
+        self, client: ConfigurationClient, headers: Mapping[str, str], **kwargs
+    ) -> Tuple[
+        Optional[List[FeatureFlagConfigurationSetting]], List[List[str]], Optional[List[FeatureFlag]], List[List[str]]
+    ]:
+        """
+        Refreshes key-value based and enhanced feature flags using a single client, if a refresh is due.
+
+        Key-value based feature flags and enhanced feature flags are separate resource types with their own
+        change-detection state, but if either indicates a change, both are reloaded and re-merged together to
+        guarantee the merged result is always correct and internally consistent.
+
+        :param client: The configuration client to attempt the refresh against.
+        :type client: ~azure.appconfiguration.provider.ConfigurationClient
+        :param headers: The correlation-context headers to include with the requests.
+        :type headers: Mapping[str, str]
+        :return: A tuple of (feature_flags, feature_flag_page_etags, enhanced_feature_flags,
+            enhanced_feature_flag_etags).
+        :rtype: Tuple[Optional[List[FeatureFlagConfigurationSetting]], List[List[str]],
+            Optional[List[FeatureFlag]], List[List[str]]]
+        """
+        feature_flags: Optional[List[FeatureFlagConfigurationSetting]] = None
+        feature_flag_page_etags: List[List[str]] = []
+        enhanced_feature_flags: Optional[List[FeatureFlag]] = None
+        enhanced_feature_flag_etags: List[List[str]] = []
+
+        feature_flags_changed = not self._feature_flag_page_etags or client.check_feature_flag_page_etags(
+            self._feature_flag_selectors, self._feature_flag_page_etags, headers=headers, **kwargs
+        )
+        enhanced_feature_flags_changed = (
+            not self._enhanced_feature_flag_etags
+            or client.check_enhanced_feature_flag_etags(
+                self._enhanced_feature_flag_selectors, self._enhanced_feature_flag_etags, headers=headers, **kwargs
+            )
+        )
+
+        if feature_flags_changed or enhanced_feature_flags_changed:
+            feature_flags, feature_flag_page_etags = client.load_feature_flags(
+                self._feature_flag_selectors, headers=headers, **kwargs
+            )
+            enhanced_feature_flags, enhanced_feature_flag_etags = client.load_enhanced_feature_flags(
+                self._enhanced_feature_flag_selectors, headers=headers, **kwargs
+            )
+
+        return feature_flags, feature_flag_page_etags, enhanced_feature_flags, enhanced_feature_flag_etags
+
     def _attempt_refresh(
         self, client: ConfigurationClient, replica_count: int, is_failover_request: bool, **kwargs
     ) -> None:
@@ -109,7 +198,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         :param is_failover_request: Whether this attempt is a failover from a previously failed client.
         :type is_failover_request: bool
         """
-        settings_refreshed = False
         headers = self._update_correlation_context_header(
             kwargs.pop("headers", {}),
             "Watch",
@@ -117,64 +205,32 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             self._secret_provider.uses_key_vault,
             is_failover_request,
         )
-        configuration_settings: List[ConfigurationSetting] = []
         feature_flags: Optional[List[FeatureFlagConfigurationSetting]] = None
         enhanced_feature_flags: Optional[List[FeatureFlag]] = None
 
         # Timer needs to be reset even if no refresh happened if time had passed
-        configuration_refresh_attempted = False
         feature_flag_refresh_attempted = False
-        updated_watched_settings: Mapping[Tuple[str, str], Optional[str]] = {}
         existing_feature_flag_usage = self._tracing_context.feature_filter_usage.copy()
-        page_etags: List[List[str]] = []
         feature_flag_page_etags: List[List[str]] = []
         enhanced_feature_flag_etags: List[List[str]] = []
         try:
-            if self._refresh_enabled and not self._watched_settings and self._refresh_timer.needs_refresh():
-                configuration_refresh_attempted = True
-
-                if client.check_page_etags(self._selects, self._page_etags, headers=headers, **kwargs):
-                    configuration_settings, page_etags = client.load_configuration_settings(
-                        self._selects, headers=headers, **kwargs
-                    )
-                    settings_refreshed = True
-
-            elif self._refresh_enabled and self._watched_settings and self._refresh_timer.needs_refresh():
-                configuration_refresh_attempted = True
-
-                updated_watched_settings = client.get_updated_watched_settings(
-                    self._watched_settings, headers=headers, **kwargs
-                )
-
-                if len(updated_watched_settings) > 0:
-                    configuration_settings, _ = client.load_configuration_settings(
-                        self._selects, headers=headers, **kwargs
-                    )
-                    settings_refreshed = True
+            (
+                configuration_settings,
+                page_etags,
+                settings_refreshed,
+                configuration_refresh_attempted,
+                updated_watched_settings,
+            ) = self._refresh_configuration_settings(client, headers, **kwargs)
 
             if self._feature_flag_refresh_enabled and self._feature_flag_refresh_timer.needs_refresh():
                 feature_flag_refresh_attempted = True
 
-                # Key-value based feature flags and enhanced feature flags are separate resource types with their
-                # own change-detection state, but if either indicates a change, both are reloaded and re-merged
-                # together to guarantee the merged result is always correct and internally consistent.
-                feature_flags_changed = not self._feature_flag_page_etags or client.check_feature_flag_page_etags(
-                    self._feature_flag_selectors, self._feature_flag_page_etags, headers=headers, **kwargs
-                )
-                enhanced_feature_flags_changed = (
-                    not self._enhanced_feature_flag_etags
-                    or client.check_enhanced_feature_flag_etags(
-                        self._enhanced_feature_flag_selectors, self._enhanced_feature_flag_etags, headers=headers, **kwargs
-                    )
-                )
-
-                if feature_flags_changed or enhanced_feature_flags_changed:
-                    feature_flags, feature_flag_page_etags = client.load_feature_flags(
-                        self._feature_flag_selectors, headers=headers, **kwargs
-                    )
-                    enhanced_feature_flags, enhanced_feature_flag_etags = client.load_enhanced_feature_flags(
-                        self._enhanced_feature_flag_selectors, headers=headers, **kwargs
-                    )
+                (
+                    feature_flags,
+                    feature_flag_page_etags,
+                    enhanced_feature_flags,
+                    enhanced_feature_flag_etags,
+                ) = self._refresh_feature_flags(client, headers, **kwargs)
 
             # Default to existing settings if no refresh occurred
             processed_settings = self._dict

@@ -17,10 +17,10 @@ USAGE: python enhanced_feature_flag_sample.py
 """
 import os
 from sample_utilities import get_authority, get_credential, get_client_modifications
-from azure.appconfiguration import FeatureFlag, FeatureFlagClient
+from azure.appconfiguration import FeatureFlag, FeatureFlagClient  # type:ignore
 from azure.appconfiguration.provider import load, SettingSelector
 
-endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
+endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 authority = get_authority(endpoint)
 credential = get_credential(authority)
 kwargs = get_client_modifications()
