@@ -168,6 +168,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
             samples_to_skip=[
                 "sample_datasets_async.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
                 "sample_dataset_generation_job_simpleqna_for_finetuning_async.py",  # Need to add recordings
+                "sample_dataset_generation_job_simpleqna_for_finetuning_with_app_polling_async.py",  # Need test recordings
             ],
         ),
     )

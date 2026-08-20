@@ -131,7 +131,7 @@ servicePreparer = functools.partial(
 
 - `@pytest.mark.parametrize`: Drives one test per sample file. Use `samples_to_test` or `samples_to_skip` with `get_sample_paths` / `get_async_sample_paths`.
 - `@SamplePathPasser`: Forwards the sample path to the recorder decorators.
-- `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX` when samples use httpx in addition to the default `RecordedTransport.AZURE_CORE`.
+- `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX` when samples use httpx2 in addition to the default `RecordedTransport.AZURE_CORE`.
 - `execute` / `execute_async`: Run the sample; any exception fails the test.
 - `validate_print_calls_by_llm` / `validate_print_calls_by_llm_async`: Validate captured print output with LLM instructions resolved automatically from the sample folder. You can still pass an explicit `instructions` override when needed.
 - `kwargs` in the test function: A dictionary with environment variables in key and value pairs.
@@ -242,7 +242,7 @@ def _preprocess_validation(entries: list[str]) -> str:
     """Filter debug log entries and annotate metric counters."""
     import re
     # Remove SDK debug log entries (they start with "[module.name]")
-    _NOISE = re.compile(r"^\[(?:azure\.|openai\.|httpx|httpcore|msrest)")
+    _NOISE = re.compile(r"^\[(?:azure\.|openai\.|httpx2|httpcore|msrest)")
     kept = [e for e in entries if not _NOISE.match(e.strip())]
     return "\n".join(kept)
 

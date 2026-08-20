@@ -20,6 +20,8 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """EXTERNAL_AGENTS_V1_PREVIEW."""
     DRAFT_AGENTS_V1_PREVIEW = "DraftAgents=V1Preview"
     """DRAFT_AGENTS_V1_PREVIEW."""
+    VOICE_AGENTS_V1_PREVIEW = "VoiceAgents=V1Preview"
+    """VOICE_AGENTS_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -35,8 +37,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INSIGHTS_V1_PREVIEW."""
     MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
     """MEMORY_STORES_V1_PREVIEW."""
-    ROUTINES_V1_PREVIEW = "Routines=V1Preview"
-    """ROUTINES_V1_PREVIEW."""
+    ROUTINES_V2_PREVIEW = "Routines=V2Preview"
+    """ROUTINES_V2_PREVIEW."""
     SKILLS_V1_PREVIEW = "Skills=V1Preview"
     """SKILLS_V1_PREVIEW."""
     DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
@@ -45,6 +47,13 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MODELS_V1_PREVIEW."""
     AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
     """AGENTS_OPTIMIZATION_V2_PREVIEW."""
+
+
+class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported A2A protocol versions."""
+
+    V1_0 = "1.0"
+    """A2A protocol version 1.0."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -123,6 +132,15 @@ class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AGENT_CONTAINER."""
 
 
+class AgentOptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminator values for the dataset input union."""
+
+    INLINE = "inline"
+    """Inline dataset — items are provided directly in the request body."""
+    REFERENCE = "reference"
+    """Reference to a registered Foundry dataset by name and version."""
+
+
 class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of an agent session."""
 
@@ -151,6 +169,17 @@ class AgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Agent endpoint accepts requests. This is the default state on creation."""
     DISABLED = "disabled"
     """Agent endpoint rejects all requests."""
+
+
+class AgentStateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the source of an agent's operational state. Empty when the state is not derived from
+    a specific source.
+    """
+
+    AGENT_INSTANCE_IDENTITY = "agent_instance_identity"
+    """The state is derived from the agent's instance identity."""
+    AGENT_BLUEPRINT = "agent_blueprint"
+    """The state is derived from the agent's blueprint."""
 
 
 class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -252,6 +281,15 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Query type ``vector_simple_hybrid``."""
     VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
     """Query type ``vector_semantic_hybrid``."""
+
+
+class CallableToolAllowedCaller(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CallableToolAllowedCaller."""
+
+    DIRECT = "direct"
+    """DIRECT."""
+    PROGRAMMATIC = "programmatic"
+    """PROGRAMMATIC."""
 
 
 class CodeDependencyResolution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -403,8 +441,8 @@ class DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Single turn query and response from agent traces."""
     TOOL_USE = "tool_use"
     """Tool calling conversation between user and agent."""
-    TASK_GENERATION = "task_generation"
-    """Task generation for evaluation scenarios."""
+    SIMULATION_SEED = "simulation_seed"
+    """Simulation seed for evaluation scenarios."""
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -799,15 +837,6 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been canceled by the user."""
 
 
-class OptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Discriminator values for the dataset input union."""
-
-    INLINE = "inline"
-    """Inline dataset — items are provided directly in the request body."""
-    REFERENCE = "reference"
-    """Reference to a registered Foundry dataset by name and version."""
-
-
 class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of PageOrder."""
 
@@ -836,6 +865,39 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AUTO."""
     DEFAULT_2024_11_15 = "default-2024-11-15"
     """DEFAULT_2024_11_15."""
+
+
+class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Constrains effort on reasoning for reasoning models. Currently supported values are ``none``,
+    ``minimal``, ``low``, ``medium``, ``high``, ``xhigh``, and ``max``. Reducing reasoning effort
+    can result in faster responses and fewer tokens used on reasoning in a response. Not all
+    reasoning models support every value. See the `reasoning guide
+    <https://platform.openai.com/docs/guides/reasoning>`_ for model-specific support.
+    """
+
+    NONE = "none"
+    """NONE."""
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+    MAX = "max"
+    """MAX."""
+
+
+class ReasoningModeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ReasoningModeEnum."""
+
+    STANDARD = "standard"
+    """STANDARD."""
+    PRO = "pro"
+    """PRO."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1119,6 +1181,8 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AZURE_AI_SEARCH."""
     OPENAPI = "openapi"
     """OPENAPI."""
+    A2_A = "a2a"
+    """A2_A."""
     A2A_PREVIEW = "a2a_preview"
     """A2A_PREVIEW."""
     BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
@@ -1146,6 +1210,8 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP."""
     CUSTOM = "custom"
     """CUSTOM."""
+    PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"
+    """PROGRAMMATIC_TOOL_CALLING."""
     APPLY_PATCH = "apply_patch"
     """APPLY_PATCH."""
     SHELL = "shell"
@@ -1194,6 +1260,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP."""
     CODE_INTERPRETER = "code_interpreter"
     """CODE_INTERPRETER."""
+    PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"
+    """PROGRAMMATIC_TOOL_CALLING."""
     IMAGE_GENERATION = "image_generation"
     """IMAGE_GENERATION."""
     LOCAL_SHELL = "local_shell"
@@ -1228,6 +1296,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FABRIC_IQ_PREVIEW."""
     TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
     """TOOLBOX_SEARCH_PREVIEW."""
+    A2_A = "a2a"
+    """A2_A."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"
