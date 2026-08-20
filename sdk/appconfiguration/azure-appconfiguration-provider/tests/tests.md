@@ -2,6 +2,8 @@
 
 (This content is for `azure-appconfiguration-provider` package developer only)
 
+For general repo-wide testing guidance, see [doc/dev/tests.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md).
+
 The tests for this package are under the `tests/` directory and are split into two categories:
 
 * **Unit tests** (e.g. `tests/test_azureappconfigurationproviderbase.py`, `tests/test_configuration_client_manager.py`) — exercise internal logic in isolation using mocked clients. These do not require any App Configuration store, network access, or environment variables, and can be run at any time with no setup.
@@ -35,7 +37,7 @@ Recordings themselves are not stored directly in this repository — they live i
 3. From the repo root, push the new/updated recordings to the assets repo:
 
    ```bash
-   dotnet tool run test-proxy push -a sdk/appconfiguration/azure-appconfiguration-provider/assets.json
+   python scripts/manage_recordings.py push -p sdk/appconfiguration/azure-appconfiguration-provider/assets.json
    ```
 
    This uploads the changed recordings and updates the `Tag` field in `assets.json`.
