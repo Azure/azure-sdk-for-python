@@ -266,9 +266,10 @@ class TestRunOutputDirectory:
             open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
 
         def fake_pwsh(cmd, **kwargs):
-            out_idx = cmd.index("-OutputPath")
+            output_arg = "--output-path" if "extract_apiview_metadata.py" in cmd[1] else "-OutputPath"
+            out_idx = cmd.index(output_arg)
             out_dir = cmd[out_idx + 1]
-            if "Extract-APIViewMetadata-Python.ps1" in cmd[1]:
+            if "extract_apiview_metadata.py" in cmd[1]:
                 open(os.path.join(out_dir, "api.metadata.yml"), "w").close()
             else:
                 open(os.path.join(out_dir, "api.md"), "w").close()
@@ -325,9 +326,11 @@ class TestRunOutputDirectory:
             open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
 
         def fake_pwsh(cmd, **kwargs):
-            out_idx = cmd.index("-OutputPath")
+            output_arg = "--output-path" if "extract_apiview_metadata.py" in cmd[1] else "-OutputPath"
+            out_idx = cmd.index(output_arg)
             out_dir = cmd[out_idx + 1]
-            open(os.path.join(out_dir, "api.md"), "w").close()
+            output_file = "api.metadata.yml" if "extract_apiview_metadata.py" in cmd[1] else "api.md"
+            open(os.path.join(out_dir, output_file), "w").close()
             return MagicMock(returncode=0)
 
         with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
