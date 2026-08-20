@@ -255,6 +255,19 @@ with ServiceBusClient(fully_qualified_namespace, credential) as client:
 
 In this example, max_message_count declares the maximum number of messages to attempt receiving before hitting a max_wait_time as specified in seconds.
 
+> **NOTE:** When a message is received, the keys and any string values in `application_properties` are returned as `bytes`, not `str` (for example `{b"order_id": b"12345"}`). The property is `None` when the message has no application properties, so guard for that before indexing. Access received properties using bytes keys and decode string values as needed:
+>
+> ```python
+> for message in received_message_array:
+>     props = message.application_properties or {}
+>     value = props.get(b"order_id")
+>     if isinstance(value, bytes):
+>         value = value.decode("utf-8")
+>     print(value)
+> ```
+>
+> Non-string values are returned as decoded by the AMQP layer: `int`, `bool`, `float`, and `uuid.UUID` keep their native types, while an AMQP timestamp is returned as an integer (milliseconds since the Unix epoch), not a `datetime`.
+
 > **NOTE:** It should also be noted that `ServiceBusReceiver.peek_messages()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
 
 

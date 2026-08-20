@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-- Added upper bounds to runtime dependencies so installation cannot silently resolve to incompatible major or pre-1.0 minor releases.
+- Added compatibility bounds to runtime and development dependencies so installation cannot silently resolve to incompatible releases.
 
 ## 2.1.0b2 (2026-08-18)
 

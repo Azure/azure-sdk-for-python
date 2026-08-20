@@ -4,11 +4,12 @@
 
 ### Samples
 
-- Updated the resilient LangGraph sample to require `langchain-core` 1.6.0 or later.
+- Updated the resilient LangGraph sample to current `langgraph`,
+  `langgraph-checkpoint-sqlite`, and `langchain-core` release lines.
 
 ### Other Changes
 
-- Constrained `azure-ai-agentserver-core` to the compatible 2.1 release line and added an upper bound to `azure-core`.
+- Constrained runtime, development, and sample dependencies to compatible release lines.
 
 ## 1.1.0b1 (2026-08-11)
 
