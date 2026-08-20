@@ -12,6 +12,8 @@
 
 ### Bugs Fixed
 
+- Fixed a replay bug in challenge authentication policy. The original request is now stored at the request level instead of the client level [#48636](https://github.com/Azure/azure-sdk-for-python/pull/48636).
+
 ### Other Changes
 
 - Key Vault API version `2025-07-01` is now the default
