@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2026-08-18)
+## 1.0.0b2 (2026-08-20)
 
 ### Features Added
 
@@ -28,9 +28,10 @@
   - Added enum `ManagedServiceIdentityType`
   - Added enum `PrincipalTypes`
   - Added model `UserAssignedIdentity`
-  - Operation group `HorizonDbClustersOperations` added method `begin_restart`
-  - Operation group `HorizonDbClustersOperations` added method `begin_start`
-  - Operation group `HorizonDbClustersOperations` added method `begin_stop`
+  - Model `HorizonDbClustersOperations` added method `begin_restart`
+  - Model `HorizonDbClustersOperations` added method `begin_start`
+  - Model `HorizonDbClustersOperations` added method `begin_stop`
+  - Model `HorizonDbPrivateEndpointConnectionsOperations` added method `update_status`
   - Added operation group `HorizonDbAdministratorsOperations`
 
 ### Breaking Changes
@@ -39,7 +40,7 @@
   - Deleted or renamed model `PrivateEndpointConnection`
   - Deleted or renamed model `PrivateEndpointConnectionUpdate`
   - Method `HorizonDbPrivateEndpointConnectionsOperations.begin_delete` inserted a `positional_or_keyword` parameter `cluster_name`
-  - Renamed method `HorizonDbPrivateEndpointConnectionsOperations.begin_update` to `update_status`
+  - Deleted or renamed method `HorizonDbPrivateEndpointConnectionsOperations.begin_update`
 
 ## 1.0.0b1 (2026-04-22)
 

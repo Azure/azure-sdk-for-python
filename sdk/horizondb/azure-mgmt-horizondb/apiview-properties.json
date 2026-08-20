@@ -140,5 +140,5 @@
         "azure.mgmt.horizondb.operations.HorizonDbAdministratorsOperations.list": "Microsoft.HorizonDb.HorizonDbAdministrators.list",
         "azure.mgmt.horizondb.aio.operations.HorizonDbAdministratorsOperations.list": "Microsoft.HorizonDb.HorizonDbAdministrators.list"
     },
-    "CrossLanguageVersion": "d5ef54b2166c"
+    "CrossLanguageVersion": "e073010193f3"
 }
