@@ -14,4 +14,13 @@ promptflow-core>=1.17.1
 promptflow-devkit>=1.17.1
 # Note: redteam extra (pyrit) is installed separately via InjectedPackages in platform-matrix.json
 # to avoid pillow version conflicts with promptflow-devkit (pillow<11 vs >=12.1)
+# Test-only openai pin (see below). Not applied to install_requires so end-user
+# installs can still use openai>=3.0 features (Responses API, workload identity,
+# etc.) that are runtime-compatible with this SDK. The pin is here because
+# tests/__openai_patcher.py constructs httpx.URL objects, but openai 3.x's
+# client requires httpx2.URL — a mismatch that only triggers inside the test
+# proxy path, never in real production code. Remove this pin once
+# tests/__openai_patcher.py is updated for httpx2 compatibility.
+openai<3.0
 ../azure-ai-evaluation
+

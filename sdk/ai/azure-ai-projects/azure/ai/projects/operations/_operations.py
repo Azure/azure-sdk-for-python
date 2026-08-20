@@ -571,7 +571,7 @@ def build_agents_upload_session_file_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -589,7 +589,8 @@ def build_agents_upload_session_file_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -3597,7 +3598,7 @@ def build_beta_agents_delete_optimization_job_request(  # pylint: disable=name-t
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-class BetaOperations:  # pylint: disable=too-many-instance-attributes
+class BetaOperations:  # pylint: disable=docstring-missing-param,too-many-instance-attributes
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3629,7 +3630,7 @@ class BetaOperations:  # pylint: disable=too-many-instance-attributes
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
-class AgentsOperations:  # pylint: disable=too-many-public-methods
+class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5605,9 +5606,16 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace
+    @overload
     def upload_session_file(
-        self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
+        self,
+        agent_name: str,
+        session_id: str,
+        content: bytes,
+        *,
+        path: str,
+        content_type: str = "application/octet-stream",
+        **kwargs: Any
     ) -> _models.SessionFileWriteResult:
         """Upload a session file.
 
@@ -5620,6 +5628,65 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type session_id: str
         :param content: Required.
         :type content: bytes
+        :keyword path: The destination file path within the sandbox, relative to the session home
+         directory. Required.
+        :paramtype path: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upload_session_file(
+        self,
+        agent_name: str,
+        session_id: str,
+        content: IO[bytes],
+        *,
+        path: str,
+        content_type: str = "application/octet-stream",
+        **kwargs: Any
+    ) -> _models.SessionFileWriteResult:
+        """Upload a session file.
+
+        Uploads binary file content to the specified path in the session sandbox. The service stores
+        the file relative to the session home directory and rejects payloads larger than 50 MB.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :param content: Required.
+        :type content: IO[bytes]
+        :keyword path: The destination file path within the sandbox, relative to the session home
+         directory. Required.
+        :paramtype path: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def upload_session_file(
+        self, agent_name: str, session_id: str, content: Union[bytes, IO[bytes]], *, path: str, **kwargs: Any
+    ) -> _models.SessionFileWriteResult:
+        """Upload a session file.
+
+        Uploads binary file content to the specified path in the session sandbox. The service stores
+        the file relative to the session home directory and rejects payloads larger than 50 MB.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :param content: Is either a bytes type or a IO[bytes] type. Required.
+        :type content: bytes or IO[bytes]
         :keyword path: The destination file path within the sandbox, relative to the session home
          directory. Required.
         :paramtype path: str
@@ -5638,9 +5705,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SessionFileWriteResult] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = content
 
         _request = build_agents_upload_session_file_request(
@@ -5937,7 +6005,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class EvaluationRulesOperations:
+class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6314,7 +6382,7 @@ class EvaluationRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ConnectionsOperations:
+class ConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6575,7 +6643,7 @@ class ConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DatasetsOperations:
+class DatasetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7298,7 +7366,7 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
 
-class DeploymentsOperations:
+class DeploymentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7493,7 +7561,7 @@ class DeploymentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class IndexesOperations:
+class IndexesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7974,7 +8042,7 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
 
-class ToolboxesOperations:
+class ToolboxesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8778,7 +8846,7 @@ class ToolboxesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaEvaluationTaxonomiesOperations:
+class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9284,7 +9352,7 @@ class BetaEvaluationTaxonomiesOperations:
         return deserialized  # type: ignore
 
 
-class BetaEvaluatorsOperations:
+class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10819,7 +10887,7 @@ class BetaEvaluatorsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaInsightsOperations:
+class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11158,7 +11226,7 @@ class BetaInsightsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BetaMemoryStoresOperations:
+class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12957,7 +13025,7 @@ class BetaMemoryStoresOperations:
         return deserialized  # type: ignore
 
 
-class BetaModelsOperations:
+class BetaModelsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13960,7 +14028,7 @@ class BetaModelsOperations:
         return deserialized  # type: ignore
 
 
-class BetaRedTeamsOperations:
+class BetaRedTeamsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14258,7 +14326,7 @@ class BetaRedTeamsOperations:
         return deserialized  # type: ignore
 
 
-class BetaRoutinesOperations:
+class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15102,7 +15170,7 @@ class BetaRoutinesOperations:
         return deserialized  # type: ignore
 
 
-class BetaSchedulesOperations:
+class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15651,7 +15719,7 @@ class BetaSchedulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BetaSkillsOperations:
+class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16693,7 +16761,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
 
-class BetaDatasetsOperations:
+class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17224,7 +17292,7 @@ class BetaDatasetsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaAgentsOperations:
+class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
