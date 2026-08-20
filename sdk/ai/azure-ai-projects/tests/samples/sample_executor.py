@@ -17,6 +17,7 @@ import importlib.util
 import functools
 import traceback
 import tempfile
+import urllib.parse as url_parse
 from datetime import datetime
 from contextlib import contextmanager
 
@@ -231,6 +232,77 @@ class BaseSampleExecutor:
 
         self.module = importlib.util.module_from_spec(spec)
         self.spec = spec
+
+    @contextmanager
+    def _openai_v3_transport_compatibility(self):
+        """Route OpenAI 3's httpx2 traffic through the existing test proxy."""
+        try:
+            import httpx2
+            import openai
+        except ImportError:
+            yield
+            return
+
+        if int(openai.__version__.split(".", maxsplit=1)[0]) < 3:
+            yield
+            return
+
+        from devtools_testutils.helpers import get_recording_id
+        from devtools_testutils.proxy_testcase import get_proxy_netloc
+        import azure.ai.projects._patch as sync_patch
+        import azure.ai.projects.aio._patch as async_patch
+
+        original_handle_request = httpx2.HTTPTransport.handle_request
+        original_handle_async_request = httpx2.AsyncHTTPTransport.handle_async_request
+
+        def _route_request(request):
+            recording_id = get_recording_id()
+            if not recording_id:
+                return None
+
+            parsed_url = url_parse.urlparse(str(request.url))
+            original_url = request.url
+            request.headers.setdefault(
+                "x-recording-upstream-base-uri",
+                f"{parsed_url.scheme}://{parsed_url.netloc}",
+            )
+            request.headers["x-recording-id"] = recording_id
+            request.headers["x-recording-mode"] = "record" if is_live() else "playback"
+            request.url = httpx2.URL(parsed_url._replace(**get_proxy_netloc()).geturl())
+            return original_url
+
+        def _handle_request(transport, request):
+            original_url = _route_request(request)
+            try:
+                return original_handle_request(transport, request)
+            finally:
+                if original_url is not None:
+                    request.url = original_url
+
+        async def _handle_async_request(transport, request):
+            original_url = _route_request(request)
+            try:
+                return await original_handle_async_request(transport, request)
+            finally:
+                if original_url is not None:
+                    request.url = original_url
+
+        class _OpenAI3LoggingTransport(httpx2.HTTPTransport):
+            def __init__(self, *, logging_enabled: bool) -> None:
+                del logging_enabled
+                super().__init__()
+
+        class _OpenAI3AsyncLoggingTransport(httpx2.AsyncHTTPTransport):
+            def __init__(self, *, logging_enabled: bool) -> None:
+                del logging_enabled
+                super().__init__()
+
+        with MonkeyPatch.context() as mp:
+            mp.setattr(httpx2.HTTPTransport, "handle_request", _handle_request)
+            mp.setattr(httpx2.AsyncHTTPTransport, "handle_async_request", _handle_async_request)
+            mp.setattr(sync_patch, "_OpenAILoggingTransport", _OpenAI3LoggingTransport)
+            mp.setattr(async_patch, "_OpenAILoggingTransport", _OpenAI3AsyncLoggingTransport)
+            yield
 
     def _capture_print(self, *args, **kwargs):
         """Capture print calls while still outputting to console."""
@@ -760,6 +832,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
         with (
             MonkeyPatch.context() as mp,
             self._get_mock_credential(),
+            self._openai_v3_transport_compatibility(),
         ):
             mp.setenv("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "true")
             for var_name, var_value in self.env_vars.items():
@@ -795,6 +868,10 @@ class SyncSampleExecutor(BaseSampleExecutor):
                     raise
 
     def validate_print_calls_by_llm(self, *, instructions: Optional[str] = None):
+        with self._openai_v3_transport_compatibility():
+            self._validate_print_calls_by_llm(instructions=instructions)
+
+    def _validate_print_calls_by_llm(self, *, instructions: Optional[str] = None):
         """Validate captured print output using synchronous OpenAI client."""
         instructions = self._resolve_validation_instructions(instructions)
         if is_live():
@@ -965,6 +1042,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             MonkeyPatch.context() as mp,
             self._get_mock_credential(),
             self._capture_debug_logs(),
+            self._openai_v3_transport_compatibility(),
             mock.patch("builtins.print", side_effect=self._capture_print),
             mock.patch("builtins.open", side_effect=patched_open_fn),
         ):
@@ -994,6 +1072,14 @@ class AsyncSampleExecutor(BaseSampleExecutor):
                 raise
 
     async def validate_print_calls_by_llm_async(
+        self,
+        *,
+        instructions: Optional[str] = None,
+    ):
+        with self._openai_v3_transport_compatibility():
+            await self._validate_print_calls_by_llm_async(instructions=instructions)
+
+    async def _validate_print_calls_by_llm_async(
         self,
         *,
         instructions: Optional[str] = None,
