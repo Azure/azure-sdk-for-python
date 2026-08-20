@@ -594,7 +594,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     @staticmethod
     def _parse_filter_parameter_value(value: Optional[str]) -> Any:
         """
-        Parses a single enhanced feature flag filter parameter value as a best-effort attempt. 
+        Parses a single enhanced feature flag filter parameter value as a best-effort attempt.
 
         :param value: The filter parameter's raw string value.
         :type value: Optional[str]
