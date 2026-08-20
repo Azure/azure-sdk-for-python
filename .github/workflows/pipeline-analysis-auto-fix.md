@@ -11,6 +11,10 @@ on:
         description: Failed pull request commit
         required: true
         type: string
+      source_branch:
+        description: Failed pull request branch
+        required: true
+        type: string
       parent_run_id:
         description: Trigger run that requested this fix
         required: true
@@ -61,14 +65,19 @@ on:
       env:
         CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
         PR_NUMBER: ${{ github.event.inputs.pr_number }}
+        SOURCE_BRANCH: ${{ github.event.inputs.source_branch }}
       with:
         script: |
           const { data: pull } = await github.rest.pulls.get({
             ...context.repo,
             pull_number: Number(process.env.PR_NUMBER),
           });
-          if (pull.state !== "open" || pull.head.sha !== process.env.CI_HEAD_SHA) {
-            core.setFailed("The pull request is closed or no longer points to the failed commit.");
+          if (
+            pull.state !== "open" ||
+            pull.head.sha !== process.env.CI_HEAD_SHA ||
+            pull.head.ref !== process.env.SOURCE_BRANCH
+          ) {
+            core.setFailed("The pull request is closed or no longer points to the failed branch and commit.");
             return;
           }
           if (pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`) {
@@ -95,14 +104,19 @@ jobs:
         env:
           CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
           PR_NUMBER: ${{ github.event.inputs.pr_number }}
+          SOURCE_BRANCH: ${{ github.event.inputs.source_branch }}
         with:
           script: |
             const { data: pull } = await github.rest.pulls.get({
               ...context.repo,
               pull_number: Number(process.env.PR_NUMBER),
             });
-            if (pull.state !== "open" || pull.head.sha !== process.env.CI_HEAD_SHA) {
-              core.setFailed("The pull request is closed or no longer points to the failed commit.");
+            if (
+              pull.state !== "open" ||
+              pull.head.sha !== process.env.CI_HEAD_SHA ||
+              pull.head.ref !== process.env.SOURCE_BRANCH
+            ) {
+              core.setFailed("The pull request is closed or no longer points to the failed branch and commit.");
             }
 
 permissions:
@@ -137,27 +151,28 @@ safe-outputs:
     max: 1
     signed-commits: false
     branch-prefix: "pipeline-fix/pr-${{ github.event.inputs.pr_number }}-${{ github.event.inputs.ci_head_sha }}/run-${{ github.run_id }}/"
-    base-branch: ${{ github.event.repository.default_branch }}
+    base-branch: ${{ github.event.inputs.source_branch }}
     protected-files: fallback-to-issue
     expires: 7
     if-no-changes: ignore
   jobs:
-    retarget-fix-pr:
-      description: Retarget the created fix pull request to the original pull request branch
+    trigger-main-checks:
+      description: Trigger default-branch checks by retargeting to main, then restore the original pull request branch as the base
       runs-on: ubuntu-latest
       needs: safe_outputs
       permissions:
         pull-requests: write
       inputs:
         requested:
-          description: Confirm that retargeting was requested
+          description: Confirm that default-branch checks were requested
           required: true
           type: boolean
       steps:
-        - name: Retarget fix pull request
+        - name: Trigger default-branch checks
           uses: actions/github-script@v9.0.0
           env:
             CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
+            DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
             FIX_PR_NUMBER: ${{ needs.safe_outputs.outputs.created_pr_number }}
             SOURCE_PR_NUMBER: ${{ github.event.inputs.pr_number }}
           with:
@@ -178,6 +193,13 @@ safe-outputs:
                 core.setFailed("The source pull request branch is not in this repository and cannot be used as a base.");
                 return;
               }
+              core.info(`Retargeting fix pull request to ${process.env.DEFAULT_BRANCH} to trigger checks.`);
+              await github.rest.pulls.update({
+                ...context.repo,
+                pull_number: Number(process.env.FIX_PR_NUMBER),
+                base: process.env.DEFAULT_BRANCH,
+              });
+              core.info(`Restoring fix pull request base to ${sourcePull.head.ref}.`);
               await github.rest.pulls.update({
                 ...context.repo,
                 pull_number: Number(process.env.FIX_PR_NUMBER),
@@ -186,7 +208,7 @@ safe-outputs:
     update-analysis-comment:
       description: Link the created fix pull request from the verified analysis comment
       runs-on: ubuntu-latest
-      needs: [safe_outputs, retarget-fix-pr]
+      needs: [safe_outputs, trigger-main-checks]
       permissions:
         issues: write
       inputs:
@@ -264,8 +286,9 @@ ${{ needs.pre_activation.outputs.analysis_comment }}
 3. If changes were made, call `create_pull_request` exactly once. Use the title
   `Fix pipeline failure for #${{ github.event.inputs.pr_number }}`. In the body, identify the source pull request and failed commit, then summarize the diagnosis, change, and validation.
 4. Do not poll pull request checks or claim that the fix passed validation. State that validation is pending the automated checks triggered by the draft pull request.
-5. Call `retarget_fix_pr` exactly once with `requested: true`. It retargets the created draft
-  pull request to the original pull request branch.
-6. Call `update_analysis_comment` exactly once with `requested: true`. It waits for retargeting
-  to succeed, then links the draft pull request from the verified analysis comment and tells the
-  author to review its changes and check results.
+5. Call `trigger_main_checks` exactly once with `requested: true`. It briefly retargets the created
+  draft pull request to the default branch to trigger checks, then restores the original pull
+  request branch as the base.
+6. Call `update_analysis_comment` exactly once with `requested: true`. It waits for the check
+  trigger and base restoration to succeed, then links the draft pull request from the verified
+  analysis comment and tells the author to review its changes and check results.

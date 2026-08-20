@@ -65,6 +65,7 @@ on:
           core.setOutput("run_analysis", "true");
           core.setOutput("pr_number", String(prNumber));
           core.setOutput("head_sha", suite.head_sha);
+          core.setOutput("source_branch", pull.head.ref);
 
 if: needs.pre_activation.outputs.run_analysis == 'true'
 
@@ -174,6 +175,7 @@ jobs:
       run_analysis: ${{ steps.analysis_gate.outputs.run_analysis }}
       pr_number: ${{ steps.analysis_gate.outputs.pr_number }}
       head_sha: ${{ steps.analysis_gate.outputs.head_sha }}
+      source_branch: ${{ steps.analysis_gate.outputs.source_branch }}
 
 safe-outputs:
   noop:
@@ -285,4 +287,4 @@ azsdk ci analyze https://github.com/${{ github.repository }}/pull/${{ needs.pre_
 - Keep the fix section after the outer `</details>` so it is outside the collapsible analysis.
 - For `fixable`, use the exact requested-status line and hidden authorization marker from the
   comment format, then call `dispatch_workflow` exactly once with this structure:
-  `workflow_name: "pipeline-analysis-auto-fix"` and `inputs: { "pr_number": "${{ needs.pre_activation.outputs.pr_number }}", "ci_head_sha": "${{ needs.pre_activation.outputs.head_sha }}", "parent_run_id": "${{ github.run_id }}" }`. Do not place the workflow inputs at the top level.
+  `workflow_name: "pipeline-analysis-auto-fix"` and `inputs: { "pr_number": "${{ needs.pre_activation.outputs.pr_number }}", "ci_head_sha": "${{ needs.pre_activation.outputs.head_sha }}", "source_branch": "${{ needs.pre_activation.outputs.source_branch }}", "parent_run_id": "${{ github.run_id }}" }`. Do not place the workflow inputs at the top level.
