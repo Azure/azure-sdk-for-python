@@ -267,6 +267,18 @@ $c = $c -replace '(a)\r?\n    (max-duration `1001`)\r?\n    (close, or a client 
 $c = $c -replace '(prevented)\r?\n    (finalization\.)', '$1 $2'
 Set-Content $f $c -NoNewline
 
+# Fix get_session_log_stream hardcoding `_stream = True` instead of popping it from kwargs like
+# every other streaming operation in this file does (`kwargs.pop("stream", True/False)`). Since it
+# never pops "stream" out of kwargs, a caller passing stream=True (as the SSE-streaming contract of
+# this operation invites) collides with the explicit `stream=_stream` kwarg forwarded to
+# `self._client._pipeline.run()`, raising "got multiple values for keyword argument 'stream'".
+$files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
+foreach ($f in $files) {
+    $c = Get-Content $f -Raw
+    $c = $c -replace '(_decompress = kwargs\.pop\("decompress", True\)\r?\n        )_stream = True(\r?\n        pipeline_response: PipelineResponse = (?:await )?self\._client\._pipeline\.run)', '${1}_stream = kwargs.pop("stream", True)$2'
+    Set-Content $f $c -NoNewline
+}
+
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .

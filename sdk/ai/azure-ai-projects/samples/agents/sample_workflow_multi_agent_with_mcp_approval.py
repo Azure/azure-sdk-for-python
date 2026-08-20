@@ -181,9 +181,9 @@ trigger:
         print(f"Event {event.sequence_number} type '{event.type}'", end="")
         if (
             event.type in ("response.output_item.added", "response.output_item.done")
-        ) and event.item.type == "workflow_action":  # pyright: ignore [reportAttributeAccessIssue]
+        ) and event.item.type == "workflow_action":  # type: ignore[union-attr]  # pyright: ignore [reportAttributeAccessIssue]
             print(
-                f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",  # pyright: ignore [reportAttributeAccessIssue]
+                f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",  # type: ignore[union-attr]  # pyright: ignore [reportAttributeAccessIssue]
                 end="",
             )
         elif (

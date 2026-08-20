@@ -239,9 +239,9 @@ def text_conversation() -> None:
             project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=VoiceAgentDefinition(
-                    model_type=definition.model_type,
-                    model=definition.model,
-                    instructions=definition.instructions,
+                    model_type=definition.model_type,  # type: ignore[attr-defined]
+                    model=definition.model,  # type: ignore[attr-defined]
+                    instructions=definition.instructions,  # type: ignore[attr-defined]
                     store=True,
                 ),
             )
