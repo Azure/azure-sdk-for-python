@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_virtual_machine_bulk_operations_bulk_deallocate_operation_request(  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -103,7 +103,7 @@ def build_virtual_machine_bulk_operations_bulk_hibernate_operation_request(  # p
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -134,7 +134,7 @@ def build_virtual_machine_bulk_operations_bulk_start_operation_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -165,7 +165,7 @@ def build_virtual_machine_bulk_operations_bulk_create_operation_request(  # pyli
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -196,7 +196,7 @@ def build_virtual_machine_bulk_operations_bulk_vdi_flex_create_operation_request
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -227,7 +227,7 @@ def build_virtual_machine_bulk_operations_bulk_delete_operation_request(  # pyli
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -258,7 +258,7 @@ def build_virtual_machine_bulk_operations_bulk_get_operations_status_request(  #
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -289,7 +289,7 @@ def build_virtual_machine_bulk_operations_bulk_cancel_operations_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -320,7 +320,7 @@ def build_virtual_machine_bulk_operations_bulk_reimage_operation_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -355,7 +355,7 @@ def build_virtual_machine_bulk_operations_bulk_list_operation_errors_request(  #
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -386,7 +386,7 @@ def build_virtual_machine_bulk_operations_bulk_acknowledge_operation_errors_requ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -416,7 +416,7 @@ def build_launch_bulk_instances_operation_get_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -445,7 +445,7 @@ def build_launch_bulk_instances_operation_get_operation_status_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -474,7 +474,7 @@ def build_launch_bulk_instances_operation_create_or_update_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -510,7 +510,7 @@ def build_launch_bulk_instances_operation_delete_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/locations/{location}/launchBulkInstancesOperations/{name}"
     path_format_arguments = {
@@ -535,7 +535,7 @@ def build_launch_bulk_instances_operation_cancel_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/locations/{location}/launchBulkInstancesOperations/{name}/cancel"
     path_format_arguments = {
@@ -559,7 +559,7 @@ def build_launch_bulk_instances_operation_list_by_resource_group_request(  # pyl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -587,7 +587,7 @@ def build_launch_bulk_instances_operation_list_by_subscription_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -623,7 +623,7 @@ def build_launch_bulk_instances_operation_list_virtual_machines_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -656,7 +656,7 @@ def build_bulk_create_custom_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -685,7 +685,7 @@ def build_bulk_create_custom_get_async_operation_status_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -714,7 +714,7 @@ def build_bulk_create_custom_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -750,7 +750,7 @@ def build_bulk_create_custom_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/locations/{location}/bulkCreateCustom/{name}"
     path_format_arguments = {
@@ -775,7 +775,7 @@ def build_bulk_create_custom_cancel_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/locations/{location}/bulkCreateCustom/{name}/cancel"
     path_format_arguments = {
@@ -793,13 +793,42 @@ def build_bulk_create_custom_cancel_request(
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
+def build_bulk_create_custom_virtual_machines_get_operation_status_request(  # pylint: disable=name-too-long
+    resource_group_name: str, location: str, name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/locations/{location}/bulkCreateCustom/{name}/virtualMachinesGetOperationStatus"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_bulk_create_custom_list_by_resource_group_request(  # pylint: disable=name-too-long
     resource_group_name: str, location: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -827,7 +856,7 @@ def build_bulk_create_custom_list_by_subscription_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -854,7 +883,7 @@ def build_scheduled_actions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -883,7 +912,7 @@ def build_scheduled_actions_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -914,7 +943,7 @@ def build_scheduled_actions_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -943,7 +972,7 @@ def build_scheduled_actions_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/scheduledActions/{scheduledActionName}"
     path_format_arguments = {
@@ -966,7 +995,7 @@ def build_scheduled_actions_list_by_resource_group_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -993,7 +1022,7 @@ def build_scheduled_actions_list_by_subscription_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1019,7 +1048,7 @@ def build_scheduled_actions_list_resources_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1048,7 +1077,7 @@ def build_scheduled_actions_attach_resources_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1079,7 +1108,7 @@ def build_scheduled_actions_detach_resources_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1110,7 +1139,7 @@ def build_scheduled_actions_patch_resources_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1139,7 +1168,7 @@ def build_scheduled_actions_disable_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/scheduledActions/{scheduledActionName}/disable"
     path_format_arguments = {
@@ -1161,7 +1190,7 @@ def build_scheduled_actions_enable_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/scheduledActions/{scheduledActionName}/enable"
     path_format_arguments = {
@@ -1185,7 +1214,7 @@ def build_scheduled_actions_cancel_next_occurrence_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1215,7 +1244,7 @@ def build_scheduled_actions_trigger_manual_occurrence_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1243,7 +1272,7 @@ def build_scheduled_action_extension_list_by_vms_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1269,7 +1298,7 @@ def build_scheduled_action_operation_status_get_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1297,7 +1326,7 @@ def build_occurrences_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1326,7 +1355,7 @@ def build_occurrences_list_by_scheduled_action_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1354,7 +1383,7 @@ def build_occurrences_list_resources_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1384,7 +1413,7 @@ def build_occurrences_cancel_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1416,7 +1445,7 @@ def build_occurrences_delay_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1447,7 +1476,7 @@ def build_occurrence_extension_list_occurrence_by_vms_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1467,7 +1496,7 @@ def build_occurrence_extension_list_occurrence_by_vms_request(  # pylint: disabl
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1579,7 +1608,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class VirtualMachineBulkOperationsOperations:
+class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2235,7 +2264,7 @@ class VirtualMachineBulkOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def bulk_create_operation(
         self,
@@ -2428,7 +2457,7 @@ class VirtualMachineBulkOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def bulk_vdi_flex_create_operation(
         self,
@@ -3154,7 +3183,7 @@ class VirtualMachineBulkOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def bulk_reimage_operation(
         self,
@@ -3260,7 +3289,7 @@ class VirtualMachineBulkOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def bulk_list_operation_errors(
         self, resource_group_name: str, location: str, *, lookback_in_minutes: Optional[int] = None, **kwargs: Any
@@ -3464,7 +3493,7 @@ class VirtualMachineBulkOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def bulk_acknowledge_operation_errors(
         self,
@@ -3559,7 +3588,7 @@ class VirtualMachineBulkOperationsOperations:
         return deserialized  # type: ignore
 
 
-class LaunchBulkInstancesOperationOperations:
+class LaunchBulkInstancesOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3591,7 +3620,7 @@ class LaunchBulkInstancesOperationOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def get(
         self, resource_group_name: str, location: str, name: str, **kwargs: Any
@@ -3674,7 +3703,7 @@ class LaunchBulkInstancesOperationOperations:
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "location", "async_operation_id", "accept"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def get_operation_status(
         self, location: str, async_operation_id: str, **kwargs: Any
@@ -3759,7 +3788,7 @@ class LaunchBulkInstancesOperationOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -3954,7 +3983,7 @@ class LaunchBulkInstancesOperationOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_create_or_update(
         self,
@@ -4052,7 +4081,7 @@ class LaunchBulkInstancesOperationOperations:
                 "delete_instances",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _delete_initial(
         self,
@@ -4136,7 +4165,7 @@ class LaunchBulkInstancesOperationOperations:
                 "delete_instances",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_delete(
         self,
@@ -4214,7 +4243,7 @@ class LaunchBulkInstancesOperationOperations:
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _cancel_initial(self, resource_group_name: str, location: str, name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4281,7 +4310,7 @@ class LaunchBulkInstancesOperationOperations:
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_cancel(self, resource_group_name: str, location: str, name: str, **kwargs: Any) -> LROPoller[None]:
         """Cancels LaunchBulkInstancesOperation instances that have not yet launched.
@@ -4348,7 +4377,7 @@ class LaunchBulkInstancesOperationOperations:
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "accept"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, location: str, **kwargs: Any
@@ -4456,7 +4485,7 @@ class LaunchBulkInstancesOperationOperations:
     @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={"2026-07-06-preview": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_by_subscription(
         self, location: str, **kwargs: Any
@@ -4571,7 +4600,7 @@ class LaunchBulkInstancesOperationOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_virtual_machines(
         self,
@@ -4692,7 +4721,7 @@ class LaunchBulkInstancesOperationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BulkCreateCustomOperations:
+class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4724,7 +4753,7 @@ class BulkCreateCustomOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def get(
         self, resource_group_name: str, location: str, name: str, **kwargs: Any
@@ -4807,7 +4836,7 @@ class BulkCreateCustomOperations:
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "location", "async_operation_id", "accept"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def get_async_operation_status(
         self, location: str, async_operation_id: str, **kwargs: Any
@@ -4892,7 +4921,7 @@ class BulkCreateCustomOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -5083,7 +5112,7 @@ class BulkCreateCustomOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_create_or_update(
         self,
@@ -5177,7 +5206,7 @@ class BulkCreateCustomOperations:
                 "delete_instances",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _delete_initial(
         self,
@@ -5261,7 +5290,7 @@ class BulkCreateCustomOperations:
                 "delete_instances",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_delete(
         self,
@@ -5339,7 +5368,7 @@ class BulkCreateCustomOperations:
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _cancel_initial(self, resource_group_name: str, location: str, name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5406,7 +5435,7 @@ class BulkCreateCustomOperations:
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_cancel(self, resource_group_name: str, location: str, name: str, **kwargs: Any) -> LROPoller[None]:
         """Cancels BulkCreateCustom instances that have not yet launched.
@@ -5469,11 +5498,130 @@ class BulkCreateCustomOperations:
 
     @distributed_trace
     @api_version_validation(
+        method_added_on="2026-08-06-preview",
+        params_added_on={
+            "2026-08-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-06-preview"],
+    )
+    def virtual_machines_get_operation_status(
+        self, resource_group_name: str, location: str, name: str, **kwargs: Any
+    ) -> ItemPaged["_models.ResourceOperation"]:
+        """Gets the operation status for virtual machines in a BulkCreateCustom operation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreateCustom. The value must be an UUID. Required.
+        :type name: str
+        :return: An iterator like instance of ResourceOperation
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ResourceOperation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_bulk_create_custom_virtual_machines_get_operation_status_request(
+                    resource_group_name=resource_group_name,
+                    location=location,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ResourceOperation],
+                deserialized.get("results", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "accept"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, location: str, **kwargs: Any
@@ -5581,7 +5729,7 @@ class BulkCreateCustomOperations:
     @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={"2026-07-06-preview": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_by_subscription(self, location: str, **kwargs: Any) -> ItemPaged["_models.LocationBasedBulkCreateCustom"]:
         """List BulkCreateCustom resources by subscriptionId.
@@ -5680,7 +5828,7 @@ class BulkCreateCustomOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
+class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5711,7 +5859,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def get(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> _models.ScheduledAction:
         """Get a ScheduledAction.
@@ -5794,7 +5942,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -5970,7 +6118,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_create_or_update(
         self,
@@ -6059,7 +6207,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _update_initial(
         self,
@@ -6233,7 +6381,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_update(
         self,
@@ -6309,7 +6457,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _delete_initial(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6379,7 +6527,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_delete(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> LROPoller[None]:
         """Delete a ScheduledAction.
@@ -6441,7 +6589,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={"2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.ScheduledAction"]:
         """List ScheduledAction resources by resource group.
@@ -6543,7 +6691,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={"2026-07-06-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.ScheduledAction"]:
         """List ScheduledAction resources by subscription ID.
@@ -6649,7 +6797,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_resources(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -6765,7 +6913,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _attach_resources_initial(
         self,
@@ -6945,7 +7093,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_attach_resources(
         self,
@@ -7035,7 +7183,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _detach_resources_initial(
         self,
@@ -7215,7 +7363,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_detach_resources(
         self,
@@ -7390,7 +7538,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def patch_resources(
         self,
@@ -7487,7 +7635,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _disable_initial(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7556,7 +7704,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_disable(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> LROPoller[None]:
         """Disable the scheduled action so its future occurrences do not run.
@@ -7619,7 +7767,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _enable_initial(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7688,7 +7836,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_enable(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> LROPoller[None]:
         """Enable a previously disabled scheduled action so its future occurrences run.
@@ -7758,7 +7906,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _cancel_next_occurrence_initial(
         self,
@@ -7938,7 +8086,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_cancel_next_occurrence(
         self,
@@ -8027,7 +8175,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _trigger_manual_occurrence_initial(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -8105,7 +8253,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_trigger_manual_occurrence(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -8172,7 +8320,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class ScheduledActionExtensionOperations:
+class ScheduledActionExtensionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8195,7 +8343,7 @@ class ScheduledActionExtensionOperations:
     @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={"2026-07-06-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_by_vms(self, resource_uri: str, **kwargs: Any) -> ItemPaged["_models.ScheduledActionResources"]:
         """List ScheduledActionResources resources by parent.
@@ -8294,7 +8442,7 @@ class ScheduledActionExtensionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ScheduledActionOperationStatusOperations:
+class ScheduledActionOperationStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8319,7 +8467,7 @@ class ScheduledActionOperationStatusOperations:
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "location", "operation_id", "accept"]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.OperationStatusResult:
         """Get the status of a ScheduledActions asynchronous operation. Both the ``Azure-AsyncOperation``
@@ -8391,7 +8539,7 @@ class ScheduledActionOperationStatusOperations:
         return deserialized  # type: ignore
 
 
-class OccurrencesOperations:
+class OccurrencesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8423,7 +8571,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def get(
         self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
@@ -8511,7 +8659,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_by_scheduled_action(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -8627,7 +8775,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_resources(
         self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
@@ -8746,7 +8894,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _cancel_initial(
         self,
@@ -8938,7 +9086,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_cancel(
         self,
@@ -9033,7 +9181,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def _delay_initial(
         self,
@@ -9225,7 +9373,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def begin_delay(
         self,
@@ -9308,7 +9456,7 @@ class OccurrencesOperations:
         )
 
 
-class OccurrenceExtensionOperations:
+class OccurrenceExtensionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9331,7 +9479,7 @@ class OccurrenceExtensionOperations:
     @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={"2026-07-06-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2026-07-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview"],
     )
     def list_occurrence_by_vms(
         self, resource_uri: str, **kwargs: Any

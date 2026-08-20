@@ -1,5 +1,42 @@
 # Release History
 
+## 1.0.0b3 (2026-08-20)
+
+### Features Added
+
+  - Model `BulkCreateCustomProperties` added property `min_capacity`
+  - Model `BulkCreateCustomProperties` added property `partial_fulfillment_policy`
+  - Model `BulkCreateCustomProperties` added property `resources`
+  - Model `ExecutionParameters` added property `capacity_recommendation_parameters`
+  - Model `ResourceOperationDetails` added property `capacity_recommendation`
+  - Added model `BulkCreateCustomResource`
+  - Added model `BulkCreateCustomVirtualMachineInfo`
+  - Added model `CapacityRecommendation`
+  - Added model `CapacityRecommendationDetails`
+  - Added model `CapacityRecommendationParameters`
+  - Added model `CapacityRecommendationPlacementScore`
+  - Added model `CapacityRecommendationSize`
+  - Added enum `CapacityRecommendationStatus`
+  - Added enum `OccurrenceResourceProvisioningState`
+  - Added enum `PartialFulfillmentMode`
+  - Added model `PartialFulfillmentPolicy`
+  - Added enum `PartialFulfillmentReason`
+  - Added enum `ScheduledActionsDeadlineType`
+  - Added model `ScheduledActionsExecutionParameters`
+  - Added enum `ScheduledActionsProvisioningState`
+  - Added enum `ScheduledActionsResourceOperationType`
+  - Added model `ScheduledActionsRetryPolicy`
+  - Model `BulkCreateCustomOperations` added method `virtual_machines_get_operation_status`
+
+### Breaking Changes
+
+  - Deleted or renamed model `RecurringScheduledActionsDeadlineType`
+  - Deleted or renamed model `RecurringScheduledActionsExecutionParameters`
+  - Deleted or renamed model `RecurringScheduledActionsProvisioningState`
+  - Deleted or renamed model `RecurringScheduledActionsResourceOperationType`
+  - Deleted or renamed model `RecurringScheduledActionsRetryPolicy`
+  - Deleted or renamed model `ResourceProvisioningState`
+
 ## 1.0.0b2 (2026-07-22)
 
 ### Features Added
