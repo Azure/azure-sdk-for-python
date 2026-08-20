@@ -405,7 +405,7 @@ namespace azure.ai.projects.aio.operations
             ) -> SessionFileWriteResult: ...
 
 
-    class azure.ai.projects.aio.operations.BetaAgentsOperations:
+    class azure.ai.projects.aio.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -416,12 +416,12 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def begin_create_optimization_job(
                 self, 
-                job: OptimizationJob, 
+                job: AgentOptimizationJob, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[OptimizationJobResult]: ...
+            ) -> AsyncAgentOptimizationLROPoller: ...
 
         @overload
         async def begin_create_optimization_job(
@@ -431,7 +431,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[OptimizationJobResult]: ...
+            ) -> AsyncAgentOptimizationLROPoller: ...
 
         @overload
         async def begin_create_optimization_job(
@@ -441,14 +441,14 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[OptimizationJobResult]: ...
+            ) -> AsyncAgentOptimizationLROPoller: ...
 
         @distributed_trace_async
         async def cancel_optimization_job(
                 self, 
                 job_id: str, 
                 **kwargs: Any
-            ) -> OptimizationJob: ...
+            ) -> AgentOptimizationJob: ...
 
         @distributed_trace_async
         async def delete_optimization_job(
@@ -462,7 +462,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 job_id: str, 
                 **kwargs: Any
-            ) -> OptimizationJob: ...
+            ) -> AgentOptimizationJob: ...
 
         @distributed_trace
         def list_optimization_jobs(
@@ -474,10 +474,10 @@ namespace azure.ai.projects.aio.operations
                 order: Optional[Union[str, PageOrder]] = ..., 
                 status: Optional[Union[str, JobStatus]] = ..., 
                 **kwargs: Any
-            ) -> AsyncItemPaged[OptimizationJobListItem]: ...
+            ) -> AsyncItemPaged[AgentOptimizationJobListItem]: ...
 
 
-    class azure.ai.projects.aio.operations.BetaDatasetsOperations:
+    class azure.ai.projects.aio.operations.BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -493,7 +493,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
+            ) -> AsyncDatasetGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
@@ -503,7 +503,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
+            ) -> AsyncDatasetGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
@@ -513,7 +513,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
+            ) -> AsyncDatasetGenerationLROPoller: ...
 
         @distributed_trace_async
         async def cancel_generation_job(
@@ -639,7 +639,7 @@ namespace azure.ai.projects.aio.operations
             ) -> EvaluationTaxonomy: ...
 
 
-    class azure.ai.projects.aio.operations.BetaEvaluatorsOperations:
+    class azure.ai.projects.aio.operations.BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -655,7 +655,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[EvaluatorVersion]: ...
+            ) -> AsyncEvaluatorGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
@@ -665,7 +665,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[EvaluatorVersion]: ...
+            ) -> AsyncEvaluatorGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
@@ -675,7 +675,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[EvaluatorVersion]: ...
+            ) -> AsyncEvaluatorGenerationLROPoller: ...
 
         @distributed_trace_async
         async def cancel_generation_job(
@@ -2547,6 +2547,7 @@ namespace azure.ai.projects.models
         name: str
         object: Literal[AgentObjectType.AGENT]
         state: Union[str, AgentState]
+        state_source: Optional[Union[str, AgentStateSource]]
         versions: AgentObjectVersions
 
         @overload
@@ -2684,6 +2685,271 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.AgentOptimizationCandidate(_Model):
+        avg_score: float
+        avg_tokens: float
+        candidate_id: Optional[str]
+        eval_id: Optional[str]
+        eval_run_id: Optional[str]
+        mutations: Optional[dict[str, Any]]
+        name: str
+        promotion: Optional[PromotionInfo]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                avg_score: float, 
+                avg_tokens: float, 
+                candidate_id: Optional[str] = ..., 
+                eval_id: Optional[str] = ..., 
+                eval_run_id: Optional[str] = ..., 
+                mutations: Optional[dict[str, Any]] = ..., 
+                name: str, 
+                promotion: Optional[PromotionInfo] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationDatasetCriterion(_Model):
+        instruction: str
+        name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                instruction: str, 
+                name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationDatasetInput(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INLINE = "inline"
+        REFERENCE = "reference"
+
+
+    class azure.ai.projects.models.AgentOptimizationDatasetItem(_Model):
+        criteria: Optional[list[AgentOptimizationDatasetCriterion]]
+        desired_num_turns: Optional[int]
+        ground_truth: Optional[str]
+        query: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                criteria: Optional[list[AgentOptimizationDatasetCriterion]] = ..., 
+                desired_num_turns: Optional[int] = ..., 
+                ground_truth: Optional[str] = ..., 
+                query: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationEvaluatorRef(_Model):
+        name: str
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationInlineDatasetInput(AgentOptimizationDatasetInput, discriminator='inline'):
+        dataset_items: list[AgentOptimizationDatasetItem]
+        type: Literal[AgentOptimizationDatasetInputType.INLINE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                dataset_items: list[AgentOptimizationDatasetItem]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationJob(_Model):
+        created_at: datetime
+        error: Optional[ApiError]
+        id: str
+        inputs: Optional[AgentOptimizationJobInputs]
+        progress: Optional[AgentOptimizationJobProgress]
+        result: Optional[AgentOptimizationJobResult]
+        status: Union[str, JobStatus]
+        updated_at: datetime
+        warnings: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                inputs: Optional[AgentOptimizationJobInputs] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationJobInputs(_Model):
+        agent: OptimizedAgentIdentifier
+        evaluators: list[AgentOptimizationEvaluatorRef]
+        options: Optional[AgentOptimizationOptions]
+        train_dataset: AgentOptimizationDatasetInput
+        validation_dataset: Optional[AgentOptimizationDatasetInput]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent: OptimizedAgentIdentifier, 
+                evaluators: list[AgentOptimizationEvaluatorRef], 
+                options: Optional[AgentOptimizationOptions] = ..., 
+                train_dataset: AgentOptimizationDatasetInput, 
+                validation_dataset: Optional[AgentOptimizationDatasetInput] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationJobListItem(_Model):
+        agent: Optional[OptimizedAgentIdentifier]
+        created_at: datetime
+        error: Optional[ApiError]
+        id: str
+        progress: Optional[AgentOptimizationJobProgress]
+        status: Union[str, JobStatus]
+        updated_at: datetime
+
+
+    class azure.ai.projects.models.AgentOptimizationJobProgress(_Model):
+        best_score: float
+        candidates_completed: int
+        elapsed_seconds: float
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                best_score: float, 
+                candidates_completed: int, 
+                elapsed_seconds: float
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationJobResult(_Model):
+        baseline: Optional[str]
+        best: Optional[str]
+        candidates: Optional[list[AgentOptimizationCandidate]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                baseline: Optional[str] = ..., 
+                best: Optional[str] = ..., 
+                candidates: Optional[list[AgentOptimizationCandidate]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationLROPoller(LROPoller[AgentOptimizationJobResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: PollingMethod[AgentOptimizationJobResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AgentOptimizationLROPoller: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationOptions(_Model):
+        eval_model: Optional[str]
+        evaluation_level: Optional[Union[str, EvaluationLevel]]
+        max_candidates: Optional[int]
+        max_stalls: Optional[int]
+        optimization_config: Optional[dict[str, Any]]
+        optimization_model: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                eval_model: Optional[str] = ..., 
+                evaluation_level: Optional[Union[str, EvaluationLevel]] = ..., 
+                max_candidates: Optional[int] = ..., 
+                max_stalls: Optional[int] = ..., 
+                optimization_config: Optional[dict[str, Any]] = ..., 
+                optimization_model: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentOptimizationReferenceDatasetInput(AgentOptimizationDatasetInput, discriminator='reference'):
+        name: str
+        type: Literal[AgentOptimizationDatasetInputType.REFERENCE]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.AgentSessionResource(_Model):
         agent_session_id: str
         created_at: datetime
@@ -2719,6 +2985,11 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.AgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DISABLED = "disabled"
         ENABLED = "enabled"
+
+
+    class azure.ai.projects.models.AgentStateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENT_BLUEPRINT = "agent_blueprint"
+        AGENT_INSTANCE_IDENTITY = "agent_instance_identity"
 
 
     class azure.ai.projects.models.AgentTaxonomyInput(EvaluationTaxonomyInput, discriminator='agent'):
@@ -2888,6 +3159,66 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AsyncAgentOptimizationLROPoller(AsyncLROPoller[AgentOptimizationJobResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: AsyncPollingMethod[AgentOptimizationJobResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AsyncAgentOptimizationLROPoller: ...
+
+
+    class azure.ai.projects.models.AsyncDatasetGenerationLROPoller(AsyncLROPoller[DataGenerationJobResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: AsyncPollingMethod[DataGenerationJobResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AsyncDatasetGenerationLROPoller: ...
+
+
+    class azure.ai.projects.models.AsyncEvaluatorGenerationLROPoller(AsyncLROPoller[EvaluatorVersion]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: AsyncPollingMethod[EvaluatorVersion], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AsyncEvaluatorGenerationLROPoller: ...
 
 
     class azure.ai.projects.models.AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResult]):
@@ -4310,6 +4641,26 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.DatasetGenerationLROPoller(LROPoller[DataGenerationJobResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: PollingMethod[DataGenerationJobResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> DatasetGenerationLROPoller: ...
+
+
     class azure.ai.projects.models.DatasetReference(_Model):
         name: str
         version: str
@@ -5056,6 +5407,26 @@ namespace azure.ai.projects.models
         DATASET = "dataset"
         PROMPT = "prompt"
         TRACES = "traces"
+
+
+    class azure.ai.projects.models.EvaluatorGenerationLROPoller(LROPoller[EvaluatorVersion]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: PollingMethod[EvaluatorVersion], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> EvaluatorGenerationLROPoller: ...
 
 
     class azure.ai.projects.models.EvaluatorGenerationTokenUsage(_Model):
@@ -7001,7 +7372,7 @@ namespace azure.ai.projects.models
         SUCCEEDED = "Succeeded"
 
 
-    class azure.ai.projects.models.OptimizationAgentIdentifier(_Model):
+    class azure.ai.projects.models.OptimizedAgentIdentifier(_Model):
         agent_name: str
         agent_version: Optional[str]
 
@@ -7011,251 +7382,6 @@ namespace azure.ai.projects.models
                 *, 
                 agent_name: str, 
                 agent_version: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationCandidate(_Model):
-        avg_score: float
-        avg_tokens: float
-        candidate_id: Optional[str]
-        eval_id: Optional[str]
-        eval_run_id: Optional[str]
-        mutations: Optional[dict[str, Any]]
-        name: str
-        promotion: Optional[PromotionInfo]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                avg_score: float, 
-                avg_tokens: float, 
-                candidate_id: Optional[str] = ..., 
-                eval_id: Optional[str] = ..., 
-                eval_run_id: Optional[str] = ..., 
-                mutations: Optional[dict[str, Any]] = ..., 
-                name: str, 
-                promotion: Optional[PromotionInfo] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationDatasetCriterion(_Model):
-        instruction: str
-        name: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                instruction: str, 
-                name: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationDatasetInput(_Model):
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                type: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        INLINE = "inline"
-        REFERENCE = "reference"
-
-
-    class azure.ai.projects.models.OptimizationDatasetItem(_Model):
-        criteria: Optional[list[OptimizationDatasetCriterion]]
-        desired_num_turns: Optional[int]
-        ground_truth: Optional[str]
-        query: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                criteria: Optional[list[OptimizationDatasetCriterion]] = ..., 
-                desired_num_turns: Optional[int] = ..., 
-                ground_truth: Optional[str] = ..., 
-                query: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationEvaluatorRef(_Model):
-        name: str
-        version: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                name: str, 
-                version: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationInlineDatasetInput(OptimizationDatasetInput, discriminator='inline'):
-        dataset_items: list[OptimizationDatasetItem]
-        type: Literal[OptimizationDatasetInputType.INLINE]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                dataset_items: list[OptimizationDatasetItem]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationJob(_Model):
-        created_at: datetime
-        error: Optional[ApiError]
-        id: str
-        inputs: Optional[OptimizationJobInputs]
-        progress: Optional[OptimizationJobProgress]
-        result: Optional[OptimizationJobResult]
-        status: Union[str, JobStatus]
-        updated_at: datetime
-        warnings: Optional[list[str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                inputs: Optional[OptimizationJobInputs] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationJobInputs(_Model):
-        agent: OptimizationAgentIdentifier
-        evaluators: list[OptimizationEvaluatorRef]
-        options: Optional[OptimizationOptions]
-        train_dataset: OptimizationDatasetInput
-        validation_dataset: Optional[OptimizationDatasetInput]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                agent: OptimizationAgentIdentifier, 
-                evaluators: list[OptimizationEvaluatorRef], 
-                options: Optional[OptimizationOptions] = ..., 
-                train_dataset: OptimizationDatasetInput, 
-                validation_dataset: Optional[OptimizationDatasetInput] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationJobListItem(_Model):
-        agent: Optional[OptimizationAgentIdentifier]
-        created_at: datetime
-        error: Optional[ApiError]
-        id: str
-        progress: Optional[OptimizationJobProgress]
-        status: Union[str, JobStatus]
-        updated_at: datetime
-
-
-    class azure.ai.projects.models.OptimizationJobProgress(_Model):
-        best_score: float
-        candidates_completed: int
-        elapsed_seconds: float
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                best_score: float, 
-                candidates_completed: int, 
-                elapsed_seconds: float
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationJobResult(_Model):
-        baseline: Optional[str]
-        best: Optional[str]
-        candidates: Optional[list[OptimizationCandidate]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                baseline: Optional[str] = ..., 
-                best: Optional[str] = ..., 
-                candidates: Optional[list[OptimizationCandidate]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationOptions(_Model):
-        eval_model: Optional[str]
-        evaluation_level: Optional[Union[str, EvaluationLevel]]
-        max_candidates: Optional[int]
-        max_stalls: Optional[int]
-        optimization_config: Optional[dict[str, Any]]
-        optimization_model: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                eval_model: Optional[str] = ..., 
-                evaluation_level: Optional[Union[str, EvaluationLevel]] = ..., 
-                max_candidates: Optional[int] = ..., 
-                max_stalls: Optional[int] = ..., 
-                optimization_config: Optional[dict[str, Any]] = ..., 
-                optimization_model: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OptimizationReferenceDatasetInput(OptimizationDatasetInput, discriminator='reference'):
-        name: str
-        type: Literal[OptimizationDatasetInputType.REFERENCE]
-        version: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                name: str, 
-                version: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -9796,7 +9922,7 @@ namespace azure.ai.projects.operations
             ) -> SessionFileWriteResult: ...
 
 
-    class azure.ai.projects.operations.BetaAgentsOperations:
+    class azure.ai.projects.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -9807,12 +9933,12 @@ namespace azure.ai.projects.operations
         @overload
         def begin_create_optimization_job(
                 self, 
-                job: OptimizationJob, 
+                job: AgentOptimizationJob, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[OptimizationJobResult]: ...
+            ) -> AgentOptimizationLROPoller: ...
 
         @overload
         def begin_create_optimization_job(
@@ -9822,7 +9948,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[OptimizationJobResult]: ...
+            ) -> AgentOptimizationLROPoller: ...
 
         @overload
         def begin_create_optimization_job(
@@ -9832,14 +9958,14 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[OptimizationJobResult]: ...
+            ) -> AgentOptimizationLROPoller: ...
 
         @distributed_trace
         def cancel_optimization_job(
                 self, 
                 job_id: str, 
                 **kwargs: Any
-            ) -> OptimizationJob: ...
+            ) -> AgentOptimizationJob: ...
 
         @distributed_trace
         def delete_optimization_job(
@@ -9853,7 +9979,7 @@ namespace azure.ai.projects.operations
                 self, 
                 job_id: str, 
                 **kwargs: Any
-            ) -> OptimizationJob: ...
+            ) -> AgentOptimizationJob: ...
 
         @distributed_trace
         def list_optimization_jobs(
@@ -9865,10 +9991,10 @@ namespace azure.ai.projects.operations
                 order: Optional[Union[str, PageOrder]] = ..., 
                 status: Optional[Union[str, JobStatus]] = ..., 
                 **kwargs: Any
-            ) -> ItemPaged[OptimizationJobListItem]: ...
+            ) -> ItemPaged[AgentOptimizationJobListItem]: ...
 
 
-    class azure.ai.projects.operations.BetaDatasetsOperations:
+    class azure.ai.projects.operations.BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -9884,7 +10010,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[DataGenerationJobResult]: ...
+            ) -> DatasetGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
@@ -9894,7 +10020,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[DataGenerationJobResult]: ...
+            ) -> DatasetGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
@@ -9904,7 +10030,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[DataGenerationJobResult]: ...
+            ) -> DatasetGenerationLROPoller: ...
 
         @distributed_trace
         def cancel_generation_job(
@@ -10030,7 +10156,7 @@ namespace azure.ai.projects.operations
             ) -> EvaluationTaxonomy: ...
 
 
-    class azure.ai.projects.operations.BetaEvaluatorsOperations:
+    class azure.ai.projects.operations.BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -10046,7 +10172,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[EvaluatorVersion]: ...
+            ) -> EvaluatorGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
@@ -10056,7 +10182,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[EvaluatorVersion]: ...
+            ) -> EvaluatorGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
@@ -10066,7 +10192,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[EvaluatorVersion]: ...
+            ) -> EvaluatorGenerationLROPoller: ...
 
         @distributed_trace
         def cancel_generation_job(
