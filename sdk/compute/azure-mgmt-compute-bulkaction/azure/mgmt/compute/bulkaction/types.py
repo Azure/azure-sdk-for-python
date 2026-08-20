@@ -50,19 +50,21 @@ if TYPE_CHECKING:
         OperatingSystemTypes,
         OptimizationPreference,
         OsType,
+        PartialFulfillmentMode,
+        PartialFulfillmentReason,
         PriorityType,
         ProtocolTypes,
         ProvisioningState,
         PublicIPAddressSkuName,
         PublicIPAddressSkuTier,
         PublicIPAllocationMethod,
-        RecurringScheduledActionsDeadlineType,
-        RecurringScheduledActionsProvisioningState,
-        RecurringScheduledActionsResourceOperationType,
         ResourceIdentityType,
         ResourceOperationType,
         ResourceType,
         ScheduledActionType,
+        ScheduledActionsDeadlineType,
+        ScheduledActionsProvisioningState,
+        ScheduledActionsResourceOperationType,
         SecurityEncryptionTypes,
         SecurityTypes,
         SettingNames,
@@ -79,8 +81,8 @@ if TYPE_CHECKING:
 class AcknowledgeBulkOperationErrorsRequest(TypedDict, total=False):
     """The request to acknowledge bulk operation errors.
 
-    :ivar operation_ids: The set of operation ids to acknowledge. Required.
-    :vartype operation_ids: list[str]
+    :ivar operationIds: The set of operation ids to acknowledge. Required.
+    :vartype operationIds: list[str]
     """
 
     operationIds: Required[list[str]]
@@ -90,13 +92,13 @@ class AcknowledgeBulkOperationErrorsRequest(TypedDict, total=False):
 class AdditionalCapabilities(TypedDict, total=False):
     """Enables or disables a capability on the virtual machine or virtual machine scale set.
 
-    :ivar ultra_ssd_enabled: The flag that enables or disables a capability to have one or more
+    :ivar ultraSSDEnabled: The flag that enables or disables a capability to have one or more
      managed data disks with UltraSSD_LRS storage account type on the VM or VMSS. Managed disks with
      storage account type UltraSSD_LRS can be added to a virtual machine or virtual machine scale
      set only if this property is enabled.
-    :vartype ultra_ssd_enabled: bool
-    :ivar hibernation_enabled: The flag that enables or disables hibernation capability on the VM.
-    :vartype hibernation_enabled: bool
+    :vartype ultraSSDEnabled: bool
+    :ivar hibernationEnabled: The flag that enables or disables hibernation capability on the VM.
+    :vartype hibernationEnabled: bool
     """
 
     ultraSSDEnabled: bool
@@ -113,16 +115,16 @@ class AdditionalUnattendContent(TypedDict, total=False):
     which is used by Windows Setup. Contents are defined by setting name, component name, and the
     pass in which the content is applied.
 
-    :ivar pass_name: The pass name. Currently, the only allowable value is OobeSystem. Default
-     value is "OobeSystem".
-    :vartype pass_name: Literal["OobeSystem"]
-    :ivar component_name: The component name. Currently, the only allowable value is
+    :ivar passName: The pass name. Currently, the only allowable value is OobeSystem. Default value
+     is "OobeSystem".
+    :vartype passName: Literal["OobeSystem"]
+    :ivar componentName: The component name. Currently, the only allowable value is
      Microsoft-Windows-Shell-Setup. Default value is "Microsoft-Windows-Shell-Setup".
-    :vartype component_name: Literal["Microsoft-Windows-Shell-Setup"]
-    :ivar setting_name: Specifies the name of the setting to which the content applies. Possible
+    :vartype componentName: Literal["Microsoft-Windows-Shell-Setup"]
+    :ivar settingName: Specifies the name of the setting to which the content applies. Possible
      values are: FirstLogonCommands and AutoLogon. Known values are: "AutoLogon" and
      "FirstLogonCommands".
-    :vartype setting_name: Union[str, "SettingNames"]
+    :vartype settingName: Union[str, "SettingNames"]
     :ivar content: Specifies the XML formatted content that is added to the unattend.xml file for
      the specified path and component. The XML must be less than 4KB and must include the root
      element for the setting or feature that is being inserted.
@@ -147,9 +149,9 @@ class AdditionalUnattendContent(TypedDict, total=False):
 class AllInstancesDown(TypedDict, total=False):
     """Specifies if Scheduled Events should be auto-approved when all instances are down.
 
-    :ivar all_instances_down_automatically_approve: Specifies if Scheduled Events should be
-     auto-approved when all instances are down. Its default value is true.
-    :vartype all_instances_down_automatically_approve: bool
+    :ivar automaticallyApprove: Specifies if Scheduled Events should be auto-approved when all
+     instances are down. Its default value is true.
+    :vartype automaticallyApprove: bool
     """
 
     automaticallyApprove: bool
@@ -173,9 +175,9 @@ class ApiEntityReference(TypedDict, total=False):
 class ApplicationProfile(TypedDict, total=False):
     """Contains the list of gallery applications that should be made available to the VM.
 
-    :ivar gallery_applications: Specifies the gallery applications that should be made available to
+    :ivar galleryApplications: Specifies the gallery applications that should be made available to
      the VM.
-    :vartype gallery_applications: list["VMGalleryApplication"]
+    :vartype galleryApplications: list["VMGalleryApplication"]
     """
 
     galleryApplications: list["VMGalleryApplication"]
@@ -189,10 +191,10 @@ class BootDiagnostics(TypedDict, total=False):
 
     :ivar enabled: Whether boot diagnostics should be enabled on the Virtual Machine.
     :vartype enabled: bool
-    :ivar storage_uri: Uri of the storage account to use for placing the console output and
+    :ivar storageUri: Uri of the storage account to use for placing the console output and
      screenshot. If storageUri is not specified while enabling boot diagnostics, managed storage
      will be used.
-    :vartype storage_uri: str
+    :vartype storageUri: str
     """
 
     enabled: bool
@@ -220,37 +222,37 @@ class BulkactionVMExtension(TypedDict, total=False):
 class BulkActionVmExtensionProperties(TypedDict, total=False):
     """Describes the properties of a Virtual Machine Extension.
 
-    :ivar force_update_tag: How the extension handler should be forced to update even if the
+    :ivar forceUpdateTag: How the extension handler should be forced to update even if the
      extension configuration has not changed.
-    :vartype force_update_tag: str
+    :vartype forceUpdateTag: str
     :ivar publisher: The name of the extension handler publisher.
     :vartype publisher: str
     :ivar type: Specifies the type of the extension; an example is 'CustomScriptExtension'.
     :vartype type: str
-    :ivar type_handler_version: Specifies the version of the script handler.
-    :vartype type_handler_version: str
-    :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
-     version if one is available at deployment time. Once deployed, however, the extension will not
-     upgrade minor versions unless redeployed, even with this property set to true.
-    :vartype auto_upgrade_minor_version: bool
-    :ivar enable_automatic_upgrade: Indicates whether the extension should be automatically
-     upgraded by the platform if there is a newer version of the extension available.
-    :vartype enable_automatic_upgrade: bool
+    :ivar typeHandlerVersion: Specifies the version of the script handler.
+    :vartype typeHandlerVersion: str
+    :ivar autoUpgradeMinorVersion: Indicates whether the extension should use a newer minor version
+     if one is available at deployment time. Once deployed, however, the extension will not upgrade
+     minor versions unless redeployed, even with this property set to true.
+    :vartype autoUpgradeMinorVersion: bool
+    :ivar enableAutomaticUpgrade: Indicates whether the extension should be automatically upgraded
+     by the platform if there is a newer version of the extension available.
+    :vartype enableAutomaticUpgrade: bool
     :ivar settings: JSON formatted public settings for the extension.
     :vartype settings: dict[str, Any]
-    :ivar protected_settings: The extension can contain either protectedSettings or
+    :ivar protectedSettings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: dict[str, Any]
-    :ivar suppress_failures: Indicates whether failures stemming from the extension will be
+    :vartype protectedSettings: dict[str, Any]
+    :ivar suppressFailures: Indicates whether failures stemming from the extension will be
      suppressed (Operational failures such as not connecting to the VM will not be suppressed
      regardless of this value). The default is false.
-    :vartype suppress_failures: bool
-    :ivar protected_settings_from_key_vault: The extensions protected settings that are passed by
+    :vartype suppressFailures: bool
+    :ivar protectedSettingsFromKeyVault: The extensions protected settings that are passed by
      reference, and consumed from key vault.
-    :vartype protected_settings_from_key_vault: "KeyVaultSecretReference"
-    :ivar provision_after_extensions: Collection of extension names after which this extension
-     needs to be provisioned.
-    :vartype provision_after_extensions: list[str]
+    :vartype protectedSettingsFromKeyVault: "KeyVaultSecretReference"
+    :ivar provisionAfterExtensions: Collection of extension names after which this extension needs
+     to be provisioned.
+    :vartype provisionAfterExtensions: list[str]
     """
 
     forceUpdateTag: str
@@ -287,29 +289,28 @@ class BulkActionVmExtensionProperties(TypedDict, total=False):
 class BulkactionVMProperties(TypedDict, total=False):
     """Describes the properties of a Virtual Machine for bulk create.
 
-    :ivar scheduled_events_policy: Specifies Redeploy, Reboot and
+    :ivar scheduledEventsPolicy: Specifies Redeploy, Reboot and
      ScheduledEventsAdditionalPublishingTargets Scheduled Event related configurations for the
      virtual machine.
-    :vartype scheduled_events_policy: "ScheduledEventsPolicy"
-    :ivar storage_profile: Specifies the storage settings for the virtual machine disks.
-    :vartype storage_profile: "StorageProfile"
-    :ivar hardware_profile: Specifies the hardware profile for the virtual machine.
-    :vartype hardware_profile: "HardwareProfile"
-    :ivar additional_capabilities: Specifies additional capabilities enabled or disabled on the
+    :vartype scheduledEventsPolicy: "ScheduledEventsPolicy"
+    :ivar storageProfile: Specifies the storage settings for the virtual machine disks.
+    :vartype storageProfile: "StorageProfile"
+    :ivar hardwareProfile: Specifies the hardware profile for the virtual machine.
+    :vartype hardwareProfile: "HardwareProfile"
+    :ivar additionalCapabilities: Specifies additional capabilities enabled or disabled on the
      virtual machine.
-    :vartype additional_capabilities: "AdditionalCapabilities"
-    :ivar os_profile: Specifies the operating system settings used while creating the virtual
+    :vartype additionalCapabilities: "AdditionalCapabilities"
+    :ivar osProfile: Specifies the operating system settings used while creating the virtual
      machine. Some of the settings cannot be changed once VM is provisioned.
-    :vartype os_profile: "OSProfile"
-    :ivar network_profile: Specifies the network interfaces of the virtual machine.
-    :vartype network_profile: "NetworkProfile"
-    :ivar security_profile: Specifies the Security related profile settings for the virtual
-     machine.
-    :vartype security_profile: "SecurityProfile"
-    :ivar diagnostics_profile: Specifies the boot diagnostic settings state. Minimum compute
+    :vartype osProfile: "OSProfile"
+    :ivar networkProfile: Specifies the network interfaces of the virtual machine.
+    :vartype networkProfile: "NetworkProfile"
+    :ivar securityProfile: Specifies the Security related profile settings for the virtual machine.
+    :vartype securityProfile: "SecurityProfile"
+    :ivar diagnosticsProfile: Specifies the boot diagnostic settings state. Minimum compute
      api-version: 2015-06-15.
-    :vartype diagnostics_profile: "DiagnosticsProfile"
-    :ivar license_type: Specifies that the image or disk that is being used was licensed
+    :vartype diagnosticsProfile: "DiagnosticsProfile"
+    :ivar licenseType: Specifies that the image or disk that is being used was licensed
      on-premises. <br><br> Possible values for Windows Server operating system are: <br><br>
      Windows_Client <br><br> Windows_Server <br><br> Possible values for Linux Server operating
      system are: <br><br> RHEL_BYOS (for RHEL) <br><br> SLES_BYOS (for SUSE) <br><br> For more
@@ -318,25 +319,25 @@ class BulkactionVMProperties(TypedDict, total=False):
      <br><br> `Azure Hybrid Use Benefit for Linux Server
      <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_ <br><br>
      Minimum api-version: 2015-06-15.
-    :vartype license_type: str
-    :ivar extensions_time_budget: Specifies the time alloted for all extensions to start. The time
+    :vartype licenseType: str
+    :ivar extensionsTimeBudget: Specifies the time alloted for all extensions to start. The time
      duration should be between 15 minutes and 120 minutes (inclusive) and should be specified in
      ISO 8601 format. The default value is 90 minutes (PT1H30M). Minimum compute api-version:
      2020-06-01.
-    :vartype extensions_time_budget: str
-    :ivar scheduled_events_profile: Specifies Scheduled Event related configurations.
-    :vartype scheduled_events_profile: "ScheduledEventsProfile"
-    :ivar user_data: UserData for the VM, which must be base-64 encoded. Customer should not pass
+    :vartype extensionsTimeBudget: str
+    :ivar scheduledEventsProfile: Specifies Scheduled Event related configurations.
+    :vartype scheduledEventsProfile: "ScheduledEventsProfile"
+    :ivar userData: UserData for the VM, which must be base-64 encoded. Customer should not pass
      any secrets in here. Minimum compute api-version: 2021-03-01.
-    :vartype user_data: str
-    :ivar capacity_reservation: Specifies information about the capacity reservation that is used
-     to allocate virtual machine. Minimum compute api-version: 2021-04-01.
-    :vartype capacity_reservation: "CapacityReservationProfile"
-    :ivar application_profile: Specifies the gallery applications that should be made available to
+    :vartype userData: str
+    :ivar capacityReservation: Specifies information about the capacity reservation that is used to
+     allocate virtual machine. Minimum compute api-version: 2021-04-01.
+    :vartype capacityReservation: "CapacityReservationProfile"
+    :ivar applicationProfile: Specifies the gallery applications that should be made available to
      the VM.
-    :vartype application_profile: "ApplicationProfile"
-    :ivar vm_extensions: Virtual Machine Extensions Array to be applied to the Virtual Machines.
-    :vartype vm_extensions: list["BulkactionVMExtension"]
+    :vartype applicationProfile: "ApplicationProfile"
+    :ivar vmExtensions: Virtual Machine Extensions Array to be applied to the Virtual Machines.
+    :vartype vmExtensions: list["BulkactionVMExtension"]
     """
 
     scheduledEventsPolicy: "ScheduledEventsPolicy"
@@ -388,12 +389,12 @@ class BulkactionVMProperties(TypedDict, total=False):
 class BulkCreateCustomOverride(TypedDict, total=False):
     """A single per-VM override. Extends the shared override fields with a per-VM name.
 
-    :ivar virtual_machine_name: ARM VM name for this VM. Optional; when omitted the name is
-     generated from the prefix as {prefix}_{index}.
-    :vartype virtual_machine_name: str
-    :ivar virtual_machine_profile: VM profile, the same shape as operation-level
+    :ivar virtualMachineName: ARM VM name for this VM. Optional; when omitted the name is generated
+     from the prefix as {prefix}_{index}.
+    :vartype virtualMachineName: str
+    :ivar virtualMachineProfile: VM profile, the same shape as operation-level
      ComputeProfile.virtualMachineProfile. Overrides the operation-level VM profile.
-    :vartype virtual_machine_profile: "BulkactionVMProperties"
+    :vartype virtualMachineProfile: "BulkactionVMProperties"
     :ivar tags: Tags overriding the operation-level tags.
     :vartype tags: dict[str, str]
     :ivar identity: Identity overriding the operation-level identity.
@@ -427,9 +428,9 @@ class BulkCreateCustomOverrideBase(TypedDict, total=False):
     over the operation-level value. VM size, zone, priority, eviction policy, and billing are owned
     by the service and cannot be set here.
 
-    :ivar virtual_machine_profile: VM profile, the same shape as operation-level
+    :ivar virtualMachineProfile: VM profile, the same shape as operation-level
      ComputeProfile.virtualMachineProfile. Overrides the operation-level VM profile.
-    :vartype virtual_machine_profile: "BulkactionVMProperties"
+    :vartype virtualMachineProfile: "BulkactionVMProperties"
     :ivar tags: Tags overriding the operation-level tags.
     :vartype tags: dict[str, str]
     :ivar identity: Identity overriding the operation-level identity.
@@ -459,10 +460,10 @@ class BulkCreateCustomOverridesProfile(TypedDict, total=False):
     """Groups the per-VM overrides with the name prefix that names any override that does not supply
     its own VM name.
 
-    :ivar virtual_machine_name_prefix: Prefix used to build the ARM VM name ({prefix}_{index}) for
+    :ivar virtualMachineNamePrefix: Prefix used to build the ARM VM name ({prefix}_{index}) for
      overrides that omit a virtualMachineName. Required when any override is unnamed and rejected
      when every override is named.
-    :vartype virtual_machine_name_prefix: str
+    :vartype virtualMachineNamePrefix: str
     :ivar overrides: Per-VM overrides. The count is the VM count and must equal capacity. Each
      override maps to VM index i.
     :vartype overrides: list["BulkCreateCustomOverride"]
@@ -482,14 +483,14 @@ class BulkCreateCustomPriorityProfile(TypedDict, total=False):
 
     :ivar type: The priority type for VM allocation. Known values are: "Regular" and "Spot".
     :vartype type: Union[str, "PriorityType"]
-    :ivar max_price_per_vm: Price per hour of each Spot VM will never exceed this.
-    :vartype max_price_per_vm: float
-    :ivar eviction_policy: Eviction Policy to follow when evicting Spot VMs. Known values are:
+    :ivar maxPricePerVM: Price per hour of each Spot VM will never exceed this.
+    :vartype maxPricePerVM: float
+    :ivar evictionPolicy: Eviction Policy to follow when evicting Spot VMs. Known values are:
      "Delete" and "Deallocate".
-    :vartype eviction_policy: Union[str, "EvictionPolicy"]
-    :ivar allocation_strategy: The allocation strategy for VM size selection. Known values are:
+    :vartype evictionPolicy: Union[str, "EvictionPolicy"]
+    :ivar allocationStrategy: The allocation strategy for VM size selection. Known values are:
      "LowestPrice" and "Prioritized".
-    :vartype allocation_strategy: Union[str, "BulkCreateCustomAllocationStrategy"]
+    :vartype allocationStrategy: Union[str, "BulkCreateCustomAllocationStrategy"]
     """
 
     type: Union[str, "PriorityType"]
@@ -507,31 +508,45 @@ class BulkCreateCustomPriorityProfile(TypedDict, total=False):
 class BulkCreateCustomProperties(TypedDict, total=False):
     """Details of the BulkCreateCustom.
 
-    :ivar created_time: The UTC time the BulkCreateCustom resource was created.
-    :vartype created_time: str
-    :ivar provisioning_state: The status of the last operation. Known values are: "Creating",
+    :ivar createdTime: The UTC time the BulkCreateCustom resource was created.
+    :vartype createdTime: str
+    :ivar provisioningState: The status of the last operation. Known values are: "Creating",
      "Succeeded", "Failed", "Deleting", and "Canceled".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar capacity: Total capacity to achieve. It can be in terms of VMs or vCPUs. Required.
     :vartype capacity: int
-    :ivar capacity_type: Specifies capacity type for launching instances. It can be in terms of VMs
+    :ivar capacityType: Specifies capacity type for launching instances. It can be in terms of VMs
      or vCPUs. Known values are: "VM" and "VCpu".
-    :vartype capacity_type: Union[str, "CapacityType"]
-    :ivar priority_profile: Configuration Options for Regular or Spot instances in
-     BulkCreateCustom. Required.
-    :vartype priority_profile: "BulkCreateCustomPriorityProfile"
-    :ivar vm_sizes_profile: List of VM sizes supported for BulkCreateCustom.
-    :vartype vm_sizes_profile: list["BulkCreateCustomVmSizeProfile"]
-    :ivar compute_profile: Compute Profile to configure the Virtual Machines. Required.
-    :vartype compute_profile: "ComputeProfile"
-    :ivar zone_allocation_policy: Zone Allocation Policy for launching instances.
-    :vartype zone_allocation_policy: "BulkCreateCustomZoneAllocationPolicy"
-    :ivar overrides_profile: Per-VM overrides and the shared name prefix, specified when the
+    :vartype capacityType: Union[str, "CapacityType"]
+    :ivar minCapacity: The minimum capacity, expressed in units specified by capacityType, that
+     Azure must be able to allocate for the request to proceed. If Azure cannot allocate at least
+     this capacity with high confidence, the request is rejected with 409 Conflict
+     (InsufficientCapacity) and no VMs are created. Otherwise, Azure allocates as much capacity as
+     possible, up to the requested capacity. Must be greater than 0, less than capacity, and
+     requires partialFulfillmentPolicy.mode to be Enabled.
+    :vartype minCapacity: int
+    :ivar partialFulfillmentPolicy: Controls how partial fulfillment is handled for a
+     BulkCreateCustom request. When enabled, Azure creates only the VMs or vCPUs it has high
+     confidence can be successfully allocated, instead of attempting the entire request and
+     potentially returning allocation failures.
+    :vartype partialFulfillmentPolicy: "PartialFulfillmentPolicy"
+    :ivar resources: The virtual machine resources resolved for the operation.
+    :vartype resources: list["BulkCreateCustomResource"]
+    :ivar priorityProfile: Configuration Options for Regular or Spot instances in BulkCreateCustom.
+     Required.
+    :vartype priorityProfile: "BulkCreateCustomPriorityProfile"
+    :ivar vmSizesProfile: List of VM sizes supported for BulkCreateCustom.
+    :vartype vmSizesProfile: list["BulkCreateCustomVmSizeProfile"]
+    :ivar computeProfile: Compute Profile to configure the Virtual Machines. Required.
+    :vartype computeProfile: "ComputeProfile"
+    :ivar zoneAllocationPolicy: Zone Allocation Policy for launching instances.
+    :vartype zoneAllocationPolicy: "BulkCreateCustomZoneAllocationPolicy"
+    :ivar overridesProfile: Per-VM overrides and the shared name prefix, specified when the
      operation is created.
-    :vartype overrides_profile: "BulkCreateCustomOverridesProfile"
-    :ivar execution_parameters: Extra parameters that control how the request is executed,
-     including the retry policy.
-    :vartype execution_parameters: "ExecutionParameters"
+    :vartype overridesProfile: "BulkCreateCustomOverridesProfile"
+    :ivar executionParameters: Extra parameters that control how the request is executed, including
+     the retry policy.
+    :vartype executionParameters: "ExecutionParameters"
     """
 
     createdTime: str
@@ -544,6 +559,19 @@ class BulkCreateCustomProperties(TypedDict, total=False):
     capacityType: Union[str, "CapacityType"]
     """Specifies capacity type for launching instances. It can be in terms of VMs or vCPUs. Known
      values are: \"VM\" and \"VCpu\"."""
+    minCapacity: int
+    """The minimum capacity, expressed in units specified by capacityType, that Azure must be able to
+     allocate for the request to proceed. If Azure cannot allocate at least this capacity with high
+     confidence, the request is rejected with 409 Conflict (InsufficientCapacity) and no VMs are
+     created. Otherwise, Azure allocates as much capacity as possible, up to the requested capacity.
+     Must be greater than 0, less than capacity, and requires partialFulfillmentPolicy.mode to be
+     Enabled."""
+    partialFulfillmentPolicy: "PartialFulfillmentPolicy"
+    """Controls how partial fulfillment is handled for a BulkCreateCustom request. When enabled, Azure
+     creates only the VMs or vCPUs it has high confidence can be successfully allocated, instead of
+     attempting the entire request and potentially returning allocation failures."""
+    resources: list["BulkCreateCustomResource"]
+    """The virtual machine resources resolved for the operation."""
     priorityProfile: Required["BulkCreateCustomPriorityProfile"]
     """Configuration Options for Regular or Spot instances in BulkCreateCustom. Required."""
     vmSizesProfile: list["BulkCreateCustomVmSizeProfile"]
@@ -556,6 +584,37 @@ class BulkCreateCustomProperties(TypedDict, total=False):
     """Per-VM overrides and the shared name prefix, specified when the operation is created."""
     executionParameters: "ExecutionParameters"
     """Extra parameters that control how the request is executed, including the retry policy."""
+
+
+class BulkCreateCustomResource(TypedDict, total=False):
+    """A virtual machine resource resolved for a BulkCreateCustom operation.
+
+    :ivar virtualMachineInfo: Information about the resolved virtual machine.
+    :vartype virtualMachineInfo: "BulkCreateCustomVirtualMachineInfo"
+    """
+
+    virtualMachineInfo: "BulkCreateCustomVirtualMachineInfo"
+    """Information about the resolved virtual machine."""
+
+
+class BulkCreateCustomVirtualMachineInfo(TypedDict, total=False):
+    """Information about a virtual machine resolved for a BulkCreateCustom operation.
+
+    :ivar name: The resolved Azure virtual machine name.
+    :vartype name: str
+    :ivar vmSize: The virtual machine size selected for the virtual machine.
+    :vartype vmSize: str
+    :ivar zone: The subscription-relative logical availability zone selected for the virtual
+     machine.
+    :vartype zone: str
+    """
+
+    name: str
+    """The resolved Azure virtual machine name."""
+    vmSize: str
+    """The virtual machine size selected for the virtual machine."""
+    zone: str
+    """The subscription-relative logical availability zone selected for the virtual machine."""
 
 
 class BulkCreateCustomVmSizeProfile(TypedDict, total=False):
@@ -589,12 +648,12 @@ class BulkCreateCustomVmSizeProfile(TypedDict, total=False):
 class BulkCreateCustomZoneAllocationPolicy(TypedDict, total=False):
     """The zone allocation policy for distributing VMs across availability zones in BulkCreateCustom.
 
-    :ivar distribution_strategy: The distribution strategy for zone allocation. Defaults to
+    :ivar distributionStrategy: The distribution strategy for zone allocation. Defaults to
      BestEffortBalanced. Known values are: "BestEffortSingleZone", "Prioritized", and
      "BestEffortBalanced".
-    :vartype distribution_strategy: Union[str, "BulkCreateCustomDistributionStrategy"]
-    :ivar zone_preferences: The zone preferences for allocation priority.
-    :vartype zone_preferences: list["ZonePreference"]
+    :vartype distributionStrategy: Union[str, "BulkCreateCustomDistributionStrategy"]
+    :ivar zonePreferences: The zone preferences for allocation priority.
+    :vartype zonePreferences: list["ZonePreference"]
     """
 
     distributionStrategy: Union[str, "BulkCreateCustomDistributionStrategy"]
@@ -607,9 +666,9 @@ class BulkCreateCustomZoneAllocationPolicy(TypedDict, total=False):
 class CancelOccurrenceRequest(TypedDict, total=False):
     """The request to cancel an occurrence.
 
-    :ivar resource_ids: The resources the cancellation should act on. If no resource is passed in
+    :ivar resourceIds: The resources the cancellation should act on. If no resource is passed in
      the list, Scheduled Action will cancel the occurrence for all resources. Required.
-    :vartype resource_ids: list[str]
+    :vartype resourceIds: list[str]
     """
 
     resourceIds: Required[list[str]]
@@ -620,22 +679,46 @@ class CancelOccurrenceRequest(TypedDict, total=False):
 class CancelOperationsContent(TypedDict, total=False):
     """This is the request to cancel running operations in scheduled actions using the operation ids.
 
-    :ivar operation_ids: The list of operation ids to cancel operations on. Required.
-    :vartype operation_ids: list[str]
+    :ivar operationIds: The list of operation ids to cancel operations on. Required.
+    :vartype operationIds: list[str]
     """
 
     operationIds: Required[list[str]]
     """The list of operation ids to cancel operations on. Required."""
 
 
+class CapacityRecommendationParameters(TypedDict, total=False):
+    """The parameters used to request capacity/placement recommendations for a start operation.
+    Placement recommendations are only computed if the VM fails to start due to an allocation
+    failure.
+
+    :ivar desiredLocations: The list of desired Azure regions to be considered for the capacity
+     recommendation.
+    :vartype desiredLocations: list[str]
+    :ivar desiredSizes: The list of desired VM sizes (SKUs) to be considered for the capacity
+     recommendation.
+    :vartype desiredSizes: list[str]
+    :ivar availabilityZones: Whether the capacity recommendation should be computed per
+     availability zone.
+    :vartype availabilityZones: bool
+    """
+
+    desiredLocations: list[str]
+    """The list of desired Azure regions to be considered for the capacity recommendation."""
+    desiredSizes: list[str]
+    """The list of desired VM sizes (SKUs) to be considered for the capacity recommendation."""
+    availabilityZones: bool
+    """Whether the capacity recommendation should be computed per availability zone."""
+
+
 class CapacityReservationProfile(TypedDict, total=False):
     """The parameters of a capacity reservation Profile.
 
-    :ivar capacity_reservation_group: Specifies the capacity reservation group resource id that
+    :ivar capacityReservationGroup: Specifies the capacity reservation group resource id that
      should be used for allocating the virtual machine provided enough capacity has been reserved.
      Please refer to `https://aka.ms/CapacityReservation <https://aka.ms/CapacityReservation>`_ for
      more details.
-    :vartype capacity_reservation_group: "SubResource"
+    :vartype capacityReservationGroup: "SubResource"
     """
 
     capacityReservationGroup: "SubResource"
@@ -647,18 +730,18 @@ class CapacityReservationProfile(TypedDict, total=False):
 class ComputeProfile(TypedDict, total=False):
     """Compute Profile to configure the Virtual Machines.
 
-    :ivar virtual_machine_profile: Base Virtual Machine Profile Properties to be specified
-     according to
+    :ivar virtualMachineProfile: Base Virtual Machine Profile Properties to be specified according
+     to
      specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/{computeApiVersion}/virtualMachine.json#/definitions/VirtualMachineProperties.
      Required.
-    :vartype virtual_machine_profile: "BulkactionVMProperties"
+    :vartype virtualMachineProfile: "BulkactionVMProperties"
     :ivar extensions: Virtual Machine Extensions Array to be specified according to
      specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/{computeApiVersion}/virtualMachine.json#/definitions/VirtualMachineExtension.
     :vartype extensions: list["BulkactionVMExtension"]
-    :ivar compute_api_version: Specifies the Microsoft.Compute API version to use when creating
+    :ivar computeApiVersion: Specifies the Microsoft.Compute API version to use when creating
      underlying Virtual Machines. The default value will be the latest supported computeApiVersion
      by LaunchBulkInstancesOperation.
-    :vartype compute_api_version: str
+    :vartype computeApiVersion: str
     """
 
     virtualMachineProfile: Required["BulkactionVMProperties"]
@@ -693,34 +776,34 @@ class DataDisk(TypedDict, total=False):
      ReadWrite. The defaulting behavior is: None for Standard storage. ReadOnly for Premium storage.
      Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: Union[str, "CachingTypes"]
-    :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
-     disabled on the disk.
-    :vartype write_accelerator_enabled: bool
-    :ivar create_option: Specifies how the virtual machine disk should be created. Possible values
+    :ivar writeAcceleratorEnabled: Specifies whether writeAccelerator should be enabled or disabled
+     on the disk.
+    :vartype writeAcceleratorEnabled: bool
+    :ivar createOption: Specifies how the virtual machine disk should be created. Possible values
      are Attach, FromImage, Empty, Copy, Restore. Required. Known values are: "FromImage", "Empty",
      "Attach", "Copy", and "Restore".
-    :vartype create_option: Union[str, "DiskCreateOptionTypes"]
-    :ivar disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
+    :vartype createOption: Union[str, "DiskCreateOptionTypes"]
+    :ivar diskSizeGB: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB' is
      the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
-    :vartype disk_size_gb: int
-    :ivar managed_disk: The managed disk parameters.
-    :vartype managed_disk: "ManagedDiskParametersContent"
-    :ivar source_resource: The source resource identifier. It can be a snapshot, or disk restore
+    :vartype diskSizeGB: int
+    :ivar managedDisk: The managed disk parameters.
+    :vartype managedDisk: "ManagedDiskParametersContent"
+    :ivar sourceResource: The source resource identifier. It can be a snapshot, or disk restore
      point from which to create a disk.
-    :vartype source_resource: "ApiEntityReference"
-    :ivar to_be_detached: Specifies whether the data disk is in process of detachment from the
+    :vartype sourceResource: "ApiEntityReference"
+    :ivar toBeDetached: Specifies whether the data disk is in process of detachment from the
      VirtualMachine/VirtualMachineScaleset.
-    :vartype to_be_detached: bool
-    :ivar detach_option: Specifies the detach behavior to be used while detaching a disk or which
-     is already in the process of detachment from the virtual machine. Supported values:
-     ForceDetach. This feature is still in preview. To force-detach a data disk update toBeDetached
-     to 'true' along with setting detachOption: 'ForceDetach'. "ForceDetach"
-    :vartype detach_option: Union[str, "DiskDetachOptionTypes"]
-    :ivar delete_option: Specifies whether data disk should be deleted or detached upon VM
-     deletion. Possible values are: Delete, Detach. The default value is set to Detach. Known values
-     are: "Delete" and "Detach".
-    :vartype delete_option: Union[str, "DiskDeleteOptionTypes"]
+    :vartype toBeDetached: bool
+    :ivar detachOption: Specifies the detach behavior to be used while detaching a disk or which is
+     already in the process of detachment from the virtual machine. Supported values: ForceDetach.
+     This feature is still in preview. To force-detach a data disk update toBeDetached to 'true'
+     along with setting detachOption: 'ForceDetach'. "ForceDetach"
+    :vartype detachOption: Union[str, "DiskDetachOptionTypes"]
+    :ivar deleteOption: Specifies whether data disk should be deleted or detached upon VM deletion.
+     Possible values are: Delete, Detach. The default value is set to Detach. Known values are:
+     "Delete" and "Detach".
+    :vartype deleteOption: Union[str, "DiskDeleteOptionTypes"]
     """
 
     lun: Required[int]
@@ -773,9 +856,9 @@ class DelayRequest(TypedDict, total=False):
 
     :ivar delay: The exact time to delay the operations to. Required.
     :vartype delay: str
-    :ivar resource_ids: The resources that should be delayed. If empty, the delay will apply to the
+    :ivar resourceIds: The resources that should be delayed. If empty, the delay will apply to the
      all resources in the occurrence. Required.
-    :vartype resource_ids: list[str]
+    :vartype resourceIds: list[str]
     """
 
     delay: Required[str]
@@ -788,12 +871,12 @@ class DelayRequest(TypedDict, total=False):
 class DiagnosticsProfile(TypedDict, total=False):
     """Specifies the boot diagnostic settings state. Minimum compute api-version: 2015-06-15.
 
-    :ivar boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
-     Console Output and Screenshot to diagnose VM status. **NOTE**: If storageUri is being specified
-     then ensure that the storage account is in the same region and subscription as the VM. You can
+    :ivar bootDiagnostics: Boot Diagnostics is a debugging feature which allows you to view Console
+     Output and Screenshot to diagnose VM status. **NOTE**: If storageUri is being specified then
+     ensure that the storage account is in the same region and subscription as the VM. You can
      easily view the output of your console log. Azure also enables you to see a screenshot of the
      VM from the hypervisor.
-    :vartype boot_diagnostics: "BootDiagnostics"
+    :vartype bootDiagnostics: "BootDiagnostics"
     """
 
     bootDiagnostics: "BootDiagnostics"
@@ -850,11 +933,11 @@ class DiskEncryptionSetParametersContent(SubResource):
 class DiskEncryptionSettings(TypedDict, total=False):
     """Describes a Encryption Settings for a Disk.
 
-    :ivar disk_encryption_key: Specifies the location of the disk encryption key, which is a Key
+    :ivar diskEncryptionKey: Specifies the location of the disk encryption key, which is a Key
      Vault Secret.
-    :vartype disk_encryption_key: "KeyVaultSecretReference"
-    :ivar key_encryption_key: Specifies the location of the key encryption key in Key Vault.
-    :vartype key_encryption_key: "KeyVaultKeyReference"
+    :vartype diskEncryptionKey: "KeyVaultSecretReference"
+    :ivar keyEncryptionKey: Specifies the location of the key encryption key in Key Vault.
+    :vartype keyEncryptionKey: "KeyVaultKeyReference"
     :ivar enabled: Specifies whether disk encryption should be enabled on the virtual machine.
     :vartype enabled: bool
     """
@@ -870,9 +953,9 @@ class DiskEncryptionSettings(TypedDict, total=False):
 class EncryptionIdentity(TypedDict, total=False):
     """Specifies the Managed Identity used by ADE to get access token for keyvault operations.
 
-    :ivar user_assigned_identity_resource_id: Specifies ARM Resource ID of one of the user
-     identities associated with the VM.
-    :vartype user_assigned_identity_resource_id: str
+    :ivar userAssignedIdentityResourceId: Specifies ARM Resource ID of one of the user identities
+     associated with the VM.
+    :vartype userAssignedIdentityResourceId: str
     """
 
     userAssignedIdentityResourceId: str
@@ -885,9 +968,9 @@ class EventGridAndResourceGraph(TypedDict, total=False):
     :ivar enable: Specifies if event grid and resource graph is enabled for Scheduled event related
      configurations.
     :vartype enable: bool
-    :ivar scheduled_events_api_version: Specifies the api-version to determine which Scheduled
-     Events configuration schema version will be delivered.
-    :vartype scheduled_events_api_version: str
+    :ivar scheduledEventsApiVersion: Specifies the api-version to determine which Scheduled Events
+     configuration schema version will be delivered.
+    :vartype scheduledEventsApiVersion: str
     """
 
     enable: bool
@@ -901,10 +984,10 @@ class EventGridAndResourceGraph(TypedDict, total=False):
 class ExecuteCreateContent(TypedDict, total=False):
     """The ExecuteCreateRequest request for create operations.
 
-    :ivar resource_config_parameters: resource creation payload. Required.
-    :vartype resource_config_parameters: "ResourceProvisionPayload"
-    :ivar execution_parameters: The execution parameters for the request. Required.
-    :vartype execution_parameters: "ExecutionParameters"
+    :ivar resourceConfigParameters: resource creation payload. Required.
+    :vartype resourceConfigParameters: "ResourceProvisionPayload"
+    :ivar executionParameters: The execution parameters for the request. Required.
+    :vartype executionParameters: "ExecutionParameters"
     """
 
     resourceConfigParameters: Required["ResourceProvisionPayload"]
@@ -916,13 +999,13 @@ class ExecuteCreateContent(TypedDict, total=False):
 class ExecuteDeallocateContent(TypedDict, total=False):
     """The ExecuteDeallocateRequest request for executeDeallocate operations.
 
-    :ivar execution_parameters: The execution parameters for the request. Required.
-    :vartype execution_parameters: "ExecutionParameters"
+    :ivar executionParameters: The execution parameters for the request. Required.
+    :vartype executionParameters: "ExecutionParameters"
     :ivar resources: The resources for the request.
     :vartype resources: "Resources"
-    :ivar resources_with_context: The resources for the request with resource context information.
+    :ivar resourcesWithContext: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resources_with_context: "ResourcesWithContext"
+    :vartype resourcesWithContext: "ResourcesWithContext"
     """
 
     executionParameters: Required["ExecutionParameters"]
@@ -937,15 +1020,15 @@ class ExecuteDeallocateContent(TypedDict, total=False):
 class ExecuteDeleteContent(TypedDict, total=False):
     """The ExecuteDeleteRequest for delete VM operation.
 
-    :ivar execution_parameters: The execution parameters for the request. Required.
-    :vartype execution_parameters: "ExecutionParameters"
+    :ivar executionParameters: The execution parameters for the request. Required.
+    :vartype executionParameters: "ExecutionParameters"
     :ivar resources: The resources for the request.
     :vartype resources: "Resources"
-    :ivar resources_with_context: The resources for the request with resource context information.
+    :ivar resourcesWithContext: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resources_with_context: "ResourcesWithContext"
-    :ivar force_deletion: Forced delete resource item.
-    :vartype force_deletion: bool
+    :vartype resourcesWithContext: "ResourcesWithContext"
+    :ivar forceDeletion: Forced delete resource item.
+    :vartype forceDeletion: bool
     """
 
     executionParameters: Required["ExecutionParameters"]
@@ -962,13 +1045,13 @@ class ExecuteDeleteContent(TypedDict, total=False):
 class ExecuteHibernateContent(TypedDict, total=False):
     """The ExecuteHibernateRequest request for executeHibernate operations.
 
-    :ivar execution_parameters: The execution parameters for the request. Required.
-    :vartype execution_parameters: "ExecutionParameters"
+    :ivar executionParameters: The execution parameters for the request. Required.
+    :vartype executionParameters: "ExecutionParameters"
     :ivar resources: The resources for the request.
     :vartype resources: "Resources"
-    :ivar resources_with_context: The resources for the request with resource context information.
+    :ivar resourcesWithContext: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resources_with_context: "ResourcesWithContext"
+    :vartype resourcesWithContext: "ResourcesWithContext"
     """
 
     executionParameters: Required["ExecutionParameters"]
@@ -983,15 +1066,15 @@ class ExecuteHibernateContent(TypedDict, total=False):
 class ExecuteReimageRequest(TypedDict, total=False):
     """The ExecuteReimageRequest request for reimage operations.
 
-    :ivar execution_parameters: The execution parameters for the request. Required.
-    :vartype execution_parameters: "ExecutionParameters"
+    :ivar executionParameters: The execution parameters for the request. Required.
+    :vartype executionParameters: "ExecutionParameters"
     :ivar resources: The resources for the request.
     :vartype resources: "Resources"
-    :ivar resources_with_context: The resources for the request with resource context information.
+    :ivar resourcesWithContext: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resources_with_context: "ResourcesWithContext"
-    :ivar reimage_parameters: Reimage parameters including base profile and per-resource overrides.
-    :vartype reimage_parameters: "ReimagePayload"
+    :vartype resourcesWithContext: "ResourcesWithContext"
+    :ivar reimageParameters: Reimage parameters including base profile and per-resource overrides.
+    :vartype reimageParameters: "ReimagePayload"
     """
 
     executionParameters: Required["ExecutionParameters"]
@@ -1008,13 +1091,13 @@ class ExecuteReimageRequest(TypedDict, total=False):
 class ExecuteStartContent(TypedDict, total=False):
     """The ExecuteStartRequest request for executeStart operations.
 
-    :ivar execution_parameters: The execution parameters for the request. Required.
-    :vartype execution_parameters: "ExecutionParameters"
+    :ivar executionParameters: The execution parameters for the request. Required.
+    :vartype executionParameters: "ExecutionParameters"
     :ivar resources: The resources for the request.
     :vartype resources: "Resources"
-    :ivar resources_with_context: The resources for the request with resource context information.
+    :ivar resourcesWithContext: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resources_with_context: "ResourcesWithContext"
+    :vartype resourcesWithContext: "ResourcesWithContext"
     """
 
     executionParameters: Required["ExecutionParameters"]
@@ -1029,10 +1112,10 @@ class ExecuteStartContent(TypedDict, total=False):
 class ExecuteVdiCreateRequest(TypedDict, total=False):
     """The VdiCreateRequest request for create operations.
 
-    :ivar resource_config_parameters: resource creation payload. Required.
-    :vartype resource_config_parameters: "ResourceProvisionVdiPayload"
-    :ivar execution_parameters: The execution parameters for the request. Required.
-    :vartype execution_parameters: "ExecutionParameters"
+    :ivar resourceConfigParameters: resource creation payload. Required.
+    :vartype resourceConfigParameters: "ResourceProvisionVdiPayload"
+    :ivar executionParameters: The execution parameters for the request. Required.
+    :vartype executionParameters: "ExecutionParameters"
     """
 
     resourceConfigParameters: Required["ResourceProvisionVdiPayload"]
@@ -1044,15 +1127,20 @@ class ExecuteVdiCreateRequest(TypedDict, total=False):
 class ExecutionParameters(TypedDict, total=False):
     """Extra details needed to run the user's request.
 
-    :ivar optimization_preference: Details that could optimize the user's request. Known values
-     are: "Cost", "Availability", and "CostAvailabilityBalanced".
-    :vartype optimization_preference: Union[str, "OptimizationPreference"]
-    :ivar retry_policy: Retry policy the user can pass.
-    :vartype retry_policy: "RetryPolicy"
-    :ivar verify_vm_agent_health: When true on an executeStart request, run a post-Start VM agent
+    :ivar optimizationPreference: Details that could optimize the user's request. Known values are:
+     "Cost", "Availability", and "CostAvailabilityBalanced".
+    :vartype optimizationPreference: Union[str, "OptimizationPreference"]
+    :ivar retryPolicy: Retry policy the user can pass.
+    :vartype retryPolicy: "RetryPolicy"
+    :ivar verifyVmAgentHealth: When true on an executeStart request, run a post-Start VM agent
      health check and engage the fallback chain if the guest agent does not report Ready. Ignored
      for non-Start operations.
-    :vartype verify_vm_agent_health: bool
+    :vartype verifyVmAgentHealth: bool
+    :ivar capacityRecommendationParameters: Capacity recommendation parameters for the request.
+     When provided on an executeStart request, the service computes placement recommendations only
+     if the VM fails to start due to an allocation failure; the recommendations for the desired
+     sizes and locations are then surfaced in the operation's capacityRecommendation response.
+    :vartype capacityRecommendationParameters: "CapacityRecommendationParameters"
     """
 
     optimizationPreference: Union[str, "OptimizationPreference"]
@@ -1063,6 +1151,11 @@ class ExecutionParameters(TypedDict, total=False):
     verifyVmAgentHealth: bool
     """When true on an executeStart request, run a post-Start VM agent health check and engage the
      fallback chain if the guest agent does not report Ready. Ignored for non-Start operations."""
+    capacityRecommendationParameters: "CapacityRecommendationParameters"
+    """Capacity recommendation parameters for the request. When provided on an executeStart request,
+     the service computes placement recommendations only if the VM fails to start due to an
+     allocation failure; the recommendations for the desired sizes and locations are then surfaced
+     in the operation's capacityRecommendation response."""
 
 
 class Resource(TypedDict, total=False):
@@ -1076,9 +1169,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -1096,20 +1189,20 @@ class Resource(TypedDict, total=False):
 class FlexProperties(TypedDict, total=False):
     """The flex properties for flexible VM creation.
 
-    :ivar vm_size_profiles: The list of VM size profiles to use for flex creation. Required.
-    :vartype vm_size_profiles: list["VmSizeProfile"]
-    :ivar os_type: The operating system type for the VMs. Required. Known values are: "Windows" and
+    :ivar vmSizeProfiles: The list of VM size profiles to use for flex creation. Required.
+    :vartype vmSizeProfiles: list["VmSizeProfile"]
+    :ivar osType: The operating system type for the VMs. Required. Known values are: "Windows" and
      "Linux".
-    :vartype os_type: Union[str, "OsType"]
-    :ivar priority_profile: The priority profile for VM allocation. Required.
-    :vartype priority_profile: "PriorityProfile"
-    :ivar zone_allocation_policy: The zone allocation policy for distributing VMs across
-     availability zones.
-    :vartype zone_allocation_policy: "ZoneAllocationPolicy"
-    :ivar min_capacity: The minimum number of VMs that must be successfully created for the request
+    :vartype osType: Union[str, "OsType"]
+    :ivar priorityProfile: The priority profile for VM allocation. Required.
+    :vartype priorityProfile: "PriorityProfile"
+    :ivar zoneAllocationPolicy: The zone allocation policy for distributing VMs across availability
+     zones.
+    :vartype zoneAllocationPolicy: "ZoneAllocationPolicy"
+    :ivar minCapacity: The minimum number of VMs that must be successfully created for the request
      to proceed. If fewer than this number can be allocated, the entire request is automatically
      rejected.
-    :vartype min_capacity: int
+    :vartype minCapacity: int
     """
 
     vmSizeProfiles: Required[list["VmSizeProfile"]]
@@ -1128,8 +1221,8 @@ class FlexProperties(TypedDict, total=False):
 class GetOperationStatusContent(TypedDict, total=False):
     """This is the request to get operation status using operationids.
 
-    :ivar operation_ids: The list of operation ids to get the status of. Required.
-    :vartype operation_ids: list[str]
+    :ivar operationIds: The list of operation ids to get the status of. Required.
+    :vartype operationIds: list[str]
     """
 
     operationIds: Required[list[str]]
@@ -1139,7 +1232,7 @@ class GetOperationStatusContent(TypedDict, total=False):
 class HardwareProfile(TypedDict, total=False):
     """Specifies the hardware profile for the virtual machine.
 
-    :ivar vm_size: Specifies the size of the virtual machine. The enum data type is currently
+    :ivar vmSize: Specifies the size of the virtual machine. The enum data type is currently
      deprecated and will be removed by December 23rd 2023. The recommended way to get the list of
      available sizes is using these APIs: `List all available virtual machine sizes in an
      availability set
@@ -1151,12 +1244,12 @@ class HardwareProfile(TypedDict, total=False):
      information about virtual machine sizes, see `Sizes for virtual machines
      <https://docs.microsoft.com/azure/virtual-machines/sizes>`_. The available VM sizes depend on
      region and availability set.
-    :vartype vm_size: str
-    :ivar vm_size_properties: Specifies the properties for customizing the size of the virtual
+    :vartype vmSize: str
+    :ivar vmSizeProperties: Specifies the properties for customizing the size of the virtual
      machine. Minimum api-version: 2021-07-01. This feature is still in preview mode and is not
      supported for VirtualMachineScaleSet. Please follow the instructions in `VM Customization
      <https://aka.ms/vmcustomization>`_ for more details.
-    :vartype vm_size_properties: "VmSizeProperties"
+    :vartype vmSizeProperties: "VmSizeProperties"
     """
 
     vmSize: str
@@ -1187,10 +1280,10 @@ class HostEndpointSettings(TypedDict, total=False):
      access control and it is the recommended mode of operation. Known values are: "Audit",
      "Enforce", and "Disabled".
     :vartype mode: Union[str, "Modes"]
-    :ivar in_vm_access_control_profile_reference_id: Specifies the InVMAccessControlProfileVersion
+    :ivar inVMAccessControlProfileReferenceId: Specifies the InVMAccessControlProfileVersion
      resource id in the format of
      /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.
-    :vartype in_vm_access_control_profile_reference_id: str
+    :vartype inVMAccessControlProfileReferenceId: str
     """
 
     mode: Union[str, "Modes"]
@@ -1230,12 +1323,12 @@ class ImageReference(SubResource):
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'
      in the 'id' field without version input.
     :vartype version: str
-    :ivar shared_gallery_image_id: Specified the shared gallery image unique id for vm deployment.
+    :ivar sharedGalleryImageId: Specified the shared gallery image unique id for vm deployment.
      This can be fetched from shared gallery image GET call.
-    :vartype shared_gallery_image_id: str
-    :ivar community_gallery_image_id: Specified the community gallery image unique id for vm
+    :vartype sharedGalleryImageId: str
+    :ivar communityGalleryImageId: Specified the community gallery image unique id for vm
      deployment. This can be fetched from community gallery image GET call.
-    :vartype community_gallery_image_id: str
+    :vartype communityGalleryImageId: str
     """
 
     publisher: str
@@ -1266,10 +1359,10 @@ class ImageReference(SubResource):
 class KeyVaultKeyReference(TypedDict, total=False):
     """Describes a reference to Key Vault Key.
 
-    :ivar key_url: The URL referencing a key encryption key in Key Vault. Required.
-    :vartype key_url: str
-    :ivar source_vault: The relative URL of the Key Vault containing the key. Required.
-    :vartype source_vault: "SubResource"
+    :ivar keyUrl: The URL referencing a key encryption key in Key Vault. Required.
+    :vartype keyUrl: str
+    :ivar sourceVault: The relative URL of the Key Vault containing the key. Required.
+    :vartype sourceVault: "SubResource"
     """
 
     keyUrl: Required[str]
@@ -1281,10 +1374,10 @@ class KeyVaultKeyReference(TypedDict, total=False):
 class KeyVaultSecretReference(TypedDict, total=False):
     """Describes a reference to Key Vault Secret.
 
-    :ivar secret_url: The URL referencing a secret in a Key Vault. Required.
-    :vartype secret_url: str
-    :ivar source_vault: The relative URL of the Key Vault containing the secret. Required.
-    :vartype source_vault: "SubResource"
+    :ivar secretUrl: The URL referencing a secret in a Key Vault. Required.
+    :vartype secretUrl: str
+    :ivar sourceVault: The relative URL of the Key Vault containing the secret. Required.
+    :vartype sourceVault: "SubResource"
     """
 
     secretUrl: Required[str]
@@ -1296,29 +1389,29 @@ class KeyVaultSecretReference(TypedDict, total=False):
 class LaunchBulkInstancesOperationProperties(TypedDict, total=False):
     """Details of the LaunchBulkInstancesOperation.
 
-    :ivar created_time: The UTC time the LaunchBulkInstancesOperation resource was created.
-    :vartype created_time: str
-    :ivar provisioning_state: The status of the last operation. Known values are: "Creating",
+    :ivar createdTime: The UTC time the LaunchBulkInstancesOperation resource was created.
+    :vartype createdTime: str
+    :ivar provisioningState: The status of the last operation. Known values are: "Creating",
      "Succeeded", "Failed", "Deleting", and "Canceled".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar capacity: Total capacity to achieve. It can be in terms of VMs or vCPUs. Required.
     :vartype capacity: int
-    :ivar capacity_type: Specifies capacity type for launching instances. It can be in terms of VMs
+    :ivar capacityType: Specifies capacity type for launching instances. It can be in terms of VMs
      or vCPUs. Known values are: "VM" and "VCpu".
-    :vartype capacity_type: Union[str, "CapacityType"]
-    :ivar priority_profile: Configuration Options for Regular or Spot instances in
+    :vartype capacityType: Union[str, "CapacityType"]
+    :ivar priorityProfile: Configuration Options for Regular or Spot instances in
      LaunchBulkInstancesOperation. Required.
-    :vartype priority_profile: "PriorityProfile"
-    :ivar vm_sizes_profile: List of VM sizes supported for LaunchBulkInstancesOperation.
-    :vartype vm_sizes_profile: list["VmSizeProfile"]
-    :ivar vm_attributes: Attributes to launch instances.
-    :vartype vm_attributes: "VMAttributes"
-    :ivar compute_profile: Compute Profile to configure the Virtual Machines. Required.
-    :vartype compute_profile: "ComputeProfile"
-    :ivar zone_allocation_policy: Zone Allocation Policy for launching instances.
-    :vartype zone_allocation_policy: "ZoneAllocationPolicy"
-    :ivar retry_policy: Retry policy the user can pass.
-    :vartype retry_policy: "RetryPolicy"
+    :vartype priorityProfile: "PriorityProfile"
+    :ivar vmSizesProfile: List of VM sizes supported for LaunchBulkInstancesOperation.
+    :vartype vmSizesProfile: list["VmSizeProfile"]
+    :ivar vmAttributes: Attributes to launch instances.
+    :vartype vmAttributes: "VMAttributes"
+    :ivar computeProfile: Compute Profile to configure the Virtual Machines. Required.
+    :vartype computeProfile: "ComputeProfile"
+    :ivar zoneAllocationPolicy: Zone Allocation Policy for launching instances.
+    :vartype zoneAllocationPolicy: "ZoneAllocationPolicy"
+    :ivar retryPolicy: Retry policy the user can pass.
+    :vartype retryPolicy: "RetryPolicy"
     """
 
     createdTime: str
@@ -1350,22 +1443,22 @@ class LinuxConfiguration(TypedDict, total=False):
     Linux distributions, see `Linux on Azure-Endorsed Distributions
     <https://docs.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
 
-    :ivar disable_password_authentication: Specifies whether password authentication should be
+    :ivar disablePasswordAuthentication: Specifies whether password authentication should be
      disabled.
-    :vartype disable_password_authentication: bool
+    :vartype disablePasswordAuthentication: bool
     :ivar ssh: Specifies the ssh key configuration for a Linux OS.
     :vartype ssh: "SshConfiguration"
-    :ivar provision_vm_agent: Indicates whether virtual machine agent should be provisioned on the
+    :ivar provisionVMAgent: Indicates whether virtual machine agent should be provisioned on the
      virtual machine. When this property is not specified in the request body, default behavior is
      to set it to true. This will ensure that VM Agent is installed on the VM so that extensions can
      be added to the VM later.
-    :vartype provision_vm_agent: bool
-    :ivar patch_settings: [Preview Feature] Specifies settings related to VM Guest Patching on
+    :vartype provisionVMAgent: bool
+    :ivar patchSettings: [Preview Feature] Specifies settings related to VM Guest Patching on
      Linux.
-    :vartype patch_settings: "LinuxPatchSettings"
-    :ivar enable_vm_agent_platform_updates: Indicates whether VMAgent Platform Updates is enabled
-     for the Linux virtual machine. Default value is false.
-    :vartype enable_vm_agent_platform_updates: bool
+    :vartype patchSettings: "LinuxPatchSettings"
+    :ivar enableVMAgentPlatformUpdates: Indicates whether VMAgent Platform Updates is enabled for
+     the Linux virtual machine. Default value is false.
+    :vartype enableVMAgentPlatformUpdates: bool
     """
 
     disablePasswordAuthentication: bool
@@ -1386,22 +1479,22 @@ class LinuxConfiguration(TypedDict, total=False):
 class LinuxPatchSettings(TypedDict, total=False):
     """Specifies settings related to VM Guest Patching on Linux.
 
-    :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
+    :ivar patchMode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
      machines associated to virtual machine scale set with OrchestrationMode as Flexible.<br /><br
      /> Possible values are:<br /><br /> **ImageDefault** - The virtual machine's default patching
      configuration is used. <br /><br /> **AutomaticByPlatform** - The virtual machine will be
      automatically updated by the platform. The property provisionVMAgent must be true. Known values
      are: "ImageDefault" and "AutomaticByPlatform".
-    :vartype patch_mode: Union[str, "LinuxVMGuestPatchMode"]
-    :ivar assessment_mode: Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
+    :vartype patchMode: Union[str, "LinuxVMGuestPatchMode"]
+    :ivar assessmentMode: Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
      machine.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - You control the timing
      of patch assessments on a virtual machine. <br /><br /> **AutomaticByPlatform** - The platform
      will trigger periodic patch assessments. The property provisionVMAgent must be true. Known
      values are: "ImageDefault" and "AutomaticByPlatform".
-    :vartype assessment_mode: Union[str, "LinuxPatchAssessmentMode"]
-    :ivar automatic_by_platform_settings: Specifies additional settings for patch mode
+    :vartype assessmentMode: Union[str, "LinuxPatchAssessmentMode"]
+    :ivar automaticByPlatformSettings: Specifies additional settings for patch mode
      AutomaticByPlatform in VM Guest Patching on Linux.
-    :vartype automatic_by_platform_settings: "LinuxVMGuestPatchAutomaticByPlatformSettings"
+    :vartype automaticByPlatformSettings: "LinuxVMGuestPatchAutomaticByPlatformSettings"
     """
 
     patchMode: Union[str, "LinuxVMGuestPatchMode"]
@@ -1425,12 +1518,12 @@ class LinuxVMGuestPatchAutomaticByPlatformSettings(TypedDict, total=False):  # p
     """Specifies additional settings to be applied when patch mode AutomaticByPlatform is selected in
     Linux patch settings.
 
-    :ivar reboot_setting: Specifies the reboot setting for all AutomaticByPlatform patch
+    :ivar rebootSetting: Specifies the reboot setting for all AutomaticByPlatform patch
      installation operations. Known values are: "Unknown", "IfRequired", "Never", and "Always".
-    :vartype reboot_setting: Union[str, "LinuxVMGuestPatchAutomaticByPlatformRebootSetting"]
-    :ivar bypass_platform_safety_checks_on_user_schedule: Enables customer to schedule patching
-     without accidental upgrades.
-    :vartype bypass_platform_safety_checks_on_user_schedule: bool
+    :vartype rebootSetting: Union[str, "LinuxVMGuestPatchAutomaticByPlatformRebootSetting"]
+    :ivar bypassPlatformSafetyChecksOnUserSchedule: Enables customer to schedule patching without
+     accidental upgrades.
+    :vartype bypassPlatformSafetyChecksOnUserSchedule: bool
     """
 
     rebootSetting: Union[str, "LinuxVMGuestPatchAutomaticByPlatformRebootSetting"]
@@ -1451,9 +1544,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -1468,9 +1561,9 @@ class LocationBasedBulkCreateCustom(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "BulkCreateCustomProperties"
     :ivar zones: Zones in which the BulkCreateCustom is available.
@@ -1507,9 +1600,9 @@ class LocationBasedLaunchBulkInstancesOperation(ProxyResource):  # pylint: disab
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "LaunchBulkInstancesOperationProperties"
     :ivar zones: Zones in which the LaunchBulkInstancesOperation is available.
@@ -1539,16 +1632,16 @@ class ManagedDiskParametersContent(SubResource):
 
     :ivar id: The ID of the sub-resource.
     :vartype id: str
-    :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
+    :ivar storageAccountType: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
      are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
      "StandardSSD_ZRS", and "PremiumV2_LRS".
-    :vartype storage_account_type: Union[str, "StorageAccountTypes"]
-    :ivar disk_encryption_set: Specifies the customer managed disk encryption set resource id for
-     the managed disk.
-    :vartype disk_encryption_set: "DiskEncryptionSetParametersContent"
-    :ivar security_profile: Specifies the security profile for the managed disk.
-    :vartype security_profile: "VMDiskSecurityProfile"
+    :vartype storageAccountType: Union[str, "StorageAccountTypes"]
+    :ivar diskEncryptionSet: Specifies the customer managed disk encryption set resource id for the
+     managed disk.
+    :vartype diskEncryptionSet: "DiskEncryptionSetParametersContent"
+    :ivar securityProfile: Specifies the security profile for the managed disk.
+    :vartype securityProfile: "VMDiskSecurityProfile"
     """
 
     storageAccountType: Union[str, "StorageAccountTypes"]
@@ -1565,17 +1658,17 @@ class ManagedDiskParametersContent(SubResource):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -1610,9 +1703,9 @@ class NetworkInterfaceReferenceProperties(TypedDict, total=False):
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
      than 1 network interface.
     :vartype primary: bool
-    :ivar delete_option: Specify what happens to the network interface when the VM is deleted.
-     Known values are: "Delete" and "Detach".
-    :vartype delete_option: Union[str, "DeleteOptions"]
+    :ivar deleteOption: Specify what happens to the network interface when the VM is deleted. Known
+     values are: "Delete" and "Detach".
+    :vartype deleteOption: Union[str, "DeleteOptions"]
     """
 
     primary: bool
@@ -1626,16 +1719,16 @@ class NetworkInterfaceReferenceProperties(TypedDict, total=False):
 class NetworkProfile(TypedDict, total=False):
     """Specifies the network interfaces or the networking configuration of the virtual machine.
 
-    :ivar network_interfaces: Specifies the list of resource Ids for the network interfaces
+    :ivar networkInterfaces: Specifies the list of resource Ids for the network interfaces
      associated with the virtual machine.
-    :vartype network_interfaces: list["NetworkInterfaceReference"]
-    :ivar network_api_version: specifies the Microsoft.Network API version used when creating
+    :vartype networkInterfaces: list["NetworkInterfaceReference"]
+    :ivar networkApiVersion: specifies the Microsoft.Network API version used when creating
      networking resources in the Network Interface Configurations. Known values are: "2020-11-01"
      and "2022-11-01".
-    :vartype network_api_version: Union[str, "NetworkApiVersion"]
-    :ivar network_interface_configurations: Specifies the networking configurations that will be
-     used to create the virtual machine networking resources.
-    :vartype network_interface_configurations: list["VirtualMachineNetworkInterfaceConfiguration"]
+    :vartype networkApiVersion: Union[str, "NetworkApiVersion"]
+    :ivar networkInterfaceConfigurations: Specifies the networking configurations that will be used
+     to create the virtual machine networking resources.
+    :vartype networkInterfaceConfigurations: list["VirtualMachineNetworkInterfaceConfiguration"]
     """
 
     networkInterfaces: list["NetworkInterfaceReference"]
@@ -1678,13 +1771,13 @@ class OSDisk(TypedDict, total=False):
     information about disks, see `About disks and VHDs for Azure virtual machines
     <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
 
-    :ivar os_type: This property allows you to specify the type of the OS that is included in the
+    :ivar osType: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. Possible values are: Windows,
      Linux. Known values are: "Windows" and "Linux".
-    :vartype os_type: Union[str, "OperatingSystemTypes"]
-    :ivar encryption_settings: Specifies the encryption settings for the OS Disk. Minimum compute
+    :vartype osType: Union[str, "OperatingSystemTypes"]
+    :ivar encryptionSettings: Specifies the encryption settings for the OS Disk. Minimum compute
      api-version: 2015-06-15.
-    :vartype encryption_settings: "DiskEncryptionSettings"
+    :vartype encryptionSettings: "DiskEncryptionSettings"
     :ivar name: The disk name.
     :vartype name: str
     :ivar vhd: The virtual hard disk.
@@ -1697,29 +1790,29 @@ class OSDisk(TypedDict, total=False):
      ReadWrite. The defaulting behavior is: None for Standard storage. ReadOnly for Premium storage.
      Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: Union[str, "CachingTypes"]
-    :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
-     disabled on the disk.
-    :vartype write_accelerator_enabled: bool
-    :ivar diff_disk_settings: Specifies the ephemeral Disk Settings for the operating system disk
+    :ivar writeAcceleratorEnabled: Specifies whether writeAccelerator should be enabled or disabled
+     on the disk.
+    :vartype writeAcceleratorEnabled: bool
+    :ivar diffDiskSettings: Specifies the ephemeral Disk Settings for the operating system disk
      used by the virtual machine.
-    :vartype diff_disk_settings: "DiffDiskSettings"
-    :ivar create_option: Specifies how the virtual machine disk should be created. Possible values
+    :vartype diffDiskSettings: "DiffDiskSettings"
+    :ivar createOption: Specifies how the virtual machine disk should be created. Possible values
      are Attach, FromImage. If you are using a platform image, you should also use the
      imageReference element described above. If you are using a marketplace image, you should also
      use the plan element previously described. Required. Known values are: "FromImage", "Empty",
      "Attach", "Copy", and "Restore".
-    :vartype create_option: Union[str, "DiskCreateOptionTypes"]
-    :ivar disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
+    :vartype createOption: Union[str, "DiskCreateOptionTypes"]
+    :ivar diskSizeGB: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB' is
      the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
-    :vartype disk_size_gb: int
-    :ivar managed_disk: The managed disk parameters.
-    :vartype managed_disk: "ManagedDiskParametersContent"
-    :ivar delete_option: Specifies whether OS Disk should be deleted or detached upon VM deletion.
+    :vartype diskSizeGB: int
+    :ivar managedDisk: The managed disk parameters.
+    :vartype managedDisk: "ManagedDiskParametersContent"
+    :ivar deleteOption: Specifies whether OS Disk should be deleted or detached upon VM deletion.
      Possible values are: Delete, Detach. The default value is set to Detach. For an ephemeral OS
      Disk, the default value is set to Delete. The user cannot change the delete option for an
      ephemeral OS Disk. Known values are: "Delete" and "Detach".
-    :vartype delete_option: Union[str, "DiskDeleteOptionTypes"]
+    :vartype deleteOption: Union[str, "DiskDeleteOptionTypes"]
     """
 
     osType: Union[str, "OperatingSystemTypes"]
@@ -1767,11 +1860,11 @@ class OSDisk(TypedDict, total=False):
 class OSImageNotificationProfile(TypedDict, total=False):
     """Profile for the OS Image Scheduled event.
 
-    :ivar not_before_timeout: Length of time a Virtual Machine being reimaged or having its OS
+    :ivar notBeforeTimeout: Length of time a Virtual Machine being reimaged or having its OS
      upgraded will have to potentially approve the OS Image Scheduled Event before the event is auto
      approved (timed out). The configuration is specified in ISO 8601 format, and the value must be
      15 minutes (PT15M).
-    :vartype not_before_timeout: str
+    :vartype notBeforeTimeout: str
     :ivar enable: Specifies whether the OS Image Scheduled event is enabled or disabled.
     :vartype enable: bool
     """
@@ -1788,13 +1881,13 @@ class OSProfile(TypedDict, total=False):
     """Specifies the operating system settings for the virtual machine. Some of the settings cannot be
     changed once VM is provisioned.
 
-    :ivar computer_name: Specifies the host OS name of the virtual machine. This name cannot be
+    :ivar computerName: Specifies the host OS name of the virtual machine. This name cannot be
      updated after the VM is created. **Max-length (Windows):** 15 characters. **Max-length
      (Linux):** 64 characters. For naming conventions and restrictions see `Azure infrastructure
      services implementation guidelines
      <https://docs.microsoft.com/azure/azure-resource-manager/management/resource-name-rules>`_.
-    :vartype computer_name: str
-    :ivar admin_username: Specifies the name of the administrator account. <br><br> This property
+    :vartype computerName: str
+    :ivar adminUsername: Specifies the name of the administrator account. <br><br> This property
      cannot be updated after the VM is created. <br><br> **Windows-only restriction:** Cannot end in
      "." <br><br> **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2",
      "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup",
@@ -1802,8 +1895,8 @@ class OSProfile(TypedDict, total=False):
      "support_388945a0", "sys", "test2", "test3", "user4", "user5". <br><br> **Minimum-length
      (Linux):** 1  character <br><br> **Max-length (Linux):** 64 characters <br><br> **Max-length
      (Windows):** 20 characters.
-    :vartype admin_username: str
-    :ivar admin_password: Specifies the password of the administrator account. <br><br>
+    :vartype adminUsername: str
+    :ivar adminPassword: Specifies the password of the administrator account. <br><br>
      **Minimum-length (Windows):** 8 characters <br><br> **Minimum-length (Linux):** 6 characters
      <br><br> **Max-length (Windows):** 123 characters <br><br> **Max-length (Linux):** 72
      characters <br><br> **Complexity requirements:** 3 out of 4 conditions below need to be
@@ -1816,23 +1909,22 @@ class OSProfile(TypedDict, total=False):
      resetting root password, see `Manage users, SSH, and check or repair disks on Azure Linux VMs
      using the VMAccess Extension
      <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_.
-    :vartype admin_password: str
-    :ivar custom_data: Specifies a base-64 encoded string of custom data. The base-64 encoded
-     string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum
-     length of the binary array is 65535 bytes. **Note: Do not pass any secrets or passwords in
-     customData property.** This property cannot be updated after the VM is created. The property
-     'customData' is passed to the VM to be saved as a file, for more information see `Custom Data
-     on Azure VMs <https://azure.microsoft.com/blog/custom-data-and-cloud-init-on-windows-azure/>`_.
-     For using cloud-init for your Linux VM, see `Using cloud-init to customize a Linux VM during
-     creation <https://docs.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_.
-    :vartype custom_data: str
-    :ivar windows_configuration: Specifies Windows operating system settings on the virtual
-     machine.
-    :vartype windows_configuration: "WindowsConfiguration"
-    :ivar linux_configuration: Specifies the Linux operating system settings on the virtual
-     machine. For a list of supported Linux distributions, see `Linux on Azure-Endorsed
-     Distributions <https://docs.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
-    :vartype linux_configuration: "LinuxConfiguration"
+    :vartype adminPassword: str
+    :ivar customData: Specifies a base-64 encoded string of custom data. The base-64 encoded string
+     is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum length
+     of the binary array is 65535 bytes. **Note: Do not pass any secrets or passwords in customData
+     property.** This property cannot be updated after the VM is created. The property 'customData'
+     is passed to the VM to be saved as a file, for more information see `Custom Data on Azure VMs
+     <https://azure.microsoft.com/blog/custom-data-and-cloud-init-on-windows-azure/>`_. For using
+     cloud-init for your Linux VM, see `Using cloud-init to customize a Linux VM during creation
+     <https://docs.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_.
+    :vartype customData: str
+    :ivar windowsConfiguration: Specifies Windows operating system settings on the virtual machine.
+    :vartype windowsConfiguration: "WindowsConfiguration"
+    :ivar linuxConfiguration: Specifies the Linux operating system settings on the virtual machine.
+     For a list of supported Linux distributions, see `Linux on Azure-Endorsed Distributions
+     <https://docs.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
+    :vartype linuxConfiguration: "LinuxConfiguration"
     :ivar secrets: Specifies set of certificates that should be installed onto the virtual machine.
      To install certificates on a virtual machine it is recommended to use the `Azure Key Vault
      virtual machine extension for Linux
@@ -1840,13 +1932,13 @@ class OSProfile(TypedDict, total=False):
      Key Vault virtual machine extension for Windows
      <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :vartype secrets: list["VaultSecretGroup"]
-    :ivar allow_extension_operations: Specifies whether extension operations should be allowed on
-     the virtual machine. This may only be set to False when no extensions are present on the
-     virtual machine.
-    :vartype allow_extension_operations: bool
-    :ivar require_guest_provision_signal: Optional property which must either be set to True or
+    :ivar allowExtensionOperations: Specifies whether extension operations should be allowed on the
+     virtual machine. This may only be set to False when no extensions are present on the virtual
+     machine.
+    :vartype allowExtensionOperations: bool
+    :ivar requireGuestProvisionSignal: Optional property which must either be set to True or
      omitted.
-    :vartype require_guest_provision_signal: bool
+    :vartype requireGuestProvisionSignal: bool
     """
 
     computerName: str
@@ -1910,7 +2002,7 @@ class OSProfile(TypedDict, total=False):
 class OSProfileProvisioningData(TypedDict, total=False):
     """Additional parameters for Reimaging Non-Ephemeral Virtual Machine.
 
-    :ivar admin_password: Specifies the password of the administrator account. <br><br>
+    :ivar adminPassword: Specifies the password of the administrator account. <br><br>
      **Minimum-length (Windows):** 8 characters <br><br> **Minimum-length (Linux):** 6 characters
      <br><br> **Max-length (Windows):** 123 characters <br><br> **Max-length (Linux):** 72
      characters <br><br> **Complexity requirements:** 3 out of 4 conditions below need to be
@@ -1923,16 +2015,16 @@ class OSProfileProvisioningData(TypedDict, total=False):
      resetting root password, see `Manage users, SSH, and check or repair disks on Azure Linux VMs
      using the VMAccess Extension
      <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_.
-    :vartype admin_password: str
-    :ivar custom_data: Specifies a base-64 encoded string of custom data. The base-64 encoded
-     string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum
-     length of the binary array is 65535 bytes. **Note: Do not pass any secrets or passwords in
-     customData property.** This property cannot be updated after the VM is created. The property
-     customData is passed to the VM to be saved as a file, for more information see `Custom Data on
-     Azure VMs <https://azure.microsoft.com/blog/custom-data-and-cloud-init-on-windows-azure/>`_. If
-     using cloud-init for your Linux VM, see `Using cloud-init to customize a Linux VM during
-     creation <https://docs.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_.
-    :vartype custom_data: str
+    :vartype adminPassword: str
+    :ivar customData: Specifies a base-64 encoded string of custom data. The base-64 encoded string
+     is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum length
+     of the binary array is 65535 bytes. **Note: Do not pass any secrets or passwords in customData
+     property.** This property cannot be updated after the VM is created. The property customData is
+     passed to the VM to be saved as a file, for more information see `Custom Data on Azure VMs
+     <https://azure.microsoft.com/blog/custom-data-and-cloud-init-on-windows-azure/>`_. If using
+     cloud-init for your Linux VM, see `Using cloud-init to customize a Linux VM during creation
+     <https://docs.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_.
+    :vartype customData: str
     """
 
     adminPassword: str
@@ -1960,10 +2052,47 @@ class OSProfileProvisioningData(TypedDict, total=False):
      <https://docs.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_."""
 
 
+class PartialFulfillmentPolicy(TypedDict, total=False):
+    """Controls how partial fulfillment is handled for a BulkCreateCustom request. When enabled, Azure
+    creates only the VMs or vCPUs it has high confidence can be successfully allocated, instead of
+    attempting the entire request and potentially returning allocation failures.
+
+    :ivar fulfilledCapacity: The amount of capacity that was actually attempted, expressed in the
+     units specified by capacityType. When partial fulfillment is enabled, this value can be less
+     than the requested capacity.
+    :vartype fulfilledCapacity: int
+    :ivar mode: Specifies whether partial fulfillment is allowed. When Enabled, Azure creates as
+     many VMs as it has high confidence can be successfully allocated. When Disabled, Azure attempts
+     to create all requested VMs, which may result into allocation failures. Known values are:
+     "Enabled" and "Disabled".
+    :vartype mode: Union[str, "PartialFulfillmentMode"]
+    :ivar reason: Indicates why the fulfilled capacity is less than the requested capacity.
+     Possible values include InsufficientCapacity and InsufficientQuota. Returned only in the create
+     response when partial fulfillment is enabled and the request cannot be fully satisfied. Known
+     values are: "InsufficientCapacity", "InsufficientQuota", and "None".
+    :vartype reason: Union[str, "PartialFulfillmentReason"]
+    """
+
+    fulfilledCapacity: int
+    """The amount of capacity that was actually attempted, expressed in the units specified by
+     capacityType. When partial fulfillment is enabled, this value can be less than the requested
+     capacity."""
+    mode: Union[str, "PartialFulfillmentMode"]
+    """Specifies whether partial fulfillment is allowed. When Enabled, Azure creates as many VMs as it
+     has high confidence can be successfully allocated. When Disabled, Azure attempts to create all
+     requested VMs, which may result into allocation failures. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    reason: Union[str, "PartialFulfillmentReason"]
+    """Indicates why the fulfilled capacity is less than the requested capacity. Possible values
+     include InsufficientCapacity and InsufficientQuota. Returned only in the create response when
+     partial fulfillment is enabled and the request cannot be fully satisfied. Known values are:
+     \"InsufficientCapacity\", \"InsufficientQuota\", and \"None\"."""
+
+
 class PatchSettings(TypedDict, total=False):
     """Specifies settings related to VM Guest Patching on Windows.
 
-    :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
+    :ivar patchMode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
      machines associated to virtual machine scale set with OrchestrationMode as Flexible.<br /><br
      /> Possible values are:<br /><br /> **Manual** - You  control the application of patches to a
      virtual machine. You do this by applying patches manually inside the VM. In this mode,
@@ -1973,20 +2102,20 @@ class PatchSettings(TypedDict, total=False):
      **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
      properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true. Known
      values are: "Manual", "AutomaticByOS", and "AutomaticByPlatform".
-    :vartype patch_mode: Union[str, "WindowsVMGuestPatchMode"]
-    :ivar enable_hotpatching: Enables customers to patch their Azure VMs without requiring a
-     reboot. For enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode' must
-     be set to 'AutomaticByPlatform'.
-    :vartype enable_hotpatching: bool
-    :ivar assessment_mode: Specifies the mode of VM Guest patch assessment for the IaaS virtual
+    :vartype patchMode: Union[str, "WindowsVMGuestPatchMode"]
+    :ivar enableHotpatching: Enables customers to patch their Azure VMs without requiring a reboot.
+     For enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode' must be set
+     to 'AutomaticByPlatform'.
+    :vartype enableHotpatching: bool
+    :ivar assessmentMode: Specifies the mode of VM Guest patch assessment for the IaaS virtual
      machine.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - You control the timing
      of patch assessments on a virtual machine.<br /><br /> **AutomaticByPlatform** - The platform
      will trigger periodic patch assessments. The property provisionVMAgent must be true. Known
      values are: "ImageDefault" and "AutomaticByPlatform".
-    :vartype assessment_mode: Union[str, "WindowsPatchAssessmentMode"]
-    :ivar automatic_by_platform_settings: Specifies additional settings for patch mode
+    :vartype assessmentMode: Union[str, "WindowsPatchAssessmentMode"]
+    :ivar automaticByPlatformSettings: Specifies additional settings for patch mode
      AutomaticByPlatform in VM Guest Patching on Windows.
-    :vartype automatic_by_platform_settings: "WindowsVMGuestPatchAutomaticByPlatformSettings"
+    :vartype automaticByPlatformSettings: "WindowsVMGuestPatchAutomaticByPlatformSettings"
     """
 
     patchMode: Union[str, "WindowsVMGuestPatchMode"]
@@ -2026,9 +2155,9 @@ class Plan(TypedDict, total=False):
     :ivar product: The 3rd Party artifact that is being procured. E.g. NewRelic. Product maps to
      the OfferID specified for the artifact at the time of Data Market onboarding. Required.
     :vartype product: str
-    :ivar promotion_code: A publisher provided promotion code as provisioned in Data Market for the
+    :ivar promotionCode: A publisher provided promotion code as provisioned in Data Market for the
      said product/artifact.
-    :vartype promotion_code: str
+    :vartype promotionCode: str
     :ivar version: The version of the desired product/artifact.
     :vartype version: str
     """
@@ -2052,15 +2181,15 @@ class PriorityProfile(TypedDict, total=False):
 
     :ivar type: The priority type for VM allocation. Known values are: "Regular" and "Spot".
     :vartype type: Union[str, "PriorityType"]
-    :ivar max_price_per_vm: Price per hour of each Spot VM will never exceed this. Available from
+    :ivar maxPricePerVM: Price per hour of each Spot VM will never exceed this. Available from
      2026-04-06-preview.
-    :vartype max_price_per_vm: float
-    :ivar eviction_policy: Eviction Policy to follow when evicting Spot VMs. Available from
+    :vartype maxPricePerVM: float
+    :ivar evictionPolicy: Eviction Policy to follow when evicting Spot VMs. Available from
      2026-04-06-preview. Known values are: "Delete" and "Deallocate".
-    :vartype eviction_policy: Union[str, "EvictionPolicy"]
-    :ivar allocation_strategy: The allocation strategy for VM size selection. Known values are:
+    :vartype evictionPolicy: Union[str, "EvictionPolicy"]
+    :ivar allocationStrategy: The allocation strategy for VM size selection. Known values are:
      "LowestPrice", "Prioritized", and "CapacityOptimized".
-    :vartype allocation_strategy: Union[str, "AllocationStrategy"]
+    :vartype allocationStrategy: Union[str, "AllocationStrategy"]
     """
 
     type: Union[str, "PriorityType"]
@@ -2086,18 +2215,18 @@ class ProxyAgentSettings(TypedDict, total=False):
      deprecated, please specify 'mode' under particular hostendpoint setting. Known values are:
      "Audit" and "Enforce".
     :vartype mode: Union[str, "Mode"]
-    :ivar key_incarnation_id: Increase the value of this property allows users to reset the key
-     used for securing communication channel between guest and host.
-    :vartype key_incarnation_id: int
-    :ivar wire_server: Specifies the Wire Server endpoint settings while creating the virtual
+    :ivar keyIncarnationId: Increase the value of this property allows users to reset the key used
+     for securing communication channel between guest and host.
+    :vartype keyIncarnationId: int
+    :ivar wireServer: Specifies the Wire Server endpoint settings while creating the virtual
      machine or virtual machine scale set. Minimum api-version: 2024-03-01.
-    :vartype wire_server: "HostEndpointSettings"
+    :vartype wireServer: "HostEndpointSettings"
     :ivar imds: Specifies the IMDS endpoint settings while creating the virtual machine or virtual
      machine scale set. Minimum api-version: 2024-03-01.
     :vartype imds: "HostEndpointSettings"
-    :ivar add_proxy_agent_extension: Specify whether to implicitly install the ProxyAgent
-     Extension. This option is currently applicable only for Linux Os.
-    :vartype add_proxy_agent_extension: bool
+    :ivar addProxyAgentExtension: Specify whether to implicitly install the ProxyAgent Extension.
+     This option is currently applicable only for Linux Os.
+    :vartype addProxyAgentExtension: bool
     """
 
     enabled: bool
@@ -2136,51 +2265,13 @@ class PublicIPAddressSku(TypedDict, total=False):
     """Specify public IP sku tier. Known values are: \"Regional\" and \"Global\"."""
 
 
-class RecurringScheduledActionsExecutionParameters(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The execution parameters the scheduled action is supposed to follow.
-
-    :ivar optimization_preference: Details that could optimize the user's request. Known values
-     are: "Cost", "Availability", and "CostAvailabilityBalanced".
-    :vartype optimization_preference: Union[str, "OptimizationPreference"]
-    :ivar retry_policy: Retry policy the user can pass.
-    :vartype retry_policy: "RecurringScheduledActionsRetryPolicy"
-    """
-
-    optimizationPreference: Union[str, "OptimizationPreference"]
-    """Details that could optimize the user's request. Known values are: \"Cost\", \"Availability\",
-     and \"CostAvailabilityBalanced\"."""
-    retryPolicy: "RecurringScheduledActionsRetryPolicy"
-    """Retry policy the user can pass."""
-
-
-class RecurringScheduledActionsRetryPolicy(TypedDict, total=False):
-    """Retry policy the scheduled action can pass.
-
-    :ivar retry_count: Retry count for the request.
-    :vartype retry_count: int
-    :ivar retry_window_in_minutes: Retry window in minutes for the request.
-    :vartype retry_window_in_minutes: int
-    :ivar on_failure_action: Action to take on failure. Known values are: "Unknown", "Start",
-     "Deallocate", "Hibernate", "Create", and "Delete".
-    :vartype on_failure_action: Union[str, "RecurringScheduledActionsResourceOperationType"]
-    """
-
-    retryCount: int
-    """Retry count for the request."""
-    retryWindowInMinutes: int
-    """Retry window in minutes for the request."""
-    onFailureAction: Union[str, "RecurringScheduledActionsResourceOperationType"]
-    """Action to take on failure. Known values are: \"Unknown\", \"Start\", \"Deallocate\",
-     \"Hibernate\", \"Create\", and \"Delete\"."""
-
-
 class ReimagePayload(TypedDict, total=False):
     """Reimage payload with common profile and per-resource overrides.
 
-    :ivar base_profile: Common reimage profile applied to all resources unless overridden.
-    :vartype base_profile: "VirtualMachineReimageParameters"
-    :ivar resource_overrides: Per-resource reimage overrides.
-    :vartype resource_overrides: list["ReimageResourceOverride"]
+    :ivar baseProfile: Common reimage profile applied to all resources unless overridden.
+    :vartype baseProfile: "VirtualMachineReimageParameters"
+    :ivar resourceOverrides: Per-resource reimage overrides.
+    :vartype resourceOverrides: list["ReimageResourceOverride"]
     """
 
     baseProfile: "VirtualMachineReimageParameters"
@@ -2192,8 +2283,8 @@ class ReimagePayload(TypedDict, total=False):
 class ReimageResourceOverride(TypedDict, total=False):
     """Per-resource override entry for reimage requests.
 
-    :ivar resource_id: The Azure resource ID of the virtual machine for this override. Required.
-    :vartype resource_id: str
+    :ivar resourceId: The Azure resource ID of the virtual machine for this override. Required.
+    :vartype resourceId: str
     :ivar profile: Per-resource reimage profile override. Required.
     :vartype profile: "VirtualMachineReimageParameters"
     """
@@ -2240,17 +2331,17 @@ class ResourcePatchRequest(TypedDict, total=False):
 class ResourceProvisionPayload(TypedDict, total=False):
     """Resource creation data model.
 
-    :ivar base_profile: Bulk Actions Virtual Machine Profile object that contains VM properties
-     that are common across all VMs in this batch.
-    :vartype base_profile: dict[str, Any]
-    :ivar resource_overrides: Bulk Actions Virtual Machine Profile array, that contains VM
+    :ivar baseProfile: Bulk Actions Virtual Machine Profile object that contains VM properties that
+     are common across all VMs in this batch.
+    :vartype baseProfile: dict[str, Any]
+    :ivar resourceOverrides: Bulk Actions Virtual Machine Profile array, that contains VM
      properties that should be overridden for each VM in the batch.
-    :vartype resource_overrides: list[dict[str, Any]]
-    :ivar resource_count: Number of VMs to be created. Required.
-    :vartype resource_count: int
-    :ivar resource_prefix: If resourceOverrides doesn't contain "name", the service will create a
+    :vartype resourceOverrides: list[dict[str, Any]]
+    :ivar resourceCount: Number of VMs to be created. Required.
+    :vartype resourceCount: int
+    :ivar resourcePrefix: If resourceOverrides doesn't contain "name", the service will create a
      name based on the prefix and ResourceCount, e.g., resourceprefix-0, resourceprefix-1..
-    :vartype resource_prefix: str
+    :vartype resourcePrefix: str
     """
 
     baseProfile: dict[str, Any]
@@ -2269,19 +2360,19 @@ class ResourceProvisionPayload(TypedDict, total=False):
 class ResourceProvisionVdiPayload(TypedDict, total=False):
     """Resource creation data model with Flex properties for VDI scenarios.
 
-    :ivar base_profile: Bulk Actions Virtual Machine Profile object that contains VM properties
-     that are common across all VMs in this batch.
-    :vartype base_profile: dict[str, Any]
-    :ivar resource_overrides: Bulk Actions Virtual Machine Profile array, that contains VM
+    :ivar baseProfile: Bulk Actions Virtual Machine Profile object that contains VM properties that
+     are common across all VMs in this batch.
+    :vartype baseProfile: dict[str, Any]
+    :ivar resourceOverrides: Bulk Actions Virtual Machine Profile array, that contains VM
      properties that should be overridden for each VM in the batch.
-    :vartype resource_overrides: list[dict[str, Any]]
-    :ivar resource_count: Number of VMs to be created. Required.
-    :vartype resource_count: int
-    :ivar resource_prefix: If resourceOverrides doesn't contain "name", the service will create a
+    :vartype resourceOverrides: list[dict[str, Any]]
+    :ivar resourceCount: Number of VMs to be created. Required.
+    :vartype resourceCount: int
+    :ivar resourcePrefix: If resourceOverrides doesn't contain "name", the service will create a
      name based on the prefix and ResourceCount, e.g., resourceprefix-0, resourceprefix-1..
-    :vartype resource_prefix: str
-    :ivar flex_properties: Flex properties used for VDI resource creation scenarios. Required.
-    :vartype flex_properties: "FlexProperties"
+    :vartype resourcePrefix: str
+    :ivar flexProperties: Flex properties used for VDI resource creation scenarios. Required.
+    :vartype flexProperties: "FlexProperties"
     """
 
     baseProfile: dict[str, Any]
@@ -2324,10 +2415,10 @@ class ResourcesWithContext(TypedDict, total=False):
 class ResourceWithContext(TypedDict, total=False):
     """The resources needed for the user request with the resourceContext.
 
-    :ivar resource_id: The resource ids used for the request. Required.
-    :vartype resource_id: str
-    :ivar resource_context: The operational context of the resourceId. Required.
-    :vartype resource_context: str
+    :ivar resourceId: The resource ids used for the request. Required.
+    :vartype resourceId: str
+    :ivar resourceContext: The operational context of the resourceId. Required.
+    :vartype resourceContext: str
     """
 
     resourceId: Required[str]
@@ -2339,13 +2430,13 @@ class ResourceWithContext(TypedDict, total=False):
 class RetryPolicy(TypedDict, total=False):
     """The retry policy for the user request.
 
-    :ivar retry_count: Retry count for user request.
-    :vartype retry_count: int
-    :ivar retry_window_in_minutes: Retry window in minutes for user request.
-    :vartype retry_window_in_minutes: int
-    :ivar on_failure_action: Action to take on failure. Known values are: "Unknown", "Start",
+    :ivar retryCount: Retry count for user request.
+    :vartype retryCount: int
+    :ivar retryWindowInMinutes: Retry window in minutes for user request.
+    :vartype retryWindowInMinutes: int
+    :ivar onFailureAction: Action to take on failure. Known values are: "Unknown", "Start",
      "Deallocate", "Hibernate", "Create", "Delete", and "GetInstanceView".
-    :vartype on_failure_action: Union[str, "ResourceOperationType"]
+    :vartype onFailureAction: Union[str, "ResourceOperationType"]
     """
 
     retryCount: int
@@ -2368,9 +2459,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -2394,9 +2485,9 @@ class ScheduledAction(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -2412,25 +2503,25 @@ class ScheduledAction(TrackedResource):
 class ScheduledActionProperties(TypedDict, total=False):
     """Scheduled action properties.
 
-    :ivar resource_type: The type of resource the scheduled action is targeting. Required. Known
+    :ivar resourceType: The type of resource the scheduled action is targeting. Required. Known
      values are: "VirtualMachine" and "VirtualMachineScaleSet".
-    :vartype resource_type: Union[str, "ResourceType"]
-    :ivar action_type: The action the scheduled action should perform in the resources. Required.
+    :vartype resourceType: Union[str, "ResourceType"]
+    :ivar actionType: The action the scheduled action should perform in the resources. Required.
      Known values are: "Start", "Deallocate", and "Hibernate".
-    :vartype action_type: Union[str, "ScheduledActionType"]
-    :ivar start_time: The time which the scheduled action is supposed to start running. Required.
-    :vartype start_time: str
-    :ivar end_time: The time when the scheduled action is supposed to stop scheduling.
-    :vartype end_time: str
+    :vartype actionType: Union[str, "ScheduledActionType"]
+    :ivar startTime: The time which the scheduled action is supposed to start running. Required.
+    :vartype startTime: str
+    :ivar endTime: The time when the scheduled action is supposed to stop scheduling.
+    :vartype endTime: str
     :ivar schedule: The schedule the scheduled action is supposed to follow. Required.
     :vartype schedule: "ScheduledActionsSchedule"
-    :ivar notification_settings: The notification settings for the scheduled action. Required.
-    :vartype notification_settings: list["NotificationProperties"]
+    :ivar notificationSettings: The notification settings for the scheduled action. Required.
+    :vartype notificationSettings: list["NotificationProperties"]
     :ivar disabled: Tell if the scheduled action is disabled or not.
     :vartype disabled: bool
-    :ivar provisioning_state: The status of the last provisioning operation performed on the
+    :ivar provisioningState: The status of the last provisioning operation performed on the
      resource. Known values are: "Succeeded", "Failed", "Canceled", and "Deleting".
-    :vartype provisioning_state: Union[str, "RecurringScheduledActionsProvisioningState"]
+    :vartype provisioningState: Union[str, "ScheduledActionsProvisioningState"]
     """
 
     resourceType: Required[Union[str, "ResourceType"]]
@@ -2449,7 +2540,7 @@ class ScheduledActionProperties(TypedDict, total=False):
     """The notification settings for the scheduled action. Required."""
     disabled: bool
     """Tell if the scheduled action is disabled or not."""
-    provisioningState: Union[str, "RecurringScheduledActionsProvisioningState"]
+    provisioningState: Union[str, "ScheduledActionsProvisioningState"]
     """The status of the last provisioning operation performed on the resource. Known values are:
      \"Succeeded\", \"Failed\", \"Canceled\", and \"Deleting\"."""
 
@@ -2458,12 +2549,12 @@ class ScheduledActionResourceInput(TypedDict, total=False):
     """Represents the writable fields of a scheduled action resource used in attach and patch
     requests.
 
-    :ivar resource_id: The ARM Id of the resource.
+    :ivar resourceId: The ARM Id of the resource.
      "subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}".
      Required.
-    :vartype resource_id: str
-    :ivar notification_settings: The desired notification settings for the specified resource.
-    :vartype notification_settings: list["NotificationProperties"]
+    :vartype resourceId: str
+    :ivar notificationSettings: The desired notification settings for the specified resource.
+    :vartype notificationSettings: list["NotificationProperties"]
     """
 
     resourceId: Required[str]
@@ -2474,29 +2565,66 @@ class ScheduledActionResourceInput(TypedDict, total=False):
     """The desired notification settings for the specified resource."""
 
 
+class ScheduledActionsExecutionParameters(TypedDict, total=False):
+    """The execution parameters the scheduled action is supposed to follow.
+
+    :ivar optimizationPreference: Details that could optimize the user's request. Known values are:
+     "Cost", "Availability", and "CostAvailabilityBalanced".
+    :vartype optimizationPreference: Union[str, "OptimizationPreference"]
+    :ivar retryPolicy: Retry policy the user can pass.
+    :vartype retryPolicy: "ScheduledActionsRetryPolicy"
+    """
+
+    optimizationPreference: Union[str, "OptimizationPreference"]
+    """Details that could optimize the user's request. Known values are: \"Cost\", \"Availability\",
+     and \"CostAvailabilityBalanced\"."""
+    retryPolicy: "ScheduledActionsRetryPolicy"
+    """Retry policy the user can pass."""
+
+
+class ScheduledActionsRetryPolicy(TypedDict, total=False):
+    """Retry policy the scheduled action can pass.
+
+    :ivar retryCount: Retry count for the request.
+    :vartype retryCount: int
+    :ivar retryWindowInMinutes: Retry window in minutes for the request.
+    :vartype retryWindowInMinutes: int
+    :ivar onFailureAction: Action to take on failure. Known values are: "Unknown", "Start",
+     "Deallocate", "Hibernate", "Create", and "Delete".
+    :vartype onFailureAction: Union[str, "ScheduledActionsResourceOperationType"]
+    """
+
+    retryCount: int
+    """Retry count for the request."""
+    retryWindowInMinutes: int
+    """Retry window in minutes for the request."""
+    onFailureAction: Union[str, "ScheduledActionsResourceOperationType"]
+    """Action to take on failure. Known values are: \"Unknown\", \"Start\", \"Deallocate\",
+     \"Hibernate\", \"Create\", and \"Delete\"."""
+
+
 class ScheduledActionsSchedule(TypedDict, total=False):
     """Specify the schedule in which the scheduled action is supposed to follow.
 
-    :ivar scheduled_time: The time the scheduled action is supposed to run on. Required.
-    :vartype scheduled_time: str
-    :ivar time_zone: The timezone the scheduled time is specified on. Required.
-    :vartype time_zone: str
-    :ivar requested_week_days: The week days the scheduled action is supposed to run on. If empty,
-     it means it will run on every week day.
-    :vartype requested_week_days: list[Union[str, "WeekDay"]]
-    :ivar requested_months: The months the scheduled action is supposed to run on. If empty, it
+    :ivar scheduledTime: The time the scheduled action is supposed to run on. Required.
+    :vartype scheduledTime: str
+    :ivar timeZone: The timezone the scheduled time is specified on. Required.
+    :vartype timeZone: str
+    :ivar requestedWeekDays: The week days the scheduled action is supposed to run on. If empty, it
+     means it will run on every week day.
+    :vartype requestedWeekDays: list[Union[str, "WeekDay"]]
+    :ivar requestedMonths: The months the scheduled action is supposed to run on. If empty, it
      means it will run on every month.
-    :vartype requested_months: list[Union[str, "Month"]]
-    :ivar requested_days_of_the_month: The days of the month the scheduled action is supposed to
-     run on. If empty, it means it will run on every day of the month.
-    :vartype requested_days_of_the_month: list[int]
-    :ivar execution_parameters: The execution parameters the scheduled action is supposed to
-     follow.
-    :vartype execution_parameters: "RecurringScheduledActionsExecutionParameters"
-    :ivar deadline_type: The type of deadline the scheduled action is supposed to follow for the
+    :vartype requestedMonths: list[Union[str, "Month"]]
+    :ivar requestedDaysOfTheMonth: The days of the month the scheduled action is supposed to run
+     on. If empty, it means it will run on every day of the month.
+    :vartype requestedDaysOfTheMonth: list[int]
+    :ivar executionParameters: The execution parameters the scheduled action is supposed to follow.
+    :vartype executionParameters: "ScheduledActionsExecutionParameters"
+    :ivar deadlineType: The type of deadline the scheduled action is supposed to follow for the
      schedule. If no value is passed, it will default to InitiateAt. Known values are: "Unknown",
      "InitiateAt", and "CompleteBy".
-    :vartype deadline_type: Union[str, "RecurringScheduledActionsDeadlineType"]
+    :vartype deadlineType: Union[str, "ScheduledActionsDeadlineType"]
     """
 
     scheduledTime: Required[str]
@@ -2512,9 +2640,9 @@ class ScheduledActionsSchedule(TypedDict, total=False):
     requestedDaysOfTheMonth: list[int]
     """The days of the month the scheduled action is supposed to run on. If empty, it means it will
      run on every day of the month."""
-    executionParameters: "RecurringScheduledActionsExecutionParameters"
+    executionParameters: "ScheduledActionsExecutionParameters"
     """The execution parameters the scheduled action is supposed to follow."""
-    deadlineType: Union[str, "RecurringScheduledActionsDeadlineType"]
+    deadlineType: Union[str, "ScheduledActionsDeadlineType"]
     """The type of deadline the scheduled action is supposed to follow for the schedule. If no value
      is passed, it will default to InitiateAt. Known values are: \"Unknown\", \"InitiateAt\", and
      \"CompleteBy\"."""
@@ -2524,26 +2652,25 @@ class ScheduledActionsScheduleUpdate(TypedDict, total=False):
     """Schedule properties for update (PATCH). All properties are optional so individual fields can be
     patched (merge semantics); omitting a property preserves the current value.
 
-    :ivar scheduled_time: The time the scheduled action is supposed to run on.
-    :vartype scheduled_time: str
-    :ivar time_zone: The timezone the scheduled time is specified on.
-    :vartype time_zone: str
-    :ivar requested_week_days: The week days the scheduled action is supposed to run on. If empty,
-     it means it will run on every week day.
-    :vartype requested_week_days: list[Union[str, "WeekDay"]]
-    :ivar requested_months: The months the scheduled action is supposed to run on. If empty, it
+    :ivar scheduledTime: The time the scheduled action is supposed to run on.
+    :vartype scheduledTime: str
+    :ivar timeZone: The timezone the scheduled time is specified on.
+    :vartype timeZone: str
+    :ivar requestedWeekDays: The week days the scheduled action is supposed to run on. If empty, it
+     means it will run on every week day.
+    :vartype requestedWeekDays: list[Union[str, "WeekDay"]]
+    :ivar requestedMonths: The months the scheduled action is supposed to run on. If empty, it
      means it will run on every month.
-    :vartype requested_months: list[Union[str, "Month"]]
-    :ivar requested_days_of_the_month: The days of the month the scheduled action is supposed to
-     run on. If empty, it means it will run on every day of the month.
-    :vartype requested_days_of_the_month: list[int]
-    :ivar execution_parameters: The execution parameters the scheduled action is supposed to
-     follow.
-    :vartype execution_parameters: "RecurringScheduledActionsExecutionParameters"
-    :ivar deadline_type: The type of deadline the scheduled action is supposed to follow for the
+    :vartype requestedMonths: list[Union[str, "Month"]]
+    :ivar requestedDaysOfTheMonth: The days of the month the scheduled action is supposed to run
+     on. If empty, it means it will run on every day of the month.
+    :vartype requestedDaysOfTheMonth: list[int]
+    :ivar executionParameters: The execution parameters the scheduled action is supposed to follow.
+    :vartype executionParameters: "ScheduledActionsExecutionParameters"
+    :ivar deadlineType: The type of deadline the scheduled action is supposed to follow for the
      schedule. If no value is passed, it will default to InitiateAt. Known values are: "Unknown",
      "InitiateAt", and "CompleteBy".
-    :vartype deadline_type: Union[str, "RecurringScheduledActionsDeadlineType"]
+    :vartype deadlineType: Union[str, "ScheduledActionsDeadlineType"]
     """
 
     scheduledTime: str
@@ -2559,9 +2686,9 @@ class ScheduledActionsScheduleUpdate(TypedDict, total=False):
     requestedDaysOfTheMonth: list[int]
     """The days of the month the scheduled action is supposed to run on. If empty, it means it will
      run on every day of the month."""
-    executionParameters: "RecurringScheduledActionsExecutionParameters"
+    executionParameters: "ScheduledActionsExecutionParameters"
     """The execution parameters the scheduled action is supposed to follow."""
-    deadlineType: Union[str, "RecurringScheduledActionsDeadlineType"]
+    deadlineType: Union[str, "ScheduledActionsDeadlineType"]
     """The type of deadline the scheduled action is supposed to follow for the schedule. If no value
      is passed, it will default to InitiateAt. Known values are: \"Unknown\", \"InitiateAt\", and
      \"CompleteBy\"."""
@@ -2585,20 +2712,20 @@ class ScheduledActionUpdate(TypedDict, total=False):
 class ScheduledActionUpdateProperties(TypedDict, total=False):
     """The updatable properties of the ScheduledAction.
 
-    :ivar resource_type: The type of resource the scheduled action is targeting. Known values are:
+    :ivar resourceType: The type of resource the scheduled action is targeting. Known values are:
      "VirtualMachine" and "VirtualMachineScaleSet".
-    :vartype resource_type: Union[str, "ResourceType"]
-    :ivar action_type: The action the scheduled action should perform in the resources. Known
-     values are: "Start", "Deallocate", and "Hibernate".
-    :vartype action_type: Union[str, "ScheduledActionType"]
-    :ivar start_time: The time which the scheduled action is supposed to start running.
-    :vartype start_time: str
-    :ivar end_time: The time when the scheduled action is supposed to stop scheduling.
-    :vartype end_time: str
+    :vartype resourceType: Union[str, "ResourceType"]
+    :ivar actionType: The action the scheduled action should perform in the resources. Known values
+     are: "Start", "Deallocate", and "Hibernate".
+    :vartype actionType: Union[str, "ScheduledActionType"]
+    :ivar startTime: The time which the scheduled action is supposed to start running.
+    :vartype startTime: str
+    :ivar endTime: The time when the scheduled action is supposed to stop scheduling.
+    :vartype endTime: str
     :ivar schedule: The schedule the scheduled action is supposed to follow.
     :vartype schedule: "ScheduledActionsScheduleUpdate"
-    :ivar notification_settings: The notification settings for the scheduled action.
-    :vartype notification_settings: list["NotificationProperties"]
+    :ivar notificationSettings: The notification settings for the scheduled action.
+    :vartype notificationSettings: list["NotificationProperties"]
     :ivar disabled: Tell if the scheduled action is disabled or not.
     :vartype disabled: bool
     """
@@ -2624,9 +2751,9 @@ class ScheduledActionUpdateProperties(TypedDict, total=False):
 class ScheduledEventsAdditionalPublishingTargets(TypedDict, total=False):  # pylint: disable=name-too-long
     """Specifies additional publishing targets for scheduled events.
 
-    :ivar event_grid_and_resource_graph: The configuration parameters used while creating
+    :ivar eventGridAndResourceGraph: The configuration parameters used while creating
      eventGridAndResourceGraph Scheduled Event setting.
-    :vartype event_grid_and_resource_graph: "EventGridAndResourceGraph"
+    :vartype eventGridAndResourceGraph: "EventGridAndResourceGraph"
     """
 
     eventGridAndResourceGraph: "EventGridAndResourceGraph"
@@ -2638,19 +2765,19 @@ class ScheduledEventsPolicy(TypedDict, total=False):
     """Specifies Redeploy, Reboot and ScheduledEventsAdditionalPublishingTargets Scheduled Event
     related configurations.
 
-    :ivar user_initiated_redeploy: The configuration parameters used while creating
+    :ivar userInitiatedRedeploy: The configuration parameters used while creating
      userInitiatedRedeploy scheduled event setting creation.
-    :vartype user_initiated_redeploy: "UserInitiatedRedeploy"
-    :ivar user_initiated_reboot: The configuration parameters used while creating
-     userInitiatedReboot scheduled event setting creation.
-    :vartype user_initiated_reboot: "UserInitiatedReboot"
-    :ivar scheduled_events_additional_publishing_targets: The configuration parameters used while
-     publishing scheduledEventsAdditionalPublishingTargets.
-    :vartype scheduled_events_additional_publishing_targets:
-     "ScheduledEventsAdditionalPublishingTargets"
-    :ivar all_instances_down: The configuration parameters used while creating AllInstancesDown
+    :vartype userInitiatedRedeploy: "UserInitiatedRedeploy"
+    :ivar userInitiatedReboot: The configuration parameters used while creating userInitiatedReboot
      scheduled event setting creation.
-    :vartype all_instances_down: "AllInstancesDown"
+    :vartype userInitiatedReboot: "UserInitiatedReboot"
+    :ivar scheduledEventsAdditionalPublishingTargets: The configuration parameters used while
+     publishing scheduledEventsAdditionalPublishingTargets.
+    :vartype scheduledEventsAdditionalPublishingTargets:
+     "ScheduledEventsAdditionalPublishingTargets"
+    :ivar allInstancesDown: The configuration parameters used while creating AllInstancesDown
+     scheduled event setting creation.
+    :vartype allInstancesDown: "AllInstancesDown"
     """
 
     userInitiatedRedeploy: "UserInitiatedRedeploy"
@@ -2669,11 +2796,10 @@ class ScheduledEventsPolicy(TypedDict, total=False):
 class ScheduledEventsProfile(TypedDict, total=False):
     """Profile for the scheduled events.
 
-    :ivar terminate_notification_profile: Specifies Terminate Scheduled Event related
-     configurations.
-    :vartype terminate_notification_profile: "TerminateNotificationProfile"
-    :ivar os_image_notification_profile: Specifies OS Image Scheduled Event related configurations.
-    :vartype os_image_notification_profile: "OSImageNotificationProfile"
+    :ivar terminateNotificationProfile: Specifies Terminate Scheduled Event related configurations.
+    :vartype terminateNotificationProfile: "TerminateNotificationProfile"
+    :ivar osImageNotificationProfile: Specifies OS Image Scheduled Event related configurations.
+    :vartype osImageNotificationProfile: "OSImageNotificationProfile"
     """
 
     terminateNotificationProfile: "TerminateNotificationProfile"
@@ -2685,25 +2811,25 @@ class ScheduledEventsProfile(TypedDict, total=False):
 class SecurityProfile(TypedDict, total=False):
     """Specifies the Security profile settings for the virtual machine or virtual machine scale set.
 
-    :ivar uefi_settings: Specifies the security settings like secure boot and vTPM used while
+    :ivar uefiSettings: Specifies the security settings like secure boot and vTPM used while
      creating the virtual machine. Minimum compute api-version: 2020-12-01.
-    :vartype uefi_settings: "UefiSettings"
-    :ivar encryption_at_host: This property can be used by user in the request to enable or disable
+    :vartype uefiSettings: "UefiSettings"
+    :ivar encryptionAtHost: This property can be used by user in the request to enable or disable
      the Host Encryption for the virtual machine or virtual machine scale set. This will enable the
      encryption for all the disks including Resource/Temp disk at host itself. The default behavior
      is: The Encryption at host will be disabled unless this property is set to true for the
      resource.
-    :vartype encryption_at_host: bool
-    :ivar security_type: Specifies the SecurityType of the virtual machine. It has to be set to any
+    :vartype encryptionAtHost: bool
+    :ivar securityType: Specifies the SecurityType of the virtual machine. It has to be set to any
      specified value to enable UefiSettings. The default behavior is: UefiSettings will not be
      enabled unless this property is set. Known values are: "TrustedLaunch" and "ConfidentialVM".
-    :vartype security_type: Union[str, "SecurityTypes"]
-    :ivar encryption_identity: Specifies the Managed Identity used by ADE to get access token for
+    :vartype securityType: Union[str, "SecurityTypes"]
+    :ivar encryptionIdentity: Specifies the Managed Identity used by ADE to get access token for
      keyvault operations.
-    :vartype encryption_identity: "EncryptionIdentity"
-    :ivar proxy_agent_settings: Specifies ProxyAgent settings while creating the virtual machine.
+    :vartype encryptionIdentity: "EncryptionIdentity"
+    :ivar proxyAgentSettings: Specifies ProxyAgent settings while creating the virtual machine.
      Minimum compute api-version: 2023-09-01.
-    :vartype proxy_agent_settings: "ProxyAgentSettings"
+    :vartype proxyAgentSettings: "ProxyAgentSettings"
     """
 
     uefiSettings: "UefiSettings"
@@ -2728,8 +2854,8 @@ class SecurityProfile(TypedDict, total=False):
 class SshConfiguration(TypedDict, total=False):
     """SSH configuration for Linux based VMs running on Azure.
 
-    :ivar public_keys: The list of SSH public keys used to authenticate with linux based VMs.
-    :vartype public_keys: list["SshPublicKey"]
+    :ivar publicKeys: The list of SSH public keys used to authenticate with linux based VMs.
+    :vartype publicKeys: list["SshPublicKey"]
     """
 
     publicKeys: list["SshPublicKey"]
@@ -2744,12 +2870,12 @@ class SshPublicKey(TypedDict, total=False):
      file already exists, the specified key is appended to the file. Example:
      /home/user/.ssh/authorized_keys.
     :vartype path: str
-    :ivar key_data: SSH public key certificate used to authenticate with the VM through ssh. The
-     key needs to be at least 2048-bit and in ssh-rsa format. For creating ssh keys, see [Create SSH
+    :ivar keyData: SSH public key certificate used to authenticate with the VM through ssh. The key
+     needs to be at least 2048-bit and in ssh-rsa format. For creating ssh keys, see [Create SSH
      keys on Linux and Mac for Linux VMs in
      Azure]`https://docs.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed
      <https://docs.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed>`_).
-    :vartype key_data: str
+    :vartype keyData: str
     """
 
     path: str
@@ -2766,27 +2892,27 @@ class SshPublicKey(TypedDict, total=False):
 class StorageProfile(TypedDict, total=False):
     """Specifies the storage settings for the virtual machine disks.
 
-    :ivar image_reference: Specifies information about the image to use. You can specify
-     information about platform images, marketplace images, or virtual machine images. This element
-     is required when you want to use a platform image, marketplace image, or virtual machine image,
-     but is not used in other creation operations.
-    :vartype image_reference: "ImageReference"
-    :ivar os_disk: Specifies information about the operating system disk used by the virtual
+    :ivar imageReference: Specifies information about the image to use. You can specify information
+     about platform images, marketplace images, or virtual machine images. This element is required
+     when you want to use a platform image, marketplace image, or virtual machine image, but is not
+     used in other creation operations.
+    :vartype imageReference: "ImageReference"
+    :ivar osDisk: Specifies information about the operating system disk used by the virtual
      machine. For more information about disks, see `About disks and VHDs for Azure virtual machines
      <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
-    :vartype os_disk: "OSDisk"
-    :ivar data_disks: Specifies the parameters that are used to add a data disk to a virtual
+    :vartype osDisk: "OSDisk"
+    :ivar dataDisks: Specifies the parameters that are used to add a data disk to a virtual
      machine. For more information about disks, see `About disks and VHDs for Azure virtual machines
      <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
-    :vartype data_disks: list["DataDisk"]
-    :ivar disk_controller_type: Specifies the disk controller type configured for the VM. **Note:**
+    :vartype dataDisks: list["DataDisk"]
+    :ivar diskControllerType: Specifies the disk controller type configured for the VM. **Note:**
      This property will be set to the default disk controller type if not specified provided virtual
      machine is being created with 'hyperVGeneration' set to V2 based on the capabilities of the
      operating system disk and VM size from the the specified minimum api version. You need to
      deallocate the VM before updating its disk controller type unless you are updating the VM size
      in the VM configuration which implicitly deallocates and reallocates the VM. Minimum
      api-version: 2022-08-01. Known values are: "SCSI" and "NVMe".
-    :vartype disk_controller_type: Union[str, "DiskControllerTypes"]
+    :vartype diskControllerType: Union[str, "DiskControllerTypes"]
     """
 
     imageReference: "ImageReference"
@@ -2815,20 +2941,20 @@ class StorageProfile(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -2850,11 +2976,11 @@ class SystemData(TypedDict, total=False):
 class TerminateNotificationProfile(TypedDict, total=False):
     """Profile properties for the Terminate Scheduled event.
 
-    :ivar not_before_timeout: Configurable length of time a Virtual Machine being deleted will have
+    :ivar notBeforeTimeout: Configurable length of time a Virtual Machine being deleted will have
      to potentially approve the Terminate Scheduled Event before the event is auto approved (timed
      out). The configuration must be specified in ISO 8601 format, the default value is 5 minutes
      (PT5M).
-    :vartype not_before_timeout: str
+    :vartype notBeforeTimeout: str
     :ivar enable: Specifies whether the Terminate Scheduled event is enabled or disabled.
     :vartype enable: bool
     """
@@ -2871,12 +2997,12 @@ class UefiSettings(TypedDict, total=False):
     """Specifies the security settings like secure boot and vTPM used while creating the virtual
     machine. Minimum api-version: 2020-12-01.
 
-    :ivar secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
+    :ivar secureBootEnabled: Specifies whether secure boot should be enabled on the virtual
      machine. Minimum compute api-version: 2020-12-01.
-    :vartype secure_boot_enabled: bool
-    :ivar v_tpm_enabled: Specifies whether vTPM should be enabled on the virtual machine. Minimum
+    :vartype secureBootEnabled: bool
+    :ivar vTpmEnabled: Specifies whether vTPM should be enabled on the virtual machine. Minimum
      compute api-version: 2020-12-01.
-    :vartype v_tpm_enabled: bool
+    :vartype vTpmEnabled: bool
     """
 
     secureBootEnabled: bool
@@ -2890,10 +3016,10 @@ class UefiSettings(TypedDict, total=False):
 class UserAssignedIdentitiesValue(TypedDict, total=False):
     """UserAssignedIdentitiesValue.
 
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal id of user assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client id of user assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -2905,10 +3031,10 @@ class UserAssignedIdentitiesValue(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -2920,9 +3046,8 @@ class UserAssignedIdentity(TypedDict, total=False):
 class UserInitiatedReboot(TypedDict, total=False):
     """Specifies Reboot related Scheduled Event related configurations.
 
-    :ivar user_initiated_reboot_automatically_approve: Specifies Reboot Scheduled Event related
-     configurations.
-    :vartype user_initiated_reboot_automatically_approve: bool
+    :ivar automaticallyApprove: Specifies Reboot Scheduled Event related configurations.
+    :vartype automaticallyApprove: bool
     """
 
     automaticallyApprove: bool
@@ -2932,9 +3057,8 @@ class UserInitiatedReboot(TypedDict, total=False):
 class UserInitiatedRedeploy(TypedDict, total=False):
     """Specifies Redeploy related Scheduled Event related configurations.
 
-    :ivar user_initiated_redeploy_automatically_approve: Specifies Redeploy Scheduled Event related
-     configurations.
-    :vartype user_initiated_redeploy_automatically_approve: bool
+    :ivar automaticallyApprove: Specifies Redeploy Scheduled Event related configurations.
+    :vartype automaticallyApprove: bool
     """
 
     automaticallyApprove: bool
@@ -2945,8 +3069,8 @@ class VaultCertificate(TypedDict, total=False):
     """Describes a single certificate reference in a Key Vault, and where the certificate should
     reside on the VM.
 
-    :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
-     a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
+    :ivar certificateUrl: This is the URL of a certificate that has been uploaded to Key Vault as a
+     secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
      <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
      certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded
      in UTF-8: <br><br> {<br>  'data':'<Base64-encoded-certificate>',<br>  'dataType':'pfx',<br>
@@ -2955,14 +3079,13 @@ class VaultCertificate(TypedDict, total=False):
      <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
      Key Vault virtual machine extension for Windows
      <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
-    :vartype certificate_url: str
-    :ivar certificate_store: For Windows VMs, specifies the certificate store on the Virtual
-     Machine to which the certificate should be added. The specified certificate store is implicitly
-     in the LocalMachine account. For Linux VMs, the certificate file is placed under the
-     /var/lib/waagent directory, with the file name <UppercaseThumbprint>.crt for the X509
-     certificate file and <UppercaseThumbprint>.prv for private key. Both of these files are .pem
-     formatted.
-    :vartype certificate_store: str
+    :vartype certificateUrl: str
+    :ivar certificateStore: For Windows VMs, specifies the certificate store on the Virtual Machine
+     to which the certificate should be added. The specified certificate store is implicitly in the
+     LocalMachine account. For Linux VMs, the certificate file is placed under the /var/lib/waagent
+     directory, with the file name <UppercaseThumbprint>.crt for the X509 certificate file and
+     <UppercaseThumbprint>.prv for private key. Both of these files are .pem formatted.
+    :vartype certificateStore: str
     """
 
     certificateUrl: str
@@ -2987,12 +3110,12 @@ class VaultCertificate(TypedDict, total=False):
 class VaultSecretGroup(TypedDict, total=False):
     """Describes a set of certificates which are all in the same Key Vault.
 
-    :ivar source_vault: The relative URL of the Key Vault containing all of the certificates in
+    :ivar sourceVault: The relative URL of the Key Vault containing all of the certificates in
      VaultCertificates.
-    :vartype source_vault: "SubResource"
-    :ivar vault_certificates: The list of key vault references in SourceVault which contain
+    :vartype sourceVault: "SubResource"
+    :ivar vaultCertificates: The list of key vault references in SourceVault which contain
      certificates.
-    :vartype vault_certificates: list["VaultCertificate"]
+    :vartype vaultCertificates: list["VaultCertificate"]
     """
 
     sourceVault: "SubResource"
@@ -3015,21 +3138,21 @@ class VirtualHardDisk(TypedDict, total=False):
 class VirtualMachineIdentity(TypedDict, total=False):
     """Identity for the virtual machine.
 
-    :ivar principal_id: The principal id of virtual machine identity. This property will only be
+    :ivar principalId: The principal id of virtual machine identity. This property will only be
      provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant id associated with the virtual machine. This property will only be
+    :vartype principalId: str
+    :ivar tenantId: The tenant id associated with the virtual machine. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of identity used for the virtual machine. The type 'SystemAssigned,
      UserAssigned' includes both an implicitly created identity and a set of user assigned
      identities. The type 'None' will remove any identities from the virtual machine. Known values
      are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", and "None".
     :vartype type: Union[str, "ResourceIdentityType"]
-    :ivar user_assigned_identities: The list of user identities associated with the Virtual
-     Machine. The user identity dictionary key references will be ARM resource ids in the form:
+    :ivar userAssignedIdentities: The list of user identities associated with the Virtual Machine.
+     The user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentitiesValue"]
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentitiesValue"]
     """
 
     principalId: str
@@ -3052,8 +3175,8 @@ class VirtualMachineIdentity(TypedDict, total=False):
 class VirtualMachineIpTag(TypedDict, total=False):
     """Contains the IP tag associated with the public IP address.
 
-    :ivar ip_tag_type: IP tag type. Example: FirstPartyUsage.
-    :vartype ip_tag_type: str
+    :ivar ipTagType: IP tag type. Example: FirstPartyUsage.
+    :vartype ipTagType: str
     :ivar tag: IP tag associated with the public IP. Example: SQL, Storage etc.
     :vartype tag: str
     """
@@ -3091,33 +3214,33 @@ class VirtualMachineNetworkInterfaceConfigurationProperties(TypedDict, total=Fal
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
      than 1 network interface.
     :vartype primary: bool
-    :ivar delete_option: Specify what happens to the network interface when the VM is deleted.
-     Known values are: "Delete" and "Detach".
-    :vartype delete_option: Union[str, "DeleteOptions"]
-    :ivar enable_accelerated_networking: Specifies whether the network interface is accelerated
+    :ivar deleteOption: Specify what happens to the network interface when the VM is deleted. Known
+     values are: "Delete" and "Detach".
+    :vartype deleteOption: Union[str, "DeleteOptions"]
+    :ivar enableAcceleratedNetworking: Specifies whether the network interface is accelerated
      networking-enabled.
-    :vartype enable_accelerated_networking: bool
-    :ivar disable_tcp_state_tracking: Specifies whether the network interface is disabled for tcp
+    :vartype enableAcceleratedNetworking: bool
+    :ivar disableTcpStateTracking: Specifies whether the network interface is disabled for tcp
      state tracking.
-    :vartype disable_tcp_state_tracking: bool
-    :ivar enable_fpga: Specifies whether the network interface is FPGA networking-enabled.
-    :vartype enable_fpga: bool
-    :ivar enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
-    :vartype enable_ip_forwarding: bool
-    :ivar network_security_group: The network security group.
-    :vartype network_security_group: "SubResource"
-    :ivar dns_settings: The dns settings to be applied on the network interfaces.
-    :vartype dns_settings: "VirtualMachineNetworkInterfaceDnsSettingsConfiguration"
-    :ivar ip_configurations: Specifies the IP configurations of the network interface. Required.
-    :vartype ip_configurations: list["VirtualMachineNetworkInterfaceIPConfiguration"]
-    :ivar dscp_configuration: The DSCP configuration for the network interface.
-    :vartype dscp_configuration: "SubResource"
-    :ivar auxiliary_mode: Specifies whether the Auxiliary mode is enabled for the Network Interface
+    :vartype disableTcpStateTracking: bool
+    :ivar enableFpga: Specifies whether the network interface is FPGA networking-enabled.
+    :vartype enableFpga: bool
+    :ivar enableIPForwarding: Whether IP forwarding enabled on this NIC.
+    :vartype enableIPForwarding: bool
+    :ivar networkSecurityGroup: The network security group.
+    :vartype networkSecurityGroup: "SubResource"
+    :ivar dnsSettings: The dns settings to be applied on the network interfaces.
+    :vartype dnsSettings: "VirtualMachineNetworkInterfaceDnsSettingsConfiguration"
+    :ivar ipConfigurations: Specifies the IP configurations of the network interface. Required.
+    :vartype ipConfigurations: list["VirtualMachineNetworkInterfaceIPConfiguration"]
+    :ivar dscpConfiguration: The DSCP configuration for the network interface.
+    :vartype dscpConfiguration: "SubResource"
+    :ivar auxiliaryMode: Specifies whether the Auxiliary mode is enabled for the Network Interface
      resource. Known values are: "None", "AcceleratedConnections", and "Floating".
-    :vartype auxiliary_mode: Union[str, "NetworkInterfaceAuxiliaryMode"]
-    :ivar auxiliary_sku: Specifies whether the Auxiliary sku is enabled for the Network Interface
+    :vartype auxiliaryMode: Union[str, "NetworkInterfaceAuxiliaryMode"]
+    :ivar auxiliarySku: Specifies whether the Auxiliary sku is enabled for the Network Interface
      resource. Known values are: "None", "A1", "A2", "A4", and "A8".
-    :vartype auxiliary_sku: Union[str, "NetworkInterfaceAuxiliarySku"]
+    :vartype auxiliarySku: Union[str, "NetworkInterfaceAuxiliarySku"]
     """
 
     primary: bool
@@ -3153,8 +3276,8 @@ class VirtualMachineNetworkInterfaceConfigurationProperties(TypedDict, total=Fal
 class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(TypedDict, total=False):  # pylint: disable=name-too-long
     """Describes a virtual machines network configuration's DNS settings.
 
-    :ivar dns_servers: List of DNS servers IP addresses.
-    :vartype dns_servers: list[str]
+    :ivar dnsServers: List of DNS servers IP addresses.
+    :vartype dnsServers: list[str]
     """
 
     dnsServers: list[str]
@@ -3184,25 +3307,25 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(TypedDict, total=F
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
      than 1 network interface.
     :vartype primary: bool
-    :ivar public_ip_address_configuration: The publicIPAddressConfiguration.
-    :vartype public_ip_address_configuration: "VirtualMachinePublicIPAddressConfiguration"
-    :ivar private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it represents
+    :ivar publicIPAddressConfiguration: The publicIPAddressConfiguration.
+    :vartype publicIPAddressConfiguration: "VirtualMachinePublicIPAddressConfiguration"
+    :ivar privateIPAddressVersion: Available from Api-Version 2017-03-30 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
-    :vartype private_ip_address_version: Union[str, "IPVersions"]
-    :ivar application_security_groups: Specifies an array of references to application security
+    :vartype privateIPAddressVersion: Union[str, "IPVersions"]
+    :ivar applicationSecurityGroups: Specifies an array of references to application security
      group.
-    :vartype application_security_groups: list["SubResource"]
-    :ivar application_gateway_backend_address_pools: Specifies an array of references to backend
+    :vartype applicationSecurityGroups: list["SubResource"]
+    :ivar applicationGatewayBackendAddressPools: Specifies an array of references to backend
      address pools of application gateways. A virtual machine can reference backend address pools of
      multiple application gateways. Multiple virtual machines cannot use the same application
      gateway.
-    :vartype application_gateway_backend_address_pools: list["SubResource"]
-    :ivar load_balancer_backend_address_pools: Specifies an array of references to backend address
+    :vartype applicationGatewayBackendAddressPools: list["SubResource"]
+    :ivar loadBalancerBackendAddressPools: Specifies an array of references to backend address
      pools of load balancers. A virtual machine can reference backend address pools of one public
      and one internal load balancer. [Multiple virtual machines cannot use the same basic sku load
      balancer].
-    :vartype load_balancer_backend_address_pools: list["SubResource"]
+    :vartype loadBalancerBackendAddressPools: list["SubResource"]
     """
 
     subnet: "SubResource"
@@ -3256,24 +3379,24 @@ class VirtualMachinePublicIPAddressConfiguration(TypedDict, total=False):  # pyl
 class VirtualMachinePublicIPAddressConfigurationProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """Describes a virtual machines IP Configuration's PublicIPAddress configuration.
 
-    :ivar idle_timeout_in_minutes: The idle timeout of the public IP address.
-    :vartype idle_timeout_in_minutes: int
-    :ivar delete_option: Specify what happens to the public IP address when the VM is deleted.
-     Known values are: "Delete" and "Detach".
-    :vartype delete_option: Union[str, "DeleteOptions"]
-    :ivar dns_settings: The dns settings to be applied on the publicIP addresses .
-    :vartype dns_settings: "VirtualMachinePublicIPAddressDnsSettingsConfiguration"
-    :ivar ip_tags: The list of IP tags associated with the public IP address.
-    :vartype ip_tags: list["VirtualMachineIpTag"]
-    :ivar public_ip_prefix: The PublicIPPrefix from which to allocate publicIP addresses.
-    :vartype public_ip_prefix: "SubResource"
-    :ivar public_ip_address_version: Available from Api-Version 2019-07-01 onwards, it represents
+    :ivar idleTimeoutInMinutes: The idle timeout of the public IP address.
+    :vartype idleTimeoutInMinutes: int
+    :ivar deleteOption: Specify what happens to the public IP address when the VM is deleted. Known
+     values are: "Delete" and "Detach".
+    :vartype deleteOption: Union[str, "DeleteOptions"]
+    :ivar dnsSettings: The dns settings to be applied on the publicIP addresses .
+    :vartype dnsSettings: "VirtualMachinePublicIPAddressDnsSettingsConfiguration"
+    :ivar ipTags: The list of IP tags associated with the public IP address.
+    :vartype ipTags: list["VirtualMachineIpTag"]
+    :ivar publicIPPrefix: The PublicIPPrefix from which to allocate publicIP addresses.
+    :vartype publicIPPrefix: "SubResource"
+    :ivar publicIPAddressVersion: Available from Api-Version 2019-07-01 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values
      are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
-    :vartype public_ip_address_version: Union[str, "IPVersions"]
-    :ivar public_ip_allocation_method: Specify the public IP allocation type. Known values are:
+    :vartype publicIPAddressVersion: Union[str, "IPVersions"]
+    :ivar publicIPAllocationMethod: Specify the public IP allocation type. Known values are:
      "Dynamic" and "Static".
-    :vartype public_ip_allocation_method: Union[str, "PublicIPAllocationMethod"]
+    :vartype publicIPAllocationMethod: Union[str, "PublicIPAllocationMethod"]
     """
 
     idleTimeoutInMinutes: int
@@ -3298,15 +3421,15 @@ class VirtualMachinePublicIPAddressConfigurationProperties(TypedDict, total=Fals
 class VirtualMachinePublicIPAddressDnsSettingsConfiguration(TypedDict, total=False):  # pylint: disable=name-too-long
     """Describes a virtual machines network configuration's DNS settings.
 
-    :ivar domain_name_label: The Domain name label prefix of the PublicIPAddress resources that
-     will be created. The generated name label is the concatenation of the domain name label and vm
+    :ivar domainNameLabel: The Domain name label prefix of the PublicIPAddress resources that will
+     be created. The generated name label is the concatenation of the domain name label and vm
      network profile unique ID. Required.
-    :vartype domain_name_label: str
-    :ivar domain_name_label_scope: The Domain name label scope of the PublicIPAddress resources
-     that will be created. The generated name label is the concatenation of the hashed domain name
-     label with policy according to the domain name label scope and vm network profile unique ID.
-     Known values are: "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", and "NoReuse".
-    :vartype domain_name_label_scope: Union[str, "DomainNameLabelScopeTypes"]
+    :vartype domainNameLabel: str
+    :ivar domainNameLabelScope: The Domain name label scope of the PublicIPAddress resources that
+     will be created. The generated name label is the concatenation of the hashed domain name label
+     with policy according to the domain name label scope and vm network profile unique ID. Known
+     values are: "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", and "NoReuse".
+    :vartype domainNameLabelScope: Union[str, "DomainNameLabelScopeTypes"]
     """
 
     domainNameLabel: Required[str]
@@ -3324,15 +3447,14 @@ class VirtualMachineReimageParameters(TypedDict, total=False):
     """Parameters for Reimaging Virtual Machine. NOTE: Virtual Machine OS disk will always be
     reimaged.
 
-    :ivar temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
+    :ivar tempDisk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
      disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
-    :vartype temp_disk: bool
-    :ivar exact_version: Specifies in decimal number, the version the OS disk should be reimaged
-     to. If exact version is not provided, the OS disk is reimaged to the existing version of OS
-     Disk.
-    :vartype exact_version: str
-    :ivar os_profile: Specifies information required for reimaging the non-ephemeral OS disk.
-    :vartype os_profile: "OSProfileProvisioningData"
+    :vartype tempDisk: bool
+    :ivar exactVersion: Specifies in decimal number, the version the OS disk should be reimaged to.
+     If exact version is not provided, the OS disk is reimaged to the existing version of OS Disk.
+    :vartype exactVersion: str
+    :ivar osProfile: Specifies information required for reimaging the non-ephemeral OS disk.
+    :vartype osProfile: "OSProfileProvisioningData"
     """
 
     tempDisk: bool
@@ -3379,82 +3501,82 @@ class VMAttributeMinMaxInteger(TypedDict, total=False):
 class VMAttributes(TypedDict, total=False):
     """VMAttributes that will be used to filter VMSizes which will be used to launch instances.
 
-    :ivar v_cpu_count: The range of vCpuCount specified from Min to Max. Must be specified if
+    :ivar vCpuCount: The range of vCpuCount specified from Min to Max. Must be specified if
      VMAttributes are specified, either Min or Max is required if specified. Required.
-    :vartype v_cpu_count: "VMAttributeMinMaxInteger"
-    :ivar memory_in_gi_b: The range of memory specified from Min to Max. Must be specified if
+    :vartype vCpuCount: "VMAttributeMinMaxInteger"
+    :ivar memoryInGiB: The range of memory specified from Min to Max. Must be specified if
      VMAttributes are specified, either Min or Max is required if specified. Required.
-    :vartype memory_in_gi_b: "VMAttributeMinMaxDouble"
-    :ivar architecture_types: The VM architecture types specified as a list. Must be specified if
+    :vartype memoryInGiB: "VMAttributeMinMaxDouble"
+    :ivar architectureTypes: The VM architecture types specified as a list. Must be specified if
      VMAttributes are specified. Must be compatible with image used. Required.
-    :vartype architecture_types: list[Union[str, "ArchitectureType"]]
-    :ivar memory_in_gi_b_per_v_cpu: The range of memory in GiB per vCPU specified from min to max.
+    :vartype architectureTypes: list[Union[str, "ArchitectureType"]]
+    :ivar memoryInGiBPerVCpu: The range of memory in GiB per vCPU specified from min to max.
      Optional parameter. Either Min or Max is required if specified.
-    :vartype memory_in_gi_b_per_v_cpu: "VMAttributeMinMaxDouble"
-    :ivar local_storage_support: Specifies whether the VMSize supporting local storage should be
-     used to launch instances or not. Included - Default if not specified as most Azure VMs support
-     local storage. Known values are: "Excluded", "Included", and "Required".
-    :vartype local_storage_support: Union[str, "VMAttributeSupport"]
-    :ivar local_storage_in_gi_b: LocalStorageSupport should be set to "Included" or "Required" to
-     use this VMAttribute. If localStorageSupport is "Excluded", this VMAttribute can not be used.
-    :vartype local_storage_in_gi_b: "VMAttributeMinMaxDouble"
-    :ivar local_storage_disk_types: The local storage disk types specified as a list.
+    :vartype memoryInGiBPerVCpu: "VMAttributeMinMaxDouble"
+    :ivar localStorageSupport: Specifies whether the VMSize supporting local storage should be used
+     to launch instances or not. Included - Default if not specified as most Azure VMs support local
+     storage. Known values are: "Excluded", "Included", and "Required".
+    :vartype localStorageSupport: Union[str, "VMAttributeSupport"]
+    :ivar localStorageInGiB: LocalStorageSupport should be set to "Included" or "Required" to use
+     this VMAttribute. If localStorageSupport is "Excluded", this VMAttribute can not be used.
+    :vartype localStorageInGiB: "VMAttributeMinMaxDouble"
+    :ivar localStorageDiskTypes: The local storage disk types specified as a list.
      LocalStorageSupport should be set to "Included" or "Required" to use this VMAttribute. If
      localStorageSupport is "Excluded", this VMAttribute can not be used.
-    :vartype local_storage_disk_types: list[Union[str, "LocalStorageDiskType"]]
-    :ivar data_disk_count: The range of data disk count specified from Min to Max. Optional
+    :vartype localStorageDiskTypes: list[Union[str, "LocalStorageDiskType"]]
+    :ivar dataDiskCount: The range of data disk count specified from Min to Max. Optional
      parameter. Either Min or Max is required if specified.
-    :vartype data_disk_count: "VMAttributeMinMaxInteger"
-    :ivar network_interface_count: The range of network interface count specified from Min to Max.
+    :vartype dataDiskCount: "VMAttributeMinMaxInteger"
+    :ivar networkInterfaceCount: The range of network interface count specified from Min to Max.
      Optional parameter. Either Min or Max is required if specified.
-    :vartype network_interface_count: "VMAttributeMinMaxInteger"
-    :ivar network_bandwidth_in_mbps: The range of network bandwidth in Mbps specified from Min to
-     Max. Optional parameter. Either Min or Max is required if specified.
-    :vartype network_bandwidth_in_mbps: "VMAttributeMinMaxDouble"
-    :ivar rdma_support: Specifies whether the VMSize supporting RDMA (Remote Direct Memory Access)
+    :vartype networkInterfaceCount: "VMAttributeMinMaxInteger"
+    :ivar networkBandwidthInMbps: The range of network bandwidth in Mbps specified from Min to Max.
+     Optional parameter. Either Min or Max is required if specified.
+    :vartype networkBandwidthInMbps: "VMAttributeMinMaxDouble"
+    :ivar rdmaSupport: Specifies whether the VMSize supporting RDMA (Remote Direct Memory Access)
      should be used to build launch instances or not. Known values are: "Excluded", "Included", and
      "Required".
-    :vartype rdma_support: Union[str, "VMAttributeSupport"]
-    :ivar rdma_network_interface_count: The range of RDMA (Remote Direct Memory Access) network
+    :vartype rdmaSupport: Union[str, "VMAttributeSupport"]
+    :ivar rdmaNetworkInterfaceCount: The range of RDMA (Remote Direct Memory Access) network
      interface count specified from Min to Max. Optional parameter. Either Min or Max is required if
      specified. rdmaSupport should be set to "Included" or "Required" to use this VMAttribute. If
      rdmaSupport is "Excluded", this VMAttribute can not be used.
-    :vartype rdma_network_interface_count: "VMAttributeMinMaxInteger"
-    :ivar accelerator_support: Specifies whether the VMSize supporting accelerator should be used
-     to launch instances or not. acceleratorSupport should be set to "Included" or "Required" to use
+    :vartype rdmaNetworkInterfaceCount: "VMAttributeMinMaxInteger"
+    :ivar acceleratorSupport: Specifies whether the VMSize supporting accelerator should be used to
+     launch instances or not. acceleratorSupport should be set to "Included" or "Required" to use
      this VMAttribute. If acceleratorSupport is "Excluded", this VMAttribute can not be used. Known
      values are: "Excluded", "Included", and "Required".
-    :vartype accelerator_support: Union[str, "VMAttributeSupport"]
-    :ivar accelerator_manufacturers: The accelerator manufacturers specified as a list.
+    :vartype acceleratorSupport: Union[str, "VMAttributeSupport"]
+    :ivar acceleratorManufacturers: The accelerator manufacturers specified as a list.
      acceleratorSupport should be set to "Included" or "Required" to use this VMAttribute. If
      acceleratorSupport is "Excluded", this VMAttribute can not be used.
-    :vartype accelerator_manufacturers: list[Union[str, "AcceleratorManufacturer"]]
-    :ivar accelerator_types: The accelerator types specified as a list. acceleratorSupport should
-     be set to "Included" or "Required" to use this VMAttribute. If acceleratorSupport is
-     "Excluded", this VMAttribute can not be used.
-    :vartype accelerator_types: list[Union[str, "AcceleratorType"]]
-    :ivar accelerator_count: The range of accelerator count specified from min to max. Optional
+    :vartype acceleratorManufacturers: list[Union[str, "AcceleratorManufacturer"]]
+    :ivar acceleratorTypes: The accelerator types specified as a list. acceleratorSupport should be
+     set to "Included" or "Required" to use this VMAttribute. If acceleratorSupport is "Excluded",
+     this VMAttribute can not be used.
+    :vartype acceleratorTypes: list[Union[str, "AcceleratorType"]]
+    :ivar acceleratorCount: The range of accelerator count specified from min to max. Optional
      parameter. Either Min or Max is required if specified. acceleratorSupport should be set to
      "Included" or "Required" to use this VMAttribute. If acceleratorSupport is "Excluded", this
      VMAttribute can not be used.
-    :vartype accelerator_count: "VMAttributeMinMaxInteger"
-    :ivar vm_categories: The VM category specified as a list. Optional parameter.
-    :vartype vm_categories: list[Union[str, "VMCategory"]]
-    :ivar cpu_manufacturers: The VM CPU manufacturers specified as a list. Optional parameter.
-    :vartype cpu_manufacturers: list[Union[str, "CpuManufacturer"]]
-    :ivar hyper_v_generations: The hyperV generations specified as a list. Optional parameter.
-    :vartype hyper_v_generations: list[Union[str, "HyperVGeneration"]]
-    :ivar burstable_support: Specifies whether the VMSize supporting burstable capability should be
+    :vartype acceleratorCount: "VMAttributeMinMaxInteger"
+    :ivar vmCategories: The VM category specified as a list. Optional parameter.
+    :vartype vmCategories: list[Union[str, "VMCategory"]]
+    :ivar cpuManufacturers: The VM CPU manufacturers specified as a list. Optional parameter.
+    :vartype cpuManufacturers: list[Union[str, "CpuManufacturer"]]
+    :ivar hyperVGenerations: The hyperV generations specified as a list. Optional parameter.
+    :vartype hyperVGenerations: list[Union[str, "HyperVGeneration"]]
+    :ivar burstableSupport: Specifies whether the VMSize supporting burstable capability should be
      used to launch instances or not. Known values are: "Excluded", "Included", and "Required".
-    :vartype burstable_support: Union[str, "VMAttributeSupport"]
-    :ivar allowed_vm_sizes: Specifies which VMSizes should be allowed while filtering on
+    :vartype burstableSupport: Union[str, "VMAttributeSupport"]
+    :ivar allowedVMSizes: Specifies which VMSizes should be allowed while filtering on
      VMAttributes. Cannot be specified together with excludedVMSizes. Maximum of 10 VM sizes
      allowed. Optional parameter.
-    :vartype allowed_vm_sizes: list[str]
-    :ivar excluded_vm_sizes: Specifies which VMSizes should be excluded while filtering on
+    :vartype allowedVMSizes: list[str]
+    :ivar excludedVMSizes: Specifies which VMSizes should be excluded while filtering on
      VMAttributes. Cannot be specified together with allowedVMSizes. Maximum of 10 VM sizes allowed.
      Optional parameter.
-    :vartype excluded_vm_sizes: list[str]
+    :vartype excludedVMSizes: list[str]
     """
 
     vCpuCount: Required["VMAttributeMinMaxInteger"]
@@ -3535,17 +3657,17 @@ class VMDiskSecurityProfile(TypedDict, total=False):
     """Specifies the security profile settings for the managed disk. **Note:** It can only be set for
     Confidential VMs.
 
-    :ivar security_encryption_type: Specifies the EncryptionType of the managed disk. It is set to
+    :ivar securityEncryptionType: Specifies the EncryptionType of the managed disk. It is set to
      DiskWithVMGuestState for encryption of the managed disk along with VMGuestState blob,
      VMGuestStateOnly for encryption of just the VMGuestState blob, and NonPersistedTPM for not
      persisting firmware state in the VMGuestState blob.. **Note:** It can be set for only
      Confidential VMs. Known values are: "VMGuestStateOnly", "DiskWithVMGuestState", and
      "NonPersistedTPM".
-    :vartype security_encryption_type: Union[str, "SecurityEncryptionTypes"]
-    :ivar disk_encryption_set: Specifies the customer managed disk encryption set resource id for
-     the managed disk that is used for Customer Managed Key encrypted ConfidentialVM OS Disk and
-     VMGuest blob.
-    :vartype disk_encryption_set: "DiskEncryptionSetParametersContent"
+    :vartype securityEncryptionType: Union[str, "SecurityEncryptionTypes"]
+    :ivar diskEncryptionSet: Specifies the customer managed disk encryption set resource id for the
+     managed disk that is used for Customer Managed Key encrypted ConfidentialVM OS Disk and VMGuest
+     blob.
+    :vartype diskEncryptionSet: "DiskEncryptionSetParametersContent"
     """
 
     securityEncryptionType: Union[str, "SecurityEncryptionTypes"]
@@ -3566,19 +3688,19 @@ class VMGalleryApplication(TypedDict, total=False):
     :vartype tags: str
     :ivar order: Optional, Specifies the order in which the packages have to be installed.
     :vartype order: int
-    :ivar package_reference_id: Specifies the GalleryApplicationVersion resource id on the form of
+    :ivar packageReferenceId: Specifies the GalleryApplicationVersion resource id on the form of
      /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{application}/versions/{version}.
      Required.
-    :vartype package_reference_id: str
-    :ivar configuration_reference: Optional, Specifies the uri to an azure blob that will replace
+    :vartype packageReferenceId: str
+    :ivar configurationReference: Optional, Specifies the uri to an azure blob that will replace
      the default configuration for the package if provided.
-    :vartype configuration_reference: str
-    :ivar treat_failure_as_deployment_failure: Optional, If true, any failure for any operation in
-     the VmApplication will fail the deployment.
-    :vartype treat_failure_as_deployment_failure: bool
-    :ivar enable_automatic_upgrade: If set to true, when a new Gallery Application version is
+    :vartype configurationReference: str
+    :ivar treatFailureAsDeploymentFailure: Optional, If true, any failure for any operation in the
+     VmApplication will fail the deployment.
+    :vartype treatFailureAsDeploymentFailure: bool
+    :ivar enableAutomaticUpgrade: If set to true, when a new Gallery Application version is
      available in PIR/SIG, it will be automatically updated for the VM/VMSS.
-    :vartype enable_automatic_upgrade: bool
+    :vartype enableAutomaticUpgrade: bool
     """
 
     tags: str
@@ -3617,17 +3739,17 @@ class VmSizeProfile(TypedDict, total=False):
 class VmSizeProperties(TypedDict, total=False):
     """Specifies VM Size Property settings on the virtual machine.
 
-    :ivar v_cpus_available: Specifies the number of vCPUs available for the VM. When this property
-     is not specified in the request body the default behavior is to set it to the value of vCPUs
+    :ivar vCpusAvailable: Specifies the number of vCPUs available for the VM. When this property is
+     not specified in the request body the default behavior is to set it to the value of vCPUs
      available for that VM size exposed in api response of `List all available virtual machine sizes
      in a region <https://docs.microsoft.com/en-us/rest/api/compute/resource-skus/list>`_.
-    :vartype v_cpus_available: int
-    :ivar v_cpus_per_core: Specifies the vCPU to physical core ratio. When this property is not
+    :vartype vCpusAvailable: int
+    :ivar vCpusPerCore: Specifies the vCPU to physical core ratio. When this property is not
      specified in the request body the default behavior is set to the value of vCPUsPerCore for the
      VM Size exposed in api response of `List all available virtual machine sizes in a region
      <https://docs.microsoft.com/en-us/rest/api/compute/resource-skus/list>`_. **Setting this
      property to 1 also means that hyper-threading is disabled.**.
-    :vartype v_cpus_per_core: int
+    :vartype vCpusPerCore: int
     """
 
     vCpusAvailable: int
@@ -3646,30 +3768,30 @@ class VmSizeProperties(TypedDict, total=False):
 class WindowsConfiguration(TypedDict, total=False):
     """Specifies Windows operating system settings on the virtual machine.
 
-    :ivar provision_vm_agent: Indicates whether virtual machine agent should be provisioned on the
+    :ivar provisionVMAgent: Indicates whether virtual machine agent should be provisioned on the
      virtual machine. When this property is not specified in the request body, it is set to true by
      default. This will ensure that VM Agent is installed on the VM so that extensions can be added
      to the VM later.
-    :vartype provision_vm_agent: bool
-    :ivar enable_automatic_updates: Indicates whether Automatic Updates is enabled for the Windows
+    :vartype provisionVMAgent: bool
+    :ivar enableAutomaticUpdates: Indicates whether Automatic Updates is enabled for the Windows
      virtual machine. Default value is true. For virtual machine scale sets, this property can be
      updated and updates will take effect on OS reprovisioning.
-    :vartype enable_automatic_updates: bool
-    :ivar time_zone: Specifies the time zone of the virtual machine. e.g. "Pacific Standard Time".
+    :vartype enableAutomaticUpdates: bool
+    :ivar timeZone: Specifies the time zone of the virtual machine. e.g. "Pacific Standard Time".
      Possible values can be `TimeZoneInfo.Id
      <https://docs.microsoft.com/dotnet/api/system.timezoneinfo.id?#System_TimeZoneInfo_Id>`_ value
      from time zones returned by `TimeZoneInfo.GetSystemTimeZones
      <https://docs.microsoft.com/dotnet/api/system.timezoneinfo.getsystemtimezones>`_.
-    :vartype time_zone: str
-    :ivar additional_unattend_content: Specifies additional base-64 encoded XML formatted
-     information that can be included in the Unattend.xml file, which is used by Windows Setup.
-    :vartype additional_unattend_content: list["AdditionalUnattendContent"]
-    :ivar patch_settings: [Preview Feature] Specifies settings related to VM Guest Patching on
+    :vartype timeZone: str
+    :ivar additionalUnattendContent: Specifies additional base-64 encoded XML formatted information
+     that can be included in the Unattend.xml file, which is used by Windows Setup.
+    :vartype additionalUnattendContent: list["AdditionalUnattendContent"]
+    :ivar patchSettings: [Preview Feature] Specifies settings related to VM Guest Patching on
      Windows.
-    :vartype patch_settings: "PatchSettings"
-    :ivar win_rm: Specifies the Windows Remote Management listeners. This enables remote Windows
+    :vartype patchSettings: "PatchSettings"
+    :ivar winRM: Specifies the Windows Remote Management listeners. This enables remote Windows
      PowerShell.
-    :vartype win_rm: "WinRMConfiguration"
+    :vartype winRM: "WinRMConfiguration"
     """
 
     provisionVMAgent: bool
@@ -3699,12 +3821,12 @@ class WindowsVMGuestPatchAutomaticByPlatformSettings(TypedDict, total=False):  #
     """Specifies additional settings to be applied when patch mode AutomaticByPlatform is selected in
     Windows patch settings.
 
-    :ivar reboot_setting: Specifies the reboot setting for all AutomaticByPlatform patch
+    :ivar rebootSetting: Specifies the reboot setting for all AutomaticByPlatform patch
      installation operations. Known values are: "Unknown", "IfRequired", "Never", and "Always".
-    :vartype reboot_setting: Union[str, "WindowsVMGuestPatchAutomaticByPlatformRebootSetting"]
-    :ivar bypass_platform_safety_checks_on_user_schedule: Enables customer to schedule patching
-     without accidental upgrades.
-    :vartype bypass_platform_safety_checks_on_user_schedule: bool
+    :vartype rebootSetting: Union[str, "WindowsVMGuestPatchAutomaticByPlatformRebootSetting"]
+    :ivar bypassPlatformSafetyChecksOnUserSchedule: Enables customer to schedule patching without
+     accidental upgrades.
+    :vartype bypassPlatformSafetyChecksOnUserSchedule: bool
     """
 
     rebootSetting: Union[str, "WindowsVMGuestPatchAutomaticByPlatformRebootSetting"]
@@ -3731,8 +3853,8 @@ class WinRMListener(TypedDict, total=False):
     :ivar protocol: Specifies the protocol of WinRM listener. Possible values are: **http,**
      **https.**. Known values are: "Http" and "Https".
     :vartype protocol: Union[str, "ProtocolTypes"]
-    :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
-     a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
+    :ivar certificateUrl: This is the URL of a certificate that has been uploaded to Key Vault as a
+     secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
      <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
      certificate needs to be the Base64 encoding of the following JSON Object which is encoded in
      UTF-8: <br><br> {<br>  "data":"<Base64-encoded-certificate>",<br>  "dataType":"pfx",<br>
@@ -3741,7 +3863,7 @@ class WinRMListener(TypedDict, total=False):
      <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
      Key Vault virtual machine extension for Windows
      <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
-    :vartype certificate_url: str
+    :vartype certificateUrl: str
     """
 
     protocol: Union[str, "ProtocolTypes"]
@@ -3764,11 +3886,11 @@ class WinRMListener(TypedDict, total=False):
 class ZoneAllocationPolicy(TypedDict, total=False):
     """The zone allocation policy for distributing VMs across availability zones.
 
-    :ivar distribution_strategy: The distribution strategy for zone allocation. Known values are:
+    :ivar distributionStrategy: The distribution strategy for zone allocation. Known values are:
      "BestEffortSingleZone", "Prioritized", "BestEffortBalanced", and "StrictBalanced".
-    :vartype distribution_strategy: Union[str, "DistributionStrategy"]
-    :ivar zone_preferences: The zone preferences for allocation priority.
-    :vartype zone_preferences: list["ZonePreference"]
+    :vartype distributionStrategy: Union[str, "DistributionStrategy"]
+    :ivar zonePreferences: The zone preferences for allocation priority.
+    :vartype zonePreferences: list["ZonePreference"]
     """
 
     distributionStrategy: Union[str, "DistributionStrategy"]
