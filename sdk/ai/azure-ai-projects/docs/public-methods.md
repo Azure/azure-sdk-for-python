@@ -140,13 +140,13 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 
 ```
 .beta.agents.cancel_optimization_job
-.beta.agents.begin_create_optimization_job
+.beta.agents.begin_create_optimization_job*
 .beta.agents.delete_optimization_job
 .beta.agents.get_optimization_job
 .beta.agents.list_optimization_jobs
 
 .beta.datasets.cancel_generation_job
-.beta.datasets.begin_create_generation_job
+.beta.datasets.begin_create_generation_job*
 .beta.datasets.delete_generation_job
 .beta.datasets.get_generation_job
 .beta.datasets.list_generation_jobs
@@ -158,7 +158,7 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .beta.evaluation_taxonomies.update
 
 .beta.evaluators.cancel_generation_job
-.beta.evaluators.begin_create_generation_job
+.beta.evaluators.begin_create_generation_job*
 .beta.evaluators.create_version
 .beta.evaluators.delete_generation_job
 .beta.evaluators.delete_version

@@ -37,12 +37,12 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    OptimizedAgentIdentifier as AgentIdentifier,
-    AgentOptimizationEvaluatorRef as EvaluatorRef,
+    AgentOptimizationEvaluatorRef,
     AgentOptimizationJob,
     AgentOptimizationJobInputs,
     AgentOptimizationOptions,
-    AgentOptimizationReferenceDatasetInput as ReferenceDatasetInput,
+    AgentOptimizationReferenceDatasetInput,
+    OptimizedAgentIdentifier,
 )
 
 load_dotenv()
@@ -67,12 +67,12 @@ with (
     # ------------------------------------------------------------------
     job = AgentOptimizationJob(
         inputs=AgentOptimizationJobInputs(
-            agent=AgentIdentifier(agent_name=agent_name),
-            train_dataset=ReferenceDatasetInput(
+            agent=OptimizedAgentIdentifier(agent_name=agent_name),
+            train_dataset=AgentOptimizationReferenceDatasetInput(
                 name=dataset_name,
                 version=dataset_version,
             ),
-            evaluators=[EvaluatorRef(name=evaluator_name)],
+            evaluators=[AgentOptimizationEvaluatorRef(name=evaluator_name)],
             options=AgentOptimizationOptions(
                 max_candidates=3,
                 eval_model=eval_model,

@@ -5,7 +5,7 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents**, which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
 * **Enhance Agents with specialized tools and toolbox tools** such as:
-  * Agent-to-Agent (A2A) (Preview)
+  * Agent-to-Agent (A2A)
   * Azure AI Search
   * Azure Functions
   * Bing Custom Search (Preview)

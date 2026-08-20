@@ -49,6 +49,13 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AGENTS_OPTIMIZATION_V2_PREVIEW."""
 
 
+class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported A2A protocol versions."""
+
+    V1_0 = "1.0"
+    """A2A protocol version 1.0."""
+
+
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AgentBlueprintReferenceType."""
 
@@ -873,6 +880,39 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DEFAULT_2024_11_15."""
 
 
+class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Constrains effort on reasoning for reasoning models. Currently supported values are ``none``,
+    ``minimal``, ``low``, ``medium``, ``high``, ``xhigh``, and ``max``. Reducing reasoning effort
+    can result in faster responses and fewer tokens used on reasoning in a response. Not all
+    reasoning models support every value. See the `reasoning guide
+    <https://platform.openai.com/docs/guides/reasoning>`_ for model-specific support.
+    """
+
+    NONE = "none"
+    """NONE."""
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+    MAX = "max"
+    """MAX."""
+
+
+class ReasoningModeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ReasoningModeEnum."""
+
+    STANDARD = "standard"
+    """STANDARD."""
+    PRO = "pro"
+    """PRO."""
+
+
 class RealtimeAudioFormatsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of RealtimeAudioFormatsType."""
 
@@ -1361,6 +1401,8 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AZURE_AI_SEARCH."""
     OPENAPI = "openapi"
     """OPENAPI."""
+    A2_A = "a2a"
+    """A2_A."""
     A2A_PREVIEW = "a2a_preview"
     """A2A_PREVIEW."""
     BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
@@ -1485,6 +1527,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FABRIC_IQ_PREVIEW."""
     TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
     """TOOLBOX_SEARCH_PREVIEW."""
+    A2_A = "a2a"
+    """A2_A."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"

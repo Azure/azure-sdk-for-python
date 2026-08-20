@@ -40,13 +40,13 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    JobStatus,
-    OptimizedAgentIdentifier as AgentIdentifier,
-    AgentOptimizationEvaluatorRef as EvaluatorRef,
+    AgentOptimizationEvaluatorRef,
     AgentOptimizationJob,
     AgentOptimizationJobInputs,
     AgentOptimizationOptions,
-    AgentOptimizationReferenceDatasetInput as ReferenceDatasetInput,
+    AgentOptimizationReferenceDatasetInput,
+    JobStatus,
+    OptimizedAgentIdentifier,
 )
 
 load_dotenv()
@@ -73,22 +73,15 @@ async def main() -> None:
         # 1. Create an optimization job without SDK polling.
         # ------------------------------------------------------------------
         print("Creating optimization job...")
-        pipeline_responses = []
-
-        def raw_response_hook(response):
-            # The raw_response_hook is called synchronously before the generated LRO method
-            # awaits read() on the initial response.  Capture the pipeline response object here
-            # and parse the body afterwards, when read() has already been awaited.
-            pipeline_responses.append(response)
 
         job = AgentOptimizationJob(
             inputs=AgentOptimizationJobInputs(
-                agent=AgentIdentifier(agent_name=agent_name),
-                train_dataset=ReferenceDatasetInput(
+                agent=OptimizedAgentIdentifier(agent_name=agent_name),
+                train_dataset=AgentOptimizationReferenceDatasetInput(
                     name=dataset_name,
                     version=dataset_version,
                 ),
-                evaluators=[EvaluatorRef(name=evaluator_name)],
+                evaluators=[AgentOptimizationEvaluatorRef(name=evaluator_name)],
                 options=AgentOptimizationOptions(
                     max_candidates=3,
                     eval_model=eval_model,
@@ -97,16 +90,14 @@ async def main() -> None:
             )
         )
 
-        await project_client.beta.agents.begin_create_optimization_job(
+        poller = await project_client.beta.agents.begin_create_optimization_job(
             job=job,
             polling=False,
-            raw_response_hook=raw_response_hook,
         )
-        # Alternatively, have the SDK handle polling by removing `polling=False`, assigning the awaited call
-        # to a poller, and then awaiting `poller.result()`.
-        if not pipeline_responses:
-            raise RuntimeError("The create operation did not return an optimization job.")
-        job = AgentOptimizationJob(pipeline_responses[0].http_response.json())
+        job_id = poller.details["job_id"]
+        if not job_id:
+            raise RuntimeError("The create operation did not return an optimization job ID.")
+        job = await project_client.beta.agents.get_optimization_job(job_id=job_id)
         print(f"Created job: id={job.id}, status={job.status}")
 
         # ------------------------------------------------------------------

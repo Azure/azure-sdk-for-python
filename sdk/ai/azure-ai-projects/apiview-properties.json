@@ -6,6 +6,8 @@
         "azure.ai.projects.models.ToolboxTool": "Azure.AI.Projects.ToolboxTool",
         "azure.ai.projects.models.A2APreviewToolboxTool": "Azure.AI.Projects.A2APreviewToolboxTool",
         "azure.ai.projects.models.A2AProtocolConfiguration": "Azure.AI.Projects.A2AProtocolConfiguration",
+        "azure.ai.projects.models.A2ATool": "Azure.AI.Projects.A2ATool",
+        "azure.ai.projects.models.A2AToolboxTool": "Azure.AI.Projects.A2AToolboxTool",
         "azure.ai.projects.models.ActivityProtocolConfiguration": "Azure.AI.Projects.ActivityProtocolConfiguration",
         "azure.ai.projects.models.AgentBlueprintReference": "Azure.AI.Projects.AgentBlueprintReference",
         "azure.ai.projects.models.AgentCard": "Azure.AI.Projects.AgentCard",
@@ -526,6 +528,7 @@
         "azure.ai.projects.models.WorkIQPreviewToolboxTool": "Azure.AI.Projects.WorkIQPreviewToolboxTool",
         "azure.ai.projects.models.EvaluationTaxonomyInputType": "Azure.AI.Projects.EvaluationTaxonomyInputType",
         "azure.ai.projects.models.ToolType": "OpenAI.ToolType",
+        "azure.ai.projects.models.A2AProtocolVersion": "Azure.AI.Projects.A2AProtocolVersion",
         "azure.ai.projects.models.CallableToolAllowedCaller": "OpenAI.CallableToolAllowedCaller",
         "azure.ai.projects.models.AzureAISearchQueryType": "Azure.AI.Projects.AzureAISearchQueryType",
         "azure.ai.projects.models.ContainerMemoryLimit": "OpenAI.ContainerMemoryLimit",
@@ -778,5 +781,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "5c47fb4d0cd0"
+    "CrossLanguageVersion": "f23cc7b21030"
 }
