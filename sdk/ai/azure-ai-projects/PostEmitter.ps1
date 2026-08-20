@@ -227,6 +227,46 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
+# Remove the generated `voice_agent_web_socket` operation group from the client's public surface
+# entirely (import, docstring, and __init__ assignment), instead of deleting the instance attribute
+# at runtime in _patch.py/aio/_patch.py. The generated operation only performs a plain HTTP GET (no
+# WebSocket upgrade handshake) and discards the connection - it's not a usable client and was never
+# meant to be public (the real voice-agent WebSocket client is `.realtime`). Deleting it only at
+# runtime left a static/runtime mismatch: pyright/mypy still saw `voice_agent_web_socket:
+# VoiceAgentWebSocketOperations` as always present (it's an unconditional generated __init__
+# assignment), so callers' code type-checked fine but raised AttributeError at runtime. Stripping it
+# here removes the mismatch at its source.
+$files = 'azure\ai\projects\_client.py', 'azure\ai\projects\aio\_client.py'
+foreach ($f in $files) {
+    $c = Get-Content $f -Raw
+    $c = $c -replace '(?m)^    :ivar voice_agent_web_socket: VoiceAgentWebSocketOperations operations\r?\n    :vartype voice_agent_web_socket: [^\r\n]*\r?\n', ''
+    $c = $c -replace '(?m)^        self\.voice_agent_web_socket = VoiceAgentWebSocketOperations\(\r?\n            self\._client, self\._config, self\._serialize, self\._deserialize\r?\n        \)\r?\n', ''
+    $c = $c -replace '(?m)^\s*VoiceAgentWebSocketOperations,\r?\n', ''
+    Set-Content $f $c -NoNewline
+}
+
+# Fix Sphinx docutils "Bullet list ends without a blank line; unexpected unindent" errors (the
+# `-W` sphinx flag turns these into build failures) in VoiceAudioOutputConfig (_models.py and its
+# TypedDict twin in types.py) and VoiceConversationStatus (_enums.py). The emitter wraps long
+# bullet-list items across multiple physical lines without indenting the continuation under the
+# bullet's text, which docutils doesn't recognize as part of the same list item. Join each
+# wrapped item back into one physical line; VoiceAudioOutputConfig also needs a blank line
+# inserted before its trailing non-bulleted closing sentence to properly terminate the list.
+$files = 'azure\ai\projects\models\_models.py', 'azure\ai\projects\types.py'
+foreach ($f in $files) {
+    $c = Get-Content $f -Raw
+    $c = $c -replace '(`voice_temperature`,)\r?\n    (`custom_lexicon_url`,)\r?\n    (`custom_text_normalization_url`)', '$1 $2 $3'
+    $c = $c -replace '(plus)\r?\n    (`personal_voice_model`; the voice name is derived from the avatar\.)', '$1 $2'
+    $c = $c -replace '(\* `azure-realtime-native`: `voice` and `speed`\.)\r?\n    (`format` and `output_audio_timestamp_types` apply to every voice type\.)', "`$1`r`n`r`n    `$2"
+    Set-Content $f $c -NoNewline
+}
+$f = 'azure\ai\projects\models\_enums.py'
+$c = Get-Content $f -Raw
+$c = $c -replace '(is)\r?\n    (pending\.)', '$1 $2'
+$c = $c -replace '(a)\r?\n    (max-duration `1001`)\r?\n    (close, or a client or network disconnect that the service can still finalize\.)', '$1 $2 $3'
+$c = $c -replace '(prevented)\r?\n    (finalization\.)', '$1 $2'
+Set-Content $f $c -NoNewline
+
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .

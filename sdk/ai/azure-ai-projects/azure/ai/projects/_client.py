@@ -26,7 +26,6 @@ from .operations import (
     EvaluationRulesOperations,
     IndexesOperations,
     ToolboxesOperations,
-    VoiceAgentWebSocketOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -45,8 +44,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
     :vartype beta: azure.ai.projects.operations.BetaOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.operations.AgentsOperations
-    :ivar voice_agent_web_socket: VoiceAgentWebSocketOperations operations
-    :vartype voice_agent_web_socket: azure.ai.projects.operations.VoiceAgentWebSocketOperations
     :ivar agent_endpoint_conversations: AgentEndpointConversationsOperations operations
     :vartype agent_endpoint_conversations:
      azure.ai.projects.operations.AgentEndpointConversationsOperations
@@ -113,9 +110,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
         self._serialize.client_side_validation = False
         self.beta = BetaOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.voice_agent_web_socket = VoiceAgentWebSocketOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.agent_endpoint_conversations = AgentEndpointConversationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
