@@ -3,8 +3,9 @@
   "apiVersions": {
     "Microsoft.Storage": "2026-04-01"
   },
-  "commit": "9b62943d6689ed4c35d02a05786cc561786e31d7",
+  "commit": "cb5c66698e99c29b0d4ed099a88244d7ca46235c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/storage/Storage.Management",
-  "emitterVersion": "0.62.1"
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }
