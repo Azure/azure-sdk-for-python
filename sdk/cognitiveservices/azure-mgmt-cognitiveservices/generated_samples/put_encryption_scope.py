@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-15-preview/PutEncryptionScope.json
+# x-ms-original-file: 2026-07-01/PutEncryptionScope.json
 if __name__ == "__main__":
     main()

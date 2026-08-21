@@ -8,10 +8,8 @@
 import pytest
 from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
-
-AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
@@ -19,18 +17,9 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
     def setup_method(self, method):
         self.client = self.create_mgmt_client(CognitiveServicesManagementClient, is_async=True)
 
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @pytest.mark.asyncio
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
-        response = self.client.accounts.list_by_resource_group(
-            resource_group_name=resource_group.name,
-        )
-        result = [r async for r in response]
-        assert result == []
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_list(self):
         response = self.client.accounts.list()
         result = [r async for r in response]
         assert len(result)
