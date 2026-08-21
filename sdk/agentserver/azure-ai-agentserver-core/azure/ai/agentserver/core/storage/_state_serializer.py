@@ -136,13 +136,13 @@ def serialize_store_update_request(description: str | None | object, tags: Mappi
     return json.dumps(dict(request)).encode("utf-8")
 
 
-def serialize_item_create_request(key: str, value: JSONObject, tags: Mapping[str, str] | None) -> bytes:
-    request = CreateItemRequest(key=key, value=value, tags=_to_wire_tags(tags))
+def serialize_item_create_request(key: str, value: Mapping[str, JSONValue], tags: Mapping[str, str] | None) -> bytes:
+    request = CreateItemRequest(key=key, value=dict(value), tags=_to_wire_tags(tags))
     return json.dumps(dict(request)).encode("utf-8")
 
 
-def serialize_item_put_request(value: JSONObject, tags: Mapping[str, str] | None) -> bytes:
-    request = PutItemRequest(value=value, tags=_to_wire_tags(tags))
+def serialize_item_put_request(value: Mapping[str, JSONValue], tags: Mapping[str, str] | None) -> bytes:
+    request = PutItemRequest(value=dict(value), tags=_to_wire_tags(tags))
     return json.dumps(dict(request)).encode("utf-8")
 
 

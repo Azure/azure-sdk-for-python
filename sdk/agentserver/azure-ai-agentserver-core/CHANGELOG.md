@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0b3 (Unreleased)
+
+### Other Changes
+
+- `FoundryStateStore.set_item()` and `create_item()` now accept any `Mapping[str, JSONValue]` for `value` instead of requiring a concrete `dict`. The payload is never mutated, only serialized, so the narrower `dict` requirement rejected valid callers (for example M365 `StoreItem.store_item_to_json()`, which returns a `MutableMapping`). Widening a parameter type is backward compatible for all existing callers.
+
 ## 2.1.0b2 (2026-08-18)
 
 ### Other Changes
