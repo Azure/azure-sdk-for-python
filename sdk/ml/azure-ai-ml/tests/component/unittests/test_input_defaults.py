@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
-from azure.ai.ml.exceptions import UserErrorException, ValidationException
+from azure.ai.ml.exceptions import UserErrorException
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -68,11 +68,14 @@ class TestAssetBackedInputDefaults:
         assert from_rest.default == "azureml:my_asset:1"
 
     def test_input_non_string_default_raises(self):
-        with pytest.raises(ValidationException, match="must be a string asset or path reference"):
+        with pytest.raises(UserErrorException, match="must be a string asset or path reference"):
             Input(type="uri_file", default=123)
 
-        with pytest.raises(ValidationException, match="must be a string asset or path reference"):
+        with pytest.raises(UserErrorException, match="must be a string asset or path reference"):
             Input(type="uri_folder", default=True)
+
+        with pytest.raises(UserErrorException, match="cannot be set"):
+            Input(type="uri_file", default=Input(type="uri_file", path="azureml:my_asset:1"))
 
     def test_input_unsupported_type_default_raises(self):
         with pytest.raises(UserErrorException, match="Non-primitive type Input has no default value"):

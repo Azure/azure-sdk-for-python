@@ -395,15 +395,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
                     f"{msg_prefix}cannot be set: default value of {self.type!r} Input must be a string "
                     f"asset or path reference, got '{default_value}', type = {type(default_value)!r}."
                 )
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=(
-                        "Default value of non-primitive Input must be a string asset or path reference."
-                    ),
-                    error_category=ErrorCategory.USER_ERROR,
-                    target=ErrorTarget.PIPELINE,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                )
+                raise UserErrorException(msg)
             self.default = default_value
             return
         if isinstance(default_value, float) and not math.isfinite(default_value):
