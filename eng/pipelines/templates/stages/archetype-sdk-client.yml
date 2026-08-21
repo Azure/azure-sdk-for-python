@@ -143,6 +143,36 @@ extends:
               TestProxy: ${{ parameters.TestProxy }}
               GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
+          - ${{ if and(eq(variables['System.TeamProject'], 'internal'), or(in(variables['Build.Reason'], 'Manual', ''), and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))) }}:
+            - job: CheckPackageApproval
+              displayName: Check Package Approval Status
+              dependsOn:
+                - Build_Extended
+              condition: >-
+                in(dependencies.Build_Extended.result, 'Succeeded', 'SucceededWithIssues')
+              pool:
+                name: $(LINUXPOOL)
+                image: $(LINUXVMIMAGE)
+                os: linux
+              steps:
+                - checkout: self
+                  fetchDepth: 1
+                  fetchTags: false
+                  sparseCheckoutDirectories: eng/common
+
+                - download: current
+                  artifact: packages_extended
+
+                - template: /eng/common/pipelines/templates/steps/install-azsdk-cli.yml
+
+                - template: /eng/common/pipelines/templates/steps/get-package-approval-status.yml
+                  parameters:
+                    Language: python
+                    PackageInfoFiles:
+                      - ${{ each artifact in parameters.Artifacts }}:
+                        - $(Pipeline.Workspace)/packages_extended/PackageInfo/${{ artifact.name }}.json
+                    RepoOwner: Azure
+
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml
           - template: /eng/pipelines/templates/variables/image.yml
