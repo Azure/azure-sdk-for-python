@@ -41,6 +41,7 @@ from ._helpers import (
     _compute_digest,
     _is_tag,
     _parse_next_link,
+    _validate_next_link,
     _validate_digest,
     _get_blob_size,
     _get_manifest_size,
@@ -221,6 +222,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     url, query_parameters, header_parameters
                 )
             else:
+                _validate_next_link(next_link, self._endpoint)
                 url = next_link
                 query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
@@ -369,6 +371,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     url, query_parameters, header_parameters
                 )
             else:
+                _validate_next_link(next_link, self._endpoint)
                 url = next_link
                 query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
@@ -598,6 +601,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     url, query_parameters, header_parameters
                 )
             else:
+                _validate_next_link(next_link, self._endpoint)
                 url = next_link
                 query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {

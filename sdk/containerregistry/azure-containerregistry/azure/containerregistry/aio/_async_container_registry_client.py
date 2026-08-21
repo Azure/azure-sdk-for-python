@@ -50,6 +50,7 @@ from .._helpers import (
     _compute_digest,
     _is_tag,
     _parse_next_link,
+    _validate_next_link,
     _validate_digest,
     _get_blob_size,
     _get_manifest_size,
@@ -223,6 +224,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             else:
                 # make call to next link with the client's api-version
+                _validate_next_link(next_link, self._endpoint)
                 _parsed_next_link = urllib.parse.urlparse(next_link)
                 _next_request_params = case_insensitive_dict(
                     {
@@ -365,6 +367,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     _request.url, **path_format_arguments
                 )  # pylint: disable=protected-access
             else:
+                _validate_next_link(next_link, self._endpoint)
                 _parsed_next_link = urllib.parse.urlparse(next_link)
                 _next_request_params = case_insensitive_dict(
                     {
@@ -608,6 +611,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     url, query_parameters, header_parameters
                 )
             else:
+                _validate_next_link(next_link, self._endpoint)
                 url = next_link
                 query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
