@@ -45,6 +45,7 @@ from ._job_helper import (
     _ensure_dir,
     _validate_output_for_download,
     _validate_command_job,
+    _emit_validation_warnings,
     _content_hash,
     _get_sorted_streamable_logs,
     _incremental_print,
@@ -352,7 +353,7 @@ class JobsOperations(_GeneratedJobsOps):
         :raises ValueError: If required fields are missing or empty.
         """
         if not skip_validation:
-            _validate_command_job(job).try_raise(raise_on_failure=True)
+            _emit_validation_warnings(_validate_command_job(job).try_raise(raise_on_failure=True))
         self._resolve_local_paths(name, job)
         self._inject_preview_header(kwargs)
         # Wrap the flat CommandJob inside the Job envelope required by the wire format

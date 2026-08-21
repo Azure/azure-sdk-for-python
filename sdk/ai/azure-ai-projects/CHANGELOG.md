@@ -26,11 +26,13 @@
 * New `.beta.jobs` sub-client with CommandJob operations: `create_or_update`, `get`, `list`, `begin_delete`, `begin_cancel`, `validate`, `show_services`, `stream`, `download`.
 * New optional `priority` property on class `CommandJob`, typed as the new `JobPriority` enum (`LOW`, `MID`, `HIGH`). If omitted, the service defaults to `LOW`.
 * New optional `experiment_name` property on class `CommandJob`, used to group related runs. If omitted, the service uses `Default`.
+* `.beta.jobs.create_or_update` now emits a `UserWarning` when a newly created job sets `resources.instance_type`, `resources.shm_size`, `resources.docker_args` or `resources.properties`. The service infers these from the target compute and ignores them, so they were previously dropped silently. The call still succeeds, and jobs retrieved with `.beta.jobs.get` are not affected.
 
 
 ### Breaking Changes
 
 Breaking changes in beta methods:
+* `.beta.jobs.create_or_update` now raises `ValueError` when creating a job whose outputs are missing `asset_name`. Previously the submit appeared to succeed and the job failed at startup with no retrievable error. Pass `skip_validation=True` to bypass. Jobs retrieved with `.beta.jobs.get` are unaffected, so get-modify-update round trips continue to work.
 * Required keyword `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
 * Argument `body` in method `.beta.skills.create_from_files()` renamed to `content`.

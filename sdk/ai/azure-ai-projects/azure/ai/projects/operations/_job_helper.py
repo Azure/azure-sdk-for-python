@@ -9,6 +9,7 @@ import os
 import re
 import urllib.error
 import urllib.request
+import warnings
 from fnmatch import fnmatch
 from pathlib import Path
 from typing import (
@@ -79,6 +80,10 @@ _DEFAULT_ARTIFACT_STORE_OUTPUT_NAME = "default"
 _TMP_SUFFIX = ".tmp"
 
 _GIT_PATH_PREFIXES: Tuple[str, ...] = ("git://", "git+")
+
+# JobResourceConfiguration fields the service infers from the target compute and
+# ignores on submission. Mirrors the @visibility(Lifecycle.Read) fields in the spec.
+_READ_ONLY_RESOURCE_FIELDS: Tuple[str, ...] = ("instance_type", "shm_size", "docker_args", "properties")
 
 
 def _resolve_symlink(path: Path) -> Path:
@@ -368,6 +373,96 @@ def _validate_command_job(job: CommandJob) -> ValidationResult:
             if isinstance(path_value, str) and _path_looks_local(path_value):
                 _check_local_path(result, path_value, f"outputs.{key}.path", base_path=job._base_path)
 
+    _warn_on_read_only_resources(result, job)
+    _check_output_asset_names(result, job)
+
+    return result
+
+
+def _check_output_asset_names(result: ValidationResult, job: CommandJob) -> None:
+    """Reject a newly authored job whose outputs are missing ``asset_name``.
+
+    ``asset_name`` is required by the service, but the requirement is only enforced
+    at job startup: the submit returns success, the job is created, and it then
+    fails within a second with no error message retrievable through the SDK.
+    Failing here turns that into an immediate, actionable error.
+
+    Only applied to newly authored jobs. The service auto-creates an output named
+    ``default`` with a null ``assetName`` and returns it from ``get``, so validating
+    a job that came back from the service would reject its own response. ``status``
+    is response-only and is the discriminator: it is ``None`` on a job the caller
+    built.
+
+    :param result: The validation result to append errors to.
+    :type result: ~azure.ai.projects.models.ValidationResult
+    :param job: The command job being validated.
+    :type job: ~azure.ai.projects.models.CommandJob
+    """
+    if not job.outputs or job.status is not None:
+        return
+
+    for key, job_output in job.outputs.items():
+        asset_name = getattr(job_output, "asset_name", None)
+        if isinstance(asset_name, str) and asset_name.strip():
+            continue
+        result.append_error(
+            f"outputs.{key}.asset_name",
+            f"'outputs.{key}.asset_name' is required. Without it the job is created but "
+            f"fails immediately at startup, and the service reports no error.",
+            error_code="MISSING_FIELD",
+            value=asset_name,
+        )
+
+
+def _warn_on_read_only_resources(result: ValidationResult, job: CommandJob) -> None:
+    """Warn when read-only ``resources`` fields are set on a newly authored job.
+
+    The service infers these from the target compute and silently ignores whatever
+    the caller sends, so passing them is a no-op the caller would otherwise never
+    learn about. This is a warning rather than an error: it must not fail the call.
+
+    Only applied to newly authored jobs. A job returned by ``get`` has these fields
+    populated by the service, so warning on a get-modify-update round trip would
+    flag values the caller never set. ``status`` is response-only and is the
+    discriminator: it is ``None`` on a job the caller built.
+
+    :param result: The validation result to append warnings to.
+    :type result: ~azure.ai.projects.models.ValidationResult
+    :param job: The command job being validated.
+    :type job: ~azure.ai.projects.models.CommandJob
+    """
+    if job.resources is None or job.status is not None:
+        return
+
+    for field in _READ_ONLY_RESOURCE_FIELDS:
+        value = getattr(job.resources, field, None)
+        if value is None:
+            continue
+        result.append_warning(
+            f"resources.{field}",
+            f"'resources.{field}' is read-only and is ignored on job submission. "
+            f"The service infers it from the target compute.",
+            error_code="READ_ONLY_FIELD",
+            value=value,
+        )
+
+
+def _emit_validation_warnings(result: ValidationResult) -> ValidationResult:
+    """Surface validation warnings to the caller.
+
+    ``create_or_update`` otherwise discards the validation result, so warnings
+    recorded during validation would never reach the caller. Emitted as
+    ``UserWarning`` so they are visible without configuring logging, since they
+    report caller input that will not take effect.
+
+    :param result: The validation result whose warnings should be surfaced.
+    :type result: ~azure.ai.projects.models.ValidationResult
+    :return: The same validation result, to allow chaining.
+    :rtype: ~azure.ai.projects.models.ValidationResult
+    """
+    for warning in result.warnings:
+        # stacklevel=4: _emit_validation_warnings -> create_or_update -> caller.
+        warnings.warn(f"{warning.yaml_path}: {warning.message}", UserWarning, stacklevel=4)
     return result
 
 
