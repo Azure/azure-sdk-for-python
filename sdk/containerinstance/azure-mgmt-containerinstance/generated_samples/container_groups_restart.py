@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-06-01-preview/ContainerGroupsRestart.json
+# x-ms-original-file: 2026-08-01-preview/ContainerGroupsRestart.json
 if __name__ == "__main__":
     main()
