@@ -322,7 +322,7 @@ class BaseExporter:
     def _handle_payload_too_large(
         self, envelopes: List[TelemetryItem], response_error: HttpResponseError
     ) -> ExportResult:
-        """Handle a 413 (Payload Too Large) response by splitting and persisting for retry."""
+        # Handle a 413 (Payload Too Large) response by splitting and persisting for retry.
         if not self.storage:
             if not self._is_stats_exporter():
                 logger.debug(
