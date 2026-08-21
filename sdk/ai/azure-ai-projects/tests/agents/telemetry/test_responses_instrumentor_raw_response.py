@@ -13,6 +13,8 @@ Verifies that:
 
 import asyncio
 import os
+from typing import Any
+
 import pytest
 import httpx2
 from opentelemetry import trace
@@ -23,11 +25,7 @@ from memory_trace_exporter import MemoryTraceExporter  # pylint: disable=import-
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.ai.projects.telemetry import AIProjectInstrumentor
-from azure.ai.projects.telemetry._responses_instrumentor import (
-    _InstrumentedAsyncRawResponse,
-    _InstrumentedSyncRawResponse,
-)
-from openai import OpenAI, AsyncOpenAI
+from openai import AsyncOpenAI, AsyncStream, OpenAI, Stream
 
 
 CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
@@ -39,6 +37,16 @@ SSE_PAYLOAD = (
     '"output_index":0,"content_index":0,"sequence_number":1,"logprobs":[]}\n\n'
     "data: [DONE]\n\n"
 )
+
+
+class CustomAsyncStream(AsyncStream[Any]):
+    def custom_method(self):
+        return "custom async stream"
+
+
+class CustomStream(Stream[Any]):
+    def custom_method(self):
+        return "custom stream"
 
 
 def _make_mock_transport():
@@ -76,20 +84,23 @@ class TestRawResponseStreaming:
     # ─── Async tests ───────────────────────────────────────────────
 
     def test_async_raw_response_parse_preserves_custom_stream_type(self):
-        """Async raw response parsing should delegate the custom stream type before wrapping."""
-        custom_stream_type = object()
-        parsed_stream = object()
+        """Async raw response parsing should preserve custom stream methods via delegation."""
 
-        class RawResponse:
-            def parse(self, *, to=None):
-                assert to is custom_stream_type
-                return parsed_stream
+        async def _run():
+            client = AsyncOpenAI(
+                api_key="fake-key",
+                http_client=httpx2.AsyncClient(transport=_make_mock_transport()),
+            )
+            raw = await client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
 
-        proxy = _InstrumentedAsyncRawResponse(
-            RawResponse(), lambda stream: ("wrapped", stream), ("wrapped", object())
-        )
+            stream = raw.parse(to=CustomAsyncStream)
 
-        assert proxy.parse(to=custom_stream_type) == ("wrapped", parsed_stream)
+            # Custom methods remain accessible through the telemetry wrapper
+            assert stream.custom_method() == "custom async stream"
+            await stream.close()
+            assert stream.response.is_closed
+
+        asyncio.run(_run())
 
     def test_async_with_raw_response_streaming_preserves_interface(self):
         """with_raw_response.create(stream=True) should preserve .parse() and .headers."""
@@ -201,21 +212,42 @@ class TestRawResponseStreaming:
 
         assert len(self.exporter.get_spans()) == 1
 
+    def test_async_parsed_stream_context_closes_partially_consumed_stream(self):
+        """Exiting a parsed async stream should close its HTTP response and finalize telemetry."""
+
+        async def _run():
+            client = AsyncOpenAI(
+                api_key="fake-key",
+                http_client=httpx2.AsyncClient(transport=_make_mock_transport()),
+            )
+            raw = await client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
+            stream = raw.parse()
+
+            async with stream:
+                await stream.__anext__()
+
+            assert stream.response.is_closed
+
+        asyncio.run(_run())
+
+        assert len(self.exporter.get_spans()) == 1
+
     # ─── Sync tests ────────────────────────────────────────────────
 
     def test_sync_raw_response_parse_preserves_custom_stream_type(self):
-        """Sync raw response parsing should delegate the custom stream type before wrapping."""
-        custom_stream_type = object()
-        parsed_stream = object()
+        """Sync raw response parsing should preserve custom stream methods via delegation."""
+        client = OpenAI(
+            api_key="fake-key",
+            http_client=httpx2.Client(transport=_make_mock_transport()),
+        )
+        raw = client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
 
-        class RawResponse:
-            def parse(self, *, to=None):
-                assert to is custom_stream_type
-                return parsed_stream
+        stream = raw.parse(to=CustomStream)
 
-        proxy = _InstrumentedSyncRawResponse(RawResponse(), lambda stream: ("wrapped", stream), ("wrapped", object()))
-
-        assert proxy.parse(to=custom_stream_type) == ("wrapped", parsed_stream)
+        # Custom methods remain accessible through the telemetry wrapper
+        assert stream.custom_method() == "custom stream"
+        stream.close()
+        assert stream.response.is_closed
 
     def test_sync_with_raw_response_streaming_preserves_interface(self):
         """Sync with_raw_response.create(stream=True) should preserve .parse() and .headers."""
@@ -297,4 +329,19 @@ class TestRawResponseStreaming:
         next(stream)
         raw.close()  # pyright: ignore[reportAttributeAccessIssue]
 
+        assert len(self.exporter.get_spans()) == 1
+
+    def test_sync_parsed_stream_context_closes_partially_consumed_stream(self):
+        """Exiting a parsed sync stream should close its HTTP response and finalize telemetry."""
+        client = OpenAI(
+            api_key="fake-key",
+            http_client=httpx2.Client(transport=_make_mock_transport()),
+        )
+        raw = client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
+        stream = raw.parse()
+
+        with stream:
+            next(stream)
+
+        assert stream.response.is_closed
         assert len(self.exporter.get_spans()) == 1

@@ -2861,6 +2861,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Start streaming iteration
                 return self
 
+            def __getattr__(self, name):
+                return getattr(self.stream_iter, name)
+
             def __next__(self):
                 try:
                     chunk = next(self.stream_iter)
@@ -2942,11 +2945,17 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return self
 
             def __exit__(self, exc_type, exc_val, exc_tb):
-                try:
-                    self.cleanup()
-                except Exception:
-                    pass  # Don't let cleanup exceptions mask the original exception
+                self.close()
                 return False
+
+            def close(self):
+                try:
+                    close = getattr(self.stream_iter, "close", None)
+                    if close is not None:
+                        return close()
+                    return None
+                finally:
+                    self.cleanup()
 
             def get_final_response(self):
                 """Proxy method to access the underlying stream's get_final_response if available."""
@@ -3338,6 +3347,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             def __aiter__(self):
                 return self
 
+            def __getattr__(self, name):
+                return getattr(self.stream_async_iter, name)
+
             async def __anext__(self):
                 try:
                     chunk = await self.stream_async_iter.__anext__()
@@ -3419,11 +3431,20 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return self
 
             async def __aexit__(self, exc_type, exc_val, exc_tb):
-                try:
-                    self.cleanup()
-                except Exception:
-                    pass  # Don't let cleanup exceptions mask the original exception
+                await self.close()
                 return False
+
+            async def close(self):
+                try:
+                    close = getattr(self.stream_async_iter, "close", None)
+                    if close is None:
+                        return None
+                    result = close()
+                    if hasattr(result, "__await__"):
+                        return await result
+                    return result
+                finally:
+                    self.cleanup()
 
             async def get_final_response(self):
                 """Proxy method to access the underlying stream's get_final_response if available."""
