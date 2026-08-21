@@ -20,6 +20,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from ._configuration import RelayAPIMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    ClustersOperations,
     HybridConnectionsOperations,
     NamespacesOperations,
     Operations,
@@ -38,7 +39,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class RelayAPIMgmtClient:
+class RelayAPIMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Use these API to manage Azure Relay resources through Azure Resource Manager.
 
     :ivar operations: Operations operations
@@ -52,6 +53,8 @@ class RelayAPIMgmtClient:
      azure.mgmt.relay.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources: azure.mgmt.relay.operations.PrivateLinkResourcesOperations
+    :ivar clusters: ClustersOperations operations
+    :vartype clusters: azure.mgmt.relay.operations.ClustersOperations
     :ivar namespaces: NamespacesOperations operations
     :vartype namespaces: azure.mgmt.relay.operations.NamespacesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -63,9 +66,10 @@ class RelayAPIMgmtClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2024-01-01"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-07-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -129,6 +133,7 @@ class RelayAPIMgmtClient:
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
