@@ -15,7 +15,7 @@ from azure.mgmt.horizondb import HorizonDBMgmtClient
     pip install azure-identity
     pip install azure-mgmt-horizondb
 # USAGE
-    python parameter_groups_get.py
+    python private_endpoint_connections_update_status.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,22 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.horizon_db_parameter_groups.get(
+    response = client.horizon_db_private_endpoint_connections.update_status(
         resource_group_name="exampleresourcegroup",
-        parameter_group_name="exampleparametergroup",
+        cluster_name="examplecluster",
+        private_endpoint_connection_name="exampleprivateendpointconnection.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+        resource={
+            "properties": {
+                "privateLinkServiceConnectionState": {
+                    "description": "Approved by `johndoe@contoso.com <mailto:johndoe@contoso.com>`_",
+                    "status": "Approved",
+                }
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/ParameterGroups_Get.json
+# x-ms-original-file: 2026-05-01-preview/PrivateEndpointConnections_UpdateStatus.json
 if __name__ == "__main__":
     main()
