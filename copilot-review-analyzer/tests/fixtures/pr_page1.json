@@ -1,0 +1,143 @@
+{
+  "data": {
+    "repository": {
+      "pullRequest": {
+        "number": 42,
+        "title": "Add retry logic to uploader",
+        "state": "MERGED",
+        "url": "https://github.com/octo/example/pull/42",
+        "createdAt": "2024-05-01T10:00:00Z",
+        "mergedAt": "2024-05-03T12:00:00Z",
+        "closedAt": "2024-05-03T12:00:00Z",
+        "additions": 120,
+        "deletions": 8,
+        "author": {
+          "login": "alice"
+        },
+        "reviewThreads": {
+          "pageInfo": {
+            "hasNextPage": true,
+            "endCursor": "THREADS_P1"
+          },
+          "nodes": [
+            {
+              "isResolved": false,
+              "isOutdated": false,
+              "path": "src/uploader.py",
+              "line": 50,
+              "originalLine": 48,
+              "startLine": 47,
+              "originalStartLine": 45,
+              "comments": {
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "endCursor": null
+                },
+                "nodes": [
+                  {
+                    "databaseId": 1001,
+                    "author": {
+                      "login": "bob"
+                    },
+                    "authorAssociation": "MEMBER",
+                    "body": "This will throw if response is None; guard it.",
+                    "createdAt": "2024-05-02T09:00:00Z",
+                    "url": "https://github.com/octo/example/pull/42#discussion_r1001",
+                    "diffHunk": "@@ -45,5 +45,8 @@\n+    data = response.json()"
+                  },
+                  {
+                    "databaseId": 1002,
+                    "author": {
+                      "login": "alice"
+                    },
+                    "authorAssociation": "MEMBER",
+                    "body": "Good catch, fixing.",
+                    "createdAt": "2024-05-02T10:00:00Z",
+                    "url": "https://github.com/octo/example/pull/42#discussion_r1002",
+                    "diffHunk": "@@ -45,5 +45,8 @@\n+    data = response.json()"
+                  }
+                ]
+              }
+            },
+            {
+              "isResolved": true,
+              "isOutdated": true,
+              "path": "src/legacy.py",
+              "line": null,
+              "originalLine": 200,
+              "startLine": null,
+              "originalStartLine": null,
+              "comments": {
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "endCursor": null
+                },
+                "nodes": [
+                  {
+                    "databaseId": 1003,
+                    "author": {
+                      "login": "copilot-pull-request-reviewer[bot]"
+                    },
+                    "authorAssociation": "NONE",
+                    "body": "Consider extracting this into a helper.",
+                    "createdAt": "2024-05-02T09:05:00Z",
+                    "url": "https://github.com/octo/example/pull/42#discussion_r1003",
+                    "diffHunk": "@@ -198,3 +198,5 @@\n-  old()\n+  new()"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "reviews": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": null
+          },
+          "nodes": [
+            {
+              "databaseId": 2001,
+              "author": {
+                "login": "bob"
+              },
+              "state": "CHANGES_REQUESTED",
+              "body": "Overall looks good, but please add a test for the retry path.",
+              "submittedAt": "2024-05-02T09:10:00Z",
+              "url": "https://github.com/octo/example/pull/42#pullrequestreview-2001"
+            },
+            {
+              "databaseId": 2002,
+              "author": {
+                "login": "carol"
+              },
+              "state": "APPROVED",
+              "body": "",
+              "submittedAt": "2024-05-03T08:00:00Z",
+              "url": "https://github.com/octo/example/pull/42#pullrequestreview-2002"
+            }
+          ]
+        },
+        "commits": {
+          "pageInfo": {
+            "hasNextPage": true,
+            "endCursor": "COMMITS_P1"
+          },
+          "nodes": [
+            {
+              "commit": {
+                "oid": "aaa111",
+                "committedDate": "2024-05-01T11:00:00Z",
+                "changedFilesIfAvailable": 3
+              }
+            }
+          ]
+        }
+      }
+    },
+    "rateLimit": {
+      "remaining": 4990,
+      "resetAt": "2024-05-03T13:00:00Z",
+      "cost": 1
+    }
+  }
+}

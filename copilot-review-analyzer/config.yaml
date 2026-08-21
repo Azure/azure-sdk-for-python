@@ -1,0 +1,43 @@
+# Example configuration for the Copilot Code-Review Effectiveness Analyzer.
+
+# Repositories to analyze, as "owner/name".
+repos:
+  - Azure/azure-sdk-for-python
+
+# Logins (case-insensitive) treated as the Copilot reviewer. Note: GitHub GraphQL
+# returns bot logins WITHOUT the "[bot]" suffix, so both forms are listed; the
+# attribution normalizer strips "[bot]" before matching, so either form works.
+copilot_logins:
+  - copilot-pull-request-reviewer
+  - copilot-pull-request-reviewer[bot]
+  - github-copilot[bot]
+
+# GitHub Models model id used by the LLM judge.
+model: gpt-4o
+
+# Max PRs sampled per run.
+max_prs: 50
+
+# Line-range fuzz (in lines) when testing human/Copilot overlap.
+line_fuzz: 2
+
+# Confidence threshold below which judgements are excluded from gap denominators.
+confidence_threshold: 0.5
+
+# If the unjudged ratio exceeds this, the run is marked failed (excluded from trends).
+max_unjudged_ratio: 0.5
+
+# Number of comments per LLM judge call.
+judge_batch_size: 10
+
+# Controlled vocabulary for theme tagging ("other" is always implied).
+vocab:
+  - null-handling
+  - error-handling
+  - test-coverage
+  - security
+  - api-design
+  - concurrency
+  - perf
+  - docs
+  - other
