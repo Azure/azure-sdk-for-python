@@ -83,6 +83,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-31-preview/AzureIaasVm/V2Policy/IaaS_v2_hourly.json
+# x-ms-original-file: 2026-07-01/AzureIaasVm/V2Policy/IaaS_v2_hourly.json
 if __name__ == "__main__":
     main()

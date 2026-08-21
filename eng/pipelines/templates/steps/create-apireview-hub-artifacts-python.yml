@@ -70,7 +70,7 @@ steps:
               exit 1
             fi
             install -D "$tooling_dir/eng/common/scripts/Export-APIViewMarkdown.ps1" "$source_repo/eng/common/scripts/Export-APIViewMarkdown.ps1"
-            install -D "$tooling_dir/eng/scripts/Extract-APIViewMetadata-Python.ps1" "$source_repo/eng/scripts/Extract-APIViewMetadata-Python.ps1"
+            install -D "$tooling_dir/eng/scripts/extract_apiview_metadata.py" "$source_repo/eng/scripts/extract_apiview_metadata.py"
             (cd "$source_repo" && PYTHONPATH="$common_tasks_dir${PYTHONPATH:+:$PYTHONPATH}" python -m azpysdk.main apistub --dest-dir "$package_dir" "${{ parameters.packageName }}")
 
             if [ ! -f "$package_dir/api.md" ]; then
