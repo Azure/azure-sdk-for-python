@@ -24,6 +24,7 @@ class TestQuotaMgmtUsagesOperations(AzureMgmtRecordedTestCase):
         response = self.client.usages.get(
             resource_name="str",
             scope="str",
+            api_version="2026-09-01-preview",
         )
 
         # please add some check logic here by yourself
