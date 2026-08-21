@@ -1,5 +1,11 @@
 # Release History
 
+## 2.6.0 (Unreleased)
+
+### Features Added
+
+Placeholder
+
 ## 2.5.0 (2026-08-20)
 
 ### Dependency update
