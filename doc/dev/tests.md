@@ -576,7 +576,7 @@ For information about more advanced testing scenarios, refer to the [advanced te
 <!-- Links -->
 
 [advanced_tests_notes]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md
-[azure_cli_service_principal]: https://docs.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az-ad-sp-create-for-rbac
+[azure_cli_service_principal]: https://learn.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az-ad-sp-create-for-rbac
 [azure_portal]: https://portal.azure.com/
 [azure_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py
 [central_conftest]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/conftest.py
