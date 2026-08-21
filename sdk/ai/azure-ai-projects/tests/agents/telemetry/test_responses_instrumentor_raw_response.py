@@ -77,23 +77,19 @@ class TestRawResponseStreaming:
 
     def test_async_raw_response_parse_preserves_custom_stream_type(self):
         """Async raw response parsing should delegate the custom stream type before wrapping."""
+        custom_stream_type = object()
+        parsed_stream = object()
 
-        async def _run():
-            custom_stream_type = object()
-            parsed_stream = object()
+        class RawResponse:
+            def parse(self, *, to=None):
+                assert to is custom_stream_type
+                return parsed_stream
 
-            class RawResponse:
-                async def parse(self, *, to=None):
-                    assert to is custom_stream_type
-                    return parsed_stream
+        proxy = _InstrumentedAsyncRawResponse(
+            RawResponse(), lambda stream: ("wrapped", stream), ("wrapped", object())
+        )
 
-            proxy = _InstrumentedAsyncRawResponse(
-                RawResponse(), lambda stream: ("wrapped", stream), ("wrapped", object())
-            )
-
-            assert await proxy.parse(to=custom_stream_type) == ("wrapped", parsed_stream)
-
-        asyncio.run(_run())
+        assert proxy.parse(to=custom_stream_type) == ("wrapped", parsed_stream)
 
     def test_async_with_raw_response_streaming_preserves_interface(self):
         """with_raw_response.create(stream=True) should preserve .parse() and .headers."""
@@ -109,8 +105,8 @@ class TestRawResponseStreaming:
             assert hasattr(raw, "parse"), "Result should have .parse() method"
             assert hasattr(raw, "headers"), "Result should have .headers attribute"
 
-            # Parsing should yield an async iterable stream
-            stream = await raw.parse()  # pyright: ignore[reportGeneralTypeIssues]
+            # parse() is sync (matches OpenAI's LegacyAPIResponse contract)
+            stream = raw.parse()
 
             assert hasattr(stream, "__aiter__"), "Parsed stream should be async iterable"
 
@@ -132,7 +128,7 @@ class TestRawResponseStreaming:
             )
             raw = await client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
 
-            stream = await raw.parse()  # pyright: ignore[reportGeneralTypeIssues]
+            stream = raw.parse()
 
             async for _ in stream:
                 pass
@@ -158,10 +154,10 @@ class TestRawResponseStreaming:
             )
             raw = await client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
 
-            first_stream = await raw.parse()  # pyright: ignore[reportGeneralTypeIssues]
+            first_stream = raw.parse()
             first_events = [event async for event in first_stream]
 
-            second_stream = await raw.parse()  # pyright: ignore[reportGeneralTypeIssues]
+            second_stream = raw.parse()
             second_events = [event async for event in second_stream]
 
             assert first_events
@@ -196,7 +192,7 @@ class TestRawResponseStreaming:
                 http_client=httpx2.AsyncClient(transport=_make_mock_transport()),
             )
             raw = await client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
-            stream = await raw.parse()  # pyright: ignore[reportGeneralTypeIssues]
+            stream = raw.parse()
 
             await stream.__anext__()
             await raw.close()  # pyright: ignore[reportAttributeAccessIssue]

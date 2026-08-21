@@ -82,16 +82,16 @@ class _InstrumentedAsyncRawResponse:
         self._wrap_stream = wrap_stream
         # Default stream, eagerly wrapped with telemetry at creation time
         self._wrapped_stream = wrapped_stream
+        # Track which wrapper close() should finalize (updated by parse(to=X))
+        self._active_stream = wrapped_stream
 
-    async def parse(self, *, to=None):
-        # Default parse() returns the pre-wrapped telemetry stream
+    def parse(self, *, to=None):
+        # Sync — matches OpenAI LegacyAPIResponse.parse() contract in openai>=3.0.0
         if to is None:
-            return self._wrapped_stream
-        # Custom parse(to=X) delegates to OpenAI then wraps the result with telemetry
-        parsed = self._raw_response.parse(to=to)
-        if hasattr(parsed, "__await__"):
-            parsed = await parsed
-        return self._wrap_stream(parsed)
+            return self._active_stream
+        wrapped = self._wrap_stream(self._raw_response.parse(to=to))
+        self._active_stream = wrapped
+        return wrapped
 
     def __aiter__(self):
         return self._wrapped_stream.__aiter__()
@@ -115,7 +115,7 @@ class _InstrumentedAsyncRawResponse:
             return result
         finally:
             # Always finalize telemetry even if HTTP close fails
-            self._wrapped_stream.cleanup()
+            self._active_stream.cleanup()
 
     def __getattr__(self, name):
         # Delegate everything else (e.g. .headers) to the original raw response
@@ -132,11 +132,14 @@ class _InstrumentedSyncRawResponse:
         self._raw_response = raw_response
         self._wrap_stream = wrap_stream
         self._wrapped_stream = wrapped_stream
+        self._active_stream = wrapped_stream
 
     def parse(self, *, to=None):
         if to is None:
-            return self._wrapped_stream
-        return self._wrap_stream(self._raw_response.parse(to=to))
+            return self._active_stream
+        wrapped = self._wrap_stream(self._raw_response.parse(to=to))
+        self._active_stream = wrapped
+        return wrapped
 
     def __iter__(self):
         return iter(self._wrapped_stream)
@@ -156,7 +159,7 @@ class _InstrumentedSyncRawResponse:
                 return None
             return close()
         finally:
-            self._wrapped_stream.cleanup()
+            self._active_stream.cleanup()
 
     def __getattr__(self, name):
         return getattr(self._raw_response, name)
