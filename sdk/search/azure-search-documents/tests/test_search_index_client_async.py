@@ -62,11 +62,11 @@ def _index_response_stub(name="hotels"):
 
 @pytest.mark.asyncio
 class TestListIndexesAsync:
-    async def test_list_indexes_forwards_top_skip_count(self):
+    async def test_list_indexes_forwards_search_paging(self):
         require_capability(
-            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.top",
-            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.skip",
-            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.count",
+            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.search",
+            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.page_size",
+            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.search_type",
         )
 
         with mock.patch(
@@ -74,21 +74,21 @@ class TestListIndexesAsync:
             "_SearchIndexClientOperationsMixin._list_indexes",
             side_effect=_empty_async_pager,
         ) as mock_list:
-            pager = _client().list_indexes(top=10, skip=5, count=True)
+            pager = _client().list_indexes(search="hot", page_size=10, search_type="prefix")
             async for _ in pager:
                 pass
 
         mock_list.assert_called_once()
         kwargs = mock_list.call_args.kwargs
-        assert kwargs["top"] == 10
-        assert kwargs["skip"] == 5
-        assert kwargs["count"] is True
+        assert kwargs["search"] == "hot"
+        assert kwargs["page_size"] == 10
+        assert kwargs["search_type"] == "prefix"
 
     async def test_list_indexes_with_select_forwards_paging_kwargs(self):
         require_capability(
-            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.top",
-            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.skip",
-            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.count",
+            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.search",
+            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.page_size",
+            "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.search_type",
             "azure.search.documents.indexes.models.SearchIndex.cors_options",
             "azure.search.documents.indexes.models.SearchIndex.permission_filter_option",
             "azure.search.documents.indexes.models.SearchIndex.purview_enabled",
@@ -99,16 +99,16 @@ class TestListIndexesAsync:
             "_SearchIndexClientOperationsMixin._list_indexes_with_selected_properties",
             side_effect=_empty_async_pager,
         ) as mock_list_select:
-            pager = _client().list_indexes(select=["name"], top=3, skip=1, count=False)
+            pager = _client().list_indexes(select=["name"], search="hot", page_size=3, search_type="prefix")
             async for _ in pager:
                 pass
 
         mock_list_select.assert_called_once()
         kwargs = mock_list_select.call_args.kwargs
         assert kwargs["select"] == ["name"]
-        assert kwargs["top"] == 3
-        assert kwargs["skip"] == 1
-        assert kwargs["count"] is False
+        assert kwargs["search"] == "hot"
+        assert kwargs["page_size"] == 3
+        assert kwargs["search_type"] == "prefix"
         converted = kwargs["cls"]([_index_response_stub()])
         assert isinstance(converted[0], SearchIndex)
         assert converted[0].name == "hotels"
@@ -116,11 +116,11 @@ class TestListIndexesAsync:
 
 @pytest.mark.asyncio
 class TestListIndexNamesAsync:
-    async def test_list_index_names_forwards_top_skip_count(self):
+    async def test_list_index_names_forwards_search_paging(self):
         require_capability(
-            "azure.search.documents.indexes.aio.SearchIndexClient.list_index_names.top",
-            "azure.search.documents.indexes.aio.SearchIndexClient.list_index_names.skip",
-            "azure.search.documents.indexes.aio.SearchIndexClient.list_index_names.count",
+            "azure.search.documents.indexes.aio.SearchIndexClient.list_index_names.search",
+            "azure.search.documents.indexes.aio.SearchIndexClient.list_index_names.page_size",
+            "azure.search.documents.indexes.aio.SearchIndexClient.list_index_names.search_type",
         )
 
         with mock.patch(
@@ -128,15 +128,15 @@ class TestListIndexNamesAsync:
             "_SearchIndexClientOperationsMixin._list_indexes",
             side_effect=_empty_async_pager,
         ) as mock_list:
-            pager = _client().list_index_names(top=20, skip=0, count=True)
+            pager = _client().list_index_names(search="hot", page_size=20, search_type="prefix")
             async for _ in pager:
                 pass
 
         mock_list.assert_called_once()
         kwargs = mock_list.call_args.kwargs
-        assert kwargs["top"] == 20
-        assert kwargs["skip"] == 0
-        assert kwargs["count"] is True
+        assert kwargs["search"] == "hot"
+        assert kwargs["page_size"] == 20
+        assert kwargs["search_type"] == "prefix"
         assert callable(kwargs["cls"])
 
 

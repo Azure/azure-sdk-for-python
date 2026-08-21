@@ -1,14 +1,80 @@
 # Release History
 
-## 12.1.0b2 (Unreleased)
+## 12.1.0b2 (2026-08-27)
 
 ### Features Added
 
+- Added `ApiVersion.V2026_08_01_PREVIEW` so the `2026-08-01-preview` Search API version can be
+  selected via the `api_version` keyword on the clients.
+- Added filtered and paged resource listing with `search`, `page_size`, and `search_type` parameters.
+  File listings also support `prefix`.
+- Added multipart File knowledge source operations and models:
+  - `azure.search.documents.indexes.SearchIndexClient.update_knowledge_source_file`
+  - `azure.search.documents.indexes.SearchIndexClient.upload_knowledge_source_file_multipart`
+  - `azure.search.documents.indexes.models.FileUploadMetadata`
+  - `azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest`
+  - `azure.search.documents.indexes.models.UploadKnowledgeSourceFileMultipartRequest`
+- Added knowledge source query-hint and result-processing models:
+  - `azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing`
+  - `azure.search.documents.indexes.models.SearchIndexKnowledgeSourceBoost`
+  - `azure.search.documents.indexes.models.SearchIndexKnowledgeSourceBoostKind`
+  - `azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFieldValueBoost`
+  - `azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFilterHint`
+  - `azure.search.documents.indexes.models.SearchIndexKnowledgeSourceMultiWordExpressionBoost`
+  - `azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseQueryHintProcessing`
+- Added knowledge base retrieval streaming through
+  `azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient.retrieve_stream` and its
+  asynchronous equivalent. The methods return closeable streams of typed
+  `KnowledgeBaseRetrievalEvent` instances. New stream payload models include:
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseActivityStartedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseAnswerCompletedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseStreamErrorEvent`
+- Added knowledge base configuration and retrieval features:
+  - Knowledge base `tags` and persisted `retrieve_defaults`.
+  - Per-source `never_query_source`, `results_processing`, and `query_hint_overrides`.
+  - `KnowledgeRetrievalAutoReasoningEffort` for automatic reasoning-effort selection.
+  - Activity start/completion timestamps, model metadata, logical reasoning effort, query-hint
+    processing details, and served-image metadata.
+  - Citation URLs on index-backed knowledge base references.
+  - Private ingestion networking through `KnowledgeSourceNetworkAccessMode`.
+- Added Work IQ configuration through `EntraAppAuthentication` and
+  `WorkIQKnowledgeSourceParameters`, plus the `query_work_iq_source_authorization` retrieval
+  parameter.
+- Added File knowledge source CORS, metadata, prefix, parsing-mode, and extraction-mode support.
+- Added GPT-5.5, GPT-5.6 Luna, GPT-5.6 Sol, and GPT-5.6 Terra model names.
+- Added `SearchServiceLimits.max_vector_index_size_per_index_in_bytes`.
+
 ### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.6.0.
+> Only code written against a beta version such as 12.1.0b1 may be affected.
+
+- Replaced `ApiVersion.V2026_05_01_PREVIEW` with `ApiVersion.V2026_08_01_PREVIEW` and made the new
+  version the default.
+- Replaced `top`, `skip`, and `count` with `search`, `page_size`, and `search_type` on
+  `SearchIndexClient.list_indexes`, `SearchIndexClient.list_index_names`, and their asynchronous
+  equivalents. `list_index_stats_summary` uses the same new parameters.
+- Replaced `McpServerTool.inclusion_mode` and `McpServerToolInclusionMode` with
+  `McpServerTool.results_processing` and `KnowledgeSourceResultsProcessing`.
+- Replaced `model_name` with `model` on model query-planning, answer-synthesis, and web-summarization
+  activity records. The new value is a `KnowledgeBaseActivityRecordModel`.
+- Replaced `KnowledgeBaseWorkIQReference.attributions` and `WorkIQAttribution` with
+  `search_sensitivity_label_info`.
+- Renamed the Python enum members `GPT_5_MINI`, `GPT_5_NANO`, `GPT_5_4_MINI`, and `GPT_5_4_NANO`
+  to `GPT5_MINI`, `GPT5_NANO`, `GPT5_4_MINI`, and `GPT5_4_NANO`, respectively. Wire values are
+  unchanged.
+- Dropped Python 3.9 support. Python 3.10 or later is now required.
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Updated `tsp-location.yaml` to target spec commit
+  `84400eeb46c48ffe88d81e126449725508c17547` (`2026-08-01-preview`).
+- Added Python 3.14 support.
 
 ## 12.1.0b1 (2026-05-28)
 

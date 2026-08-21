@@ -17,6 +17,7 @@ from typing import Any, Mapping
 import pytest
 
 PREVIEW = "2026-05-01-preview"
+PREVIEW_2026_08_01 = "2026-08-01-preview"
 
 
 def _surface(owner: str, kwargs: tuple = (), available_from: str = PREVIEW) -> Mapping[str, Any]:
@@ -127,6 +128,15 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
     ]
     for dotted in new_classes:
         entries[dotted] = _surface(dotted)
+
+    for dotted in [
+        f"{_KBM}.KnowledgeBaseRetrievalStartedEvent",
+        f"{_KBM}.KnowledgeBaseActivityStartedEvent",
+        f"{_KBM}.KnowledgeBaseAnswerCompletedEvent",
+        f"{_KBM}.KnowledgeBaseResponseCompletedEvent",
+        f"{_KBM}.KnowledgeBaseStreamErrorEvent",
+    ]:
+        entries[dotted] = _surface(dotted, available_from=PREVIEW_2026_08_01)
 
     # New fields on existing models. Key = "<dotted-class>.<field>", owner = dotted-class, kwargs = (field,).
     field_additions = [
@@ -305,6 +315,12 @@ def _client_capabilities() -> Mapping[str, Mapping[str, Any]]:
     for dotted in method_existence:
         entries[dotted] = _surface(dotted)
 
+    for dotted in [
+        f"{_KB}.KnowledgeBaseRetrievalClient.retrieve_stream",
+        f"{_KB}.aio.KnowledgeBaseRetrievalClient.retrieve_stream",
+    ]:
+        entries[dotted] = _surface(dotted, available_from=PREVIEW_2026_08_01)
+
     method_kwargs = [
         (
             f"{_IDX}.SearchIndexerClient.create_or_update_data_source_connection",
@@ -318,8 +334,8 @@ def _client_capabilities() -> Mapping[str, Mapping[str, Any]]:
             f"{_IDX}.SearchIndexerClient.create_or_update_skillset",
             ("skip_indexer_reset_requirement_for_cache", "disable_cache_reprocessing_change_detection"),
         ),
-        (f"{_IDX}.SearchIndexClient.list_indexes", ("top", "skip", "count")),
-        (f"{_IDX}.SearchIndexClient.list_index_names", ("top", "skip", "count")),
+        (f"{_IDX}.SearchIndexClient.list_indexes", ("search", "page_size", "search_type")),
+        (f"{_IDX}.SearchIndexClient.list_index_names", ("search", "page_size", "search_type")),
         (
             f"{_IDX}.aio.SearchIndexerClient.create_or_update_data_source_connection",
             ("skip_indexer_reset_requirement_for_cache",),
@@ -332,8 +348,8 @@ def _client_capabilities() -> Mapping[str, Mapping[str, Any]]:
             f"{_IDX}.aio.SearchIndexerClient.create_or_update_skillset",
             ("skip_indexer_reset_requirement_for_cache", "disable_cache_reprocessing_change_detection"),
         ),
-        (f"{_IDX}.aio.SearchIndexClient.list_indexes", ("top", "skip", "count")),
-        (f"{_IDX}.aio.SearchIndexClient.list_index_names", ("top", "skip", "count")),
+        (f"{_IDX}.aio.SearchIndexClient.list_indexes", ("search", "page_size", "search_type")),
+        (f"{_IDX}.aio.SearchIndexClient.list_index_names", ("search", "page_size", "search_type")),
     ]
     for dotted, kwargs in method_kwargs:
         for kw in kwargs:
@@ -377,6 +393,18 @@ _CAPS: dict = {
     "KnowledgeBaseRetrievalClient": _surface("azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient"),
     "KnowledgeBaseRetrievalClient.aio": _surface(
         "azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient"
+    ),
+    "KnowledgeBaseRetrievalEvent": _surface(
+        "azure.search.documents.knowledgebases.KnowledgeBaseRetrievalEvent",
+        available_from=PREVIEW_2026_08_01,
+    ),
+    "KnowledgeBaseRetrievalStream": _surface(
+        "azure.search.documents.knowledgebases.KnowledgeBaseRetrievalStream",
+        available_from=PREVIEW_2026_08_01,
+    ),
+    "AsyncKnowledgeBaseRetrievalStream": _surface(
+        "azure.search.documents.knowledgebases.aio.AsyncKnowledgeBaseRetrievalStream",
+        available_from=PREVIEW_2026_08_01,
     ),
 }
 _CAPS.update(_model_capabilities())
@@ -423,6 +451,7 @@ def _has_capability_attr(owner: Any, name: str) -> bool:
 
 def require_capability(*names: str) -> None:
     for name in names:
+        owner: Any = None
         try:
             cap = CAPABILITIES[name]
         except KeyError:  # pragma: no cover - misuse
@@ -431,6 +460,7 @@ def require_capability(*names: str) -> None:
             owner = _resolve(cap["owner"])
         except (ImportError, AttributeError) as exc:
             pytest.skip(f"{name} unavailable: owner {cap['owner']!r} cannot be resolved ({exc})")
+        assert owner is not None
         if not cap["kwargs"]:
             # Existence of owner is the capability.
             continue
