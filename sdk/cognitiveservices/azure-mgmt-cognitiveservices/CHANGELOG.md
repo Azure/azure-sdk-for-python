@@ -39,10 +39,10 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `Compute` deleted or renamed its instance variable `location`
   - Deleted or renamed enum value `VmPriority.LOW_PRIORITY`
   - Deleted or renamed method `ComputesOperations.begin_update`
-  - Method `ComputesOperations.begin_create_or_update` changed return type from `AsyncLROPoller[Compute]` to `AsyncLROPoller[None]`
   - Method `ComputesOperations.begin_create_or_update` changed return type from `LROPoller[Compute]` to `LROPoller[None]`
 
 ## 15.0.0b4 (2026-07-21)
