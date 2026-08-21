@@ -28,7 +28,7 @@ sys.path.append("..")
 
 class DownloadMediaSample(object):
 
-    connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+    connection_string: str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")  # type: ignore
 
     def download_media(self):
 

@@ -105,7 +105,7 @@ class ClassificationPolicySamples(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         print("JobRouterAdministrationClient created successfully!")
 
-        updated_classification_policy: ClassificationPolicy = router_admin_client.upsert_classification_policy(
+        updated_classification_policy: ClassificationPolicy = router_admin_client.upsert_classification_policy(  # type: ignore[call-overload]
             policy_id,
             prioritization_rule=ExpressionRouterRule(expression='If(job.HighPriority = "true", 50, 10)'),
         )
