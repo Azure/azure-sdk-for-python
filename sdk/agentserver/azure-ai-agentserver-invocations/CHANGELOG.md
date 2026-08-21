@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0b2 (Unreleased)
+
+### Bugs Fixed
+
+- Added A365 telemetry correlation to `invocations_ws` by propagating the WebSocket session ID as OpenTelemetry baggage for handler spans and logs, using the cross-protocol `azure.ai.agentserver.session_id` attribute while retaining the legacy structured-log field.
+
+### Other Changes
+
+- Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.1.0b3`.
+
 ## 1.1.0b1 (2026-08-11)
 
 ### Samples
