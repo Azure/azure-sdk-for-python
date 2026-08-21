@@ -54,6 +54,9 @@ stages:
             - AutoReleasePrepare
         variables:
           - template: /eng/pipelines/templates/variables/image.yml
+          # workaround for step "Validate SBoM Manifest" failing and blocking publish
+          - name: SbomToolkit_CoseValidationBlocking
+            value: 'true'
         # Auto-release CI: only release when the shared prepare stage flagged this artifact as changed.
         # Manual runs: every declared artifact remains eligible (existing behavior).
         ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
