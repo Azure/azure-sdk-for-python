@@ -269,9 +269,7 @@ path: ./model.pkl"""
         mock_model_operation.list(name="random_string")
         mock_model_operation._model_versions_operation.list.assert_called_once()
 
-    def test_list_registry_versions_forwards_list_view_type(
-        self, mock_model_operation_reg: ModelOperations
-    ) -> None:
+    def test_list_registry_versions_forwards_list_view_type(self, mock_model_operation_reg: ModelOperations) -> None:
         with patch("azure.ai.ml.operations._model_operations.list_registry_assets") as mock_list:
             mock_model_operation_reg.list(name="random_string", list_view_type=ListViewType.ARCHIVED_ONLY)
 
