@@ -61,6 +61,14 @@ UAMQP_LIBRARY = "uamqp"
 PYAMQP_LIBRARY = "pyamqp"
 OPERATION_TIMEOUT = VENDOR + b":timeout"
 
+# Bounds a management operation on the service side when the caller gave no timeout.
+DEFAULT_SERVER_TIMEOUT_MS = 60000
+# Subtracted from the caller's remaining time so the service answers before the client
+# gives up.
+SERVER_TIMEOUT_BUFFER_MS = 1000
+# The property is encoded as an AMQP uint, so cap at its maximum (about 49.7 days).
+MAX_SERVER_TIMEOUT_MS = 2**32 - 1
+
 MANAGEMENT_PATH_SUFFIX = "/$management"
 
 MGMT_RESPONSE_SESSION_STATE = b"session-state"

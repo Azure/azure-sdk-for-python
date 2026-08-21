@@ -7,7 +7,7 @@
 
 from typing import Any, Dict, Optional
 import pytest
-import httpx
+import httpx2
 from openai import AsyncOpenAI
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -99,10 +99,10 @@ class TestResponsesAsync(TestBase):
 
         calls = []
 
-        async def fake_send(request: httpx.Request, *_args: Any, **kwargs: Any):
+        async def fake_send(request: httpx2.Request, *_args: Any, **kwargs: Any):
             # Capture headers that would be sent over the wire.
             calls.append(dict(request.headers))
-            return httpx.Response(
+            return httpx2.Response(
                 200,
                 request=request,
                 json={
@@ -114,7 +114,7 @@ class TestResponsesAsync(TestBase):
                 },
             )
 
-        # Monkeypatch the underlying httpx client used by the OpenAI client instance.
+        # Monkeypatch the underlying httpx2 client used by the OpenAI client instance.
         client._client.send = fake_send  # type: ignore[attr-defined]
 
         # Act through the actual call surface
