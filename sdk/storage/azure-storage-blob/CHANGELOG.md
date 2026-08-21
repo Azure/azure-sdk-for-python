@@ -7,6 +7,13 @@
 
 ### Bugs Fixed
 - Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
+- Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning
+  an empty list.
+
+### Other Changes
+- Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
+  and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
+  models instead of generated internal types.
 
 ## 12.31.0b1 (2026-08-10)
 
