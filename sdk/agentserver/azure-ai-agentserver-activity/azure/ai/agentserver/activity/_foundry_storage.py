@@ -11,7 +11,7 @@ import re
 from collections import OrderedDict
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, TypeVar
+from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, TypeVar, cast
 
 from azure.ai.agentserver.core.storage import FoundryStateStore, FoundryStorageEndpoint, FoundryStorageNotFoundError
 from azure.core.credentials_async import AsyncTokenCredential
@@ -327,7 +327,7 @@ class FoundryStorage(AsyncStorageBase):
             item = await store.get_item(_bounded_store_name(key))
         if item is None or target_cls is None:
             return None, None
-        return key, target_cls.from_json_to_store_item(item.value)
+        return key, cast(StoreItemT, target_cls.from_json_to_store_item(item.value))
 
     async def _write_item(self, key: str, value: StoreItemT) -> None:
         """Create-or-replace one item, creating its backing store on first write.
@@ -340,7 +340,7 @@ class FoundryStorage(AsyncStorageBase):
         :rtype: None
         """
         async with self._use_store(key, ensure_exists=True) as store:
-            await store.set_item(_bounded_store_name(key), value.store_item_to_json())
+            await store.set_item(_bounded_store_name(key), dict(value.store_item_to_json()))
 
     async def _delete_item(self, key: str) -> None:
         """Delete one item. Missing keys (or stores) are ignored.
