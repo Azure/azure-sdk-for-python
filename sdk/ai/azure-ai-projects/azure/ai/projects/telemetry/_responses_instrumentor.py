@@ -76,21 +76,27 @@ class _InstrumentedAsyncRawResponse:
     This proxy intercepts .parse() and .close() to add telemetry while preserving the full interface.
     """
 
-    def __init__(self, raw_response, wrap_stream, wrapped_stream):
+    def __init__(self, raw_response, wrap_stream):
         self._raw_response = raw_response
         self._wrap_stream = wrap_stream
-        self._wrapped_stream = wrapped_stream
-        self._active_stream = wrapped_stream
+        self._wrapped_stream = None
+        self._active_stream = None
         self._custom_streams = {}
-        # Shared guard: only one wrapper records metrics/ends span
         self._finalized = [False]
-        wrapped_stream._shared_finalized = self._finalized
+
+    def _get_default_stream(self):
+        if self._wrapped_stream is None:
+            parsed = self._raw_response.parse()
+            self._wrapped_stream = self._wrap_stream(parsed)
+            self._wrapped_stream._shared_finalized = self._finalized
+        return self._wrapped_stream
 
     def parse(self, *, to=None):
         # Sync — matches OpenAI LegacyAPIResponse.parse() contract in openai>=3.0.0
         if to is None:
-            self._active_stream = self._wrapped_stream
-            return self._wrapped_stream
+            stream = self._get_default_stream()
+            self._active_stream = stream
+            return stream
         if to not in self._custom_streams:
             wrapper = self._wrap_stream(self._raw_response.parse(to=to))
             wrapper._shared_finalized = self._finalized
@@ -99,15 +105,14 @@ class _InstrumentedAsyncRawResponse:
         return self._custom_streams[to]
 
     def __aiter__(self):
-        return self._wrapped_stream.__aiter__()
+        return self._get_default_stream().__aiter__()
 
     async def __anext__(self):
-        return await self._wrapped_stream.__anext__()
+        return await self._get_default_stream().__anext__()
 
     async def close(self):
         """Close the HTTP connection and finalize the telemetry span."""
         try:
-            # LegacyAPIResponse has no close(); fall back to its underlying http_response
             close = getattr(self._raw_response, "close", None)
             if close is None:
                 http_response = getattr(self._raw_response, "http_response", None)
@@ -119,11 +124,10 @@ class _InstrumentedAsyncRawResponse:
                 return await result
             return result
         finally:
-            # Always finalize telemetry even if HTTP close fails
-            self._active_stream.cleanup()
+            stream = self._active_stream or self._get_default_stream()
+            stream.cleanup()
 
     def __getattr__(self, name):
-        # Delegate everything else (e.g. .headers) to the original raw response
         return getattr(self._raw_response, name)
 
 
@@ -133,19 +137,25 @@ class _InstrumentedSyncRawResponse:
     Same role as _InstrumentedAsyncRawResponse but for synchronous clients.
     """
 
-    def __init__(self, raw_response, wrap_stream, wrapped_stream):
+    def __init__(self, raw_response, wrap_stream):
         self._raw_response = raw_response
         self._wrap_stream = wrap_stream
-        self._wrapped_stream = wrapped_stream
-        self._active_stream = wrapped_stream
+        self._wrapped_stream = None
+        self._active_stream = None
         self._custom_streams = {}
         self._finalized = [False]
-        wrapped_stream._shared_finalized = self._finalized
+
+    def _get_default_stream(self):
+        if self._wrapped_stream is None:
+            self._wrapped_stream = self._wrap_stream(self._raw_response.parse())
+            self._wrapped_stream._shared_finalized = self._finalized
+        return self._wrapped_stream
 
     def parse(self, *, to=None):
         if to is None:
-            self._active_stream = self._wrapped_stream
-            return self._wrapped_stream
+            stream = self._get_default_stream()
+            self._active_stream = stream
+            return stream
         if to not in self._custom_streams:
             wrapper = self._wrap_stream(self._raw_response.parse(to=to))
             wrapper._shared_finalized = self._finalized
@@ -154,15 +164,14 @@ class _InstrumentedSyncRawResponse:
         return self._custom_streams[to]
 
     def __iter__(self):
-        return iter(self._wrapped_stream)
+        return iter(self._get_default_stream())
 
     def __next__(self):
-        return next(self._wrapped_stream)
+        return next(self._get_default_stream())
 
     def close(self):
         """Close the HTTP connection and finalize the telemetry span."""
         try:
-            # LegacyAPIResponse has no close(); fall back to its underlying http_response
             close = getattr(self._raw_response, "close", None)
             if close is None:
                 http_response = getattr(self._raw_response, "http_response", None)
@@ -171,7 +180,8 @@ class _InstrumentedSyncRawResponse:
                 return None
             return close()
         finally:
-            self._active_stream.cleanup()
+            stream = self._active_stream or self._get_default_stream()
+            stream.cleanup()
 
     def __getattr__(self, name):
         return getattr(self._raw_response, name)
@@ -2175,7 +2185,6 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 result = function(*args, **kwargs)
                 # Detect with_raw_response path (result is APIResponse/LegacyAPIResponse)
                 if hasattr(result, "parse"):
-                    parsed = result.parse()
                     wrap_stream = functools.partial(
                         self._wrap_streaming_response,
                         span=span,
@@ -2186,7 +2195,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         port=port,
                         model=model,
                     )
-                    return _InstrumentedSyncRawResponse(result, wrap_stream, wrap_stream(parsed))
+                    return _InstrumentedSyncRawResponse(result, wrap_stream)
                 result = self._wrap_streaming_response(
                     result,
                     span,
@@ -2355,9 +2364,6 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 result = await function(*args, **kwargs)
                 # Detect with_raw_response path (result is APIResponse/LegacyAPIResponse)
                 if hasattr(result, "parse"):
-                    parsed = result.parse()
-                    if hasattr(parsed, "__await__"):
-                        parsed = await parsed
                     wrap_stream = functools.partial(
                         self._wrap_async_streaming_response,
                         span=span,
@@ -2368,7 +2374,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         port=port,
                         model=model,
                     )
-                    return _InstrumentedAsyncRawResponse(result, wrap_stream, wrap_stream(parsed))
+                    return _InstrumentedAsyncRawResponse(result, wrap_stream)
                 result = self._wrap_async_streaming_response(
                     result,
                     span,
@@ -2963,7 +2969,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return self
 
             def __exit__(self, exc_type, exc_val, exc_tb):
-                self.close()
+                if exc_type is not None:
+                    try:
+                        self.close()
+                    except Exception:
+                        pass
+                else:
+                    self.close()
                 return False
 
             def close(self):
@@ -3456,7 +3468,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return self
 
             async def __aexit__(self, exc_type, exc_val, exc_tb):
-                await self.close()
+                if exc_type is not None:
+                    try:
+                        await self.close()
+                    except Exception:
+                        pass
+                else:
+                    await self.close()
                 return False
 
             async def close(self):
