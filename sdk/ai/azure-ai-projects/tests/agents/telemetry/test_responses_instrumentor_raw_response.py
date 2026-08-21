@@ -102,6 +102,24 @@ class TestRawResponseStreaming:
 
         asyncio.run(_run())
 
+    def test_async_parse_cache_returns_default_after_custom(self):
+        """parse() should always return the default stream even after parse(to=X)."""
+
+        async def _run():
+            client = AsyncOpenAI(
+                api_key="fake-key",
+                http_client=httpx2.AsyncClient(transport=_make_mock_transport()),
+            )
+            raw = await client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
+
+            default = raw.parse()
+            custom = raw.parse(to=CustomAsyncStream)
+            assert raw.parse() is default, "parse() must return default stream after custom parse"
+            assert raw.parse(to=CustomAsyncStream) is custom, "repeated parse(to=X) must return cached wrapper"
+            await default.close()
+
+        asyncio.run(_run())
+
     def test_async_with_raw_response_streaming_preserves_interface(self):
         """with_raw_response.create(stream=True) should preserve .parse() and .headers."""
 
@@ -248,6 +266,20 @@ class TestRawResponseStreaming:
         assert stream.custom_method() == "custom stream"
         stream.close()
         assert stream.response.is_closed
+
+    def test_sync_parse_cache_returns_default_after_custom(self):
+        """parse() should always return the default stream even after parse(to=X)."""
+        client = OpenAI(
+            api_key="fake-key",
+            http_client=httpx2.Client(transport=_make_mock_transport()),
+        )
+        raw = client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
+
+        default = raw.parse()
+        custom = raw.parse(to=CustomStream)
+        assert raw.parse() is default, "parse() must return default stream after custom parse"
+        assert raw.parse(to=CustomStream) is custom, "repeated parse(to=X) must return cached wrapper"
+        default.close()
 
     def test_sync_with_raw_response_streaming_preserves_interface(self):
         """Sync with_raw_response.create(stream=True) should preserve .parse() and .headers."""

@@ -78,20 +78,19 @@ class _InstrumentedAsyncRawResponse:
 
     def __init__(self, raw_response, wrap_stream, wrapped_stream):
         self._raw_response = raw_response
-        # Factory that wraps a parsed stream with telemetry (used for custom parse(to=X) calls)
         self._wrap_stream = wrap_stream
-        # Default stream, eagerly wrapped with telemetry at creation time
         self._wrapped_stream = wrapped_stream
-        # Track which wrapper close() should finalize (updated by parse(to=X))
         self._active_stream = wrapped_stream
+        self._custom_streams = {}  # per-type cache matching OpenAI's parse cache
 
     def parse(self, *, to=None):
         # Sync — matches OpenAI LegacyAPIResponse.parse() contract in openai>=3.0.0
         if to is None:
-            return self._active_stream
-        wrapped = self._wrap_stream(self._raw_response.parse(to=to))
-        self._active_stream = wrapped
-        return wrapped
+            return self._wrapped_stream
+        if to not in self._custom_streams:
+            self._custom_streams[to] = self._wrap_stream(self._raw_response.parse(to=to))
+        self._active_stream = self._custom_streams[to]
+        return self._custom_streams[to]
 
     def __aiter__(self):
         return self._wrapped_stream.__aiter__()
@@ -133,13 +132,15 @@ class _InstrumentedSyncRawResponse:
         self._wrap_stream = wrap_stream
         self._wrapped_stream = wrapped_stream
         self._active_stream = wrapped_stream
+        self._custom_streams = {}
 
     def parse(self, *, to=None):
         if to is None:
-            return self._active_stream
-        wrapped = self._wrap_stream(self._raw_response.parse(to=to))
-        self._active_stream = wrapped
-        return wrapped
+            return self._wrapped_stream
+        if to not in self._custom_streams:
+            self._custom_streams[to] = self._wrap_stream(self._raw_response.parse(to=to))
+        self._active_stream = self._custom_streams[to]
+        return self._custom_streams[to]
 
     def __iter__(self):
         return iter(self._wrapped_stream)
