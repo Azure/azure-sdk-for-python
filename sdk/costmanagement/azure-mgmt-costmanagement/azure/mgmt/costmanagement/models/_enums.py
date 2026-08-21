@@ -886,6 +886,8 @@ class Scope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Single scope recommendation."""
     SHARED = "Shared"
     """Shared scope recommendation."""
+    MANAGEMENT_GROUP = "ManagementGroup"
+    """Management group scope recommendation."""
 
 
 class SettingsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
