@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 import pytest
 from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
 from openai import OpenAI
-from devtools_testutils import recorded_by_proxy, RecordedTransport, set_custom_default_matcher, add_body_key_sanitizer
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from test_base import servicePreparer
 from test_ai_instrumentor_base import (  # pylint: disable=import-error
     TestAiAgentsInstrumentorBase,
@@ -54,19 +54,6 @@ TEST_IMAGE_BASE64 = (
 
 class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable=too-many-public-methods
     """Tests for ResponsesInstrumentor with real endpoints."""
-
-    @pytest.fixture(scope="session", autouse=True)
-    def configure_playback_matcher(self, test_proxy, add_sanitizers):  # pylint: disable=unused-argument
-        """Add body sanitizer and custom matchers for image_url in requests."""
-        # Sanitize image_url in request body to a consistent placeholder
-        add_body_key_sanitizer(json_path="$..image_url", value="SANITIZED_IMAGE_DATA")
-
-        # Configure playback matcher
-        set_custom_default_matcher(
-            excluded_headers="Authorization,x-ms-client-request-id,x-ms-request-id",
-            ignored_query_parameters="api-version",
-            compare_bodies=True,
-        )
 
     def _get_openai_client_and_deployment(self, **kwargs) -> Tuple[OpenAI, str]:
         """Create OpenAI client through AI Projects client"""
@@ -5740,3 +5727,144 @@ trigger:
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
+
+    # --- with_raw_response + streaming tests ---
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.HTTPX)
+    def test_sync_with_raw_response_streaming_with_content_recording(self, **kwargs):
+        """Test with_raw_response.create(stream=True) with content recording enabled."""
+        self.cleanup()
+        os.environ.update(
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
+        )
+        self.setup_telemetry()
+
+        with self.create_client(operation_group="tracing", **kwargs) as project_client:
+            client = project_client.get_openai_client()
+            deployment_name = kwargs.get("foundry_model_name")
+
+            conversation = client.conversations.create()
+
+            raw = client.responses.with_raw_response.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input="Say hello in one word",
+                stream=True,
+            )
+
+            # Raw response interface must be preserved
+            assert hasattr(raw, "parse"), "Result should have .parse() method"
+            assert hasattr(raw, "headers"), "Result should have .headers attribute"
+
+            # Parse and consume the stream
+            stream = raw.parse()
+            accumulated_content = []
+            for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+
+            full_content = "".join(accumulated_content)
+            assert len(full_content) > 0
+
+        # Check spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.input.messages", ""),
+            ("gen_ai.output.messages", ""),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.HTTPX)
+    def test_sync_with_raw_response_streaming_without_content_recording(self, **kwargs):
+        """Test with_raw_response.create(stream=True) with content recording disabled."""
+        self.cleanup()
+        os.environ.update(
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "False",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
+        )
+        self.setup_telemetry()
+
+        with self.create_client(operation_group="tracing", **kwargs) as project_client:
+            client = project_client.get_openai_client()
+            deployment_name = kwargs.get("foundry_model_name")
+
+            conversation = client.conversations.create()
+
+            raw = client.responses.with_raw_response.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input="Say hello in one word",
+                stream=True,
+            )
+
+            # Raw response interface must be preserved
+            assert hasattr(raw, "parse"), "Result should have .parse() method"
+            assert hasattr(raw, "headers"), "Result should have .headers attribute"
+
+            # Parse and consume the stream
+            stream = raw.parse()
+            accumulated_content = []
+            for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+
+            full_content = "".join(accumulated_content)
+            assert len(full_content) > 0
+
+        # Check spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.input.messages", ""),
+            ("gen_ai.output.messages", ""),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        # Verify content is omitted when content recording is disabled
+        input_messages = json.loads(span.attributes["gen_ai.input.messages"])
+        assert len(input_messages) == 1
+        assert input_messages[0]["role"] == "user"
+        assert "content" not in input_messages[0]["parts"][0]
+
+        output_messages = json.loads(span.attributes["gen_ai.output.messages"])
+        assert len(output_messages) == 1
+        assert output_messages[0]["role"] == "assistant"
+        assert "content" not in output_messages[0]["parts"][0]
