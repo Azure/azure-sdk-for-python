@@ -53,6 +53,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/TagRules_Update_MinimumSet_Gen.json
+# x-ms-original-file: 2026-06-01/TagRules_Update_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
