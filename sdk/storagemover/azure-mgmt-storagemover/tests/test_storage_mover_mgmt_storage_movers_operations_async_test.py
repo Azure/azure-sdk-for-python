@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,6 +9,7 @@
 Mirrors .NET StorageMoverCollectionTests + StorageMoverResourceTests at:
   https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/storagemover/Azure.ResourceManager.StorageMover/tests/Scenario
 """
+
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from azure.mgmt.storagemover.aio import StorageMoverMgmtClient
@@ -23,6 +25,7 @@ FAKE_STORAGE_ACCOUNT_ID = (
 )
 
 
+@pytest.mark.live_test_only
 class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
@@ -75,7 +78,8 @@ class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase
         sm_name = "testsm-get1"
 
         created = await self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION, "tags": {"k": "v"}},
         )
 
@@ -101,20 +105,27 @@ class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase
         endpoint_name = "testblobendpoint"
 
         await self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
         await self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
-            endpoint={"properties": {
-                "endpointType": "AzureStorageBlobContainer",
-                "storageAccountResourceId": FAKE_STORAGE_ACCOUNT_ID,
-                "blobContainerName": "testcontainer",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageBlobContainer",
+                    "storageAccountResourceId": FAKE_STORAGE_ACCOUNT_ID,
+                    "blobContainerName": "testcontainer",
+                }
+            },
         )
 
         endpoint = await self.client.endpoints.get(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         )
         assert endpoint.name == endpoint_name
         assert endpoint.properties.endpoint_type == "AzureStorageBlobContainer"
@@ -127,16 +138,21 @@ class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase
         project_name = "testproj1"
 
         await self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
         await self.client.projects.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
             project={},
         )
 
         project = await self.client.projects.get(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
         )
         assert project.name == project_name
 
@@ -147,40 +163,46 @@ class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase
         sm_name = "testsm-updel"
 
         sm = await self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
         assert sm.name == sm_name
         assert sm.location == AZURE_LOCATION
 
         sm = await self.client.storage_movers.update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"properties": {"description": "This is an updated storage mover"}},
         )
         assert sm.properties.description == "This is an updated storage mover"
 
         # Subscription policies may inject extra tags, so only assert on the tag we set.
         sm = await self.client.storage_movers.update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"tags": {"tag1": "val1"}},
         )
         assert sm.tags.get("tag1") == "val1"
 
         sm = await self.client.storage_movers.update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"tags": {"tag2": "val2", "tag3": "val3"}},
         )
         assert sm.tags.get("tag2") == "val2"
         assert sm.tags.get("tag3") == "val3"
 
         sm = await self.client.storage_movers.update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"tags": {"tag3": "val3"}},
         )
         assert sm.tags.get("tag3") == "val3"
 
         poller = await self.client.storage_movers.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
         )
         await poller.result()
         with pytest.raises(ResourceNotFoundError):
