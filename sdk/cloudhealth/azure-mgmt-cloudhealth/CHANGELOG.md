@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0b4 (2026-08-21)
+
+### Features Added
+
+  - Model `EntityProperties` added property `signal_aggregation_groups`
+  - Added enum `AggregationType`
+  - Added enum `AggregationUnit`
+  - Added model `SignalAggregationGroup`
+
+### Breaking Changes
+
+  - Model `ThresholdRuleV2` deleted or renamed its instance variable `look_back_window`
+  - Deleted or renamed model `DependenciesAggregationType`
+  - Deleted or renamed model `DependenciesAggregationUnit`
+  - Deleted or renamed model `LookBackWindow`
+
 ## 1.0.0b3 (2026-07-07)
 
 ### Features Added

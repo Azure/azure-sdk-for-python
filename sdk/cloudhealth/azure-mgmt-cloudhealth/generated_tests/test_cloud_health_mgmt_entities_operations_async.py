@@ -55,6 +55,20 @@ class TestCloudHealthMgmtEntitiesOperationsAsync(AzureMgmtRecordedTestCase):
                         "icon": {"iconName": "str", "customData": "str"},
                         "impact": "str",
                         "provisioningState": "str",
+                        "signalAggregationGroups": [
+                            {
+                                "members": ["str"],
+                                "name": "str",
+                                "aggregatedHealthState": "str",
+                                "aggregationType": "str",
+                                "degradedThreshold": 0.0,
+                                "displayName": "str",
+                                "ignoreUnknown": bool,
+                                "unhealthyThreshold": 0.0,
+                                "unit": "str",
+                                "unresolvedMembers": ["str"],
+                            }
+                        ],
                         "signalGroups": {
                             "azureLogAnalytics": {
                                 "authenticationSetting": "str",
@@ -68,16 +82,10 @@ class TestCloudHealthMgmtEntitiesOperationsAsync(AzureMgmtRecordedTestCase):
                                         "evaluationRules": {
                                             "unhealthyRule": {
                                                 "operator": "str",
-                                                "lookBackWindow": "str",
                                                 "sensitivity": "str",
                                                 "threshold": 0.0,
                                             },
-                                            "degradedRule": {
-                                                "operator": "str",
-                                                "lookBackWindow": "str",
-                                                "sensitivity": "str",
-                                                "threshold": 0.0,
-                                            },
+                                            "degradedRule": {"operator": "str", "sensitivity": "str", "threshold": 0.0},
                                         },
                                         "queryText": "str",
                                         "refreshInterval": "str",
@@ -106,16 +114,10 @@ class TestCloudHealthMgmtEntitiesOperationsAsync(AzureMgmtRecordedTestCase):
                                         "evaluationRules": {
                                             "unhealthyRule": {
                                                 "operator": "str",
-                                                "lookBackWindow": "str",
                                                 "sensitivity": "str",
                                                 "threshold": 0.0,
                                             },
-                                            "degradedRule": {
-                                                "operator": "str",
-                                                "lookBackWindow": "str",
-                                                "sensitivity": "str",
-                                                "threshold": 0.0,
-                                            },
+                                            "degradedRule": {"operator": "str", "sensitivity": "str", "threshold": 0.0},
                                         },
                                         "queryText": "str",
                                         "refreshInterval": "str",
@@ -164,16 +166,10 @@ class TestCloudHealthMgmtEntitiesOperationsAsync(AzureMgmtRecordedTestCase):
                                         "evaluationRules": {
                                             "unhealthyRule": {
                                                 "operator": "str",
-                                                "lookBackWindow": "str",
                                                 "sensitivity": "str",
                                                 "threshold": 0.0,
                                             },
-                                            "degradedRule": {
-                                                "operator": "str",
-                                                "lookBackWindow": "str",
-                                                "sensitivity": "str",
-                                                "threshold": 0.0,
-                                            },
+                                            "degradedRule": {"operator": "str", "sensitivity": "str", "threshold": 0.0},
                                         },
                                         "metricName": "str",
                                         "metricNamespace": "str",
@@ -205,16 +201,10 @@ class TestCloudHealthMgmtEntitiesOperationsAsync(AzureMgmtRecordedTestCase):
                                         "evaluationRules": {
                                             "unhealthyRule": {
                                                 "operator": "str",
-                                                "lookBackWindow": "str",
                                                 "sensitivity": "str",
                                                 "threshold": 0.0,
                                             },
-                                            "degradedRule": {
-                                                "operator": "str",
-                                                "lookBackWindow": "str",
-                                                "sensitivity": "str",
-                                                "threshold": 0.0,
-                                            },
+                                            "degradedRule": {"operator": "str", "sensitivity": "str", "threshold": 0.0},
                                         },
                                         "signalDefinitionName": "str",
                                         "status": {
@@ -315,18 +305,8 @@ class TestCloudHealthMgmtEntitiesOperationsAsync(AzureMgmtRecordedTestCase):
                 "signalName": "str",
                 "additionalContext": "str",
                 "evaluationRules": {
-                    "unhealthyRule": {
-                        "operator": "str",
-                        "lookBackWindow": "str",
-                        "sensitivity": "str",
-                        "threshold": 0.0,
-                    },
-                    "degradedRule": {
-                        "operator": "str",
-                        "lookBackWindow": "str",
-                        "sensitivity": "str",
-                        "threshold": 0.0,
-                    },
+                    "unhealthyRule": {"operator": "str", "sensitivity": "str", "threshold": 0.0},
+                    "degradedRule": {"operator": "str", "sensitivity": "str", "threshold": 0.0},
                 },
                 "expiresInMinutes": 0,
                 "value": 0.0,
