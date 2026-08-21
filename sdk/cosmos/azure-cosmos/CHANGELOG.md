@@ -3,6 +3,7 @@
 ### 4.16.4 (Unreleased)
 
 #### Features Added
+* `query_items_change_feed()` now returns a `CosmosItemPaged`/`CosmosAsyncItemPaged` exposing `get_response_headers()`, which returns a `CaseInsensitiveDict` of the most recent page's response headers (including the `etag` continuation token). This gives thread-safe access to change-feed response headers without relying on internal `client_connection.last_response_headers`. Use `response_hook=` to observe per-page headers as they arrive.
 
 #### Breaking Changes
 
