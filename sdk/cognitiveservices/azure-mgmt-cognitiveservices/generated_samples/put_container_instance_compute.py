@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.computes.begin_create_or_update(
+    client.computes.begin_create_or_update(
         resource_group_name="rgcognitiveservices",
         account_name="myAccount",
         compute_name="myContainerInstance",
@@ -42,19 +42,18 @@ def main():
                     "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rgcognitiveservices/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity": {}
                 },
             },
-            "location": "eastus",
             "properties": {
                 "computeType": "ContainerInstance",
                 "idleTimeBeforeShutdown": "PT30M",
                 "imageLink": "mcr.microsoft.com/azureml/curated/pytorch-gpu:latest",
+                "location": "eastus",
                 "sshSettings": {"adminEnabled": True, "sshPublicKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQ..."},
                 "targetClusterId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rgcognitiveservices/providers/Microsoft.CognitiveServices/accounts/myAccount/computes/myCluster",
             },
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2026-05-15-preview/PutContainerInstanceCompute.json
+# x-ms-original-file: 2026-07-15-preview/PutContainerInstanceCompute.json
 if __name__ == "__main__":
     main()
