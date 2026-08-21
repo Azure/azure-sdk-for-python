@@ -115,6 +115,65 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
+# Fix Sphinx docutils "Bullet list ends without a blank line; unexpected unindent" warnings in
+# VoiceAudioOutputConfig (types.py + models/_models.py) and VoiceConversationStatus
+# (models/_enums.py). The emitter wraps long bullet-item lines without indenting the
+# continuation lines to align with the bullet's text, and (for VoiceAudioOutputConfig) runs the
+# trailing summary sentence straight into the last bullet with no blank line to end the list.
+$oldVoiceAudioOutputConfig = @"
+    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
+    `custom_lexicon_url`,
+    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
+    * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
+    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
+    `personal_voice_model`; the voice name is derived from the avatar.
+    * `azure-realtime-native`: `voice` and `speed`.
+    `format` and `output_audio_timestamp_types` apply to every voice type.
+"@
+$newVoiceAudioOutputConfig = @"
+    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
+      `custom_lexicon_url`,
+      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
+    * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
+    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
+      `personal_voice_model`; the voice name is derived from the avatar.
+    * `azure-realtime-native`: `voice` and `speed`.
+
+    `format` and `output_audio_timestamp_types` apply to every voice type.
+"@
+$files = 'azure\ai\projects\types.py', 'azure\ai\projects\models\_models.py'
+foreach ($f in $files) {
+    $c = Get-Content $f -Raw
+    $c = $c.Replace($oldVoiceAudioOutputConfig, $newVoiceAudioOutputConfig)
+    Set-Content $f $c -NoNewline
+}
+
+$f = 'azure\ai\projects\models\_enums.py'
+$c = Get-Content $f -Raw
+$c = $c.Replace(
+@"
+    * `in_progress`: the live session is active, or post-session persistence finalization is
+    pending.
+    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
+    max-duration `1001`
+    close, or a client or network disconnect that the service can still finalize.
+    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
+    finalization.
+"@,
+@"
+    * `in_progress`: the live session is active, or post-session persistence finalization is
+      pending.
+    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
+      max-duration `1001`
+      close, or a client or network disconnect that the service can still finalize.
+    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
+      finalization.
+"@
+)
+Set-Content $f $c -NoNewline
+
 # A block of code in the implementation of "list_memories", in both sync 
 # and async _operations.py files, needs to be moved up. It's emitted in the wrong place,
 # in the inline function named "prepare_request". Instead it should be moved up into the
