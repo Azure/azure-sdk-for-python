@@ -22,6 +22,7 @@ from ._operations import IndexesOperations  # type: ignore
 from ._operations import RLEnvironmentsOperations  # type: ignore
 from ._operations import RLEInstanceGroupsOperations  # type: ignore
 from ._operations import RLEInstancesOperations  # type: ignore
+from ._operations import RLEInstanceRuntimeOperations  # type: ignore
 from ._operations import ToolboxesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
@@ -32,6 +33,7 @@ __all__ = [
     "RLEnvironmentsOperations",
     "RLEInstanceGroupsOperations",
     "RLEInstancesOperations",
+    "RLEInstanceRuntimeOperations",
     "BetaOperations",
     "AgentsOperations",
     "EvaluationRulesOperations",

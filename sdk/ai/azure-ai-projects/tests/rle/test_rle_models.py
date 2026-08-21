@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -6,7 +7,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 
 from azure.ai.projects.aio.operations._patch_rle_async import (
     AsyncOpenEnvClient,
@@ -16,10 +17,9 @@ from azure.ai.projects.aio.operations._patch_rle_async import (
 from azure.ai.projects.models import (
     CreateRLEInstanceGroupRequest,
     ListRLEInstanceGroupsResponse,
+    ListRLEnvironmentsResponse,
     ListRLEnvironmentVersionsResponse,
-    RLEErrorResponse,
     RLEInstance,
-    RLEInstanceGroupAtCapacityErrorResponse,
     RLEInstanceGroup,
     RLEInstanceStatus,
     RLEnvironmentState,
@@ -57,13 +57,17 @@ class _FakeInstance:
 
 
 def _pipeline_response(status_code=201, headers=None):
-    return SimpleNamespace(http_response=SimpleNamespace(status_code=status_code, headers=headers or {}))
+    return SimpleNamespace(
+        http_response=SimpleNamespace(status_code=status_code, headers=headers or {})
+    )
 
 
 def _http_response_error(status_code, error_code=None, headers=None):
     # ``HttpResponseError.__init__`` reads ``reason``/``status_code``/``headers`` off the response.
     error = HttpResponseError(
-        response=SimpleNamespace(status_code=status_code, headers=headers or {}, reason=None)
+        response=SimpleNamespace(
+            status_code=status_code, headers=headers or {}, reason=None
+        )
     )
     if error_code is not None:
         error.model = SimpleNamespace(error=SimpleNamespace(code=error_code))
@@ -72,17 +76,19 @@ def _http_response_error(status_code, error_code=None, headers=None):
 
 def _capacity_error(retry_after=5):
     error = _http_response_error(429, headers={"Retry-After": str(retry_after)})
-    error.model = RLEInstanceGroupAtCapacityErrorResponse(
-        code="InstanceGroupAtCapacity",
-        message="The instance group is at capacity. Try again later.",
-        active_instance_count=5,
-        max_active_instances=5,
-        retry_after_seconds=retry_after,
-    )
+    error.model = SimpleNamespace(code="InstanceGroupAtCapacity")
     return error
 
 
-def _record_runtime(calls, op, environment_name, environment_version, instance_group_id, instance_id, body=None):
+def _record_runtime(
+    calls,
+    op,
+    environment_name,
+    environment_version,
+    instance_group_id,
+    instance_id,
+    body=None,
+):
     """Record a delegated runtime call and return a canned result."""
     calls.append(
         (
@@ -102,7 +108,7 @@ def _record_runtime(calls, op, environment_name, environment_version, instance_g
 
 
 class _FakeEnvironments:
-    def __init__(self, version="7"):
+    def __init__(self, version="resolved-latest"):
         self._version = version
         self.calls = []
 
@@ -120,15 +126,15 @@ class _FakeEnvironments:
 
     def list_environments(self, **kwargs):
         self.calls.append(("list_environments", kwargs))
-        return SimpleNamespace(data=[], has_more=False)
+        return SimpleNamespace(data=[], next_continuation_token=None)
 
     def list_rl_environment_versions(self, name, **kwargs):
         self.calls.append(("list_rl_environment_versions", name, kwargs))
-        return SimpleNamespace(data=[], has_more=False)
+        return SimpleNamespace(data=[], next_continuation_token=None)
 
 
 class _AsyncFakeEnvironments:
-    def __init__(self, version="7"):
+    def __init__(self, version="resolved-latest"):
         self._version = version
         self.calls = []
 
@@ -146,11 +152,11 @@ class _AsyncFakeEnvironments:
 
     async def list_environments(self, **kwargs):
         self.calls.append(("list_environments", kwargs))
-        return SimpleNamespace(data=[], has_more=False)
+        return SimpleNamespace(data=[], next_continuation_token=None)
 
     async def list_rl_environment_versions(self, name, **kwargs):
         self.calls.append(("list_rl_environment_versions", name, kwargs))
-        return SimpleNamespace(data=[], has_more=False)
+        return SimpleNamespace(data=[], next_continuation_token=None)
 
 
 def test_rle_public_symbols_are_available():
@@ -183,7 +189,10 @@ def test_rle_symbols_exported_from_public_namespace():
     assert getattr(models, "RLEnvironmentState")
     assert getattr(models, "RLEInstance")
     assert getattr(models, "RLEInstanceGroup")
-    assert getattr(models, "ListRLEnvironmentVersionsResponse") is ListRLEnvironmentVersionsResponse
+    assert (
+        getattr(models, "ListRLEnvironmentVersionsResponse")
+        is ListRLEnvironmentVersionsResponse
+    )
 
 
 def test_coerce_action_accepts_mapping_or_keyword_fields():
@@ -224,18 +233,19 @@ class _FakeInstanceGroups:
         self.routes = []
         self.deleted = []
 
-    def create_instance_group(self, environment_name, body, *, environment_version=None):
+    def create_instance_group(self, environment_name, environment_version, body):
         self.created.append(body)
         self.routes.append((environment_name, environment_version))
         if self._create_status is not None:
             raise _http_response_error(self._create_status, self._create_error_code)
         return SimpleNamespace(
             id=self.group_id,
+            instance_group_id=self.group_id,
             environment_name=environment_name,
-            environment_version=environment_version or "resolved-latest",
+            environment_version=environment_version,
         )
 
-    def delete_instance_group(self, environment_name, instance_group_id, *, environment_version=None):
+    def delete_instance_group(self, environment_name, environment_version, instance_group_id):
         self.routes.append((environment_name, environment_version))
         self.deleted.append(instance_group_id)
 
@@ -269,8 +279,12 @@ class _FakeInstances:
         self.release_routes = []
         self.calls = []
 
-    def create_instance(self, environment_name, instance_group_id, *, environment_version=None, cls=None):
-        self.create_routes.append((environment_name, environment_version, instance_group_id))
+    def create_instance(
+        self, environment_name, environment_version, instance_group_id, *, cls=None
+    ):
+        self.create_routes.append(
+            (environment_name, environment_version, instance_group_id)
+        )
         index = self._next
         self._next += 1
         if self._capacity_failures:
@@ -279,57 +293,128 @@ class _FakeInstances:
         if self._create_status is not None:
             if self._create_status == 429:
                 raise _capacity_error()
-            raise _http_response_error(self._create_status, headers={"Retry-After": "0"})
+            raise _http_response_error(
+                self._create_status, headers={"Retry-After": "0"}
+            )
         if self._fail_on is not None and index == self._fail_on:
-            instance = _FakeInstance(f"inst-{index}", RLEInstanceStatus.FAILED, error="boom")
+            instance = _FakeInstance(
+                f"inst-{index}", RLEInstanceStatus.FAILED, error="boom"
+            )
         else:
             instance = _FakeInstance(f"inst-{index}", RLEInstanceStatus.RUNNING)
         if cls is not None:
             return cls(_pipeline_response(201), instance, {})
         return instance
 
-    def get_instance(self, environment_name, instance_group_id, instance_id, *, environment_version=None):
+    def get_instance(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         return _FakeInstance(instance_id, RLEInstanceStatus.RUNNING)
 
-    def release_instance(self, environment_name, instance_group_id, instance_id, *, environment_version=None):
-        self.release_routes.append((environment_name, environment_version, instance_group_id, instance_id))
+    def delete_instance(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
+        self.release_routes.append(
+            (environment_name, environment_version, instance_group_id, instance_id)
+        )
         self.released.append(instance_id)
         return _FakeInstance(instance_id, RLEInstanceStatus.RUNNING)
 
-    def reset(self, environment_name, environment_version, instance_group_id, instance_id, body):
+    def reset(
+        self,
+        environment_name,
+        environment_version,
+        instance_group_id,
+        instance_id,
+        body,
+    ):
         return _record_runtime(
-            self.calls, "reset", environment_name, environment_version, instance_group_id, instance_id, body
+            self.calls,
+            "reset",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
+            body,
         )
 
-    def step(self, environment_name, environment_version, instance_group_id, instance_id, body):
+    def step(
+        self,
+        environment_name,
+        environment_version,
+        instance_group_id,
+        instance_id,
+        body,
+    ):
         return _record_runtime(
-            self.calls, "step", environment_name, environment_version, instance_group_id, instance_id, body
+            self.calls,
+            "step",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
+            body,
         )
 
-    def state(self, environment_name, environment_version, instance_group_id, instance_id):
+    def state(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         return _record_runtime(
-            self.calls, "state", environment_name, environment_version, instance_group_id, instance_id
+            self.calls,
+            "state",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
         )
 
-    def health(self, environment_name, environment_version, instance_group_id, instance_id):
+    def health(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         if self._health_statuses:
             status = self._health_statuses.pop(0)
             self.calls.append(
-                ("health", environment_name, environment_version, instance_group_id, instance_id, None)
+                (
+                    "health",
+                    environment_name,
+                    environment_version,
+                    instance_group_id,
+                    instance_id,
+                    None,
+                )
             )
             return {"status": status}
         return _record_runtime(
-            self.calls, "health", environment_name, environment_version, instance_group_id, instance_id
+            self.calls,
+            "health",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
         )
 
-    def get_metadata(self, environment_name, environment_version, instance_group_id, instance_id):
+    def get_metadata(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         return _record_runtime(
-            self.calls, "metadata", environment_name, environment_version, instance_group_id, instance_id
+            self.calls,
+            "metadata",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
         )
 
-    def schema(self, environment_name, environment_version, instance_group_id, instance_id):
+    def schema(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         return _record_runtime(
-            self.calls, "schema", environment_name, environment_version, instance_group_id, instance_id
+            self.calls,
+            "schema",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
         )
 
 
@@ -348,7 +433,9 @@ class _FakeInstances202:
         self.released = []
         self._running_after = running_after
 
-    def create_instance(self, environment_name, instance_group_id, *, environment_version=None, cls=None):
+    def create_instance(
+        self, environment_name, environment_version, instance_group_id, *, cls=None
+    ):
         self.create_count += 1
         instance = _FakeInstance("inst-0", RLEInstanceStatus.CREATING)
         response = _pipeline_response(202, {"Retry-After": "0"})
@@ -356,16 +443,30 @@ class _FakeInstances202:
             return cls(response, instance, {})
         return instance
 
-    def get_instance(self, environment_name, instance_group_id, instance_id, *, environment_version=None):
+    def get_instance(
+        self,
+        environment_name,
+        environment_version,
+        instance_group_id,
+        instance_id,
+    ):
         self.get_count += 1
-        status = RLEInstanceStatus.RUNNING if self.get_count >= self._running_after else RLEInstanceStatus.CREATING
+        status = (
+            RLEInstanceStatus.RUNNING
+            if self.get_count >= self._running_after
+            else RLEInstanceStatus.CREATING
+        )
         return _FakeInstance(instance_id, status)
 
-    def release_instance(self, environment_name, instance_group_id, instance_id, *, environment_version=None):
+    def delete_instance(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         self.released.append(instance_id)
         return _FakeInstance(instance_id, RLEInstanceStatus.RUNNING)
 
-    def health(self, environment_name, environment_version, instance_group_id, instance_id):
+    def health(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         return {"status": "ok"}
 
 
@@ -431,13 +532,14 @@ def test_openenv_get_instance_retries_capacity_until_timeout():
     assert exc_info.value.timeout == 0.01
     assert exc_info.value.last_status == "InstanceGroupAtCapacity"
     assert exc_info.value.details is not None
-    assert exc_info.value.details.active_instance_count == 5
-    assert exc_info.value.details.max_active_instances == 5
+    assert exc_info.value.details.code == "InstanceGroupAtCapacity"
 
 
 def test_openenv_get_instance_retries_capacity_then_succeeds(monkeypatch):
     delays = []
-    monkeypatch.setattr("azure.ai.projects.operations._patch_rle.time.sleep", delays.append)
+    monkeypatch.setattr(
+        "azure.ai.projects.operations._patch_rle.time.sleep", delays.append
+    )
     instances = _FakeInstances(capacity_failures=1, capacity_retry_after=2)
     client, _groups, _instances = _make_openenv_client(instances=instances)
     with client:
@@ -449,8 +551,17 @@ def test_openenv_get_instance_retries_capacity_then_succeeds(monkeypatch):
 
 def test_openenv_get_instance_does_not_retry_untyped_429():
     class _Untyped429Instances(_FakeInstances):
-        def create_instance(self, environment_name, instance_group_id, *, environment_version=None, cls=None):
-            self.create_routes.append((environment_name, environment_version, instance_group_id))
+        def create_instance(
+            self,
+            environment_name,
+            environment_version,
+            instance_group_id,
+            *,
+            cls=None,
+        ):
+            self.create_routes.append(
+                (environment_name, environment_version, instance_group_id)
+            )
             raise _http_response_error(429, headers={"Retry-After": "0"})
 
     instances = _Untyped429Instances()
@@ -465,7 +576,9 @@ def test_openenv_get_instance_releases_failed_instance():
     # An instance that never reaches Running is released so it does not leak quota, and the failure
     # surfaces as RLEError.
     instances = _FakeInstances(fail_on=0)
-    client, _groups, _instances = _make_openenv_client(max_active_instances=1, instances=instances)
+    client, _groups, _instances = _make_openenv_client(
+        max_active_instances=1, instances=instances
+    )
     with client:
         with pytest.raises(RLEError):
             client.get_instance()
@@ -477,7 +590,9 @@ def test_openenv_get_instance_polls_pending_202_without_recreating():
     # issued exactly once and the pending instance polled by id -- re-POSTing would lease and leak an
     # extra instance for every pending response.
     instances = _FakeInstances202(running_after=2)
-    client, _groups, _instances = _make_openenv_client(max_active_instances=1, instances=instances)
+    client, _groups, _instances = _make_openenv_client(
+        max_active_instances=1, instances=instances
+    )
     with client:
         with client.get_instance() as instance:
             assert instance.id == "inst-0"
@@ -513,7 +628,9 @@ def test_openenv_get_instance_waits_for_runtime_health():
 
 def test_openenv_get_instance_releases_instance_when_health_times_out():
     class _UnhealthyInstances(_FakeInstances):
-        def health(self, environment_name, environment_version, instance_group_id, instance_id):
+        def health(
+            self, environment_name, environment_version, instance_group_id, instance_id
+        ):
             return {"status": "starting"}
 
     instances = _UnhealthyInstances()
@@ -522,22 +639,30 @@ def test_openenv_get_instance_releases_instance_when_health_times_out():
         instance_acquire_timeout=0.01,
     )
     with client:
-        with pytest.raises(RLEInstanceAcquireTimeoutError, match="runtime was not healthy"):
+        with pytest.raises(
+            RLEInstanceAcquireTimeoutError, match="runtime was not healthy"
+        ):
             client.get_instance()
     assert instances.released == ["inst-0"]
 
 
 def test_openenv_ensure_group_maps_quota_exceeded():
     groups = _FakeInstanceGroups(create_status=403, create_error_code="QuotaExceeded")
-    client, _groups, _instances = _make_openenv_client(max_active_instances=1, groups=groups)
+    client, _groups, _instances = _make_openenv_client(
+        max_active_instances=1, groups=groups
+    )
     with pytest.raises(RLEQuotaExceededError):
         client._ensure_group()
 
 
-@pytest.mark.parametrize("error_code", ["AuthorizationFailed", "preview_feature_required"])
+@pytest.mark.parametrize(
+    "error_code", ["AuthorizationFailed", "preview_feature_required"]
+)
 def test_openenv_ensure_group_preserves_non_quota_403(error_code):
     groups = _FakeInstanceGroups(create_status=403, create_error_code=error_code)
-    client, _groups, _instances = _make_openenv_client(max_active_instances=1, groups=groups)
+    client, _groups, _instances = _make_openenv_client(
+        max_active_instances=1, groups=groups
+    )
     with pytest.raises(HttpResponseError):
         client._ensure_group()
 
@@ -583,7 +708,10 @@ def test_openenv_instance_runtime_uses_resolved_environment_route():
         "health",
         "schema",
     ]
-    assert all(call[1:5] == ("env-1", "resolved-latest", "grp-1", "inst-0") for call in instances.calls)
+    assert all(
+        call[1:5] == ("env-1", "resolved-latest", "grp-1", "inst-0")
+        for call in instances.calls
+    )
     reset_call = instances.calls[2]
     assert reset_call[5].get("seed") == 42
 
@@ -604,17 +732,19 @@ def test_openenv_get_instance_requires_enter_first():
         client.get_instance()
 
 
-def test_ensure_group_uses_unversioned_environment_route():
+def test_ensure_group_resolves_latest_environment_version():
     environments = _FakeEnvironments(version="42")
-    client, groups, instances = _make_openenv_client(max_active_instances=1, environments=environments)
+    client, groups, instances = _make_openenv_client(
+        max_active_instances=1, environments=environments
+    )
     with client:
         assert client.instance_group_id == "grp-1"
         with client.get_instance():
             pass
-    assert environments.calls == []
-    assert groups.routes[0] == ("env-1", None)
-    assert groups.routes[1] == ("env-1", "resolved-latest")
-    assert instances.create_routes == [("env-1", "resolved-latest", "grp-1")]
+    assert environments.calls == [("get_environment", "env-1")]
+    assert groups.routes[0] == ("env-1", "42")
+    assert groups.routes[1] == ("env-1", "42")
+    assert instances.create_routes == [("env-1", "42", "grp-1")]
     body = groups.created[0]
     assert body.max_active_instances == 1
 
@@ -665,7 +795,9 @@ def test_create_environment_builds_request():
     ops = RLEOperations(object(), object(), object(), object())
     environments = _FakeEnvironments()
     ops._environments = environments
-    result = ops.create_environment("wordle", "registry.azurecr.io/wordle:v1", version_bump="Minor")
+    result = ops.create_environment(
+        "wordle", "registry.azurecr.io/wordle:v1", version_bump="Minor"
+    )
     assert result.name == "wordle"
     body = environments.calls[0][1]
     assert body.name == "wordle"
@@ -673,73 +805,139 @@ def test_create_environment_builds_request():
     assert body.version_bump == "Minor"
 
 
-def test_environment_list_helpers_forward_cursor_pagination():
+def test_environment_list_helpers_forward_continuation_token_pagination():
     ops = RLEOperations(object(), object(), object(), object())
     environments = _FakeEnvironments()
     ops._environments = environments
 
-    ops.list_environments(name="wordle", limit=10, after="first", order="asc")
-    ops.list_environment_versions("wordle", limit=5, before="last", order="desc")
+    ops.list_environments(
+        name="wordle", limit=10, continuation_token="first", order="asc"
+    )
+    ops.list_environment_versions(
+        "wordle", limit=5, continuation_token="last", order="desc"
+    )
 
     assert environments.calls == [
-        ("list_environments", {"name": "wordle", "limit": 10, "after": "first", "before": None, "order": "asc"}),
+        (
+            "list_environments",
+            {
+                "name": "wordle",
+                "limit": 10,
+                "continuation_token_parameter": "first",
+                "order": "asc",
+            },
+        ),
         (
             "list_rl_environment_versions",
             "wordle",
-            {"limit": 5, "after": None, "before": "last", "order": "desc"},
+            {"limit": 5, "continuation_token_parameter": "last", "order": "desc"},
         ),
     ]
 
 
-def test_instance_group_list_response_maps_value_and_count():
-    response = ListRLEInstanceGroupsResponse(
-        {
-            "value": [
-                {
-                    "id": "group-1",
-                    "environment_name": "wordle",
-                    "environment_version": "1",
-                    "max_active_instances": 10,
-                }
-            ],
-            "count": 1,
-        }
+@pytest.mark.parametrize("limit", (0, 101))
+def test_environment_list_helpers_reject_invalid_pagination_limits(limit):
+    ops = RLEOperations(object(), object(), object(), object())
+    environments = _FakeEnvironments()
+    ops._environments = environments
+
+    with pytest.raises(ValueError, match=r"range \[1, 100\]"):
+        ops.list_environments(limit=limit)
+    with pytest.raises(ValueError, match=r"range \[1, 100\]"):
+        ops.list_environment_versions("wordle", limit=limit)
+
+    assert environments.calls == []
+
+
+@pytest.mark.parametrize("limit", (0, 101))
+def test_async_environment_list_helpers_reject_invalid_pagination_limits(limit):
+    async def run():
+        ops = AsyncRLEOperations(object(), object(), object(), object())
+        environments = _AsyncFakeEnvironments()
+        ops._environments = environments
+
+        with pytest.raises(ValueError, match=r"range \[1, 100\]"):
+            await ops.list_environments(limit=limit)
+        with pytest.raises(ValueError, match=r"range \[1, 100\]"):
+            await ops.list_environment_versions("wordle", limit=limit)
+
+        assert environments.calls == []
+
+    asyncio.run(run())
+
+
+def test_rle_list_responses_expose_continuation_tokens():
+    environment_response = ListRLEnvironmentsResponse(
+        data=[], next_continuation_token="environments-next"
+    )
+    version_response = ListRLEnvironmentVersionsResponse(
+        data=[], next_continuation_token="versions-next"
+    )
+    instance_group_response = ListRLEInstanceGroupsResponse(
+        data=[], next_continuation_token="groups-next"
     )
 
-    assert response.count == 1
-    assert len(response.data) == 1
-    assert response.data[0].id == "group-1"
+    assert environment_response.next_continuation_token == "environments-next"
+    assert version_response.next_continuation_token == "versions-next"
+    assert instance_group_response.next_continuation_token == "groups-next"
 
 
-def test_instance_group_list_builder_uses_offset_pagination():
-    request = generated_operations.build_rle_instance_groups_list_instance_groups_request(
-        "wordle",
-        environment_version="1",
-        skip=5,
-        top=20,
+def test_instance_group_list_builder_uses_continuation_token_pagination():
+    request = (
+        generated_operations.build_rle_instance_groups_list_instance_groups_request(
+            "wordle",
+            "1",
+            limit=20,
+            continuation_token_parameter="groups-next",
+        )
     )
 
-    assert request.query["skip"] == "5"
-    assert request.query["top"] == "20"
-    assert "limit" not in request.query
+    assert request.query["limit"] == "20"
+    assert request.query["continuationToken"] == "groups-next"
     assert "after" not in request.query
+    assert "before" not in request.query
+
+
+def test_create_environment_builder_uses_collection_root():
+    request = generated_operations.build_rl_environments_create_environment_request()
+    assert request.url.split("?")[0] == "/rl_environments"
 
 
 @pytest.mark.parametrize(
     "builder_name,args,suffix",
     [
-        ("build_rle_instance_groups_create_instance_group_request", (), "/instance_groups"),
-        ("build_rle_instance_groups_list_instance_groups_request", (), "/instance_groups"),
-        ("build_rle_instance_groups_get_instance_group_request", ("group-1",), "/instance_groups/group-1"),
-        ("build_rle_instance_groups_delete_instance_group_request", ("group-1",), "/instance_groups/group-1"),
-        ("build_rle_instances_create_instance_request", ("group-1",), "/instance_groups/group-1/instances"),
+        (
+            "build_rle_instance_groups_create_instance_group_request",
+            (),
+            "/instance_groups",
+        ),
+        (
+            "build_rle_instance_groups_list_instance_groups_request",
+            (),
+            "/instance_groups",
+        ),
+        (
+            "build_rle_instance_groups_get_instance_group_request",
+            ("group-1",),
+            "/instance_groups/group-1",
+        ),
+        (
+            "build_rle_instance_groups_delete_instance_group_request",
+            ("group-1",),
+            "/instance_groups/group-1",
+        ),
+        (
+            "build_rle_instances_create_instance_request",
+            ("group-1",),
+            "/instance_groups/group-1/instances",
+        ),
         (
             "build_rle_instances_get_instance_request",
             ("group-1", "instance-1"),
             "/instance_groups/group-1/instances/instance-1",
         ),
         (
-            "build_rle_instances_release_instance_request",
+            "build_rle_instances_delete_instance_request",
             ("group-1", "instance-1"),
             "/instance_groups/group-1/instances/instance-1",
         ),
@@ -747,15 +945,17 @@ def test_instance_group_list_builder_uses_offset_pagination():
 )
 def test_rle_control_plane_routes_include_environment(builder_name, args, suffix):
     builder = getattr(generated_operations, builder_name)
-    unversioned = builder("wordle", *args)
-    versioned = builder("wordle", *args, environment_version="42")
-    assert unversioned.url.split("?")[0] == f"/rl_environments/wordle{suffix}"
-    assert versioned.url.split("?")[0] == f"/rl_environments/wordle/versions/42{suffix}"
+    request = builder("wordle", "42", *args)
+    assert request.url.split("?")[0] == f"/rl_environments/wordle/versions/42{suffix}"
 
 
-@pytest.mark.parametrize("operation", ["reset", "step", "state", "health", "get_metadata", "schema"])
+@pytest.mark.parametrize(
+    "operation", ["reset", "step", "state", "health", "get_metadata", "schema"]
+)
 def test_rle_runtime_routes_include_resolved_environment_and_group(operation):
-    builder = getattr(generated_operations, f"build_rle_instance_runtime_{operation}_request")
+    builder = getattr(
+        generated_operations, f"build_rle_instance_runtime_{operation}_request"
+    )
     request = builder("wordle", "42", "group-1", "instance-1")
     suffix = "metadata" if operation == "get_metadata" else operation
     assert request.url.split("?")[0] == (
@@ -764,12 +964,15 @@ def test_rle_runtime_routes_include_resolved_environment_and_group(operation):
     )
 
 
-@pytest.mark.parametrize("operation", ["reset", "step", "state", "health", "get_metadata", "schema"])
-@pytest.mark.parametrize("environment_version", [None, ""])
-def test_rle_runtime_routes_require_environment_version(operation, environment_version):
-    builder = getattr(generated_operations, f"build_rle_instance_runtime_{operation}_request")
-    with pytest.raises(ValueError, match="environment_version is required"):
-        builder("wordle", environment_version, "group-1", "instance-1")
+@pytest.mark.parametrize(
+    "operation", ["reset", "step", "state", "health", "get_metadata", "schema"]
+)
+def test_rle_runtime_routes_require_environment_version(operation):
+    builder = getattr(
+        generated_operations, f"build_rle_instance_runtime_{operation}_request"
+    )
+    with pytest.raises(ValueError):
+        builder("wordle", None, "group-1", "instance-1")
 
 
 def test_create_instance_group_request_uses_max_active_instances():
@@ -779,63 +982,19 @@ def test_create_instance_group_request_uses_max_active_instances():
     assert not hasattr(request, "environment_version")
 
 
-def test_rle_typed_error_models_use_service_wire_names():
-    error = RLEErrorResponse(code="InstanceNotFound", message="missing")
-    assert error.as_dict() == {"code": "InstanceNotFound", "message": "missing"}
-
-    capacity = RLEInstanceGroupAtCapacityErrorResponse(
-        code="InstanceGroupAtCapacity",
-        message="The instance group is at capacity. Try again later.",
-        active_instance_count=5,
-        max_active_instances=5,
-        retry_after_seconds=5,
-    )
-    assert capacity.as_dict() == {
-        "code": "InstanceGroupAtCapacity",
-        "message": "The instance group is at capacity. Try again later.",
-        "activeInstanceCount": 5,
-        "maxActiveInstances": 5,
-        "retryAfterSeconds": 5,
-    }
-
-    deserialized = generated_operations._deserialize(  # pylint: disable=protected-access
-        RLEInstanceGroupAtCapacityErrorResponse,
-        capacity.as_dict(),
-    )
-    assert isinstance(deserialized, RLEInstanceGroupAtCapacityErrorResponse)
-    assert deserialized.active_instance_count == 5
-    assert deserialized.max_active_instances == 5
-    assert deserialized.retry_after_seconds == 5
-
-
-@pytest.mark.parametrize("operations_module", [generated_operations, generated_async_operations])
-def test_rle_mapped_errors_keep_typed_model(monkeypatch, operations_module):
-    model = RLEErrorResponse(code="InstanceNotFound", message="missing")
-    monkeypatch.setattr(operations_module, "_failsafe_deserialize", lambda *_: model)
-    response = SimpleNamespace(
-        request=SimpleNamespace(url="https://example.test/rl_environments/wordle/instance_groups/group-1"),
-        status_code=404,
-        headers={},
-        reason="Not Found",
-    )
-
-    with pytest.raises(ResourceNotFoundError) as exc_info:
-        operations_module.map_error(
-            status_code=404,
-            response=response,
-            error_map={404: ResourceNotFoundError},
-        )
-
-    assert exc_info.value.model is model
-
-
 def test_unsupported_instance_group_operations_are_not_public():
     from azure.ai.projects.aio.operations import _operations as aio_generated_operations
 
-    assert not hasattr(generated_operations.RLEInstanceGroupsOperations, "update_instance_group")
-    assert not hasattr(aio_generated_operations.RLEInstanceGroupsOperations, "update_instance_group")
+    assert not hasattr(
+        generated_operations.RLEInstanceGroupsOperations, "update_instance_group"
+    )
+    assert not hasattr(
+        aio_generated_operations.RLEInstanceGroupsOperations, "update_instance_group"
+    )
     assert not hasattr(generated_operations.RLEInstancesOperations, "list_instances")
-    assert not hasattr(aio_generated_operations.RLEInstancesOperations, "list_instances")
+    assert not hasattr(
+        aio_generated_operations.RLEInstancesOperations, "list_instances"
+    )
 
 
 class _AsyncFakeInstanceGroups:
@@ -847,18 +1006,21 @@ class _AsyncFakeInstanceGroups:
         self.routes = []
         self.deleted = []
 
-    async def create_instance_group(self, environment_name, body, *, environment_version=None):
+    async def create_instance_group(self, environment_name, environment_version, body):
         self.created.append(body)
         self.routes.append((environment_name, environment_version))
         if self._create_status is not None:
             raise _http_response_error(self._create_status, self._create_error_code)
         return SimpleNamespace(
             id=self.group_id,
+            instance_group_id=self.group_id,
             environment_name=environment_name,
-            environment_version=environment_version or "resolved-latest",
+            environment_version=environment_version,
         )
 
-    async def delete_instance_group(self, environment_name, instance_group_id, *, environment_version=None):
+    async def delete_instance_group(
+        self, environment_name, environment_version, instance_group_id
+    ):
         self.routes.append((environment_name, environment_version))
         self.deleted.append(instance_group_id)
 
@@ -884,8 +1046,12 @@ class _AsyncFakeInstances:
         self.release_routes = []
         self.calls = []
 
-    async def create_instance(self, environment_name, instance_group_id, *, environment_version=None, cls=None):
-        self.create_routes.append((environment_name, environment_version, instance_group_id))
+    async def create_instance(
+        self, environment_name, environment_version, instance_group_id, *, cls=None
+    ):
+        self.create_routes.append(
+            (environment_name, environment_version, instance_group_id)
+        )
         index = self._next
         self._next += 1
         if self._capacity_failures:
@@ -894,57 +1060,128 @@ class _AsyncFakeInstances:
         if self._create_status is not None:
             if self._create_status == 429:
                 raise _capacity_error()
-            raise _http_response_error(self._create_status, headers={"Retry-After": "0"})
+            raise _http_response_error(
+                self._create_status, headers={"Retry-After": "0"}
+            )
         if self._fail_on is not None and index == self._fail_on:
-            instance = _FakeInstance(f"inst-{index}", RLEInstanceStatus.FAILED, error="boom")
+            instance = _FakeInstance(
+                f"inst-{index}", RLEInstanceStatus.FAILED, error="boom"
+            )
         else:
             instance = _FakeInstance(f"inst-{index}", RLEInstanceStatus.RUNNING)
         if cls is not None:
             return cls(_pipeline_response(201), instance, {})
         return instance
 
-    async def get_instance(self, environment_name, instance_group_id, instance_id, *, environment_version=None):
+    async def get_instance(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         return _FakeInstance(instance_id, RLEInstanceStatus.RUNNING)
 
-    async def release_instance(self, environment_name, instance_group_id, instance_id, *, environment_version=None):
-        self.release_routes.append((environment_name, environment_version, instance_group_id, instance_id))
+    async def delete_instance(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
+        self.release_routes.append(
+            (environment_name, environment_version, instance_group_id, instance_id)
+        )
         self.released.append(instance_id)
         return _FakeInstance(instance_id, RLEInstanceStatus.RUNNING)
 
-    async def reset(self, environment_name, environment_version, instance_group_id, instance_id, body):
+    async def reset(
+        self,
+        environment_name,
+        environment_version,
+        instance_group_id,
+        instance_id,
+        body,
+    ):
         return _record_runtime(
-            self.calls, "reset", environment_name, environment_version, instance_group_id, instance_id, body
+            self.calls,
+            "reset",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
+            body,
         )
 
-    async def step(self, environment_name, environment_version, instance_group_id, instance_id, body):
+    async def step(
+        self,
+        environment_name,
+        environment_version,
+        instance_group_id,
+        instance_id,
+        body,
+    ):
         return _record_runtime(
-            self.calls, "step", environment_name, environment_version, instance_group_id, instance_id, body
+            self.calls,
+            "step",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
+            body,
         )
 
-    async def state(self, environment_name, environment_version, instance_group_id, instance_id):
+    async def state(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         return _record_runtime(
-            self.calls, "state", environment_name, environment_version, instance_group_id, instance_id
+            self.calls,
+            "state",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
         )
 
-    async def health(self, environment_name, environment_version, instance_group_id, instance_id):
+    async def health(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         if self._health_statuses:
             status = self._health_statuses.pop(0)
             self.calls.append(
-                ("health", environment_name, environment_version, instance_group_id, instance_id, None)
+                (
+                    "health",
+                    environment_name,
+                    environment_version,
+                    instance_group_id,
+                    instance_id,
+                    None,
+                )
             )
             return {"status": status}
         return _record_runtime(
-            self.calls, "health", environment_name, environment_version, instance_group_id, instance_id
+            self.calls,
+            "health",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
         )
 
-    async def get_metadata(self, environment_name, environment_version, instance_group_id, instance_id):
+    async def get_metadata(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         return _record_runtime(
-            self.calls, "metadata", environment_name, environment_version, instance_group_id, instance_id
+            self.calls,
+            "metadata",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
         )
 
-    async def schema(self, environment_name, environment_version, instance_group_id, instance_id):
+    async def schema(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         return _record_runtime(
-            self.calls, "schema", environment_name, environment_version, instance_group_id, instance_id
+            self.calls,
+            "schema",
+            environment_name,
+            environment_version,
+            instance_group_id,
+            instance_id,
         )
 
 
@@ -961,7 +1198,9 @@ class _AsyncFakeInstances202:
         self.released = []
         self._running_after = running_after
 
-    async def create_instance(self, environment_name, instance_group_id, *, environment_version=None, cls=None):
+    async def create_instance(
+        self, environment_name, environment_version, instance_group_id, *, cls=None
+    ):
         self.create_count += 1
         instance = _FakeInstance("inst-0", RLEInstanceStatus.CREATING)
         response = _pipeline_response(202, {"Retry-After": "0"})
@@ -969,16 +1208,30 @@ class _AsyncFakeInstances202:
             return cls(response, instance, {})
         return instance
 
-    async def get_instance(self, environment_name, instance_group_id, instance_id, *, environment_version=None):
+    async def get_instance(
+        self,
+        environment_name,
+        environment_version,
+        instance_group_id,
+        instance_id,
+    ):
         self.get_count += 1
-        status = RLEInstanceStatus.RUNNING if self.get_count >= self._running_after else RLEInstanceStatus.CREATING
+        status = (
+            RLEInstanceStatus.RUNNING
+            if self.get_count >= self._running_after
+            else RLEInstanceStatus.CREATING
+        )
         return _FakeInstance(instance_id, status)
 
-    async def release_instance(self, environment_name, instance_group_id, instance_id, *, environment_version=None):
+    async def delete_instance(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         self.released.append(instance_id)
         return _FakeInstance(instance_id, RLEInstanceStatus.RUNNING)
 
-    async def health(self, environment_name, environment_version, instance_group_id, instance_id):
+    async def health(
+        self, environment_name, environment_version, instance_group_id, instance_id
+    ):
         return {"status": "ok"}
 
 
@@ -1029,7 +1282,10 @@ def test_async_openenv_client_creates_group_and_runs():
         assert instances.released == ["inst-0"]
         assert instances.create_routes == [("env-1", "resolved-latest", "grp-1")]
         assert groups.deleted == ["grp-1"]
-        assert groups.routes == [("env-1", None), ("env-1", "resolved-latest")]
+        assert groups.routes == [
+            ("env-1", "resolved-latest"),
+            ("env-1", "resolved-latest"),
+        ]
         # Runtime calls use the environment identity resolved by the instance-group create response.
         routes = [call[0] for call in instances.calls]
         assert routes == [
@@ -1046,7 +1302,10 @@ def test_async_openenv_client_creates_group_and_runs():
             "health",
             "schema",
         ]
-        assert all(call[1:5] == ("env-1", "resolved-latest", "grp-1", "inst-0") for call in instances.calls)
+        assert all(
+            call[1:5] == ("env-1", "resolved-latest", "grp-1", "inst-0")
+            for call in instances.calls
+        )
 
     asyncio.run(run())
 
@@ -1099,8 +1358,7 @@ def test_async_openenv_get_instance_retries_capacity_until_timeout():
         assert exc_info.value.timeout == 0.01
         assert exc_info.value.last_status == "InstanceGroupAtCapacity"
         assert exc_info.value.details is not None
-        assert exc_info.value.details.active_instance_count == 5
-        assert exc_info.value.details.max_active_instances == 5
+        assert exc_info.value.details.code == "InstanceGroupAtCapacity"
 
     asyncio.run(run())
 
@@ -1111,7 +1369,9 @@ def test_async_openenv_get_instance_retries_capacity_then_succeeds(monkeypatch):
     async def record_sleep(delay):
         delays.append(delay)
 
-    monkeypatch.setattr("azure.ai.projects.aio.operations._patch_rle_async.asyncio.sleep", record_sleep)
+    monkeypatch.setattr(
+        "azure.ai.projects.aio.operations._patch_rle_async.asyncio.sleep", record_sleep
+    )
 
     async def run():
         instances = _AsyncFakeInstances(capacity_failures=1, capacity_retry_after=2)
@@ -1127,8 +1387,17 @@ def test_async_openenv_get_instance_retries_capacity_then_succeeds(monkeypatch):
 
 def test_async_openenv_get_instance_does_not_retry_untyped_429():
     class _Untyped429Instances(_AsyncFakeInstances):
-        async def create_instance(self, environment_name, instance_group_id, *, environment_version=None, cls=None):
-            self.create_routes.append((environment_name, environment_version, instance_group_id))
+        async def create_instance(
+            self,
+            environment_name,
+            environment_version,
+            instance_group_id,
+            *,
+            cls=None,
+        ):
+            self.create_routes.append(
+                (environment_name, environment_version, instance_group_id)
+            )
             raise _http_response_error(429, headers={"Retry-After": "0"})
 
     async def run():
@@ -1146,7 +1415,9 @@ def test_async_openenv_get_instance_does_not_retry_untyped_429():
 def test_async_openenv_get_instance_releases_failed_instance():
     async def run():
         instances = _AsyncFakeInstances(fail_on=0)
-        client, _groups, _instances = _make_async_openenv_client(max_active_instances=1, instances=instances)
+        client, _groups, _instances = _make_async_openenv_client(
+            max_active_instances=1, instances=instances
+        )
         async with client:
             with pytest.raises(RLEError):
                 async with client.get_instance():
@@ -1162,7 +1433,9 @@ def test_async_openenv_get_instance_polls_pending_202_without_recreating():
         # issued exactly once and the pending instance polled by id -- re-POSTing would lease and leak
         # an extra instance for every pending response.
         instances = _AsyncFakeInstances202(running_after=2)
-        client, _groups, _instances = _make_async_openenv_client(max_active_instances=1, instances=instances)
+        client, _groups, _instances = _make_async_openenv_client(
+            max_active_instances=1, instances=instances
+        )
         async with client:
             async with client.get_instance() as instance:
                 assert instance.id == "inst-0"
@@ -1174,11 +1447,15 @@ def test_async_openenv_get_instance_polls_pending_202_without_recreating():
     asyncio.run(run())
 
 
-def test_async_openenv_get_instance_releases_pending_instance_when_cancelled(monkeypatch):
+def test_async_openenv_get_instance_releases_pending_instance_when_cancelled(
+    monkeypatch,
+):
     async def cancel(_delay):
         raise asyncio.CancelledError
 
-    monkeypatch.setattr("azure.ai.projects.aio.operations._patch_rle_async.asyncio.sleep", cancel)
+    monkeypatch.setattr(
+        "azure.ai.projects.aio.operations._patch_rle_async.asyncio.sleep", cancel
+    )
 
     async def run():
         instances = _AsyncFakeInstances202(running_after=2)
@@ -1207,7 +1484,9 @@ def test_async_openenv_get_instance_waits_for_runtime_health():
 
 def test_async_openenv_get_instance_releases_instance_when_health_times_out():
     class _UnhealthyInstances(_AsyncFakeInstances):
-        async def health(self, environment_name, environment_version, instance_group_id, instance_id):
+        async def health(
+            self, environment_name, environment_version, instance_group_id, instance_id
+        ):
             return {"status": "starting"}
 
     async def run():
@@ -1217,7 +1496,9 @@ def test_async_openenv_get_instance_releases_instance_when_health_times_out():
             instance_acquire_timeout=0.01,
         )
         async with client:
-            with pytest.raises(RLEInstanceAcquireTimeoutError, match="runtime was not healthy"):
+            with pytest.raises(
+                RLEInstanceAcquireTimeoutError, match="runtime was not healthy"
+            ):
                 async with client.get_instance():
                     pass
         assert instances.released == ["inst-0"]
@@ -1227,19 +1508,29 @@ def test_async_openenv_get_instance_releases_instance_when_health_times_out():
 
 def test_async_openenv_ensure_group_maps_quota_exceeded():
     async def run():
-        groups = _AsyncFakeInstanceGroups(create_status=403, create_error_code="QuotaExceeded")
-        client, _groups, _instances = _make_async_openenv_client(max_active_instances=1, groups=groups)
+        groups = _AsyncFakeInstanceGroups(
+            create_status=403, create_error_code="QuotaExceeded"
+        )
+        client, _groups, _instances = _make_async_openenv_client(
+            max_active_instances=1, groups=groups
+        )
         with pytest.raises(RLEQuotaExceededError):
             await client._ensure_group()
 
     asyncio.run(run())
 
 
-@pytest.mark.parametrize("error_code", ["AuthorizationFailed", "preview_feature_required"])
+@pytest.mark.parametrize(
+    "error_code", ["AuthorizationFailed", "preview_feature_required"]
+)
 def test_async_openenv_ensure_group_preserves_non_quota_403(error_code):
     async def run():
-        groups = _AsyncFakeInstanceGroups(create_status=403, create_error_code=error_code)
-        client, _groups, _instances = _make_async_openenv_client(max_active_instances=1, groups=groups)
+        groups = _AsyncFakeInstanceGroups(
+            create_status=403, create_error_code=error_code
+        )
+        client, _groups, _instances = _make_async_openenv_client(
+            max_active_instances=1, groups=groups
+        )
         with pytest.raises(HttpResponseError):
             await client._ensure_group()
 
@@ -1251,7 +1542,9 @@ def test_async_create_environment_builds_request():
         ops = AsyncRLEOperations(object(), object(), object(), object())
         environments = _AsyncFakeEnvironments()
         ops._environments = environments
-        result = await ops.create_environment("wordle", "registry.azurecr.io/wordle:v1", version_bump="Major")
+        result = await ops.create_environment(
+            "wordle", "registry.azurecr.io/wordle:v1", version_bump="Major"
+        )
         assert result.name == "wordle"
         body = environments.calls[0][1]
         assert body.name == "wordle"

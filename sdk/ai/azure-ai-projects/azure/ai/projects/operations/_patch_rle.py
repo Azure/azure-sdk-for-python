@@ -33,7 +33,6 @@ from ..models import (
     CreateRLEnvironmentRequest,
     ListRLEnvironmentVersionsResponse,
     ListRLEnvironmentsResponse,
-    RLEInstanceGroupAtCapacityErrorResponse,
     RLEInstance,
     RLEInstanceStatus,
     RLEnvironment,
@@ -48,15 +47,19 @@ from ._operations import (
     RLEnvironmentsOperations as _RLEnvironmentsOperationsGenerated,
     RLEInstanceGroupsOperations,
     RLEInstancesOperations,
+    RLEInstanceRuntimeOperations,
 )
 
 _DEFAULT_INSTANCE_ACQUIRE_TIMEOUT_S = 900.0
 _MAX_INSTANCE_ACQUIRE_TIMEOUT_S = 3600.0
 _DEFAULT_POLL_INTERVAL_S = 5.0
+_MAX_PAGINATION_LIMIT = 100
 _QUOTA_EXCEEDED_CODE = "QuotaExceeded"
 _INSTANCE_GROUP_AT_CAPACITY_CODE = "InstanceGroupAtCapacity"
 _HEALTHY_STATUSES = frozenset(("healthy", "ok", "ready", "running"))
-_TRANSIENT_HEALTH_STATUS_CODES = frozenset((404, 408, 409, 425, 429, 500, 502, 503, 504))
+_TRANSIENT_HEALTH_STATUS_CODES = frozenset(
+    (404, 408, 409, 425, 429, 500, 502, 503, 504)
+)
 
 
 class RLEError(RuntimeError):
@@ -88,7 +91,7 @@ class RLEAtCapacityError(RLEError):
         message: str,
         *,
         retry_after: Optional[float] = None,
-        details: Optional[RLEInstanceGroupAtCapacityErrorResponse] = None,
+        details: Optional[Any] = None,
     ) -> None:
         super().__init__(message)
         self.retry_after = retry_after
@@ -104,7 +107,7 @@ class RLEInstanceAcquireTimeoutError(RLEError):
         *,
         timeout: float,
         last_status: Optional[str] = None,
-        details: Optional[RLEInstanceGroupAtCapacityErrorResponse] = None,
+        details: Optional[Any] = None,
     ) -> None:
         super().__init__(message)
         self.timeout = timeout
@@ -112,10 +115,17 @@ class RLEInstanceAcquireTimeoutError(RLEError):
         self.details = details
 
 
+def _error_code(model: Any) -> Optional[str]:
+    return getattr(model, "code", None) or getattr(
+        getattr(model, "error", None), "code", None
+    )
+
+
 def _is_quota_exceeded_error(exc: HttpResponseError) -> bool:
-    model = getattr(exc, "model", None)
-    code = getattr(model, "code", None) or getattr(getattr(model, "error", None), "code", None)
-    return exc.status_code == 403 and code == _QUOTA_EXCEEDED_CODE
+    return (
+        exc.status_code == 403
+        and _error_code(getattr(exc, "model", None)) == _QUOTA_EXCEEDED_CODE
+    )
 
 
 def _status_matches(status: Any, target: RLEInstanceStatus) -> bool:
@@ -149,12 +159,21 @@ def _validate_instance_acquire_timeout(instance_acquire_timeout: float) -> float
     except (TypeError, ValueError) as exc:
         raise ValueError("instance_acquire_timeout must be a finite number") from exc
     if not math.isfinite(value) or value <= 0:
-        raise ValueError("instance_acquire_timeout must be a finite number greater than 0")
+        raise ValueError(
+            "instance_acquire_timeout must be a finite number greater than 0"
+        )
     if value > _MAX_INSTANCE_ACQUIRE_TIMEOUT_S:
         raise ValueError(
             f"instance_acquire_timeout must be <= {_MAX_INSTANCE_ACQUIRE_TIMEOUT_S:.0f} seconds"
         )
     return value
+
+
+def _validate_pagination_limit(limit: Optional[int]) -> None:
+    if limit is not None and not 1 <= limit <= _MAX_PAGINATION_LIMIT:
+        raise ValueError(
+            f"limit must be in the range [1, {_MAX_PAGINATION_LIMIT}]"
+        )
 
 
 def _is_healthy_response(response: Any) -> bool:
@@ -164,26 +183,20 @@ def _is_healthy_response(response: Any) -> bool:
     return status is None or str(status).lower() in _HEALTHY_STATUSES
 
 
-def _capacity_details(exc: HttpResponseError) -> Optional[RLEInstanceGroupAtCapacityErrorResponse]:
+def _capacity_details(exc: HttpResponseError) -> Optional[Any]:
     if getattr(exc.response, "status_code", None) != 429:
         return None
     model = getattr(exc, "model", None)
-    if not isinstance(model, RLEInstanceGroupAtCapacityErrorResponse):
-        return None
-    return model if model.code == _INSTANCE_GROUP_AT_CAPACITY_CODE else None
+    return model if _error_code(model) == _INSTANCE_GROUP_AT_CAPACITY_CODE else None
 
 
 def _capacity_retry(
     exc: HttpResponseError, fallback_delay: float
-) -> Optional[Tuple[RLEInstanceGroupAtCapacityErrorResponse, float]]:
+) -> Optional[Tuple[Any, float]]:
     details = _capacity_details(exc)
     if details is None:
         return None
-    retry_after = (
-        float(details.retry_after_seconds)
-        if details.retry_after_seconds is not None
-        else _parse_retry_after(exc.response)
-    )
+    retry_after = _parse_retry_after(exc.response)
     return details, fallback_delay if retry_after is None else retry_after
 
 
@@ -209,14 +222,18 @@ def coerce_action(action: Any, action_kwargs: Mapping[str, Any]) -> dict:
     if action is None:
         return dict(action_kwargs)
     if action_kwargs:
-        raise TypeError("pass either a single action mapping or keyword fields, not both")
+        raise TypeError(
+            "pass either a single action mapping or keyword fields, not both"
+        )
     if hasattr(action, "model_dump"):
         return action.model_dump()
     if hasattr(action, "to_dict"):
         return action.to_dict()
     if isinstance(action, Mapping):
         return dict(action)
-    raise TypeError(f"action must be a mapping or keyword fields, got {type(action).__name__}")
+    raise TypeError(
+        f"action must be a mapping or keyword fields, got {type(action).__name__}"
+    )
 
 
 def _acquire_instance(
@@ -251,7 +268,9 @@ def _acquire_instance(
     deadline = time.monotonic() + instance_acquire_timeout
     captured: Dict[str, Any] = {}
 
-    def _capture(pipeline_response: Any, deserialized: Any, _response_headers: Any) -> Any:
+    def _capture(
+        pipeline_response: Any, deserialized: Any, _response_headers: Any
+    ) -> Any:
         captured["response"] = pipeline_response.http_response
         return deserialized
 
@@ -260,8 +279,8 @@ def _acquire_instance(
         try:
             instance = instances.create_instance(
                 environment_name,
+                environment_version,
                 instance_group_id,
-                environment_version=environment_version,
                 cls=_capture,
             )
             break
@@ -275,7 +294,7 @@ def _acquire_instance(
                     f"instance group {instance_group_id} remained at capacity for "
                     f"{instance_acquire_timeout:.0f}s",
                     timeout=instance_acquire_timeout,
-                    last_status=details.code,
+                    last_status=_error_code(details),
                     details=details,
                 ) from exc
     if instance is None or not instance.instance_id:
@@ -294,9 +313,13 @@ def _acquire_instance(
                     RLEInstanceStatus.DELETED,
                 )
             ):
-                raise RLEError(f"instance {instance_id} failed to start: {instance.error or 'unknown error'}")
+                raise RLEError(
+                    f"instance {instance_id} failed to start: {instance.error or 'unknown error'}"
+                )
             if time.monotonic() >= deadline:
-                last_status = str(getattr(instance.status, "value", instance.status) or "unknown")
+                last_status = str(
+                    getattr(instance.status, "value", instance.status) or "unknown"
+                )
                 raise RLEInstanceAcquireTimeoutError(
                     f"instance {instance_id} not ready after {instance_acquire_timeout:.0f}s "
                     f"(last status: {last_status})",
@@ -304,7 +327,9 @@ def _acquire_instance(
                     last_status=last_status,
                 )
             if not _sleep_before_deadline(next_wait, deadline):
-                last_status = str(getattr(instance.status, "value", instance.status) or "unknown")
+                last_status = str(
+                    getattr(instance.status, "value", instance.status) or "unknown"
+                )
                 raise RLEInstanceAcquireTimeoutError(
                     f"instance {instance_id} not ready after {instance_acquire_timeout:.0f}s "
                     f"(last status: {last_status})",
@@ -314,9 +339,9 @@ def _acquire_instance(
             next_wait = poll_interval_s
             instance = instances.get_instance(
                 environment_name,
+                environment_version,
                 instance_group_id,
                 instance_id,
-                environment_version=environment_version,
             )
 
         while True:
@@ -330,7 +355,10 @@ def _acquire_instance(
                 if _is_healthy_response(health):
                     break
             except HttpResponseError as exc:
-                if getattr(exc.response, "status_code", None) not in _TRANSIENT_HEALTH_STATUS_CODES:
+                if (
+                    getattr(exc.response, "status_code", None)
+                    not in _TRANSIENT_HEALTH_STATUS_CODES
+                ):
                     raise
             if not _sleep_before_deadline(poll_interval_s, deadline):
                 raise RLEInstanceAcquireTimeoutError(
@@ -342,11 +370,11 @@ def _acquire_instance(
     except BaseException:
         # The instance was leased but never became usable; release it so it does not leak quota.
         try:
-            instances.release_instance(
+            instances.delete_instance(
                 environment_name,
+                environment_version,
                 instance_group_id,
                 instance_id,
-                environment_version=environment_version,
             )
         except Exception:  # pylint: disable=broad-except
             pass
@@ -441,7 +469,12 @@ class OpenEnvInstance:
         self._release()
 
     @distributed_trace
-    def reset(self, seed: Optional[int] = None, episode_id: Optional[str] = None, **kwargs: Any) -> RLEStepResult:
+    def reset(
+        self,
+        seed: Optional[int] = None,
+        episode_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> RLEStepResult:
         """Start a new episode on this instance and return the initial observation.
 
         :param seed: Optional seed for deterministic episode initialization.
@@ -546,11 +579,11 @@ class OpenEnvInstance:
     def _release(self) -> None:
         """Release the underlying instance, best effort."""
         try:
-            self._instances.release_instance(
+            self._instances.delete_instance(
                 self._environment_name,
+                self._environment_version,
                 self._instance_group_id,
                 self._instance_id,
-                environment_version=self._environment_version,
             )
         except HttpResponseError:
             pass
@@ -663,13 +696,18 @@ class OpenEnvClient:
                 return
             if self._closed:
                 raise RLEError("OpenEnv client is closed")
+            if self._version is None:
+                environment = self._environments.get_environment(self._name)
+                if not environment.version:
+                    raise RLEError("service did not return the environment's latest version")
+                self._version = environment.version
             try:
                 group = self._instance_groups.create_instance_group(
                     self._name,
+                    self._version,
                     CreateRLEInstanceGroupRequest(
                         max_active_instances=self._max_active_instances,
                     ),
-                    environment_version=self._version,
                 )
             except HttpResponseError as exc:
                 if _is_quota_exceeded_error(exc):
@@ -677,13 +715,15 @@ class OpenEnvClient:
                         f"quota exceeded creating an instance group for environment '{self._name}'"
                     ) from exc
                 raise
-            if not group.id:
+            if not group.instance_group_id:
                 raise RLEError("service did not return an instance group id")
             if not group.environment_name or not group.environment_version:
-                raise RLEError("service did not return the instance group's environment name and version")
+                raise RLEError(
+                    "service did not return the instance group's environment name and version"
+                )
             self._name = group.environment_name
             self._version = group.environment_version
-            self._instance_group_id = group.id
+            self._instance_group_id = group.instance_group_id
 
     def get_instance(self) -> OpenEnvInstance:
         """Lease a running instance from the group for one or more episodes.
@@ -708,10 +748,14 @@ class OpenEnvClient:
                 raise RLEError("OpenEnv client is closed")
             group_id = self._instance_group_id
         if group_id is None:
-            raise RLEError("reserve quota first: enter the OpenEnvClient context before get_instance()")
+            raise RLEError(
+                "reserve quota first: enter the OpenEnvClient context before get_instance()"
+            )
         environment_version = self._version
         if environment_version is None:
-            raise RLEError("service did not resolve the instance group's environment version")
+            raise RLEError(
+                "service did not resolve the instance group's environment version"
+            )
         instance = _acquire_instance(
             self._instances,
             self._name,
@@ -753,8 +797,8 @@ class OpenEnvClient:
         try:
             self._instance_groups.delete_instance_group(
                 self._name,
+                self._version,
                 group_id,
-                environment_version=self._version,
             )
         except HttpResponseError:
             pass
@@ -775,6 +819,9 @@ class RLEOperations:
         self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
         self._instance_groups = RLEInstanceGroupsOperations(*args, **kwargs)
         self._instances = RLEInstancesOperations(*args, **kwargs)
+        runtime = RLEInstanceRuntimeOperations(*args, **kwargs)
+        for operation_name in ("reset", "step", "state", "health", "get_metadata", "schema"):
+            setattr(self._instances, operation_name, getattr(runtime, operation_name))
 
     @distributed_trace
     def create_environment(
@@ -800,7 +847,9 @@ class RLEOperations:
         if not acr_image_path:
             raise ValueError("acr_image_path is required")
         return self._environments.create_environment(
-            CreateRLEnvironmentRequest(name=name, acr_image_path=acr_image_path, version_bump=version_bump),
+            CreateRLEnvironmentRequest(
+                name=name, acr_image_path=acr_image_path, version_bump=version_bump
+            ),
             **kwargs,
         )
 
@@ -810,8 +859,7 @@ class RLEOperations:
         *,
         name: Optional[str] = None,
         limit: Optional[int] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
+        continuation_token: Optional[str] = None,
         order: Optional[Union[str, RLEPaginationOrder]] = None,
         **kwargs: Any,
     ) -> ListRLEnvironmentsResponse:
@@ -820,17 +868,21 @@ class RLEOperations:
         :keyword name: Optional environment name filter. When set, returns at most a single matching
          environment. Default value is None.
         :paramtype name: str or None
-        :keyword skip: Number of environments to skip. Defaults to 0. Default value is None.
-        :paramtype skip: int or None
-        :keyword top: Maximum number of environments to return. Defaults to 50; valid range is
-         [1, 200]. Default value is None.
-        :paramtype top: int or None
+        :keyword limit: Maximum number of environments to return. Valid range is [1, 100].
+        :paramtype limit: int or None
+        :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
+        :paramtype continuation_token: str or None
         :return: The list of hosted RLE environments.
         :rtype: ~azure.ai.projects.models.ListRLEnvironmentsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _validate_pagination_limit(limit)
         return self._environments.list_environments(
-            name=name, limit=limit, after=after, before=before, order=order, **kwargs
+            name=name,
+            limit=limit,
+            continuation_token_parameter=continuation_token,
+            order=order,
+            **kwargs,
         )
 
     @distributed_trace
@@ -846,7 +898,9 @@ class RLEOperations:
         return self._environments.get_environment(name, **kwargs)
 
     @distributed_trace
-    def get_environment_version(self, name: str, version: str, **kwargs: Any) -> RLEnvironment:
+    def get_environment_version(
+        self, name: str, version: str, **kwargs: Any
+    ) -> RLEnvironment:
         """Get a specific version of a hosted RLE environment by name and version.
 
         :param name: Environment name. Required.
@@ -865,8 +919,7 @@ class RLEOperations:
         name: str,
         *,
         limit: Optional[int] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
+        continuation_token: Optional[str] = None,
         order: Optional[Union[str, RLEPaginationOrder]] = None,
         **kwargs: Any,
     ) -> ListRLEnvironmentVersionsResponse:
@@ -874,16 +927,27 @@ class RLEOperations:
 
         :param name: Environment name. Required.
         :type name: str
-        :return: The list of environment versions.
-        :rtype: list[~azure.ai.projects.models.RLEnvironmentVersion]
+        :keyword limit: Maximum number of versions to return. Valid range is [1, 100].
+        :paramtype limit: int or None
+        :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
+        :paramtype continuation_token: str or None
+        :return: A page of environment versions.
+        :rtype: ~azure.ai.projects.models.ListRLEnvironmentVersionsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _validate_pagination_limit(limit)
         return self._environments.list_rl_environment_versions(
-            name, limit=limit, after=after, before=before, order=order, **kwargs
+            name,
+            limit=limit,
+            continuation_token_parameter=continuation_token,
+            order=order,
+            **kwargs,
         )
 
     @distributed_trace
-    def delete_environment_version(self, name: str, version: str, **kwargs: Any) -> None:
+    def delete_environment_version(
+        self, name: str, version: str, **kwargs: Any
+    ) -> None:
         """Delete a specific version of a hosted RLE environment.
 
         :param name: Environment name. Required.

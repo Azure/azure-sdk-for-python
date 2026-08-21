@@ -44,6 +44,7 @@ from ...operations._patch_rle import (
     _parse_retry_after,
     _status_matches,
     _validate_instance_acquire_timeout,
+    _validate_pagination_limit,
     coerce_action,
     RLEError,
     RLEInstanceAcquireTimeoutError,
@@ -53,6 +54,7 @@ from ._operations import (
     RLEnvironmentsOperations as _RLEnvironmentsOperationsGenerated,
     RLEInstanceGroupsOperations,
     RLEInstancesOperations,
+    RLEInstanceRuntimeOperations,
 )
 
 
@@ -104,8 +106,8 @@ async def _acquire_instance(
         try:
             instance = await instances.create_instance(
                 environment_name,
+                environment_version,
                 instance_group_id,
-                environment_version=environment_version,
                 cls=_capture,
             )
             break
@@ -138,9 +140,13 @@ async def _acquire_instance(
                     RLEInstanceStatus.DELETED,
                 )
             ):
-                raise RLEError(f"instance {instance_id} failed to start: {instance.error or 'unknown error'}")
+                raise RLEError(
+                    f"instance {instance_id} failed to start: {instance.error or 'unknown error'}"
+                )
             if time.monotonic() >= deadline:
-                last_status = str(getattr(instance.status, "value", instance.status) or "unknown")
+                last_status = str(
+                    getattr(instance.status, "value", instance.status) or "unknown"
+                )
                 raise RLEInstanceAcquireTimeoutError(
                     f"instance {instance_id} not ready after {instance_acquire_timeout:.0f}s "
                     f"(last status: {last_status})",
@@ -148,7 +154,9 @@ async def _acquire_instance(
                     last_status=last_status,
                 )
             if not await _sleep_before_deadline(next_wait, deadline):
-                last_status = str(getattr(instance.status, "value", instance.status) or "unknown")
+                last_status = str(
+                    getattr(instance.status, "value", instance.status) or "unknown"
+                )
                 raise RLEInstanceAcquireTimeoutError(
                     f"instance {instance_id} not ready after {instance_acquire_timeout:.0f}s "
                     f"(last status: {last_status})",
@@ -158,9 +166,9 @@ async def _acquire_instance(
             next_wait = poll_interval_s
             instance = await instances.get_instance(
                 environment_name,
+                environment_version,
                 instance_group_id,
                 instance_id,
-                environment_version=environment_version,
             )
 
         while True:
@@ -174,7 +182,10 @@ async def _acquire_instance(
                 if _is_healthy_response(health):
                     break
             except HttpResponseError as exc:
-                if getattr(exc.response, "status_code", None) not in _TRANSIENT_HEALTH_STATUS_CODES:
+                if (
+                    getattr(exc.response, "status_code", None)
+                    not in _TRANSIENT_HEALTH_STATUS_CODES
+                ):
                     raise
             if not await _sleep_before_deadline(poll_interval_s, deadline):
                 raise RLEInstanceAcquireTimeoutError(
@@ -186,11 +197,11 @@ async def _acquire_instance(
     except BaseException:
         # The instance was leased but never became usable; release it so it does not leak quota.
         try:
-            await instances.release_instance(
+            await instances.delete_instance(
                 environment_name,
+                environment_version,
                 instance_group_id,
                 instance_id,
-                environment_version=environment_version,
             )
         except Exception:  # pylint: disable=broad-except
             pass
@@ -248,7 +259,9 @@ class AsyncOpenEnvInstance:
     def id(self) -> str:
         """Identifier of the leased instance that backs this object."""
         if self._instance_id is None:
-            raise RLEError("enter the AsyncOpenEnvInstance context before accessing the instance")
+            raise RLEError(
+                "enter the AsyncOpenEnvInstance context before accessing the instance"
+            )
         return self._instance_id
 
     @property
@@ -270,7 +283,9 @@ class AsyncOpenEnvInstance:
     def instance(self) -> RLEInstance:
         """The underlying leased instance model."""
         if self._instance is None:
-            raise RLEError("enter the AsyncOpenEnvInstance context before accessing the instance")
+            raise RLEError(
+                "enter the AsyncOpenEnvInstance context before accessing the instance"
+            )
         return self._instance
 
     async def __aenter__(self) -> "AsyncOpenEnvInstance":
@@ -306,7 +321,12 @@ class AsyncOpenEnvInstance:
         await self._release()
 
     @distributed_trace_async
-    async def reset(self, seed: Optional[int] = None, episode_id: Optional[str] = None, **kwargs: Any) -> RLEStepResult:
+    async def reset(
+        self,
+        seed: Optional[int] = None,
+        episode_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> RLEStepResult:
         """Start a new episode on this instance and return the initial observation.
 
         :param seed: Optional seed for deterministic episode initialization.
@@ -416,11 +436,11 @@ class AsyncOpenEnvInstance:
         self._instance = None
         self._instance_id = None
         try:
-            await self._instances.release_instance(
+            await self._instances.delete_instance(
                 self._environment_name,
+                self._environment_version,
                 self._instance_group_id,
                 instance_id,
-                environment_version=self._environment_version,
             )
         except HttpResponseError:
             pass
@@ -533,13 +553,18 @@ class AsyncOpenEnvClient:
                 return
             if self._closed:
                 raise RLEError("OpenEnv client is closed")
+            if self._version is None:
+                environment = await self._environments.get_environment(self._name)
+                if not environment.version:
+                    raise RLEError("service did not return the environment's latest version")
+                self._version = environment.version
             try:
                 group = await self._instance_groups.create_instance_group(
                     self._name,
+                    self._version,
                     CreateRLEInstanceGroupRequest(
                         max_active_instances=self._max_active_instances,
                     ),
-                    environment_version=self._version,
                 )
             except HttpResponseError as exc:
                 if _is_quota_exceeded_error(exc):
@@ -547,13 +572,15 @@ class AsyncOpenEnvClient:
                         f"quota exceeded creating an instance group for environment '{self._name}'"
                     ) from exc
                 raise
-            if not group.id:
+            if not group.instance_group_id:
                 raise RLEError("service did not return an instance group id")
             if not group.environment_name or not group.environment_version:
-                raise RLEError("service did not return the instance group's environment name and version")
+                raise RLEError(
+                    "service did not return the instance group's environment name and version"
+                )
             self._name = group.environment_name
             self._version = group.environment_version
-            self._instance_group_id = group.id
+            self._instance_group_id = group.instance_group_id
 
     def get_instance(self) -> AsyncOpenEnvInstance:
         """Create an async context manager that leases a running instance on entry.
@@ -577,10 +604,14 @@ class AsyncOpenEnvClient:
             raise RLEError("OpenEnv client is closed")
         group_id = self._instance_group_id
         if group_id is None:
-            raise RLEError("reserve quota first: enter the AsyncOpenEnvClient context before get_instance()")
+            raise RLEError(
+                "reserve quota first: enter the AsyncOpenEnvClient context before get_instance()"
+            )
         environment_version = self._version
         if environment_version is None:
-            raise RLEError("service did not resolve the instance group's environment version")
+            raise RLEError(
+                "service did not resolve the instance group's environment version"
+            )
         return AsyncOpenEnvInstance(
             self._name,
             group_id,
@@ -611,8 +642,8 @@ class AsyncOpenEnvClient:
         try:
             await self._instance_groups.delete_instance_group(
                 self._name,
+                self._version,
                 group_id,
-                environment_version=self._version,
             )
         except HttpResponseError:
             pass
@@ -633,6 +664,9 @@ class RLEOperations:
         self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
         self._instance_groups = RLEInstanceGroupsOperations(*args, **kwargs)
         self._instances = RLEInstancesOperations(*args, **kwargs)
+        runtime = RLEInstanceRuntimeOperations(*args, **kwargs)
+        for operation_name in ("reset", "step", "state", "health", "get_metadata", "schema"):
+            setattr(self._instances, operation_name, getattr(runtime, operation_name))
 
     @distributed_trace_async
     async def create_environment(
@@ -658,7 +692,9 @@ class RLEOperations:
         if not acr_image_path:
             raise ValueError("acr_image_path is required")
         return await self._environments.create_environment(
-            CreateRLEnvironmentRequest(name=name, acr_image_path=acr_image_path, version_bump=version_bump),
+            CreateRLEnvironmentRequest(
+                name=name, acr_image_path=acr_image_path, version_bump=version_bump
+            ),
             **kwargs,
         )
 
@@ -668,8 +704,7 @@ class RLEOperations:
         *,
         name: Optional[str] = None,
         limit: Optional[int] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
+        continuation_token: Optional[str] = None,
         order: Optional[Union[str, RLEPaginationOrder]] = None,
         **kwargs: Any,
     ) -> ListRLEnvironmentsResponse:
@@ -678,17 +713,21 @@ class RLEOperations:
         :keyword name: Optional environment name filter. When set, returns at most a single matching
          environment. Default value is None.
         :paramtype name: str or None
-        :keyword skip: Number of environments to skip. Defaults to 0. Default value is None.
-        :paramtype skip: int or None
-        :keyword top: Maximum number of environments to return. Defaults to 50; valid range is
-         [1, 200]. Default value is None.
-        :paramtype top: int or None
+        :keyword limit: Maximum number of environments to return. Valid range is [1, 100].
+        :paramtype limit: int or None
+        :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
+        :paramtype continuation_token: str or None
         :return: The list of hosted RLE environments.
         :rtype: ~azure.ai.projects.models.ListRLEnvironmentsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _validate_pagination_limit(limit)
         return await self._environments.list_environments(
-            name=name, limit=limit, after=after, before=before, order=order, **kwargs
+            name=name,
+            limit=limit,
+            continuation_token_parameter=continuation_token,
+            order=order,
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -704,7 +743,9 @@ class RLEOperations:
         return await self._environments.get_environment(name, **kwargs)
 
     @distributed_trace_async
-    async def get_environment_version(self, name: str, version: str, **kwargs: Any) -> RLEnvironment:
+    async def get_environment_version(
+        self, name: str, version: str, **kwargs: Any
+    ) -> RLEnvironment:
         """Get a specific version of a hosted RLE environment by name and version.
 
         :param name: Environment name. Required.
@@ -723,8 +764,7 @@ class RLEOperations:
         name: str,
         *,
         limit: Optional[int] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
+        continuation_token: Optional[str] = None,
         order: Optional[Union[str, RLEPaginationOrder]] = None,
         **kwargs: Any,
     ) -> ListRLEnvironmentVersionsResponse:
@@ -732,16 +772,27 @@ class RLEOperations:
 
         :param name: Environment name. Required.
         :type name: str
-        :return: The list of environment versions.
-        :rtype: list[~azure.ai.projects.models.RLEnvironmentVersion]
+        :keyword limit: Maximum number of versions to return. Valid range is [1, 100].
+        :paramtype limit: int or None
+        :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
+        :paramtype continuation_token: str or None
+        :return: A page of environment versions.
+        :rtype: ~azure.ai.projects.models.ListRLEnvironmentVersionsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _validate_pagination_limit(limit)
         return await self._environments.list_rl_environment_versions(
-            name, limit=limit, after=after, before=before, order=order, **kwargs
+            name,
+            limit=limit,
+            continuation_token_parameter=continuation_token,
+            order=order,
+            **kwargs,
         )
 
     @distributed_trace_async
-    async def delete_environment_version(self, name: str, version: str, **kwargs: Any) -> None:
+    async def delete_environment_version(
+        self, name: str, version: str, **kwargs: Any
+    ) -> None:
         """Delete a specific version of a hosted RLE environment.
 
         :param name: Environment name. Required.
