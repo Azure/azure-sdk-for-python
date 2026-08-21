@@ -190,31 +190,31 @@
   - Added model `ThroughputPoolProperties`
   - Added model `ThroughputPoolResource`
   - Added model `ThroughputPoolUpdate`
-  - Model `CassandraClustersOperations` added method `begin_invoke_command_async`
-  - Model `CassandraClustersOperations` added method `get_backup`
-  - Model `CassandraClustersOperations` added method `get_command_async`
-  - Model `CassandraClustersOperations` added method `list_backups`
-  - Model `CassandraClustersOperations` added method `list_command`
-  - Model `CassandraResourcesOperations` added method `begin_create_update_cassandra_view`
-  - Model `CassandraResourcesOperations` added method `begin_delete_cassandra_view`
-  - Model `CassandraResourcesOperations` added method `begin_migrate_cassandra_view_to_autoscale`
-  - Model `CassandraResourcesOperations` added method `begin_migrate_cassandra_view_to_manual_throughput`
-  - Model `CassandraResourcesOperations` added method `begin_update_cassandra_view_throughput`
-  - Model `CassandraResourcesOperations` added method `get_cassandra_view`
-  - Model `CassandraResourcesOperations` added method `get_cassandra_view_throughput`
-  - Model `CassandraResourcesOperations` added method `list_cassandra_views`
-  - Model `MongoDBResourcesOperations` added method `begin_list_mongo_db_collection_partition_merge`
-  - Model `MongoDBResourcesOperations` added method `begin_mongo_db_container_redistribute_throughput`
-  - Model `MongoDBResourcesOperations` added method `begin_mongo_db_container_retrieve_throughput_distribution`
-  - Model `MongoDBResourcesOperations` added method `begin_mongo_db_database_partition_merge`
-  - Model `MongoDBResourcesOperations` added method `begin_mongo_db_database_redistribute_throughput`
-  - Model `MongoDBResourcesOperations` added method `begin_mongo_db_database_retrieve_throughput_distribution`
-  - Model `SqlResourcesOperations` added method `begin_list_sql_container_partition_merge`
-  - Model `SqlResourcesOperations` added method `begin_sql_container_redistribute_throughput`
-  - Model `SqlResourcesOperations` added method `begin_sql_container_retrieve_throughput_distribution`
-  - Model `SqlResourcesOperations` added method `begin_sql_database_partition_merge`
-  - Model `SqlResourcesOperations` added method `begin_sql_database_redistribute_throughput`
-  - Model `SqlResourcesOperations` added method `begin_sql_database_retrieve_throughput_distribution`
+  - Operation group `CassandraClustersOperations` added method `begin_invoke_command_async`
+  - Operation group `CassandraClustersOperations` added method `get_backup`
+  - Operation group `CassandraClustersOperations` added method `get_command_async`
+  - Operation group `CassandraClustersOperations` added method `list_backups`
+  - Operation group `CassandraClustersOperations` added method `list_command`
+  - Operation group `CassandraResourcesOperations` added method `begin_create_update_cassandra_view`
+  - Operation group `CassandraResourcesOperations` added method `begin_delete_cassandra_view`
+  - Operation group `CassandraResourcesOperations` added method `begin_migrate_cassandra_view_to_autoscale`
+  - Operation group `CassandraResourcesOperations` added method `begin_migrate_cassandra_view_to_manual_throughput`
+  - Operation group `CassandraResourcesOperations` added method `begin_update_cassandra_view_throughput`
+  - Operation group `CassandraResourcesOperations` added method `get_cassandra_view`
+  - Operation group `CassandraResourcesOperations` added method `get_cassandra_view_throughput`
+  - Operation group `CassandraResourcesOperations` added method `list_cassandra_views`
+  - Operation group `MongoDBResourcesOperations` added method `begin_list_mongo_db_collection_partition_merge`
+  - Operation group `MongoDBResourcesOperations` added method `begin_mongo_db_container_redistribute_throughput`
+  - Operation group `MongoDBResourcesOperations` added method `begin_mongo_db_container_retrieve_throughput_distribution`
+  - Operation group `MongoDBResourcesOperations` added method `begin_mongo_db_database_partition_merge`
+  - Operation group `MongoDBResourcesOperations` added method `begin_mongo_db_database_redistribute_throughput`
+  - Operation group `MongoDBResourcesOperations` added method `begin_mongo_db_database_retrieve_throughput_distribution`
+  - Operation group `SqlResourcesOperations` added method `begin_list_sql_container_partition_merge`
+  - Operation group `SqlResourcesOperations` added method `begin_sql_container_redistribute_throughput`
+  - Operation group `SqlResourcesOperations` added method `begin_sql_container_retrieve_throughput_distribution`
+  - Operation group `SqlResourcesOperations` added method `begin_sql_database_partition_merge`
+  - Operation group `SqlResourcesOperations` added method `begin_sql_database_redistribute_throughput`
+  - Operation group `SqlResourcesOperations` added method `begin_sql_database_retrieve_throughput_distribution`
   - Added operation group `ChaosFaultOperations`
   - Added operation group `CopyJobsOperations`
   - Added operation group `DataTransferJobsOperations`
