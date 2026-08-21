@@ -81,14 +81,20 @@ class _InstrumentedAsyncRawResponse:
         self._wrap_stream = wrap_stream
         self._wrapped_stream = wrapped_stream
         self._active_stream = wrapped_stream
-        self._custom_streams = {}  # per-type cache matching OpenAI's parse cache
+        self._custom_streams = {}
+        # Shared guard: only one wrapper records metrics/ends span
+        self._finalized = [False]
+        wrapped_stream._shared_finalized = self._finalized
 
     def parse(self, *, to=None):
         # Sync — matches OpenAI LegacyAPIResponse.parse() contract in openai>=3.0.0
         if to is None:
+            self._active_stream = self._wrapped_stream
             return self._wrapped_stream
         if to not in self._custom_streams:
-            self._custom_streams[to] = self._wrap_stream(self._raw_response.parse(to=to))
+            wrapper = self._wrap_stream(self._raw_response.parse(to=to))
+            wrapper._shared_finalized = self._finalized
+            self._custom_streams[to] = wrapper
         self._active_stream = self._custom_streams[to]
         return self._custom_streams[to]
 
@@ -133,12 +139,17 @@ class _InstrumentedSyncRawResponse:
         self._wrapped_stream = wrapped_stream
         self._active_stream = wrapped_stream
         self._custom_streams = {}
+        self._finalized = [False]
+        wrapped_stream._shared_finalized = self._finalized
 
     def parse(self, *, to=None):
         if to is None:
+            self._active_stream = self._wrapped_stream
             return self._wrapped_stream
         if to not in self._custom_streams:
-            self._custom_streams[to] = self._wrap_stream(self._raw_response.parse(to=to))
+            wrapper = self._wrap_stream(self._raw_response.parse(to=to))
+            wrapper._shared_finalized = self._finalized
+            self._custom_streams[to] = wrapper
         self._active_stream = self._custom_streams[to]
         return self._custom_streams[to]
 
@@ -2738,6 +2749,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             def cleanup(self):
                 """Perform final cleanup when streaming is complete."""
                 if not self.span_ended:
+                    shared = getattr(self, "_shared_finalized", None)
+                    if shared is not None and shared[0]:
+                        self.span_ended = True
+                        return
+                    if shared is not None:
+                        shared[0] = True
+
                     duration = time.time() - self.start_time
 
                     # Join all accumulated output content
@@ -2859,7 +2877,6 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     self.span_ended = True
 
             def __iter__(self):
-                # Start streaming iteration
                 return self
 
             def __getattr__(self, name):
@@ -3225,6 +3242,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             def cleanup(self):
                 """Perform final cleanup when streaming is complete."""
                 if not self.span_ended:
+                    shared = getattr(self, "_shared_finalized", None)
+                    if shared is not None and shared[0]:
+                        self.span_ended = True
+                        return
+                    if shared is not None:
+                        shared[0] = True
+
                     duration = time.time() - self.start_time
 
                     # Join all accumulated output content
