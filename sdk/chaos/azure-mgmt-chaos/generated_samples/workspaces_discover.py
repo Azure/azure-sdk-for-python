@@ -15,7 +15,7 @@ from azure.mgmt.chaos import ChaosManagementClient
     pip install azure-identity
     pip install azure-mgmt-chaos
 # USAGE
-    python workspaces_refresh_recommendations.py
+    python workspaces_discover.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.workspaces.begin_refresh_recommendations(
+    response = client.workspaces.begin_discover(
         resource_group_name="exampleRG",
         workspace_name="exampleWorkspace",
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/Workspaces_RefreshRecommendations.json
+# x-ms-original-file: 2026-08-01-preview/Workspaces_Discover.json
 if __name__ == "__main__":
     main()
