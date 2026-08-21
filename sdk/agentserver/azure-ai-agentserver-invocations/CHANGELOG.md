@@ -1,5 +1,27 @@
 # Release History
 
+## 1.1.0b2 (2026-08-17)
+
+### Features Added
+
+- Added W3C Voice connection tracing with one `agentserver.connection` span,
+  content-free `voice.callback` dispatch spans, and aggregate duration and
+  propagation-failure metrics.
+- Added application-declared target-turn tracing through
+  `Session.start_target_turn`, `TargetTurn.activate`, and explicit
+  `TargetTurn.complete` outcomes. The SDK does not infer response lifecycle or
+  own application tasks.
+- Added source-aware `Session.termination` for classifying unfinished
+  application work during connection cleanup.
+
+### Samples
+
+- Updated `basic_voice_agent` to declare target turns around real background
+  generation work and report truthful response, timeout, cancellation,
+  end-call, and transport outcomes, with bounded per-connection concurrency and
+  retained model output. Unfinished turns now distinguish clean abandonment,
+  application/server errors, and protocol or transport loss.
+
 ## 1.1.0b1 (2026-08-11)
 
 ### Samples

@@ -2,7 +2,7 @@
 
 This sample hosts a text-only agent for the Voice Live Bridge protocol `1.0`.
 The SDK relays typed events while the application owns response generation,
-task cancellation, and correlation.
+task cancellation, correlation, and target-turn trace completion.
 
 ## Prerequisites
 
@@ -48,6 +48,19 @@ Omitting the version selects the previously shipped non-Bridge integration.
 The sample intentionally uses a simulated model stream. Replace
 `generate_answer` with the application's model call while preserving the
 application-owned task cleanup shown by the event callbacks.
+
+Each response generation declares one target turn with
+`session.start_target_turn(...)`. The generation task activates that handle
+around the real model/output work and completes it only after the activation
+scope exits. Cancellation callbacks store an application-owned terminal hint
+before cancelling the task; the runner or done callback then completes the turn
+with the first truthful outcome. The SDK does not inspect or retain the task.
+For unfinished work, the sample maps clean peer closure to `abandoned`,
+application/server failures to `error`, protocol or transport loss to
+`transport_error`, and cancellation to `cancelled`. An explicit application
+hint such as `end_call` or `timeout` remains the first winner.
+The sample also caps active generations per connection and bounds retained model
+output by both UTF-8 bytes and chunk count; excess input receives `response.none`.
 
 `on_connection_terminating` synchronously cancels the sample's generation tasks
 whenever the connection handler exits. The tasks remain responsible for their
