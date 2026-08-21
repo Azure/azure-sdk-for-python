@@ -28,7 +28,6 @@ from sample_utils import (
     print_retrieval_summary,
 )
 
-
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
 run_tag = get_sample_run_tag()
@@ -37,7 +36,7 @@ knowledge_base_name = f"hotels-file-kb-{run_tag}"
 upload_file_name = "hotels.txt"
 
 
-def main():
+def main():  # pylint: disable=too-many-locals
     # [START sample_knowledge_source_file_preview]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes import SearchIndexClient
@@ -110,6 +109,18 @@ def main():
         print(f"Uploaded: file '{uploaded_file.file_name}'")
         assert uploaded_file.file_id is not None
 
+        annex_file = index_client.upload_knowledge_source_file_multipart(
+            name=knowledge_source_name,
+            body=UploadKnowledgeSourceFileMultipartRequest(
+                metadata=FileUploadMetadata(
+                    file_name="hotels/annex.txt",
+                    metadata={"category": "hotel", "city": "Portland"},
+                ),
+                content=("annex.txt", b"Harbor Hotel Annex has meeting rooms.", "text/plain"),
+            ),
+        )
+        assert annex_file.file_id is not None
+
         updated_file = index_client.update_knowledge_source_file(
             file_id=uploaded_file.file_id,
             name=knowledge_source_name,
@@ -123,17 +134,23 @@ def main():
             ),
         )
         print(f"Updated: file '{updated_file.file_name}'")
+        assert updated_file.metadata == {"category": "hotel", "city": "Seattle"}
+        assert updated_file.parsing_mode is not None
+        assert updated_file.extraction_mode in {"minimal", "standard"}
 
         files = list(
             index_client.list_knowledge_source_files(
                 knowledge_source_name,
                 prefix="hotels/",
                 search="hotels",
-                page_size=10,
+                page_size=1,
                 search_type="prefix",
             )
         )
-        print(f"Files: {len(files)}")
+        file_ids = [file.file_id for file in files]
+        assert set(file_ids) == {uploaded_file.file_id, annex_file.file_id}
+        assert len(file_ids) == len(set(file_ids))
+        print(f"Paged through {len(files)} files without duplicates")
 
         retrieval_client = KnowledgeBaseRetrievalClient(
             service_endpoint, AzureKeyCredential(key), knowledge_base_name=knowledge_base_name
@@ -154,6 +171,10 @@ def main():
             print_retrieval_summary(retrieval_result)
         finally:
             retrieval_client.close()
+
+        index_client.delete_knowledge_source_file(knowledge_source_name, uploaded_file.file_id)
+        index_client.delete_knowledge_source_file(knowledge_source_name, annex_file.file_id)
+        print("Deleted both uploaded files")
         # [END sample_knowledge_source_file_preview]
     finally:
         cleanup_resources(

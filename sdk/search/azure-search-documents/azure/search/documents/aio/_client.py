@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SearchClient(_SearchClientOperationsMixin):
+class SearchClient(_SearchClientOperationsMixin):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SearchClient.
 
     :param endpoint: The endpoint URL of the search service. Required.

@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Any, Dict, List, Optional, Union, cast
 import base64
 import itertools
@@ -372,7 +373,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
         :return: List of IndexingResult
-        :rtype:  list[IndexingResult]
+        :rtype: list[~azure.search.documents.types.IndexingResult]
 
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """

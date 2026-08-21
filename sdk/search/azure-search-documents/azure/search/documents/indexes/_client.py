@@ -28,7 +28,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SearchIndexClient(_SearchIndexClientOperationsMixin):
+class SearchIndexClient(
+    _SearchIndexClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SearchIndexClient.
 
     :param endpoint: The endpoint URL of the search service. Required.
@@ -108,7 +110,9 @@ class SearchIndexClient(_SearchIndexClientOperationsMixin):
         self._client.__exit__(*exc_details)
 
 
-class SearchIndexerClient(_SearchIndexerClientOperationsMixin):
+class SearchIndexerClient(
+    _SearchIndexerClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SearchIndexerClient.
 
     :param endpoint: The endpoint URL of the search service. Required.

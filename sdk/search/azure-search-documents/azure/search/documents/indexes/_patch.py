@@ -7,7 +7,8 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Union
+
+from typing import Any, Optional, Union
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
@@ -25,9 +26,9 @@ class SearchIndexClient(_SearchIndexClient):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Known values are
-     listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
+        listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
         ``ApiVersion.V2026_08_01_PREVIEW``. Note that overriding this default value may
-     result in unsupported behavior.
+        result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
@@ -51,9 +52,9 @@ class SearchIndexerClient(_SearchIndexerClient):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Known values are
-     listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
+        listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
         ``ApiVersion.V2026_08_01_PREVIEW``. Note that overriding this default value may
-     result in unsupported behavior.
+        result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
@@ -80,3 +81,16 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    from . import types
+
+    ingestion_parameter_types = (
+        types.AzureBlobKnowledgeSourceParameters,
+        types.FileKnowledgeSourceParameters,
+        types.IndexedOneLakeKnowledgeSourceParameters,
+        types.IndexedSharePointKnowledgeSourceParameters,
+        types.IndexedSqlKnowledgeSourceParameters,
+    )
+    for parameter_type in ingestion_parameter_types:
+        parameter_type.__annotations__["ingestionParameters"] = Optional[
+            "azure.search.documents.knowledgebases.types.KnowledgeSourceIngestionParameters"
+        ]

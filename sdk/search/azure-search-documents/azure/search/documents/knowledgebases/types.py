@@ -7,10 +7,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Literal, Optional, TYPE_CHECKING, Union
+from typing import Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from ..indexes.models._enums import KnowledgeSourceKind, VectorSearchVectorizerKind
+from ..indexes.models._enums import KnowledgeSourceKind
 from .models._enums import (
     KnowledgeBaseMessageContentType,
     KnowledgeRetrievalIntentType,
@@ -18,98 +18,54 @@ from .models._enums import (
 )
 
 if TYPE_CHECKING:
-    from ..indexes.types import (
-        AzureOpenAIVectorizerParameters,
-        IndexingSchedule,
-        KnowledgeBaseModel,
-        SearchIndexKnowledgeSourceQueryHints,
-        SearchIndexerDataIdentity,
-    )
-    from ..indexesmodels import (
-        KnowledgeSourceContentExtractionMode,
-        KnowledgeSourceIngestionPermissionOption,
-        KnowledgeSourceKind,
-        KnowledgeSourceResultsProcessing,
-        KnowledgeSourceSynchronizationStatus,
-    )
-    from .models import KnowledgeRetrievalOutputMode, KnowledgeSourceNetworkAccessMode
-
-
-class AIServices(TypedDict, total=False):
-    """Parameters for AI Services.
-
-    :ivar uri: The URI of the AI Services endpoint. Required.
-    :vartype uri: str
-    :ivar api_key: The API key for accessing AI Services.
-    :vartype api_key: str
-    """
-
-    uri: Required[str]
-    """The URI of the AI Services endpoint. Required."""
-    apiKey: str
-    """The API key for accessing AI Services."""
-
-
-class AssetStore(TypedDict, total=False):
-    """Configuration for an asset store used to store extracted assets such as images.
-
-    :ivar connection_string: The connection string for the asset store. Required.
-    :vartype connection_string: str
-    :ivar container_name: The name of the blob container within the asset store where extracted
-     assets (for example, images) are stored. Required.
-    :vartype container_name: str
-    """
-
-    connectionString: Required[str]
-    """The connection string for the asset store. Required."""
-    containerName: Required[str]
-    """The name of the blob container within the asset store where extracted assets (for example,
-     images) are stored. Required."""
+    from ..indexes.types import SearchIndexKnowledgeSourceQueryHints
+    from ..indexesmodels import KnowledgeSourceResultsProcessing
+    from .models import KnowledgeRetrievalOutputMode
 
 
 class AzureBlobKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for a azure blob knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source that read and ingest data
      from Azure Blob Storage to a Search Index.
     :vartype kind: Literal[KnowledgeSourceKind.AZURE_BLOB]
-    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
-     If specified, this object replaces the complete set of query hints configured on the knowledge
+    :ivar queryHintOverrides: Hints that guide query planning toward useful filters and boosts. If
+     specified, this object replaces the complete set of query hints configured on the knowledge
      source.
-    :vartype query_hint_overrides: "SearchIndexKnowledgeSourceQueryHints"
+    :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     knowledgeSourceName: Required[str]
@@ -147,71 +103,42 @@ class AzureBlobKnowledgeSourceParams(TypedDict, total=False):
      replaces the complete set of query hints configured on the knowledge source."""
 
 
-class CompletedSynchronizationState(TypedDict, total=False):
-    """Represents the completed state of the last synchronization.
-
-    :ivar start_time: The start time of the last completed synchronization. Required.
-    :vartype start_time: str
-    :ivar end_time: The end time of the last completed synchronization. Required.
-    :vartype end_time: str
-    :ivar items_updates_processed: The number of item updates successfully processed in the last
-     synchronization. Required.
-    :vartype items_updates_processed: int
-    :ivar items_updates_failed: The number of item updates that failed in the last synchronization.
-     Required.
-    :vartype items_updates_failed: int
-    :ivar items_skipped: The number of items skipped in the last synchronization. Required.
-    :vartype items_skipped: int
-    """
-
-    startTime: Required[str]
-    """The start time of the last completed synchronization. Required."""
-    endTime: Required[str]
-    """The end time of the last completed synchronization. Required."""
-    itemsUpdatesProcessed: Required[int]
-    """The number of item updates successfully processed in the last synchronization. Required."""
-    itemsUpdatesFailed: Required[int]
-    """The number of item updates that failed in the last synchronization. Required."""
-    itemsSkipped: Required[int]
-    """The number of items skipped in the last synchronization. Required."""
-
-
 class FabricDataAgentKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for a Fabric Data Agent knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source that retrieves data from a
      Fabric Data Agent.
     :vartype kind: Literal[KnowledgeSourceKind.FABRIC_DATA_AGENT]
@@ -252,39 +179,39 @@ class FabricDataAgentKnowledgeSourceParams(TypedDict, total=False):
 class FabricOntologyKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for a Fabric Ontology knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source that retrieves data from
      Microsoft Fabric Ontology ontologies.
     :vartype kind: Literal[KnowledgeSourceKind.FABRIC_ONTOLOGY]
@@ -325,46 +252,46 @@ class FabricOntologyKnowledgeSourceParams(TypedDict, total=False):
 class FileKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for a File knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source that supports direct file
      upload and indexing.
     :vartype kind: Literal[KnowledgeSourceKind.FILE]
-    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
-     If specified, this object replaces the complete set of query hints configured on the knowledge
+    :ivar queryHintOverrides: Hints that guide query planning toward useful filters and boosts. If
+     specified, this object replaces the complete set of query hints configured on the knowledge
      source.
-    :vartype query_hint_overrides: "SearchIndexKnowledgeSourceQueryHints"
+    :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     knowledgeSourceName: Required[str]
@@ -402,63 +329,49 @@ class FileKnowledgeSourceParams(TypedDict, total=False):
      replaces the complete set of query hints configured on the knowledge source."""
 
 
-class FreshnessPolicy(TypedDict, total=False):
-    """Configuration for freshness-aware retrieval. When set, newer documents receive a ranking boost
-    during retrieval.
-
-    :ivar boosting_duration: ISO 8601 duration for the freshness boosting window (e.g. 'P90D' for
-     90 days). Documents newer than this duration receive a ranking boost during retrieval.
-    :vartype boosting_duration: str
-    """
-
-    boostingDuration: str
-    """ISO 8601 duration for the freshness boosting window (e.g. 'P90D' for 90 days). Documents newer
-     than this duration receive a ranking boost during retrieval."""
-
-
 class IndexedOneLakeKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for a indexed OneLake knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from indexed
      OneLake.
     :vartype kind: Literal[KnowledgeSourceKind.INDEXED_ONELAKE]
-    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
-     If specified, this object replaces the complete set of query hints configured on the knowledge
+    :ivar queryHintOverrides: Hints that guide query planning toward useful filters and boosts. If
+     specified, this object replaces the complete set of query hints configured on the knowledge
      source.
-    :vartype query_hint_overrides: "SearchIndexKnowledgeSourceQueryHints"
+    :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     knowledgeSourceName: Required[str]
@@ -498,46 +411,46 @@ class IndexedOneLakeKnowledgeSourceParams(TypedDict, total=False):
 class IndexedSharePointKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for a indexed SharePoint knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from indexed
      SharePoint.
     :vartype kind: Literal[KnowledgeSourceKind.INDEXED_SHARE_POINT]
-    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
-     If specified, this object replaces the complete set of query hints configured on the knowledge
+    :ivar queryHintOverrides: Hints that guide query planning toward useful filters and boosts. If
+     specified, this object replaces the complete set of query hints configured on the knowledge
      source.
-    :vartype query_hint_overrides: "SearchIndexKnowledgeSourceQueryHints"
+    :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     knowledgeSourceName: Required[str]
@@ -577,46 +490,46 @@ class IndexedSharePointKnowledgeSourceParams(TypedDict, total=False):
 class IndexedSqlKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for an indexed SQL knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source that retrieves and ingests
      data from Azure SQL Database or SQL Managed Instance to a Search Index.
     :vartype kind: Literal[KnowledgeSourceKind.INDEXED_SQL]
-    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
-     If specified, this object replaces the complete set of query hints configured on the knowledge
+    :ivar queryHintOverrides: Hints that guide query planning toward useful filters and boosts. If
+     specified, this object replaces the complete set of query hints configured on the knowledge
      source.
-    :vartype query_hint_overrides: "SearchIndexKnowledgeSourceQueryHints"
+    :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     knowledgeSourceName: Required[str]
@@ -717,23 +630,23 @@ class KnowledgeBaseRetrievalRequest(TypedDict, total=False):
     :vartype messages: list["KnowledgeBaseMessage"]
     :ivar intents: A list of intended queries to execute without model query planning.
     :vartype intents: list["KnowledgeRetrievalIntent"]
-    :ivar max_runtime_in_seconds: The maximum runtime in seconds.
-    :vartype max_runtime_in_seconds: int
-    :ivar max_output_size: Limits the maximum size of the content in the output.
-    :vartype max_output_size: int
-    :ivar max_output_documents: Limits the maximum number of documents in the output.
-    :vartype max_output_documents: int
-    :ivar max_output_size_in_tokens: Limits the maximum size of the content in the output.
-    :vartype max_output_size_in_tokens: int
-    :ivar retrieval_reasoning_effort: The retrieval reasoning effort configuration.
-    :vartype retrieval_reasoning_effort: "KnowledgeRetrievalReasoningEffort"
-    :ivar include_activity: Indicates retrieval results should include activity information.
-    :vartype include_activity: bool
-    :ivar output_mode: The output configuration for this retrieval. Known values are:
+    :ivar maxRuntimeInSeconds: The maximum runtime in seconds.
+    :vartype maxRuntimeInSeconds: int
+    :ivar maxOutputSize: Limits the maximum size of the content in the output.
+    :vartype maxOutputSize: int
+    :ivar maxOutputDocuments: Limits the maximum number of documents in the output.
+    :vartype maxOutputDocuments: int
+    :ivar maxOutputSizeInTokens: Limits the maximum size of the content in the output.
+    :vartype maxOutputSizeInTokens: int
+    :ivar retrievalReasoningEffort: The retrieval reasoning effort configuration.
+    :vartype retrievalReasoningEffort: "KnowledgeRetrievalReasoningEffort"
+    :ivar includeActivity: Indicates retrieval results should include activity information.
+    :vartype includeActivity: bool
+    :ivar outputMode: The output configuration for this retrieval. Known values are:
      "extractiveData" and "answerSynthesis".
-    :vartype output_mode: Union[str, "KnowledgeRetrievalOutputMode"]
-    :ivar knowledge_source_params: A list of runtime parameters for the knowledge sources.
-    :vartype knowledge_source_params: list["KnowledgeSourceParams"]
+    :vartype outputMode: Union[str, "KnowledgeRetrievalOutputMode"]
+    :ivar knowledgeSourceParams: A list of runtime parameters for the knowledge sources.
+    :vartype knowledgeSourceParams: list["KnowledgeSourceParams"]
     """
 
     messages: list["KnowledgeBaseMessage"]
@@ -825,222 +738,42 @@ class KnowledgeRetrievalSemanticIntent(TypedDict, total=False):
     """The semantic query to execute. Required."""
 
 
-class KnowledgeSourceAzureOpenAIVectorizer(TypedDict, total=False):
-    """Specifies the Azure OpenAI resource used to vectorize a query string.
-
-    :ivar kind: The discriminator value. Required. Generate embeddings using an Azure OpenAI
-     resource at query time.
-    :vartype kind: Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]
-    :ivar azure_open_ai_parameters: Contains the parameters specific to Azure OpenAI embedding
-     vectorization.
-    :vartype azure_open_ai_parameters: "AzureOpenAIVectorizerParameters"
-    """
-
-    kind: Required[Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]]
-    """The discriminator value. Required. Generate embeddings using an Azure OpenAI resource at query
-     time."""
-    azureOpenAIParameters: "AzureOpenAIVectorizerParameters"
-    """Contains the parameters specific to Azure OpenAI embedding vectorization."""
-
-
-class KnowledgeSourceIngestionParameters(TypedDict, total=False):
-    """Consolidates all general ingestion settings for knowledge sources.
-
-    :ivar identity: An explicit identity to use for this knowledge source.
-    :vartype identity: "SearchIndexerDataIdentity"
-    :ivar embedding_model: Optional vectorizer configuration for vectorizing content.
-    :vartype embedding_model: "KnowledgeSourceVectorizer"
-    :ivar chat_completion_model: Optional chat completion model for image verbalization or context
-     extraction.
-    :vartype chat_completion_model: "KnowledgeBaseModel"
-    :ivar disable_image_verbalization: Indicates whether image verbalization should be disabled.
-     Default is false.
-    :vartype disable_image_verbalization: bool
-    :ivar ingestion_schedule: Optional schedule for data ingestion.
-    :vartype ingestion_schedule: "IndexingSchedule"
-    :ivar ingestion_permission_options: Optional list of permission types to ingest together with
-     document content. If specified, it will set the indexer permission options for the data source.
-    :vartype ingestion_permission_options: list[Union[str,
-     "KnowledgeSourceIngestionPermissionOption"]]
-    :ivar content_extraction_mode: Optional content extraction mode. Default is 'minimal'. Known
-     values are: "minimal" and "standard".
-    :vartype content_extraction_mode: Union[str, "KnowledgeSourceContentExtractionMode"]
-    :ivar ai_services: Optional AI Services configuration for content processing.
-    :vartype ai_services: "AIServices"
-    :ivar asset_store: Optional asset store configuration for storing extracted assets such as
-     images.
-    :vartype asset_store: "AssetStore"
-    :ivar freshness_policy: Optional freshness policy for biasing retrieval toward newer documents.
-    :vartype freshness_policy: "FreshnessPolicy"
-    :ivar network_access_mode: Optional network access mode for ingestion. Set to 'private' to run
-     ingestion in a private execution environment that can reach data sources and dependencies over
-     a private network. Default is 'public'. This is a create-time setting and cannot be changed
-     after the knowledge source is created. Known values are: "public" and "private".
-    :vartype network_access_mode: Union[str, "KnowledgeSourceNetworkAccessMode"]
-    """
-
-    identity: Optional["SearchIndexerDataIdentity"]
-    """An explicit identity to use for this knowledge source."""
-    embeddingModel: Optional["KnowledgeSourceVectorizer"]
-    """Optional vectorizer configuration for vectorizing content."""
-    chatCompletionModel: Optional["KnowledgeBaseModel"]
-    """Optional chat completion model for image verbalization or context extraction."""
-    disableImageVerbalization: bool
-    """Indicates whether image verbalization should be disabled. Default is false."""
-    ingestionSchedule: Optional["IndexingSchedule"]
-    """Optional schedule for data ingestion."""
-    ingestionPermissionOptions: Optional[list[Union[str, "KnowledgeSourceIngestionPermissionOption"]]]
-    """Optional list of permission types to ingest together with document content. If specified, it
-     will set the indexer permission options for the data source."""
-    contentExtractionMode: Optional[Union[str, "KnowledgeSourceContentExtractionMode"]]
-    """Optional content extraction mode. Default is 'minimal'. Known values are: \"minimal\" and
-     \"standard\"."""
-    aiServices: Optional["AIServices"]
-    """Optional AI Services configuration for content processing."""
-    assetStore: "AssetStore"
-    """Optional asset store configuration for storing extracted assets such as images."""
-    freshnessPolicy: "FreshnessPolicy"
-    """Optional freshness policy for biasing retrieval toward newer documents."""
-    networkAccessMode: Union[str, "KnowledgeSourceNetworkAccessMode"]
-    """Optional network access mode for ingestion. Set to 'private' to run ingestion in a private
-     execution environment that can reach data sources and dependencies over a private network.
-     Default is 'public'. This is a create-time setting and cannot be changed after the knowledge
-     source is created. Known values are: \"public\" and \"private\"."""
-
-
-class KnowledgeSourceStatistics(TypedDict, total=False):
-    """Statistical information about knowledge source synchronization history.
-
-    :ivar total_synchronization: Total number of synchronizations. Required.
-    :vartype total_synchronization: int
-    :ivar average_synchronization_duration: Average synchronization duration in HH:MM:SS format.
-     Required.
-    :vartype average_synchronization_duration: str
-    :ivar average_items_processed_per_synchronization: Average items processed per synchronization.
-     Required.
-    :vartype average_items_processed_per_synchronization: int
-    """
-
-    totalSynchronization: Required[int]
-    """Total number of synchronizations. Required."""
-    averageSynchronizationDuration: Required[str]
-    """Average synchronization duration in HH:MM:SS format. Required."""
-    averageItemsProcessedPerSynchronization: Required[int]
-    """Average items processed per synchronization. Required."""
-
-
-class KnowledgeSourceStatus(TypedDict, total=False):
-    """Represents the status and synchronization history of a knowledge source.
-
-    :ivar kind: Identifies the Knowledge Source kind directly from the Status response. Known
-     values are: "searchIndex", "azureBlob", "indexedSharePoint", "indexedOneLake", "indexedSql",
-     "web", "remoteSharePoint", "workIQ", "file", "mcpServer", "fabricDataAgent", and
-     "fabricOntology".
-    :vartype kind: Union[str, "KnowledgeSourceKind"]
-    :ivar synchronization_status: The current synchronization status. Required. Known values are:
-     "creating", "active", and "deleting".
-    :vartype synchronization_status: Union[str, "KnowledgeSourceSynchronizationStatus"]
-    :ivar synchronization_interval: The synchronization interval (e.g., '1d' for daily). Null if no
-     schedule is configured.
-    :vartype synchronization_interval: str
-    :ivar current_synchronization_state: Current synchronization state that spans multiple indexer
-     runs.
-    :vartype current_synchronization_state: "SynchronizationState"
-    :ivar last_synchronization_state: Details of the last completed synchronization. Null on first
-     sync.
-    :vartype last_synchronization_state: "CompletedSynchronizationState"
-    :ivar statistics: Statistical information about the knowledge source synchronization history.
-     Null on first sync.
-    :vartype statistics: "KnowledgeSourceStatistics"
-    """
-
-    kind: Union[str, "KnowledgeSourceKind"]
-    """Identifies the Knowledge Source kind directly from the Status response. Known values are:
-     \"searchIndex\", \"azureBlob\", \"indexedSharePoint\", \"indexedOneLake\", \"indexedSql\",
-     \"web\", \"remoteSharePoint\", \"workIQ\", \"file\", \"mcpServer\", \"fabricDataAgent\", and
-     \"fabricOntology\"."""
-    synchronizationStatus: Required[Union[str, "KnowledgeSourceSynchronizationStatus"]]
-    """The current synchronization status. Required. Known values are: \"creating\", \"active\", and
-     \"deleting\"."""
-    synchronizationInterval: Optional[str]
-    """The synchronization interval (e.g., '1d' for daily). Null if no schedule is configured."""
-    currentSynchronizationState: Optional["SynchronizationState"]
-    """Current synchronization state that spans multiple indexer runs."""
-    lastSynchronizationState: Optional["CompletedSynchronizationState"]
-    """Details of the last completed synchronization. Null on first sync."""
-    statistics: Optional["KnowledgeSourceStatistics"]
-    """Statistical information about the knowledge source synchronization history. Null on first sync."""
-
-
-class KnowledgeSourceSynchronizationError(TypedDict, total=False):
-    """Represents a document-level indexing error encountered during a knowledge source
-    synchronization run.
-
-    :ivar doc_id: The unique identifier for the failed document or item within the synchronization
-     run.
-    :vartype doc_id: str
-    :ivar status_code: HTTP-like status code representing the failure category (e.g., 400).
-    :vartype status_code: int
-    :ivar name: Name of the ingestion or processing component reporting the error.
-    :vartype name: str
-    :ivar error_message: Human-readable, customer-visible error message. Required.
-    :vartype error_message: str
-    :ivar details: Additional contextual information about the failure.
-    :vartype details: str
-    :ivar documentation_link: A link to relevant troubleshooting documentation.
-    :vartype documentation_link: str
-    """
-
-    docId: str
-    """The unique identifier for the failed document or item within the synchronization run."""
-    statusCode: int
-    """HTTP-like status code representing the failure category (e.g., 400)."""
-    name: str
-    """Name of the ingestion or processing component reporting the error."""
-    errorMessage: Required[str]
-    """Human-readable, customer-visible error message. Required."""
-    details: str
-    """Additional contextual information about the failure."""
-    documentationLink: str
-    """A link to relevant troubleshooting documentation."""
-
-
 class McpServerKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for an MCP server knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source backed by an MCP (Model
      Context Protocol) server.
     :vartype kind: Literal[KnowledgeSourceKind.MCP_SERVER]
@@ -1081,46 +814,46 @@ class McpServerKnowledgeSourceParams(TypedDict, total=False):
 class RemoteSharePointKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for a remote SharePoint knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from remote
      SharePoint.
     :vartype kind: Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT]
-    :ivar filter_expression_add_on: A filter condition applied to the SharePoint data source. It
-     must be specified in the Keyword Query Language syntax. It will be combined as a conjunction
-     with the filter expression specified in the knowledge source definition.
-    :vartype filter_expression_add_on: str
+    :ivar filterExpressionAddOn: A filter condition applied to the SharePoint data source. It must
+     be specified in the Keyword Query Language syntax. It will be combined as a conjunction with
+     the filter expression specified in the knowledge source definition.
+    :vartype filterExpressionAddOn: str
     """
 
     knowledgeSourceName: Required[str]
@@ -1161,48 +894,48 @@ class RemoteSharePointKnowledgeSourceParams(TypedDict, total=False):
 class SearchIndexKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for a search index knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from a Search
      Index.
     :vartype kind: Literal[KnowledgeSourceKind.SEARCH_INDEX]
-    :ivar filter_add_on: A filter condition applied to the index (e.g., 'State eq VA').
-    :vartype filter_add_on: str
-    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
-     If specified, this object replaces the complete set of query hints configured on the knowledge
+    :ivar filterAddOn: A filter condition applied to the index (e.g., 'State eq VA').
+    :vartype filterAddOn: str
+    :ivar queryHintOverrides: Hints that guide query planning toward useful filters and boosts. If
+     specified, this object replaces the complete set of query hints configured on the knowledge
      source.
-    :vartype query_hint_overrides: "SearchIndexKnowledgeSourceQueryHints"
+    :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     knowledgeSourceName: Required[str]
@@ -1241,73 +974,42 @@ class SearchIndexKnowledgeSourceParams(TypedDict, total=False):
      replaces the complete set of query hints configured on the knowledge source."""
 
 
-class SynchronizationState(TypedDict, total=False):
-    """Represents the current state of an ongoing synchronization that spans multiple indexer runs.
-
-    :ivar start_time: The start time of the current synchronization. Required.
-    :vartype start_time: str
-    :ivar items_updates_processed: The number of item updates successfully processed in the current
-     synchronization. Required.
-    :vartype items_updates_processed: int
-    :ivar items_updates_failed: The number of item updates that failed in the current
-     synchronization. Required.
-    :vartype items_updates_failed: int
-    :ivar items_skipped: The number of items skipped in the current synchronization. Required.
-    :vartype items_skipped: int
-    :ivar errors: Collection of document-level indexing errors encountered during the current
-     synchronization run. Returned only when errors are present.
-    :vartype errors: list["KnowledgeSourceSynchronizationError"]
-    """
-
-    startTime: Required[str]
-    """The start time of the current synchronization. Required."""
-    itemsUpdatesProcessed: Required[int]
-    """The number of item updates successfully processed in the current synchronization. Required."""
-    itemsUpdatesFailed: Required[int]
-    """The number of item updates that failed in the current synchronization. Required."""
-    itemsSkipped: Required[int]
-    """The number of items skipped in the current synchronization. Required."""
-    errors: list["KnowledgeSourceSynchronizationError"]
-    """Collection of document-level indexing errors encountered during the current synchronization
-     run. Returned only when errors are present."""
-
-
 class WebKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for a web knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from the web.
     :vartype kind: Literal[KnowledgeSourceKind.WEB]
     :ivar language: The language of the web results.
@@ -1362,39 +1064,39 @@ class WebKnowledgeSourceParams(TypedDict, total=False):
 class WorkIQKnowledgeSourceParams(TypedDict, total=False):
     """Specifies runtime parameters for a WorkIQ knowledge source.
 
-    :ivar knowledge_source_name: The name of the index the params apply to. Required.
-    :vartype knowledge_source_name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
+    :ivar knowledgeSourceName: The name of the index the params apply to. Required.
+    :vartype knowledgeSourceName: str
+    :ivar includeReferences: Indicates whether references should be included for data retrieved
      from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
+    :vartype includeReferences: bool
+    :ivar includeReferenceSourceData: Indicates whether references should include the structured
      data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+    :vartype includeReferenceSourceData: bool
+    :ivar alwaysQuerySource: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+    :vartype alwaysQuerySource: bool
+    :ivar neverQuerySource: Indicates that this knowledge source should be excluded from the
      request's candidate set and never queried at retrieval time. The exclusion is request-local and
      does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
      same knowledge source.
-    :vartype never_query_source: bool
-    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+    :vartype neverQuerySource: bool
+    :ivar failOnError: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
-    :vartype fail_on_error: bool
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+    :vartype failOnError: bool
+    :ivar rerankerThreshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
-    :vartype reranker_threshold: float
-    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+    :vartype rerankerThreshold: float
+    :ivar resultsProcessing: Overrides the knowledge source's stored resultsProcessing for this
      retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
      "rerank" and "none".
-    :vartype results_processing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
+    :ivar maxOutputDocuments: Limits the maximum number of documents returned from this knowledge
      source.
-    :vartype max_output_documents: int
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
-     to downstream models.
-    :vartype enable_image_serving: bool
+    :vartype maxOutputDocuments: int
+    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
+     source at retrieval time. When true, images extracted during ingestion are delivered to
+     downstream models.
+    :vartype enableImageServing: bool
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from work IQ.
     :vartype kind: Literal[KnowledgeSourceKind.WORK_IQ]
     """
@@ -1452,4 +1154,3 @@ KnowledgeRetrievalReasoningEffort = Union[
     KnowledgeRetrievalMinimalReasoningEffort,
 ]
 KnowledgeRetrievalIntent = Union[KnowledgeRetrievalSemanticIntent]
-KnowledgeSourceVectorizer = Union[KnowledgeSourceAzureOpenAIVectorizer]

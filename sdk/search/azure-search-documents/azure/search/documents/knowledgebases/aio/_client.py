@@ -28,7 +28,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClientOperationsMixin):
+class KnowledgeBaseRetrievalClient(
+    _KnowledgeBaseRetrievalClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KnowledgeBaseRetrievalClient.
 
     :param endpoint: The endpoint URL of the search service. Required.

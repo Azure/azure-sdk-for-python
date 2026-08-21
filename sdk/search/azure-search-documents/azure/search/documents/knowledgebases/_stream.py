@@ -8,18 +8,12 @@ from __future__ import annotations
 
 import codecs
 import json
-import sys
 from types import TracebackType
 from typing import Any, AsyncGenerator, AsyncIterator, Generator, Iterator, Optional, Tuple, Type, Union
-
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    from typing_extensions import Self  # type: ignore
+from typing_extensions import Self
 
 from . import models
 from ._utils.model_base import _deserialize
-
 
 _TERMINAL_EVENTS = {"error", "response.completed"}
 
@@ -59,6 +53,9 @@ class KnowledgeBaseRetrievalEvent:
 
     def __repr__(self) -> str:
         return f"KnowledgeBaseRetrievalEvent(event_type={self.event_type!r}, data={self.data!r})"
+
+
+KnowledgeBaseRetrievalEvent.__module__ = "azure.search.documents.knowledgebases"
 
 
 def _split_sse_lines(buffer: str) -> Tuple[list[str], str]:
@@ -165,8 +162,7 @@ def _deserialize_event(event_type: str, data: str) -> KnowledgeBaseRetrievalEven
         return KnowledgeBaseRetrievalEvent(event_type, event_data)
     if event_type == "references.completed":
         references = [
-            models.KnowledgeBaseReference._deserialize(item, [])  # pylint: disable=protected-access
-            for item in payload
+            models.KnowledgeBaseReference._deserialize(item, []) for item in payload  # pylint: disable=protected-access
         ]
         return KnowledgeBaseRetrievalEvent(event_type, references)
     deserializer = {

@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Literal, Optional, TYPE_CHECKING, Union
+from typing import Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 from .models._enums import VectorQueryKind, VectorThresholdKind
@@ -27,112 +26,24 @@ if TYPE_CHECKING:
         ScoringStatistics,
         SearchMode,
         SemanticErrorMode,
-        SemanticErrorReason,
-        SemanticFieldState,
-        SemanticQueryRewritesResultType,
-        SemanticSearchResultsType,
         VectorFilterMode,
     )
-
-
-class AutocompleteItem(TypedDict, total=False):
-    """The result of Autocomplete requests.
-
-    :ivar text: The completed term. Required.
-    :vartype text: str
-    :ivar query_plus_text: The query along with the completed term. Required.
-    :vartype query_plus_text: str
-    """
-
-    text: Required[str]
-    """The completed term. Required."""
-    queryPlusText: Required[str]
-    """The query along with the completed term. Required."""
-
-
-class DebugInfo(TypedDict, total=False):
-    """Contains debugging information that can be used to further explore your search results.
-
-    :ivar query_rewrites: Contains debugging information specific to query rewrites.
-    :vartype query_rewrites: "QueryRewritesDebugInfo"
-    """
-
-    queryRewrites: "QueryRewritesDebugInfo"
-    """Contains debugging information specific to query rewrites."""
-
-
-class DocumentDebugInfo(TypedDict, total=False):
-    """Contains debugging information that can be used to further explore your search results.
-
-    :ivar semantic: Contains debugging information specific to semantic ranking requests.
-    :vartype semantic: "SemanticDebugInfo"
-    :ivar vectors: Contains debugging information specific to vector and hybrid search.
-    :vartype vectors: "VectorsDebugInfo"
-    :ivar inner_hits: Contains debugging information specific to vectors matched within a
-     collection of complex types.
-    :vartype inner_hits: dict[str, list["QueryResultDocumentInnerHit"]]
-    """
-
-    semantic: "SemanticDebugInfo"
-    """Contains debugging information specific to semantic ranking requests."""
-    vectors: "VectorsDebugInfo"
-    """Contains debugging information specific to vector and hybrid search."""
-    innerHits: dict[str, list["QueryResultDocumentInnerHit"]]
-    """Contains debugging information specific to vectors matched within a collection of complex
-     types."""
-
-
-FacetResult = TypedDict(
-    "FacetResult",
-    {
-        "count": int,
-        "avg": float,
-        "min": float,
-        "max": float,
-        "sum": float,
-        "cardinality": int,
-        "@search.facets": dict[str, list["FacetResult"]],
-    },
-    total=False,
-)
-FacetResult.__doc__ = """A single bucket of a facet query result. Reports the number of documents with a field value
-falling within a particular range or having a particular value or interval.
-
-:ivar count: The approximate count of documents falling within the bucket described by this
- facet.
-:vartype count: int
-:ivar avg: The resulting total avg for the facet when a avg metric is requested.
-:vartype avg: float
-:ivar min: The resulting total min for the facet when a min metric is requested.
-:vartype min: float
-:ivar max: The resulting total max for the facet when a max metric is requested.
-:vartype max: float
-:ivar sum: The resulting total sum for the facet when a sum metric is requested.
-:vartype sum: float
-:ivar cardinality: The resulting total cardinality for the facet when a cardinality metric is
- requested.
-:vartype cardinality: int
-:ivar facets: The nested facet query results for the search operation, organized as a
- collection of buckets for each faceted field; null if the query did not contain any nested
- facets.
-:vartype facets: dict[str, list["FacetResult"]]
-"""
 
 
 class HybridSearch(TypedDict, total=False):
     """The query parameters to configure hybrid search behaviors.
 
-    :ivar max_text_recall_size: Determines the maximum number of documents to be retrieved by the
-     text query portion of a hybrid search request. Those documents will be combined with the
-     documents matching the vector queries to produce a single final list of results. Choosing a
-     larger maxTextRecallSize value will allow retrieving and paging through more documents (using
-     the top and skip parameters), at the cost of higher resource utilization and higher latency.
-     The value needs to be between 1 and 10,000. Default is 1000.
-    :vartype max_text_recall_size: int
-    :ivar count_and_facet_mode: Determines whether the count and facets should includes all
-     documents that matched the search query, or only the documents that are retrieved within the
+    :ivar maxTextRecallSize: Determines the maximum number of documents to be retrieved by the text
+     query portion of a hybrid search request. Those documents will be combined with the documents
+     matching the vector queries to produce a single final list of results. Choosing a larger
+     maxTextRecallSize value will allow retrieving and paging through more documents (using the top
+     and skip parameters), at the cost of higher resource utilization and higher latency. The value
+     needs to be between 1 and 10,000. Default is 1000.
+    :vartype maxTextRecallSize: int
+    :ivar countAndFacetMode: Determines whether the count and facets should includes all documents
+     that matched the search query, or only the documents that are retrieved within the
      'maxTextRecallSize' window. Known values are: "countRetrievableResults" and "countAllResults".
-    :vartype count_and_facet_mode: Union[str, "HybridCountAndFacetMode"]
+    :vartype countAndFacetMode: Union[str, "HybridCountAndFacetMode"]
     """
 
     maxTextRecallSize: int
@@ -157,571 +68,21 @@ IndexAction = TypedDict(
 )
 IndexAction.__doc__ = """Represents an index action that operates on a document.
 
-:ivar action_type: The operation to perform on a document in an indexing batch. Known values
- are: "upload", "merge", "mergeOrUpload", and "delete".
-:vartype action_type: Union[str, "IndexActionType"]
+:ivar ``@search.action``: The operation to perform on a document in an indexing batch. Known
+ values are: "upload", "merge", "mergeOrUpload", and "delete".
+:vartype ``@search.action``: Union[str, "IndexActionType"]
 """
 
 
 class IndexDocumentsBatch(TypedDict, total=False):
     """Contains a batch of document write actions to send to the index.
 
-    :ivar actions: The actions in the batch. Required.
-    :vartype actions: list["IndexAction"]
+    :ivar value: The actions in the batch. Required.
+    :vartype value: list["IndexAction"]
     """
 
     value: Required[list["IndexAction"]]
     """The actions in the batch. Required."""
-
-
-class IndexingResult(TypedDict, total=False):
-    """Status of an indexing operation for a single document.
-
-    :ivar key: The key of a document that was in the indexing request. Required.
-    :vartype key: str
-    :ivar error_message: The error message explaining why the indexing operation failed for the
-     document identified by the key; null if indexing succeeded.
-    :vartype error_message: str
-    :ivar succeeded: A value indicating whether the indexing operation succeeded for the document
-     identified by the key. Required.
-    :vartype succeeded: bool
-    :ivar status_code: The status code of the indexing operation. Possible values include: 200 for
-     a successful update or delete, 201 for successful document creation, 400 for a malformed input
-     document, 404 for document not found, 409 for a version conflict, 422 when the index is
-     temporarily unavailable, or 503 for when the service is too busy. Required.
-    :vartype status_code: int
-    """
-
-    key: Required[str]
-    """The key of a document that was in the indexing request. Required."""
-    errorMessage: str
-    """The error message explaining why the indexing operation failed for the document identified by
-     the key; null if indexing succeeded."""
-    status: Required[bool]
-    """A value indicating whether the indexing operation succeeded for the document identified by the
-     key. Required."""
-    statusCode: Required[int]
-    """The status code of the indexing operation. Possible values include: 200 for a successful update
-     or delete, 201 for successful document creation, 400 for a malformed input document, 404 for
-     document not found, 409 for a version conflict, 422 when the index is temporarily unavailable,
-     or 503 for when the service is too busy. Required."""
-
-
-class QueryAnswerResult(TypedDict, total=False):
-    """An answer is a text passage extracted from the contents of the most relevant documents that
-    matched the query. Answers are extracted from the top search results. Answer candidates are
-    scored and the top answers are selected.
-
-    :ivar score: The score value represents how relevant the answer is to the query relative to
-     other answers returned for the query.
-    :vartype score: float
-    :ivar key: The key of the document the answer was extracted from.
-    :vartype key: str
-    :ivar text: The text passage extracted from the document contents as the answer.
-    :vartype text: str
-    :ivar highlights: Same text passage as in the Text property with highlighted text phrases most
-     relevant to the query.
-    :vartype highlights: str
-    """
-
-    score: float
-    """The score value represents how relevant the answer is to the query relative to other answers
-     returned for the query."""
-    key: str
-    """The key of the document the answer was extracted from."""
-    text: str
-    """The text passage extracted from the document contents as the answer."""
-    highlights: Optional[str]
-    """Same text passage as in the Text property with highlighted text phrases most relevant to the
-     query."""
-
-
-class QueryCaptionResult(TypedDict, total=False):
-    """Captions are the most representative passages from the document relatively to the search query.
-    They are often used as document summary. Captions are only returned for queries of type
-    ``semantic``.
-
-    :ivar text: A representative text passage extracted from the document most relevant to the
-     search query.
-    :vartype text: str
-    :ivar highlights: Same text passage as in the Text property with highlighted phrases most
-     relevant to the query.
-    :vartype highlights: str
-    """
-
-    text: str
-    """A representative text passage extracted from the document most relevant to the search query."""
-    highlights: Optional[str]
-    """Same text passage as in the Text property with highlighted phrases most relevant to the query."""
-
-
-class QueryResultDocumentInnerHit(TypedDict, total=False):
-    """Detailed scoring information for an individual element of a complex collection.
-
-    :ivar ordinal: Position of this specific matching element within it's original collection.
-     Position starts at 0.
-    :vartype ordinal: int
-    :ivar vectors: Detailed scoring information for an individual element of a complex collection
-     that matched a vector query.
-    :vartype vectors: list[dict[str, "SingleVectorFieldResult"]]
-    """
-
-    ordinal: int
-    """Position of this specific matching element within it's original collection. Position starts at
-     0."""
-    vectors: list[dict[str, "SingleVectorFieldResult"]]
-    """Detailed scoring information for an individual element of a complex collection that matched a
-     vector query."""
-
-
-class QueryResultDocumentRerankerInput(TypedDict, total=False):
-    """The raw concatenated strings that were sent to the semantic enrichment process.
-
-    :ivar title: The raw string for the title field that was used for semantic enrichment.
-    :vartype title: str
-    :ivar content: The raw concatenated strings for the content fields that were used for semantic
-     enrichment.
-    :vartype content: str
-    :ivar keywords: The raw concatenated strings for the keyword fields that were used for semantic
-     enrichment.
-    :vartype keywords: str
-    """
-
-    title: str
-    """The raw string for the title field that was used for semantic enrichment."""
-    content: str
-    """The raw concatenated strings for the content fields that were used for semantic enrichment."""
-    keywords: str
-    """The raw concatenated strings for the keyword fields that were used for semantic enrichment."""
-
-
-class QueryResultDocumentSemanticField(TypedDict, total=False):
-    """Description of fields that were sent to the semantic enrichment process, as well as how they
-    were used.
-
-    :ivar name: The name of the field that was sent to the semantic enrichment process.
-    :vartype name: str
-    :ivar state: The way the field was used for the semantic enrichment process (fully used,
-     partially used, or unused). Known values are: "used", "unused", and "partial".
-    :vartype state: Union[str, "SemanticFieldState"]
-    """
-
-    name: str
-    """The name of the field that was sent to the semantic enrichment process."""
-    state: Union[str, "SemanticFieldState"]
-    """The way the field was used for the semantic enrichment process (fully used, partially used, or
-     unused). Known values are: \"used\", \"unused\", and \"partial\"."""
-
-
-class QueryResultDocumentSubscores(TypedDict, total=False):
-    """The breakdown of subscores between the text and vector query components of the search query for
-    this document. Each vector query is shown as a separate object in the same order they were
-    received.
-
-    :ivar text: The BM25 or Classic score for the text portion of the query.
-    :vartype text: "TextResult"
-    :ivar vectors: The vector similarity and.
-    :vartype vectors: list[dict[str, "SingleVectorFieldResult"]]
-    :ivar document_boost: The BM25 or Classic score for the text portion of the query.
-    :vartype document_boost: float
-    """
-
-    text: "TextResult"
-    """The BM25 or Classic score for the text portion of the query."""
-    vectors: list[dict[str, "SingleVectorFieldResult"]]
-    """The vector similarity and."""
-    documentBoost: float
-    """The BM25 or Classic score for the text portion of the query."""
-
-
-class QueryRewritesDebugInfo(TypedDict, total=False):
-    """Contains debugging information specific to query rewrites.
-
-    :ivar text: List of query rewrites generated for the text query.
-    :vartype text: "QueryRewritesValuesDebugInfo"
-    :ivar vectors: List of query rewrites generated for the vectorizable text queries.
-    :vartype vectors: list["QueryRewritesValuesDebugInfo"]
-    """
-
-    text: "QueryRewritesValuesDebugInfo"
-    """List of query rewrites generated for the text query."""
-    vectors: list["QueryRewritesValuesDebugInfo"]
-    """List of query rewrites generated for the vectorizable text queries."""
-
-
-class QueryRewritesValuesDebugInfo(TypedDict, total=False):
-    """Contains debugging information specific to query rewrites.
-
-    :ivar input_query: The input text to the generative query rewriting model. There may be cases
-     where the user query and the input to the generative model are not identical.
-    :vartype input_query: str
-    :ivar rewrites: List of query rewrites.
-    :vartype rewrites: list[str]
-    """
-
-    inputQuery: str
-    """The input text to the generative query rewriting model. There may be cases where the user query
-     and the input to the generative model are not identical."""
-    rewrites: list[str]
-    """List of query rewrites."""
-
-
-SearchDocumentsResult = TypedDict(
-    "SearchDocumentsResult",
-    {
-        "@odata.count": int,
-        "@search.coverage": float,
-        "@search.facets": dict[str, list["FacetResult"]],
-        "@search.answers": Optional[list["QueryAnswerResult"]],
-        "@search.debug": Optional["DebugInfo"],
-        "@search.nextPageParameters": "SearchRequest",
-        "value": Required[list["SearchResult"]],
-        "@odata.nextLink": str,
-        "@search.semanticPartialResponseReason": Union[str, "SemanticErrorReason"],
-        "@search.semanticPartialResponseType": Union[str, "SemanticSearchResultsType"],
-        "@search.semanticQueryRewritesResultType": Union[str, "_enums.SemanticQueryRewritesResultType"],
-    },
-    total=False,
-)
-SearchDocumentsResult.__doc__ = """Response containing search results from an index.
-
-:ivar count: The total count of results found by the search operation, or null if the count was
- not requested. If present, the count may be greater than the number of results in this
- response. This can happen if you use the $top or $skip parameters, or if the query can't return
- all the requested documents in a single response.
-:vartype count: int
-:ivar coverage: A value indicating the percentage of the index that was included in the query,
- or null if minimumCoverage was not specified in the request.
-:vartype coverage: float
-:ivar facets: The facet query results for the search operation, organized as a collection of
- buckets for each faceted field; null if the query did not include any facet expressions.
-:vartype facets: dict[str, list["FacetResult"]]
-:ivar answers: The answers query results for the search operation; null if the answers query
- parameter was not specified or set to 'none'.
-:vartype answers: list["QueryAnswerResult"]
-:ivar debug_info: Debug information that applies to the search results as a whole.
-:vartype debug_info: "DebugInfo"
-:ivar next_page_parameters: Continuation JSON payload returned when the query can't return all
- the requested results in a single response. You can use this JSON along with.
-:vartype next_page_parameters: "SearchRequest"
-:ivar results: The sequence of results returned by the query. Required.
-:vartype results: list["SearchResult"]
-:ivar next_link: Continuation URL returned when the query can't return all the requested
- results in a single response. You can use this URL to formulate another GET or POST Search
- request to get the next part of the search response. Make sure to use the same verb (GET or
- POST) as the request that produced this response.
-:vartype next_link: str
-:ivar semantic_partial_response_reason: Reason that a partial response was returned for a
- semantic ranking request. Known values are: "maxWaitExceeded", "capacityOverloaded", and
- "transient".
-:vartype semantic_partial_response_reason: Union[str, "SemanticErrorReason"]
-:ivar semantic_partial_response_type: Type of partial response that was returned for a semantic
- ranking request. Known values are: "baseResults" and "rerankedResults".
-:vartype semantic_partial_response_type: Union[str, "SemanticSearchResultsType"]
-:ivar semantic_query_rewrites_result_type: Type of query rewrite that was used to retrieve
- documents. "originalQueryOnly"
-:vartype semantic_query_rewrites_result_type: Union[str,
- "_enums.SemanticQueryRewritesResultType"]
-"""
-
-
-class SearchRequest(TypedDict, total=False):
-    """Parameters for filtering, sorting, faceting, paging, and other search query behaviors.
-
-    :ivar include_total_count: A value that specifies whether to fetch the total count of results.
-     Default is false. Setting this value to true may have a performance impact. Note that the count
-     returned is an approximation.
-    :vartype include_total_count: bool
-    :ivar facets: The list of facet expressions to apply to the search query. Each facet expression
-     contains a field name, optionally followed by a comma-separated list of name:value pairs.
-    :vartype facets: list[str]
-    :ivar filter: The OData $filter expression to apply to the search query.
-    :vartype filter: str
-    :ivar highlight_fields: The comma-separated list of field names to use for hit highlights. Only
-     searchable fields can be used for hit highlighting.
-    :vartype highlight_fields: list[str]
-    :ivar highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
-     highlightPreTag. Default is &lt;/em&gt;.
-    :vartype highlight_post_tag: str
-    :ivar highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
-     highlightPostTag. Default is &lt;em&gt;.
-    :vartype highlight_pre_tag: str
-    :ivar minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
-     must be covered by a search query in order for the query to be reported as a success. This
-     parameter can be useful for ensuring search availability even for services with only one
-     replica. The default is 100.
-    :vartype minimum_coverage: float
-    :ivar order_by: The comma-separated list of OData $orderby expressions by which to sort the
-     results. Each expression can be either a field name or a call to either the geo.distance() or
-     the search.score() functions. Each expression can be followed by asc to indicate ascending, or
-     desc to indicate descending. The default is ascending order. Ties will be broken by the match
-     scores of documents. If no $orderby is specified, the default sort order is descending by
-     document match score. There can be at most 32 $orderby clauses.
-    :vartype order_by: list[str]
-    :ivar query_type: A value that specifies the syntax of the search query. The default is
-     'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
-     "full", and "semantic".
-    :vartype query_type: Union[str, "QueryType"]
-    :ivar scoring_statistics: A value that specifies whether we want to calculate scoring
-     statistics (such as document frequency) globally for more consistent scoring, or locally, for
-     lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
-     before scoring. Using global scoring statistics can increase latency of search queries. Known
-     values are: "local" and "global".
-    :vartype scoring_statistics: Union[str, "ScoringStatistics"]
-    :ivar session_id: A value to be used to create a sticky session, which can help getting more
-     consistent results. As long as the same sessionId is used, a best-effort attempt will be made
-     to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
-     interfere with the load balancing of the requests across replicas and adversely affect the
-     performance of the search service. The value used as sessionId cannot start with a '_'
-     character.
-    :vartype session_id: str
-    :ivar scoring_parameters: The list of parameter values to be used in scoring functions (for
-     example, referencePointParameter) using the format name-values. For example, if the scoring
-     profile defines a function with a parameter called 'mylocation' the parameter string would be
-     "mylocation--122.2,44.8" (without the quotes).
-    :vartype scoring_parameters: list[str]
-    :ivar scoring_profile: The name of a scoring profile to evaluate match scores for matching
-     documents in order to sort the results.
-    :vartype scoring_profile: str
-    :ivar debug: Enables a debugging tool that can be used to further explore your reranked
-     results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
-     "all".
-    :vartype debug: Union[str, "QueryDebugMode"]
-    :ivar search_text: A full-text search query expression; Use "*" or omit this parameter to match
-     all documents.
-    :vartype search_text: str
-    :ivar search_fields: The comma-separated list of field names to which to scope the full-text
-     search. When using fielded search (fieldName:searchExpression) in a full Lucene query, the
-     field names of each fielded search expression take precedence over any field names listed in
-     this parameter.
-    :vartype search_fields: list[str]
-    :ivar search_mode: A value that specifies whether any or all of the search terms must be
-     matched in order to count the document as a match. Known values are: "any" and "all".
-    :vartype search_mode: Union[str, "SearchMode"]
-    :ivar query_language: A value that specifies the language of the search query. Known values
-     are: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
-     "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
-     "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
-     "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
-     "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv",
-     "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
-     "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
-     "te-in", and "ur-pk".
-    :vartype query_language: Union[str, "QueryLanguage"]
-    :ivar query_speller: A value that specifies the type of the speller to use to spell-correct
-     individual search query terms. Known values are: "none" and "lexicon".
-    :vartype query_speller: Union[str, "QuerySpellerType"]
-    :ivar select: The comma-separated list of fields to retrieve. If unspecified, all fields marked
-     as retrievable in the schema are included.
-    :vartype select: list[str]
-    :ivar skip: The number of search results to skip. This value cannot be greater than 100,000. If
-     you need to scan documents in sequence, but cannot use skip due to this limitation, consider
-     using orderby on a totally-ordered key and filter with a range query instead.
-    :vartype skip: int
-    :ivar top: The number of search results to retrieve. This can be used in conjunction with $skip
-     to implement client-side paging of search results. If results are truncated due to server-side
-     paging, the response will include a continuation token that can be used to issue another Search
-     request for the next page of results.
-    :vartype top: int
-    :ivar semantic_configuration_name: The name of a semantic configuration that will be used when
-     processing documents for queries of type semantic.
-    :vartype semantic_configuration_name: str
-    :ivar semantic_error_handling: Allows the user to choose whether a semantic call should fail
-     completely (default / current behavior), or to return partial results. Known values are:
-     "partial" and "fail".
-    :vartype semantic_error_handling: Union[str, "SemanticErrorMode"]
-    :ivar semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
-     time it takes for semantic enrichment to finish processing before the request fails.
-    :vartype semantic_max_wait_in_milliseconds: int
-    :ivar semantic_query: Allows setting a separate search query that will be solely used for
-     semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
-     is a need to use different queries between the base retrieval and ranking phase, and the L2
-     semantic phase.
-    :vartype semantic_query: str
-    :ivar answers: A value that specifies whether answers should be returned as part of the search
-     response. Known values are: "none" and "extractive".
-    :vartype answers: Union[str, "QueryAnswerType"]
-    :ivar captions: A value that specifies whether captions should be returned as part of the
-     search response. Known values are: "none" and "extractive".
-    :vartype captions: Union[str, "QueryCaptionType"]
-    :ivar query_rewrites: A value that specifies whether query rewrites should be generated to
-     augment the search query. Known values are: "none" and "generative".
-    :vartype query_rewrites: Union[str, "QueryRewritesType"]
-    :ivar semantic_fields: The comma-separated list of field names used for semantic ranking.
-    :vartype semantic_fields: list[str]
-    :ivar vector_queries: The query parameters for vector and hybrid search queries.
-    :vartype vector_queries: list["VectorQuery"]
-    :ivar vector_filter_mode: Determines whether or not filters are applied before or after the
-     vector search is performed. Default is 'preFilter' for new indexes. Known values are:
-     "postFilter", "preFilter", and "strictPostFilter".
-    :vartype vector_filter_mode: Union[str, "VectorFilterMode"]
-    :ivar hybrid_search: The query parameters to configure hybrid search behaviors.
-    :vartype hybrid_search: "HybridSearch"
-    """
-
-    count: bool
-    """A value that specifies whether to fetch the total count of results. Default is false. Setting
-     this value to true may have a performance impact. Note that the count returned is an
-     approximation."""
-    facets: list[str]
-    """The list of facet expressions to apply to the search query. Each facet expression contains a
-     field name, optionally followed by a comma-separated list of name:value pairs."""
-    filter: str
-    """The OData $filter expression to apply to the search query."""
-    highlight: list[str]
-    """The comma-separated list of field names to use for hit highlights. Only searchable fields can
-     be used for hit highlighting."""
-    highlightPostTag: str
-    """A string tag that is appended to hit highlights. Must be set with highlightPreTag. Default is
-     &lt;/em&gt;."""
-    highlightPreTag: str
-    """A string tag that is prepended to hit highlights. Must be set with highlightPostTag. Default is
-     &lt;em&gt;."""
-    minimumCoverage: float
-    """A number between 0 and 100 indicating the percentage of the index that must be covered by a
-     search query in order for the query to be reported as a success. This parameter can be useful
-     for ensuring search availability even for services with only one replica. The default is 100."""
-    orderby: list[str]
-    """The comma-separated list of OData $orderby expressions by which to sort the results. Each
-     expression can be either a field name or a call to either the geo.distance() or the
-     search.score() functions. Each expression can be followed by asc to indicate ascending, or desc
-     to indicate descending. The default is ascending order. Ties will be broken by the match scores
-     of documents. If no $orderby is specified, the default sort order is descending by document
-     match score. There can be at most 32 $orderby clauses."""
-    queryType: Union[str, "QueryType"]
-    """A value that specifies the syntax of the search query. The default is 'simple'. Use 'full' if
-     your query uses the Lucene query syntax. Known values are: \"simple\", \"full\", and
-     \"semantic\"."""
-    scoringStatistics: Union[str, "ScoringStatistics"]
-    """A value that specifies whether we want to calculate scoring statistics (such as document
-     frequency) globally for more consistent scoring, or locally, for lower latency. The default is
-     'local'. Use 'global' to aggregate scoring statistics globally before scoring. Using global
-     scoring statistics can increase latency of search queries. Known values are: \"local\" and
-     \"global\"."""
-    sessionId: str
-    """A value to be used to create a sticky session, which can help getting more consistent results.
-     As long as the same sessionId is used, a best-effort attempt will be made to target the same
-     replica set. Be wary that reusing the same sessionID values repeatedly can interfere with the
-     load balancing of the requests across replicas and adversely affect the performance of the
-     search service. The value used as sessionId cannot start with a '_' character."""
-    scoringParameters: list[str]
-    """The list of parameter values to be used in scoring functions (for example,
-     referencePointParameter) using the format name-values. For example, if the scoring profile
-     defines a function with a parameter called 'mylocation' the parameter string would be
-     \"mylocation--122.2,44.8\" (without the quotes)."""
-    scoringProfile: str
-    """The name of a scoring profile to evaluate match scores for matching documents in order to sort
-     the results."""
-    debug: Union[str, "QueryDebugMode"]
-    """Enables a debugging tool that can be used to further explore your reranked results. Known
-     values are: \"disabled\", \"semantic\", \"vector\", \"queryRewrites\", \"innerHits\", and
-     \"all\"."""
-    search: str
-    """A full-text search query expression; Use \"*\" or omit this parameter to match all documents."""
-    searchFields: list[str]
-    """The comma-separated list of field names to which to scope the full-text search. When using
-     fielded search (fieldName:searchExpression) in a full Lucene query, the field names of each
-     fielded search expression take precedence over any field names listed in this parameter."""
-    searchMode: Union[str, "SearchMode"]
-    """A value that specifies whether any or all of the search terms must be matched in order to count
-     the document as a match. Known values are: \"any\" and \"all\"."""
-    queryLanguage: Union[str, "QueryLanguage"]
-    """A value that specifies the language of the search query. Known values are: \"none\", \"en-us\",
-     \"en-gb\", \"en-in\", \"en-ca\", \"en-au\", \"fr-fr\", \"fr-ca\", \"de-de\", \"es-es\",
-     \"es-mx\", \"zh-cn\", \"zh-tw\", \"pt-br\", \"pt-pt\", \"it-it\", \"ja-jp\", \"ko-kr\",
-     \"ru-ru\", \"cs-cz\", \"nl-be\", \"nl-nl\", \"hu-hu\", \"pl-pl\", \"sv-se\", \"tr-tr\",
-     \"hi-in\", \"ar-sa\", \"ar-eg\", \"ar-ma\", \"ar-kw\", \"ar-jo\", \"da-dk\", \"no-no\",
-     \"bg-bg\", \"hr-hr\", \"hr-ba\", \"ms-my\", \"ms-bn\", \"sl-sl\", \"ta-in\", \"vi-vn\",
-     \"el-gr\", \"ro-ro\", \"is-is\", \"id-id\", \"th-th\", \"lt-lt\", \"uk-ua\", \"lv-lv\",
-     \"et-ee\", \"ca-es\", \"fi-fi\", \"sr-ba\", \"sr-me\", \"sr-rs\", \"sk-sk\", \"nb-no\",
-     \"hy-am\", \"bn-in\", \"eu-es\", \"gl-es\", \"gu-in\", \"he-il\", \"ga-ie\", \"kn-in\",
-     \"ml-in\", \"mr-in\", \"fa-ae\", \"pa-in\", \"te-in\", and \"ur-pk\"."""
-    speller: Union[str, "QuerySpellerType"]
-    """A value that specifies the type of the speller to use to spell-correct individual search query
-     terms. Known values are: \"none\" and \"lexicon\"."""
-    select: list[str]
-    """The comma-separated list of fields to retrieve. If unspecified, all fields marked as
-     retrievable in the schema are included."""
-    skip: int
-    """The number of search results to skip. This value cannot be greater than 100,000. If you need to
-     scan documents in sequence, but cannot use skip due to this limitation, consider using orderby
-     on a totally-ordered key and filter with a range query instead."""
-    top: int
-    """The number of search results to retrieve. This can be used in conjunction with $skip to
-     implement client-side paging of search results. If results are truncated due to server-side
-     paging, the response will include a continuation token that can be used to issue another Search
-     request for the next page of results."""
-    semanticConfiguration: str
-    """The name of a semantic configuration that will be used when processing documents for queries of
-     type semantic."""
-    semanticErrorHandling: Union[str, "SemanticErrorMode"]
-    """Allows the user to choose whether a semantic call should fail completely (default / current
-     behavior), or to return partial results. Known values are: \"partial\" and \"fail\"."""
-    semanticMaxWaitInMilliseconds: int
-    """Allows the user to set an upper bound on the amount of time it takes for semantic enrichment to
-     finish processing before the request fails."""
-    semanticQuery: str
-    """Allows setting a separate search query that will be solely used for semantic reranking,
-     semantic captions and semantic answers. Is useful for scenarios where there is a need to use
-     different queries between the base retrieval and ranking phase, and the L2 semantic phase."""
-    answers: Union[str, "QueryAnswerType"]
-    """A value that specifies whether answers should be returned as part of the search response. Known
-     values are: \"none\" and \"extractive\"."""
-    captions: Union[str, "QueryCaptionType"]
-    """A value that specifies whether captions should be returned as part of the search response.
-     Known values are: \"none\" and \"extractive\"."""
-    queryRewrites: Union[str, "QueryRewritesType"]
-    """A value that specifies whether query rewrites should be generated to augment the search query.
-     Known values are: \"none\" and \"generative\"."""
-    semanticFields: list[str]
-    """The comma-separated list of field names used for semantic ranking."""
-    vectorQueries: list["VectorQuery"]
-    """The query parameters for vector and hybrid search queries."""
-    vectorFilterMode: Union[str, "VectorFilterMode"]
-    """Determines whether or not filters are applied before or after the vector search is performed.
-     Default is 'preFilter' for new indexes. Known values are: \"postFilter\", \"preFilter\", and
-     \"strictPostFilter\"."""
-    hybridSearch: "HybridSearch"
-    """The query parameters to configure hybrid search behaviors."""
-
-
-SearchResult = TypedDict(
-    "SearchResult",
-    {
-        "@search.score": Required[float],
-        "@search.rerankerScore": Optional[float],
-        "@search.rerankerBoostedScore": Optional[float],
-        "@search.highlights": dict[str, list[str]],
-        "@search.captions": Optional[list["QueryCaptionResult"]],
-        "@search.documentDebugInfo": Optional["DocumentDebugInfo"],
-    },
-    total=False,
-)
-SearchResult.__doc__ = """Contains a document found by a search query, plus associated metadata.
-
-:ivar score: The relevance score of the document compared to other documents returned by the
- query. Required.
-:vartype score: float
-:ivar reranker_score: The relevance score computed by the semantic ranker for the top search
- results. Search results are sorted by the RerankerScore first and then by the Score.
- RerankerScore is only returned for queries of type 'semantic'.
-:vartype reranker_score: float
-:ivar reranker_boosted_score: The relevance score computed by boosting the Reranker Score.
- Search results are sorted by the RerankerScore/RerankerBoostedScore based on
- useScoringProfileBoostedRanking in the Semantic Config. RerankerBoostedScore is only returned
- for queries of type 'semantic'.
-:vartype reranker_boosted_score: float
-:ivar highlights: Text fragments from the document that indicate the matching search terms,
- organized by each applicable field; null if hit highlighting was not enabled for the query.
-:vartype highlights: dict[str, list[str]]
-:ivar captions: Captions are the most representative passages from the document relatively to
- the search query. They are often used as document summary. Captions are only returned for
- queries of type 'semantic'.
-:vartype captions: list["QueryCaptionResult"]
-:ivar document_debug_info: Contains debugging information that can be used to further explore
- your search results.
-:vartype document_debug_info: "DocumentDebugInfo"
-"""
 
 
 class SearchScoreThreshold(TypedDict, total=False):
@@ -744,85 +105,12 @@ class SearchScoreThreshold(TypedDict, total=False):
      of the search response. The threshold direction will be chosen for higher @search.score."""
 
 
-class SemanticDebugInfo(TypedDict, total=False):
-    """Contains debugging information specific to semantic ranking requests.
-
-    :ivar title_field: The title field that was sent to the semantic enrichment process, as well as
-     how it was used.
-    :vartype title_field: "QueryResultDocumentSemanticField"
-    :ivar content_fields: The content fields that were sent to the semantic enrichment process, as
-     well as how they were used.
-    :vartype content_fields: list["QueryResultDocumentSemanticField"]
-    :ivar keyword_fields: The keyword fields that were sent to the semantic enrichment process, as
-     well as how they were used.
-    :vartype keyword_fields: list["QueryResultDocumentSemanticField"]
-    :ivar reranker_input: The raw concatenated strings that were sent to the semantic enrichment
-     process.
-    :vartype reranker_input: "QueryResultDocumentRerankerInput"
-    """
-
-    titleField: "QueryResultDocumentSemanticField"
-    """The title field that was sent to the semantic enrichment process, as well as how it was used."""
-    contentFields: list["QueryResultDocumentSemanticField"]
-    """The content fields that were sent to the semantic enrichment process, as well as how they were
-     used."""
-    keywordFields: list["QueryResultDocumentSemanticField"]
-    """The keyword fields that were sent to the semantic enrichment process, as well as how they were
-     used."""
-    rerankerInput: "QueryResultDocumentRerankerInput"
-    """The raw concatenated strings that were sent to the semantic enrichment process."""
-
-
-class SingleVectorFieldResult(TypedDict, total=False):
-    """A single vector field result. Both.
-
-    :ivar search_score: The.
-    :vartype search_score: float
-    :ivar vector_similarity: The vector similarity score for this document. Note this is the
-     canonical definition of similarity metric, not the 'distance' version. For example, cosine
-     similarity instead of cosine distance.
-    :vartype vector_similarity: float
-    """
-
-    searchScore: float
-    """The."""
-    vectorSimilarity: float
-    """The vector similarity score for this document. Note this is the canonical definition of
-     similarity metric, not the 'distance' version. For example, cosine similarity instead of cosine
-     distance."""
-
-
-SuggestResult = TypedDict(
-    "SuggestResult",
-    {
-        "@search.text": Required[str],
-    },
-    total=False,
-)
-SuggestResult.__doc__ = """A result containing a document found by a suggestion query, plus associated metadata.
-
-:ivar text: The text of the suggestion result. Required.
-:vartype text: str
-"""
-
-
-class TextResult(TypedDict, total=False):
-    """The BM25 or Classic score for the text portion of the query.
-
-    :ivar search_score: The BM25 or Classic score for the text portion of the query.
-    :vartype search_score: float
-    """
-
-    searchScore: float
-    """The BM25 or Classic score for the text portion of the query."""
-
-
 class VectorizableImageBinaryQuery(TypedDict, total=False):
     """The query parameters to use for vector search when a base 64 encoded binary of an image that
     needs to be vectorized is provided.
 
-    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
-    :vartype k_nearest_neighbors: int
+    :ivar k: Number of nearest neighbors to return as top hits.
+    :vartype k: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -845,18 +133,18 @@ class VectorizableImageBinaryQuery(TypedDict, total=False):
     :ivar threshold: The threshold used for vector queries. Note this can only be set if all
      'fields' use the same similarity metric.
     :vartype threshold: "VectorThreshold"
-    :ivar filter_override: The OData filter expression to apply to this specific vector query. If
-     no filter expression is defined at the vector level, the expression defined in the top level
+    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
+     filter expression is defined at the vector level, the expression defined in the top level
      filter parameter is used instead.
-    :vartype filter_override: str
-    :ivar per_document_vector_limit: Controls how many vectors can be matched from each document in
-     a vector search query. Setting it to 1 ensures at most one vector per document is matched,
+    :vartype filterOverride: str
+    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
+     vector search query. Setting it to 1 ensures at most one vector per document is matched,
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
-    :vartype per_document_vector_limit: int
-    :ivar base64_image: The base 64 encoded binary of an image to be vectorized to perform a vector
+    :vartype perDocumentVectorLimit: int
+    :ivar base64Image: The base 64 encoded binary of an image to be vectorized to perform a vector
      search query.
-    :vartype base64_image: str
+    :vartype base64Image: str
     :ivar kind: The kind of vector query being performed. Required. Vector query where a base 64
      encoded binary of an image that needs to be vectorized is provided.
     :vartype kind: Literal[VectorQueryKind.IMAGE_BINARY]
@@ -904,8 +192,8 @@ class VectorizableImageUrlQuery(TypedDict, total=False):
     """The query parameters to use for vector search when an url that represents an image value that
     needs to be vectorized is provided.
 
-    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
-    :vartype k_nearest_neighbors: int
+    :ivar k: Number of nearest neighbors to return as top hits.
+    :vartype k: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -928,15 +216,15 @@ class VectorizableImageUrlQuery(TypedDict, total=False):
     :ivar threshold: The threshold used for vector queries. Note this can only be set if all
      'fields' use the same similarity metric.
     :vartype threshold: "VectorThreshold"
-    :ivar filter_override: The OData filter expression to apply to this specific vector query. If
-     no filter expression is defined at the vector level, the expression defined in the top level
+    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
+     filter expression is defined at the vector level, the expression defined in the top level
      filter parameter is used instead.
-    :vartype filter_override: str
-    :ivar per_document_vector_limit: Controls how many vectors can be matched from each document in
-     a vector search query. Setting it to 1 ensures at most one vector per document is matched,
+    :vartype filterOverride: str
+    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
+     vector search query. Setting it to 1 ensures at most one vector per document is matched,
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
-    :vartype per_document_vector_limit: int
+    :vartype perDocumentVectorLimit: int
     :ivar url: The URL of an image to be vectorized to perform a vector search query.
     :vartype url: str
     :ivar kind: The kind of vector query being performed. Required. Vector query where an url that
@@ -986,8 +274,8 @@ class VectorizableTextQuery(TypedDict, total=False):
     """The query parameters to use for vector search when a text value that needs to be vectorized is
     provided.
 
-    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
-    :vartype k_nearest_neighbors: int
+    :ivar k: Number of nearest neighbors to return as top hits.
+    :vartype k: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -1010,20 +298,20 @@ class VectorizableTextQuery(TypedDict, total=False):
     :ivar threshold: The threshold used for vector queries. Note this can only be set if all
      'fields' use the same similarity metric.
     :vartype threshold: "VectorThreshold"
-    :ivar filter_override: The OData filter expression to apply to this specific vector query. If
-     no filter expression is defined at the vector level, the expression defined in the top level
+    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
+     filter expression is defined at the vector level, the expression defined in the top level
      filter parameter is used instead.
-    :vartype filter_override: str
-    :ivar per_document_vector_limit: Controls how many vectors can be matched from each document in
-     a vector search query. Setting it to 1 ensures at most one vector per document is matched,
+    :vartype filterOverride: str
+    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
+     vector search query. Setting it to 1 ensures at most one vector per document is matched,
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
-    :vartype per_document_vector_limit: int
+    :vartype perDocumentVectorLimit: int
     :ivar text: The text to be vectorized to perform a vector search query. Required.
     :vartype text: str
-    :ivar query_rewrites: Can be configured to let a generative model rewrite the query before
+    :ivar queryRewrites: Can be configured to let a generative model rewrite the query before
      sending it to be vectorized. Known values are: "none" and "generative".
-    :vartype query_rewrites: Union[str, "QueryRewritesType"]
+    :vartype queryRewrites: Union[str, "QueryRewritesType"]
     :ivar kind: The kind of vector query being performed. Required. Vector query where a text value
      that needs to be vectorized is provided.
     :vartype kind: Literal[VectorQueryKind.TEXT]
@@ -1073,8 +361,8 @@ class VectorizableTextQuery(TypedDict, total=False):
 class VectorizedQuery(TypedDict, total=False):
     """The query parameters to use for vector search when a raw vector value is provided.
 
-    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
-    :vartype k_nearest_neighbors: int
+    :ivar k: Number of nearest neighbors to return as top hits.
+    :vartype k: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -1097,15 +385,15 @@ class VectorizedQuery(TypedDict, total=False):
     :ivar threshold: The threshold used for vector queries. Note this can only be set if all
      'fields' use the same similarity metric.
     :vartype threshold: "VectorThreshold"
-    :ivar filter_override: The OData filter expression to apply to this specific vector query. If
-     no filter expression is defined at the vector level, the expression defined in the top level
+    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
+     filter expression is defined at the vector level, the expression defined in the top level
      filter parameter is used instead.
-    :vartype filter_override: str
-    :ivar per_document_vector_limit: Controls how many vectors can be matched from each document in
-     a vector search query. Setting it to 1 ensures at most one vector per document is matched,
+    :vartype filterOverride: str
+    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
+     vector search query. Setting it to 1 ensures at most one vector per document is matched,
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
-    :vartype per_document_vector_limit: int
+    :vartype perDocumentVectorLimit: int
     :ivar vector: The vector representation of a search query. Required.
     :vartype vector: list[float]
     :ivar kind: The kind of vector query being performed. Required. Vector query where a raw vector
@@ -1151,19 +439,6 @@ class VectorizedQuery(TypedDict, total=False):
      provided."""
 
 
-class VectorsDebugInfo(TypedDict, total=False):
-    """ "Contains debugging information specific to vector and hybrid search.").
-
-    :ivar subscores: The breakdown of subscores of the document prior to the chosen result set
-     fusion/combination method such as RRF.
-    :vartype subscores: "QueryResultDocumentSubscores"
-    """
-
-    subscores: "QueryResultDocumentSubscores"
-    """The breakdown of subscores of the document prior to the chosen result set fusion/combination
-     method such as RRF."""
-
-
 class VectorSimilarityThreshold(TypedDict, total=False):
     """The results of the vector query will be filtered based on the vector similarity metric. Note
     this is the canonical definition of similarity metric, not the 'distance' version. The
@@ -1196,78 +471,78 @@ class VectorSimilarityThreshold(TypedDict, total=False):
 class SearchPostRequest(TypedDict, total=False):
     """SearchPostRequest.
 
-    :ivar include_total_count: A value that specifies whether to fetch the total count of results.
-     Default is false. Setting this value to true may have a performance impact. Note that the count
-     returned is an approximation.
-    :vartype include_total_count: bool
+    :ivar count: A value that specifies whether to fetch the total count of results. Default is
+     false. Setting this value to true may have a performance impact. Note that the count returned
+     is an approximation.
+    :vartype count: bool
     :ivar facets: The list of facet expressions to apply to the search query. Each facet expression
      contains a field name, optionally followed by a comma-separated list of name:value pairs.
     :vartype facets: list[str]
     :ivar filter: The OData $filter expression to apply to the search query.
     :vartype filter: str
-    :ivar highlight_fields: The comma-separated list of field names to use for hit highlights. Only
+    :ivar highlight: The comma-separated list of field names to use for hit highlights. Only
      searchable fields can be used for hit highlighting.
-    :vartype highlight_fields: list[str]
-    :ivar highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+    :vartype highlight: list[str]
+    :ivar highlightPostTag: A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. Default is &lt;/em&gt;.
-    :vartype highlight_post_tag: str
-    :ivar highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+    :vartype highlightPostTag: str
+    :ivar highlightPreTag: A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. Default is &lt;em&gt;.
-    :vartype highlight_pre_tag: str
-    :ivar minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+    :vartype highlightPreTag: str
+    :ivar minimumCoverage: A number between 0 and 100 indicating the percentage of the index that
      must be covered by a search query in order for the query to be reported as a success. This
      parameter can be useful for ensuring search availability even for services with only one
      replica. The default is 100.
-    :vartype minimum_coverage: float
-    :ivar order_by: The comma-separated list of OData $orderby expressions by which to sort the
+    :vartype minimumCoverage: float
+    :ivar orderby: The comma-separated list of OData $orderby expressions by which to sort the
      results. Each expression can be either a field name or a call to either the geo.distance() or
      the search.score() functions. Each expression can be followed by asc to indicate ascending, or
      desc to indicate descending. The default is ascending order. Ties will be broken by the match
      scores of documents. If no $orderby is specified, the default sort order is descending by
      document match score. There can be at most 32 $orderby clauses.
-    :vartype order_by: list[str]
-    :ivar query_type: A value that specifies the syntax of the search query. The default is
+    :vartype orderby: list[str]
+    :ivar queryType: A value that specifies the syntax of the search query. The default is
      'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
      "full", and "semantic".
-    :vartype query_type: Union[str, "QueryType"]
-    :ivar scoring_statistics: A value that specifies whether we want to calculate scoring
-     statistics (such as document frequency) globally for more consistent scoring, or locally, for
-     lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
-     before scoring. Using global scoring statistics can increase latency of search queries. Known
-     values are: "local" and "global".
-    :vartype scoring_statistics: Union[str, "ScoringStatistics"]
-    :ivar session_id: A value to be used to create a sticky session, which can help getting more
+    :vartype queryType: Union[str, "QueryType"]
+    :ivar scoringStatistics: A value that specifies whether we want to calculate scoring statistics
+     (such as document frequency) globally for more consistent scoring, or locally, for lower
+     latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally before
+     scoring. Using global scoring statistics can increase latency of search queries. Known values
+     are: "local" and "global".
+    :vartype scoringStatistics: Union[str, "ScoringStatistics"]
+    :ivar sessionId: A value to be used to create a sticky session, which can help getting more
      consistent results. As long as the same sessionId is used, a best-effort attempt will be made
      to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
      interfere with the load balancing of the requests across replicas and adversely affect the
      performance of the search service. The value used as sessionId cannot start with a '_'
      character.
-    :vartype session_id: str
-    :ivar scoring_parameters: The list of parameter values to be used in scoring functions (for
+    :vartype sessionId: str
+    :ivar scoringParameters: The list of parameter values to be used in scoring functions (for
      example, referencePointParameter) using the format name-values. For example, if the scoring
      profile defines a function with a parameter called 'mylocation' the parameter string would be
      "mylocation--122.2,44.8" (without the quotes).
-    :vartype scoring_parameters: list[str]
-    :ivar scoring_profile: The name of a scoring profile to evaluate match scores for matching
+    :vartype scoringParameters: list[str]
+    :ivar scoringProfile: The name of a scoring profile to evaluate match scores for matching
      documents in order to sort the results.
-    :vartype scoring_profile: str
+    :vartype scoringProfile: str
     :ivar debug: Enables a debugging tool that can be used to further explore your reranked
      results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
      "all".
     :vartype debug: Union[str, "QueryDebugMode"]
-    :ivar search_text: A full-text search query expression; Use "*" or omit this parameter to match
-     all documents.
-    :vartype search_text: str
-    :ivar search_fields: The comma-separated list of field names to which to scope the full-text
+    :ivar search: A full-text search query expression; Use "*" or omit this parameter to match all
+     documents.
+    :vartype search: str
+    :ivar searchFields: The comma-separated list of field names to which to scope the full-text
      search. When using fielded search (fieldName:searchExpression) in a full Lucene query, the
      field names of each fielded search expression take precedence over any field names listed in
      this parameter.
-    :vartype search_fields: list[str]
-    :ivar search_mode: A value that specifies whether any or all of the search terms must be
-     matched in order to count the document as a match. Known values are: "any" and "all".
-    :vartype search_mode: Union[str, "SearchMode"]
-    :ivar query_language: A value that specifies the language of the search query. Known values
-     are: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
+    :vartype searchFields: list[str]
+    :ivar searchMode: A value that specifies whether any or all of the search terms must be matched
+     in order to count the document as a match. Known values are: "any" and "all".
+    :vartype searchMode: Union[str, "SearchMode"]
+    :ivar queryLanguage: A value that specifies the language of the search query. Known values are:
+     "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
      "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
      "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
      "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
@@ -1275,10 +550,10 @@ class SearchPostRequest(TypedDict, total=False):
      "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
      "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
      "te-in", and "ur-pk".
-    :vartype query_language: Union[str, "QueryLanguage"]
-    :ivar query_speller: A value that specifies the type of the speller to use to spell-correct
+    :vartype queryLanguage: Union[str, "QueryLanguage"]
+    :ivar speller: A value that specifies the type of the speller to use to spell-correct
      individual search query terms. Known values are: "none" and "lexicon".
-    :vartype query_speller: Union[str, "QuerySpellerType"]
+    :vartype speller: Union[str, "QuerySpellerType"]
     :ivar select: The comma-separated list of fields to retrieve. If unspecified, all fields marked
      as retrievable in the schema are included.
     :vartype select: list[str]
@@ -1291,40 +566,40 @@ class SearchPostRequest(TypedDict, total=False):
      paging, the response will include a continuation token that can be used to issue another Search
      request for the next page of results.
     :vartype top: int
-    :ivar semantic_configuration_name: The name of a semantic configuration that will be used when
+    :ivar semanticConfiguration: The name of a semantic configuration that will be used when
      processing documents for queries of type semantic.
-    :vartype semantic_configuration_name: str
-    :ivar semantic_error_handling: Allows the user to choose whether a semantic call should fail
+    :vartype semanticConfiguration: str
+    :ivar semanticErrorHandling: Allows the user to choose whether a semantic call should fail
      completely (default / current behavior), or to return partial results. Known values are:
      "partial" and "fail".
-    :vartype semantic_error_handling: Union[str, "SemanticErrorMode"]
-    :ivar semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
+    :vartype semanticErrorHandling: Union[str, "SemanticErrorMode"]
+    :ivar semanticMaxWaitInMilliseconds: Allows the user to set an upper bound on the amount of
      time it takes for semantic enrichment to finish processing before the request fails.
-    :vartype semantic_max_wait_in_milliseconds: int
-    :ivar semantic_query: Allows setting a separate search query that will be solely used for
+    :vartype semanticMaxWaitInMilliseconds: int
+    :ivar semanticQuery: Allows setting a separate search query that will be solely used for
      semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
      is a need to use different queries between the base retrieval and ranking phase, and the L2
      semantic phase.
-    :vartype semantic_query: str
+    :vartype semanticQuery: str
     :ivar answers: A value that specifies whether answers should be returned as part of the search
      response. Known values are: "none" and "extractive".
     :vartype answers: Union[str, "QueryAnswerType"]
     :ivar captions: A value that specifies whether captions should be returned as part of the
      search response. Known values are: "none" and "extractive".
     :vartype captions: Union[str, "QueryCaptionType"]
-    :ivar query_rewrites: A value that specifies whether query rewrites should be generated to
+    :ivar queryRewrites: A value that specifies whether query rewrites should be generated to
      augment the search query. Known values are: "none" and "generative".
-    :vartype query_rewrites: Union[str, "QueryRewritesType"]
-    :ivar semantic_fields: The comma-separated list of field names used for semantic ranking.
-    :vartype semantic_fields: list[str]
-    :ivar vector_queries: The query parameters for vector and hybrid search queries.
-    :vartype vector_queries: list["VectorQuery"]
-    :ivar vector_filter_mode: Determines whether or not filters are applied before or after the
+    :vartype queryRewrites: Union[str, "QueryRewritesType"]
+    :ivar semanticFields: The comma-separated list of field names used for semantic ranking.
+    :vartype semanticFields: list[str]
+    :ivar vectorQueries: The query parameters for vector and hybrid search queries.
+    :vartype vectorQueries: list["VectorQuery"]
+    :ivar vectorFilterMode: Determines whether or not filters are applied before or after the
      vector search is performed. Default is 'preFilter' for new indexes. Known values are:
      "postFilter", "preFilter", and "strictPostFilter".
-    :vartype vector_filter_mode: Union[str, "VectorFilterMode"]
-    :ivar hybrid_search: The query parameters to configure hybrid search behaviors.
-    :vartype hybrid_search: "HybridSearch"
+    :vartype vectorFilterMode: Union[str, "VectorFilterMode"]
+    :ivar hybridSearch: The query parameters to configure hybrid search behaviors.
+    :vartype hybridSearch: "HybridSearch"
     """
 
     count: bool
@@ -1458,42 +733,42 @@ class SuggestPostRequest(TypedDict, total=False):
 
     :ivar filter: An OData expression that filters the documents considered for suggestions.
     :vartype filter: str
-    :ivar use_fuzzy_matching: A value indicating whether to use fuzzy matching for the suggestion
-     query. Default is false. When set to true, the query will find suggestions even if there's a
-     substituted or missing character in the search text. While this provides a better experience in
-     some scenarios, it comes at a performance cost as fuzzy suggestion searches are slower and
-     consume more resources.
-    :vartype use_fuzzy_matching: bool
-    :ivar highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+    :ivar fuzzy: A value indicating whether to use fuzzy matching for the suggestion query. Default
+     is false. When set to true, the query will find suggestions even if there's a substituted or
+     missing character in the search text. While this provides a better experience in some
+     scenarios, it comes at a performance cost as fuzzy suggestion searches are slower and consume
+     more resources.
+    :vartype fuzzy: bool
+    :ivar highlightPostTag: A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. If omitted, hit highlighting of suggestions is disabled.
-    :vartype highlight_post_tag: str
-    :ivar highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+    :vartype highlightPostTag: str
+    :ivar highlightPreTag: A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. If omitted, hit highlighting of suggestions is disabled.
-    :vartype highlight_pre_tag: str
-    :ivar minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+    :vartype highlightPreTag: str
+    :ivar minimumCoverage: A number between 0 and 100 indicating the percentage of the index that
      must be covered by a suggestion query in order for the query to be reported as a success. This
      parameter can be useful for ensuring search availability even for services with only one
      replica. The default is 80.
-    :vartype minimum_coverage: float
-    :ivar order_by: The comma-separated list of OData $orderby expressions by which to sort the
+    :vartype minimumCoverage: float
+    :ivar orderby: The comma-separated list of OData $orderby expressions by which to sort the
      results. Each expression can be either a field name or a call to either the geo.distance() or
      the search.score() functions. Each expression can be followed by asc to indicate ascending, or
      desc to indicate descending. The default is ascending order. Ties will be broken by the match
      scores of documents. If no $orderby is specified, the default sort order is descending by
      document match score. There can be at most 32 $orderby clauses.
-    :vartype order_by: list[str]
-    :ivar search_text: The search text to use to suggest documents. Must be at least 1 character,
-     and no more than 100 characters. Required.
-    :vartype search_text: str
-    :ivar search_fields: The comma-separated list of field names to search for the specified search
+    :vartype orderby: list[str]
+    :ivar search: The search text to use to suggest documents. Must be at least 1 character, and no
+     more than 100 characters. Required.
+    :vartype search: str
+    :ivar searchFields: The comma-separated list of field names to search for the specified search
      text. Target fields must be included in the specified suggester.
-    :vartype search_fields: list[str]
+    :vartype searchFields: list[str]
     :ivar select: The comma-separated list of fields to retrieve. If unspecified, only the key
      field will be included in the results.
     :vartype select: list[str]
-    :ivar suggester_name: The name of the suggester as specified in the suggesters collection
-     that's part of the index definition. Required.
-    :vartype suggester_name: str
+    :ivar suggesterName: The name of the suggester as specified in the suggesters collection that's
+     part of the index definition. Required.
+    :vartype suggesterName: str
     :ivar top: The number of suggestions to retrieve. This must be a value between 1 and 100. The
      default is 5.
     :vartype top: int
@@ -1544,38 +819,38 @@ class SuggestPostRequest(TypedDict, total=False):
 class AutocompletePostRequest(TypedDict, total=False):
     """AutocompletePostRequest.
 
-    :ivar search_text: The search text on which to base autocomplete results. Required.
-    :vartype search_text: str
-    :ivar autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
+    :ivar search: The search text on which to base autocomplete results. Required.
+    :vartype search: str
+    :ivar autocompleteMode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
      'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
      auto-completed terms. Known values are: "oneTerm", "twoTerms", and "oneTermWithContext".
-    :vartype autocomplete_mode: Union[str, "AutocompleteMode"]
+    :vartype autocompleteMode: Union[str, "AutocompleteMode"]
     :ivar filter: An OData expression that filters the documents used to produce completed terms
      for the Autocomplete result.
     :vartype filter: str
-    :ivar use_fuzzy_matching: A value indicating whether to use fuzzy matching for the autocomplete
-     query. Default is false. When set to true, the query will autocomplete terms even if there's a
+    :ivar fuzzy: A value indicating whether to use fuzzy matching for the autocomplete query.
+     Default is false. When set to true, the query will autocomplete terms even if there's a
      substituted or missing character in the search text. While this provides a better experience in
      some scenarios, it comes at a performance cost as fuzzy autocomplete queries are slower and
      consume more resources.
-    :vartype use_fuzzy_matching: bool
-    :ivar highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+    :vartype fuzzy: bool
+    :ivar highlightPostTag: A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. If omitted, hit highlighting is disabled.
-    :vartype highlight_post_tag: str
-    :ivar highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+    :vartype highlightPostTag: str
+    :ivar highlightPreTag: A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. If omitted, hit highlighting is disabled.
-    :vartype highlight_pre_tag: str
-    :ivar minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+    :vartype highlightPreTag: str
+    :ivar minimumCoverage: A number between 0 and 100 indicating the percentage of the index that
      must be covered by an autocomplete query in order for the query to be reported as a success.
      This parameter can be useful for ensuring search availability even for services with only one
      replica. The default is 80.
-    :vartype minimum_coverage: float
-    :ivar search_fields: The comma-separated list of field names to consider when querying for
+    :vartype minimumCoverage: float
+    :ivar searchFields: The comma-separated list of field names to consider when querying for
      auto-completed terms. Target fields must be included in the specified suggester.
-    :vartype search_fields: list[str]
-    :ivar suggester_name: The name of the suggester as specified in the suggesters collection
-     that's part of the index definition. Required.
-    :vartype suggester_name: str
+    :vartype searchFields: list[str]
+    :ivar suggesterName: The name of the suggester as specified in the suggesters collection that's
+     part of the index definition. Required.
+    :vartype suggesterName: str
     :ivar top: The number of auto-completed terms to retrieve. This must be a value between 1 and
      100. The default is 5.
     :vartype top: int

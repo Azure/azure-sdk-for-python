@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator, ReturnType
@@ -189,7 +190,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :param batch: A batch of document operations to perform.
         :type batch: ~azure.search.documents.models.IndexDocumentsBatch
         :return: List of IndexingResult
-        :rtype:  list[IndexingResult]
+        :rtype: list[~azure.search.documents.types.IndexingResult]
 
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """

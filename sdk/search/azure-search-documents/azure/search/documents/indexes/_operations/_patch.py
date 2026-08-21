@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from collections.abc import MutableMapping  # pylint: disable=import-error
 from typing import Any, cast, IO, List, Sequence, Union, Optional, TYPE_CHECKING
 
@@ -15,7 +16,7 @@ from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from ..models._models import SearchIndexResponse as _SearchIndexResponse
 from ._operations import (
     _SearchIndexClientOperationsMixin as _SearchIndexClientOperationsMixinGenerated,
@@ -508,22 +509,41 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         return cast(ItemPaged[str], names)
 
     @distributed_trace
-    def get_synonym_maps(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> List[_models.SynonymMap]:
+    def get_synonym_maps(
+        self,
+        *,
+        select: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
+        **kwargs: Any,
+    ) -> List[_models.SynonymMap]:
         """Lists all synonym maps available for a search service.
 
         :keyword select: Selects which top-level properties of the synonym maps to retrieve. Specified
             as a comma-separated list of JSON property names, or '*' for all properties. The default is
             all properties. Default value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: List of synonym maps
         :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_synonym_maps(select=select, **kwargs)
-        assert result.synonym_maps is not None  # Hint for mypy
-        # typed_result = [cast(_models.SynonymMap, x) for x in result.synonym_maps]
-        typed_result = result.synonym_maps
-        return typed_result
+        return list(
+            self._get_synonym_maps(
+                select=select,
+                search=search,
+                page_size=page_size,
+                search_type=search_type,
+                **kwargs,
+            )
+        )
 
     @distributed_trace
     def get_synonym_map_names(self, **kwargs: Any) -> List[str]:
@@ -766,7 +786,10 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._resync(name=name, indexer_resync=indexer_resync, **kwargs)
+        typed_indexer_resync = cast(
+            Union[_models.IndexerResyncBody, _types.IndexerResyncBody, IO[bytes]], indexer_resync
+        )
+        return self._resync(name=name, indexer_resync=typed_indexer_resync, **kwargs)
 
     @distributed_trace
     def reset_documents(
@@ -792,7 +815,10 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._reset_documents(name=name, keys_or_ids=keys_or_ids, overwrite=overwrite, **kwargs)
+        typed_keys_or_ids = cast(
+            Optional[Union[_models.DocumentKeysOrIds, _types.DocumentKeysOrIds, IO[bytes]]], keys_or_ids
+        )
+        return self._reset_documents(name=name, keys_or_ids=typed_keys_or_ids, overwrite=overwrite, **kwargs)
 
     @distributed_trace
     def delete_skillset(
@@ -882,11 +908,18 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._reset_skills(name=name, skill_names=skill_names, **kwargs)
+        typed_skill_names = cast(Union[_models.SkillNames, _types.SkillNames, IO[bytes]], skill_names)
+        return self._reset_skills(name=name, skill_names=typed_skill_names, **kwargs)
 
     @distributed_trace
     def get_skillsets(
-        self, *, select: Optional[List[str]] = None, **kwargs: Any
+        self,
+        *,
+        select: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
+        **kwargs: Any,
     ) -> List[_models.SearchIndexerSkillset]:
         """Lists all skillsets available for a search service.
 
@@ -894,33 +927,63 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: List of all the SearchIndexerSkillsets.
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_skillsets(select=select, **kwargs)
-        assert result.skillsets is not None  # Hint for mypy
-        # typed_result = [cast(_models.SearchIndexerSkillset, x) for x in result.skillsets]
-        typed_result = result.skillsets
-        return typed_result
+        return list(
+            self._get_skillsets(
+                select=select,
+                search=search,
+                page_size=page_size,
+                search_type=search_type,
+                **kwargs,
+            )
+        )
 
     @distributed_trace
-    def get_indexers(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> List[_models.SearchIndexer]:
+    def get_indexers(
+        self,
+        *,
+        select: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
+        **kwargs: Any,
+    ) -> List[_models.SearchIndexer]:
         """Lists all indexers available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: List of all the SearchIndexers.
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_indexers(select=select, **kwargs)
-        assert result.indexers is not None  # Hint for mypy
-        # typed_result = [cast(_models.SearchIndexer, x) for x in result.indexers]
-        typed_result = result.indexers
-        return typed_result
+        return list(
+            self._get_indexers(
+                select=select,
+                search=search,
+                page_size=page_size,
+                search_type=search_type,
+                **kwargs,
+            )
+        )
 
     @distributed_trace
     def get_indexer_names(self, **kwargs: Any) -> Sequence[str]:
@@ -943,7 +1006,13 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
     @distributed_trace
     def get_data_source_connections(
-        self, *, select: Optional[List[str]] = None, **kwargs: Any
+        self,
+        *,
+        select: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
+        **kwargs: Any,
     ) -> List[_models.SearchIndexerDataSourceConnection]:
         """Lists all data source connections available for a search service.
 
@@ -951,15 +1020,26 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: List of all the data source connections.
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_data_source_connections(select=select, **kwargs)
-        assert result.data_sources is not None  # Hint for mypy
-        # typed_result = [cast(_models.SearchIndexerDataSourceConnection, x) for x in result.data_sources]
-        typed_result = result.data_sources
-        return typed_result
+        return list(
+            self._get_data_source_connections(
+                select=select,
+                search=search,
+                page_size=page_size,
+                search_type=search_type,
+                **kwargs,
+            )
+        )
 
     @distributed_trace
     def get_data_source_connection_names(self, **kwargs: Any) -> Sequence[str]:

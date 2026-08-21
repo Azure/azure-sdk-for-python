@@ -30,7 +30,6 @@ from sample_utils import (
     setup_hotel_index,
 )
 
-
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
 run_tag = get_sample_run_tag()
@@ -65,6 +64,7 @@ def main():
             KnowledgeBaseMessageTextContent,
             KnowledgeBaseRetrievalRequest,
             KnowledgeRetrievalAutoReasoningEffort,
+            KnowledgeRetrievalLowReasoningEffort,
         )
 
         index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
@@ -119,13 +119,17 @@ def main():
             retrieve_defaults=KnowledgeBaseRetrieveDefaults(
                 max_runtime_in_seconds=60,
                 max_output_documents=20,
-                max_output_size_in_tokens=4000,
+                max_output_size_in_tokens=5000,
             ),
         )
         created_knowledge_base = index_client.create_or_update_knowledge_base(knowledge_base)
         print(f"Created: knowledge base '{created_knowledge_base.name}'")
         retrieved_knowledge_base = index_client.get_knowledge_base(knowledge_base_name)
         print(f"Retrieved: knowledge base '{retrieved_knowledge_base.name}'")
+        assert retrieved_knowledge_base.retrieval_reasoning_effort is not None
+        assert retrieved_knowledge_base.retrieve_defaults is not None
+        assert retrieved_knowledge_base.retrieval_reasoning_effort.kind == "auto"
+        assert retrieved_knowledge_base.retrieve_defaults.max_output_size_in_tokens == 5000
 
         retrieval_client = KnowledgeBaseRetrievalClient(
             service_endpoint, AzureKeyCredential(key), knowledge_base_name=knowledge_base_name
@@ -133,6 +137,10 @@ def main():
         try:
             request = KnowledgeBaseRetrievalRequest(
                 include_activity=True,
+                retrieval_reasoning_effort=KnowledgeRetrievalLowReasoningEffort(),
+                max_runtime_in_seconds=30,
+                max_output_documents=5,
+                max_output_size=5000,
                 messages=[
                     KnowledgeBaseMessage(
                         role="user",
@@ -140,6 +148,8 @@ def main():
                     )
                 ],
             )
+            assert request.retrieval_reasoning_effort is not None
+            assert request.retrieval_reasoning_effort.kind == "low"
             retrieval_result = retrieval_client.retrieve(request)
         finally:
             retrieval_client.close()
