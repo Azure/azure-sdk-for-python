@@ -31,6 +31,7 @@ from .._encryption import (
     decrypt_blob,
     is_encryption_v2,
     parse_encryption_data,
+    _GCMRegionNonceValidator,
 )
 
 if TYPE_CHECKING:
@@ -68,6 +69,7 @@ async def process_content(
                 end_offset,
                 data.response.headers,
                 expected_encryption_data,
+                encryption.get("gcm_nonce_validator"),
             )
         except Exception as error:
             raise HttpResponseError(
@@ -325,6 +327,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
     async def _setup(self) -> None:
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             await self._get_encryption_data_request()
+            if is_encryption_v2(self._encryption_data):
+                self._encryption_options["gcm_nonce_validator"] = _GCMRegionNonceValidator()
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
