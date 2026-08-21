@@ -587,7 +587,7 @@ def _get_retry_delay_from_headers(headers: Any) -> Optional[int]:
 
 
 def _get_envelope_serialized_size(envelope: TelemetryItem) -> int:
-    """Return the serialized wire size (in bytes) of a single envelope on the wire."""
+    # Return the serialized wire size (in bytes) of a single envelope on the wire.
     try:
         serialized = json.dumps(envelope, cls=SdkJSONEncoder, exclude_readonly=True)
         return len(serialized.encode("utf-8"))
@@ -596,7 +596,7 @@ def _get_envelope_serialized_size(envelope: TelemetryItem) -> int:
 
 
 def _split_oversized_batch(envelopes: List[TelemetryItem]) -> List[List[TelemetryItem]]:
-    """Split an oversized batch into sub-batches that each fit under the ingestion size limit."""
+    # Split an oversized batch into sub-batches that each fit under the ingestion size limit.
     chunks: List[List[TelemetryItem]] = []
     current: List[TelemetryItem] = []
     current_size = 2  # account for the enclosing "[" and "]" of the JSON array
@@ -623,7 +623,7 @@ def _split_oversized_batch(envelopes: List[TelemetryItem]) -> List[List[Telemetr
 
 
 def _is_item_too_large(message: Optional[str]) -> bool:
-    """Determine if a per-item error indicates the envelope exceeded the ingestion size limit."""
+    # Determine if a per-item error indicates the envelope exceeded the ingestion size limit.
     if not message:
         return False
     lowered = message.lower()
