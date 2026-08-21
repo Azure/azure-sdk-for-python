@@ -1,7 +1,11 @@
 {
-  "apiVersion": "2025-08-02",
-  "commit": "222af3670e36c5083cb0dc8a9c2677a8f77f8958",
+  "apiVersion": "2026-06-01-preview",
+  "apiVersions": {
+    "Microsoft.IoTFirmwareDefense": "2026-06-01-preview"
+  },
+  "commit": "4362bdee9aba8de72a82c14063e3bd5f3e55c3bf",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/fist/IotFirmwareDefense.Management",
-  "emitterVersion": "0.48.2"
+  "typespec_src": "specification/fist/resource-manager/Microsoft.IoTFirmwareDefense/IoTFirmwareDefense",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }
