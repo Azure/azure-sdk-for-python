@@ -1,5 +1,97 @@
 # Release History
 
+## 2.0.0 (2026-08-21)
+
+### Features Added
+
+  - Client `HybridConnectivityMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `HybridConnectivityMgmtClient` added parameter `polling_interval` in method `__init__`
+  - Client `HybridConnectivityMgmtClient` added method `send_request`
+  - Client `HybridConnectivityMgmtClient` added operation group `generate_aws_template`
+  - Client `HybridConnectivityMgmtClient` added operation group `generate_gcp_template`
+  - Client `HybridConnectivityMgmtClient` added operation group `inventory`
+  - Client `HybridConnectivityMgmtClient` added operation group `public_cloud_connectors`
+  - Client `HybridConnectivityMgmtClient` added operation group `solution_configurations`
+  - Client `HybridConnectivityMgmtClient` added operation group `solution_types`
+  - Model `ServiceConfigurationResource` added property `properties`
+  - Added model `AADProfileProperties`
+  - Added model `AwsCloudProfile`
+  - Added model `AwsCloudProfileUpdate`
+  - Added enum `CloudNativeType`
+  - Added model `ExtensionResource`
+  - Added model `GcpCloudProfile`
+  - Added model `GcpCloudProfileUpdate`
+  - Added model `GcpOrganizationProperties`
+  - Added model `GcpOrganizationPropertiesUpdate`
+  - Added model `GcpProjectProperties`
+  - Added enum `GcpTemplateFormat`
+  - Added model `GenerateAwsTemplateRequest`
+  - Added model `GenerateAwsTemplateResponse`
+  - Added model `GenerateGcpTemplateRequest`
+  - Added model `GenerateGcpTemplateResponse`
+  - Added enum `HostType`
+  - Added model `IngressProfileProperties`
+  - Added model `InventoryProperties`
+  - Added model `InventoryResource`
+  - Added model `OperationStatusResult`
+  - Added model `PublicCloudConnector`
+  - Added model `PublicCloudConnectorProperties`
+  - Added model `PublicCloudConnectorPropertiesUpdate`
+  - Added model `PublicCloudConnectorUpdate`
+  - Added model `RelayNamespaceAccessProperties`
+  - Added enum `ResourceProvisioningState`
+  - Added model `ServiceConfigurationProperties`
+  - Added model `ServiceConfigurationPropertiesPatch`
+  - Added model `SolutionConfiguration`
+  - Added model `SolutionConfigurationProperties`
+  - Added model `SolutionConfigurationPropertiesUpdate`
+  - Added enum `SolutionConfigurationStatus`
+  - Added model `SolutionConfigurationUpdate`
+  - Added model `SolutionSettings`
+  - Added model `SolutionTypeProperties`
+  - Added model `SolutionTypeResource`
+  - Added model `SolutionTypeSettings`
+  - Added model `SolutionTypeSettingsProperties`
+  - Added model `TrackedResource`
+  - Added model `TrackedResourceUpdate`
+  - Added operation group `GenerateAwsTemplateOperations`
+  - Added operation group `GenerateGcpTemplateOperations`
+  - Added operation group `InventoryOperations`
+  - Added operation group `PublicCloudConnectorsOperations`
+  - Added operation group `SolutionConfigurationsOperations`
+  - Added operation group `SolutionTypesOperations`
+
+### Breaking Changes
+
+  - Method `HybridConnectivityMgmtClient.__init__` inserted a `positional_or_keyword` parameter `subscription_id`
+  - Model `EndpointAccessResource` deleted or renamed its instance variable `access_key`
+  - Model `EndpointAccessResource` deleted or renamed its instance variable `expires_on`
+  - Model `EndpointAccessResource` deleted or renamed its instance variable `hybrid_connection_name`
+  - Model `EndpointAccessResource` deleted or renamed its instance variable `namespace_name`
+  - Model `EndpointAccessResource` deleted or renamed its instance variable `namespace_name_suffix`
+  - Model `EndpointAccessResource` deleted or renamed its instance variable `service_configuration_token`
+  - Model `IngressGatewayResource` deleted or renamed its instance variable `access_key`
+  - Model `IngressGatewayResource` deleted or renamed its instance variable `expires_on`
+  - Model `IngressGatewayResource` deleted or renamed its instance variable `hostname`
+  - Model `IngressGatewayResource` deleted or renamed its instance variable `hybrid_connection_name`
+  - Model `IngressGatewayResource` deleted or renamed its instance variable `namespace_name`
+  - Model `IngressGatewayResource` deleted or renamed its instance variable `namespace_name_suffix`
+  - Model `IngressGatewayResource` deleted or renamed its instance variable `server_id`
+  - Model `IngressGatewayResource` deleted or renamed its instance variable `service_configuration_token`
+  - Model `IngressGatewayResource` deleted or renamed its instance variable `tenant_id`
+  - Model `ServiceConfigurationResource` deleted or renamed its instance variable `port`
+  - Model `ServiceConfigurationResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `ServiceConfigurationResource` deleted or renamed its instance variable `resource_id`
+  - Model `ServiceConfigurationResource` deleted or renamed its instance variable `service_name`
+  - Model `ServiceConfigurationResourcePatch` deleted or renamed its instance variable `port`
+  - Deleted or renamed model `EndpointsList`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `ServiceConfigurationList`
+  - Method `EndpointsOperations.list_credentials` parameter `expiresin` changed default value from `10800` to `none`
+  - Method `EndpointsOperations.list_credentials` changed its parameter `expiresin` from `positional_or_keyword` to `keyword_only`
+  - Method `EndpointsOperations.list_ingress_gateway_credentials` parameter `expiresin` changed default value from `10800` to `none`
+  - Method `EndpointsOperations.list_ingress_gateway_credentials` changed its parameter `expiresin` from `positional_or_keyword` to `keyword_only`
+
 ## 2.0.0b1 (2025-04-01)
 
 ### Features Added
