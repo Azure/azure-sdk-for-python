@@ -13,10 +13,10 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class FeatureSetBackfillMetadata(RestTranslatableMixin):
     """Feature Set Backfill Metadata
 
-    :param job_ids: A list of IDs of the backfill jobs. Defaults to None.
-    :type job_ids: Optional[List[str]]
-    :param type: The type of the backfill job. Defaults to None.
-    :type type: Optional[str]
+    :keyword job_ids: A list of IDs of the backfill jobs. Defaults to None.
+    :paramtype job_ids: Optional[List[str]]
+    :keyword type: The type of the backfill job. Defaults to None.
+    :paramtype type: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """

@@ -7,6 +7,7 @@ Unit tests for azure-ai-discovery models.
 
 These tests verify model initialization without making HTTP calls.
 """
+
 import pytest
 from azure.ai.discovery import models
 
@@ -95,14 +96,10 @@ class TestBookshelfModelsUnit:
         assert kb.description == "A test knowledge base"
         assert kb.copilot_instruction == "Test instruction"
 
-    def test_knowledge_base_version_model(self):
-        """Test KnowledgeBaseVersion model can be initialized."""
-        version = models.KnowledgeBaseVersion(
-            description="Version 1",
-            copilot_instruction="Instruction v1",
-        )
-        assert version.description == "Version 1"
-        assert version.copilot_instruction == "Instruction v1"
+    def test_search_request_model(self):
+        """Test SearchRequest model can be initialized (GA-only)."""
+        req = models.SearchRequest(query="hello world")
+        assert req.query == "hello world"
 
     def test_storage_asset_reference_model(self):
         """Test StorageAssetReference model can be initialized."""

@@ -11,22 +11,16 @@ Use recorded tests to validate samples with `SyncSampleExecutor` and `AsyncSampl
 
 ## Sample test logging
 
-Optionally enable logging to capture sample execution results in log files (useful for monitoring and alerting):
-
-```bash
-# In .env - uncomment to enable logging
-SAMPLE_TEST_ERROR_LOG=<sample_filename>_errors_<timestamp>.log
-SAMPLE_TEST_FAILED_LOG=<sample_filename>_failed_<timestamp>.log
-SAMPLE_TEST_PASSED_LOG=<sample_filename>_success_<timestamp>.log
-```
+In live mode, sample execution always writes a log file to the system temp directory.
 
 Log types:
 
-- **`SAMPLE_TEST_ERROR_LOG`**: Sample crashed with an exception during execution
-- **`SAMPLE_TEST_FAILED_LOG`**: Sample ran successfully but LLM validation failed (incorrect output)
-- **`SAMPLE_TEST_PASSED_LOG`**: Sample ran successfully and LLM validation passed (correct output)
+- `*_errors_<timestamp>.log`: Sample crashed with an exception during execution
+- `*_failed_<timestamp>.log`: Sample ran successfully but LLM validation failed (incorrect output)
+- `*_success_<timestamp>.log`: Sample ran successfully and LLM validation passed (correct output)
+- `*_output_<timestamp>.log`: Captured `print()` output only, without SDK debug log entries
 
-Logs are written to the system's temp directory with the specified filename format. Each log includes the sample path, status/error details, exception traceback (for errors), and all captured print statements.
+Logs are written to the system's temp directory with those fixed filename templates. The `*_errors_*`, `*_failed_*`, and `*_success_*` logs include the sample path, status/error details, exception traceback (for errors), and all captured print/debug statements. The `*_output_*` log contains only captured `print()` output.
 
 ## Sync example
 
@@ -137,7 +131,7 @@ servicePreparer = functools.partial(
 
 - `@pytest.mark.parametrize`: Drives one test per sample file. Use `samples_to_test` or `samples_to_skip` with `get_sample_paths` / `get_async_sample_paths`.
 - `@SamplePathPasser`: Forwards the sample path to the recorder decorators.
-- `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX` when samples use httpx in addition to the default `RecordedTransport.AZURE_CORE`.
+- `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX` when samples use httpx2 in addition to the default `RecordedTransport.AZURE_CORE`.
 - `execute` / `execute_async`: Run the sample; any exception fails the test.
 - `validate_print_calls_by_llm` / `validate_print_calls_by_llm_async`: Validate captured print output with LLM instructions resolved automatically from the sample folder. You can still pass an explicit `instructions` override when needed.
 - `kwargs` in the test function: A dictionary with environment variables in key and value pairs.
@@ -231,7 +225,7 @@ executor = SyncSampleExecutor(
 
 Behavior:
 
-- **Samples in the allowlist:** Pass the test even when LLM validation fails. A warning message is printed to the console, and a failed report is still generated (if `SAMPLE_TEST_FAILED_LOG` is configured in `.env`).
+- **Samples in the allowlist:** Pass the test even when LLM validation fails. A warning message is printed to the console, and a failed report is still generated.
 - **Samples not in the allowlist:** Fail the test when LLM validation fails (existing behavior).
 - **All samples:** Execution errors (exceptions) always fail the test, regardless of the allowlist.
 
@@ -248,7 +242,7 @@ def _preprocess_validation(entries: list[str]) -> str:
     """Filter debug log entries and annotate metric counters."""
     import re
     # Remove SDK debug log entries (they start with "[module.name]")
-    _NOISE = re.compile(r"^\[(?:azure\.|openai\.|httpx|httpcore|msrest)")
+    _NOISE = re.compile(r"^\[(?:azure\.|openai\.|httpx2|httpcore|msrest)")
     kept = [e for e in entries if not _NOISE.match(e.strip())]
     return "\n".join(kept)
 

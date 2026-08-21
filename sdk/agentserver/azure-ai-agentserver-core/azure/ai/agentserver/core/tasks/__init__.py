@@ -31,7 +31,6 @@ Public API::
         MultiTurnTask,
         RetryPolicy,
         TaskContext,
-        TaskMetadata,
         TaskRun,
         TaskFailed,
         TaskCancelled,
@@ -49,6 +48,7 @@ Public API::
 
 from ._context import EntryMode, TaskContext
 from ._decorator import MultiTurnTask, Task, multi_turn_task, task
+from ._enablement import resilient_tasks_enabled, set_resilient_tasks_enabled
 from ._exceptions import (
     InputTooLarge,
     LastInputIdPreconditionFailed,
@@ -61,7 +61,7 @@ from ._exceptions import (
     TaskFailed,
     TaskManagerNotInitialized,
 )
-from ._metadata import JSONValue, TaskMetadata
+from ..storage import JSONValue
 from ._retry import RetryPolicy
 from ._run import TaskRun
 
@@ -82,9 +82,11 @@ __all__ = [
     "multi_turn_task",
     "Task",
     "MultiTurnTask",
-    # Context + metadata
+    # Enablement switch
+    "set_resilient_tasks_enabled",
+    "resilient_tasks_enabled",
+    # Context
     "TaskContext",
-    "TaskMetadata",
     "EntryMode",
     # Type aliases + TypedDicts
     "JSONValue",

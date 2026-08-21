@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-31-preview/AzureIaasVm/ValidateOperationResults.json
+# x-ms-original-file: 2026-07-01/AzureIaasVm/ValidateOperationResults.json
 if __name__ == "__main__":
     main()

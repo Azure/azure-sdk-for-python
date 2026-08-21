@@ -86,6 +86,28 @@ def get_check_dest_dir(
     return dest_dir
 
 
+async def _discard_oversized_line(stream: asyncio.StreamReader) -> None:
+    """Discard bytes up to and including the next newline (or EOF) without
+    capturing them.
+
+    When a single line exceeds the reader's line-length limit, ``readuntil()``
+    raises and leaves the buffered bytes in place -- so it would raise again on
+    the same bytes forever. Draining past the newline lets streaming resume with
+    the next line while never reading the oversized content into memory.
+    """
+    while True:
+        try:
+            await stream.readuntil()
+            return
+        except asyncio.LimitOverrunError as ex:
+            # Still no newline within the limit; drop the buffered bytes and
+            # keep scanning for the newline that ends the oversized line.
+            await stream.readexactly(ex.consumed)
+        except asyncio.IncompleteReadError:
+            # Reached EOF before a newline; nothing left to drain.
+            return
+
+
 async def _tee_stream(
     proc: "asyncio.subprocess.Process", package: str, check: str
 ) -> tuple:
@@ -110,7 +132,21 @@ async def _tee_stream(
             return ""
         chunks: List[str] = []
         while True:
-            line_b = await stream.readline()
+            try:
+                line_b = await stream.readuntil()
+            except asyncio.LimitOverrunError:
+                # The line is larger than the stream limit. Don't read it --
+                # log that it was too long, discard it, and keep going. The
+                # notice is emitted before draining so it appears promptly even
+                # if the oversized line takes a while to terminate.
+                notice = "streaming log line exceeded buffer limit, the line is dropped (see dispatch_checks.py)\n"
+                chunks.append(notice)
+                sink.write(prefix + notice)
+                sink.flush()
+                await _discard_oversized_line(stream)
+                continue
+            except asyncio.IncompleteReadError as ex:
+                line_b = ex.partial
             if not line_b:
                 break
             line = line_b.decode(errors="replace")
@@ -511,12 +547,14 @@ def configure_interrupt_handling():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="""
+    parser = argparse.ArgumentParser(
+        description="""
 This script is the single point for all checks invoked by CI within this repo. It works in two phases.
     1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
     2. Invoke one or multiple `checks` environments for each package identified as in scope.
 In the case of an environment invoking `pytest`, results can be collected in a junit xml file, and test markers can be selected via --mark_arg.
-""")
+"""
+    )
 
     parser.add_argument(
         "glob_string",

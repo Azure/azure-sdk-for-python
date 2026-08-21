@@ -49,7 +49,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     :paramtype command: Optional[str]
     :keyword code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
-    :type code: Optional[str]
+    :paramtype code: Optional[str]
     :keyword environment: The environment that the job will run in.
     :paramtype environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
     :keyword distribution: The configuration for distributed jobs. Defaults to None.

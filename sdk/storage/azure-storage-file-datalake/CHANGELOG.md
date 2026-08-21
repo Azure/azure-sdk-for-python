@@ -1,12 +1,22 @@
 # Release History
 
-## 12.26.0b1 (Unreleased)
+## 12.27.0b1 (Unreleased)
 
 ### Features Added
 
 ### Other Changes
 - Content-Type for append_data has changed from application/json to octet-stream
 - Dropped support for legacy transports
+
+## 12.26.0b1 (2026-08-10)
+
+### Features Added
+- Added support for service version 2026-10-06.
+
+## 12.25.0 (2026-06-08)
+
+### Features Added
+- Stable release of features from 12.25.0b1
 
 ## 12.24.0 (2026-05-14)
 

@@ -37,7 +37,9 @@ from ...operations._container_operations import (
     build_get_access_policy_request,
     build_get_account_info_request,
     build_get_properties_request,
+    build_list_blob_flat_segment_apache_arrow_request,
     build_list_blob_flat_segment_request,
+    build_list_blob_hierarchy_segment_apache_arrow_request,
     build_list_blob_hierarchy_segment_request,
     build_release_lease_request,
     build_rename_request,
@@ -1667,6 +1669,132 @@ class ContainerOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    async def list_blob_flat_segment_apache_arrow(
+        self,
+        prefix: Optional[str] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        timeout: Optional[int] = None,
+        start_from: Optional[str] = None,
+        end_before: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """The List Blobs operation returns a list of the blobs under the specified container. This
+        operation is for Apache Arrow use case so response is returned as raw to be deserialized by the
+        client.
+
+        :param prefix: Filters the results to return only containers whose name begins with the
+         specified prefix. Default value is None.
+        :type prefix: str
+        :param marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client. Default value is None.
+        :type marker: str
+        :param maxresults: Specifies the maximum number of containers to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Note that if the listing operation crosses a partition boundary, then the service
+         will return a continuation token for retrieving the remainder of the results. For this reason,
+         it is possible that the service will return fewer results than specified by maxresults, or than
+         the default of 5000. Default value is None.
+        :type maxresults: int
+        :param include: Include this parameter to specify one or more datasets to include in the
+         response. Default value is None.
+        :type include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
+        :type timeout: int
+        :param start_from: Specifies the relative path to list paths from. For non-recursive list, only
+         one entity level is supported; For recursive list, multiple entity levels are supported.
+         (Inclusive). Default value is None.
+        :type start_from: str
+        :param end_before: Specifies the relative path to end before list paths. (Exclusive). Default
+         value is None.
+        :type end_before: str
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
+        :type request_id_parameter: str
+        :return: AsyncIterator[bytes] or the result of cls(response)
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_list_blob_flat_segment_apache_arrow_request(
+            url=self._config.url,
+            version=self._config.version,
+            prefix=prefix,
+            marker=marker,
+            maxresults=maxresults,
+            include=include,
+            timeout=timeout,
+            start_from=start_from,
+            end_before=end_before,
+            request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
     async def list_blob_hierarchy_segment(
         self,
         delimiter: str,
@@ -1781,6 +1909,139 @@ class ContainerOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         deserialized = self._deserialize("ListBlobsHierarchySegmentResponse", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def list_blob_hierarchy_segment_apache_arrow(
+        self,
+        delimiter: str,
+        prefix: Optional[str] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        timeout: Optional[int] = None,
+        start_from: Optional[str] = None,
+        end_before: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """[Update] The List Blobs operation returns a list of the blobs under the specified container.
+        This operation is for Apache Arrow use case so response is returned as raw to be deserialized
+        by the client.
+
+        :param delimiter: When the request includes this parameter, the operation returns a BlobPrefix
+         element in the response body that acts as a placeholder for all blobs whose names begin with
+         the same substring up to the appearance of the delimiter character. The delimiter may be a
+         single character or a string. Required.
+        :type delimiter: str
+        :param prefix: Filters the results to return only containers whose name begins with the
+         specified prefix. Default value is None.
+        :type prefix: str
+        :param marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client. Default value is None.
+        :type marker: str
+        :param maxresults: Specifies the maximum number of containers to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Note that if the listing operation crosses a partition boundary, then the service
+         will return a continuation token for retrieving the remainder of the results. For this reason,
+         it is possible that the service will return fewer results than specified by maxresults, or than
+         the default of 5000. Default value is None.
+        :type maxresults: int
+        :param include: Include this parameter to specify one or more datasets to include in the
+         response. Default value is None.
+        :type include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
+        :type timeout: int
+        :param start_from: Specifies the relative path to list paths from. For non-recursive list, only
+         one entity level is supported; For recursive list, multiple entity levels are supported.
+         (Inclusive). Default value is None.
+        :type start_from: str
+        :param end_before: Specifies the relative path to end before list paths. (Exclusive). Default
+         value is None.
+        :type end_before: str
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
+        :type request_id_parameter: str
+        :return: AsyncIterator[bytes] or the result of cls(response)
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_list_blob_hierarchy_segment_apache_arrow_request(
+            url=self._config.url,
+            delimiter=delimiter,
+            version=self._config.version,
+            prefix=prefix,
+            marker=marker,
+            maxresults=maxresults,
+            include=include,
+            timeout=timeout,
+            start_from=start_from,
+            end_before=end_before,
+            request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

@@ -40,9 +40,11 @@ EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
         "multi_turn_task",
         "Task",
         "MultiTurnTask",
+        # Enablement switch
+        "set_resilient_tasks_enabled",
+        "resilient_tasks_enabled",
         "RetryPolicy",
         "TaskContext",
-        "TaskMetadata",
         # Type aliases + TypedDicts
         "JSONValue",
         "TaskErrorDict",

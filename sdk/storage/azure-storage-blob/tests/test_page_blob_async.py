@@ -451,8 +451,10 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         data = self.get_random_bytes(512)
-        await blob.upload_page(data, offset=0, length=512, validate_content=True)
+        resp = await blob.upload_page(data, offset=0, length=512, validate_content=True)
         # Assert
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -697,6 +699,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         )
         assert resp.get("etag") is not None
         assert resp.get("last_modified") is not None
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
 
         # Assert the destination blob is constructed correctly
         blob_properties = await destination_blob_client.get_blob_properties()

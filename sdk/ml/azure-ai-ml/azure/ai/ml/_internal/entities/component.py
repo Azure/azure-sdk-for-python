@@ -43,34 +43,34 @@ class InternalComponent(Component, AdditionalIncludesMixin):
     """Base class for internal component version, used to define an internal component. Recommended to create instance
     with component_factory.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the resource.
-    :type version: str
-    :param id:  Global id of the resource, Azure Resource Manager ID.
-    :type id: str
-    :param type:  Type of the command, supported is 'command'.
-    :type type: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict
-    :param properties: Internal use only.
-    :type properties: dict
-    :param display_name: Display name of the component.
-    :type display_name: str
-    :param is_deterministic: Whether the component is deterministic.
-    :type is_deterministic: bool
-    :param inputs: Inputs of the component.
-    :type inputs: dict
-    :param outputs: Outputs of the component.
-    :type outputs: dict
-    :param yaml_str: The yaml string of the component.
-    :type yaml_str: str
-    :param _schema: Schema of the component.
-    :type _schema: str
-    :param creation_context: Creation metadata of the component.
-    :type creation_context: ~azure.ai.ml.entities.SystemData
+    :keyword name: Name of the resource.
+    :paramtype name: str
+    :keyword version: Version of the resource.
+    :paramtype version: str
+    :keyword id:  Global id of the resource, Azure Resource Manager ID.
+    :paramtype id: str
+    :keyword type:  Type of the command, supported is 'command'.
+    :paramtype type: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict
+    :keyword properties: Internal use only.
+    :paramtype properties: dict
+    :keyword display_name: Display name of the component.
+    :paramtype display_name: str
+    :keyword is_deterministic: Whether the component is deterministic.
+    :paramtype is_deterministic: bool
+    :keyword inputs: Inputs of the component.
+    :paramtype inputs: dict
+    :keyword outputs: Outputs of the component.
+    :paramtype outputs: dict
+    :keyword yaml_str: The yaml string of the component.
+    :paramtype yaml_str: str
+    :keyword _schema: Schema of the component.
+    :paramtype _schema: str
+    :keyword creation_context: Creation metadata of the component.
+    :paramtype creation_context: ~azure.ai.ml.entities.SystemData
     """
 
     def __init__(
