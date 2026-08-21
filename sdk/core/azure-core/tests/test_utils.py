@@ -5,11 +5,12 @@
 # pylint: disable=line-too-long,useless-suppression
 import sys
 from unittest.mock import patch
+from urllib.parse import urlparse
 
 import pytest
 from azure.core.utils import case_insensitive_dict
 from azure.core.utils._utils import get_running_async_lock, CaseInsensitiveSet
-from azure.core.pipeline.policies._utils import parse_retry_after, get_challenge_parameter, sanitize_url
+from azure.core.pipeline.policies._utils import parse_retry_after, get_challenge_parameter, sanitize_url, domain_changed
 
 
 @pytest.fixture()
@@ -280,6 +281,41 @@ def test_sanitize_url():
 def test_sanitize_url_with_different_placeholder():
     url = "https://www.example.com?q1=value1&q2=value2"
     assert sanitize_url(url, {"q1"}, "SANITIZED") == "https://www.example.com?q1=value1&q2=SANITIZED"
+
+
+@pytest.mark.parametrize(
+    "original,redirect,expected",
+    [
+        # Identical URLs -> no change.
+        ("https://example.com", "https://example.com", False),
+        # Same host, different path -> no change.
+        ("https://example.com/foo", "https://example.com/bar", False),
+        # Different host -> change.
+        ("https://example.com", "https://example1.com", True),
+        # Hostname comparison is case-insensitive (urlparse normalizes).
+        ("https://Example.com", "https://example.com", False),
+        # Different scheme on same host -> change.
+        ("https://example.com", "http://example.com", True),
+        # Different explicit port on same host -> change.
+        ("https://example.com:443", "https://example.com:8443", True),
+        # Same host, same explicit port -> no change.
+        ("https://example.com:8443", "https://example.com:8443", False),
+        # Default port vs absent port for https -> no change.
+        ("https://example.com:443", "https://example.com", False),
+        ("https://example.com", "https://example.com:443", False),
+        # Default port vs absent port for http -> no change.
+        ("http://example.com:80", "http://example.com", False),
+        # Default port for one scheme is not the default for a different scheme.
+        ("https://example.com:80", "https://example.com", True),
+    ],
+)
+def test_domain_changed(original, redirect, expected):
+    assert domain_changed(urlparse(original), redirect) is expected
+
+
+def test_domain_changed_no_original_domain():
+    # When redirects are disabled the original domain is None and is never considered changed.
+    assert domain_changed(None, "https://example.com") is False
 
 
 class TestCaseInsensitiveSet:
