@@ -4,7 +4,7 @@ license: MIT
 metadata:
   version: "1.0.0"
   distribution: shared
-description: 'Detect and mitigate SDK Breaking changes for an SDK package which is generated from TypeSpec. WHEN: "Detect SDK breaking changes for a service", "Detect SDK breaking changes for an SDK package", "Detect and mitigate SDK breaking changes for a service", "Detect and mitigate SDK breaking changes for an SDK package". INVOKES: skill: azsdk-common-generate-sdk-locally; MCP tools: azsdk_customized_code_update, azsdk_package_detect_breaking_change.'
+description: 'Detect and mitigate SDK Breaking changes for an SDK package which is generated from TypeSpec. WHEN: "Detect SDK breaking changes for a service", "Detect SDK breaking changes for an SDK package", "Detect and mitigate SDK breaking changes for a service", "Detect and mitigate SDK breaking changes for an SDK package". INVOKES: skill: azsdk-common-generate-sdk-locally; MCP tools: azure-sdk-mcp:azsdk_customized_code_update, azure-sdk-mcp:azsdk_package_detect_breaking_change.'
 compatibility: "azure-sdk-mcp server, local azure-sdk-for-{language} clone, language build tools"
 ---
 
