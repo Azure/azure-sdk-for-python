@@ -32,7 +32,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_AAD_SCOPE,
-    _MAX_INGESTION_PAYLOAD_SIZE_BYTES,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
     _REQ_FAILURE_NAME,
@@ -55,6 +54,8 @@ from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
     TrackResponse,
 )
+
+_MAX_INGESTION_PAYLOAD_SIZE_BYTES = 30 * 1000 * 1000
 
 TEST_AUTH_POLICY = "TEST_AUTH_POLICY"
 TEST_TEMP_DIR = "TEST_TEMP_DIR"

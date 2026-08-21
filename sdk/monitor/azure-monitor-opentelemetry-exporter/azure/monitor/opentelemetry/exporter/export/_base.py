@@ -322,15 +322,7 @@ class BaseExporter:
     def _handle_payload_too_large(
         self, envelopes: List[TelemetryItem], response_error: HttpResponseError
     ) -> ExportResult:
-        """Handle a 413 (Payload Too Large) response by splitting and persisting for retry.
-
-        :param envelopes: The telemetry envelopes that were rejected as too large.
-        :type envelopes: list[~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem]
-        :param response_error: The error returned for the oversized request.
-        :type response_error: ~azure.core.exceptions.HttpResponseError
-        :return: The export result for the oversized batch.
-        :rtype: ~azure.monitor.opentelemetry.exporter.export._base.ExportResult
-        """
+        """Handle a 413 (Payload Too Large) response by splitting and persisting for retry."""
         if not self.storage:
             if not self._is_stats_exporter():
                 logger.debug(
@@ -496,11 +488,9 @@ class BaseExporter:
                                     ):
                                         track_dropped_items([envelopes[error.index]], error.status_code)
                                 dropped_envelope = envelopes[error.index] if error.index is not None else None
-                                # The ingestion endpoint already tells us when an item was rejected
-                                # for exceeding the per-item size limit, so trust that message
-                                # instead of re-serializing every dropped envelope to measure it.
-                                # Such an envelope is huge (and potentially PII-laden), so stop the
-                                # log at the server message and leave the payload out.
+                                # When the server rejects an item for exceeding the per-item size limit
+                                # (detected via _is_item_too_large), omit its payload from the log: it is
+                                # too large to dump and may contain PII, which would leak and flood the logs.
                                 if dropped_envelope is None or _is_item_too_large(error.message):
                                     dropped_envelope = ""  # type: ignore[assignment]
                                 logger.error(
