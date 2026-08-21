@@ -31,7 +31,6 @@ from sample_utils import (
     setup_hotel_index_async,
 )
 
-
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
 run_tag = get_sample_run_tag()
@@ -64,6 +63,7 @@ async def main():
         KnowledgeBaseMessageTextContent,
         KnowledgeBaseRetrievalRequest,
         KnowledgeRetrievalAutoReasoningEffort,
+        KnowledgeRetrievalLowReasoningEffort,
     )
 
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
@@ -127,6 +127,10 @@ async def main():
             print(f"Created: knowledge base '{created_knowledge_base.name}'")
             retrieved_knowledge_base = await index_client.get_knowledge_base(knowledge_base_name)
             print(f"Retrieved: knowledge base '{retrieved_knowledge_base.name}'")
+            assert retrieved_knowledge_base.retrieval_reasoning_effort is not None
+            assert retrieved_knowledge_base.retrieve_defaults is not None
+            assert retrieved_knowledge_base.retrieval_reasoning_effort.kind == "auto"
+            assert retrieved_knowledge_base.retrieve_defaults.max_output_size_in_tokens == 4000
 
             retrieval_client = KnowledgeBaseRetrievalClient(
                 service_endpoint, AzureKeyCredential(key), knowledge_base_name=knowledge_base_name
@@ -134,6 +138,10 @@ async def main():
             try:
                 request = KnowledgeBaseRetrievalRequest(
                     include_activity=True,
+                    retrieval_reasoning_effort=KnowledgeRetrievalLowReasoningEffort(),
+                    max_runtime_in_seconds=30,
+                    max_output_documents=5,
+                    max_output_size=5000,
                     messages=[
                         KnowledgeBaseMessage(
                             role="user",
@@ -141,6 +149,8 @@ async def main():
                         )
                     ],
                 )
+                assert request.retrieval_reasoning_effort is not None
+                assert request.retrieval_reasoning_effort.kind == "low"
                 retrieval_result = await retrieval_client.retrieve(request)
             finally:
                 await retrieval_client.close()

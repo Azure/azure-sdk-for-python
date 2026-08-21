@@ -7,7 +7,9 @@
 
 """
 DESCRIPTION:
-    Demonstrates preview Work IQ knowledge source setup and retrieval using async clients.
+    Demonstrates preview Work IQ knowledge source setup and retrieval using async clients. The
+    federated credential must trust the managed identity used by the Search service, and the Entra
+    app must have the WorkIQAgent.Ask delegated permission before this sample runs.
 
 USAGE:
     python sample_knowledge_source_workiq_preview_async.py
@@ -29,7 +31,6 @@ from sample_utils import (
     get_sample_run_tag,
     print_retrieval_summary,
 )
-
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
@@ -60,21 +61,31 @@ async def main():
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     async with index_client:
         try:
+            tenant_id = os.getenv("AZURE_WORKIQ_TENANT_ID")
+            entra_authentication = EntraAppAuthentication(
+                application_id=os.environ["AZURE_WORKIQ_APPLICATION_ID"],
+                federated_credential_id=os.environ["AZURE_WORKIQ_FEDERATED_CREDENTIAL_ID"],
+                tenant_id=tenant_id,
+            )
+            if tenant_id is None:
+                assert entra_authentication.tenant_id is None
+                print("Tenant omitted: Search uses the Search service tenant.")
+
             knowledge_source = WorkIQKnowledgeSource(
                 name=knowledge_source_name,
                 description="Hotel Work IQ knowledge source",
                 work_iq_parameters=WorkIQKnowledgeSourceParameters(
-                    entra_app_authentication=EntraAppAuthentication(
-                        application_id=os.environ["AZURE_WORKIQ_APPLICATION_ID"],
-                        federated_credential_id=os.environ["AZURE_WORKIQ_FEDERATED_CREDENTIAL_ID"],
-                        tenant_id=os.getenv("AZURE_WORKIQ_TENANT_ID"),
-                    )
+                    entra_app_authentication=entra_authentication,
                 ),
             )
             created_knowledge_source = await index_client.create_or_update_knowledge_source(knowledge_source)
             print(f"Created: knowledge source '{created_knowledge_source.name}'")
 
             retrieved_knowledge_source = await index_client.get_knowledge_source(knowledge_source_name)
+            assert isinstance(retrieved_knowledge_source, WorkIQKnowledgeSource)
+            assert retrieved_knowledge_source.work_iq_parameters.entra_app_authentication.application_id == (
+                os.environ["AZURE_WORKIQ_APPLICATION_ID"]
+            )
             print(f"Retrieved: knowledge source '{retrieved_knowledge_source.name}'")
 
             knowledge_base = KnowledgeBase(
@@ -102,9 +113,10 @@ async def main():
                         )
                     ],
                 )
+                work_iq_user_assertion = os.environ["AZURE_SEARCH_QUERY_WORK_IQ_SOURCE_AUTHORIZATION"]
                 retrieval_result = await retrieval_client.retrieve(
                     request,
-                    query_work_iq_source_authorization=os.environ["AZURE_SEARCH_QUERY_WORK_IQ_SOURCE_AUTHORIZATION"],
+                    query_work_iq_source_authorization=work_iq_user_assertion,
                 )
             finally:
                 await retrieval_client.close()

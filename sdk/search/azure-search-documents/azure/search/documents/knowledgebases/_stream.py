@@ -15,7 +15,6 @@ from typing_extensions import Self
 from . import models
 from ._utils.model_base import _deserialize
 
-
 _TERMINAL_EVENTS = {"error", "response.completed"}
 
 KnowledgeBaseRetrievalEventData = Union[

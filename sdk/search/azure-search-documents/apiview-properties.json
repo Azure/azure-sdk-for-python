@@ -550,5 +550,5 @@
         "azure.search.documents.KnowledgeBaseRetrievalClient.retrieve_stream": "Customizations.KnowledgeBaseRetrievalClient.retrieveStream",
         "azure.search.documents.aio.KnowledgeBaseRetrievalClient.retrieve_stream": "Customizations.KnowledgeBaseRetrievalClient.retrieveStream"
     },
-    "CrossLanguageVersion": "da0aafb66887"
+    "CrossLanguageVersion": "989eb0de7d67"
 }

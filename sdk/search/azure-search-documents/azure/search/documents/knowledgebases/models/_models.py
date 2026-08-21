@@ -1060,14 +1060,14 @@ class KnowledgeBaseActivityRecordModel(_Model):  # pylint: disable=docstring-key
     """Represents the model used for a knowledge base LLM activity, including its model name and
     deployment identifier.
 
-    :ivar model_name: The name of the model used for the activity.
+    :ivar model_name: The name of the model used for the activity. Required.
     :vartype model_name: str
     :ivar deployment_id: The deployment identifier of the model used for the activity.
     :vartype deployment_id: str
     """
 
-    model_name: Optional[str] = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the model used for the activity."""
+    model_name: str = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the model used for the activity. Required."""
     deployment_id: Optional[str] = rest_field(
         name="deploymentId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1077,7 +1077,7 @@ class KnowledgeBaseActivityRecordModel(_Model):  # pylint: disable=docstring-key
     def __init__(
         self,
         *,
-        model_name: Optional[str] = None,
+        model_name: str,
         deployment_id: Optional[str] = None,
     ) -> None: ...
 
@@ -3895,17 +3895,15 @@ class KnowledgeBaseSearchIndexReference(
 class KnowledgeBaseStreamErrorEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Emitted in place of ``response.completed`` if retrieval fails after the stream starts.
 
-    :ivar error: The error detail explaining why the retrieval stream failed.
+    :ivar error: The error detail explaining why the retrieval stream failed. Required.
     :vartype error: ~azure.search.documents.knowledgebases.models.KnowledgeBaseErrorDetail
     :ivar activity: Activity records that completed before the retrieval failed.
     :vartype activity:
      list[~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecord]
     """
 
-    error: Optional["_models.KnowledgeBaseErrorDetail"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The error detail explaining why the retrieval stream failed."""
+    error: "_models.KnowledgeBaseErrorDetail" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error detail explaining why the retrieval stream failed. Required."""
     activity: Optional[list["_models.KnowledgeBaseActivityRecord"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3915,7 +3913,7 @@ class KnowledgeBaseStreamErrorEvent(_Model):  # pylint: disable=docstring-keywor
     def __init__(
         self,
         *,
-        error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
+        error: "_models.KnowledgeBaseErrorDetail",
         activity: Optional[list["_models.KnowledgeBaseActivityRecord"]] = None,
     ) -> None: ...
 
@@ -5202,27 +5200,27 @@ class ServedImage(_Model):  # pylint: disable=docstring-keyword-should-match-key
     :ivar image_id: The image label extracted from the source document by Content Understanding
      enrichment. Corresponds to the figure numbering in the original document.
     :vartype image_id: str
-    :ivar image_path: The relative path to the image within the asset store.
+    :ivar image_path: The relative path to the image within the asset store. Required.
     :vartype image_path: str
-    :ivar size_bytes: The size in bytes of this image as sent to the model.
+    :ivar size_bytes: The size in bytes of this image as sent to the model. Required.
     :vartype size_bytes: int
     """
 
     image_id: Optional[str] = rest_field(name="imageId", visibility=["read", "create", "update", "delete", "query"])
     """The image label extracted from the source document by Content Understanding enrichment.
      Corresponds to the figure numbering in the original document."""
-    image_path: Optional[str] = rest_field(name="imagePath", visibility=["read", "create", "update", "delete", "query"])
-    """The relative path to the image within the asset store."""
-    size_bytes: Optional[int] = rest_field(name="sizeBytes", visibility=["read", "create", "update", "delete", "query"])
-    """The size in bytes of this image as sent to the model."""
+    image_path: str = rest_field(name="imagePath", visibility=["read", "create", "update", "delete", "query"])
+    """The relative path to the image within the asset store. Required."""
+    size_bytes: int = rest_field(name="sizeBytes", visibility=["read", "create", "update", "delete", "query"])
+    """The size in bytes of this image as sent to the model. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        image_path: str,
+        size_bytes: int,
         image_id: Optional[str] = None,
-        image_path: Optional[str] = None,
-        size_bytes: Optional[int] = None,
     ) -> None: ...
 
     @overload

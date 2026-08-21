@@ -2093,7 +2093,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         page_size: Optional[int] = None,
         search_type: Optional[Union[str, _models1.ListingSearchType]] = None,
         **kwargs: Any,
-    ) -> _models1._models.ListSynonymMapsResult:
+    ) -> ItemPaged["_models1.SynonymMap"]:
         """Lists all synonym maps available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
@@ -2110,10 +2110,15 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         :keyword search_type: Specifies how the search parameter is interpreted. Currently only
          'prefix' is supported. "prefix" Default value is None.
         :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
-        :return: ListSynonymMapsResult. The ListSynonymMapsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models._models.ListSynonymMapsResult
+        :return: An iterator like instance of SynonymMap
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SynonymMap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models1.SynonymMap]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2122,57 +2127,80 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models1._models.ListSynonymMapsResult] = kwargs.pop("cls", None)
+                _request = build_search_index_get_synonym_maps_request(
+                    select=select,
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_search_index_get_synonym_maps_request(
-            select=select,
-            search=search,
-            page_size=page_size,
-            search_type=search_type,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models2.ErrorResponse,
-                response,
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models1.SynonymMap],
+                deserialized.get("value", []),
             )
-            raise HttpResponseError(response=response, model=error)
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("@odata.nextLink") or None, iter(list_of_elem)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(
-                _models1._models.ListSynonymMapsResult, response.json()  # pylint: disable=protected-access
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
             )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models2.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def create_synonym_map(
@@ -2806,7 +2834,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                list[_models1._models.SearchIndexResponse],  # pylint: disable=protected-access
+                list[_models1._models.SearchIndexResponse],
                 deserialized.get("value", []),
             )
             if cls:
@@ -4847,8 +4875,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         self, name: str, body: _models1.UploadKnowledgeSourceFileMultipartRequest, **kwargs: Any
     ) -> _models1.KnowledgeSourceFile:
         """Uploads a file to a File knowledge source using multipart/form-data: a JSON 'metadata' part
-        (file name, custom metadata, and optional parsing/extraction overrides) and a 'content' part
-        with the raw file bytes.
+        (file name and custom metadata) and a 'content' part with the raw file bytes.
 
         :param name: The name of the knowledge source. Required.
         :type name: str
@@ -4864,8 +4891,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         self, name: str, body: _types_models1.UploadKnowledgeSourceFileMultipartRequest, **kwargs: Any
     ) -> _models1.KnowledgeSourceFile:
         """Uploads a file to a File knowledge source using multipart/form-data: a JSON 'metadata' part
-        (file name, custom metadata, and optional parsing/extraction overrides) and a 'content' part
-        with the raw file bytes.
+        (file name and custom metadata) and a 'content' part with the raw file bytes.
 
         :param name: The name of the knowledge source. Required.
         :type name: str
@@ -4891,8 +4917,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         **kwargs: Any,
     ) -> _models1.KnowledgeSourceFile:
         """Uploads a file to a File knowledge source using multipart/form-data: a JSON 'metadata' part
-        (file name, custom metadata, and optional parsing/extraction overrides) and a 'content' part
-        with the raw file bytes.
+        (file name and custom metadata) and a 'content' part with the raw file bytes.
 
         :param name: The name of the knowledge source. Required.
         :type name: str
@@ -5162,8 +5187,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         self, file_id: str, name: str, body: _models1.UpdateKnowledgeSourceFileRequest, **kwargs: Any
     ) -> _models1.KnowledgeSourceFile:
         """Updates an existing file in a File knowledge source in place, replacing its indexed content.
-        Uses multipart/form-data: a JSON 'metadata' part (file name, custom metadata, and optional
-        extraction override) and a 'content' part with the raw file bytes.
+        Uses multipart/form-data: a JSON 'metadata' part (file name and custom metadata) and a
+        'content' part with the raw file bytes.
 
         :param file_id: The unique identifier of the file to update. Required.
         :type file_id: str
@@ -5181,8 +5206,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         self, file_id: str, name: str, body: _types_models1.UpdateKnowledgeSourceFileRequest, **kwargs: Any
     ) -> _models1.KnowledgeSourceFile:
         """Updates an existing file in a File knowledge source in place, replacing its indexed content.
-        Uses multipart/form-data: a JSON 'metadata' part (file name, custom metadata, and optional
-        extraction override) and a 'content' part with the raw file bytes.
+        Uses multipart/form-data: a JSON 'metadata' part (file name and custom metadata) and a
+        'content' part with the raw file bytes.
 
         :param file_id: The unique identifier of the file to update. Required.
         :type file_id: str
@@ -5211,8 +5236,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         **kwargs: Any,
     ) -> _models1.KnowledgeSourceFile:
         """Updates an existing file in a File knowledge source in place, replacing its indexed content.
-        Uses multipart/form-data: a JSON 'metadata' part (file name, custom metadata, and optional
-        extraction override) and a 'content' part with the raw file bytes.
+        Uses multipart/form-data: a JSON 'metadata' part (file name and custom metadata) and a
+        'content' part with the raw file bytes.
 
         :param file_id: The unique identifier of the file to update. Required.
         :type file_id: str
@@ -5772,7 +5797,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         page_size: Optional[int] = None,
         search_type: Optional[Union[str, _models1.ListingSearchType]] = None,
         **kwargs: Any,
-    ) -> _models1._models.ListDataSourcesResult:
+    ) -> ItemPaged["_models1.SearchIndexerDataSourceConnection"]:
         """Lists all datasources available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
@@ -5789,10 +5814,16 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         :keyword search_type: Specifies how the search parameter is interpreted. Currently only
          'prefix' is supported. "prefix" Default value is None.
         :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
-        :return: ListDataSourcesResult. The ListDataSourcesResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models._models.ListDataSourcesResult
+        :return: An iterator like instance of SearchIndexerDataSourceConnection
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models1.SearchIndexerDataSourceConnection]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5801,57 +5832,80 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models1._models.ListDataSourcesResult] = kwargs.pop("cls", None)
+                _request = build_search_indexer_get_data_source_connections_request(
+                    select=select,
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_search_indexer_get_data_source_connections_request(
-            select=select,
-            search=search,
-            page_size=page_size,
-            search_type=search_type,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models2.ErrorResponse,
-                response,
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models1.SearchIndexerDataSourceConnection],
+                deserialized.get("value", []),
             )
-            raise HttpResponseError(response=response, model=error)
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("@odata.nextLink") or None, iter(list_of_elem)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(
-                _models1._models.ListDataSourcesResult, response.json()  # pylint: disable=protected-access
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
             )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models2.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def create_data_source_connection(
@@ -6628,7 +6682,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         page_size: Optional[int] = None,
         search_type: Optional[Union[str, _models1.ListingSearchType]] = None,
         **kwargs: Any,
-    ) -> _models1._models.ListIndexersResult:
+    ) -> ItemPaged["_models1.SearchIndexer"]:
         """Lists all indexers available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
@@ -6645,10 +6699,15 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         :keyword search_type: Specifies how the search parameter is interpreted. Currently only
          'prefix' is supported. "prefix" Default value is None.
         :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
-        :return: ListIndexersResult. The ListIndexersResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models._models.ListIndexersResult
+        :return: An iterator like instance of SearchIndexer
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchIndexer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models1.SearchIndexer]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6657,57 +6716,80 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models1._models.ListIndexersResult] = kwargs.pop("cls", None)
+                _request = build_search_indexer_get_indexers_request(
+                    select=select,
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_search_indexer_get_indexers_request(
-            select=select,
-            search=search,
-            page_size=page_size,
-            search_type=search_type,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models2.ErrorResponse,
-                response,
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models1.SearchIndexer],
+                deserialized.get("value", []),
             )
-            raise HttpResponseError(response=response, model=error)
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("@odata.nextLink") or None, iter(list_of_elem)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(
-                _models1._models.ListIndexersResult, response.json()  # pylint: disable=protected-access
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
             )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models2.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def create_indexer(
@@ -7206,7 +7288,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         page_size: Optional[int] = None,
         search_type: Optional[Union[str, _models1.ListingSearchType]] = None,
         **kwargs: Any,
-    ) -> _models1._models.ListSkillsetsResult:
+    ) -> ItemPaged["_models1.SearchIndexerSkillset"]:
         """List all skillsets in a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
@@ -7223,10 +7305,16 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         :keyword search_type: Specifies how the search parameter is interpreted. Currently only
          'prefix' is supported. "prefix" Default value is None.
         :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
-        :return: ListSkillsetsResult. The ListSkillsetsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models._models.ListSkillsetsResult
+        :return: An iterator like instance of SearchIndexerSkillset
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models1.SearchIndexerSkillset]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7235,57 +7323,80 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models1._models.ListSkillsetsResult] = kwargs.pop("cls", None)
+                _request = build_search_indexer_get_skillsets_request(
+                    select=select,
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_search_indexer_get_skillsets_request(
-            select=select,
-            search=search,
-            page_size=page_size,
-            search_type=search_type,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models2.ErrorResponse,
-                response,
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models1.SearchIndexerSkillset],
+                deserialized.get("value", []),
             )
-            raise HttpResponseError(response=response, model=error)
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("@odata.nextLink") or None, iter(list_of_elem)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(
-                _models1._models.ListSkillsetsResult, response.json()  # pylint: disable=protected-access
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
             )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models2.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def create_skillset(

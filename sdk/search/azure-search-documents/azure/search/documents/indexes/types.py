@@ -117,9 +117,9 @@ AIServicesAccountIdentity.__doc__ = """The multi-region account of an Azure AI s
 :ivar subdomainUrl: The subdomain/Azure AI Services endpoint url for the corresponding AI
  Service. Required.
 :vartype subdomainUrl: str
-:ivar @odata.type: A URI fragment specifying the type of Azure AI service resource attached to
- a skillset. Required. Default value is "#Microsoft.Azure.Search.AIServicesByIdentity".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.AIServicesByIdentity"]
+:ivar ``@odata.type``: A URI fragment specifying the type of Azure AI service resource attached
+ to a skillset. Required. Default value is "#Microsoft.Azure.Search.AIServicesByIdentity".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.AIServicesByIdentity"]
 """
 
 
@@ -144,9 +144,9 @@ the resource's subdomain.
 :ivar subdomainUrl: The subdomain/Azure AI Services endpoint url for the corresponding AI
  Service. Required.
 :vartype subdomainUrl: str
-:ivar @odata.type: A URI fragment specifying the type of Azure AI service resource attached to
- a skillset. Required. Default value is "#Microsoft.Azure.Search.AIServicesByKey".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.AIServicesByKey"]
+:ivar ``@odata.type``: A URI fragment specifying the type of Azure AI service resource attached
+ to a skillset. Required. Default value is "#Microsoft.Azure.Search.AIServicesByKey".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.AIServicesByKey"]
 """
 
 
@@ -203,46 +203,6 @@ class AIServicesVisionVectorizer(TypedDict, total=False):
     """The name of the kind of vectorization method being configured for use with vector search.
      Required. Generate embeddings for an image or text input at query time using the Azure AI
      Services Vision Vectorize API."""
-
-
-class AnalyzedTokenInfo(TypedDict, total=False):
-    """Information about a token returned by an analyzer.
-
-    :ivar token: The token returned by the analyzer. Required.
-    :vartype token: str
-    :ivar startOffset: The index of the first character of the token in the input text. Required.
-    :vartype startOffset: int
-    :ivar endOffset: The index of the last character of the token in the input text. Required.
-    :vartype endOffset: int
-    :ivar position: The position of the token in the input text relative to other tokens. The first
-     token in the input text has position 0, the next has position 1, and so on. Depending on the
-     analyzer used, some tokens might have the same position, for example if they are synonyms of
-     each other. Required.
-    :vartype position: int
-    """
-
-    token: Required[str]
-    """The token returned by the analyzer. Required."""
-    startOffset: Required[int]
-    """The index of the first character of the token in the input text. Required."""
-    endOffset: Required[int]
-    """The index of the last character of the token in the input text. Required."""
-    position: Required[int]
-    """The position of the token in the input text relative to other tokens. The first token in the
-     input text has position 0, the next has position 1, and so on. Depending on the analyzer used,
-     some tokens might have the same position, for example if they are synonyms of each other.
-     Required."""
-
-
-class AnalyzeResult(TypedDict, total=False):
-    """The result of testing an analyzer on text.
-
-    :ivar tokens: The list of tokens returned by the analyzer specified in the request. Required.
-    :vartype tokens: list["AnalyzedTokenInfo"]
-    """
-
-    tokens: Required[list["AnalyzedTokenInfo"]]
-    """The list of tokens returned by the analyzer specified in the request. Required."""
 
 
 class AnalyzeTextOptions(TypedDict, total=False):
@@ -350,9 +310,9 @@ equivalents exist. This token filter is implemented using Apache Lucene.
 :ivar preserveOriginal: A value indicating whether the original token will be kept. Default is
  false.
 :vartype preserveOriginal: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.AsciiFoldingTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.AsciiFoldingTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.AsciiFoldingTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.AsciiFoldingTokenFilter"]
 """
 
 
@@ -399,8 +359,8 @@ AzureBlobKnowledgeSource.__doc__ = """Configuration for Azure Blob Storage knowl
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
@@ -563,9 +523,9 @@ enrichment.
  set, a default value of 5 is used. The degreeOfParallelism can be set to a maximum of 10 and a
  minimum of 1.
 :vartype degreeOfParallelism: int
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Custom.AmlSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Custom.AmlSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Custom.AmlSkill"]
 """
 
 
@@ -647,9 +607,9 @@ resource.
 :ivar dimensions: The number of dimensions the resulting output embeddings should have. Only
  supported in text-embedding-3 and later models.
 :vartype dimensions: int
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"]
 """
 
 
@@ -794,9 +754,9 @@ saturation (controlled by the 'k1' parameter).
  default, a value of 0.75 is used. A value of 0.0 means no length normalization is applied,
  while a value of 1.0 means the score is fully normalized by the length of the document.
 :vartype b: float
-:ivar @odata.type: The discriminator for derived types. Required. Default value is
+:ivar ``@odata.type``: The discriminator for derived types. Required. Default value is
  "#Microsoft.Azure.Search.BM25Similarity".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.BM25Similarity"]
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.BM25Similarity"]
 """
 
 
@@ -971,9 +931,9 @@ ChatCompletionSkill.__doc__ = """A skill that calls a language model via Azure A
 :ivar responseFormat: Determines how the LLM should format its response. Defaults to 'text'
  response type.
 :vartype responseFormat: "ChatCompletionResponseFormat"
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Custom.ChatCompletionSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Custom.ChatCompletionSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Custom.ChatCompletionSkill"]
 """
 
 
@@ -999,9 +959,9 @@ implemented using Apache Lucene.
 :ivar outputUnigrams: A value indicating whether to output both unigrams and bigrams (if true),
  or just bigrams (if false). Default is false.
 :vartype outputUnigrams: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.CjkBigramTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.CjkBigramTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.CjkBigramTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.CjkBigramTokenFilter"]
 """
 
 
@@ -1016,9 +976,9 @@ ClassicSimilarityAlgorithm.__doc__ = """Legacy similarity algorithm which uses t
 This variation of TF-IDF introduces static document length normalization as well as
 coordinating factors that penalize documents that only partially match the searched queries.
 
-:ivar @odata.type: The discriminator for derived types. Required. Default value is
+:ivar ``@odata.type``: The discriminator for derived types. Required. Default value is
  "#Microsoft.Azure.Search.ClassicSimilarity".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.ClassicSimilarity"]
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.ClassicSimilarity"]
 """
 
 
@@ -1041,9 +1001,9 @@ tokenizer is implemented using Apache Lucene.
 :ivar maxTokenLength: The maximum token length. Default is 255. Tokens longer than the maximum
  length are split. The maximum token length that can be used is 300 characters.
 :vartype maxTokenLength: int
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.ClassicTokenizer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.ClassicTokenizer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.ClassicTokenizer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.ClassicTokenizer"]
 """
 
 
@@ -1063,9 +1023,9 @@ CognitiveServicesAccountKey.__doc__ = """The multi-region account key of an Azur
 :ivar key: The key used to provision the Azure AI service resource attached to a skillset.
  Required.
 :vartype key: str
-:ivar @odata.type: A URI fragment specifying the type of Azure AI service resource attached to
- a skillset. Required. Default value is "#Microsoft.Azure.Search.CognitiveServicesByKey".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.CognitiveServicesByKey"]
+:ivar ``@odata.type``: A URI fragment specifying the type of Azure AI service resource attached
+ to a skillset. Required. Default value is "#Microsoft.Azure.Search.CognitiveServicesByKey".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.CognitiveServicesByKey"]
 """
 
 
@@ -1096,9 +1056,9 @@ too, with bigrams overlaid. This token filter is implemented using Apache Lucene
  query mode, the token filter generates bigrams and then removes common words and single terms
  followed by a common word. Default is false.
 :vartype queryMode: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.CommonGramTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.CommonGramTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.CommonGramTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.CommonGramTokenFilter"]
 """
 
 
@@ -1133,9 +1093,9 @@ to an output.
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.ConditionalSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Util.ConditionalSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Util.ConditionalSkill"]
 """
 
 
@@ -1197,9 +1157,9 @@ and retrieval.
 :vartype extractionOptions: list[Union[str, "ContentUnderstandingSkillExtractionOptions"]]
 :ivar chunkingProperties: Controls the cardinality for chunking the content.
 :vartype chunkingProperties: "ContentUnderstandingSkillChunkingProperties"
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.ContentUnderstandingSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Util.ContentUnderstandingSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Util.ContentUnderstandingSkill"]
 """
 
 
@@ -1290,9 +1250,9 @@ for modifying tokens emitted by the tokenizer.
  processed by the tokenizer. For instance, they can replace certain characters or symbols. The
  filters are run in the order in which they are listed.
 :vartype charFilters: list[Union[str, "CharFilterName"]]
-:ivar @odata.type: A URI fragment specifying the type of analyzer. Required. Default value is
- "#Microsoft.Azure.Search.CustomAnalyzer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.CustomAnalyzer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of analyzer. Required. Default value
+ is "#Microsoft.Azure.Search.CustomAnalyzer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.CustomAnalyzer"]
 """
 
 
@@ -1467,9 +1427,9 @@ CustomEntityLookupSkill.__doc__ = """A skill looks for text from a custom, user-
 :ivar globalDefaultFuzzyEditDistance: A global flag for FuzzyEditDistance. If FuzzyEditDistance
  is not set in CustomEntity, this value will be the default value.
 :vartype globalDefaultFuzzyEditDistance: int
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.CustomEntityLookupSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Text.CustomEntityLookupSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.CustomEntityLookupSkill"]
 """
 
 
@@ -1499,9 +1459,9 @@ least one or more filters, which modify the token that is stored.
  processed. For instance, they can replace certain characters or symbols. The filters are run in
  the order in which they are listed.
 :vartype charFilters: list[Union[str, "CharFilterName"]]
-:ivar @odata.type: A URI fragment specifying the type of normalizer. Required. Default value is
- "#Microsoft.Azure.Search.CustomNormalizer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.CustomNormalizer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of normalizer. Required. Default
+ value is "#Microsoft.Azure.Search.CustomNormalizer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.CustomNormalizer"]
 """
 
 
@@ -1532,9 +1492,9 @@ DefaultCognitiveServicesAccount.__doc__ = """An empty object that represents the
 
 :ivar description: Description of the Azure AI service resource attached to a skillset.
 :vartype description: str
-:ivar @odata.type: A URI fragment specifying the type of Azure AI service resource attached to
- a skillset. Required. Default value is "#Microsoft.Azure.Search.DefaultCognitiveServices".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.DefaultCognitiveServices"]
+:ivar ``@odata.type``: A URI fragment specifying the type of Azure AI service resource attached
+ to a skillset. Required. Default value is "#Microsoft.Azure.Search.DefaultCognitiveServices".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.DefaultCognitiveServices"]
 """
 
 
@@ -1572,9 +1532,9 @@ using Apache Lucene.
 :ivar onlyLongestMatch: A value indicating whether to add only the longest matching subword to
  the output. Default is false.
 :vartype onlyLongestMatch: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"]
 """
 
 
@@ -1668,9 +1628,9 @@ DocumentExtractionSkill.__doc__ = """A skill that extracts content from a file w
 :vartype dataToExtract: str
 :ivar configuration: A dictionary of configurations for the skill.
 :vartype configuration: dict[str, Any]
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.DocumentExtractionSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Util.DocumentExtractionSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Util.DocumentExtractionSkill"]
 """
 
 
@@ -1725,9 +1685,9 @@ the enrichment pipeline.
  "DocumentIntelligenceLayoutSkillExtractionOptions"]]
 :ivar chunkingProperties: Controls the cardinality for chunking the content.
 :vartype chunkingProperties: "DocumentIntelligenceLayoutSkillChunkingProperties"
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill"]
 """
 
 
@@ -1790,9 +1750,9 @@ This token filter is implemented using Apache Lucene.
 :ivar side: Specifies which side of the input the n-gram should be generated from. Default is
  "front". Known values are: "front" and "back".
 :vartype side: Union[str, "EdgeNGramTokenFilterSide"]
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.EdgeNGramTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.EdgeNGramTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilter"]
 """
 
 
@@ -1822,9 +1782,9 @@ This token filter is implemented using Apache Lucene.
 :ivar side: Specifies which side of the input the n-gram should be generated from. Default is
  "front". Known values are: "front" and "back".
 :vartype side: Union[str, "EdgeNGramTokenFilterSide"]
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.EdgeNGramTokenFilterV2".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.EdgeNGramTokenFilterV2".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"]
 """
 
 
@@ -1853,9 +1813,9 @@ implemented using Apache Lucene.
 :vartype maxGram: int
 :ivar tokenChars: Character classes to keep in the tokens.
 :vartype tokenChars: list[Union[str, "TokenCharacterKind"]]
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.EdgeNGramTokenizer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenizer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.EdgeNGramTokenizer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.EdgeNGramTokenizer"]
 """
 
 
@@ -1877,9 +1837,9 @@ token filter is implemented using Apache Lucene.
 :vartype name: str
 :ivar articles: The set of articles to remove.
 :vartype articles: list[str]
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.ElisionTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.ElisionTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.ElisionTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.ElisionTokenFilter"]
 """
 
 
@@ -1941,9 +1901,9 @@ EntityLinkingSkill.__doc__ = """Using the Text Analytics API, extracts linked en
  will default to the latest available when not specified. We recommend you do not specify this
  value unless absolutely necessary.
 :vartype modelVersion: str
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.V3.EntityLinkingSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Text.V3.EntityLinkingSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.V3.EntityLinkingSkill"]
 """
 
 
@@ -1995,9 +1955,9 @@ EntityRecognitionSkillV3.__doc__ = """Using the Text Analytics API, extracts ent
  will default to the latest available when not specified. We recommend you do not specify this
  value unless absolutely necessary.
 :vartype modelVersion: str
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.V3.EntityRecognitionSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Text.V3.EntityRecognitionSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.V3.EntityRecognitionSkill"]
 """
 
 
@@ -2085,8 +2045,8 @@ FabricDataAgentKnowledgeSource.__doc__ = """Configuration for Fabric Data Agent 
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
@@ -2143,8 +2103,8 @@ FabricOntologyKnowledgeSource.__doc__ = """Configuration for Fabric Ontology kno
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
@@ -2239,8 +2199,8 @@ FileKnowledgeSource.__doc__ = """Configuration for File knowledge source that su
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
@@ -2349,27 +2309,6 @@ class FreshnessScoringParameters(TypedDict, total=False):
     """The expiration period after which boosting will stop for a particular document. Required."""
 
 
-class GetIndexStatisticsResult(TypedDict, total=False):
-    """Statistics for a given index. Statistics are collected periodically and are not guaranteed to
-    always be up-to-date.
-
-    :ivar documentCount: The number of documents in the index. Required.
-    :vartype documentCount: int
-    :ivar storageSize: The amount of storage in bytes consumed by the index. Required.
-    :vartype storageSize: int
-    :ivar vectorIndexSize: The amount of memory in bytes consumed by vectors in the index.
-     Required.
-    :vartype vectorIndexSize: int
-    """
-
-    documentCount: Required[int]
-    """The number of documents in the index. Required."""
-    storageSize: Required[int]
-    """The amount of storage in bytes consumed by the index. Required."""
-    vectorIndexSize: Required[int]
-    """The amount of memory in bytes consumed by vectors in the index. Required."""
-
-
 HighWaterMarkChangeDetectionPolicy = TypedDict(
     "HighWaterMarkChangeDetectionPolicy",
     {
@@ -2383,9 +2322,9 @@ mark column.
 
 :ivar highWaterMarkColumnName: The name of the high water mark column. Required.
 :vartype highWaterMarkColumnName: str
-:ivar @odata.type: A URI fragment specifying the type of data change detection policy.
+:ivar ``@odata.type``: A URI fragment specifying the type of data change detection policy.
  Required. Default value is "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"]
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"]
 """
 
 
@@ -2497,9 +2436,9 @@ content.
 :vartype visualFeatures: list[Union[str, "VisualFeature"]]
 :ivar details: A string indicating which domain-specific details to return.
 :vartype details: list[Union[str, "ImageDetail"]]
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Vision.ImageAnalysisSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Vision.ImageAnalysisSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Vision.ImageAnalysisSkill"]
 """
 
 
@@ -2526,8 +2465,8 @@ IndexedOneLakeKnowledgeSource.__doc__ = """Configuration for OneLake knowledge s
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
@@ -2601,8 +2540,8 @@ IndexedSharePointKnowledgeSource.__doc__ = """Configuration for SharePoint knowl
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
@@ -2683,8 +2622,8 @@ IndexedSqlKnowledgeSource.__doc__ = """Configuration for indexed SQL knowledge s
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
@@ -2996,9 +2935,9 @@ token filter is implemented using Apache Lucene.
 :ivar keepWordsCase: A value indicating whether to lower case all words first. Default is
  false.
 :vartype keepWordsCase: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.KeepTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.KeepTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.KeepTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.KeepTokenFilter"]
 """
 
 
@@ -3046,9 +2985,9 @@ KeyPhraseExtractionSkill.__doc__ = """A skill that uses text analytics for key p
  will default to the latest available when not specified. We recommend you do not specify this
  value unless absolutely necessary.
 :vartype modelVersion: str
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.KeyPhraseExtractionSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Text.KeyPhraseExtractionSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.KeyPhraseExtractionSkill"]
 """
 
 
@@ -3073,9 +3012,9 @@ KeywordMarkerTokenFilter.__doc__ = """Marks terms as keywords. This token filter
 :ivar ignoreCase: A value indicating whether to ignore case. If true, all words are converted
  to lower case first. Default is false.
 :vartype ignoreCase: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.KeywordMarkerTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.KeywordMarkerTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.KeywordMarkerTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.KeywordMarkerTokenFilter"]
 """
 
 
@@ -3096,9 +3035,9 @@ KeywordTokenizer.__doc__ = """Emits the entire input as a single token. This tok
 :vartype name: str
 :ivar bufferSize: The read buffer size in bytes. Default is 256.
 :vartype bufferSize: int
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.KeywordTokenizer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.KeywordTokenizer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.KeywordTokenizer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.KeywordTokenizer"]
 """
 
 
@@ -3120,9 +3059,9 @@ KeywordTokenizerV2.__doc__ = """Emits the entire input as a single token. This t
 :ivar maxTokenLength: The maximum token length. Default is 256. Tokens longer than the maximum
  length are split. The maximum token length that can be used is 300 characters.
 :vartype maxTokenLength: int
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.KeywordTokenizerV2".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.KeywordTokenizerV2"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.KeywordTokenizerV2".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.KeywordTokenizerV2"]
 """
 
 
@@ -3158,8 +3097,8 @@ KnowledgeBase.__doc__ = """Represents a knowledge base definition.
 :ivar outputMode: The output mode for the knowledge base. Known values are: "extractiveData"
  and "answerSynthesis".
 :vartype outputMode: Union[str, "KnowledgeRetrievalOutputMode"]
-:ivar @odata.etag: The ETag of the knowledge base.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge base.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
 :vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar description: The description of the knowledge base.
@@ -3287,9 +3226,9 @@ confidence of the analysis.
  will default to the latest available when not specified. We recommend you do not specify this
  value unless absolutely necessary.
 :vartype modelVersion: str
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.LanguageDetectionSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Text.LanguageDetectionSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.LanguageDetectionSkill"]
 """
 
 
@@ -3315,9 +3254,9 @@ Lucene.
 :vartype min: int
 :ivar max: The maximum length in characters. Default and maximum is 300.
 :vartype max: int
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.LengthTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.LengthTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.LengthTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.LengthTokenFilter"]
 """
 
 
@@ -3343,9 +3282,9 @@ Lucene.
 :ivar consumeAllTokens: A value indicating whether all tokens from the input must be consumed
  even if maxTokenCount is reached. Default is false.
 :vartype consumeAllTokens: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.LimitTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.LimitTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.LimitTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.LimitTokenFilter"]
 """
 
 
@@ -3371,9 +3310,9 @@ filter.
 :vartype maxTokenLength: int
 :ivar stopwords: A list of stopwords.
 :vartype stopwords: list[str]
-:ivar @odata.type: A URI fragment specifying the type of analyzer. Required. Default value is
- "#Microsoft.Azure.Search.StandardAnalyzer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.StandardAnalyzer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of analyzer. Required. Default value
+ is "#Microsoft.Azure.Search.StandardAnalyzer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.StandardAnalyzer"]
 """
 
 
@@ -3396,9 +3335,9 @@ Apache Lucene.
 :ivar maxTokenLength: The maximum token length. Default is 255. Tokens longer than the maximum
  length are split.
 :vartype maxTokenLength: int
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.StandardTokenizer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.StandardTokenizer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.StandardTokenizer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.StandardTokenizer"]
 """
 
 
@@ -3421,9 +3360,9 @@ Apache Lucene.
 :ivar maxTokenLength: The maximum token length. Default is 255. Tokens longer than the maximum
  length are split. The maximum token length that can be used is 300 characters.
 :vartype maxTokenLength: int
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.StandardTokenizerV2".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.StandardTokenizerV2"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.StandardTokenizerV2".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.StandardTokenizerV2"]
 """
 
 
@@ -3502,9 +3441,9 @@ string. This character filter is implemented using Apache Lucene.
 :ivar mappings: A list of mappings of the following format: "a=>b" (all occurrences of the
  character "a" will be replaced with character "b"). Required.
 :vartype mappings: list[str]
-:ivar @odata.type: A URI fragment specifying the type of char filter. Required. Default value
- is "#Microsoft.Azure.Search.MappingCharFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.MappingCharFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of char filter. Required. Default
+ value is "#Microsoft.Azure.Search.MappingCharFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.MappingCharFilter"]
 """
 
 
@@ -3593,8 +3532,8 @@ McpServerKnowledgeSource.__doc__ = """Configuration for a knowledge source backe
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
@@ -3800,9 +3739,9 @@ user-defined delimiter separating each component part.
 :ivar insertPostTag: The tag indicates the end of the merged text. By default, the tag is an
  empty space.
 :vartype insertPostTag: str
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.MergeSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Text.MergeSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.MergeSkill"]
 """
 
 
@@ -3839,9 +3778,9 @@ MicrosoftLanguageStemmingTokenizer.__doc__ = """Divides text using language-spec
  "romanian", "russian", "serbianCyrillic", "serbianLatin", "slovak", "slovenian", "spanish",
  "swedish", "tamil", "telugu", "turkish", "ukrainian", and "urdu".
 :vartype language: Union[str, "MicrosoftStemmingTokenizerLanguage"]
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"]
 """
 
 
@@ -3878,9 +3817,9 @@ MicrosoftLanguageTokenizer.__doc__ = """Divides text using language-specific rul
  "russian", "serbianCyrillic", "serbianLatin", "slovenian", "spanish", "swedish", "tamil",
  "telugu", "thai", "ukrainian", "urdu", and "vietnamese".
 :vartype language: Union[str, "MicrosoftTokenizerLanguage"]
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.MicrosoftLanguageTokenizer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageTokenizer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.MicrosoftLanguageTokenizer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.MicrosoftLanguageTokenizer"]
 """
 
 
@@ -3894,10 +3833,10 @@ NativeBlobSoftDeleteDeletionDetectionPolicy = TypedDict(
 NativeBlobSoftDeleteDeletionDetectionPolicy.__doc__ = """Defines a data deletion detection policy utilizing Azure Blob Storage's native soft delete
 feature for deletion detection.
 
-:ivar @odata.type: A URI fragment specifying the type of data deletion detection policy.
+:ivar ``@odata.type``: A URI fragment specifying the type of data deletion detection policy.
  Required. Default value is
  "#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy".
-:vartype @odata.type:
+:vartype ``@odata.type``:
  Literal["#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy"]
 """
 
@@ -3922,9 +3861,9 @@ NGramTokenFilter.__doc__ = """Generates n-grams of the given size(s). This token
 :vartype minGram: int
 :ivar maxGram: The maximum n-gram length. Default is 2.
 :vartype maxGram: int
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.NGramTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.NGramTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.NGramTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.NGramTokenFilter"]
 """
 
 
@@ -3949,9 +3888,9 @@ NGramTokenFilterV2.__doc__ = """Generates n-grams of the given size(s). This tok
 :vartype minGram: int
 :ivar maxGram: The maximum n-gram length. Default is 2. Maximum is 300.
 :vartype maxGram: int
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.NGramTokenFilterV2".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.NGramTokenFilterV2"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.NGramTokenFilterV2".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.NGramTokenFilterV2"]
 """
 
 
@@ -3980,9 +3919,9 @@ Apache Lucene.
 :vartype maxGram: int
 :ivar tokenChars: Character classes to keep in the tokens.
 :vartype tokenChars: list[Union[str, "TokenCharacterKind"]]
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.NGramTokenizer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.NGramTokenizer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.NGramTokenizer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.NGramTokenizer"]
 """
 
 
@@ -4041,9 +3980,9 @@ OcrSkill.__doc__ = """A skill that extracts text from image files.
  recognized by the OCR skill. The default value is "space". Known values are: "space",
  "carriageReturn", "lineFeed", and "carriageReturnLineFeed".
 :vartype lineEnding: Union[str, "OcrLineEnding"]
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Vision.OcrSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Vision.OcrSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Vision.OcrSkill"]
 """
 
 
@@ -4092,9 +4031,9 @@ PathHierarchyTokenizerV2.__doc__ = """Tokenizer for path-like hierarchies. This 
 :vartype reverse: bool
 :ivar skip: The number of initial tokens to skip. Default is 0.
 :vartype skip: int
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.PathHierarchyTokenizerV2".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.PathHierarchyTokenizerV2"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.PathHierarchyTokenizerV2".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.PathHierarchyTokenizerV2"]
 """
 
 
@@ -4127,9 +4066,9 @@ implemented using Apache Lucene.
 :vartype flags: list[Union[str, "RegexFlags"]]
 :ivar stopwords: A list of stopwords.
 :vartype stopwords: list[str]
-:ivar @odata.type: A URI fragment specifying the type of analyzer. Required. Default value is
- "#Microsoft.Azure.Search.PatternAnalyzer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.PatternAnalyzer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of analyzer. Required. Default value
+ is "#Microsoft.Azure.Search.PatternAnalyzer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.PatternAnalyzer"]
 """
 
 
@@ -4155,9 +4094,9 @@ This token filter is implemented using Apache Lucene.
 :ivar preserveOriginal: A value indicating whether to return the original token even if one of
  the patterns matches. Default is true.
 :vartype preserveOriginal: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.PatternCaptureTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.PatternCaptureTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.PatternCaptureTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.PatternCaptureTokenFilter"]
 """
 
 
@@ -4185,9 +4124,9 @@ using Apache Lucene.
 :vartype pattern: str
 :ivar replacement: The replacement text. Required.
 :vartype replacement: str
-:ivar @odata.type: A URI fragment specifying the type of char filter. Required. Default value
- is "#Microsoft.Azure.Search.PatternReplaceCharFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.PatternReplaceCharFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of char filter. Required. Default
+ value is "#Microsoft.Azure.Search.PatternReplaceCharFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.PatternReplaceCharFilter"]
 """
 
 
@@ -4215,9 +4154,9 @@ Apache Lucene.
 :vartype pattern: str
 :ivar replacement: The replacement text. Required.
 :vartype replacement: str
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.PatternReplaceTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.PatternReplaceTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.PatternReplaceTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.PatternReplaceTokenFilter"]
 """
 
 
@@ -4249,9 +4188,9 @@ implemented using Apache Lucene.
  extract into tokens. Use -1 if you want to use the entire pattern to split the input into
  tokens, irrespective of matching groups. Default is -1.
 :vartype group: int
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.PatternTokenizer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.PatternTokenizer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.PatternTokenizer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.PatternTokenizer"]
 """
 
 
@@ -4278,9 +4217,9 @@ PhoneticTokenFilter.__doc__ = """Create tokens for phonetic matches. This token 
 :ivar replace: A value indicating whether encoded tokens should replace original tokens. If
  false, encoded tokens are added as synonyms. Default is true.
 :vartype replace: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.PhoneticTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.PhoneticTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.PhoneticTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.PhoneticTokenFilter"]
 """
 
 
@@ -4343,9 +4282,9 @@ the option of masking it.
 :ivar domain: If specified, will set the PII domain to include only a subset of the entity
  categories. Possible values include: 'phi', 'none'. Default is 'none'.
 :vartype domain: str
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.PIIDetectionSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Text.PIIDetectionSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.PIIDetectionSkill"]
 """
 
 
@@ -4372,8 +4311,8 @@ RemoteSharePointKnowledgeSource.__doc__ = """Configuration for remote SharePoint
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
@@ -4549,8 +4488,8 @@ name can be used in place of the index name for supported operations.
 :ivar indexes: The name of the index this alias maps to. Only one index name may be specified.
  Required.
 :vartype indexes: list[str]
-:ivar @odata.etag: The ETag of the alias.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the alias.
+:vartype ``@odata.etag``: str
 """
 
 
@@ -4985,8 +4924,8 @@ index.
  for the index, enabling document-level permissions from SharePoint. If provided, the
  applicationId and federatedCredentialId properties are required.
 :vartype sharePointConnectorAppRegistration: "SharePointConnectorAppRegistration"
-:ivar @odata.etag: The ETag of the index.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the index.
+:vartype ``@odata.etag``: str
 """
 
 
@@ -5033,8 +4972,8 @@ SearchIndexer.__doc__ = """Represents an indexer.
 :vartype outputFieldMappings: list["FieldMapping"]
 :ivar disabled: A value indicating whether the indexer is disabled. Default is false.
 :vartype disabled: bool
-:ivar @odata.etag: The ETag of the indexer.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the indexer.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your indexer
  definition (as well as indexer execution status) when you want full assurance that no one, not
@@ -5112,9 +5051,9 @@ SearchIndexerDataNoneIdentity = TypedDict(
 )
 SearchIndexerDataNoneIdentity.__doc__ = """Clears the identity property of a datasource.
 
-:ivar @odata.type: The discriminator for derived types. Required. Default value is
+:ivar ``@odata.type``: The discriminator for derived types. Required. Default value is
  "#Microsoft.Azure.Search.DataNoneIdentity".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.DataNoneIdentity"]
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.DataNoneIdentity"]
 """
 
 
@@ -5163,8 +5102,8 @@ SearchIndexerDataSourceConnection.__doc__ = """Represents a datasource definitio
 :vartype dataChangeDetectionPolicy: "DataChangeDetectionPolicy"
 :ivar dataDeletionDetectionPolicy: The data deletion detection policy for the datasource.
 :vartype dataDeletionDetectionPolicy: "DataDeletionDetectionPolicy"
-:ivar @odata.etag: The ETag of the data source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the data source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your datasource
  definition when you want full assurance that no one, not even Microsoft, can decrypt your data
@@ -5193,9 +5132,9 @@ SearchIndexerDataUserAssignedIdentity.__doc__ = """Specifies the identity for a 
  "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"
  that should have been assigned to the search service. Required.
 :vartype userAssignedIdentity: str
-:ivar @odata.type: A URI fragment specifying the type of identity. Required. Default value is
- "#Microsoft.Azure.Search.DataUserAssignedIdentity".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.DataUserAssignedIdentity"]
+:ivar ``@odata.type``: A URI fragment specifying the type of identity. Required. Default value
+ is "#Microsoft.Azure.Search.DataUserAssignedIdentity".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.DataUserAssignedIdentity"]
 :ivar federatedIdentityClientId: Multi-tenant User-Assigned Managed Identity Support: The
  client id of the multi-tentant App that has been configured to federate with the user-assigned
  managed identity.
@@ -5421,7 +5360,9 @@ class SearchIndexerKnowledgeStoreProjection(TypedDict, total=False):
     """Projections to Azure File storage."""
 
 
-class SearchIndexerKnowledgeStoreTableProjectionSelector(TypedDict, total=False):  # pylint: disable=name-too-long
+class SearchIndexerKnowledgeStoreTableProjectionSelector(
+    SearchIndexerKnowledgeStoreProjectionSelector
+):  # pylint: disable=name-too-long
     """Description for what data to store in Azure Tables.
 
     :ivar referenceKeyName: Name of reference key to different projection.
@@ -5438,14 +5379,6 @@ class SearchIndexerKnowledgeStoreTableProjectionSelector(TypedDict, total=False)
     :vartype tableName: str
     """
 
-    referenceKeyName: str
-    """Name of reference key to different projection."""
-    source: str
-    """Source data to project."""
-    sourceContext: str
-    """Source context for complex projections."""
-    inputs: list["InputFieldMappingEntry"]
-    """Nested inputs for complex projections."""
     generatedKeyName: Required[str]
     """Name of generated key to store projection under. Required."""
     tableName: Required[str]
@@ -5481,8 +5414,8 @@ SearchIndexerSkillset.__doc__ = """A list of skills.
 :vartype knowledgeStore: "SearchIndexerKnowledgeStore"
 :ivar indexProjections: Definition of additional projections to secondary search index(es).
 :vartype indexProjections: "SearchIndexerIndexProjection"
-:ivar @odata.etag: The ETag of the skillset.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the skillset.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your skillset
  definition when you want full assurance that no one, not even Microsoft, can decrypt your
@@ -5529,8 +5462,8 @@ SearchIndexKnowledgeSource.__doc__ = """Knowledge Source targeting a search inde
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
@@ -5889,9 +5822,9 @@ score found by the service at a sentence and document-level.
  will default to the latest available when not specified. We recommend you do not specify this
  value unless absolutely necessary.
 :vartype modelVersion: str
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.V3.SentimentSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Text.V3.SentimentSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.V3.SentimentSkill"]
 """
 
 
@@ -5926,9 +5859,9 @@ known as multipart fields).
 :ivar outputs: The output of a skill is either a field in a search index, or a value that can
  be consumed as an input by another skill. Required.
 :vartype outputs: list["OutputFieldMappingEntry"]
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.ShaperSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Util.ShaperSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Util.ShaperSkill"]
 """
 
 
@@ -5995,9 +5928,9 @@ Lucene.
 :ivar filterToken: The string to insert for each position at which there is no token. Default
  is an underscore ("_").
 :vartype filterToken: str
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.ShingleTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.ShingleTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.ShingleTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.ShingleTokenFilter"]
 """
 
 
@@ -6033,9 +5966,9 @@ using Apache Lucene.
  "italian", "kp", "lovins", "norwegian", "porter", "portuguese", "romanian", "russian",
  "spanish", "swedish", and "turkish".
 :vartype language: Union[str, "SnowballTokenFilterLanguage"]
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.SnowballTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.SnowballTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.SnowballTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.SnowballTokenFilter"]
 """
 
 
@@ -6056,9 +5989,9 @@ column.
 :vartype softDeleteColumnName: str
 :ivar softDeleteMarkerValue: The marker value that identifies an item as deleted.
 :vartype softDeleteMarkerValue: str
-:ivar @odata.type: A URI fragment specifying the type of data deletion detection policy.
+:ivar ``@odata.type``: A URI fragment specifying the type of data deletion detection policy.
  Required. Default value is "#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy".
-:vartype @odata.type:
+:vartype ``@odata.type``:
  Literal["#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy"]
 """
 
@@ -6127,9 +6060,9 @@ SplitSkill.__doc__ = """A skill to split a string into chunks of text.
  specified, the splitSkill will use these parameters when performing the tokenization. The
  parameters are a valid 'encoderModelName' and an optional 'allowedSpecialTokens' property.
 :vartype azureOpenAITokenizerParameters: "AzureOpenAITokenizerParameters"
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.SplitSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Text.SplitSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.SplitSkill"]
 """
 
 
@@ -6143,9 +6076,9 @@ SqlIntegratedChangeTrackingPolicy = TypedDict(
 SqlIntegratedChangeTrackingPolicy.__doc__ = """Defines a data change detection policy that captures changes using the Integrated Change
 Tracking feature of Azure SQL Database.
 
-:ivar @odata.type: A URI fragment specifying the type of data change detection policy.
+:ivar ``@odata.type``: A URI fragment specifying the type of data change detection policy.
  Required. Default value is "#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"]
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"]
 """
 
 
@@ -6172,9 +6105,9 @@ implemented using Apache Lucene. See
 :ivar rules: A list of stemming rules in the following format: "word => stem", for example:
  "ran => run". Required.
 :vartype rules: list[str]
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.StemmerOverrideTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.StemmerOverrideTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.StemmerOverrideTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.StemmerOverrideTokenFilter"]
 """
 
 
@@ -6205,9 +6138,9 @@ StemmerTokenFilter.__doc__ = """Language specific stemming filter. This token fi
  "portuguese", "lightPortuguese", "minimalPortuguese", "portugueseRslp", "romanian", "russian",
  "lightRussian", "spanish", "lightSpanish", "swedish", "lightSwedish", and "turkish".
 :vartype language: Union[str, "StemmerTokenFilterLanguage"]
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.StemmerTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.StemmerTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.StemmerTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.StemmerTokenFilter"]
 """
 
 
@@ -6229,9 +6162,9 @@ implemented using Apache Lucene.
 :vartype name: str
 :ivar stopwords: A list of stopwords.
 :vartype stopwords: list[str]
-:ivar @odata.type: A URI fragment specifying the type of analyzer. Required. Default value is
- "#Microsoft.Azure.Search.StopAnalyzer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.StopAnalyzer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of analyzer. Required. Default value
+ is "#Microsoft.Azure.Search.StopAnalyzer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.StopAnalyzer"]
 """
 
 
@@ -6272,9 +6205,9 @@ See
 :ivar removeTrailing: A value indicating whether to ignore the last search term if it's a stop
  word. Default is true.
 :vartype removeTrailing: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.StopwordsTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.StopwordsTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.StopwordsTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.StopwordsTokenFilter"]
 """
 
 
@@ -6308,8 +6241,8 @@ SynonymMap.__doc__ = """Represents a synonym map definition.
  available for free search services, and is only available for paid services created on or after
  January 1, 2019.
 :vartype encryptionKey: "SearchResourceEncryptionKey"
-:ivar @odata.etag: The ETag of the synonym map.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the synonym map.
+:vartype ``@odata.etag``: str
 """
 
 
@@ -6347,9 +6280,9 @@ Apache Lucene.
  fabulous, amazing will be equivalent to: incredible, unbelievable, fabulous, amazing =>
  incredible. Default is true.
 :vartype expand: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.SynonymTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.SynonymTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.SynonymTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.SynonymTokenFilter"]
 """
 
 
@@ -6458,9 +6391,9 @@ TextTranslationSkill.__doc__ = """A skill to translate text from one language to
  "pt-br", "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty",
  "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
 :vartype suggestedFrom: Union[str, "TextTranslationSkillLanguage"]
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.TranslationSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Text.TranslationSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.TranslationSkill"]
 """
 
 
@@ -6494,9 +6427,9 @@ TruncateTokenFilter.__doc__ = """Truncates the terms to a specific length. This 
 :vartype name: str
 :ivar length: The length at which terms will be truncated. Default and maximum is 300.
 :vartype length: int
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.TruncateTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.TruncateTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.TruncateTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.TruncateTokenFilter"]
 """
 
 
@@ -6518,9 +6451,9 @@ UaxUrlEmailTokenizer.__doc__ = """Tokenizes urls and emails as one token. This t
 :ivar maxTokenLength: The maximum token length. Default is 255. Tokens longer than the maximum
  length are split. The maximum token length that can be used is 300 characters.
 :vartype maxTokenLength: int
-:ivar @odata.type: A URI fragment specifying the type of tokenizer. Required. Default value is
- "#Microsoft.Azure.Search.UaxUrlEmailTokenizer".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.UaxUrlEmailTokenizer"]
+:ivar ``@odata.type``: A URI fragment specifying the type of tokenizer. Required. Default value
+ is "#Microsoft.Azure.Search.UaxUrlEmailTokenizer".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.UaxUrlEmailTokenizer"]
 """
 
 
@@ -6543,9 +6476,9 @@ Apache Lucene.
 :ivar onlyOnSamePosition: A value indicating whether to remove duplicates only at the same
  position. Default is false.
 :vartype onlyOnSamePosition: bool
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.UniqueTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.UniqueTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.UniqueTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.UniqueTokenFilter"]
 """
 
 
@@ -6667,9 +6600,9 @@ Services Vision Vectorize API.
 :ivar modelVersion: The version of the model to use when calling the AI Services Vision
  service. It will default to the latest available when not specified. Required.
 :vartype modelVersion: str
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Vision.VectorizeSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Vision.VectorizeSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Vision.VectorizeSkill"]
 """
 
 
@@ -6741,9 +6674,9 @@ your custom code.
  used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
  If set to "none", the value of this property is cleared.
 :vartype authIdentity: "SearchIndexerDataIdentity"
-:ivar @odata.type: A URI fragment specifying the type of skill. Required. Default value is
+:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Custom.WebApiSkill".
-:vartype @odata.type: Literal["#Microsoft.Skills.Custom.WebApiSkill"]
+:vartype ``@odata.type``: Literal["#Microsoft.Skills.Custom.WebApiSkill"]
 """
 
 
@@ -6840,8 +6773,8 @@ WebKnowledgeSource.__doc__ = """Knowledge Source targeting web results.
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
@@ -6978,9 +6911,9 @@ filter is implemented using Apache Lucene.
 :vartype stemEnglishPossessive: bool
 :ivar protectedWords: A list of tokens to protect from being delimited.
 :vartype protectedWords: list[str]
-:ivar @odata.type: A URI fragment specifying the type of token filter. Required. Default value
- is "#Microsoft.Azure.Search.WordDelimiterTokenFilter".
-:vartype @odata.type: Literal["#Microsoft.Azure.Search.WordDelimiterTokenFilter"]
+:ivar ``@odata.type``: A URI fragment specifying the type of token filter. Required. Default
+ value is "#Microsoft.Azure.Search.WordDelimiterTokenFilter".
+:vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.WordDelimiterTokenFilter"]
 """
 
 
@@ -7007,8 +6940,8 @@ WorkIQKnowledgeSource.__doc__ = """Configuration for WorkIQ knowledge source.
  before they are included in the final result set. Defaults to 'rerank' when not specified.
  Known values are: "rerank" and "none".
 :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar @odata.etag: The ETag of the knowledge source.
-:vartype @odata.etag: str
+:ivar ``@odata.etag``: The ETag of the knowledge source.
+:vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
  This key is used to provide an additional level of encryption-at-rest for your knowledge source
  definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
