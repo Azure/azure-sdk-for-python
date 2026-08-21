@@ -130,6 +130,7 @@ with (
             agent_name=agent_name,
             agent_version=created.version,
             session_id=session.agent_session_id,
+            stream=True,
         )
         for frame in _iter_sse_frames(raw_stream, max_log_events=30):
             print(f"SSE event: {frame.get('event')}")

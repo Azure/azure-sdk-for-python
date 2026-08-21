@@ -12,7 +12,6 @@ import os
 import re
 import logging
 from typing import Any, IO, Tuple, Optional, Union, cast, overload
-from collections.abc import MutableMapping
 from pathlib import Path
 from urllib.parse import urlsplit
 from azure.storage.blob import ContainerClient
@@ -24,7 +23,7 @@ from ._operations import (
     BetaDatasetsOperations as BetaDatasetsOperationsGenerated,
     DatasetsOperations as DatasetsOperationsGenerated,
 )
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._utils.model_base import _deserialize
 from ..models import DatasetGenerationLROPoller
 from ..models._models import (
@@ -36,8 +35,6 @@ from ..models._models import (
 )
 
 logger = logging.getLogger(__name__)
-
-JSON = MutableMapping[str, Any]
 
 
 class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
@@ -56,7 +53,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
     @overload
     def begin_create_generation_job(
         self,
-        job: JSON,
+        job: _types.DataGenerationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -76,7 +73,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
     @distributed_trace
     def begin_create_generation_job(
         self,
-        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.DataGenerationJob, _types.DataGenerationJob, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
@@ -84,7 +81,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
         """Create a data generation job.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob or JSON or IO[bytes]
+        :type job: ~azure.ai.projects.models.DataGenerationJob or ~azure.ai.projects.types.DataGenerationJob or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str

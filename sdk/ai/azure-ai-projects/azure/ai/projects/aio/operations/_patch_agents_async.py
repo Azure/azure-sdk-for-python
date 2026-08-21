@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Union, Optional, Any, IO, cast, overload
+from typing import Union, Optional, Any, IO, cast, overload, TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -20,7 +20,7 @@ from ._operations import (
     JSON,
     _Unset,
 )
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import _deserialize
 from ...models import AsyncAgentOptimizationLROPoller
 from ...operations._patch_agents import _compute_sha256_from_stream
@@ -31,6 +31,9 @@ from ...models._patch import (
     _PREVIEW_FEATURE_REQUIRED_CODE,
     _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE,
 )
+
+if TYPE_CHECKING:
+    from ... import _unions
 
 
 class AgentsOperations(GeneratedAgentsOperations):
@@ -43,7 +46,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         :attr:`agents` attribute.
     """
 
-    @overload
+    @overload  # type: ignore[override]
     async def create_version(
         self,
         agent_name: str,
@@ -145,7 +148,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         """
 
     @distributed_trace_async
-    async def create_version(
+    async def create_version(  # type: ignore[override]
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -203,9 +206,9 @@ class AgentsOperations(GeneratedAgentsOperations):
                 kwargs["headers"] = headers
 
         try:
-            return await super().create_version(
+            return await super().create_version(  # type: ignore[misc]
                 agent_name,
-                body,
+                body,  # type: ignore[arg-type]
                 definition=definition,
                 metadata=metadata,
                 description=description,
@@ -325,6 +328,48 @@ class AgentsOperations(GeneratedAgentsOperations):
                         raise new_exc from exc
             raise
 
+    @distributed_trace_async
+    async def generate_agent(self, body: _models.GenerateVoiceAgentRequest, **kwargs: Any) -> _models.AgentDetails:  # type: ignore[override]
+        """Generate an agent.
+
+        Generates and creates an agent from kind-specific high-level inputs. The generated definition
+        remains fully editable through the standard agent versioning operations. When the client is
+        constructed with ``allow_preview=True``, the required preview opt-in header is added
+        automatically.
+
+        :param body: The kind-specific inputs for generating and creating an agent. Required.
+        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        if getattr(self._config, "allow_preview", False):
+            # Add Foundry-Features header if not already present
+            headers = kwargs.get("headers")
+            if headers is None:
+                kwargs["headers"] = {_FOUNDRY_FEATURES_HEADER_NAME: _AGENT_OPERATION_FEATURE_HEADERS}
+            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _AGENT_OPERATION_FEATURE_HEADERS
+                kwargs["headers"] = headers
+
+        try:
+            return await super().generate_agent(body, **kwargs)  # type: ignore[misc]
+        except HttpResponseError as exc:
+            if exc.status_code == 403 and not self._config.allow_preview and exc.model is not None:
+                api_error_response = exc.model
+                if hasattr(api_error_response, "error") and api_error_response.error is not None:
+                    if api_error_response.error.code == _PREVIEW_FEATURE_REQUIRED_CODE:
+                        new_exc = HttpResponseError(
+                            message=f"{exc.message} {_PREVIEW_FEATURE_ADDED_ERROR_MESSAGE}",
+                        )
+                        new_exc.status_code = exc.status_code
+                        new_exc.reason = exc.reason
+                        new_exc.response = exc.response
+                        new_exc.model = exc.model
+                        raise new_exc from exc
+            raise
+
 
 class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     """Custom async operations for beta agent optimization jobs."""
@@ -342,7 +387,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     @overload
     async def begin_create_optimization_job(
         self,
-        job: JSON,
+        job: _types.AgentOptimizationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -362,7 +407,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     @distributed_trace_async
     async def begin_create_optimization_job(
         self,
-        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        job: Union[_models.AgentOptimizationJob, _types.AgentOptimizationJob, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
@@ -370,7 +415,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
         """Create an agent optimization job.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.AgentOptimizationJob or JSON or IO[bytes]
+        :type job: ~azure.ai.projects.models.AgentOptimizationJob or ~azure.ai.projects.types.AgentOptimizationJob or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str

@@ -5,7 +5,6 @@
 # ------------------------------------
 """Custom async evaluator operations."""
 
-from collections.abc import MutableMapping
 from typing import Any, IO, Optional, Union, cast, overload
 
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
@@ -14,11 +13,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ._operations import BetaEvaluatorsOperations as BetaEvaluatorsOperationsGenerated
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import _deserialize
 from ...models import AsyncEvaluatorGenerationLROPoller
-
-JSON = MutableMapping[str, Any]
 
 
 class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
@@ -37,7 +34,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     @overload
     async def begin_create_generation_job(
         self,
-        job: JSON,
+        job: _types.EvaluatorGenerationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -57,7 +54,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     @distributed_trace_async
     async def begin_create_generation_job(
         self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.EvaluatorGenerationJob, _types.EvaluatorGenerationJob, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
@@ -65,7 +62,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         """Create an evaluator generation job.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or ~azure.ai.projects.types.EvaluatorGenerationJob or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str

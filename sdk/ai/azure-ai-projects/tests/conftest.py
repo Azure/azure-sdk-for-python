@@ -384,6 +384,20 @@ def add_sanitizers(test_proxy, sanitized_values):
     # would otherwise fail to decode -> UnicodeDecodeError).
     add_remove_header_sanitizer(headers="Content-Encoding")
 
+    # Strip Foundry-Features from record/playback matching. Its value is a comma-joined list of
+    # preview opt-in flags that legitimately changes over time as new preview features are added
+    # (e.g. VoiceAgents=V1Preview was added later); exact-matching it against older cassettes
+    # would otherwise cause spurious playback failures unrelated to what a given test is actually
+    # validating. Some affected cassettes (test_ai_agents_instrumentor.py/_async.py) have been
+    # re-recorded and no longer need this, but others still rely on it pending re-recording (see
+    # test_responses_instrumentor_workflow.py, which currently fails to re-record live due to an
+    # unrelated pre-existing gap in its expected span-attribute list vs. actual gen_ai.usage.*
+    # token attributes now returned by the service). Tests that specifically need to assert on
+    # this header's value use a dedicated unit-test suite (tests/foundry_features_header) with a
+    # capturing transport instead of the test-proxy, so this does not reduce coverage of the
+    # header-injection behavior itself.
+    add_remove_header_sanitizer(headers="Foundry-Features")
+
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name
     #  - AZSDK3430: $..id

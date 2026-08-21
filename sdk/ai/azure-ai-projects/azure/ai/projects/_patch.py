@@ -19,7 +19,17 @@ from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
+from .operations._patch import _OperationMethodHeaderProxy
+from .models._enums import _AgentDefinitionOptInKeys
 from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
+from ._realtime import (
+    Realtime,
+    RealtimeConnection,
+    RealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 
 _OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
 logger = logging.getLogger(__name__)
@@ -239,6 +249,27 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
+        self._realtime: Optional[Realtime] = None
+        # Voice-agent conversation reads require the VoiceAgents=V1Preview opt-in header, which
+        # isn't part of the standard agent preview headers; inject it transparently.
+        # Guarded with hasattr since some tests mock out the generated __init__ entirely, in which
+        # case none of the generated operation-group attributes are set on `self`.
+        if hasattr(self, "agent_endpoint_conversations"):
+            self.agent_endpoint_conversations = _OperationMethodHeaderProxy(  # type: ignore
+                self.agent_endpoint_conversations,
+                _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
+            )
+
+    @property
+    def realtime(self) -> Realtime:
+        """Realtime streaming entry point for voice agents.
+
+        :return: The realtime namespace, exposing ``connect(...)``.
+        :rtype: ~azure.ai.projects.Realtime
+        """
+        if self._realtime is None:
+            self._realtime = Realtime(self)
+        return self._realtime
 
     def _get_openai_api_key(self, kwargs: dict):
         """Resolve the API key for the OpenAI client.
@@ -268,7 +299,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         logging_kwargs = getattr(self, "_kwargs", {})
         logging_enabled = bool(logging_kwargs.get("logging_enable", False))
-        return DefaultHttpxClient(transport=_OpenAILoggingTransport(logging_enabled=logging_enabled))
+        return DefaultHttpxClient(
+            transport=_OpenAILoggingTransport(logging_enabled=logging_enabled)
+        )  # type: ignore[arg-type]
 
     @distributed_trace
     def get_openai_client(
@@ -501,6 +534,12 @@ class _OpenAILoggingTransport(httpx2.HTTPTransport):
 
 __all__: List[str] = [
     "AIProjectClient",
+    "Realtime",
+    "RealtimeConnection",
+    "RealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
 ]  # Add all objects you want publicly available to users at this package level
 
 
