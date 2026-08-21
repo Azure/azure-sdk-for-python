@@ -373,6 +373,17 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         msg_prefix = f"Default value of Input {name}"
 
         if not self._is_primitive_type and default_value is not None:
+            # Asset-type inputs accept a string default value (e.g. "azureml:", "https://",
+            # local path) matching the public CLI v2 YAML schema.
+            if not self._multiple_types and self.type in IOConstants.ASSET_INPUT_TYPES:
+                if isinstance(default_value, str):
+                    self.default: Any = default_value
+                    return
+                msg = (
+                    f"{msg_prefix}cannot be set: default for type '{self.type}' must be a "
+                    f"string asset reference, got '{type(default_value)}'."
+                )
+                raise UserErrorException(msg)
             msg = f"{msg_prefix}cannot be set: Non-primitive type Input has no default value."
             raise UserErrorException(msg)
         if isinstance(default_value, float) and not math.isfinite(default_value):
