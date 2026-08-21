@@ -17,8 +17,14 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
     _get_storage_directory,
 )
-from azure.monitor.opentelemetry.exporter._utils import _get_retry_delay_from_headers
+from azure.monitor.opentelemetry.exporter._utils import (
+    _get_retry_delay_from_headers,
+    _get_envelope_serialized_size,
+    _is_item_too_large,
+    _split_oversized_batch,
+)
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
+from azure.monitor.opentelemetry.exporter._constants import DropCode
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _STATSBEAT_STATE,
@@ -48,6 +54,8 @@ from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
     TrackResponse,
 )
+
+_MAX_INGESTION_PAYLOAD_SIZE_BYTES = 30 * 1000 * 1000
 
 TEST_AUTH_POLICY = "TEST_AUTH_POLICY"
 TEST_TEMP_DIR = "TEST_TEMP_DIR"
@@ -1115,6 +1123,75 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         exporter.storage.put.assert_not_called()
 
+    def test_transmission_206_oversized_item_omits_envelope_from_log(self):
+        """An item the server reports as exceeding the per-item ingestion size limit is dropped and
+        the log stops at the server message; the full (potentially large / PII-laden) envelope must
+        NOT be dumped. The decision comes from the server's error message, so the envelope is never
+        re-serialized to measure it."""
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        oversized_envelope = TelemetryItem(
+            name="OversizedItem",
+            time=datetime.now(),
+            tags={"marker": "SECRET_PAYLOAD_MARKER"},
+        )
+        custom_envelopes_to_export = [oversized_envelope]
+        with mock.patch.object(AzureMonitorClient, "track") as post, mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils._get_envelope_serialized_size",
+        ) as mock_size:
+            post.return_value = TrackResponse(
+                items_received=1,
+                items_accepted=0,
+                errors=[
+                    TelemetryErrorDetails(
+                        index=0,
+                        status_code=400,
+                        message="Telemetry item length must not exceed 1258291",
+                    ),
+                ],
+            )
+            with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as cm:
+                result = exporter._transmit(custom_envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        # The drop path never re-serializes the envelope to decide what to log.
+        mock_size.assert_not_called()
+        log_output = "\n".join(cm.output)
+        # The server message is still logged so the drop reason is visible.
+        self.assertIn("Telemetry item length must not exceed 1258291", log_output)
+        # The full envelope payload (its tags/data) must NOT be dumped to the log.
+        self.assertNotIn("SECRET_PAYLOAD_MARKER", log_output)
+
+    def test_transmission_206_normal_drop_logs_full_envelope(self):
+        """A non-retryable drop for a normally-sized item keeps the existing behavior of logging
+        the full envelope to aid debugging."""
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        dropped_envelope = TelemetryItem(
+            name="NormalItem",
+            time=datetime.now(),
+            tags={"marker": "SECRET_PAYLOAD_MARKER"},
+        )
+        custom_envelopes_to_export = [dropped_envelope]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = TrackResponse(
+                items_received=1,
+                items_accepted=0,
+                errors=[
+                    TelemetryErrorDetails(
+                        index=0,
+                        status_code=400,
+                        message="should drop",
+                    ),
+                ],
+            )
+            with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as cm:
+                result = exporter._transmit(custom_envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        log_output = "\n".join(cm.output)
+        # The full envelope (including its tags) is logged for a normally-sized drop.
+        self.assertIn("SECRET_PAYLOAD_MARKER", log_output)
+        self.assertNotIn("omitted from the log", log_output)
+
     def test_transmission_206_sampling_rejection_not_retried(self):
         """Test that items rejected due to ingestion sampling are not retried or persisted."""
         exporter = BaseExporter(disable_offline_storage=True)
@@ -1298,6 +1375,207 @@ class TestBaseExporter(unittest.TestCase):
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(408)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_413_splits_batch(self):
+        """A 413 with more than one envelope should split the batch in half and
+        persist each half as a separate blob so they are retried at a smaller size."""
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test1", time=datetime.now()),
+            TelemetryItem(name="Test2", time=datetime.now()),
+            TelemetryItem(name="Test3", time=datetime.now()),
+            TelemetryItem(name="Test4", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
+            result = exporter._transmit(custom_envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        # Two separate blobs (one per half) so the halves are retried independently.
+        self.assertEqual(exporter.storage.put.call_count, 2)
+
+    def test_transmission_413_single_envelope_dropped(self):
+        """A 413 with a single envelope cannot be split further and should be dropped."""
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        single_envelope = [TelemetryItem(name="Test", time=datetime.now())]
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
+            result = exporter._transmit(single_envelope)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        exporter.storage.put.assert_not_called()
+
+    def test_transmission_413_storage_disabled_dropped(self):
+        """A 413 with storage disabled cannot be persisted and should be dropped exactly once
+        with the CLIENT_STORAGE_DISABLED reason. Drop attribution for the storage-disabled case
+        is owned solely by _handle_transmit_from_storage, so _transmit must not also count it."""
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = None
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test1", time=datetime.now()),
+            TelemetryItem(name="Test2", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
+            with mock.patch.object(exporter, "_should_collect_customer_sdkstats", return_value=True):
+                with mock.patch(
+                    "azure.monitor.opentelemetry.exporter.export._base.track_dropped_items"
+                ) as mock_track_dropped:
+                    result = exporter._transmit(custom_envelopes_to_export)
+                    # _transmit itself must not attribute the drop (avoids the double count).
+                    mock_track_dropped.assert_not_called()
+                    exporter._handle_transmit_from_storage(custom_envelopes_to_export, result)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        # The batch is dropped exactly once, with the storage-disabled reason.
+        mock_track_dropped.assert_called_once_with(custom_envelopes_to_export, DropCode.CLIENT_STORAGE_DISABLED)
+
+    def test_transmission_413_persists_and_retries(self):
+        """End-to-end with real on-disk storage: a 413 persists the split halves to
+        disk, and a later successful drain reads them back and retries them."""
+        exporter = self._base
+        clean_folder(exporter.storage._path)
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test1", time=datetime.now()),
+            TelemetryItem(name="Test2", time=datetime.now()),
+            TelemetryItem(name="Test3", time=datetime.now()),
+            TelemetryItem(name="Test4", time=datetime.now()),
+        ]
+        # First transmit gets a 413 -> the batch is split and each half is persisted.
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
+            result = exporter._transmit(custom_envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        # Two separate blobs were written to disk (one per half).
+        blobs = [f for f in os.listdir(exporter.storage._path) if ".blob" in f]
+        self.assertEqual(len(blobs), 2)
+        # Strip the retry lease so the freshly-persisted blobs are drainable now.
+        for name in os.listdir(exporter.storage._path):
+            if name.endswith(".lock"):
+                src = os.path.join(exporter.storage._path, name)
+                dst = os.path.join(exporter.storage._path, name[: name.rindex("@")])
+                os.rename(src, dst)
+        # Now the endpoint accepts data -> draining retries the persisted halves.
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = TrackResponse(items_received=2, items_accepted=2, errors=[])
+            exporter._transmit_from_storage()
+        # Both halves were re-sent and their blobs removed from disk.
+        self.assertEqual(post.call_count, 2)
+        remaining = [f for f in os.listdir(exporter.storage._path) if ".blob" in f]
+        self.assertEqual(len(remaining), 0)
+
+    def test_transmission_413_sub_batch_persist_failure_drops_that_batch_only(self):
+        """storage.put reports failure by return value (not by raising). If persisting one
+        split sub-batch fails during a 413, that sub-batch is dropped (with a warning) while
+        the remaining sub-batches are still attempted and persisted."""
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        # First sub-batch persist reports a failure result, second succeeds -> both are
+        # attempted (a failing sub-batch must not abort the loop) and only the failed one
+        # is dropped rather than counted as a pending retry.
+        exporter.storage.put.side_effect = [
+            StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED,
+            StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
+        ]
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test1", time=datetime.now()),
+            TelemetryItem(name="Test2", time=datetime.now()),
+            TelemetryItem(name="Test3", time=datetime.now()),
+            TelemetryItem(name="Test4", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
+            with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="DEBUG") as cm:
+                result = exporter._transmit(custom_envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        # Both sub-batches were attempted despite the first failing (loop did not abort).
+        self.assertEqual(exporter.storage.put.call_count, 2)
+        # The failed sub-batch is reported via a warning.
+        self.assertTrue(any("Failed to persist a split sub-batch" in line for line in cm.output))
+
+    def test_get_envelope_serialized_size_matches_wire(self):
+        """The measured size must be > 0 and match the exact bytes the transport puts on the
+        wire (same encoder + read-only exclusion)."""
+        import json
+        from azure.monitor.opentelemetry.exporter._generated.exporter._utils.model_base import SdkJSONEncoder
+
+        envelope = TelemetryItem(name="Test", time=datetime.now())
+        expected = len(json.dumps(envelope, cls=SdkJSONEncoder, exclude_readonly=True).encode("utf-8"))
+        size = _get_envelope_serialized_size(envelope)
+        self.assertGreater(size, 0)
+        self.assertEqual(size, expected)
+
+    def test_get_envelope_serialized_size_failure_returns_max(self):
+        """If an envelope cannot be serialized, sizing returns the max payload size so the item
+        is isolated into its own sub-batch instead of being counted as weightless."""
+        envelope = TelemetryItem(name="Test", time=datetime.now())
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.json.dumps",
+            side_effect=TypeError("not serializable"),
+        ):
+            size = _get_envelope_serialized_size(envelope)
+        self.assertEqual(size, _MAX_INGESTION_PAYLOAD_SIZE_BYTES)
+
+    def test_is_item_too_large(self):
+        """The oversized-item decision is driven by the server's error message, so no envelope
+        needs to be re-serialized to make it."""
+        self.assertTrue(_is_item_too_large("Telemetry item length must not exceed 1258291"))
+        self.assertTrue(_is_item_too_large("Payload too large"))
+        self.assertFalse(_is_item_too_large("Invalid instrumentation key"))
+        self.assertFalse(_is_item_too_large(""))
+        self.assertFalse(_is_item_too_large(None))
+
+    def test_split_oversized_batch_empty(self):
+        """Splitting an empty batch yields no sub-batches (and never an empty half)."""
+        self.assertEqual(_split_oversized_batch([]), [])
+
+    def test_split_oversized_batch_single_envelope_no_empty_half(self):
+        """A single envelope cannot be divided; it is returned as one sub-batch with no empty
+        second half."""
+        single = [TelemetryItem(name="Test", time=datetime.now())]
+        chunks = _split_oversized_batch(single)
+        self.assertEqual(len(chunks), 1)
+        self.assertEqual(len(chunks[0]), 1)
+
+    def test_split_oversized_batch_isolates_oversized_envelopes(self):
+        """When each envelope already fills the budget, every envelope is packed into its own
+        sub-batch."""
+        envelopes = [
+            TelemetryItem(name="Test1", time=datetime.now()),
+            TelemetryItem(name="Test2", time=datetime.now()),
+            TelemetryItem(name="Test3", time=datetime.now()),
+        ]
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils._get_envelope_serialized_size",
+            return_value=_MAX_INGESTION_PAYLOAD_SIZE_BYTES,
+        ):
+            chunks = _split_oversized_batch(envelopes)
+        self.assertEqual([len(c) for c in chunks], [1, 1, 1])
+
+    def test_split_oversized_batch_packs_multiple_chunks_by_size(self):
+        """Size-based packing groups multiple envelopes per sub-batch and starts a new
+        sub-batch once the running size would exceed the ingestion limit."""
+        envelopes = [TelemetryItem(name="Test{}".format(i), time=datetime.now()) for i in range(5)]
+        # Each envelope reports ~40% of the limit -> at most 2 per chunk (2*0.4 fits,
+        # 3*0.4 exceeds), yielding chunks of [2, 2, 1].
+        per_item = int(_MAX_INGESTION_PAYLOAD_SIZE_BYTES * 0.4)
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils._get_envelope_serialized_size",
+            return_value=per_item,
+        ):
+            chunks = _split_oversized_batch(envelopes)
+        self.assertEqual([len(c) for c in chunks], [2, 2, 1])
+
+    def test_split_oversized_batch_falls_back_to_count_halving(self):
+        """If the byte estimate under-reports and everything fits in one chunk, the batch is
+        still halved by count so repeated 413s keep shrinking it."""
+        envelopes = [
+            TelemetryItem(name="Test1", time=datetime.now()),
+            TelemetryItem(name="Test2", time=datetime.now()),
+            TelemetryItem(name="Test3", time=datetime.now()),
+            TelemetryItem(name="Test4", time=datetime.now()),
+        ]
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils._get_envelope_serialized_size",
+            return_value=1,
+        ):
+            chunks = _split_oversized_batch(envelopes)
+        self.assertEqual([len(c) for c in chunks], [2, 2])
 
     def test_transmission_429(self):
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(429)):
