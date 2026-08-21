@@ -26,4 +26,15 @@ VoiceAgentMaxOutputTokens = Union[int, Literal["inf"]]
 VoiceAgentInterimResponse = Union[
     "_models.VoiceAgentStaticInterimResponseConfig", "_models.VoiceAgentLlmInterimResponseConfig"
 ]
+VoiceConversationItem = Union[
+    "_models.VoiceSystemMessageItem",
+    "_models.VoiceUserMessageItem",
+    "_models.VoiceAssistantMessageItem",
+    "_models.VoiceFunctionCallItem",
+    "_models.VoiceFunctionCallOutputItem",
+    "_models.VoiceMcpListToolsItem",
+    "_models.VoiceMcpCallItem",
+    "_models.VoiceMcpApprovalRequestItem",
+    "_models.VoiceMcpApprovalResponseItem",
+]
 GenerateAgentRequest = "_models.GenerateVoiceAgentRequest"

@@ -3195,7 +3195,7 @@ class AgentEndpointConversationsOperations:
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.VoiceConversationItem"]:
+    ) -> AsyncItemPaged["_unions.VoiceConversationItem"]:
         """List items produced by a voice agent conversation response.
 
         Returns a paged collection of the output items produced by a specific response (the response's
@@ -3223,15 +3223,25 @@ class AgentEndpointConversationsOperations:
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: An iterator like instance of VoiceConversationItem
+        :return: An iterator like instance of VoiceSystemMessageItem or VoiceUserMessageItem or
+         VoiceAssistantMessageItem or VoiceFunctionCallItem or VoiceFunctionCallOutputItem or
+         VoiceMcpListToolsItem or VoiceMcpCallItem or VoiceMcpApprovalRequestItem or
+         VoiceMcpApprovalResponseItem
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.VoiceConversationItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.VoiceSystemMessageItem or
+         ~azure.ai.projects.models.VoiceUserMessageItem or
+         ~azure.ai.projects.models.VoiceAssistantMessageItem or
+         ~azure.ai.projects.models.VoiceFunctionCallItem or
+         ~azure.ai.projects.models.VoiceFunctionCallOutputItem or
+         ~azure.ai.projects.models.VoiceMcpListToolsItem or ~azure.ai.projects.models.VoiceMcpCallItem
+         or ~azure.ai.projects.models.VoiceMcpApprovalRequestItem or
+         ~azure.ai.projects.models.VoiceMcpApprovalResponseItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.VoiceConversationItem]] = kwargs.pop("cls", None)
+        cls: ClsType[List["_unions.VoiceConversationItem"]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3264,7 +3274,7 @@ class AgentEndpointConversationsOperations:
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.VoiceConversationItem],
+                List["_unions.VoiceConversationItem"],
                 deserialized.get("data", []),
             )
             if cls:
@@ -3302,7 +3312,7 @@ class AgentEndpointConversationsOperations:
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.VoiceConversationItem"]:
+    ) -> AsyncItemPaged["_unions.VoiceConversationItem"]:
         """List items in a voice agent conversation.
 
         Returns a paged collection of items — the complete ordered conversation history, including user
@@ -3327,15 +3337,25 @@ class AgentEndpointConversationsOperations:
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: An iterator like instance of VoiceConversationItem
+        :return: An iterator like instance of VoiceSystemMessageItem or VoiceUserMessageItem or
+         VoiceAssistantMessageItem or VoiceFunctionCallItem or VoiceFunctionCallOutputItem or
+         VoiceMcpListToolsItem or VoiceMcpCallItem or VoiceMcpApprovalRequestItem or
+         VoiceMcpApprovalResponseItem
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.VoiceConversationItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.VoiceSystemMessageItem or
+         ~azure.ai.projects.models.VoiceUserMessageItem or
+         ~azure.ai.projects.models.VoiceAssistantMessageItem or
+         ~azure.ai.projects.models.VoiceFunctionCallItem or
+         ~azure.ai.projects.models.VoiceFunctionCallOutputItem or
+         ~azure.ai.projects.models.VoiceMcpListToolsItem or ~azure.ai.projects.models.VoiceMcpCallItem
+         or ~azure.ai.projects.models.VoiceMcpApprovalRequestItem or
+         ~azure.ai.projects.models.VoiceMcpApprovalResponseItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.VoiceConversationItem]] = kwargs.pop("cls", None)
+        cls: ClsType[List["_unions.VoiceConversationItem"]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3367,7 +3387,7 @@ class AgentEndpointConversationsOperations:
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.VoiceConversationItem],
+                List["_unions.VoiceConversationItem"],
                 deserialized.get("data", []),
             )
             if cls:
@@ -3398,7 +3418,7 @@ class AgentEndpointConversationsOperations:
     @distributed_trace_async
     async def get_agent_conversation_item(
         self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
-    ) -> _models.VoiceConversationItem:
+    ) -> "_unions.VoiceConversationItem":
         """Get a voice agent conversation item.
 
         Retrieves a single item from the specified conversation by its id, including its transcript. An
@@ -3413,8 +3433,17 @@ class AgentEndpointConversationsOperations:
         :type conversation_id: str
         :param item_id: The id of the conversation item to retrieve. Required.
         :type item_id: str
-        :return: VoiceConversationItem. The VoiceConversationItem is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VoiceConversationItem
+        :return: VoiceSystemMessageItem or VoiceUserMessageItem or VoiceAssistantMessageItem or
+         VoiceFunctionCallItem or VoiceFunctionCallOutputItem or VoiceMcpListToolsItem or
+         VoiceMcpCallItem or VoiceMcpApprovalRequestItem or VoiceMcpApprovalResponseItem
+        :rtype: ~azure.ai.projects.models.VoiceSystemMessageItem or
+         ~azure.ai.projects.models.VoiceUserMessageItem or
+         ~azure.ai.projects.models.VoiceAssistantMessageItem or
+         ~azure.ai.projects.models.VoiceFunctionCallItem or
+         ~azure.ai.projects.models.VoiceFunctionCallOutputItem or
+         ~azure.ai.projects.models.VoiceMcpListToolsItem or ~azure.ai.projects.models.VoiceMcpCallItem
+         or ~azure.ai.projects.models.VoiceMcpApprovalRequestItem or
+         ~azure.ai.projects.models.VoiceMcpApprovalResponseItem
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3428,7 +3457,7 @@ class AgentEndpointConversationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VoiceConversationItem] = kwargs.pop("cls", None)
+        cls: ClsType["_unions.VoiceConversationItem"] = kwargs.pop("cls", None)
 
         _request = build_agent_endpoint_conversations_get_agent_conversation_item_request(
             agent_name=agent_name,
@@ -3467,7 +3496,7 @@ class AgentEndpointConversationsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.VoiceConversationItem, response.json())
+            deserialized = _deserialize("_unions.VoiceConversationItem", response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

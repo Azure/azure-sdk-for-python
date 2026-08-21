@@ -929,6 +929,23 @@ class RealtimeConversationItemMessageType(str, Enum, metaclass=CaseInsensitiveEn
     """ASSISTANT."""
 
 
+class RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeConversationItemType."""
+
+    FUNCTION_CALL = "function_call"
+    """FUNCTION_CALL."""
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    """FUNCTION_CALL_OUTPUT."""
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    """MCP_APPROVAL_RESPONSE."""
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    """MCP_LIST_TOOLS."""
+    MCP_CALL = "mcp_call"
+    """MCP_CALL."""
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    """MCP_APPROVAL_REQUEST."""
+
+
 class RealtimeMcpErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of RealtimeMcpErrorType."""
 
@@ -1677,25 +1694,6 @@ class VoiceAvatarType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VIDEO_AVATAR."""
     PHOTO_AVATAR = "photo_avatar"
     """PHOTO_AVATAR."""
-
-
-class VoiceConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of a persisted voice conversation item."""
-
-    MESSAGE = "message"
-    """A message item."""
-    FUNCTION_CALL = "function_call"
-    """A function-call request item."""
-    FUNCTION_CALL_OUTPUT = "function_call_output"
-    """A function-call output item."""
-    MCP_LIST_TOOLS = "mcp_list_tools"
-    """An MCP list-tools item."""
-    MCP_CALL = "mcp_call"
-    """An MCP call item."""
-    MCP_APPROVAL_REQUEST = "mcp_approval_request"
-    """An MCP approval request item."""
-    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
-    """An MCP approval response item."""
 
 
 class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
