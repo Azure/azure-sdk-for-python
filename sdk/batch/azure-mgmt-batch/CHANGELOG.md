@@ -1,5 +1,11 @@
 # Release History
 
+## 20.0.0 (2026-08-18)
+
+### Breaking Changes
+
+  - Renamed model `AzureResource` to `TrackedResource`
+
 ## 19.0.0 (2026-02-27)
 
 ### Features Added

@@ -34,7 +34,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -85,11 +85,10 @@ from .._configuration import BatchManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -153,7 +152,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -166,7 +168,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -193,7 +198,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BatchAccountOperations:
+class BatchAccountOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -254,6 +259,7 @@ class BatchAccountOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -275,7 +281,7 @@ class BatchAccountOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchAccount, response.json())
 
@@ -288,7 +294,7 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.BatchAccountCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.BatchAccountCreateParameters, _types.BatchAccountCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -327,6 +333,7 @@ class BatchAccountOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -351,7 +358,7 @@ class BatchAccountOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -397,7 +404,7 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.BatchAccountCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -416,7 +423,7 @@ class BatchAccountOperations:
          Required.
         :type account_name: str
         :param parameters: Additional parameters for account creation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.batch.types.BatchAccountCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -465,7 +472,7 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.BatchAccountCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.BatchAccountCreateParameters, _types.BatchAccountCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BatchAccount]:
         """Creates a new Batch account with the specified parameters. Existing accounts cannot be updated
@@ -481,9 +488,10 @@ class BatchAccountOperations:
          `http://accountname.region.batch.azure.com/ <http://accountname.region.batch.azure.com/>`_.
          Required.
         :type account_name: str
-        :param parameters: Additional parameters for account creation. Is one of the following types:
-         BatchAccountCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.batch.models.BatchAccountCreateParameters or JSON or IO[bytes]
+        :param parameters: Additional parameters for account creation. Is either a
+         BatchAccountCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.batch.models.BatchAccountCreateParameters or
+         ~azure.mgmt.batch.types.BatchAccountCreateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BatchAccount. The BatchAccount is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.batch.models.BatchAccount]
@@ -578,7 +586,7 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.BatchAccountUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -596,7 +604,7 @@ class BatchAccountOperations:
          Required.
         :type account_name: str
         :param parameters: Additional parameters for account update. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.batch.types.BatchAccountUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -642,7 +650,7 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.BatchAccountUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.BatchAccountUpdateParameters, _types.BatchAccountUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.BatchAccount:
         """Updates the properties of an existing Batch account.
@@ -657,9 +665,10 @@ class BatchAccountOperations:
          `http://accountname.region.batch.azure.com/ <http://accountname.region.batch.azure.com/>`_.
          Required.
         :type account_name: str
-        :param parameters: Additional parameters for account update. Is one of the following types:
-         BatchAccountUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.batch.models.BatchAccountUpdateParameters or JSON or IO[bytes]
+        :param parameters: Additional parameters for account update. Is either a
+         BatchAccountUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.batch.models.BatchAccountUpdateParameters or
+         ~azure.mgmt.batch.types.BatchAccountUpdateParameters or IO[bytes]
         :return: BatchAccount. The BatchAccount is compatible with MutableMapping
         :rtype: ~azure.mgmt.batch.models.BatchAccount
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -700,6 +709,7 @@ class BatchAccountOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -721,7 +731,7 @@ class BatchAccountOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchAccount, response.json())
 
@@ -757,6 +767,7 @@ class BatchAccountOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -781,7 +792,7 @@ class BatchAccountOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -902,7 +913,10 @@ class BatchAccountOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -915,7 +929,10 @@ class BatchAccountOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchAccount], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BatchAccount],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -989,7 +1006,10 @@ class BatchAccountOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1002,7 +1022,10 @@ class BatchAccountOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchAccount], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BatchAccount],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1133,7 +1156,7 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.BatchAccountRegenerateKeyParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1156,7 +1179,7 @@ class BatchAccountOperations:
          Required.
         :type account_name: str
         :param parameters: The type of key to regenerate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.batch.types.BatchAccountRegenerateKeyParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1207,7 +1230,9 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.BatchAccountRegenerateKeyParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.BatchAccountRegenerateKeyParameters, _types.BatchAccountRegenerateKeyParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.BatchAccountKeys:
         """Regenerates the specified account key for the Batch account.
@@ -1227,10 +1252,10 @@ class BatchAccountOperations:
          `http://accountname.region.batch.azure.com/ <http://accountname.region.batch.azure.com/>`_.
          Required.
         :type account_name: str
-        :param parameters: The type of key to regenerate. Is one of the following types:
-         BatchAccountRegenerateKeyParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.batch.models.BatchAccountRegenerateKeyParameters or JSON or
-         IO[bytes]
+        :param parameters: The type of key to regenerate. Is either a
+         BatchAccountRegenerateKeyParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.batch.models.BatchAccountRegenerateKeyParameters or
+         ~azure.mgmt.batch.types.BatchAccountRegenerateKeyParameters or IO[bytes]
         :return: BatchAccountKeys. The BatchAccountKeys is compatible with MutableMapping
         :rtype: ~azure.mgmt.batch.models.BatchAccountKeys
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1271,6 +1296,7 @@ class BatchAccountOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1292,7 +1318,7 @@ class BatchAccountOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchAccountKeys, response.json())
 
@@ -1350,6 +1376,7 @@ class BatchAccountOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1371,7 +1398,7 @@ class BatchAccountOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchAccountKeys, response.json())
 
@@ -1449,7 +1476,10 @@ class BatchAccountOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1462,7 +1492,10 @@ class BatchAccountOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OutboundEnvironmentEndpoint], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OutboundEnvironmentEndpoint],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1537,6 +1570,7 @@ class BatchAccountOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1558,7 +1592,7 @@ class BatchAccountOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DetectorResponse, response.json())
 
@@ -1629,7 +1663,10 @@ class BatchAccountOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1642,7 +1679,10 @@ class BatchAccountOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DetectorResponse], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DetectorResponse],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1669,7 +1709,7 @@ class BatchAccountOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ApplicationPackageOperations:
+class ApplicationPackageOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1739,6 +1779,7 @@ class ApplicationPackageOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1760,7 +1801,7 @@ class ApplicationPackageOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ApplicationPackage, response.json())
 
@@ -1818,7 +1859,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.ApplicationPackage] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1844,7 +1885,7 @@ class ApplicationPackageOperations:
         :param version_name: The version of the application. Required.
         :type version_name: str
         :param parameters: The parameters for the request. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.batch.types.ApplicationPackage
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1902,7 +1943,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        parameters: Optional[Union[_models.ApplicationPackage, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.ApplicationPackage, _types.ApplicationPackage, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ApplicationPackage:
         """Creates an application package record. The record contains a storageUrl where the package
@@ -1925,9 +1966,10 @@ class ApplicationPackageOperations:
         :type application_name: str
         :param version_name: The version of the application. Required.
         :type version_name: str
-        :param parameters: The parameters for the request. Is one of the following types:
-         ApplicationPackage, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.batch.models.ApplicationPackage or JSON or IO[bytes]
+        :param parameters: The parameters for the request. Is either a ApplicationPackage type or a
+         IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.batch.models.ApplicationPackage or
+         ~azure.mgmt.batch.types.ApplicationPackage or IO[bytes]
         :return: ApplicationPackage. The ApplicationPackage is compatible with MutableMapping
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1974,6 +2016,7 @@ class ApplicationPackageOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1995,7 +2038,7 @@ class ApplicationPackageOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ApplicationPackage, response.json())
 
@@ -2151,7 +2194,10 @@ class ApplicationPackageOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2164,7 +2210,10 @@ class ApplicationPackageOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ApplicationPackage], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ApplicationPackage],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2238,7 +2287,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        parameters: JSON,
+        parameters: _types.ActivateApplicationPackageParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2263,7 +2312,7 @@ class ApplicationPackageOperations:
         :param version_name: The version of the application. Required.
         :type version_name: str
         :param parameters: The parameters for the request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.batch.types.ActivateApplicationPackageParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2320,7 +2369,9 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        parameters: Union[_models.ActivateApplicationPackageParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ActivateApplicationPackageParameters, _types.ActivateApplicationPackageParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ApplicationPackage:
         """Activates the specified application package. This should be done after the
@@ -2342,10 +2393,10 @@ class ApplicationPackageOperations:
         :type application_name: str
         :param version_name: The version of the application. Required.
         :type version_name: str
-        :param parameters: The parameters for the request. Is one of the following types:
-         ActivateApplicationPackageParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.batch.models.ActivateApplicationPackageParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters for the request. Is either a
+         ActivateApplicationPackageParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.batch.models.ActivateApplicationPackageParameters or
+         ~azure.mgmt.batch.types.ActivateApplicationPackageParameters or IO[bytes]
         :return: ApplicationPackage. The ApplicationPackage is compatible with MutableMapping
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2388,6 +2439,7 @@ class ApplicationPackageOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2409,7 +2461,7 @@ class ApplicationPackageOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ApplicationPackage, response.json())
 
@@ -2419,7 +2471,7 @@ class ApplicationPackageOperations:
         return deserialized  # type: ignore
 
 
-class ApplicationOperations:
+class ApplicationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2486,6 +2538,7 @@ class ApplicationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2507,7 +2560,7 @@ class ApplicationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Application, response.json())
 
@@ -2558,7 +2611,7 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.Application] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2579,7 +2632,7 @@ class ApplicationOperations:
          Required.
         :type application_name: str
         :param parameters: The parameters for the request. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.batch.types.Application
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2630,7 +2683,7 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        parameters: Optional[Union[_models.Application, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.Application, _types.Application, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.Application:
         """Adds an application to the specified Batch account.
@@ -2648,9 +2701,10 @@ class ApplicationOperations:
         :param application_name: The name of the application. This must be unique within the account.
          Required.
         :type application_name: str
-        :param parameters: The parameters for the request. Is one of the following types: Application,
-         JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.batch.models.Application or JSON or IO[bytes]
+        :param parameters: The parameters for the request. Is either a Application type or a IO[bytes]
+         type. Default value is None.
+        :type parameters: ~azure.mgmt.batch.models.Application or ~azure.mgmt.batch.types.Application
+         or IO[bytes]
         :return: Application. The Application is compatible with MutableMapping
         :rtype: ~azure.mgmt.batch.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2696,6 +2750,7 @@ class ApplicationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2717,7 +2772,7 @@ class ApplicationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Application, response.json())
 
@@ -2768,7 +2823,7 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        parameters: JSON,
+        parameters: _types.Application,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2789,7 +2844,7 @@ class ApplicationOperations:
          Required.
         :type application_name: str
         :param parameters: The parameters for the request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.batch.types.Application
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2840,7 +2895,7 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        parameters: Union[_models.Application, JSON, IO[bytes]],
+        parameters: Union[_models.Application, _types.Application, IO[bytes]],
         **kwargs: Any
     ) -> _models.Application:
         """Updates settings for the specified application.
@@ -2858,9 +2913,10 @@ class ApplicationOperations:
         :param application_name: The name of the application. This must be unique within the account.
          Required.
         :type application_name: str
-        :param parameters: The parameters for the request. Is one of the following types: Application,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.batch.models.Application or JSON or IO[bytes]
+        :param parameters: The parameters for the request. Is either a Application type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.batch.models.Application or ~azure.mgmt.batch.types.Application
+         or IO[bytes]
         :return: Application. The Application is compatible with MutableMapping
         :rtype: ~azure.mgmt.batch.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2902,6 +2958,7 @@ class ApplicationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2923,7 +2980,7 @@ class ApplicationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Application, response.json())
 
@@ -3064,7 +3121,10 @@ class ApplicationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3077,7 +3137,10 @@ class ApplicationOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Application], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Application],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3104,7 +3167,7 @@ class ApplicationOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourceOperations:
+class PrivateLinkResourceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3171,6 +3234,7 @@ class PrivateLinkResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3192,7 +3256,7 @@ class PrivateLinkResourceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateLinkResource, response.json())
 
@@ -3267,7 +3331,10 @@ class PrivateLinkResourceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3280,7 +3347,10 @@ class PrivateLinkResourceOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateLinkResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PrivateLinkResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3307,7 +3377,7 @@ class PrivateLinkResourceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionOperations:
+class PrivateEndpointConnectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3375,6 +3445,7 @@ class PrivateEndpointConnectionOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3396,7 +3467,7 @@ class PrivateEndpointConnectionOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
 
@@ -3410,7 +3481,7 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -3461,6 +3532,7 @@ class PrivateEndpointConnectionOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3488,7 +3560,7 @@ class PrivateEndpointConnectionOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3546,7 +3618,7 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -3570,7 +3642,7 @@ class PrivateEndpointConnectionOperations:
         :type private_endpoint_connection_name: str
         :param parameters: PrivateEndpointConnection properties that should be updated. Properties that
          are supplied will be updated, any property not supplied will be unchanged. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.batch.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3636,7 +3708,7 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -3658,9 +3730,10 @@ class PrivateEndpointConnectionOperations:
          unique within the account. Required.
         :type private_endpoint_connection_name: str
         :param parameters: PrivateEndpointConnection properties that should be updated. Properties that
-         are supplied will be updated, any property not supplied will be unchanged. Is one of the
-         following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.batch.models.PrivateEndpointConnection or JSON or IO[bytes]
+         are supplied will be updated, any property not supplied will be unchanged. Is either a
+         PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.batch.models.PrivateEndpointConnection or
+         ~azure.mgmt.batch.types.PrivateEndpointConnection or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -3756,6 +3829,7 @@ class PrivateEndpointConnectionOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3783,7 +3857,7 @@ class PrivateEndpointConnectionOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3925,7 +3999,10 @@ class PrivateEndpointConnectionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3938,7 +4015,10 @@ class PrivateEndpointConnectionOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateEndpointConnection], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PrivateEndpointConnection],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3965,7 +4045,7 @@ class PrivateEndpointConnectionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PoolOperations:
+class PoolOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4029,6 +4109,7 @@ class PoolOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4053,7 +4134,7 @@ class PoolOperations:
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Pool, response.json())
 
@@ -4110,7 +4191,7 @@ class PoolOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        parameters: JSON,
+        parameters: _types.Pool,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -4132,7 +4213,7 @@ class PoolOperations:
         :param pool_name: The pool name. This must be unique within the account. Required.
         :type pool_name: str
         :param parameters: Additional parameters for pool creation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.batch.types.Pool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4194,7 +4275,7 @@ class PoolOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        parameters: Union[_models.Pool, JSON, IO[bytes]],
+        parameters: Union[_models.Pool, _types.Pool, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -4214,9 +4295,9 @@ class PoolOperations:
         :type account_name: str
         :param pool_name: The pool name. This must be unique within the account. Required.
         :type pool_name: str
-        :param parameters: Additional parameters for pool creation. Is one of the following types:
-         Pool, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.batch.models.Pool or JSON or IO[bytes]
+        :param parameters: Additional parameters for pool creation. Is either a Pool type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.batch.models.Pool or ~azure.mgmt.batch.types.Pool or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -4271,6 +4352,7 @@ class PoolOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4295,7 +4377,7 @@ class PoolOperations:
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Pool, response.json())
 
@@ -4353,7 +4435,7 @@ class PoolOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        parameters: JSON,
+        parameters: _types.Pool,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -4376,7 +4458,7 @@ class PoolOperations:
         :type pool_name: str
         :param parameters: Pool properties that should be updated. Properties that are supplied will be
          updated, any property not supplied will be unchanged. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.batch.types.Pool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4439,7 +4521,7 @@ class PoolOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        parameters: Union[_models.Pool, JSON, IO[bytes]],
+        parameters: Union[_models.Pool, _types.Pool, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -4460,9 +4542,9 @@ class PoolOperations:
         :param pool_name: The pool name. This must be unique within the account. Required.
         :type pool_name: str
         :param parameters: Pool properties that should be updated. Properties that are supplied will be
-         updated, any property not supplied will be unchanged. Is one of the following types: Pool,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.batch.models.Pool or JSON or IO[bytes]
+         updated, any property not supplied will be unchanged. Is either a Pool type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.batch.models.Pool or ~azure.mgmt.batch.types.Pool or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -4517,6 +4599,7 @@ class PoolOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4541,7 +4624,7 @@ class PoolOperations:
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Pool, response.json())
 
@@ -4580,6 +4663,7 @@ class PoolOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4604,7 +4688,7 @@ class PoolOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4771,7 +4855,10 @@ class PoolOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4784,7 +4871,10 @@ class PoolOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Pool], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Pool],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4859,6 +4949,7 @@ class PoolOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4883,7 +4974,7 @@ class PoolOperations:
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Pool, response.json())
 
@@ -4948,6 +5039,7 @@ class PoolOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4972,7 +5064,7 @@ class PoolOperations:
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Pool, response.json())
 
@@ -4982,7 +5074,7 @@ class PoolOperations:
         return deserialized  # type: ignore
 
 
-class NetworkSecurityPerimeterOperations:
+class NetworkSecurityPerimeterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5054,6 +5146,7 @@ class NetworkSecurityPerimeterOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5075,7 +5168,7 @@ class NetworkSecurityPerimeterOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NetworkSecurityPerimeterConfiguration, response.json())
 
@@ -5147,7 +5240,10 @@ class NetworkSecurityPerimeterOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5161,7 +5257,8 @@ class NetworkSecurityPerimeterOperations:
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.NetworkSecurityPerimeterConfiguration], deserialized.get("value", [])
+                List[_models.NetworkSecurityPerimeterConfiguration],
+                deserialized.get("value", []),
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -5222,6 +5319,7 @@ class NetworkSecurityPerimeterOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5245,7 +5343,7 @@ class NetworkSecurityPerimeterOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5325,7 +5423,7 @@ class NetworkSecurityPerimeterOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class LocationOperations:
+class LocationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5377,6 +5475,7 @@ class LocationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5398,7 +5497,7 @@ class LocationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchLocationQuota, response.json())
 
@@ -5468,7 +5567,10 @@ class LocationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5481,7 +5583,10 @@ class LocationOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SupportedSku], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SupportedSku],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5533,14 +5638,19 @@ class LocationOperations:
 
     @overload
     async def check_name_availability(
-        self, location_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location_name: str,
+        parameters: _types.CheckNameAvailabilityParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks whether the Batch account name is available in the specified region.
 
         :param location_name: The desired region for the name check. Required.
         :type location_name: str
         :param parameters: Properties needed to check the availability of a name. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.batch.types.CheckNameAvailabilityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5573,16 +5683,17 @@ class LocationOperations:
     async def check_name_availability(
         self,
         location_name: str,
-        parameters: Union[_models.CheckNameAvailabilityParameters, JSON, IO[bytes]],
+        parameters: Union[_models.CheckNameAvailabilityParameters, _types.CheckNameAvailabilityParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks whether the Batch account name is available in the specified region.
 
         :param location_name: The desired region for the name check. Required.
         :type location_name: str
-        :param parameters: Properties needed to check the availability of a name. Is one of the
-         following types: CheckNameAvailabilityParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.batch.models.CheckNameAvailabilityParameters or JSON or IO[bytes]
+        :param parameters: Properties needed to check the availability of a name. Is either a
+         CheckNameAvailabilityParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.batch.models.CheckNameAvailabilityParameters or
+         ~azure.mgmt.batch.types.CheckNameAvailabilityParameters or IO[bytes]
         :return: CheckNameAvailabilityResult. The CheckNameAvailabilityResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.batch.models.CheckNameAvailabilityResult
@@ -5623,6 +5734,7 @@ class LocationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5644,7 +5756,7 @@ class LocationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckNameAvailabilityResult, response.json())
 
