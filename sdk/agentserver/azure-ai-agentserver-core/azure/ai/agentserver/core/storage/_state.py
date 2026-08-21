@@ -28,7 +28,7 @@ from ._state_serializer import (
     _UNSET,
     DeletedStateStore,
     DeletedStateStoreItem,
-    JSONObject,
+    JSONValue,
     StateStoreItemKeyPage,
     Order,
     StateStore,
@@ -374,7 +374,7 @@ class FoundryStateStore(FoundryStorageClient):
     async def create_item(
         self,
         key: str,
-        value: JSONObject,
+        value: Mapping[str, JSONValue],
         *,
         tags: Mapping[str, str] | None = None,
         call_id: str | None = None,
@@ -384,7 +384,7 @@ class FoundryStateStore(FoundryStorageClient):
         :param key: The item key to create.
         :type key: str
         :param value: The item payload as a JSON object.
-        :type value: dict[str, any]
+        :type value: ~collections.abc.Mapping[str, any]
         :keyword tags: Optional string labels stored with the item and used to
             filter :meth:`list_keys`.
         :paramtype tags: ~collections.abc.Mapping[str, str] or None
@@ -412,7 +412,7 @@ class FoundryStateStore(FoundryStorageClient):
     async def set_item(
         self,
         key: str,
-        value: JSONObject,
+        value: Mapping[str, JSONValue],
         *,
         tags: Mapping[str, str] | None = None,
         if_match: str | None = None,
@@ -424,7 +424,7 @@ class FoundryStateStore(FoundryStorageClient):
         :param key: The item key to create or replace.
         :type key: str
         :param value: The item payload as a JSON object.
-        :type value: dict[str, any]
+        :type value: ~collections.abc.Mapping[str, any]
         :keyword tags: Optional string labels stored with the item and used to
             filter :meth:`list_keys`.
         :paramtype tags: ~collections.abc.Mapping[str, str] or None

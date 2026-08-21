@@ -252,7 +252,7 @@ namespace azure.ai.agentserver.core.storage
         async def create_item(
                 self, 
                 key: str, 
-                value: JSONObject, 
+                value: Mapping[str, JSONValue], 
                 *, 
                 call_id: str | None = ..., 
                 tags: Mapping[str, str] | None = ...
@@ -291,7 +291,7 @@ namespace azure.ai.agentserver.core.storage
         async def set_item(
                 self, 
                 key: str, 
-                value: JSONObject, 
+                value: Mapping[str, JSONValue], 
                 *, 
                 call_id: str | None = ..., 
                 if_match: str | None = ..., 

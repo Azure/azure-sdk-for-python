@@ -22,7 +22,7 @@ from ._errors import (
 from ._state_serializer import (
     DeletedStateStore,
     DeletedStateStoreItem,
-    JSONObject,
+    JSONValue,
     Order,
     StateStore,
     StateStoreItem,
@@ -139,7 +139,7 @@ class LocalStateStoreBackend:
     def create_item(
         self,
         key: str,
-        value: JSONObject,
+        value: Mapping[str, JSONValue],
         tags: Mapping[str, str] | None,
     ) -> StateStoreItemRef:
         with self._lock:
@@ -159,7 +159,7 @@ class LocalStateStoreBackend:
     def set_item(
         self,
         key: str,
-        value: JSONObject,
+        value: Mapping[str, JSONValue],
         tags: Mapping[str, str] | None,
         if_match: str | None,
     ) -> StateStoreItemRef:
@@ -296,7 +296,7 @@ class LocalStateStoreBackend:
     def _new_item(
         self,
         key: str,
-        value: JSONObject,
+        value: Mapping[str, JSONValue],
         tags: Mapping[str, str] | None,
     ) -> dict[str, Any]:
         now = _now()
