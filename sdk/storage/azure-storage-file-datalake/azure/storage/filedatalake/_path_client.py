@@ -86,7 +86,7 @@ class PathClient(StorageAccountHostsMixin):
         path_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any
     ) -> None:
         # remove the preceding/trailing delimiter from the path components
@@ -158,7 +158,6 @@ class PathClient(StorageAccountHostsMixin):
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
             url,
-            base_url=url,
             file_system=self.file_system_name,
             path=self.path_name,
             version=self._api_version,

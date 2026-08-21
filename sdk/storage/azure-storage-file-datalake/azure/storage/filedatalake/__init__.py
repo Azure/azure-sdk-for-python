@@ -76,7 +76,6 @@ __all__ = [
     "DataLakeDirectoryClient",
     "DataLakeFileClient",
     "DataLakeFileQueryError",
-    "DataLakeFileQueryError",
     "DataLakeLeaseClient",
     "DataLakeServiceClient",
     "DeletedPathProperties",

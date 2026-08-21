@@ -21,7 +21,7 @@ from typing import (
 
 from ._serialize import (
     add_metadata_headers,
-    get_access_conditions,
+    get_lease_id,
     get_cpk_info,
     get_lease_action_properties,
     get_mod_conditions,
@@ -143,7 +143,7 @@ def _upload_options(
         max_concurrency = DEFAULT_MAX_CONCURRENCY
 
     kwargs["properties"] = add_metadata_headers(metadata)
-    lease_id = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     if lease_id:
         kwargs["lease_id"] = lease_id
     mod_conditions = get_mod_conditions(kwargs)

@@ -11,7 +11,6 @@ from urllib.parse import quote, urlparse
 from ._serialize import (
     add_metadata_headers,
     convert_datetime_to_rfc1123,
-    get_access_conditions,
     get_cpk_info,
     get_lease_id,
     get_mod_conditions,
@@ -53,7 +52,7 @@ def _create_path_options(
     metadata: Optional[Dict[str, str]] = None,
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    lease_id = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_mod_conditions(kwargs)
 
     path_http_headers = {}
@@ -98,7 +97,7 @@ def _create_path_options(
 
 
 def _delete_path_options(paginated: Optional[bool], **kwargs) -> Dict[str, Any]:
-    lease_id = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_mod_conditions(kwargs)
 
     options = {
@@ -120,7 +119,7 @@ def _set_access_control_options(
     acl: Optional[str] = None,
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    lease_id = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_mod_conditions(kwargs)
 
     options = {
@@ -139,7 +138,7 @@ def _set_access_control_options(
 
 
 def _get_access_control_options(upn: Optional[bool] = None, **kwargs: Any) -> Dict[str, Any]:
-    lease_id = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_mod_conditions(kwargs)
 
     options = {
@@ -178,7 +177,7 @@ def _rename_path_options(
     if metadata or kwargs.pop("permissions", None) or kwargs.pop("umask", None):
         raise ValueError("metadata, permissions, umask is not supported for this operation")
 
-    lease_id = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     source_lease_id = get_lease_id(kwargs.pop("source_lease", None))
     mod_conditions = get_mod_conditions(kwargs)
     source_mod_conditions = get_source_mod_conditions(kwargs)
@@ -216,7 +215,7 @@ def _parse_rename_path(
             "TokenCredential",
             "AsyncTokenCredential",
         ]
-    ],  # pylint: disable=line-too-long
+    ],
 ) -> Tuple[str, str, Optional[str]]:
     new_name = new_name.strip("/")
     new_file_system = new_name.split("/")[0]

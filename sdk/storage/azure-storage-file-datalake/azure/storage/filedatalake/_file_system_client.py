@@ -96,7 +96,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_system_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> None:
         if not file_system_name:
@@ -154,7 +154,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
-            url, base_url=url, file_system=self.file_system_name, version=self._api_version, pipeline=self._pipeline
+            url, file_system=self.file_system_name, version=self._api_version, pipeline=self._pipeline
         )
         return client
 
@@ -168,7 +168,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_system_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """

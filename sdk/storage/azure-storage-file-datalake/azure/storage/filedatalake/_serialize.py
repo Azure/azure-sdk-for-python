@@ -160,22 +160,12 @@ def get_path_http_headers(content_settings: "ContentSettings") -> Dict[str, Any]
     return result
 
 
-def get_access_conditions(lease: Optional[Union["BlobLeaseClient", "BlobLeaseClientAsync", str]]) -> Optional[str]:
-    if not lease:
-        return None
-    if hasattr(lease, "id"):
-        return lease.id
-    return lease
-
-
 def get_lease_id(lease: Optional[Union["BlobLeaseClient", "BlobLeaseClientAsync", str]]) -> str:
     if not lease:
         return ""
     if hasattr(lease, "id"):
-        lease_id = lease.id
-    else:
-        lease_id = lease
-    return lease_id
+        return lease.id
+    return lease
 
 
 def get_lease_action_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:

@@ -103,7 +103,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         account_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any
     ) -> None:
         parsed_url = _parse_url(account_url=account_url)
@@ -124,7 +124,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
         self._api_version = get_api_version(kwargs)
         self._client = AzureDataLakeStorageRESTAPI(
-            self.url, base_url=self.url, version=self._api_version, pipeline=self._pipeline
+            self.url, version=self._api_version, pipeline=self._pipeline
         )
 
     def __enter__(self) -> Self:
@@ -161,7 +161,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         conn_str: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any
     ) -> Self:
         """

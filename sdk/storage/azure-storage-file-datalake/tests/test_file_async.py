@@ -16,7 +16,7 @@ import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import DataLakePreparer
-from test_helpers_async import AsyncStream, MockStorageTransport, ProgressTracker
+from test_helpers_async import ProgressTracker
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
@@ -1595,65 +1595,6 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         data = b"Hello world"
         await fc.get_file_properties()
         await fc.upload_data(data, overwrite=True)
-
-    @pytest.mark.skip(reason="We drop support for legacy transports")
-    @DataLakePreparer()
-    async def test_mock_transport_no_content_validation(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
-
-        transport = MockStorageTransport()
-        file_client = DataLakeFileClient(
-            self.account_url(datalake_storage_account_name, "dfs"),
-            "filesystem/",
-            "dir/file.txt",
-            credential=datalake_storage_account_key.secret,
-            transport=transport,
-            retry_total=0,
-        )
-
-        data = await file_client.download_file()
-        assert data is not None
-
-        props = await file_client.get_file_properties()
-        assert props is not None
-
-        data = b"Hello Async World!"
-        stream = AsyncStream(data)
-        resp = await file_client.upload_data(stream, overwrite=True)
-        assert resp is not None
-
-        file_data = await (await file_client.download_file()).read()
-        assert file_data == b"Hello Async World!"  # data is fixed by mock transport
-
-        resp = await file_client.delete_file()
-        assert resp is not None
-
-    @pytest.mark.skip(reason="We drop support for legacy transports")
-    @DataLakePreparer()
-    async def test_mock_transport_with_content_validation(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
-
-        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-
-        transport = MockStorageTransport()
-        file_client = DataLakeFileClient(
-            self.account_url(datalake_storage_account_name, "dfs"),
-            "filesystem/",
-            "dir/file.txt",
-            credential=datalake_storage_account_key.secret,
-            transport=transport,
-            retry_total=0,
-        )
-
-        data = b"Hello Async World!"
-        stream = AsyncStream(data)
-        resp = await file_client.upload_data(stream, overwrite=True, validate_content=True)
-        assert resp is not None
-
-        file_data = await (await file_client.download_file(validate_content=True)).read()
-        assert file_data == b"Hello Async World!"  # data is fixed by mock transport
 
     @DataLakePreparer()
     @recorded_by_proxy_async

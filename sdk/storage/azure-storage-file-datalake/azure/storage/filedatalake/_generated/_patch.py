@@ -10,8 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from azure.core.pipeline import Pipeline, PipelineRequest
-from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline import Pipeline
 
 from ._client import DataLakeClient as GeneratedDataLakeClient
 from ._configuration import DataLakeClientConfiguration as GeneratedDataLakeClientConfiguration
@@ -51,40 +50,28 @@ class DataLakeClient(GeneratedDataLakeClient):
     def __init__(
         self, url: str, credential: Optional["TokenCredential"] = None, *, pipeline: Any = None, **kwargs: Any
     ) -> None:
-        from azure.core.pipeline import policies
-
         from ._utils.serialization import Deserializer, Serializer
         from .operations import FileSystemOperations, PathOperations, ServiceOperations
 
+        if pipeline is None:
+            raise ValueError("Parameter 'pipeline' must not be None.")
+
         _endpoint = "{url}"
         self._config = DataLakeClientConfiguration(url=url, credential=credential, **kwargs)
-
-        if pipeline is not None:
-            _wrapped_pipeline = Pipeline(
-                transport=pipeline._transport,
-                policies=[RangeHeaderPolicy()] + list(pipeline._impl_policies),
-            )
-            self._client = PipelineClient(base_url=_endpoint, pipeline=_wrapped_pipeline)
-        else:
-            _policies = kwargs.pop("policies", None)
-            if _policies is None:
-                _policies = [
-                    RangeHeaderPolicy(),
-                    policies.RequestIdPolicy(**kwargs),
-                    self._config.headers_policy,
-                    self._config.user_agent_policy,
-                    self._config.proxy_policy,
-                    policies.ContentDecodePolicy(**kwargs),
-                    self._config.redirect_policy,
-                    self._config.retry_policy,
-                    self._config.authentication_policy,
-                    self._config.custom_hook_policy,
-                    self._config.logging_policy,
-                    policies.DistributedTracingPolicy(**kwargs),
-                    policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                    self._config.http_logging_policy,
-                ]
-            self._client = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        impl_policies = list(pipeline._impl_policies)  # pylint: disable=protected-access
+        has_range_header_policy = any(
+            isinstance(getattr(policy, "_policy", policy), RangeHeaderPolicy)  # pylint: disable=protected-access
+            for policy in impl_policies
+        )
+        if not has_range_header_policy:
+            impl_policies.insert(0, RangeHeaderPolicy())
+        self._client = PipelineClient(
+            base_url=_endpoint,
+            pipeline=Pipeline(
+                transport=pipeline._transport,  # pylint: disable=protected-access
+                policies=impl_policies,
+            ),
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
