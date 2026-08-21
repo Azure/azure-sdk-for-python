@@ -353,7 +353,9 @@ def _deserialize_int_as_str(attr):
 def _deserialize_bool_as_str(attr):
     if isinstance(attr, bool):
         return attr
-    return attr.lower() == "true"
+    if isinstance(attr, str):
+        return attr.strip().lower() == "true"
+    return attr
 
 
 _DESERIALIZE_MAPPING = {
