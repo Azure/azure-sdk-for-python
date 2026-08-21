@@ -249,19 +249,19 @@ stages:
                 inputs:
                   versionSpec: '3.10'
 
+              - template: /eng/common/pipelines/templates/steps/install-azsdk-cli.yml
+
               - template: /eng/common/pipelines/templates/steps/mark-release-completion.yml
                 parameters:
                   ConfigFileDir: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo'
                   PackageArtifactName: ${{artifact.name}}
 
-              - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+              - template: /eng/pipelines/templates/steps/mark-package-released.yml
                 parameters:
-                  ArtifactPath: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
-                  Artifacts: ${{parameters.Artifacts}}
-                  ConfigFileDir: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo
-                  MarkPackageAsShipped: true
-                  ArtifactName: ${{parameters.ArtifactName}}
-                  PackageName: ${{artifact.name}}
+                  Language: python
+                  PackageInfoFiles:
+                    - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{ artifact.name }}.json
+                  RepoOwner: Azure
 
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - job: PublishGitHubIODocs
