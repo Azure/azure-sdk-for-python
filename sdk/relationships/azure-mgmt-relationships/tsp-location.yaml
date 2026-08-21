@@ -1,4 +1,4 @@
-directory: specification/relationships/Relationships.Management
-commit: fe03e53383d9c9c97ec22a65abd1d8c18e401abe
+directory: specification/relationships/resource-manager/Microsoft.Relationships/Relationships
+commit: e9b8d33567e9422a09711667279fe178fada51a1
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 

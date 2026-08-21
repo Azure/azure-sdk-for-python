@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -19,14 +19,24 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import RelationshipsMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import DependencyOfRelationshipsOperations, Operations, ServiceGroupMemberRelationshipsOperations
+from .operations import (
+    ContainsRelationshipsOperations,
+    DependencyOfRelationshipsOperations,
+    Operations,
+    ServiceGroupMemberRelationshipsOperations,
+)
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class RelationshipsMgmtClient:
+class RelationshipsMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft.Relationships Resource Provider management API.
 
     :ivar operations: Operations operations
@@ -37,16 +47,22 @@ class RelationshipsMgmtClient:
     :ivar service_group_member_relationships: ServiceGroupMemberRelationshipsOperations operations
     :vartype service_group_member_relationships:
      azure.mgmt.relationships.operations.ServiceGroupMemberRelationshipsOperations
+    :ivar contains_relationships: ContainsRelationshipsOperations operations
+    :vartype contains_relationships:
+     azure.mgmt.relationships.operations.ContainsRelationshipsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+    :type subscription_id: str
     :param base_url: Service host. Default value is None.
     :type base_url: str
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2023-09-01-preview". Default value is "2023-09-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+     "2026-03-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -55,6 +71,7 @@ class RelationshipsMgmtClient:
     def __init__(
         self,
         credential: "TokenCredential",
+        subscription_id: str,
         base_url: Optional[str] = None,
         *,
         cloud_setting: Optional["AzureClouds"] = None,
@@ -68,6 +85,7 @@ class RelationshipsMgmtClient:
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = RelationshipsMgmtClientConfiguration(
             credential=credential,
+            subscription_id=subscription_id,
             base_url=cast(str, base_url),
             cloud_setting=cloud_setting,
             credential_scopes=credential_scopes,
@@ -102,6 +120,9 @@ class RelationshipsMgmtClient:
             self._client, self._config, self._serialize, self._deserialize
         )
         self.service_group_member_relationships = ServiceGroupMemberRelationshipsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.contains_relationships = ContainsRelationshipsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
