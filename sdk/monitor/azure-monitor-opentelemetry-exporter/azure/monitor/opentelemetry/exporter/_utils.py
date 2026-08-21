@@ -32,9 +32,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_AAD_SCOPE,
     _FUNCTIONS_WORKER_RUNTIME,
     _INSTRUMENTATIONS_BIT_MAP,
-    _ITEM_TOO_LARGE_MESSAGE_MARKERS,
     _KUBERNETES_SERVICE_HOST,
-    _MAX_INGESTION_PAYLOAD_SIZE_BYTES,
     _MICROSOFT_OPENTELEMETRY_VERSION,
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
@@ -49,6 +47,15 @@ from azure.monitor.opentelemetry.exporter._constants import (
 
 # Workaround for missing version file
 opentelemetry_version = version("opentelemetry-sdk")
+
+# Maximum ingestion limit over wire
+_MAX_INGESTION_PAYLOAD_SIZE_BYTES = 30 * 1000 * 1000
+
+# Marker to check the per-item size limit messages
+_ITEM_TOO_LARGE_MESSAGE_MARKERS = (
+    "length must not exceed",
+    "too large",
+)
 
 
 # Azure App Service
@@ -579,9 +586,6 @@ def _get_retry_delay_from_headers(headers: Any) -> Optional[int]:
     return None
 
 
-# Ingestion size helpers
-
-
 def _get_envelope_serialized_size(envelope: TelemetryItem) -> int:
     """Return the serialized wire size (in bytes) of a single envelope on the wire."""
     try:
@@ -609,10 +613,9 @@ def _split_oversized_batch(envelopes: List[TelemetryItem]) -> List[List[Telemetr
         current_size += separator_size + envelope_size
     if current:
         chunks.append(current)
-    # Guarantee progress: if size-based packing produced a single chunk (e.g. because the byte
+    # If size-based packing produced a single chunk (e.g. because the byte
     # estimate under-reported), fall back to halving by count so repeated 413s keep shrinking the
-    # batch. Only split when there is more than one envelope; a single envelope cannot be divided
-    # and is handled by the caller (which drops it), so this never produces an empty sub-batch.
+    # batch.
     if len(chunks) < 2 and len(envelopes) > 1:
         midpoint = len(envelopes) // 2
         chunks = [envelopes[:midpoint], envelopes[midpoint:]]
