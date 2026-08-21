@@ -25,6 +25,13 @@ USAGE:
     3) JOB_ENVIRONMENT_IMAGE - Required. The Docker image to use as the job environment.
        Example: mcr.microsoft.com/azureml/curated/acpt-pytorch-2.2-cuda12.1:48
     4) JOB_NAME - Optional. The name of the job to create. Defaults to "sample-command-job-async".
+
+NOTE ON REQUESTING COMPUTE:
+    Use `gpu_count` to request a number of GPUs on a GPU cluster, or `instance_count`
+    inside `resources` to request whole nodes on a CPU cluster. Do not set `gpu_count`
+    for a CPU compute. The remaining `resources` fields (`instance_type`, `shm_size`,
+    `docker_args` and `properties`) are read-only: the service infers them from the
+    target cluster and returns them on read, so they cannot be set when creating a job.
 """
 
 import asyncio
@@ -34,6 +41,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     CommandJob,
+    JobPriority,
     JobResourceConfiguration,
     Input,
     Output,
@@ -58,18 +66,22 @@ async def main() -> None:
     ):
 
         # --- Validate a job definition before submitting ---
+        # This job targets a GPU cluster and asks for 2 GPUs rather than whole nodes.
+        # `gpu_count` sits directly on the job, not inside `resources`.
         print("Validate a CommandJob definition")
         job_to_validate = CommandJob(
             display_name=job_name,
             command="echo hello",
             environment_image_reference=environment_image,
             compute=compute_id,
-            resources=JobResourceConfiguration(instance_count=1),
+            gpu_count=2,
+            priority=JobPriority.HIGH,
         )
         validation_result = project_client.beta.jobs.validate(job_to_validate)
         print(validation_result)
 
         # --- Create or update a job ---
+        # This job targets a CPU cluster, so it requests whole nodes via `instance_count`.
         print(f"\nCreate (or update) job `{job_name}`:")
         job = CommandJob(
             display_name=job_name,
@@ -77,8 +89,19 @@ async def main() -> None:
             environment_image_reference=environment_image,
             compute=compute_id,
             inputs={"src": Input(path="./data", type=AssetTypes.URI_FOLDER)},
-            outputs={"output": Output(type=AssetTypes.URI_FOLDER, mode=InputOutputModes.READ_WRITE_MOUNT)},
+            # The dictionary key ("output") is the mount name used in the command above.
+            # `asset_name` is the name the output is registered under, and is required.
+            outputs={
+                "output": Output(
+                    type=AssetTypes.URI_FOLDER,
+                    mode=InputOutputModes.READ_WRITE_MOUNT,
+                    asset_name="my-trained-model",
+                )
+            },
             resources=JobResourceConfiguration(instance_count=1),
+            priority=JobPriority.MID,
+            # Groups related runs together. If omitted, the service uses "Default".
+            experiment_name="my-experiment",
             tags={"sample": "true"},
         )
         created_job = await project_client.beta.jobs.create_or_update(name=job_name, job=job)

@@ -18,6 +18,7 @@ from ._models import (
     Job as _RestJob,
     JobResourceConfiguration,
     MpiDistribution,
+    Output,
     PyTorchDistribution,
     QueueSettings,
     ServiceInstance as _RestServiceInstance,
@@ -217,6 +218,10 @@ def _load_command_job(data: dict, base_dir: Optional[Path] = None) -> CommandJob
     inputs_data = data.pop("inputs", None)
     if isinstance(inputs_data, dict):
         data["inputs"] = {key: Input(**val) if isinstance(val, dict) else val for key, val in inputs_data.items()}
+
+    outputs_data = data.pop("outputs", None)
+    if isinstance(outputs_data, dict):
+        data["outputs"] = {key: Output(**val) if isinstance(val, dict) else val for key, val in outputs_data.items()}
 
     job = CommandJob(**data)
     job._base_path = base_dir
