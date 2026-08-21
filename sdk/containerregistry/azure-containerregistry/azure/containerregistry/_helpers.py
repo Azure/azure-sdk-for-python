@@ -8,7 +8,7 @@ import hashlib
 import re
 import time
 import json
-from typing import Any, List, Dict, MutableMapping, IO, Optional, Union
+from typing import Any, Dict, MutableMapping, IO, Optional, Union
 from urllib.parse import urlparse
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import PipelineRequest
@@ -16,7 +16,7 @@ from azure.core.pipeline import PipelineRequest
 JSON = MutableMapping[str, Any]
 
 BEARER = "Bearer"
-AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
+AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:^|[\\s,])(\\w+)="([^"]*)"')
 SUPPORTED_API_VERSIONS = ["2019-08-15-preview", "2021-07-01"]
 DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024  # 4MB
 MAX_MANIFEST_SIZE = 4 * 1024 * 1024
@@ -45,25 +45,6 @@ def _is_tag(tag_or_digest: str) -> bool:
     return not (len(tag) == 2 and tag[0].startswith("sha"))
 
 
-def _clean(matches: List[str]) -> None:
-    """This method removes empty strings and commas from the regex matching of the Challenge header.
-
-    :param list[str] matches: The regex list to clean.
-    :return: None
-    """
-    while True:
-        try:
-            matches.remove("")
-        except ValueError:
-            break
-
-    while True:
-        try:
-            matches.remove(",")
-        except ValueError:
-            return
-
-
 def _parse_challenge(header: str) -> Dict[str, str]:
     """Parse challenge header into service and scope
 
@@ -74,11 +55,8 @@ def _parse_challenge(header: str) -> Dict[str, str]:
     ret: Dict[str, str] = {}
     if header.startswith(BEARER):
         challenge_params = header[len(BEARER) + 1 :]
-
-        matches = re.split(AUTHENTICATION_CHALLENGE_PARAMS_PATTERN, challenge_params)
-        _clean(matches)
-        for i in range(0, len(matches), 2):
-            ret[matches[i]] = matches[i + 1]
+        for match in AUTHENTICATION_CHALLENGE_PARAMS_PATTERN.finditer(challenge_params):
+            ret[match.group(1)] = match.group(2)
 
     return ret
 
