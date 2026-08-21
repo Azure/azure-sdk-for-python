@@ -23,6 +23,10 @@ from memory_trace_exporter import MemoryTraceExporter  # pylint: disable=import-
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.ai.projects.telemetry import AIProjectInstrumentor
+from azure.ai.projects.telemetry._responses_instrumentor import (
+    _InstrumentedAsyncRawResponse,
+    _InstrumentedSyncRawResponse,
+)
 from openai import OpenAI, AsyncOpenAI
 
 
@@ -71,6 +75,26 @@ class TestRawResponseStreaming:
 
     # ─── Async tests ───────────────────────────────────────────────
 
+    def test_async_raw_response_parse_preserves_custom_stream_type(self):
+        """Async raw response parsing should delegate the custom stream type before wrapping."""
+
+        async def _run():
+            custom_stream_type = object()
+            parsed_stream = object()
+
+            class RawResponse:
+                async def parse(self, *, to=None):
+                    assert to is custom_stream_type
+                    return parsed_stream
+
+            proxy = _InstrumentedAsyncRawResponse(
+                RawResponse(), lambda stream: ("wrapped", stream), ("wrapped", object())
+            )
+
+            assert await proxy.parse(to=custom_stream_type) == ("wrapped", parsed_stream)
+
+        asyncio.run(_run())
+
     def test_async_with_raw_response_streaming_preserves_interface(self):
         """with_raw_response.create(stream=True) should preserve .parse() and .headers."""
 
@@ -79,18 +103,14 @@ class TestRawResponseStreaming:
                 api_key="fake-key",
                 http_client=httpx2.AsyncClient(transport=_make_mock_transport()),
             )
-            raw = await client.responses.with_raw_response.create(
-                model="gpt-4o", input="hi", stream=True
-            )
+            raw = await client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
 
             # Raw response interface must be preserved
             assert hasattr(raw, "parse"), "Result should have .parse() method"
             assert hasattr(raw, "headers"), "Result should have .headers attribute"
 
             # Parsing should yield an async iterable stream
-            stream = raw.parse()
-            if asyncio.iscoroutine(stream):
-                stream = await stream
+            stream = await raw.parse()  # pyright: ignore[reportGeneralTypeIssues]
 
             assert hasattr(stream, "__aiter__"), "Parsed stream should be async iterable"
 
@@ -110,13 +130,9 @@ class TestRawResponseStreaming:
                 api_key="fake-key",
                 http_client=httpx2.AsyncClient(transport=_make_mock_transport()),
             )
-            raw = await client.responses.with_raw_response.create(
-                model="gpt-4o", input="hi", stream=True
-            )
+            raw = await client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
 
-            stream = raw.parse()
-            if asyncio.iscoroutine(stream):
-                stream = await stream
+            stream = await raw.parse()  # pyright: ignore[reportGeneralTypeIssues]
 
             async for _ in stream:
                 pass
@@ -129,12 +145,81 @@ class TestRawResponseStreaming:
 
         # The instrumentor names spans like 'chat <model>'
         span = spans[0]
-        assert span.status.status_code == StatusCode.OK, (
-            f"Span status should be OK, got {span.status.status_code}"
-        )
+        assert span.status.status_code == StatusCode.OK, f"Span status should be OK, got {span.status.status_code}"
         assert span.attributes.get("gen_ai.request.model") == "gpt-4o"
 
+    def test_async_with_raw_response_repeated_parse_is_exhausted(self):
+        """Parsing an async raw stream twice should not replay events or create another span."""
+
+        async def _run():
+            client = AsyncOpenAI(
+                api_key="fake-key",
+                http_client=httpx2.AsyncClient(transport=_make_mock_transport()),
+            )
+            raw = await client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
+
+            first_stream = await raw.parse()  # pyright: ignore[reportGeneralTypeIssues]
+            first_events = [event async for event in first_stream]
+
+            second_stream = await raw.parse()  # pyright: ignore[reportGeneralTypeIssues]
+            second_events = [event async for event in second_stream]
+
+            assert first_events
+            assert second_events == []
+
+        asyncio.run(_run())
+
+        assert len(self.exporter.get_spans()) == 1
+
+    def test_async_with_raw_response_close_finalizes_unconsumed_stream(self):
+        """Closing an unconsumed async raw response should finalize its telemetry span."""
+
+        async def _run():
+            client = AsyncOpenAI(
+                api_key="fake-key",
+                http_client=httpx2.AsyncClient(transport=_make_mock_transport()),
+            )
+            raw = await client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
+
+            await raw.close()  # pyright: ignore[reportAttributeAccessIssue]
+
+        asyncio.run(_run())
+
+        assert len(self.exporter.get_spans()) == 1
+
+    def test_async_with_raw_response_close_finalizes_partially_consumed_stream(self):
+        """Closing a partially consumed async raw response should finalize its telemetry span."""
+
+        async def _run():
+            client = AsyncOpenAI(
+                api_key="fake-key",
+                http_client=httpx2.AsyncClient(transport=_make_mock_transport()),
+            )
+            raw = await client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
+            stream = await raw.parse()  # pyright: ignore[reportGeneralTypeIssues]
+
+            await stream.__anext__()
+            await raw.close()  # pyright: ignore[reportAttributeAccessIssue]
+
+        asyncio.run(_run())
+
+        assert len(self.exporter.get_spans()) == 1
+
     # ─── Sync tests ────────────────────────────────────────────────
+
+    def test_sync_raw_response_parse_preserves_custom_stream_type(self):
+        """Sync raw response parsing should delegate the custom stream type before wrapping."""
+        custom_stream_type = object()
+        parsed_stream = object()
+
+        class RawResponse:
+            def parse(self, *, to=None):
+                assert to is custom_stream_type
+                return parsed_stream
+
+        proxy = _InstrumentedSyncRawResponse(RawResponse(), lambda stream: ("wrapped", stream), ("wrapped", object()))
+
+        assert proxy.parse(to=custom_stream_type) == ("wrapped", parsed_stream)
 
     def test_sync_with_raw_response_streaming_preserves_interface(self):
         """Sync with_raw_response.create(stream=True) should preserve .parse() and .headers."""
@@ -142,9 +227,7 @@ class TestRawResponseStreaming:
             api_key="fake-key",
             http_client=httpx2.Client(transport=_make_mock_transport()),
         )
-        raw = client.responses.with_raw_response.create(
-            model="gpt-4o", input="hi", stream=True
-        )
+        raw = client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
 
         # Raw response interface must be preserved
         assert hasattr(raw, "parse"), "Result should have .parse() method"
@@ -164,9 +247,7 @@ class TestRawResponseStreaming:
             api_key="fake-key",
             http_client=httpx2.Client(transport=_make_mock_transport()),
         )
-        raw = client.responses.with_raw_response.create(
-            model="gpt-4o", input="hi", stream=True
-        )
+        raw = client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
 
         stream = raw.parse()
         for _ in stream:
@@ -178,7 +259,46 @@ class TestRawResponseStreaming:
 
         # The instrumentor names spans like 'chat <model>'
         span = spans[0]
-        assert span.status.status_code == StatusCode.OK, (
-            f"Span status should be OK, got {span.status.status_code}"
-        )
+        assert span.status.status_code == StatusCode.OK, f"Span status should be OK, got {span.status.status_code}"
         assert span.attributes.get("gen_ai.request.model") == "gpt-4o"
+
+    def test_sync_with_raw_response_repeated_parse_is_exhausted(self):
+        """Parsing a sync raw stream twice should not replay events or create another span."""
+        client = OpenAI(
+            api_key="fake-key",
+            http_client=httpx2.Client(transport=_make_mock_transport()),
+        )
+        raw = client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
+
+        first_events = list(raw.parse())
+        second_events = list(raw.parse())
+
+        assert first_events
+        assert second_events == []
+        assert len(self.exporter.get_spans()) == 1
+
+    def test_sync_with_raw_response_close_finalizes_unconsumed_stream(self):
+        """Closing an unconsumed sync raw response should finalize its telemetry span."""
+        client = OpenAI(
+            api_key="fake-key",
+            http_client=httpx2.Client(transport=_make_mock_transport()),
+        )
+        raw = client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
+
+        raw.close()  # pyright: ignore[reportAttributeAccessIssue]
+
+        assert len(self.exporter.get_spans()) == 1
+
+    def test_sync_with_raw_response_close_finalizes_partially_consumed_stream(self):
+        """Closing a partially consumed sync raw response should finalize its telemetry span."""
+        client = OpenAI(
+            api_key="fake-key",
+            http_client=httpx2.Client(transport=_make_mock_transport()),
+        )
+        raw = client.responses.with_raw_response.create(model="gpt-4o", input="hi", stream=True)
+        stream = raw.parse()
+
+        next(stream)
+        raw.close()  # pyright: ignore[reportAttributeAccessIssue]
+
+        assert len(self.exporter.get_spans()) == 1
