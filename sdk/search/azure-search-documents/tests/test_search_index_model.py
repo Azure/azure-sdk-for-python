@@ -8,11 +8,14 @@ from __future__ import annotations
 
 from azure.search.documents.indexes.models import (
     ComplexField,
+    KnowledgeRetrievalOutputMode,
+    KnowledgeRetrievalReasoningEffort,
     SearchFieldDataType,
     SearchIndex,
     SearchableField,
     SimpleField,
 )
+from _capabilities import require_capability
 
 
 INDEX_NAME = "hotels"
@@ -97,3 +100,31 @@ class TestSearchIndexSerialization:
         assert index.fields[2].analyzer_name == "en.lucene"
         assert index.fields[3].type == "Collection(Edm.String)"
         assert index.fields[4].fields[1].name == "State"
+
+    def test_search_index_exposes_public_round_trip_helpers(self):
+        index = SearchIndex(name=INDEX_NAME, fields=create_hotel_fields(), e_tag="abc123")
+
+        serialized = index.serialize()
+        round_tripped = SearchIndex.deserialize(serialized)
+
+        assert serialized == index.as_dict()
+        assert isinstance(round_tripped, SearchIndex)
+        assert round_tripped.as_dict() == index.as_dict()
+
+    def test_indexes_models_reexports_knowledge_retrieval_types(self):
+        require_capability(
+            "azure.search.documents.indexes.models.KnowledgeRetrievalOutputMode",
+            "azure.search.documents.indexes.models.KnowledgeRetrievalReasoningEffort",
+        )
+
+        from azure.search.documents.knowledgebases.models import (
+            KnowledgeRetrievalOutputMode as KnowledgeRetrievalOutputModeFromKnowledgeBases,
+        )
+        from azure.search.documents.knowledgebases.models import (
+            KnowledgeRetrievalReasoningEffort as KnowledgeRetrievalReasoningEffortFromKnowledgeBases,
+        )
+
+        assert KnowledgeRetrievalOutputMode.EXTRACTIVE_DATA == (
+            KnowledgeRetrievalOutputModeFromKnowledgeBases.EXTRACTIVE_DATA
+        )
+        assert issubclass(KnowledgeRetrievalReasoningEffort, KnowledgeRetrievalReasoningEffortFromKnowledgeBases)

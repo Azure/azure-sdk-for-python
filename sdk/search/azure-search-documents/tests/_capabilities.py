@@ -109,6 +109,8 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         f"{_KBM}.KnowledgeRetrievalLowReasoningEffort",
         f"{_KBM}.KnowledgeRetrievalMediumReasoningEffort",
         f"{_KBM}.KnowledgeRetrievalOutputMode",
+        f"{_IM}.KnowledgeRetrievalOutputMode",
+        f"{_IM}.KnowledgeRetrievalReasoningEffort",
         f"{_KBM}.KnowledgeBaseModelQueryPlanningActivityRecord",
         f"{_KBM}.KnowledgeBaseModelAnswerSynthesisActivityRecord",
         f"{_KBM}.KnowledgeBaseModelWebSummarizationActivityRecord",

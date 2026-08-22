@@ -4188,6 +4188,25 @@ namespace azure.search.documents.indexes.models
             ) -> None: ...
 
 
+    class azure.search.documents.indexes.models.KnowledgeRetrievalOutputMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ANSWER_SYNTHESIS = "answerSynthesis"
+        EXTRACTIVE_DATA = "extractiveData"
+
+
+    class azure.search.documents.indexes.models.KnowledgeRetrievalReasoningEffort(_Model):
+        kind: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                kind: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.search.documents.indexes.models.KnowledgeBaseAzureOpenAIModel(KnowledgeBaseModel, discriminator='azureOpenAI'):
         azure_open_ai_parameters: AzureOpenAIVectorizerParameters
         kind: Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI]
@@ -5853,6 +5872,19 @@ namespace azure.search.documents.indexes.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        @classmethod
+        def deserialize(
+                cls,
+                data: Any,
+                content_type: Optional[str] = None
+            ) -> Self: ...
+
+        def serialize(
+                self,
+                keep_readonly: bool = False,
+                **kwargs: Any
+            ) -> Any: ...
 
 
     class azure.search.documents.indexes.models.SearchIndexFieldReference(_Model):
