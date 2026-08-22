@@ -23,6 +23,8 @@ USAGE:
 """
 
 
+import os
+import uuid
 from azure.health.deidentification import DeidentificationClient
 from azure.health.deidentification.models import (
     DeidentificationJob,
@@ -30,8 +32,6 @@ from azure.health.deidentification.models import (
     TargetStorageLocation,
 )
 from azure.identity import DefaultAzureCredential
-import os
-import uuid
 
 
 def list_job_documents():
