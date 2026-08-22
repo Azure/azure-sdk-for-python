@@ -153,7 +153,7 @@ Management plane SDKs are those that are formatted `azure-mgmt-xxxx`, otherwise 
 
 ### Tips:
 After the migration of the test proxy, `conftests.py` needs to be configured under the tests folder.<br/>
-* For a sample about `conftest.py`, see [conftest.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/advisor/azure-mgmt-advisor/tests/conftest.py). <br/>
+* For a sample about `conftest.py`, see [conftest.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/apimanagement/azure-mgmt-apimanagement/tests/conftest.py). <br/>
 * For more information about test proxy, see [TestProxy][testproxy].
 
 ### Example 1: Basic Azure service interaction and recording
