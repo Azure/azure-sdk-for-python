@@ -88,6 +88,7 @@ content_safety_eval = ContentSafetyEvaluator(azure_cred, project_scope)
 content_safety_score = content_safety_eval(
     query="What is the capital of Japan?",
     response="The capital of Japan is Tokyo."
+)
 pprint(content_safety_score)
 
 # Using Chat conversation

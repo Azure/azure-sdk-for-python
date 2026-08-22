@@ -28,11 +28,11 @@ This guide walks you through how to investigate failures, common errors in the `
 
 - Before running `evaluate()`, to ensure that you can enable logging and tracing to your Azure AI project, make sure you are first logged in by running `az login`.
 
-- Ensure that you assign the proper permissions to the storage account linked to your Azure AI Studio hub. This can be done with the following command. More information can be found [here](https://aka.ms/credentialleshub).
+- Ensure that you assign the proper permissions to the storage account linked to your Azure AI Foundry hub. This can be done with the following command. More information can be found [here](https://aka.ms/credentialleshub).
 
     ```Shell
-    # <mySubscriptionID>: Subscription ID of the Azure AI Studio hub's linked storage account (available in Azure AI hub resource view in Azure Portal).
-    # <myResourceGroupName>: Resource group of the Azure AI Studio hub's linked storage account.
+    # <mySubscriptionID>: Subscription ID of the Azure AI Foundry hub's linked storage account (available in Azure AI hub resource view in Azure Portal).
+    # <myResourceGroupName>: Resource group of the Microsoft Foundry hub's linked storage account.
     # <user-id>: User object ID for role assignment (retrieve with "az ad user show" command).
 
     az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName> --assignee-principal-type User --assignee-object-id "<user-id>"
