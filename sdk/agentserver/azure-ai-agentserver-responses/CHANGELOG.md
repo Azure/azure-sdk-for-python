@@ -1,5 +1,23 @@
 # Release History
 
+## 2.1.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 2.1.0b2 (2026-08-21)
+
+### Bugs Fixed
+
+- Restored JSON-string encoding for response-level `internal_metadata` so resilient response checkpoints round-trip through Foundry storage.
+- Restored `get_request_context()` identity values while stored Responses handlers run inside durable tasks.
+- `get_history_item_ids` on `InMemoryResponseProvider` and `FileResponseStore` now keeps the newest item IDs when applying `limit`. (#48514)
+
 ## 2.1.0b1 (2026-08-11)
 
 ### Breaking Changes
@@ -18,11 +36,6 @@
   `ConversationChainMetadataNamespace` protocol. Resilient response
   applications now persist cross-turn state explicitly with
   `FoundryStateStore`.
-
-### Bugs Fixed
-
-- Restored JSON-string encoding for response-level `internal_metadata` so resilient response checkpoints round-trip through Foundry storage.
-- Restored `get_request_context()` identity values while stored Responses handlers run inside durable tasks.
 
 ### Other Changes
 
