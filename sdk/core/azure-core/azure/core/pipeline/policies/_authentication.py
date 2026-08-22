@@ -106,13 +106,14 @@ class _BearerTokenCredentialPolicyBase:
         self._refresh_jitter = 0
 
     @staticmethod
-    def _update_headers(headers: MutableMapping[str, str], token: str) -> None:
-        """Updates the Authorization header with the bearer token.
+    def _update_headers(headers: MutableMapping[str, str], token: str, token_type: str = "Bearer") -> None:
+        """Updates the Authorization header with the access token.
 
         :param MutableMapping[str, str] headers: The HTTP Request headers
         :param str token: The OAuth token.
+        :param str token_type: The OAuth token type.
         """
-        headers["Authorization"] = "Bearer {}".format(token)
+        headers["Authorization"] = "{} {}".format(token_type, token)
 
     @property
     def _need_new_token(self) -> bool:
@@ -165,8 +166,10 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
 
         if self._token is None or self._need_new_token:
             self._request_token(*self._scopes)
-        bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], self._token).token
-        self._update_headers(request.http_request.headers, bearer_token)
+        token = cast(Union["AccessToken", "AccessTokenInfo"], self._token)
+        self._update_headers(
+            request.http_request.headers, token.token, getattr(token, "token_type", "Bearer")
+        )
 
     def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
@@ -178,8 +181,10 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         :param str scopes: required scopes of authentication
         """
         self._request_token(*scopes, **kwargs)
-        bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], self._token).token
-        self._update_headers(request.http_request.headers, bearer_token)
+        token = cast(Union["AccessToken", "AccessTokenInfo"], self._token)
+        self._update_headers(
+            request.http_request.headers, token.token, getattr(token, "token_type", "Bearer")
+        )
 
     def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Authorize request with a bearer token and send it to the next policy
