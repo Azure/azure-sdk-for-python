@@ -50,17 +50,6 @@ class TestResilienceManagementDrillRunsOperationsAsync(AzureMgmtRecordedTestCase
                 service_group_name="str",
                 drill_name="str",
                 drill_run_name="str",
-                body={
-                    "autoFailover": "str",
-                    "failoverProperties": {
-                        "failoverDirection": "str",
-                        "failoverRequestProperties": {
-                            "sourceLocations": ["str"],
-                            "executionConfigurations": {"userConsent": "str"},
-                            "selectedResourceIds": ["str"],
-                        },
-                    },
-                },
                 operation_id="str",
             )
         ).result()  # call '.result()' to poll until service return final result
@@ -126,6 +115,33 @@ class TestResilienceManagementDrillRunsOperationsAsync(AzureMgmtRecordedTestCase
                 operation_id="str",
             )
         ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_drill_runs_begin_generate_report(self, resource_group):
+        response = await (
+            await self.client.drill_runs.begin_generate_report(
+                service_group_name="str",
+                drill_name="str",
+                drill_run_name="str",
+                operation_id="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_drill_runs_list_report_download_url(self, resource_group):
+        response = await self.client.drill_runs.list_report_download_url(
+            service_group_name="str",
+            drill_name="str",
+            drill_run_name="str",
+        )
 
         # please add some check logic here by yourself
         # ...

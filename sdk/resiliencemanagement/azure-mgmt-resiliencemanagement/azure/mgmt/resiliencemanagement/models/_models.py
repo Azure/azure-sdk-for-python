@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AddOrUpdateResourcesRequest(_Model):
+class AddOrUpdateResourcesRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body of the AddOrUpdateResources API.
 
     :ivar fault_duration_in_min: Duration of faults. Required.
@@ -65,7 +65,7 @@ class AddOrUpdateResourcesRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArmResponseErrorResponse(_Model):
+class ArmResponseErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure operation completed successfully.
 
     :ivar body: The body type of the operation request or response. Required.
@@ -93,7 +93,7 @@ class ArmResponseErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetPropertiesOfDrill(_Model):
+class AssetPropertiesOfDrill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Drill asset properties.
 
     :ivar subscription: Subscription where Drill's internal resources will be created. Required.
@@ -134,7 +134,7 @@ class AssetPropertiesOfDrill(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssociatedIdentity(_Model):
+class AssociatedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of associated identity linked with the various resources.
 
     :ivar type: Identity type linked with the resource. Required. Known values are: "None",
@@ -173,7 +173,7 @@ class AssociatedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AttentionReason(_Model):
+class AttentionReason(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reason why the Drill is in NeedsAttention state, and not ready to run.
 
     :ivar drill_rbac_on_chaos_resource: Drill object does not have the necessary RBAC to run the
@@ -245,6 +245,30 @@ class AttentionReason(_Model):
     :ivar missing_required_resource_providers: List of required required Azure resource providers
      that are not registered in the subscription specified for chaos resource.
     :vartype missing_required_resource_providers: list[str]
+    :ivar monitoring_source_not_configured: Neither an Azure Health Model nor an SLI is configured
+     for the Drill. Execution is blocked until a monitoring source is configured.
+    :vartype monitoring_source_not_configured: bool
+    :ivar health_model_exists: Whether the selected Azure Health Model still exists. Known values
+     are: "Exists" and "NotExists".
+    :vartype health_model_exists: str or
+     ~azure.mgmt.resiliencemanagement.models.ExtensionObjectState
+    :ivar discovery_rule_exists: Whether the selected discovery rule still exists. Known values
+     are: "Exists" and "NotExists".
+    :vartype discovery_rule_exists: str or
+     ~azure.mgmt.resiliencemanagement.models.ExtensionObjectState
+    :ivar drill_rbac_on_health_model: Whether the Drill identity has the necessary RBAC (Reader) to
+     read the selected Azure Health Model. Known values are: "Set" and "NotSet".
+    :vartype drill_rbac_on_health_model: str or ~azure.mgmt.resiliencemanagement.models.RBACState
+    :ivar rbac_needed_for_drill_on_health_model: Permissions needed by the Drill identity to read
+     the selected Azure Health Model.
+    :vartype rbac_needed_for_drill_on_health_model: list[str]
+    :ivar drill_rbac_on_sli: Rolled-up RBAC state: NotSet if the Drill identity is missing the
+     necessary RBAC to read any selected SLI. Known values are: "Set" and "NotSet".
+    :vartype drill_rbac_on_sli: str or ~azure.mgmt.resiliencemanagement.models.RBACState
+    :ivar sli_attention_statuses: Per-SLI attention status for each SLI selected for Drill
+     monitoring.
+    :vartype sli_attention_statuses:
+     list[~azure.mgmt.resiliencemanagement.models.SliAttentionStatus]
     """
 
     drill_rbac_on_chaos_resource: Optional[Union[str, "_models.RBACState"]] = rest_field(
@@ -346,9 +370,42 @@ class AttentionReason(_Model):
     )
     """List of required required Azure resource providers that are not registered in the subscription
      specified for chaos resource."""
+    monitoring_source_not_configured: Optional[bool] = rest_field(
+        name="monitoringSourceNotConfigured", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Neither an Azure Health Model nor an SLI is configured for the Drill. Execution is blocked
+     until a monitoring source is configured."""
+    health_model_exists: Optional[Union[str, "_models.ExtensionObjectState"]] = rest_field(
+        name="healthModelExists", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the selected Azure Health Model still exists. Known values are: \"Exists\" and
+     \"NotExists\"."""
+    discovery_rule_exists: Optional[Union[str, "_models.ExtensionObjectState"]] = rest_field(
+        name="discoveryRuleExists", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the selected discovery rule still exists. Known values are: \"Exists\" and
+     \"NotExists\"."""
+    drill_rbac_on_health_model: Optional[Union[str, "_models.RBACState"]] = rest_field(
+        name="drillRbacOnHealthModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the Drill identity has the necessary RBAC (Reader) to read the selected Azure Health
+     Model. Known values are: \"Set\" and \"NotSet\"."""
+    rbac_needed_for_drill_on_health_model: Optional[list[str]] = rest_field(
+        name="rbacNeededForDrillOnHealthModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Permissions needed by the Drill identity to read the selected Azure Health Model."""
+    drill_rbac_on_sli: Optional[Union[str, "_models.RBACState"]] = rest_field(
+        name="drillRbacOnSli", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Rolled-up RBAC state: NotSet if the Drill identity is missing the necessary RBAC to read any
+     selected SLI. Known values are: \"Set\" and \"NotSet\"."""
+    sli_attention_statuses: Optional[list["_models.SliAttentionStatus"]] = rest_field(
+        name="sliAttentionStatuses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per-SLI attention status for each SLI selected for Drill monitoring."""
 
     @overload
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         drill_rbac_on_chaos_resource: Optional[Union[str, "_models.RBACState"]] = None,
@@ -375,6 +432,13 @@ class AttentionReason(_Model):
         rbac_needed_for_drill_on_drill_monitoring_resources: Optional[list[str]] = None,
         rbac_needed_for_drill_on_drill_resources: Optional[list[str]] = None,
         missing_required_resource_providers: Optional[list[str]] = None,
+        monitoring_source_not_configured: Optional[bool] = None,
+        health_model_exists: Optional[Union[str, "_models.ExtensionObjectState"]] = None,
+        discovery_rule_exists: Optional[Union[str, "_models.ExtensionObjectState"]] = None,
+        drill_rbac_on_health_model: Optional[Union[str, "_models.RBACState"]] = None,
+        rbac_needed_for_drill_on_health_model: Optional[list[str]] = None,
+        drill_rbac_on_sli: Optional[Union[str, "_models.RBACState"]] = None,
+        sli_attention_statuses: Optional[list["_models.SliAttentionStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -388,7 +452,7 @@ class AttentionReason(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChaosResourcePropertiesOfDrill(_Model):
+class ChaosResourcePropertiesOfDrill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Chaos Resource properties.
 
     :ivar identity: Identity to use for Chaos Resource operations. Required.
@@ -433,7 +497,7 @@ class ChaosResourcePropertiesOfDrill(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomFaultDetails(_Model):
+class CustomFaultDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom fault details.
 
     :ivar fault_name: fault name. Required.
@@ -469,7 +533,7 @@ class CustomFaultDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskReprotectInputDetails(_Model):
+class DiskReprotectInputDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk Reprotect Input Details.
 
     :ivar disk_resource_id: Disk Resource Id to Reprotect.
@@ -551,7 +615,7 @@ class ProxyResource(Resource):
     """
 
 
-class Drill(ProxyResource):
+class Drill(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Drill resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -599,7 +663,7 @@ class Drill(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DrillEndRequest(_Model):
+class DrillEndRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body of the End Action of Drill.
 
     :ivar attestation: Attestation Status. Required. Known values are: "Success" and "Failed".
@@ -636,14 +700,14 @@ class DrillEndRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DrillProperties(_Model):
+class DrillProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Resiliency Drill.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RegionalDrillProperties, ZonalDrillProperties
 
     :ivar provisioning_state: Status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar service_group_id: Parent SG resource.
     :vartype service_group_id: str
@@ -675,15 +739,19 @@ class DrillProperties(_Model):
     :vartype last_sync_time: ~datetime.datetime
     :ivar last_resync_readiness_check_time: Last resync and readiness check time.
     :vartype last_resync_readiness_check_time: ~datetime.datetime
-    :ivar managed_on_behalf_of_configuration: Managed RG v2 properties.
-    :vartype managed_on_behalf_of_configuration:
-     ~azure.mgmt.resiliencemanagement.models.ManagedOnBehalfOfConfiguration
     :ivar drill_type: The discriminator for the Drill object hierarchy. Required. Known values are:
      "Zonal" and "Regional".
     :vartype drill_type: str or ~azure.mgmt.resiliencemanagement.models.DrillType
     :ivar monitoring_properties: Monitoring properties of the Drill.
     :vartype monitoring_properties:
      ~azure.mgmt.resiliencemanagement.models.MonitoringPropertiesOfDrill
+    :ivar health_model_monitoring_properties: Azure Health Model monitoring properties of the
+     Drill.
+    :vartype health_model_monitoring_properties:
+     ~azure.mgmt.resiliencemanagement.models.HealthModelMonitoringProperties
+    :ivar sli_monitoring_properties: SLI monitoring properties of the Drill.
+    :vartype sli_monitoring_properties:
+     ~azure.mgmt.resiliencemanagement.models.SliMonitoringProperties
     :ivar error_details: Error details associated with the resource.
     :vartype error_details: ~azure.mgmt.resiliencemanagement.models.ErrorDetail
     """
@@ -693,7 +761,7 @@ class DrillProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and \"NeedsAttention\"."""
     service_group_id: Optional[str] = rest_field(name="serviceGroupId", visibility=["read"])
     """Parent SG resource."""
     recovery_plan_properties: Optional["_models.RecoveryPlanPropertiesOfDrill"] = rest_field(
@@ -736,10 +804,6 @@ class DrillProperties(_Model):
         name="lastResyncReadinessCheckTime", visibility=["read"], format="rfc3339"
     )
     """Last resync and readiness check time."""
-    managed_on_behalf_of_configuration: Optional["_models.ManagedOnBehalfOfConfiguration"] = rest_field(
-        name="managedOnBehalfOfConfiguration", visibility=["read"]
-    )
-    """Managed RG v2 properties."""
     drill_type: str = rest_discriminator(name="drillType", visibility=["create"])
     """The discriminator for the Drill object hierarchy. Required. Known values are: \"Zonal\" and
      \"Regional\"."""
@@ -747,6 +811,14 @@ class DrillProperties(_Model):
         name="monitoringProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Monitoring properties of the Drill."""
+    health_model_monitoring_properties: Optional["_models.HealthModelMonitoringProperties"] = rest_field(
+        name="healthModelMonitoringProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure Health Model monitoring properties of the Drill."""
+    sli_monitoring_properties: Optional["_models.SliMonitoringProperties"] = rest_field(
+        name="sliMonitoringProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SLI monitoring properties of the Drill."""
     error_details: Optional["_models.ErrorDetail"] = rest_field(name="errorDetails", visibility=["read"])
     """Error details associated with the resource."""
 
@@ -760,6 +832,8 @@ class DrillProperties(_Model):
         chaos_resource_properties: Optional["_models.ChaosResourcePropertiesOfDrill"] = None,
         rbac_setup_mode: Optional[Union[str, "_models.RBACSetupMode"]] = None,
         monitoring_properties: Optional["_models.MonitoringPropertiesOfDrill"] = None,
+        health_model_monitoring_properties: Optional["_models.HealthModelMonitoringProperties"] = None,
+        sli_monitoring_properties: Optional["_models.SliMonitoringProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -773,7 +847,58 @@ class DrillProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DrillResource(ProxyResource):
+class DrillReportSummary(_Model):
+    """Public, read-only summary of report generation for a Drill Run. Exposes status and pointers
+    only - the report content and internal storage locations are never surfaced.
+
+    :ivar generation_status: Overall report generation status for the Drill Run. Known values are:
+     "NotStarted", "InProgress", "Succeeded", and "Failed".
+    :vartype generation_status: str or
+     ~azure.mgmt.resiliencemanagement.models.DrillReportGenerationStatus
+    :ivar stage_statuses: Per-stage report generation statuses.
+    :vartype stage_statuses: list[~azure.mgmt.resiliencemanagement.models.ReportStageStatus]
+    :ivar available_formats: Formats the report is currently available for download in.
+    :vartype available_formats: list[str or
+     ~azure.mgmt.resiliencemanagement.models.DrillReportFormat]
+    :ivar last_generated_timestamp: Timestamp of the last successful report generation.
+    :vartype last_generated_timestamp: ~datetime.datetime
+    :ivar schema_version: Schema version of the generated report content.
+    :vartype schema_version: str
+    :ivar finalization_state: Finalization state of the report. A finalized report is immutable.
+     Known values are: "NotFinalized" and "Finalized".
+    :vartype finalization_state: str or
+     ~azure.mgmt.resiliencemanagement.models.DrillReportFinalizationState
+    :ivar last_error: Error from the last failed report generation attempt.
+    :vartype last_error: ~azure.mgmt.resiliencemanagement.models.ErrorDetails
+    """
+
+    generation_status: Optional[Union[str, "_models.DrillReportGenerationStatus"]] = rest_field(
+        name="generationStatus", visibility=["read"]
+    )
+    """Overall report generation status for the Drill Run. Known values are: \"NotStarted\",
+     \"InProgress\", \"Succeeded\", and \"Failed\"."""
+    stage_statuses: Optional[list["_models.ReportStageStatus"]] = rest_field(name="stageStatuses", visibility=["read"])
+    """Per-stage report generation statuses."""
+    available_formats: Optional[list[Union[str, "_models.DrillReportFormat"]]] = rest_field(
+        name="availableFormats", visibility=["read"]
+    )
+    """Formats the report is currently available for download in."""
+    last_generated_timestamp: Optional[datetime.datetime] = rest_field(
+        name="lastGeneratedTimestamp", visibility=["read"], format="rfc3339"
+    )
+    """Timestamp of the last successful report generation."""
+    schema_version: Optional[str] = rest_field(name="schemaVersion", visibility=["read"])
+    """Schema version of the generated report content."""
+    finalization_state: Optional[Union[str, "_models.DrillReportFinalizationState"]] = rest_field(
+        name="finalizationState", visibility=["read"]
+    )
+    """Finalization state of the report. A finalized report is immutable. Known values are:
+     \"NotFinalized\" and \"Finalized\"."""
+    last_error: Optional["_models.ErrorDetails"] = rest_field(name="lastError", visibility=["read"])
+    """Error from the last failed report generation attempt."""
+
+
+class DrillResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Drill Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -814,7 +939,7 @@ class DrillResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DrillResourceAttentionReason(_Model):
+class DrillResourceAttentionReason(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reason why the Drill resource is in NeedsAttention state.
 
     :ivar fault_rbac_on_target_resource: Chaos Resource MSI does not have the desired RBAC on the
@@ -874,7 +999,7 @@ class DrillResourceAttentionReason(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DrillResourceProperties(_Model):
+class DrillResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Resiliency Drill Resource.
 
     :ivar resource_id: ARM Id of the underlying resource. Required.
@@ -934,7 +1059,7 @@ class DrillResourceProperties(_Model):
     :ivar monitoring_rbac_assignment_error: Monitoring RBAC assignment error, if any.
     :vartype monitoring_rbac_assignment_error: ~azure.mgmt.resiliencemanagement.models.ErrorDetails
     :ivar provisioning_state: Provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     """
 
@@ -1008,7 +1133,7 @@ class DrillResourceProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and \"NeedsAttention\"."""
 
     @overload
     def __init__(
@@ -1030,7 +1155,7 @@ class DrillResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DrillRun(ProxyResource):
+class DrillRun(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DrillRun resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1071,7 +1196,7 @@ class DrillRun(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DrillRunAddNotesRequest(_Model):
+class DrillRunAddNotesRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for AddNotes API.
 
     :ivar notes: The notes string.
@@ -1107,7 +1232,7 @@ class DrillRunAddNotesRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DrillRunFailoverRequest(_Model):
+class DrillRunFailoverRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for Failover API.
 
     :ivar auto_failover: AutoFailover - whether to pause between Fault and Failover for manual
@@ -1146,7 +1271,7 @@ class DrillRunFailoverRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobProperties(_Model):
+class JobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of a job, including its type, status, timing, and additional details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1246,7 +1371,9 @@ class JobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DrillRunProperties(JobProperties, discriminator="DrillRun"):
+class DrillRunProperties(
+    JobProperties, discriminator="DrillRun"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Resiliency DrillRun.
 
     :ivar status: The current status of the job execution. Known values are: "NotApplicable",
@@ -1295,6 +1422,8 @@ class DrillRunProperties(JobProperties, discriminator="DrillRun"):
     :ivar current_active_operation_id: The currently active operationID on this Drill Run. There
      can be only one active.
     :vartype current_active_operation_id: str
+    :ivar report: Summary of report generation for this Drill Run.
+    :vartype report: ~azure.mgmt.resiliencemanagement.models.DrillReportSummary
     """
 
     job_type: Literal[JobType.DRILL_RUN] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1314,6 +1443,8 @@ class DrillRunProperties(JobProperties, discriminator="DrillRun"):
     """Matrix of Actions supported on Operations."""
     current_active_operation_id: Optional[str] = rest_field(name="currentActiveOperationId", visibility=["read"])
     """The currently active operationID on this Drill Run. There can be only one active."""
+    report: Optional["_models.DrillReportSummary"] = rest_field(visibility=["read"])
+    """Summary of report generation for this Drill Run."""
 
     @overload
     def __init__(
@@ -1336,7 +1467,37 @@ class DrillRunProperties(JobProperties, discriminator="DrillRun"):
         self.job_type = JobType.DRILL_RUN  # type: ignore
 
 
-class DrillRunResource(ProxyResource):
+class DrillRunReprotectRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body for Reprotect API.
+
+    :ivar reprotect_properties: The reprotect properties. Required.
+    :vartype reprotect_properties: ~azure.mgmt.resiliencemanagement.models.ReprotectRequest
+    """
+
+    reprotect_properties: "_models.ReprotectRequest" = rest_field(
+        name="reprotectProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reprotect properties. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        reprotect_properties: "_models.ReprotectRequest",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DrillRunResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Drill Run job resource in the Azure Resilience Management provider namespace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1377,7 +1538,7 @@ class DrillRunResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class JobResourceProperties(_Model):
+class JobResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of job-resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1480,7 +1641,9 @@ class JobResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DrillRunResourceProperties(JobResourceProperties, discriminator="DrillRun"):
+class DrillRunResourceProperties(
+    JobResourceProperties, discriminator="DrillRun"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Drill Run resource.
 
     :ivar status: The current status of the job execution. Known values are: "NotApplicable",
@@ -1516,7 +1679,8 @@ class DrillRunResourceProperties(JobResourceProperties, discriminator="DrillRun"
      resource.
     :vartype job_resource_type: str or ~azure.mgmt.resiliencemanagement.models.DRILL_RUN
     :ivar provisioning_state: The provisioning state of the Drill Run Resource. Known values are:
-     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and
+     "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     """
 
@@ -1526,7 +1690,8 @@ class DrillRunResourceProperties(JobResourceProperties, discriminator="DrillRun"
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the Drill Run Resource. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and
+     \"NeedsAttention\"."""
 
     @overload
     def __init__(
@@ -1549,7 +1714,7 @@ class DrillRunResourceProperties(JobResourceProperties, discriminator="DrillRun"
         self.job_resource_type = JobResourceType.DRILL_RUN  # type: ignore
 
 
-class DrillStartRequest(_Model):
+class DrillStartRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body of the Start Action of Drill.
 
     :ivar mode: Mode of starting the Drill. Required. "Failover"
@@ -1577,7 +1742,7 @@ class DrillStartRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DrillUpdate(_Model):
+class DrillUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the Drill.
 
     :ivar identity: The managed service identities assigned to this resource.
@@ -1614,7 +1779,7 @@ class DrillUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DrillUpdateProperties(_Model):
+class DrillUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the Drill.
 
     :ivar recovery_plan_properties: Recovery Plan properties.
@@ -1631,6 +1796,14 @@ class DrillUpdateProperties(_Model):
     :ivar monitoring_properties: Monitoring properties of the Drill.
     :vartype monitoring_properties:
      ~azure.mgmt.resiliencemanagement.models.MonitoringPropertiesOfDrill
+    :ivar health_model_monitoring_properties: Azure Health Model monitoring properties of the
+     Drill. Send null to clear the selection.
+    :vartype health_model_monitoring_properties:
+     ~azure.mgmt.resiliencemanagement.models.HealthModelMonitoringProperties
+    :ivar sli_monitoring_properties: SLI monitoring properties of the Drill. Send null to clear the
+     selection; the submitted slis array is the new desired state.
+    :vartype sli_monitoring_properties:
+     ~azure.mgmt.resiliencemanagement.models.SliMonitoringProperties
     """
 
     recovery_plan_properties: Optional["_models.RecoveryPlanPropertiesOfDrill"] = rest_field(
@@ -1654,6 +1827,15 @@ class DrillUpdateProperties(_Model):
         name="monitoringProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Monitoring properties of the Drill."""
+    health_model_monitoring_properties: Optional["_models.HealthModelMonitoringProperties"] = rest_field(
+        name="healthModelMonitoringProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure Health Model monitoring properties of the Drill. Send null to clear the selection."""
+    sli_monitoring_properties: Optional["_models.SliMonitoringProperties"] = rest_field(
+        name="sliMonitoringProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SLI monitoring properties of the Drill. Send null to clear the selection; the submitted slis
+     array is the new desired state."""
 
     @overload
     def __init__(
@@ -1664,6 +1846,8 @@ class DrillUpdateProperties(_Model):
         chaos_resource_properties: Optional["_models.ChaosResourcePropertiesOfDrill"] = None,
         rbac_setup_mode: Optional[Union[str, "_models.RBACSetupMode"]] = None,
         monitoring_properties: Optional["_models.MonitoringPropertiesOfDrill"] = None,
+        health_model_monitoring_properties: Optional["_models.HealthModelMonitoringProperties"] = None,
+        sli_monitoring_properties: Optional["_models.SliMonitoringProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -1677,7 +1861,7 @@ class DrillUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Enrollment(ProxyResource):
+class Enrollment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An enrollment that links a usage plan to a service group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1718,14 +1902,14 @@ class Enrollment(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class EnrollmentProperties(_Model):
+class EnrollmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of enrollment properties.
 
     :ivar service_group_id: ARM resource identifier of the service group associated with this usage
      plan. Required.
     :vartype service_group_id: str
     :ivar provisioning_state: Provisioning state of the enrollment. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar error_details: Details of any errors encountered during Enrollment create or update.
     :vartype error_details: ~azure.mgmt.resiliencemanagement.models.ErrorDetail
@@ -1739,7 +1923,8 @@ class EnrollmentProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state of the enrollment. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and
+     \"NeedsAttention\"."""
     error_details: Optional["_models.ErrorDetail"] = rest_field(name="errorDetails", visibility=["read"])
     """Details of any errors encountered during Enrollment create or update."""
 
@@ -1805,7 +1990,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorDetails(_Model):
+class ErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Errors in T&C / RBAC assignment.
 
     :ivar code: Error code. Required.
@@ -1843,7 +2028,7 @@ class ErrorDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1871,7 +2056,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecutionConfigurations(_Model):
+class ExecutionConfigurations(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Execution configurations for recovery action.
 
     :ivar user_consent: User consent for performing recovery action. Required. Known values are:
@@ -1903,7 +2088,7 @@ class ExecutionConfigurations(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailoverRequest(_Model):
+class FailoverRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Failover post action request.
 
     :ivar failover_direction: Type of Failover direction. Required. "FromSpecificLocations"
@@ -1942,7 +2127,7 @@ class FailoverRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailoverRequestProperties(_Model):
+class FailoverRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional properties for Failover.
 
     :ivar source_locations: Source locations from where resources to be failed-over. Required.
@@ -1989,7 +2174,7 @@ class FailoverRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FaultDetails(_Model):
+class FaultDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fault Details.
 
     :ivar fault_urn: fault urn. Required.
@@ -2033,7 +2218,7 @@ class FaultDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FaultProperties(_Model):
+class FaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fault Properties.
 
     :ivar available_faults: Available faults for this resource.
@@ -2078,7 +2263,7 @@ class FaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GoalAssignment(ProxyResource):
+class GoalAssignment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Goal assignment a AzureResilienceProviderHub resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2119,32 +2304,38 @@ class GoalAssignment(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GoalAssignmentProperties(_Model):
+class GoalAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of goal assignment property.
 
-    :ivar goal_template_id: Arm id of the goal template. Required.
+    :ivar goal_template_id: Arm id of the goal template.
     :vartype goal_template_id: str
-    :ivar goal_assignment_type: The type of goal assignment. Required. "Resiliency"
+    :ivar goal_assignment_type: The type of goal assignment. "Resiliency"
     :vartype goal_assignment_type: str or
      ~azure.mgmt.resiliencemanagement.models.GoalAssignmentType
+    :ivar require_zonal_resiliency: Whether zonal resiliency is required for this goal assignment.
+    :vartype require_zonal_resiliency: bool
     :ivar service_level_resources: List of service level resources.
     :vartype service_level_resources:
      list[~azure.mgmt.resiliencemanagement.models.ServiceLevelResource]
     :ivar provisioning_state: Provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar error_details: Details of any errors encountered during the operation.
     :vartype error_details: ~azure.mgmt.resiliencemanagement.models.ErrorDetail
     """
 
-    goal_template_id: str = rest_field(
+    goal_template_id: Optional[str] = rest_field(
         name="goalTemplateId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Arm id of the goal template. Required."""
-    goal_assignment_type: Union[str, "_models.GoalAssignmentType"] = rest_field(
+    """Arm id of the goal template."""
+    goal_assignment_type: Optional[Union[str, "_models.GoalAssignmentType"]] = rest_field(
         name="goalAssignmentType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of goal assignment. Required. \"Resiliency\""""
+    """The type of goal assignment. \"Resiliency\""""
+    require_zonal_resiliency: Optional[bool] = rest_field(
+        name="requireZonalResiliency", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether zonal resiliency is required for this goal assignment."""
     service_level_resources: Optional[list["_models.ServiceLevelResource"]] = rest_field(
         name="serviceLevelResources", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2153,7 +2344,7 @@ class GoalAssignmentProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and \"NeedsAttention\"."""
     error_details: Optional["_models.ErrorDetail"] = rest_field(name="errorDetails", visibility=["read"])
     """Details of any errors encountered during the operation."""
 
@@ -2161,8 +2352,9 @@ class GoalAssignmentProperties(_Model):
     def __init__(
         self,
         *,
-        goal_template_id: str,
-        goal_assignment_type: Union[str, "_models.GoalAssignmentType"],
+        goal_template_id: Optional[str] = None,
+        goal_assignment_type: Optional[Union[str, "_models.GoalAssignmentType"]] = None,
+        require_zonal_resiliency: Optional[bool] = None,
         service_level_resources: Optional[list["_models.ServiceLevelResource"]] = None,
     ) -> None: ...
 
@@ -2177,7 +2369,7 @@ class GoalAssignmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GoalResource(ProxyResource):
+class GoalResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Goal Resource a AzureResilienceProviderHub resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2218,22 +2410,24 @@ class GoalResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GoalResourceProperties(_Model):
+class GoalResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of goal assignment property.
 
     :ivar resource_arm_id: Arm Id of resource under the SG for which the extension resource is
      maintained. Required.
     :vartype resource_arm_id: str
     :ivar high_availability_goal_participation: Flag which depicts whether the Arm resource is
-     excluded for high availability recommendation. Required. Known values are: "Excluded" and
-     "Included".
+     excluded for high availability recommendation. Known values are: "Excluded" and "Included".
     :vartype high_availability_goal_participation: str or
      ~azure.mgmt.resiliencemanagement.models.ExclusionState
     :ivar high_availability_attestation_status: Flag which depicts whether the Arm resource is
-     manually attested for high availability recommendation. Required. Known values are:
-     "NotAttested" and "ManuallyAttested".
+     manually attested for high availability recommendation. Known values are: "NotAttested" and
+     "ManuallyAttested".
     :vartype high_availability_attestation_status: str or
      ~azure.mgmt.resiliencemanagement.models.AttestationState
+    :ivar zonal_resiliency: Zonal resiliency posture (participation, attestation, exclusion reason,
+     and user confirmations) for the Arm resource.
+    :vartype zonal_resiliency: ~azure.mgmt.resiliencemanagement.models.ResiliencyProperties
     :ivar disaster_recovery_goal_participation: Flag which depicts whether the Arm resource is
      excluded for disaster recovery recommendation. Known values are: "Excluded" and "Included".
     :vartype disaster_recovery_goal_participation: str or
@@ -2256,27 +2450,32 @@ class GoalResourceProperties(_Model):
     :ivar user_confirmation_for_high_availability: List of user confirmations for high availability
      solutions.
     :vartype user_confirmation_for_high_availability:
-     list[~azure.mgmt.resiliencemanagement.models.UserConfirmationForHighAvailabilityItem]
+     list[~azure.mgmt.resiliencemanagement.models.UserConfirmationItem]
     :ivar service_group_memberships: List of service groups of which this resource is memberof.
     :vartype service_group_memberships:
      list[~azure.mgmt.resiliencemanagement.models.ServiceGroupMembership]
     :ivar provisioning_state: Provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     """
 
     resource_arm_id: str = rest_field(name="resourceArmId", visibility=["read", "create", "update", "delete", "query"])
     """Arm Id of resource under the SG for which the extension resource is maintained. Required."""
-    high_availability_goal_participation: Union[str, "_models.ExclusionState"] = rest_field(
+    high_availability_goal_participation: Optional[Union[str, "_models.ExclusionState"]] = rest_field(
         name="highAvailabilityGoalParticipation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag which depicts whether the Arm resource is excluded for high availability recommendation.
-     Required. Known values are: \"Excluded\" and \"Included\"."""
-    high_availability_attestation_status: Union[str, "_models.AttestationState"] = rest_field(
+     Known values are: \"Excluded\" and \"Included\"."""
+    high_availability_attestation_status: Optional[Union[str, "_models.AttestationState"]] = rest_field(
         name="highAvailabilityAttestationStatus", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag which depicts whether the Arm resource is manually attested for high availability
-     recommendation. Required. Known values are: \"NotAttested\" and \"ManuallyAttested\"."""
+     recommendation. Known values are: \"NotAttested\" and \"ManuallyAttested\"."""
+    zonal_resiliency: Optional["_models.ResiliencyProperties"] = rest_field(
+        name="zonalResiliency", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Zonal resiliency posture (participation, attestation, exclusion reason, and user confirmations)
+     for the Arm resource."""
     disaster_recovery_goal_participation: Optional[Union[str, "_models.ExclusionState"]] = rest_field(
         name="disasterRecoveryGoalParticipation", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2297,10 +2496,8 @@ class GoalResourceProperties(_Model):
     )
     """Reason for exclusion from disaster recovery goals. Known values are: \"UserSelectedExclusion\",
      \"FailedOverResource\", and \"UnsupportedResource\"."""
-    user_confirmation_for_high_availability: Optional[list["_models.UserConfirmationForHighAvailabilityItem"]] = (
-        rest_field(
-            name="userConfirmationForHighAvailability", visibility=["read", "create", "update", "delete", "query"]
-        )
+    user_confirmation_for_high_availability: Optional[list["_models.UserConfirmationItem"]] = rest_field(
+        name="userConfirmationForHighAvailability", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of user confirmations for high availability solutions."""
     service_group_memberships: Optional[list["_models.ServiceGroupMembership"]] = rest_field(
@@ -2311,20 +2508,19 @@ class GoalResourceProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and \"NeedsAttention\"."""
 
     @overload
     def __init__(
         self,
         *,
         resource_arm_id: str,
-        high_availability_goal_participation: Union[str, "_models.ExclusionState"],
-        high_availability_attestation_status: Union[str, "_models.AttestationState"],
+        high_availability_goal_participation: Optional[Union[str, "_models.ExclusionState"]] = None,
+        high_availability_attestation_status: Optional[Union[str, "_models.AttestationState"]] = None,
+        zonal_resiliency: Optional["_models.ResiliencyProperties"] = None,
         disaster_recovery_goal_participation: Optional[Union[str, "_models.ExclusionState"]] = None,
         disaster_recovery_attestation_status: Optional[Union[str, "_models.AttestationState"]] = None,
-        user_confirmation_for_high_availability: Optional[
-            list["_models.UserConfirmationForHighAvailabilityItem"]
-        ] = None,
+        user_confirmation_for_high_availability: Optional[list["_models.UserConfirmationItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -2338,7 +2534,7 @@ class GoalResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GoalsData(_Model):
+class GoalsData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of goals data in unified resilience item.
 
     :ivar template_id: Arm id of the goal template. Required.
@@ -2451,7 +2647,7 @@ class GoalsData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GoalTemplate(ProxyResource):
+class GoalTemplate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Goal template a AzureResilienceProviderHub resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2492,7 +2688,7 @@ class GoalTemplate(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GoalTemplateProperties(_Model):
+class GoalTemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of goal template property.
 
     :ivar require_high_availability: Option specified by customer under high availability section
@@ -2512,7 +2708,7 @@ class GoalTemplateProperties(_Model):
     :ivar goal_type: Type of Goal Template created by customer. Required. "Resiliency"
     :vartype goal_type: str or ~azure.mgmt.resiliencemanagement.models.GoalType
     :ivar provisioning_state: Provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar error_details: Details of any errors encountered during the operation.
     :vartype error_details: ~azure.mgmt.resiliencemanagement.models.ErrorDetail
@@ -2544,7 +2740,7 @@ class GoalTemplateProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and \"NeedsAttention\"."""
     error_details: Optional["_models.ErrorDetail"] = rest_field(name="errorDetails", visibility=["read"])
     """Details of any errors encountered during the operation."""
 
@@ -2570,7 +2766,48 @@ class GoalTemplateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncludeOrUpdateResource(_Model):
+class HealthModelMonitoringProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Azure Health Model monitoring properties of a Drill. Exactly one Health Model may be selected
+    per Drill.
+
+    :ivar identity: Identity that the Drill uses to read the Azure Health Model. The Drill is
+     granted Reader on the Health Model for this identity. Required.
+    :vartype identity: ~azure.mgmt.resiliencemanagement.models.AssociatedIdentity
+    :ivar discovery_rule_id: Full ARM Id of the discovery rule inside the Azure Health Model. The
+     parent Health Model is derived from this Id; it is the only identifier accepted on the wire.
+     Required.
+    :vartype discovery_rule_id: str
+    """
+
+    identity: "_models.AssociatedIdentity" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Identity that the Drill uses to read the Azure Health Model. The Drill is granted Reader on the
+     Health Model for this identity. Required."""
+    discovery_rule_id: str = rest_field(
+        name="discoveryRuleId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Full ARM Id of the discovery rule inside the Azure Health Model. The parent Health Model is
+     derived from this Id; it is the only identifier accepted on the wire. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: "_models.AssociatedIdentity",
+        discovery_rule_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IncludeOrUpdateResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Include or Update resource.
 
     :ivar id: Id of the DrillResource to be included (NOT the ARM Id of the underlying resource).
@@ -2640,7 +2877,7 @@ class JobExtendedInfo(_Model):
     """Non localized error message on job execution."""
 
 
-class JobRetryDetails(_Model):
+class JobRetryDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job Retry Details.
 
     :ivar status: The current status of the job execution. Known values are: "NotApplicable",
@@ -2699,7 +2936,7 @@ class JobRetryDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobTaskDetail(_Model):
+class JobTaskDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job task details.
 
     :ivar status: The current status of the job execution. Known values are: "NotApplicable",
@@ -2823,21 +3060,58 @@ class LastRunProperties(_Model):
     """Attestation state of the last run of this Drill. Known values are: \"Success\" and \"Failed\"."""
 
 
-class ManagedOnBehalfOfConfiguration(_Model):
-    """Configuration of the managed on behalf of resource.
+class ListReportDownloadUrlRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request to mint a short-lived, read-only download URL for a Drill Run report.
 
-    :ivar mobo_broker_resources: Associated MoboBrokerResources.
-    :vartype mobo_broker_resources:
-     list[~azure.mgmt.resiliencemanagement.models.MoboBrokerResource]
+    :ivar format: Format of the report to download. Defaults to Html when not specified. "Html"
+    :vartype format: str or ~azure.mgmt.resiliencemanagement.models.DrillReportFormat
     """
 
-    mobo_broker_resources: Optional[list["_models.MoboBrokerResource"]] = rest_field(
-        name="moboBrokerResources", visibility=["read"]
+    format: Optional[Union[str, "_models.DrillReportFormat"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """Associated MoboBrokerResources."""
+    """Format of the report to download. Defaults to Html when not specified. \"Html\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        format: Optional[Union[str, "_models.DrillReportFormat"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ListReportDownloadUrlResponse(_Model):
+    """Response containing a short-lived, read-only download URL for a Drill Run report.
+
+    :ivar format: Format of the report the download URL refers to. "Html"
+    :vartype format: str or ~azure.mgmt.resiliencemanagement.models.DrillReportFormat
+    :ivar download_url: Short-lived, read-only URL to download the report.
+    :vartype download_url: str
+    :ivar expiry_timestamp: Timestamp at which the download URL expires.
+    :vartype expiry_timestamp: ~datetime.datetime
+    """
+
+    format: Optional[Union[str, "_models.DrillReportFormat"]] = rest_field(visibility=["read"])
+    """Format of the report the download URL refers to. \"Html\""""
+    download_url: Optional[str] = rest_field(name="downloadUrl", visibility=["read"])
+    """Short-lived, read-only URL to download the report."""
+    expiry_timestamp: Optional[datetime.datetime] = rest_field(
+        name="expiryTimestamp", visibility=["read"], format="rfc3339"
+    )
+    """Timestamp at which the download URL expires."""
+
+
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -2889,7 +3163,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarkAsCompleteRequest(_Model):
+class MarkAsCompleteRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for MarkAsComplete API.
 
     :ivar drill_run_stage: State of the Drill Run. Required. Known values are: "FaultInjection",
@@ -2921,20 +3195,7 @@ class MarkAsCompleteRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MoboBrokerResource(_Model):
-    """MoboBroker resource.
-
-    :ivar id: The fully qualified resource ID of the MoboBroker resource. Example:
-     ``/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}``.
-    :vartype id: str
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """The fully qualified resource ID of the MoboBroker resource. Example:
-     ``/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}``."""
-
-
-class MonitoringPropertiesOfDrill(_Model):
+class MonitoringPropertiesOfDrill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Drill monitoring properties.
 
     :ivar identity: Identity to use for Drill monitoring operations.
@@ -2992,7 +3253,7 @@ class MonitoringPropertiesOfDrill(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -3080,7 +3341,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OperationQualificationDetails(_Model):
+class OperationQualificationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of qualification for an operation.
 
     :ivar qualification_state: Resource qualification state for the operation. Required. Known
@@ -3088,6 +3349,10 @@ class OperationQualificationDetails(_Model):
     :vartype qualification_state: str or ~azure.mgmt.resiliencemanagement.models.QualificationState
     :ivar not_qualified_reasons: Reasons for resource not qualified for the operation.
     :vartype not_qualified_reasons: list[str]
+    :ivar resource_feasibility_reviews: Advisory resource feasibility reviews. Absent when no
+     review was evaluated for this resource.
+    :vartype resource_feasibility_reviews:
+     list[~azure.mgmt.resiliencemanagement.models.ResourceFeasibilityReview]
     """
 
     qualification_state: Union[str, "_models.QualificationState"] = rest_field(
@@ -3099,6 +3364,10 @@ class OperationQualificationDetails(_Model):
         name="notQualifiedReasons", visibility=["read", "create", "update", "delete", "query"]
     )
     """Reasons for resource not qualified for the operation."""
+    resource_feasibility_reviews: Optional[list["_models.ResourceFeasibilityReview"]] = rest_field(
+        name="resourceFeasibilityReviews", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Advisory resource feasibility reviews. Absent when no review was evaluated for this resource."""
 
     @overload
     def __init__(
@@ -3106,6 +3375,7 @@ class OperationQualificationDetails(_Model):
         *,
         qualification_state: Union[str, "_models.QualificationState"],
         not_qualified_reasons: Optional[list[str]] = None,
+        resource_feasibility_reviews: Optional[list["_models.ResourceFeasibilityReview"]] = None,
     ) -> None: ...
 
     @overload
@@ -3119,7 +3389,7 @@ class OperationQualificationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatusResult(_Model):
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -3195,7 +3465,7 @@ class OperationStatusResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationsData(_Model):
+class RecommendationsData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of recommendations data in unified resilience item.
 
     :ivar high_availability: The high availability section of resilience recommendation. Required.
@@ -3226,7 +3496,7 @@ class RecommendationsData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationsHighAvailabilityData(_Model):
+class RecommendationsHighAvailabilityData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of recommendation data related to high availability in unified resilience item.
 
     :ivar enabled_resource_count: Count of resources that have high availability enabled.
@@ -3280,7 +3550,7 @@ class RecommendationsHighAvailabilityData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendCapacityRequest(_Model):
+class RecommendCapacityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for the recommend capacity action. Provide specific resource IDs to evaluate, or
     pass an empty array to let the service automatically select non-resilient resources from the
     goal assignment.
@@ -3314,7 +3584,7 @@ class RecommendCapacityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryActionRequest(_Model):
+class RecoveryActionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for providing user input for a recovery action.
 
     :ivar description: User-provided input for the action.
@@ -3342,7 +3612,7 @@ class RecoveryActionRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryGroup(ProxyResource):
+class RecoveryGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a recovery orchestration group resource in the Azure Resilience Management provider
     namespace.
 
@@ -3417,7 +3687,7 @@ class RecoveryGroupActionSettings(_Model):
     """User description of the action."""
 
 
-class RecoveryGroupBaseAction(_Model):
+class RecoveryGroupBaseAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines an action for the recovery orchestration group.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3472,7 +3742,9 @@ class RecoveryGroupBaseAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryGroupCustomRunbookAction(RecoveryGroupBaseAction, discriminator="CustomRunbook"):
+class RecoveryGroupCustomRunbookAction(
+    RecoveryGroupBaseAction, discriminator="CustomRunbook"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a custom runbook action for the recovery orchestration group.
 
     :ivar name: The name of the recovery orchestration group action. Required.
@@ -3534,7 +3806,9 @@ class RecoveryGroupCustomRunbookAction(RecoveryGroupBaseAction, discriminator="C
         self.type = RecoveryGroupActionType.CUSTOM_RUNBOOK  # type: ignore
 
 
-class RecoveryGroupManualAction(RecoveryGroupBaseAction, discriminator="ManualAction"):
+class RecoveryGroupManualAction(
+    RecoveryGroupBaseAction, discriminator="ManualAction"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a manual action for the recovery orchestration group.
 
     :ivar name: The name of the recovery orchestration group action. Required.
@@ -3575,7 +3849,7 @@ class RecoveryGroupManualAction(RecoveryGroupBaseAction, discriminator="ManualAc
         self.type = RecoveryGroupActionType.MANUAL_ACTION  # type: ignore
 
 
-class RecoveryGroupProperties(_Model):
+class RecoveryGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the recovery orchestration group.
 
     :ivar group_unique_id: A unique id for the recovery orchestration group, which is a GUID.
@@ -3628,7 +3902,7 @@ class RecoveryGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryGroupsSetting(_Model):
+class RecoveryGroupsSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for the recovery orchestration groups.
 
     :ivar default_group: The default recovery orchestration group setting. Every recovery
@@ -3667,7 +3941,7 @@ class RecoveryGroupsSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryJob(ProxyResource):
+class RecoveryJob(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a recovery job resource in the Azure Resilience Management provider namespace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3708,7 +3982,9 @@ class RecoveryJob(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryJobProperties(JobProperties, discriminator="RecoveryPlan"):
+class RecoveryJobProperties(
+    JobProperties, discriminator="RecoveryPlan"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of recovery job associated with Recovery Orchestration Plan.
 
     :ivar status: The current status of the job execution. Known values are: "NotApplicable",
@@ -3744,7 +4020,8 @@ class RecoveryJobProperties(JobProperties, discriminator="RecoveryPlan"):
      Plan created job.
     :vartype job_type: str or ~azure.mgmt.resiliencemanagement.models.RECOVERY_PLAN
     :ivar provisioning_state: The provisioning state of the recovery job. Known values are:
-     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and
+     "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     """
 
@@ -3754,7 +4031,8 @@ class RecoveryJobProperties(JobProperties, discriminator="RecoveryPlan"):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the recovery job. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and
+     \"NeedsAttention\"."""
 
     @overload
     def __init__(
@@ -3777,7 +4055,7 @@ class RecoveryJobProperties(JobProperties, discriminator="RecoveryPlan"):
         self.job_type = JobType.RECOVERY_PLAN  # type: ignore
 
 
-class RecoveryJobResource(ProxyResource):
+class RecoveryJobResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a recovery orchestration job resource in the Azure Resilience Management provider
     namespace.
 
@@ -3819,7 +4097,9 @@ class RecoveryJobResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryJobResourceProperties(JobResourceProperties, discriminator="RecoveryPlan"):
+class RecoveryJobResourceProperties(
+    JobResourceProperties, discriminator="RecoveryPlan"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a recovery orchestration job resource associated with a recovery orchestration
     plan.
 
@@ -3856,7 +4136,8 @@ class RecoveryJobResourceProperties(JobResourceProperties, discriminator="Recove
      Orchestration Plan created job resource.
     :vartype job_resource_type: str or ~azure.mgmt.resiliencemanagement.models.RECOVERY_PLAN
     :ivar provisioning_state: The provisioning state of the recovery job resource. Known values
-     are: "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     are: "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and
+     "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar protection_solution_type: A setting that indicates the protection solution selected.
      Known values are: "None", "AzureNative", "AzureSiteRecovery", "CrossZoneVMRecovery", and
@@ -3875,7 +4156,8 @@ class RecoveryJobResourceProperties(JobResourceProperties, discriminator="Recove
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the recovery job resource. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Failed\", \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and
+     \"NeedsAttention\"."""
     protection_solution_type: Optional[Union[str, "_models.ResourceProtectionSolutionType"]] = rest_field(
         name="protectionSolutionType", visibility=["read"]
     )
@@ -3907,7 +4189,7 @@ class RecoveryJobResourceProperties(JobResourceProperties, discriminator="Recove
         self.job_resource_type = JobResourceType.RECOVERY_PLAN  # type: ignore
 
 
-class RecoveryPlan(ProxyResource):
+class RecoveryPlan(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a recovery orchestration plan resource in the Azure Resilience Management provider
     namespace.
 
@@ -3956,7 +4238,7 @@ class RecoveryPlan(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanActionBaseResponse(_Model):
+class RecoveryPlanActionBaseResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery Orchestration Plan post action response.
 
     :ivar job_id: JobId of the job triggered for Recovery Orchestration Plan. Required.
@@ -4049,12 +4331,12 @@ class RecoveryPlanOperationStatus(_Model):
     """Error details for the most recent execution of the recovery orchestration plan."""
 
 
-class RecoveryPlanProperties(_Model):
+class RecoveryPlanProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the recovery orchestration plan.
 
     :ivar provisioning_state: The provisioning state of the recovery orchestration plan. Known
-     values are: "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and
-     "Accepted".
+     values are: "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting",
+     "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar plan_type: The type of the recovery orchestration plan, which can be set during creation
      but cannot be changed afterward. Required. Known values are: "Regional" and "Zonal".
@@ -4081,7 +4363,8 @@ class RecoveryPlanProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the recovery orchestration plan. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Failed\", \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and
+     \"NeedsAttention\"."""
     plan_type: Union[str, "_models.RecoveryPlanType"] = rest_field(name="planType", visibility=["create"])
     """The type of the recovery orchestration plan, which can be set during creation but cannot be
      changed afterward. Required. Known values are: \"Regional\" and \"Zonal\"."""
@@ -4128,7 +4411,7 @@ class RecoveryPlanProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanPropertiesOfDrill(_Model):
+class RecoveryPlanPropertiesOfDrill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RecoveryPlan properties.
 
     :ivar identity: Identity to use for RecoveryPlan operations. Required.
@@ -4166,7 +4449,7 @@ class RecoveryPlanPropertiesOfDrill(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryResource(ProxyResource):
+class RecoveryResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RecoveryPlan Resource a AzureResilienceProviderHub resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4207,7 +4490,7 @@ class RecoveryResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryResourceProperties(_Model):
+class RecoveryResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of recovery orchestration resource property associated with recovery orchestration
     plan.
 
@@ -4215,7 +4498,7 @@ class RecoveryResourceProperties(_Model):
      Required.
     :vartype recovery_resource_unique_id: str
     :ivar provisioning_state: Provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar resource_id: Resource ID of the Azure resource associated with the recovery orchestration
      plan and linked to the recovery resource.
@@ -4270,7 +4553,7 @@ class RecoveryResourceProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and \"NeedsAttention\"."""
     resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
     """Resource ID of the Azure resource associated with the recovery orchestration plan and linked to
      the recovery resource."""
@@ -4346,7 +4629,7 @@ class RecoveryResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryResourceQualification(_Model):
+class RecoveryResourceQualification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of resource and its qualification for an operation.
 
     :ivar recovery_resource: Recovery orchestration resource. Required.
@@ -4384,11 +4667,13 @@ class RecoveryResourceQualification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegionalDrillProperties(DrillProperties, discriminator="Regional"):
+class RegionalDrillProperties(
+    DrillProperties, discriminator="Regional"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of Regional Drill properties.
 
     :ivar provisioning_state: Status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar service_group_id: Parent SG resource.
     :vartype service_group_id: str
@@ -4420,12 +4705,16 @@ class RegionalDrillProperties(DrillProperties, discriminator="Regional"):
     :vartype last_sync_time: ~datetime.datetime
     :ivar last_resync_readiness_check_time: Last resync and readiness check time.
     :vartype last_resync_readiness_check_time: ~datetime.datetime
-    :ivar managed_on_behalf_of_configuration: Managed RG v2 properties.
-    :vartype managed_on_behalf_of_configuration:
-     ~azure.mgmt.resiliencemanagement.models.ManagedOnBehalfOfConfiguration
     :ivar monitoring_properties: Monitoring properties of the Drill.
     :vartype monitoring_properties:
      ~azure.mgmt.resiliencemanagement.models.MonitoringPropertiesOfDrill
+    :ivar health_model_monitoring_properties: Azure Health Model monitoring properties of the
+     Drill.
+    :vartype health_model_monitoring_properties:
+     ~azure.mgmt.resiliencemanagement.models.HealthModelMonitoringProperties
+    :ivar sli_monitoring_properties: SLI monitoring properties of the Drill.
+    :vartype sli_monitoring_properties:
+     ~azure.mgmt.resiliencemanagement.models.SliMonitoringProperties
     :ivar error_details: Error details associated with the resource.
     :vartype error_details: ~azure.mgmt.resiliencemanagement.models.ErrorDetail
     :ivar drill_type: The discriminator for the Drill object hierarchy. Required. Regional Drill.
@@ -4444,6 +4733,8 @@ class RegionalDrillProperties(DrillProperties, discriminator="Regional"):
         chaos_resource_properties: Optional["_models.ChaosResourcePropertiesOfDrill"] = None,
         rbac_setup_mode: Optional[Union[str, "_models.RBACSetupMode"]] = None,
         monitoring_properties: Optional["_models.MonitoringPropertiesOfDrill"] = None,
+        health_model_monitoring_properties: Optional["_models.HealthModelMonitoringProperties"] = None,
+        sli_monitoring_properties: Optional["_models.SliMonitoringProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -4458,7 +4749,59 @@ class RegionalDrillProperties(DrillProperties, discriminator="Regional"):
         self.drill_type = DrillType.REGIONAL  # type: ignore
 
 
-class ReprotectRequest(_Model):
+class ReportStageStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Report generation status for a single Drill Run stage.
+
+    :ivar drill_run_stage: Name of the Drill Run stage this status applies to. Required. Known
+     values are: "FaultInjection", "Failover", "Reprotect", "FailoverReverse", and
+     "ReprotectReverse".
+    :vartype drill_run_stage: str or ~azure.mgmt.resiliencemanagement.models.DrillRunSubtasks
+    :ivar generation_status: Report generation status for this stage. Known values are:
+     "NotStarted", "InProgress", "Succeeded", and "Failed".
+    :vartype generation_status: str or
+     ~azure.mgmt.resiliencemanagement.models.DrillReportGenerationStatus
+    :ivar last_attempt_timestamp: Timestamp of the last report generation attempt for this stage.
+    :vartype last_attempt_timestamp: ~datetime.datetime
+    :ivar last_error: Error from the last failed report generation attempt for this stage.
+    :vartype last_error: ~azure.mgmt.resiliencemanagement.models.ErrorDetails
+    """
+
+    drill_run_stage: Union[str, "_models.DrillRunSubtasks"] = rest_field(
+        name="drillRunStage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the Drill Run stage this status applies to. Required. Known values are:
+     \"FaultInjection\", \"Failover\", \"Reprotect\", \"FailoverReverse\", and \"ReprotectReverse\"."""
+    generation_status: Optional[Union[str, "_models.DrillReportGenerationStatus"]] = rest_field(
+        name="generationStatus", visibility=["read"]
+    )
+    """Report generation status for this stage. Known values are: \"NotStarted\", \"InProgress\",
+     \"Succeeded\", and \"Failed\"."""
+    last_attempt_timestamp: Optional[datetime.datetime] = rest_field(
+        name="lastAttemptTimestamp", visibility=["read"], format="rfc3339"
+    )
+    """Timestamp of the last report generation attempt for this stage."""
+    last_error: Optional["_models.ErrorDetails"] = rest_field(name="lastError", visibility=["read"])
+    """Error from the last failed report generation attempt for this stage."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        drill_run_stage: Union[str, "_models.DrillRunSubtasks"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ReprotectRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reprotect post action request.
 
     :ivar reprotect_request_properties: Additional properties for Reprotect.
@@ -4489,7 +4832,7 @@ class ReprotectRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReprotectRequestProperties(_Model):
+class ReprotectRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional properties for Reprotect.
 
     :ivar selected_resource_ids: Selected recovery resource Ids to be processed. If not provided,
@@ -4521,13 +4864,69 @@ class ReprotectRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceBaseProtectionSolutionSetting(_Model):
+class ResiliencyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Resiliency posture for a goal resource.
+
+    :ivar goal_participation: Flag which depicts whether the Arm resource is excluded for
+     resiliency recommendation. Known values are: "Excluded" and "Included".
+    :vartype goal_participation: str or ~azure.mgmt.resiliencemanagement.models.ExclusionState
+    :ivar attestation_status: Flag which depicts whether the Arm resource is manually attested for
+     resiliency recommendation. Known values are: "NotAttested" and "ManuallyAttested".
+    :vartype attestation_status: str or ~azure.mgmt.resiliencemanagement.models.AttestationState
+    :ivar exclusion_reason: Reason for exclusion from resiliency goals. Known values are:
+     "UserSelectedExclusion", "FailedOverResource", and "UnsupportedResource".
+    :vartype exclusion_reason: str or ~azure.mgmt.resiliencemanagement.models.ExclusionReason
+    :ivar user_confirmation: List of user confirmations for resiliency solutions.
+    :vartype user_confirmation: list[~azure.mgmt.resiliencemanagement.models.UserConfirmationItem]
+    """
+
+    goal_participation: Optional[Union[str, "_models.ExclusionState"]] = rest_field(
+        name="goalParticipation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag which depicts whether the Arm resource is excluded for resiliency recommendation. Known
+     values are: \"Excluded\" and \"Included\"."""
+    attestation_status: Optional[Union[str, "_models.AttestationState"]] = rest_field(
+        name="attestationStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag which depicts whether the Arm resource is manually attested for resiliency recommendation.
+     Known values are: \"NotAttested\" and \"ManuallyAttested\"."""
+    exclusion_reason: Optional[Union[str, "_models.ExclusionReason"]] = rest_field(
+        name="exclusionReason", visibility=["read"]
+    )
+    """Reason for exclusion from resiliency goals. Known values are: \"UserSelectedExclusion\",
+     \"FailedOverResource\", and \"UnsupportedResource\"."""
+    user_confirmation: Optional[list["_models.UserConfirmationItem"]] = rest_field(
+        name="userConfirmation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of user confirmations for resiliency solutions."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        goal_participation: Optional[Union[str, "_models.ExclusionState"]] = None,
+        attestation_status: Optional[Union[str, "_models.AttestationState"]] = None,
+        user_confirmation: Optional[list["_models.UserConfirmationItem"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceBaseProtectionSolutionSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of recovery orchestration resource protection solution setting with recovery
     orchestration plan.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ResourceNativeProtectionSolutionSetting, ResourceSiteRecoveryProtectionSetting,
-    ResourceCustomProtectionSetting
+    ResourceCrossZoneVmRecoveryProtectionSetting, ResourceCustomProtectionSetting
 
     :ivar protection_solution_type: A setting that indicates the resource protected with which
      recovery solution. Required. Known values are: "None", "AzureNative", "AzureSiteRecovery",
@@ -4562,7 +4961,61 @@ class ResourceBaseProtectionSolutionSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceCustomProtectionAction(_Model):
+class ResourceCrossZoneVmRecoveryProtectionSetting(
+    ResourceBaseProtectionSolutionSetting, discriminator="CrossZoneVMRecovery"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Definition of recovery orchestration resource protection with cross-zone (zonally resilient) VM
+    recovery.
+
+    :ivar protection_solution_type: Required. Cross zone recovery enabled Azure VMs.
+    :vartype protection_solution_type: str or
+     ~azure.mgmt.resiliencemanagement.models.CROSS_ZONE_VM_RECOVERY
+    :ivar target_zone: Customer-requested logical target availability zone for zonal failover (a
+     positive availability-zone id, e.g. "1", "2", "3"; additional zones are accepted where the
+     region exposes them). Always optional; when omitted the service selects a healthy zone.
+     Immutable per failover.
+    :vartype target_zone: str
+    :ivar capacity_reservation_group_id: ARM resource ID of the Capacity Reservation Group (in the
+     same subscription as the VM) to use when moving the VM to the target zone.
+    :vartype capacity_reservation_group_id: str
+    """
+
+    protection_solution_type: Literal[ResourceProtectionSolutionType.CROSS_ZONE_VM_RECOVERY] = rest_discriminator(name="protectionSolutionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Cross zone recovery enabled Azure VMs."""
+    target_zone: Optional[str] = rest_field(
+        name="targetZone", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Customer-requested logical target availability zone for zonal failover (a positive
+     availability-zone id, e.g. \"1\", \"2\", \"3\"; additional zones are accepted where the region
+     exposes them). Always optional; when omitted the service selects a healthy zone. Immutable per
+     failover."""
+    capacity_reservation_group_id: Optional[str] = rest_field(
+        name="capacityReservationGroupId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the Capacity Reservation Group (in the same subscription as the VM) to use
+     when moving the VM to the target zone."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_zone: Optional[str] = None,
+        capacity_reservation_group_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.protection_solution_type = ResourceProtectionSolutionType.CROSS_ZONE_VM_RECOVERY  # type: ignore
+
+
+class ResourceCustomProtectionAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of recovery resource custom action setting with Recovery Orchestration Plan.
 
     :ivar resource_id: The Azure resource ID hosting the custom action automation script. Required.
@@ -4590,7 +5043,9 @@ class ResourceCustomProtectionAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceCustomProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator="CustomRunbook"):
+class ResourceCustomProtectionSetting(
+    ResourceBaseProtectionSolutionSetting, discriminator="CustomRunbook"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of recovery orchestration resource custom protection setting with recovery
     orchestration plan.
 
@@ -4664,7 +5119,78 @@ class ResourceCustomProtectionSetting(ResourceBaseProtectionSolutionSetting, dis
         self.protection_solution_type = ResourceProtectionSolutionType.CUSTOM_RUNBOOK  # type: ignore
 
 
-class ResourceLists(_Model):
+class ResourceFeasibilityReview(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Result of a single feasibility review performed against one resource in a recovery plan.
+
+    :ivar feasibility_type: The resource feasibility review type. Required. "SkuCapacity"
+    :vartype feasibility_type: str or
+     ~azure.mgmt.resiliencemanagement.models.ResourceFeasibilityReviewType
+    :ivar resource_type: Fully qualified ARM resource type evaluated, e.g.
+     ``Microsoft.Compute/virtualMachines``. Required.
+    :vartype resource_type: str
+    :ivar current_target_sku: The SKU the resource is currently configured to recover into,
+     enriched for comparison against the recommendations. Absent when it could not be resolved, and
+     always absent on ``Passed`` and ``NotApplicable`` reviews.
+    :vartype current_target_sku: ~azure.mgmt.resiliencemanagement.models.SkuDetails
+    :ivar status: Outcome of this feasibility review. Required. Known values are: "Unavailable",
+     "Passed", "Flagged", and "NotApplicable".
+    :vartype status: str or ~azure.mgmt.resiliencemanagement.models.ResourceFeasibilityReviewStatus
+    :ivar recommended_target_skus: Alternative SKUs surfaced for this review. Absent or empty means
+     a ``Flagged`` review has no alternatives, an ``Unavailable`` review has no applicable
+     recommendations to surface, or the review has a minimal ``Passed`` / ``NotApplicable`` outcome.
+     Callers should treat an absent array and an empty array identically.
+    :vartype recommended_target_skus: list[~azure.mgmt.resiliencemanagement.models.SkuDetails]
+    """
+
+    feasibility_type: Union[str, "_models.ResourceFeasibilityReviewType"] = rest_field(
+        name="feasibilityType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource feasibility review type. Required. \"SkuCapacity\""""
+    resource_type: str = rest_field(name="resourceType", visibility=["read", "create", "update", "delete", "query"])
+    """Fully qualified ARM resource type evaluated, e.g. ``Microsoft.Compute/virtualMachines``.
+     Required."""
+    current_target_sku: Optional["_models.SkuDetails"] = rest_field(
+        name="currentTargetSku", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SKU the resource is currently configured to recover into, enriched for comparison against
+     the recommendations. Absent when it could not be resolved, and always absent on ``Passed`` and
+     ``NotApplicable`` reviews."""
+    status: Union[str, "_models.ResourceFeasibilityReviewStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Outcome of this feasibility review. Required. Known values are: \"Unavailable\", \"Passed\",
+     \"Flagged\", and \"NotApplicable\"."""
+    recommended_target_skus: Optional[list["_models.SkuDetails"]] = rest_field(
+        name="recommendedTargetSkus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Alternative SKUs surfaced for this review. Absent or empty means a ``Flagged`` review has no
+     alternatives, an ``Unavailable`` review has no applicable recommendations to surface, or the
+     review has a minimal ``Passed`` / ``NotApplicable`` outcome. Callers should treat an absent
+     array and an empty array identically."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        feasibility_type: Union[str, "_models.ResourceFeasibilityReviewType"],
+        resource_type: str,
+        status: Union[str, "_models.ResourceFeasibilityReviewStatus"],
+        current_target_sku: Optional["_models.SkuDetails"] = None,
+        recommended_target_skus: Optional[list["_models.SkuDetails"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceLists(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Add, Update, Delete resource lists.
 
     :ivar include_resources: Include resource.
@@ -4835,7 +5361,9 @@ class ResourceProtectionSolutionSettings(_Model):
      \"TestFailoverCleanupPending\"."""
 
 
-class ResourceSiteRecoveryProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator="AzureSiteRecovery"):
+class ResourceSiteRecoveryProtectionSetting(
+    ResourceBaseProtectionSolutionSetting, discriminator="AzureSiteRecovery"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of recovery orchestration resource protection with azure site recovery.
 
     :ivar protection_solution_type: Required. Resource protected with the Azure solution provided
@@ -4890,7 +5418,7 @@ class ResourceSiteRecoveryProtectionSetting(ResourceBaseProtectionSolutionSettin
         self.protection_solution_type = ResourceProtectionSolutionType.AZURE_SITE_RECOVERY  # type: ignore
 
 
-class ResourceSiteRecoveryReprotectParams(_Model):
+class ResourceSiteRecoveryReprotectParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of recovery resource reprotect params for site recovery solution.
 
     :ivar disk_reprotect_input_details: Disk Reprotect Input Details.
@@ -4921,7 +5449,9 @@ class ResourceSiteRecoveryReprotectParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSiteRecoveryTestFailoverCleanupParams(_Model):  # pylint: disable=name-too-long
+class ResourceSiteRecoveryTestFailoverCleanupParams(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Definition of recovery resource reprotect params for site recovery solution.
 
     :ivar comments: Comments for testfailover cleanup.
@@ -4949,7 +5479,7 @@ class ResourceSiteRecoveryTestFailoverCleanupParams(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class ResourceSiteRecoveryTestFailoverParams(_Model):
+class ResourceSiteRecoveryTestFailoverParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of recovery resource failover params for site recovery solution.
 
     :ivar network_resource_id: The Azure network resource is which will be used for test failover
@@ -4980,7 +5510,7 @@ class ResourceSiteRecoveryTestFailoverParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceGroupMembership(_Model):
+class ServiceGroupMembership(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for service group membership.
 
     :ivar service_group_id: Arm Id of the service group. Required.
@@ -5019,14 +5549,13 @@ class ServiceGroupMembership(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceLevelResource(_Model):
+class ServiceLevelResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Service level resource model.
 
     :ivar service_level_indicator_resource_id: The arm id of the service level indicator resource.
      Required.
     :vartype service_level_indicator_resource_id: str
     :ivar service_level_objective_resource_id: The arm id of the service level object resource.
-     Required.
     :vartype service_level_objective_resource_id: str
     """
 
@@ -5034,17 +5563,17 @@ class ServiceLevelResource(_Model):
         name="serviceLevelIndicatorResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The arm id of the service level indicator resource. Required."""
-    service_level_objective_resource_id: str = rest_field(
+    service_level_objective_resource_id: Optional[str] = rest_field(
         name="serviceLevelObjectiveResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The arm id of the service level object resource. Required."""
+    """The arm id of the service level object resource."""
 
     @overload
     def __init__(
         self,
         *,
         service_level_indicator_resource_id: str,
-        service_level_objective_resource_id: str,
+        service_level_objective_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -5058,7 +5587,205 @@ class ServiceLevelResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SupportedVerbsForStage(_Model):
+class SkuDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SKU details for a resource feasibility review, used for both the current target SKU and the
+    recommended alternate SKUs.
+
+    :ivar sku: The Azure SKU name. Required.
+    :vartype sku: str
+    :ivar v_cpu: Number of virtual CPUs for the SKU. Absent when SKU specifications are
+     unavailable.
+    :vartype v_cpu: int
+    :ivar ram: Memory in GiB for the SKU. Absent when SKU specifications are unavailable.
+    :vartype ram: int
+    :ivar monthly_price: Estimated monthly price. Absent when pricing is unavailable.
+    :vartype monthly_price: float
+    :ivar currency: ISO 4217 currency code for ``monthlyPrice``.
+    :vartype currency: str
+    :ivar offering_id: Identifier of the Azure offering used to estimate ``monthlyPrice``.
+    :vartype offering_id: str
+    """
+
+    sku: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Azure SKU name. Required."""
+    v_cpu: Optional[int] = rest_field(name="vCpu", visibility=["read", "create", "update", "delete", "query"])
+    """Number of virtual CPUs for the SKU. Absent when SKU specifications are unavailable."""
+    ram: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Memory in GiB for the SKU. Absent when SKU specifications are unavailable."""
+    monthly_price: Optional[float] = rest_field(
+        name="monthlyPrice", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Estimated monthly price. Absent when pricing is unavailable."""
+    currency: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ISO 4217 currency code for ``monthlyPrice``."""
+    offering_id: Optional[str] = rest_field(
+        name="offeringId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identifier of the Azure offering used to estimate ``monthlyPrice``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sku: str,
+        v_cpu: Optional[int] = None,
+        ram: Optional[int] = None,
+        monthly_price: Optional[float] = None,
+        currency: Optional[str] = None,
+        offering_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SliAttentionStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Per-SLI attention status of a Drill.
+
+    :ivar sli_id: Full ARM Id of the SLI this status refers to. Required.
+    :vartype sli_id: str
+    :ivar type: User-declared category of the SLI. Required. Known values are: "Availability" and
+     "Latency".
+    :vartype type: str or ~azure.mgmt.resiliencemanagement.models.SliType
+    :ivar exists: Whether the selected SLI still exists. Known values are: "Exists" and
+     "NotExists".
+    :vartype exists: str or ~azure.mgmt.resiliencemanagement.models.ExtensionObjectState
+    :ivar type_match: Whether the user-declared SLI type matches the SLI's actual category. Known
+     values are: "Matched" and "Mismatched".
+    :vartype type_match: str or ~azure.mgmt.resiliencemanagement.models.SliTypeMatchState
+    :ivar drill_rbac_on_destination_amw: Rolled-up RBAC state: NotSet if the Drill identity is
+     missing Monitoring Reader on any of the SLI's destination Azure Monitor Workspaces. Known
+     values are: "Set" and "NotSet".
+    :vartype drill_rbac_on_destination_amw: str or
+     ~azure.mgmt.resiliencemanagement.models.RBACState
+    :ivar rbac_needed_on_destination_amws: The destination Azure Monitor Workspaces that are still
+     missing the Monitoring Reader grant for the Drill identity.
+    :vartype rbac_needed_on_destination_amws: list[str]
+    """
+
+    sli_id: str = rest_field(name="sliId", visibility=["read", "create", "update", "delete", "query"])
+    """Full ARM Id of the SLI this status refers to. Required."""
+    type: Union[str, "_models.SliType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User-declared category of the SLI. Required. Known values are: \"Availability\" and
+     \"Latency\"."""
+    exists: Optional[Union[str, "_models.ExtensionObjectState"]] = rest_field(visibility=["read"])
+    """Whether the selected SLI still exists. Known values are: \"Exists\" and \"NotExists\"."""
+    type_match: Optional[Union[str, "_models.SliTypeMatchState"]] = rest_field(name="typeMatch", visibility=["read"])
+    """Whether the user-declared SLI type matches the SLI's actual category. Known values are:
+     \"Matched\" and \"Mismatched\"."""
+    drill_rbac_on_destination_amw: Optional[Union[str, "_models.RBACState"]] = rest_field(
+        name="drillRbacOnDestinationAmw", visibility=["read"]
+    )
+    """Rolled-up RBAC state: NotSet if the Drill identity is missing Monitoring Reader on any of the
+     SLI's destination Azure Monitor Workspaces. Known values are: \"Set\" and \"NotSet\"."""
+    rbac_needed_on_destination_amws: Optional[list[str]] = rest_field(
+        name="rbacNeededOnDestinationAmws", visibility=["read"]
+    )
+    """The destination Azure Monitor Workspaces that are still missing the Monitoring Reader grant for
+     the Drill identity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sli_id: str,
+        type: Union[str, "_models.SliType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SliMonitoringProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SLI monitoring properties of a Drill. At most two SLIs may be selected: at most one
+    Availability and one Latency.
+
+    :ivar identity: Identity that the Drill uses to read evaluated SLI results from each SLI's
+     destination Azure Monitor Workspace. The Drill is granted Monitoring Reader on every
+     destination AMW of every selected SLI for this identity. Required.
+    :vartype identity: ~azure.mgmt.resiliencemanagement.models.AssociatedIdentity
+    :ivar slis: The SLIs selected for Drill monitoring. Maximum of two entries: at most one
+     Availability and one Latency. Duplicate types or duplicate SLI Ids are rejected. Required.
+    :vartype slis: list[~azure.mgmt.resiliencemanagement.models.SliSelection]
+    """
+
+    identity: "_models.AssociatedIdentity" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Identity that the Drill uses to read evaluated SLI results from each SLI's destination Azure
+     Monitor Workspace. The Drill is granted Monitoring Reader on every destination AMW of every
+     selected SLI for this identity. Required."""
+    slis: list["_models.SliSelection"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The SLIs selected for Drill monitoring. Maximum of two entries: at most one Availability and
+     one Latency. Duplicate types or duplicate SLI Ids are rejected. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: "_models.AssociatedIdentity",
+        slis: list["_models.SliSelection"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SliSelection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A single SLI selected for Drill monitoring.
+
+    :ivar sli_id: Full ARM Id of the SLI. Required.
+    :vartype sli_id: str
+    :ivar type: User-declared category of the SLI. Must be unique across the selected SLIs.
+     Required. Known values are: "Availability" and "Latency".
+    :vartype type: str or ~azure.mgmt.resiliencemanagement.models.SliType
+    """
+
+    sli_id: str = rest_field(name="sliId", visibility=["read", "create", "update", "delete", "query"])
+    """Full ARM Id of the SLI. Required."""
+    type: Union[str, "_models.SliType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User-declared category of the SLI. Must be unique across the selected SLIs. Required. Known
+     values are: \"Availability\" and \"Latency\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sli_id: str,
+        type: Union[str, "_models.SliType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SupportedVerbsForStage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for supported verbs for stage.
 
     :ivar drill_run_stage: Name of stage. Required. Known values are: "FaultInjection", "Failover",
@@ -5098,7 +5825,7 @@ class SupportedVerbsForStage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -5165,7 +5892,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemMetadata(_Model):
+class SystemMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Internal System Metadata, to be used by internal components only.
 
     :ivar initial_config: Indicates if the Initial system configuration of the Drill is complete or
@@ -5205,7 +5932,7 @@ class SystemMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestFailoverCleanupRequest(_Model):
+class TestFailoverCleanupRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TestFailoverCleanup post action request.
 
     :ivar comments: Comments for test failover cleanup.
@@ -5233,7 +5960,7 @@ class TestFailoverCleanupRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5277,7 +6004,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class UnifiedResilienceItem(ProxyResource):
+class UnifiedResilienceItem(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A unified resilience item represents a computed and aggregated resilience information of Azure
     Applications.
 
@@ -5319,11 +6046,11 @@ class UnifiedResilienceItem(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class UnifiedResilienceItemProperties(_Model):
+class UnifiedResilienceItemProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of unified resilience item property.
 
     :ivar provisioning_state: Provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar goals: Computed and copied data of resilience goals. Required.
     :vartype goals: ~azure.mgmt.resiliencemanagement.models.GoalsData
@@ -5337,7 +6064,7 @@ class UnifiedResilienceItemProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and \"NeedsAttention\"."""
     goals: "_models.GoalsData" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Computed and copied data of resilience goals. Required."""
     recommendations: "_models.RecommendationsData" = rest_field(
@@ -5369,7 +6096,7 @@ class UnifiedResilienceItemProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateGoalResourceRequest(_Model):
+class UpdateGoalResourceRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request model for update goal resource.
 
     :ivar resources: List of update goal resource. Required.
@@ -5397,7 +6124,7 @@ class UpdateGoalResourceRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateRecoveryResourcesRequest(_Model):
+class UpdateRecoveryResourcesRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RecoveryResources post action request to update in batch.
 
     :ivar resources_to_update: A list of recovery orchestration resources whose properties need to
@@ -5437,7 +6164,7 @@ class UpdateRecoveryResourcesRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateRecoveryResourcesResponse(_Model):
+class UpdateRecoveryResourcesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RecoveryResources post action request to update in batch.
 
     :ivar failed_resources: A list of error details associated with resources for which the update
@@ -5468,7 +6195,7 @@ class UpdateRecoveryResourcesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UsagePlan(TrackedResource):
+class UsagePlan(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A usage plan resource for Resiliency feature billing.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5515,13 +6242,13 @@ class UsagePlan(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class UsagePlanProperties(_Model):
+class UsagePlanProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of usage plan properties.
 
     :ivar plan_type: The type of the usage plan. Known values are: "Basic" and "Standard".
     :vartype plan_type: str or ~azure.mgmt.resiliencemanagement.models.UsagePlanType
     :ivar provisioning_state: Provisioning state of the usage plan. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar error_details: Details of any errors encountered during Usage Plan create or update.
     :vartype error_details: ~azure.mgmt.resiliencemanagement.models.ErrorDetail
@@ -5535,7 +6262,8 @@ class UsagePlanProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state of the usage plan. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and
+     \"NeedsAttention\"."""
     error_details: Optional["_models.ErrorDetail"] = rest_field(name="errorDetails", visibility=["read"])
     """Details of any errors encountered during Usage Plan create or update."""
 
@@ -5557,7 +6285,7 @@ class UsagePlanProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UsagePlanTagsUpdate(_Model):
+class UsagePlanTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for updating tags in UsagePlan resources.
 
     :ivar tags: Resource tags.
@@ -5600,7 +6328,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserConfirmationForHighAvailabilityItem(_Model):
+class UserConfirmationItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a user confirmation for a high availability solution.
 
     :ivar solution_display_name: The solution display name of the high availability solution.
@@ -5654,24 +6382,35 @@ class UserConfirmationForHighAvailabilityItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateForExecutionProperties(_Model):
+class ValidateForExecutionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional properties for Failover.
 
+    :ivar operation_name: Operation name for which the validation is being done. This is needed to
+     determine the set of validations to be done for the operation. Known values are: "Failover",
+     "Reprotect", "FailoverReverse", and "ReprotectReverse".
+    :vartype operation_name: str or ~azure.mgmt.resiliencemanagement.models.DrillRunTasks
     :ivar source_locations: Physiscal Source locations from where resources to be failed-over or
-     faulted. Required.
+     faulted.
     :vartype source_locations: list[str]
     """
 
-    source_locations: list[str] = rest_field(
+    operation_name: Optional[Union[str, "_models.DrillRunTasks"]] = rest_field(
+        name="operationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Operation name for which the validation is being done. This is needed to determine the set of
+     validations to be done for the operation. Known values are: \"Failover\", \"Reprotect\",
+     \"FailoverReverse\", and \"ReprotectReverse\"."""
+    source_locations: Optional[list[str]] = rest_field(
         name="sourceLocations", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Physiscal Source locations from where resources to be failed-over or faulted. Required."""
+    """Physiscal Source locations from where resources to be failed-over or faulted."""
 
     @overload
     def __init__(
         self,
         *,
-        source_locations: list[str],
+        operation_name: Optional[Union[str, "_models.DrillRunTasks"]] = None,
+        source_locations: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -5685,7 +6424,7 @@ class ValidateForExecutionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateForExecutionRequest(_Model):
+class ValidateForExecutionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body of the Validate For Execute Action of Drill.
 
     :ivar validate_for_execution_properties: Additional properties for Validate for execute.
@@ -5716,7 +6455,7 @@ class ValidateForExecutionRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateForOperationRequest(_Model):
+class ValidateForOperationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ValidateForOperation post action request to check if operation can be performed.
 
     :ivar operation_name: Operation Name to validate. Required. Known values are: "Failover",
@@ -5748,7 +6487,7 @@ class ValidateForOperationRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateForRecoveryOperationBaseResponse(_Model):
+class ValidateForRecoveryOperationBaseResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ValidateForRecoveryOperation post action response.
 
     :ivar recovery_resource_qualifications: Qualification details of resources for the operation.
@@ -5780,11 +6519,13 @@ class ValidateForRecoveryOperationBaseResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ZonalDrillProperties(DrillProperties, discriminator="Zonal"):
+class ZonalDrillProperties(
+    DrillProperties, discriminator="Zonal"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of Zonal Drill properties.
 
     :ivar provisioning_state: Status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar service_group_id: Parent SG resource.
     :vartype service_group_id: str
@@ -5816,12 +6557,16 @@ class ZonalDrillProperties(DrillProperties, discriminator="Zonal"):
     :vartype last_sync_time: ~datetime.datetime
     :ivar last_resync_readiness_check_time: Last resync and readiness check time.
     :vartype last_resync_readiness_check_time: ~datetime.datetime
-    :ivar managed_on_behalf_of_configuration: Managed RG v2 properties.
-    :vartype managed_on_behalf_of_configuration:
-     ~azure.mgmt.resiliencemanagement.models.ManagedOnBehalfOfConfiguration
     :ivar monitoring_properties: Monitoring properties of the Drill.
     :vartype monitoring_properties:
      ~azure.mgmt.resiliencemanagement.models.MonitoringPropertiesOfDrill
+    :ivar health_model_monitoring_properties: Azure Health Model monitoring properties of the
+     Drill.
+    :vartype health_model_monitoring_properties:
+     ~azure.mgmt.resiliencemanagement.models.HealthModelMonitoringProperties
+    :ivar sli_monitoring_properties: SLI monitoring properties of the Drill.
+    :vartype sli_monitoring_properties:
+     ~azure.mgmt.resiliencemanagement.models.SliMonitoringProperties
     :ivar error_details: Error details associated with the resource.
     :vartype error_details: ~azure.mgmt.resiliencemanagement.models.ErrorDetail
     :ivar drill_type: The discriminator for the Drill object hierarchy. Required. Zonal Drill.
@@ -5846,6 +6591,8 @@ class ZonalDrillProperties(DrillProperties, discriminator="Zonal"):
         chaos_resource_properties: Optional["_models.ChaosResourcePropertiesOfDrill"] = None,
         rbac_setup_mode: Optional[Union[str, "_models.RBACSetupMode"]] = None,
         monitoring_properties: Optional["_models.MonitoringPropertiesOfDrill"] = None,
+        health_model_monitoring_properties: Optional["_models.HealthModelMonitoringProperties"] = None,
+        sli_monitoring_properties: Optional["_models.SliMonitoringProperties"] = None,
     ) -> None: ...
 
     @overload
