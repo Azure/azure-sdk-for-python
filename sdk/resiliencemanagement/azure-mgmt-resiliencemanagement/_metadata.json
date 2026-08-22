@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2026-04-01-preview",
+  "apiVersion": "2026-08-31-preview",
   "apiVersions": {
-    "Microsoft.AzureResilienceManagement": "2026-04-01-preview"
+    "Microsoft.AzureResilienceManagement": "2026-08-31-preview"
   },
-  "commit": "589a0fec47674e91982ecef00d23aa60e53ff281",
+  "commit": "736e61cb6c5059d5f75bac47b54ce57c6ad130f7",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/azureresiliencemanagement/resource-manager/Microsoft.AzureResilienceManagement/AzureResilienceManagement",
-  "emitterVersion": "0.63.1",
-  "httpClientPythonVersion": "^0.31.1"
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }
