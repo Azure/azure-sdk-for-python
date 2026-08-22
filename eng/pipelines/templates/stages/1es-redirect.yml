@@ -40,7 +40,10 @@ extends:
         - 1ES.PT.Tag-refs/tags/canary
     settings:
       skipBuildTagsForGitHubPullRequests: true
-      networkIsolationPolicy: Permissive, CFSClean
+      ${{ if startsWith(variables['Build.DefinitionName'], 'python - conda') }}:
+        networkIsolationPolicy: Permissive, CFSClean
+      ${{ else }}:
+        networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     ${{ if ne(variables['Build.DefinitionName'], 'python - core') }}:
       featureFlags:
         autoBaseline: false
