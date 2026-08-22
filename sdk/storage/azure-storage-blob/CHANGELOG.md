@@ -7,6 +7,9 @@
 
 ### Bugs Fixed
 - Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
+- Fixed an issue where `generate_blob_sas` signed a blob name containing a backslash (`\`) verbatim, producing a SAS token
+the service rejects. Backslashes in the blob name are now canonicalized to forward slashes (`/`) when building the
+signed resource, consistent with the service and the Go and .NET SDKs.
 
 ## 12.31.0b1 (2026-08-10)
 

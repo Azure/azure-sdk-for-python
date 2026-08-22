@@ -160,6 +160,10 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+        # The service canonicalizes backslashes in a blob name to forward slashes,
+        # so the signed resource must do the same. Directory names are signed as given.
+        if not is_directory:
+            blob_name = blob_name.replace("\\", "/")
         resource_path = container_name + "/" + blob_name
 
         sas = _BlobSharedAccessHelper()
