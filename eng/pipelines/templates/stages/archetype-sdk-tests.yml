@@ -100,6 +100,12 @@ parameters:
   - name: PersistOidcToken
     type: boolean
     default: false
+  # Skip the per-run ARM deployment and its teardown for this stage. Use when the service's
+  # live tests bind to fixed, team-owned accounts (resolved in BeforeTestSteps) instead of
+  # provisioning per run. See sdk/cosmos/pipeline/README.md for the Cosmos implementation.
+  - name: DisableAzureResourceCreation
+    type: boolean
+    default: false
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -146,6 +152,7 @@ extends:
                       CheckEnv: ${{ parameters.CheckEnv }}
                       UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
                       PersistOidcToken: ${{ parameters.PersistOidcToken }}
+                      DisableAzureResourceCreation: ${{ parameters.DisableAzureResourceCreation }}
                     MatrixConfigs:
                       # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
                       - ${{ each config in parameters.MatrixConfigs }}:

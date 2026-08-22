@@ -268,7 +268,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
         _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
-        os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "80"
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED="80")
         try:
             # writes should fail but still be tracked and mark unavailable a partition after crossing threshold
             for i in range(10):
@@ -296,7 +296,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
             validate_unhealthy_partitions(global_endpoint_manager, 1)
 
         finally:
-            os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
+            test_config.restore_environment_variables(previous_env)
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
         await cleanup_method([custom_setup, setup])
@@ -315,7 +315,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
         _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 8
-        os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "80"
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED="80")
         try:
             if isinstance(error, ServiceResponseError):
                 # service response error retries in region 3 additional times before failing over
@@ -338,7 +338,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
             validate_unhealthy_partitions(global_endpoint_manager, expected_unhealthy_partitions)
         finally:
-            os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
+            test_config.restore_environment_variables(previous_env)
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
         await cleanup_method([custom_setup, setup])
