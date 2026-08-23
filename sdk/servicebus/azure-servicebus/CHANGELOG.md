@@ -11,6 +11,7 @@
 
 ### Bugs Fixed
 
+- Fixed a race condition in the async `ServiceBusSender` where concurrent coroutines could trigger `AttributeError: 'NoneType' object has no attribute 'client_ready_async'` when reusing a sender. ([#35618](https://github.com/Azure/azure-sdk-for-python/issues/35618))
 - Fixed a bug where messages returned by `receive_deferred_messages` had a `lock_token` of `None`, which prevented settling (completing, abandoning, dead-lettering, deferring) or renewing the lock on a deferred message in `PEEK_LOCK` mode. The lock token is now read from the `lock-token` field of the management-link response for deferred messages. ([#42454](https://github.com/Azure/azure-sdk-for-python/issues/42454))
 - Read `com.microsoft:max-message-batch-size` vendor property from the AMQP sender link to correctly limit batch size on Premium large-message entities, where `max-message-size` can be up to 100 MB but the batch limit is 1 MB.
 - Fixed a bug where sending a batched or multi-message payload with `uamqp_transport=True` raised `TypeError: 'BatchMessage' object is not subscriptable` (and a masked `AttributeError` on the list path) when the first message carried a `message_id`, `session_id`, or `partition_key`. The batch envelope properties are now set through the transport-appropriate code path. (regression from [#42598](https://github.com/Azure/azure-sdk-for-python/pull/42598))
