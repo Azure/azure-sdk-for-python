@@ -1,6 +1,6 @@
 # Release History
 
-## 7.15.0b1 (Unreleased)
+## 7.15.0b2 (2026-08-21)
 
 ### Features Added
 

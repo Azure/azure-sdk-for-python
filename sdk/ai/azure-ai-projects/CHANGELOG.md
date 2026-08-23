@@ -16,6 +16,10 @@
 
 * Added an optional dependency on `websockets`, required only when using the new `client.realtime` / `async_client.realtime` voice agent streaming APIs.
 
+### Bugs Fixed
+
+* Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
+
 ## 2.5.0 (2026-08-20)
 
 ### Dependency update
