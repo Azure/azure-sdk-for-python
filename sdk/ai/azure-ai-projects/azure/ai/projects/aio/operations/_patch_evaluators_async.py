@@ -21,7 +21,7 @@ from ...models import AsyncEvaluatorGenerationLROPoller
 class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     """Custom async operations for beta evaluator generation jobs."""
 
-    @overload
+    @overload  # type: ignore[override]
     async def begin_create_generation_job(
         self,
         job: _models.EvaluatorGenerationJob,
@@ -52,7 +52,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     ) -> AsyncEvaluatorGenerationLROPoller: ...
 
     @distributed_trace_async
-    async def begin_create_generation_job(
+    async def begin_create_generation_job(  # type: ignore[reportIncompatibleMethodOverride, override]
         self,
         job: Union[_models.EvaluatorGenerationJob, _types.EvaluatorGenerationJob, IO[bytes]],
         *,
@@ -81,7 +81,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         raw_result = None
         if continuation_token is None:
             raw_result = await self._create_generation_job_initial(
-                job=job,
+                job=job,  # type: ignore[reportArgumentType, arg-type]
                 operation_id=operation_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,

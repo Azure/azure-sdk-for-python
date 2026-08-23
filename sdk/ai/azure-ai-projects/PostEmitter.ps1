@@ -120,7 +120,16 @@ foreach ($f in $files) {
 # (models/_enums.py). The emitter wraps long bullet-item lines without indenting the
 # continuation lines to align with the bullet's text, and (for VoiceAudioOutputConfig) runs the
 # trailing summary sentence straight into the last bullet with no blank line to end the list.
-$oldVoiceAudioOutputConfig = @"
+#
+# NOTE: these here-strings use single-quoted @'...'@ delimiters (not @"..."@) on purpose.
+# Double-quoted here-strings still process backtick escape sequences, and since this text is
+# full of literal Markdown backticks (`` `azure-standard` ``, etc.), any backtick not immediately
+# followed by a recognized escape letter (n, r, t, 0, a, b, f, v, e, #, ', ", `) gets silently
+# DROPPED by the PowerShell parser -- with no error or warning. That corrupts $oldVoiceAudioOutputConfig
+# so it can never match the real (backtick-containing) generated file content, and .Replace() then
+# just silently no-ops. Single-quoted here-strings disable all escape/interpolation processing, so
+# the backticks survive exactly as written.
+$oldVoiceAudioOutputConfig = @'
     * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
     `custom_lexicon_url`,
     `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
@@ -130,8 +139,8 @@ $oldVoiceAudioOutputConfig = @"
     `personal_voice_model`; the voice name is derived from the avatar.
     * `azure-realtime-native`: `voice` and `speed`.
     `format` and `output_audio_timestamp_types` apply to every voice type.
-"@
-$newVoiceAudioOutputConfig = @"
+'@
+$newVoiceAudioOutputConfig = @'
     * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
       `custom_lexicon_url`,
       `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
@@ -142,7 +151,7 @@ $newVoiceAudioOutputConfig = @"
     * `azure-realtime-native`: `voice` and `speed`.
 
     `format` and `output_audio_timestamp_types` apply to every voice type.
-"@
+'@
 $files = 'azure\ai\projects\types.py', 'azure\ai\projects\models\_models.py'
 foreach ($f in $files) {
     $c = Get-Content $f -Raw
@@ -152,8 +161,9 @@ foreach ($f in $files) {
 
 $f = 'azure\ai\projects\models\_enums.py'
 $c = Get-Content $f -Raw
+# NOTE: single-quoted @'...'@ here-strings -- see comment above the VoiceAudioOutputConfig fix for why.
 $c = $c.Replace(
-@"
+@'
     * `in_progress`: the live session is active, or post-session persistence finalization is
     pending.
     * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
@@ -161,8 +171,8 @@ $c = $c.Replace(
     close, or a client or network disconnect that the service can still finalize.
     * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
     finalization.
-"@,
-@"
+'@,
+@'
     * `in_progress`: the live session is active, or post-session persistence finalization is
       pending.
     * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
@@ -170,7 +180,7 @@ $c = $c.Replace(
       close, or a client or network disconnect that the service can still finalize.
     * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
       finalization.
-"@
+'@
 )
 Set-Content $f $c -NoNewline
 
@@ -328,16 +338,13 @@ Set-Content $f $c -NoNewline
 # persisted voice response always has both set). Pyright's reportIncompatibleVariableOverride
 # flags this because narrowing a *mutable* attribute's type in a subclass isn't sound in general,
 # but it's safe here by construction (the service never omits these for a persisted response).
+# NOTE: uses -replace with a \r?\n-tolerant regex (not .Replace() with a literal `n), since `n
+# always resolves to a bare LF and can never match this file's real CRLF line endings -- the
+# $1/$2 replacement backreferences preserve whatever newline the regex actually matched.
 $f = 'azure\ai\projects\models\_models.py'
 $c = Get-Content $f -Raw
-$c = $c.Replace(
-    "    id: str = rest_field(visibility=[`"read`", `"create`", `"update`", `"delete`", `"query`"])`n    `"`"`"The unique id of the response. Required.`"`"`"",
-    "    id: str = rest_field(visibility=[`"read`", `"create`", `"update`", `"delete`", `"query`"])  # type: ignore[reportIncompatibleVariableOverride]`n    `"`"`"The unique id of the response. Required.`"`"`""
-)
-$c = $c.Replace(
-    "    conversation_id: str = rest_field(visibility=[`"read`", `"create`", `"update`", `"delete`", `"query`"])`n    `"`"`"The id of the conversation this response belongs to. Required.`"`"`"",
-    "    conversation_id: str = rest_field(visibility=[`"read`", `"create`", `"update`", `"delete`", `"query`"])  # type: ignore[reportIncompatibleVariableOverride]`n    `"`"`"The id of the conversation this response belongs to. Required.`"`"`""
-)
+$c = $c -replace '(id: str = rest_field\(visibility=\["read", "create", "update", "delete", "query"\]\))(\r?\n    """The unique id of the response\. Required\.""")', '$1  # type: ignore[reportIncompatibleVariableOverride]$2'
+$c = $c -replace '(conversation_id: str = rest_field\(visibility=\["read", "create", "update", "delete", "query"\]\))(\r?\n    """The id of the conversation this response belongs to\. Required\.""")', '$1  # type: ignore[reportIncompatibleVariableOverride]$2'
 Set-Content $f $c -NoNewline
 
 # Finishing by running 'black' tool to format code. 

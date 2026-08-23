@@ -683,6 +683,7 @@ from ._enums import (  # type: ignore
     VoiceSystemToolName,
     VoiceTurnDetectionType,
     VoiceType,
+    _AgentDefinitionOptInKeys,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -1354,6 +1355,7 @@ __all__ = [
     "VoiceSystemToolName",
     "VoiceTurnDetectionType",
     "VoiceType",
+    "_AgentDefinitionOptInKeys",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

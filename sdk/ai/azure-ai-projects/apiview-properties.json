@@ -643,6 +643,7 @@
         "azure.ai.projects.models.AgentSessionStatus": "Azure.AI.Projects.AgentSessionStatus",
         "azure.ai.projects.models.SessionLogEventType": "Azure.AI.Projects.SessionLogEventType",
         "azure.ai.projects.models.VoiceAgentWebSocketSubprotocol": "Azure.AI.Projects.VoiceAgentWebSocketSubprotocol",
+        "azure.ai.projects.models._AgentDefinitionOptInKeys": "Azure.AI.Projects.AgentDefinitionOptInKeys",
         "azure.ai.projects.models.VoiceConversationStatus": "Azure.AI.Projects.VoiceConversationStatus",
         "azure.ai.projects.models.RealtimeConversationItemMessageType": "OpenAI.RealtimeConversationItemMessageType",
         "azure.ai.projects.models.RealtimeConversationItemType": "OpenAI.RealtimeConversationItemType",
@@ -793,5 +794,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "9872c35ac0b9"
+    "CrossLanguageVersion": "0e6d765a5930"
 }

@@ -1,5 +1,21 @@
 # Release History
 
+## 2.6.0 (Unreleased)
+
+### Features Added
+
+* Added voice agents, unified with the rest of the Agents API as a new `kind="voice"` on `AgentDefinition`:
+  * Define a voice agent with `VoiceAgentDefinition`, configuring its model (`VoiceModelType`), audio input/output (`VoiceAudioConfig`, `VoiceAudioInputConfig`, `VoiceAudioOutputConfig`), turn detection (`VoiceTurnDetection` and its `VoiceServerVadTurnDetection` / `VoiceSemanticVadTurnDetection` / `VoiceAzureSemanticVadTurnDetection` variants), greeting (`VoiceGreetingConfig`), tools (`VoiceAgentTool`, `VoiceAgentFunctionTool`, `VoiceAgentMcpTool`, `VoiceToolboxTool`), and avatar (`VoiceAvatarConfig`). Manage it like any other agent through `project_client.agents` (`create_version`, `get`, `list`, `disable`/`enable`, `delete`).
+  * Added guided authoring via `project_client.agents.generate_agent(GenerateVoiceAgentRequest(kind=AgentKind.VOICE, ...))`, which returns a service-generated starter definition that can be edited afterward through the standard `create_version`/`update` flow.
+  * Added a new `client.realtime` / `async_client.realtime` entry point for realtime speech-to-speech streaming. Use `with client.realtime.connect(agent_name=...) as connection:` to open a WebSocket connection, `connection.send(...)` to send strongly-typed client events (or use the `connection.response`, `connection.item`, and `connection.session` helpers), and iterate over `connection` to receive strongly-typed server events (`VoiceAgentServerEvent*`, `RealtimeServerEvent*`). The new types `Realtime`, `RealtimeConnection`, and `RealtimeConnectionManager` (and their async equivalents `AsyncRealtime`, `AsyncRealtimeConnection`, `AsyncRealtimeConnectionManager`) are exported from `azure.ai.projects` / `azure.ai.projects.aio`. Requires the optional `websockets` package.
+  * Added the `agent_endpoint_conversations` operation group for reading back persisted voice-agent conversation transcripts and audio, for agents created with `store=True`.
+  * Added the underlying `RealtimeConversationItem*`, `RealtimeMCP*`, `RealtimeResponseUsage`, and related realtime event/session models used by the voice agent WebSocket protocol.
+* Added 11 new samples under `samples/agents/voice/`, covering basic agent lifecycle, guided generation, live audio and text conversations (sync and async), function tools, versioning, and reading back conversation transcripts and audio.
+
+### Dependency update
+
+* Added an optional dependency on `websockets`, required only when using the new `client.realtime` / `async_client.realtime` voice agent streaming APIs.
+
 ## 2.5.0 (2026-08-20)
 
 ### Dependency update

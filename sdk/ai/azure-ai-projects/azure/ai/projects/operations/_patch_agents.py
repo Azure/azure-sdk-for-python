@@ -408,7 +408,7 @@ class AgentsOperations(GeneratedAgentsOperations):
 class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     """Custom operations for beta agent optimization jobs."""
 
-    @overload
+    @overload  # type: ignore[override]
     def begin_create_optimization_job(
         self,
         job: _models.AgentOptimizationJob,
@@ -439,7 +439,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     ) -> AgentOptimizationLROPoller: ...
 
     @distributed_trace
-    def begin_create_optimization_job(
+    def begin_create_optimization_job(  # type: ignore[reportIncompatibleMethodOverride, override]
         self,
         job: Union[_models.AgentOptimizationJob, _types.AgentOptimizationJob, IO[bytes]],
         *,
@@ -468,7 +468,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
         raw_result = None
         if continuation_token is None:
             raw_result = self._create_optimization_job_initial(
-                job=job,
+                job=job,  # type: ignore[reportArgumentType, arg-type]
                 operation_id=operation_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,

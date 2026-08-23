@@ -69,7 +69,7 @@ if TYPE_CHECKING:
     from .. import _unions, models as _models
 
 
-class _CreateAgentVersionFromCodeContent(_Model):
+class _CreateAgentVersionFromCodeContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Multipart request body for updating or versioning a code-based agent (POST /agents/{name} and
     POST /agents/{name}/versions).
 
@@ -107,7 +107,7 @@ class _CreateAgentVersionFromCodeContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class _CreateAgentVersionFromCodeMetadata(_Model):
+class _CreateAgentVersionFromCodeMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JSON metadata for code-based agent operations (create, update, create version). The agent name
     comes from the URL path parameter or the ``x-ms-agent-name`` header, so it is not included in
     this model. The content hash (SHA-256 of the zip) is carried in the ``x-ms-code-zip-sha256``
@@ -160,7 +160,7 @@ class _CreateAgentVersionFromCodeMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Tool(_Model):
+class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A tool that can be used to generate a response.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -213,7 +213,7 @@ class Tool(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2APreviewTool(Tool, discriminator="a2a_preview"):
+class A2APreviewTool(Tool, discriminator="a2a_preview"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An agent implementing the A2A protocol.
 
     :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2A_PREVIEW.
@@ -271,7 +271,7 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
         self.type = ToolType.A2A_PREVIEW  # type: ignore
 
 
-class ToolboxTool(_Model):
+class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An abstract representation of a tool stored in a toolbox.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -335,7 +335,9 @@ class ToolboxTool(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2APreviewToolboxTool(ToolboxTool, discriminator="a2a_preview"):
+class A2APreviewToolboxTool(
+    ToolboxTool, discriminator="a2a_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An A2A tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -408,7 +410,7 @@ class A2AProtocolConfiguration(_Model):
     """Configuration specific to the A2A protocol."""
 
 
-class A2ATool(Tool, discriminator="a2a"):
+class A2ATool(Tool, discriminator="a2a"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An agent implementing the A2A protocol.
 
     :ivar type: The type of the tool. Always ``"a2a"``. Required. A2_A.
@@ -473,7 +475,7 @@ class A2ATool(Tool, discriminator="a2a"):
         self.type = ToolType.A2_A  # type: ignore
 
 
-class A2AToolboxTool(ToolboxTool, discriminator="a2a"):
+class A2AToolboxTool(ToolboxTool, discriminator="a2a"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An A2A tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -549,7 +551,7 @@ class A2AToolboxTool(ToolboxTool, discriminator="a2a"):
         self.type = ToolboxToolType.A2_A  # type: ignore
 
 
-class ActivityProtocolConfiguration(_Model):
+class ActivityProtocolConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration specific to the activity protocol.
 
     :ivar enable_m365_public_endpoint: Whether to enable the M365 public endpoint for the activity
@@ -578,7 +580,7 @@ class ActivityProtocolConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentBlueprintReference(_Model):
+class AgentBlueprintReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentBlueprintReference.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -610,7 +612,7 @@ class AgentBlueprintReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentCard(_Model):
+class AgentCard(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentCard.
 
     :ivar version: The version of the agent card. Required.
@@ -648,7 +650,7 @@ class AgentCard(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentCardSkill(_Model):
+class AgentCardSkill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentCardSkill.
 
     :ivar id: a unique identifier for the skill. Required.
@@ -696,7 +698,7 @@ class AgentCardSkill(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InsightRequest(_Model):
+class InsightRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request of the insights report.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -731,7 +733,9 @@ class InsightRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentClusterInsightRequest(InsightRequest, discriminator="AgentClusterInsight"):
+class AgentClusterInsightRequest(
+    InsightRequest, discriminator="AgentClusterInsight"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Insights on set of Agent Evaluation Results.
 
     :ivar type: The type of request. Required. Cluster Insight on an Agent.
@@ -771,7 +775,7 @@ class AgentClusterInsightRequest(InsightRequest, discriminator="AgentClusterInsi
         self.type = InsightType.AGENT_CLUSTER_INSIGHT  # type: ignore
 
 
-class InsightResult(_Model):
+class InsightResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of the insights.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -805,7 +809,9 @@ class InsightResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentClusterInsightResult(InsightResult, discriminator="AgentClusterInsight"):
+class AgentClusterInsightResult(
+    InsightResult, discriminator="AgentClusterInsight"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Insights from the agent cluster analysis.
 
     :ivar type: The type of insights result. Required. Cluster Insight on an Agent.
@@ -840,7 +846,7 @@ class AgentClusterInsightResult(InsightResult, discriminator="AgentClusterInsigh
         self.type = InsightType.AGENT_CLUSTER_INSIGHT  # type: ignore
 
 
-class DataGenerationJobSource(_Model):
+class DataGenerationJobSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The base source model for data generation jobs.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -883,7 +889,9 @@ class DataGenerationJobSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentDataGenerationJobSource(DataGenerationJobSource, discriminator="agent"):
+class AgentDataGenerationJobSource(
+    DataGenerationJobSource, discriminator="agent"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Agent source for data generation jobs — references an agent to fetch instructions and metadata
     from.
 
@@ -928,7 +936,7 @@ class AgentDataGenerationJobSource(DataGenerationJobSource, discriminator="agent
         self.type = DataGenerationJobSourceType.AGENT  # type: ignore
 
 
-class AgentDefinition(_Model):
+class AgentDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentDefinition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -967,7 +975,7 @@ class AgentDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentDetails(_Model):
+class AgentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentDetails.
 
     :ivar object: The object type, which is always 'agent'. Required. AGENT.
@@ -1047,7 +1055,7 @@ class AgentDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentEndpointAuthorizationScheme(_Model):
+class AgentEndpointAuthorizationScheme(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentEndpointAuthorizationScheme.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1082,7 +1090,7 @@ class AgentEndpointAuthorizationScheme(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentEndpointConfig(_Model):
+class AgentEndpointConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentEndpointConfig.
 
     :ivar version_selector: The version selector of the agent endpoint determines how traffic is
@@ -1129,7 +1137,7 @@ class AgentEndpointConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorGenerationJobSource(_Model):
+class EvaluatorGenerationJobSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The base source model for evaluator generation jobs. Polymorphic over ``type``.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1164,7 +1172,9 @@ class EvaluatorGenerationJobSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator="agent"):
+class AgentEvaluatorGenerationJobSource(
+    EvaluatorGenerationJobSource, discriminator="agent"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Agent source for evaluator generation jobs — references an agent to fetch instructions and
     metadata from.
 
@@ -1213,7 +1223,7 @@ class AgentEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discrimina
         self.type = EvaluatorGenerationJobSourceType.AGENT  # type: ignore
 
 
-class BaseCredentials(_Model):
+class BaseCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A base class for connection credentials.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1275,7 +1285,7 @@ class AgenticIdentityPreviewCredentials(BaseCredentials, discriminator="AgenticI
         self.type = CredentialType.AGENTIC_IDENTITY_PREVIEW  # type: ignore
 
 
-class AgentIdentity(_Model):
+class AgentIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentIdentity.
 
     :ivar principal_id: The principal ID of the agent instance. Required.
@@ -1318,7 +1328,7 @@ class AgentIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentObjectVersions(_Model):
+class AgentObjectVersions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentObjectVersions.
 
     :ivar latest: Required.
@@ -1346,7 +1356,7 @@ class AgentObjectVersions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptimizationCandidate(_Model):
+class AgentOptimizationCandidate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Aggregated evaluation result for a single candidate agent configuration across all tasks.
 
     :ivar candidate_id: Server-assigned candidate identifier. Use with GET /candidates/{id}
@@ -1412,7 +1422,7 @@ class AgentOptimizationCandidate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptimizationDatasetCriterion(_Model):
+class AgentOptimizationDatasetCriterion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluation criterion: a name + instruction pair used for per-item scoring.
 
     :ivar name: Criterion name. Required.
@@ -1445,7 +1455,7 @@ class AgentOptimizationDatasetCriterion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptimizationDatasetInput(_Model):
+class AgentOptimizationDatasetInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base discriminated model for dataset input. Either inline items or a registered reference.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1478,7 +1488,7 @@ class AgentOptimizationDatasetInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptimizationDatasetItem(_Model):
+class AgentOptimizationDatasetItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single item in an inline dataset.
 
     :ivar query: The user query / prompt.
@@ -1523,7 +1533,7 @@ class AgentOptimizationDatasetItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptimizationEvaluatorRef(_Model):
+class AgentOptimizationEvaluatorRef(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reference to a named evaluator, optionally pinned to a version.
 
     :ivar name: Evaluator name. Required.
@@ -1556,7 +1566,9 @@ class AgentOptimizationEvaluatorRef(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptimizationInlineDatasetInput(AgentOptimizationDatasetInput, discriminator="inline"):
+class AgentOptimizationInlineDatasetInput(
+    AgentOptimizationDatasetInput, discriminator="inline"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Inline dataset — items supplied directly in the request body.
 
     :ivar type: Dataset input type discriminator. Required. Inline dataset — items are provided
@@ -1593,7 +1605,7 @@ class AgentOptimizationInlineDatasetInput(AgentOptimizationDatasetInput, discrim
         self.type = AgentOptimizationDatasetInputType.INLINE  # type: ignore
 
 
-class AgentOptimizationJob(_Model):
+class AgentOptimizationJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Agent optimization job resource — a long-running job that optimizes an agent's configuration
     (instructions, model, skills, tools) to maximize evaluation scores. On success, the result
     contains scored candidates.
@@ -1661,7 +1673,7 @@ class AgentOptimizationJob(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptimizationJobInputs(_Model):
+class AgentOptimizationJobInputs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Caller-supplied inputs for an optimization job.
 
     :ivar agent: The agent (and pinned version) being optimized. Required.
@@ -1761,7 +1773,7 @@ class AgentOptimizationJobListItem(_Model):
     """The agent targeted by this optimization job."""
 
 
-class AgentOptimizationJobProgress(_Model):
+class AgentOptimizationJobProgress(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """In-flight progress; only populated while status is queued or in_progress.
 
     :ivar candidates_completed: Number of candidates whose evaluation has completed so far.
@@ -1801,7 +1813,7 @@ class AgentOptimizationJobProgress(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptimizationJobResult(_Model):
+class AgentOptimizationJobResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Terminal-state result body. Populated when status is succeeded or failed.
 
     :ivar baseline: Candidate ID of the original (un-optimized) baseline evaluation.
@@ -1841,7 +1853,7 @@ class AgentOptimizationJobResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptimizationOptions(_Model):
+class AgentOptimizationOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tuning knobs and run-mode for an optimization job.
 
     :ivar max_candidates: Maximum number of optimization candidates to generate. Must be >= 1.
@@ -1919,7 +1931,9 @@ class AgentOptimizationOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptimizationReferenceDatasetInput(AgentOptimizationDatasetInput, discriminator="reference"):
+class AgentOptimizationReferenceDatasetInput(
+    AgentOptimizationDatasetInput, discriminator="reference"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reference to a registered Foundry dataset.
 
     :ivar type: Dataset input type discriminator. Required. Reference to a registered Foundry
@@ -1959,7 +1973,7 @@ class AgentOptimizationReferenceDatasetInput(AgentOptimizationDatasetInput, disc
         self.type = AgentOptimizationDatasetInputType.REFERENCE  # type: ignore
 
 
-class AgentSessionResource(_Model):
+class AgentSessionResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An agent session providing a long-lived compute sandbox for hosted agent invocations.
 
     :ivar agent_session_id: The session identifier. Required.
@@ -2019,7 +2033,7 @@ class AgentSessionResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationTaxonomyInput(_Model):
+class EvaluationTaxonomyInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input configuration for the evaluation taxonomy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2052,7 +2066,9 @@ class EvaluationTaxonomyInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentTaxonomyInput(EvaluationTaxonomyInput, discriminator="agent"):
+class AgentTaxonomyInput(
+    EvaluationTaxonomyInput, discriminator="agent"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input configuration for the evaluation taxonomy when the input type is agent.
 
     :ivar type: Input type of the evaluation taxonomy. Required. Agent.
@@ -2092,7 +2108,7 @@ class AgentTaxonomyInput(EvaluationTaxonomyInput, discriminator="agent"):
         self.type = EvaluationTaxonomyInputType.AGENT  # type: ignore
 
 
-class AgentVersionDetails(_Model):
+class AgentVersionDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AgentVersionDetails.
 
     :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
@@ -2208,7 +2224,7 @@ class AgentVersionDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AISearchIndexResource(_Model):
+class AISearchIndexResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A AI Search Index resource.
 
     :ivar project_connection_id: An index connection ID in an IndexResource attached to this agent.
@@ -2267,7 +2283,7 @@ class AISearchIndexResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiError(_Model):
+class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApiError.
 
     :ivar code: Required.
@@ -2324,7 +2340,7 @@ class ApiError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiErrorResponse(_Model):
+class ApiErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response for API failures.
 
     :ivar error: Required.
@@ -2383,7 +2399,9 @@ class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
         self.type = CredentialType.API_KEY  # type: ignore
 
 
-class ApplyPatchToolParam(Tool, discriminator="apply_patch"):
+class ApplyPatchToolParam(
+    Tool, discriminator="apply_patch"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Apply patch tool.
 
     :ivar type: The type of the tool. Always ``apply_patch``. Required. APPLY_PATCH.
@@ -2417,7 +2435,7 @@ class ApplyPatchToolParam(Tool, discriminator="apply_patch"):
         self.type = ToolType.APPLY_PATCH  # type: ignore
 
 
-class ApproximateLocation(_Model):
+class ApproximateLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApproximateLocation.
 
     :ivar type: The type of location approximation. Always ``approximate``. Required. Default value
@@ -2463,7 +2481,7 @@ class ApproximateLocation(_Model):
         self.type: Literal["approximate"] = "approximate"
 
 
-class ArtifactProfile(_Model):
+class ArtifactProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Artifact profile of the model.
 
     :ivar category: The category of the artifact profile. Required. Known values are: "DataOnly",
@@ -2502,7 +2520,7 @@ class ArtifactProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoCodeInterpreterToolParam(_Model):
+class AutoCodeInterpreterToolParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Automatic Code Interpreter Tool Parameters.
 
     :ivar type: Always ``auto``. Required. Default value is "auto".
@@ -2548,7 +2566,7 @@ class AutoCodeInterpreterToolParam(_Model):
         self.type: Literal["auto"] = "auto"
 
 
-class EvaluationTarget(_Model):
+class EvaluationTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for targets with discriminator support.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2580,7 +2598,9 @@ class EvaluationTarget(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureAIAgentTarget(EvaluationTarget, discriminator="azure_ai_agent"):
+class AzureAIAgentTarget(
+    EvaluationTarget, discriminator="azure_ai_agent"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a target specifying an Azure AI agent.
 
     :ivar type: The type of target, always ``azure_ai_agent``. Required. Default value is
@@ -2631,7 +2651,9 @@ class AzureAIAgentTarget(EvaluationTarget, discriminator="azure_ai_agent"):
         self.type = "azure_ai_agent"  # type: ignore
 
 
-class AzureAIModelTarget(EvaluationTarget, discriminator="azure_ai_model"):
+class AzureAIModelTarget(
+    EvaluationTarget, discriminator="azure_ai_model"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a target specifying an Azure AI model for operations requiring model selection.
 
     :ivar type: The type of target, always ``azure_ai_model``. Required. Default value is
@@ -2673,7 +2695,7 @@ class AzureAIModelTarget(EvaluationTarget, discriminator="azure_ai_model"):
         self.type = "azure_ai_model"  # type: ignore
 
 
-class Index(_Model):
+class Index(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Index resource Definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2729,7 +2751,9 @@ class Index(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureAISearchIndex(Index, discriminator="AzureSearch"):
+class AzureAISearchIndex(
+    Index, discriminator="AzureSearch"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure AI Search Index Definition.
 
     :ivar id: Asset ID, a unique identifier for the asset.
@@ -2784,7 +2808,9 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
         self.type = IndexType.AZURE_SEARCH  # type: ignore
 
 
-class AzureAISearchTool(Tool, discriminator="azure_ai_search"):
+class AzureAISearchTool(
+    Tool, discriminator="azure_ai_search"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input definition information for an Azure AI search tool as used to configure an agent.
 
     :ivar type: The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH.
@@ -2838,7 +2864,9 @@ class AzureAISearchTool(Tool, discriminator="azure_ai_search"):
         self.type = ToolType.AZURE_AI_SEARCH  # type: ignore
 
 
-class AzureAISearchToolboxTool(ToolboxTool, discriminator="azure_ai_search"):
+class AzureAISearchToolboxTool(
+    ToolboxTool, discriminator="azure_ai_search"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure AI Search tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -2884,7 +2912,7 @@ class AzureAISearchToolboxTool(ToolboxTool, discriminator="azure_ai_search"):
         self.type = ToolboxToolType.AZURE_AI_SEARCH  # type: ignore
 
 
-class AzureAISearchToolResource(_Model):
+class AzureAISearchToolResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A set of index resources used by the ``azure_ai_search`` tool.
 
     :ivar indexes: The indices attached to this agent. There can be a maximum of 1 index resource
@@ -2916,7 +2944,7 @@ class AzureAISearchToolResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFunctionBinding(_Model):
+class AzureFunctionBinding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The structure for keeping storage queue name and URI.
 
     :ivar type: The type of binding, which is always 'storage_queue'. Required. Default value is
@@ -2953,7 +2981,7 @@ class AzureFunctionBinding(_Model):
         self.type: Literal["storage_queue"] = "storage_queue"
 
 
-class AzureFunctionDefinition(_Model):
+class AzureFunctionDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of Azure function.
 
     :ivar function: The definition of azure function and its parameters. Required.
@@ -3001,7 +3029,7 @@ class AzureFunctionDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFunctionDefinitionFunction(_Model):
+class AzureFunctionDefinitionFunction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureFunctionDefinitionFunction.
 
     :ivar name: The name of the function to be called. Required.
@@ -3042,7 +3070,7 @@ class AzureFunctionDefinitionFunction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFunctionStorageQueue(_Model):
+class AzureFunctionStorageQueue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The structure for keeping storage queue name and URI.
 
     :ivar queue_service_endpoint: URI to the Azure Storage Queue service allowing you to manipulate
@@ -3076,7 +3104,9 @@ class AzureFunctionStorageQueue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFunctionTool(Tool, discriminator="azure_function"):
+class AzureFunctionTool(
+    Tool, discriminator="azure_function"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input definition information for an Azure Function Tool, as used to configure an Agent.
 
     :ivar type: The object type, which is always 'browser_automation'. Required. AZURE_FUNCTION.
@@ -3119,7 +3149,7 @@ class AzureFunctionTool(Tool, discriminator="azure_function"):
         self.type = ToolType.AZURE_FUNCTION  # type: ignore
 
 
-class RedTeamTargetConfig(_Model):
+class RedTeamTargetConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Abstract class for target configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3151,7 +3181,9 @@ class RedTeamTargetConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureOpenAIModelConfiguration(RedTeamTargetConfig, discriminator="AzureOpenAIModel"):
+class AzureOpenAIModelConfiguration(
+    RedTeamTargetConfig, discriminator="AzureOpenAIModel"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure OpenAI model configuration. The API version would be selected by the service for querying
     the model.
 
@@ -3190,7 +3222,7 @@ class AzureOpenAIModelConfiguration(RedTeamTargetConfig, discriminator="AzureOpe
         self.type = "AzureOpenAIModel"  # type: ignore
 
 
-class BingCustomSearchConfiguration(_Model):
+class BingCustomSearchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A bing custom search configuration.
 
     :ivar project_connection_id: Project connection id for grounding with bing search. Required.
@@ -3245,7 +3277,9 @@ class BingCustomSearchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BingCustomSearchPreviewTool(Tool, discriminator="bing_custom_search_preview"):
+class BingCustomSearchPreviewTool(
+    Tool, discriminator="bing_custom_search_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input definition information for a Bing custom search tool as used to configure an agent.
 
     :ivar type: The object type, which is always 'bing_custom_search_preview'. Required.
@@ -3282,7 +3316,7 @@ class BingCustomSearchPreviewTool(Tool, discriminator="bing_custom_search_previe
         self.type = ToolType.BING_CUSTOM_SEARCH_PREVIEW  # type: ignore
 
 
-class BingCustomSearchToolParameters(_Model):
+class BingCustomSearchToolParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The bing custom search tool parameters.
 
     :ivar search_configurations: The project connections attached to this tool. There can be a
@@ -3314,7 +3348,7 @@ class BingCustomSearchToolParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BingGroundingSearchConfiguration(_Model):
+class BingGroundingSearchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Search configuration for Bing Grounding.
 
     :ivar project_connection_id: Project connection id for grounding with bing search. Required.
@@ -3364,7 +3398,7 @@ class BingGroundingSearchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BingGroundingSearchToolParameters(_Model):
+class BingGroundingSearchToolParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The bing grounding search tool parameters.
 
     :ivar search_configurations: The search configurations attached to this tool. There can be a
@@ -3397,7 +3431,9 @@ class BingGroundingSearchToolParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BingGroundingTool(Tool, discriminator="bing_grounding"):
+class BingGroundingTool(
+    Tool, discriminator="bing_grounding"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input definition information for a bing grounding search tool as used to configure an
     agent.
 
@@ -3452,7 +3488,7 @@ class BingGroundingTool(Tool, discriminator="bing_grounding"):
         self.type = ToolType.BING_GROUNDING  # type: ignore
 
 
-class BlobReference(_Model):
+class BlobReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Blob reference details.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
@@ -3496,7 +3532,7 @@ class BlobReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobReferenceSasCredential(_Model):
+class BlobReferenceSasCredential(_Model):  # pylint: disable=docstring-missing-param
     """SAS Credential definition.
 
     :ivar sas_uri: SAS uri. Required.
@@ -3596,7 +3632,9 @@ class BotServiceTenantAuthorizationScheme(AgentEndpointAuthorizationScheme, disc
         self.type = AgentEndpointAuthorizationSchemeType.BOT_SERVICE_TENANT  # type: ignore
 
 
-class BrowserAutomationPreviewTool(Tool, discriminator="browser_automation_preview"):
+class BrowserAutomationPreviewTool(
+    Tool, discriminator="browser_automation_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input definition information for a Browser Automation Tool, as used to configure an Agent.
 
     :ivar type: The object type, which is always 'browser_automation_preview'. Required.
@@ -3633,7 +3671,9 @@ class BrowserAutomationPreviewTool(Tool, discriminator="browser_automation_previ
         self.type = ToolType.BROWSER_AUTOMATION_PREVIEW  # type: ignore
 
 
-class BrowserAutomationPreviewToolboxTool(ToolboxTool, discriminator="browser_automation_preview"):
+class BrowserAutomationPreviewToolboxTool(
+    ToolboxTool, discriminator="browser_automation_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A browser automation tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -3679,7 +3719,9 @@ class BrowserAutomationPreviewToolboxTool(ToolboxTool, discriminator="browser_au
         self.type = ToolboxToolType.BROWSER_AUTOMATION_PREVIEW  # type: ignore
 
 
-class BrowserAutomationToolConnectionParameters(_Model):  # pylint: disable=name-too-long
+class BrowserAutomationToolConnectionParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Definition of input parameters for the connection used by the Browser Automation Tool.
 
     :ivar project_connection_id: The ID of the project connection to your Azure Playwright
@@ -3708,7 +3750,7 @@ class BrowserAutomationToolConnectionParameters(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class BrowserAutomationToolParameters(_Model):
+class BrowserAutomationToolParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of input parameters for the Browser Automation Tool.
 
     :ivar connection: The project connection parameters associated with the Browser Automation
@@ -3739,7 +3781,9 @@ class BrowserAutomationToolParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CaptureStructuredOutputsTool(Tool, discriminator="capture_structured_outputs"):
+class CaptureStructuredOutputsTool(
+    Tool, discriminator="capture_structured_outputs"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A tool for capturing structured outputs.
 
     :ivar type: The type of the tool. Always ``capture_structured_outputs``. Required.
@@ -3795,7 +3839,7 @@ class CaptureStructuredOutputsTool(Tool, discriminator="capture_structured_outpu
         self.type = ToolType.CAPTURE_STRUCTURED_OUTPUTS  # type: ignore
 
 
-class ChartCoordinate(_Model):
+class ChartCoordinate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Coordinates for the analysis chart.
 
     :ivar x: X-axis coordinate. Required.
@@ -3833,7 +3877,7 @@ class ChartCoordinate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemoryItem(_Model):
+class MemoryItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single memory item stored in the memory store, containing content and metadata.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3890,7 +3934,9 @@ class MemoryItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatSummaryMemoryItem(MemoryItem, discriminator="chat_summary"):
+class ChatSummaryMemoryItem(
+    MemoryItem, discriminator="chat_summary"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A memory item containing a summary extracted from conversations.
 
     :ivar memory_id: The unique ID of the memory item. Required.
@@ -3931,7 +3977,7 @@ class ChatSummaryMemoryItem(MemoryItem, discriminator="chat_summary"):
         self.kind = MemoryItemKind.CHAT_SUMMARY  # type: ignore
 
 
-class ClusterInsightResult(_Model):
+class ClusterInsightResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Insights from the cluster analysis.
 
     :ivar summary: Summary of the insights report. Required.
@@ -4008,7 +4054,7 @@ class ClusterInsightResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterTokenUsage(_Model):
+class ClusterTokenUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Token usage for cluster analysis.
 
     :ivar input_token_usage: input token usage. Required.
@@ -4052,7 +4098,7 @@ class ClusterTokenUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorDefinition(_Model):
+class EvaluatorDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base evaluator configuration with discriminator.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4108,7 +4154,9 @@ class EvaluatorDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CodeBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="code"):
+class CodeBasedEvaluatorDefinition(
+    EvaluatorDefinition, discriminator="code"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Code-based evaluator definition using python code.
 
     :ivar init_parameters: The JSON schema (Draft 2020-12) for the evaluator's input parameters.
@@ -4169,7 +4217,7 @@ class CodeBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="code"):
         self.type = EvaluatorDefinitionType.CODE  # type: ignore
 
 
-class CodeConfiguration(_Model):
+class CodeConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Code-based deployment configuration for a hosted agent.
 
     :ivar runtime: The runtime identifier for code execution (e.g., 'python_3_11', 'python_3_12',
@@ -4226,7 +4274,9 @@ class CodeConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CodeInterpreterTool(Tool, discriminator="code_interpreter"):
+class CodeInterpreterTool(
+    Tool, discriminator="code_interpreter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Code interpreter.
 
     :ivar type: The type of the code interpreter tool. Always ``code_interpreter``. Required.
@@ -4293,7 +4343,9 @@ class CodeInterpreterTool(Tool, discriminator="code_interpreter"):
         self.type = ToolType.CODE_INTERPRETER  # type: ignore
 
 
-class CodeInterpreterToolboxTool(ToolboxTool, discriminator="code_interpreter"):
+class CodeInterpreterToolboxTool(
+    ToolboxTool, discriminator="code_interpreter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A code interpreter tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -4351,7 +4403,7 @@ class CodeInterpreterToolboxTool(ToolboxTool, discriminator="code_interpreter"):
         self.type = ToolboxToolType.CODE_INTERPRETER  # type: ignore
 
 
-class ComparisonFilter(_Model):
+class ComparisonFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Comparison Filter.
 
     :ivar type: Specifies the comparison operator: ``eq``, ``ne``, ``gt``, ``gte``, ``lt``,
@@ -4418,7 +4470,7 @@ class ComparisonFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CompoundFilter(_Model):
+class CompoundFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Compound Filter.
 
     :ivar type: Type of operation: ``and`` or ``or``. Required. Is either a Literal["and"] type or
@@ -4483,7 +4535,9 @@ class ComputerTool(Tool, discriminator="computer"):
         self.type = ToolType.COMPUTER  # type: ignore
 
 
-class ComputerUsePreviewTool(Tool, discriminator="computer_use_preview"):
+class ComputerUsePreviewTool(
+    Tool, discriminator="computer_use_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Computer use preview.
 
     :ivar type: The type of the computer use tool. Always ``computer_use_preview``. Required.
@@ -4572,7 +4626,7 @@ class Connection(_Model):
     """Metadata of the connection. Required."""
 
 
-class FunctionShellToolParamEnvironment(_Model):
+class FunctionShellToolParamEnvironment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FunctionShellToolParamEnvironment.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4605,7 +4659,9 @@ class FunctionShellToolParamEnvironment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerAutoParam(FunctionShellToolParamEnvironment, discriminator="container_auto"):
+class ContainerAutoParam(
+    FunctionShellToolParamEnvironment, discriminator="container_auto"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerAutoParam.
 
     :ivar type: Automatically creates a container for this request. Required. CONTAINER_AUTO.
@@ -4658,7 +4714,7 @@ class ContainerAutoParam(FunctionShellToolParamEnvironment, discriminator="conta
         self.type = FunctionShellToolParamEnvironmentType.CONTAINER_AUTO  # type: ignore
 
 
-class ContainerConfiguration(_Model):
+class ContainerConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container-based deployment configuration for a hosted agent.
 
     :ivar image: The container image for the hosted agent. Required.
@@ -4701,7 +4757,7 @@ class ContainerConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerNetworkPolicyParam(_Model):
+class ContainerNetworkPolicyParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network access policy for the container.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4733,7 +4789,9 @@ class ContainerNetworkPolicyParam(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerNetworkPolicyAllowlistParam(ContainerNetworkPolicyParam, discriminator="allowlist"):
+class ContainerNetworkPolicyAllowlistParam(
+    ContainerNetworkPolicyParam, discriminator="allowlist"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerNetworkPolicyAllowlistParam.
 
     :ivar type: Allow outbound network access only to specified domains. Always ``allowlist``.
@@ -4803,7 +4861,7 @@ class ContainerNetworkPolicyDisabledParam(ContainerNetworkPolicyParam, discrimin
         self.type = ContainerNetworkPolicyParamType.DISABLED  # type: ignore
 
 
-class ContainerNetworkPolicyDomainSecretParam(_Model):
+class ContainerNetworkPolicyDomainSecretParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerNetworkPolicyDomainSecretParam.
 
     :ivar domain: The domain associated with the secret. Required.
@@ -4841,7 +4899,7 @@ class ContainerNetworkPolicyDomainSecretParam(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerSkill(_Model):
+class ContainerSkill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerSkill.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4873,7 +4931,7 @@ class ContainerSkill(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationRuleAction(_Model):
+class EvaluationRuleAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluation action model.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4907,7 +4965,9 @@ class EvaluationRuleAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContinuousEvaluationRuleAction(EvaluationRuleAction, discriminator="continuousEvaluation"):
+class ContinuousEvaluationRuleAction(
+    EvaluationRuleAction, discriminator="continuousEvaluation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluation rule action for continuous evaluation.
 
     :ivar type: Required. Continuous evaluation.
@@ -4958,7 +5018,9 @@ class ContinuousEvaluationRuleAction(EvaluationRuleAction, discriminator="contin
         self.type = EvaluationRuleActionType.CONTINUOUS_EVALUATION  # type: ignore
 
 
-class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
+class CosmosDBIndex(
+    Index, discriminator="CosmosDBNoSqlVectorStore"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CosmosDB Vector Store Index Definition.
 
     :ivar id: Asset ID, a unique identifier for the asset.
@@ -5025,7 +5087,7 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
         self.type = IndexType.COSMOS_DB  # type: ignore
 
 
-class CreateAsyncResponse(_Model):
+class CreateAsyncResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CreateAsyncResponse.
 
     :ivar location: URL to poll for operation status.
@@ -5061,7 +5123,7 @@ class CreateAsyncResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateSkillVersionFromFilesBody(_Model):
+class CreateSkillVersionFromFilesBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Multipart request body for creating a skill version from files. Accepts either a single zip
     file or multiple individual skill files (directory upload). For zip uploads, the server
     extracts and validates contents. For directory uploads, files are validated as-is.
@@ -5100,7 +5162,7 @@ class CreateSkillVersionFromFilesBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateTranscriptionResponseJsonUsage(_Model):
+class CreateTranscriptionResponseJsonUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Token usage statistics for the request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5132,7 +5194,7 @@ class CreateTranscriptionResponseJsonUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Trigger(_Model):
+class Trigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base model for Trigger of the schedule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5165,7 +5227,7 @@ class Trigger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CronTrigger(Trigger, discriminator="Cron"):
+class CronTrigger(Trigger, discriminator="Cron"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cron based trigger.
 
     :ivar type: Required. Cron based trigger.
@@ -5244,7 +5306,7 @@ class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
         self.type = CredentialType.CUSTOM  # type: ignore
 
 
-class CustomToolParamFormat(_Model):
+class CustomToolParamFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input format for the custom tool. Default is unconstrained text.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5276,7 +5338,9 @@ class CustomToolParamFormat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomGrammarFormatParam(CustomToolParamFormat, discriminator="grammar"):
+class CustomGrammarFormatParam(
+    CustomToolParamFormat, discriminator="grammar"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Grammar format.
 
     :ivar type: Grammar format. Always ``grammar``. Required. GRAMMAR.
@@ -5318,7 +5382,7 @@ class CustomGrammarFormatParam(CustomToolParamFormat, discriminator="grammar"):
         self.type = CustomToolParamFormatType.GRAMMAR  # type: ignore
 
 
-class RoutineTrigger(_Model):
+class RoutineTrigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base model for a routine trigger.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5352,7 +5416,9 @@ class RoutineTrigger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomRoutineTrigger(RoutineTrigger, discriminator="custom"):
+class CustomRoutineTrigger(
+    RoutineTrigger, discriminator="custom"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A custom event routine trigger.
 
     :ivar type: The trigger type. Required. A custom event trigger.
@@ -5422,7 +5488,7 @@ class CustomTextFormatParam(CustomToolParamFormat, discriminator="text"):
         self.type = CustomToolParamFormatType.TEXT  # type: ignore
 
 
-class CustomToolParam(Tool, discriminator="custom"):
+class CustomToolParam(Tool, discriminator="custom"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom tool.
 
     :ivar type: The type of the custom tool. Always ``custom``. Required. CUSTOM.
@@ -5478,7 +5544,7 @@ class CustomToolParam(Tool, discriminator="custom"):
         self.type = ToolType.CUSTOM  # type: ignore
 
 
-class RecurrenceSchedule(_Model):
+class RecurrenceSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recurrence schedule model.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5513,7 +5579,9 @@ class RecurrenceSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DailyRecurrenceSchedule(RecurrenceSchedule, discriminator="Daily"):
+class DailyRecurrenceSchedule(
+    RecurrenceSchedule, discriminator="Daily"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Daily recurrence schedule.
 
     :ivar type: Daily recurrence type. Required. Daily recurrence pattern.
@@ -5546,7 +5614,7 @@ class DailyRecurrenceSchedule(RecurrenceSchedule, discriminator="Daily"):
         self.type = RecurrenceType.DAILY  # type: ignore
 
 
-class DataGenerationJob(_Model):
+class DataGenerationJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data Generation Job resource.
 
     :ivar id: Server-assigned unique identifier. Required.
@@ -5606,7 +5674,7 @@ class DataGenerationJob(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataGenerationJobInputs(_Model):
+class DataGenerationJobInputs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Caller-supplied inputs for a data generation job.
 
     :ivar name: The display name of the data generation job. Required.
@@ -5666,7 +5734,7 @@ class DataGenerationJobInputs(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataGenerationJobOptions(_Model):
+class DataGenerationJobOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Options for managing data generation jobs.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5720,7 +5788,7 @@ class DataGenerationJobOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataGenerationJobOutput(_Model):
+class DataGenerationJobOutput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Output information for a data generation job.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5752,7 +5820,7 @@ class DataGenerationJobOutput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataGenerationJobOutputOptions(_Model):
+class DataGenerationJobOutputOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Output options for data generation job.
 
     :ivar name: Name to assign to the output. Used as the filename for Azure OpenAI file outputs
@@ -5796,7 +5864,7 @@ class DataGenerationJobOutputOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataGenerationJobResult(_Model):
+class DataGenerationJobResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result produced by a successful data generation job.
 
     :ivar outputs: The final job outputs: Azure OpenAI files for fine-tuning, or datasets for
@@ -5839,7 +5907,7 @@ class DataGenerationJobResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataGenerationModelOptions(_Model):
+class DataGenerationModelOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LLM model options for data generation jobs.
 
     :ivar model: Base model name used to generate data. Required.
@@ -5886,7 +5954,7 @@ class DataGenerationTokenUsage(_Model):
     """Total number of tokens used. Required."""
 
 
-class DatasetCredential(_Model):
+class DatasetCredential(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a reference to a blob for consumption.
 
     :ivar blob_reference: Credential info to access the storage account. Required.
@@ -5963,7 +6031,9 @@ class DatasetDataGenerationJobOutput(DataGenerationJobOutput, discriminator="dat
         self.type = DataGenerationJobOutputType.DATASET  # type: ignore
 
 
-class DatasetEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator="dataset"):
+class DatasetEvaluatorGenerationJobSource(
+    EvaluatorGenerationJobSource, discriminator="dataset"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataset source for evaluator generation jobs — reference to a dataset.
 
     :ivar description: Optional description of what this source represents — helps the pipeline
@@ -6011,7 +6081,7 @@ class DatasetEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discrimi
         self.type = EvaluatorGenerationJobSourceType.DATASET  # type: ignore
 
 
-class DatasetReference(_Model):
+class DatasetReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reference to a versioned Foundry Dataset.
 
     :ivar name: Dataset name. Required.
@@ -6044,7 +6114,7 @@ class DatasetReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatasetVersion(_Model):
+class DatasetVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DatasetVersion Definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6118,7 +6188,7 @@ class DatasetVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteAgentResponse(_Model):
+class DeleteAgentResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A deleted agent Object.
 
     :ivar object: The object type. Always 'agent.deleted'. Required. AGENT_DELETED.
@@ -6158,7 +6228,7 @@ class DeleteAgentResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteAgentVersionResponse(_Model):
+class DeleteAgentVersionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A deleted agent version Object.
 
     :ivar object: The object type. Always 'agent.version.deleted'. Required. AGENT_VERSION_DELETED.
@@ -6203,7 +6273,7 @@ class DeleteAgentVersionResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteMemoryResult(_Model):
+class DeleteMemoryResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for deleting a memory item from a memory store.
 
     :ivar object: The object type. Always 'memory_store.item.deleted'. Required. MEMORY_DELETED.
@@ -6243,7 +6313,7 @@ class DeleteMemoryResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteMemoryStoreResult(_Model):
+class DeleteMemoryStoreResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DeleteMemoryStoreResult.
 
     :ivar object: The object type. Always 'memory_store.deleted'. Required. MEMORY_STORE_DELETED.
@@ -6283,7 +6353,7 @@ class DeleteMemoryStoreResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteSkillResult(_Model):
+class DeleteSkillResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A deleted skill.
 
     :ivar id: The unique identifier of the deleted skill. Required.
@@ -6321,7 +6391,7 @@ class DeleteSkillResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteSkillVersionResult(_Model):
+class DeleteSkillVersionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A deleted skill version.
 
     :ivar id: The unique identifier of the deleted skill version. Required.
@@ -6364,7 +6434,7 @@ class DeleteSkillVersionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Deployment(_Model):
+class Deployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model Deployment Definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6400,7 +6470,7 @@ class Deployment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Dimension(_Model):
+class Dimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single dimension — one independent, measurable quality dimension within a rubric evaluator's
     scoring blueprint.
 
@@ -6461,7 +6531,7 @@ class Dimension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DispatchRoutineResult(_Model):
+class DispatchRoutineResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identifiers returned after a routine dispatch is queued.
 
     :ivar dispatch_id: The dispatch identifier created for the routine dispatch.
@@ -6499,7 +6569,7 @@ class DispatchRoutineResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EmbeddingConfiguration(_Model):
+class EmbeddingConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Embedding configuration class.
 
     :ivar model_deployment_name: Deployment name of embedding model. It can point to a model
@@ -6538,7 +6608,9 @@ class EmptyModelParam(_Model):
     """EmptyModelParam."""
 
 
-class EndpointBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="endpoint"):
+class EndpointBasedEvaluatorDefinition(
+    EvaluatorDefinition, discriminator="endpoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Endpoint-based evaluator definition. The customer owns and hosts an HTTP endpoint that
     implements the evaluation contract. The evaluator references a Project Connection by name; the
     connection stores the endpoint URL and credentials (API Key or Entra ID). At execution time,
@@ -6648,7 +6720,7 @@ class EntraIDCredentials(BaseCredentials, discriminator="AAD"):
         self.type = CredentialType.ENTRA_ID  # type: ignore
 
 
-class EvalResult(_Model):
+class EvalResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the evaluation.
 
     :ivar name: name of the check. Required.
@@ -6691,7 +6763,7 @@ class EvalResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvalRunResultCompareItem(_Model):
+class EvalRunResultCompareItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metric comparison for a treatment against the baseline.
 
     :ivar treatment_run_id: The treatment run ID. Required.
@@ -6747,7 +6819,7 @@ class EvalRunResultCompareItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvalRunResultComparison(_Model):
+class EvalRunResultComparison(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Comparison results for treatment runs against the baseline.
 
     :ivar testing_criteria: Name of the testing criteria. Required.
@@ -6801,7 +6873,7 @@ class EvalRunResultComparison(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvalRunResultSummary(_Model):
+class EvalRunResultSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Summary statistics of a metric in an evaluation run.
 
     :ivar run_id: The evaluation run ID. Required.
@@ -6846,7 +6918,9 @@ class EvalRunResultSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationComparisonInsightRequest(InsightRequest, discriminator="EvaluationComparison"):
+class EvaluationComparisonInsightRequest(
+    InsightRequest, discriminator="EvaluationComparison"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluation Comparison Request.
 
     :ivar type: The type of request. Required. Evaluation Comparison.
@@ -6891,7 +6965,9 @@ class EvaluationComparisonInsightRequest(InsightRequest, discriminator="Evaluati
         self.type = InsightType.EVALUATION_COMPARISON  # type: ignore
 
 
-class EvaluationComparisonInsightResult(InsightResult, discriminator="EvaluationComparison"):
+class EvaluationComparisonInsightResult(
+    InsightResult, discriminator="EvaluationComparison"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Insights from the evaluation comparison.
 
     :ivar type: The type of insights result. Required. Evaluation Comparison.
@@ -6931,7 +7007,7 @@ class EvaluationComparisonInsightResult(InsightResult, discriminator="Evaluation
         self.type = InsightType.EVALUATION_COMPARISON  # type: ignore
 
 
-class InsightSample(_Model):
+class InsightSample(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A sample from the analysis.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6980,7 +7056,9 @@ class InsightSample(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationResultSample(InsightSample, discriminator="EvaluationResultSample"):
+class EvaluationResultSample(
+    InsightSample, discriminator="EvaluationResultSample"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A sample from the evaluation result.
 
     :ivar id: The unique identifier for the analysis sample. Required.
@@ -7024,7 +7102,7 @@ class EvaluationResultSample(InsightSample, discriminator="EvaluationResultSampl
         self.type = SampleType.EVALUATION_RESULT_SAMPLE  # type: ignore
 
 
-class EvaluationRule(_Model):
+class EvaluationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluation rule model.
 
     :ivar id: Unique identifier for the evaluation rule. Required.
@@ -7093,7 +7171,7 @@ class EvaluationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationRuleFilter(_Model):
+class EvaluationRuleFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluation filter model.
 
     :ivar agent_name: Filter by agent name. Required.
@@ -7121,7 +7199,9 @@ class EvaluationRuleFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationRunClusterInsightRequest(InsightRequest, discriminator="EvaluationRunClusterInsight"):
+class EvaluationRunClusterInsightRequest(
+    InsightRequest, discriminator="EvaluationRunClusterInsight"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Insights on set of Evaluation Results.
 
     :ivar type: The type of insights request. Required. Insights on an Evaluation run result.
@@ -7166,7 +7246,9 @@ class EvaluationRunClusterInsightRequest(InsightRequest, discriminator="Evaluati
         self.type = InsightType.EVALUATION_RUN_CLUSTER_INSIGHT  # type: ignore
 
 
-class EvaluationRunClusterInsightResult(InsightResult, discriminator="EvaluationRunClusterInsight"):
+class EvaluationRunClusterInsightResult(
+    InsightResult, discriminator="EvaluationRunClusterInsight"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Insights from the evaluation run cluster analysis.
 
     :ivar type: The type of insights result. Required. Insights on an Evaluation run result.
@@ -7201,7 +7283,7 @@ class EvaluationRunClusterInsightResult(InsightResult, discriminator="Evaluation
         self.type = InsightType.EVALUATION_RUN_CLUSTER_INSIGHT  # type: ignore
 
 
-class ScheduleTask(_Model):
+class ScheduleTask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schedule task model.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7238,7 +7320,9 @@ class ScheduleTask(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationScheduleTask(ScheduleTask, discriminator="Evaluation"):
+class EvaluationScheduleTask(
+    ScheduleTask, discriminator="Evaluation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluation task for the schedule.
 
     :ivar configuration: Configuration for the task.
@@ -7279,7 +7363,7 @@ class EvaluationScheduleTask(ScheduleTask, discriminator="Evaluation"):
         self.type = ScheduleTaskType.EVALUATION  # type: ignore
 
 
-class EvaluationTaxonomy(_Model):
+class EvaluationTaxonomy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluation Taxonomy Definition.
 
     :ivar id: Asset ID, a unique identifier for the asset.
@@ -7343,7 +7427,7 @@ class EvaluationTaxonomy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorCredentialRequest(_Model):
+class EvaluatorCredentialRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for getting evaluator credentials.
 
     :ivar blob_uri: The blob URI for the evaluator storage. Example:
@@ -7373,7 +7457,7 @@ class EvaluatorCredentialRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorGenerationArtifacts(_Model):
+class EvaluatorGenerationArtifacts(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service-managed provenance artifacts produced by an evaluator generation job. Present only on
     EvaluatorVersion resources created via the generation pipeline. The combined-JSONL Foundry
     Dataset is read-only and resolves to a versioned dataset in a service-reserved namespace.
@@ -7422,7 +7506,7 @@ class EvaluatorGenerationArtifacts(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorGenerationInputs(_Model):
+class EvaluatorGenerationInputs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Caller-supplied inputs for an evaluator generation job.
 
     :ivar sources: Source materials for generation — agent descriptions, prompts, traces, or
@@ -7505,7 +7589,7 @@ class EvaluatorGenerationInputs(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorGenerationJob(_Model):
+class EvaluatorGenerationJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluator Generation Job resource — a long-running job that generates rubric-based evaluator
     definitions from source materials. On success, the result is the persisted EvaluatorVersion.
 
@@ -7582,7 +7666,7 @@ class EvaluatorGenerationJob(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorGenerationTokenUsage(_Model):
+class EvaluatorGenerationTokenUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Token consumption summary for an evaluator generation job. Populated when the job reaches a
     terminal state.
 
@@ -7621,7 +7705,7 @@ class EvaluatorGenerationTokenUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorMetric(_Model):
+class EvaluatorMetric(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluator Metric.
 
     :ivar type: Type of the metric. Known values are: "ordinal", "continuous", and "boolean".
@@ -7680,7 +7764,7 @@ class EvaluatorMetric(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorVersion(_Model):
+class EvaluatorVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluator Definition.
 
     :ivar display_name: Display Name for evaluator. It helps to find the evaluator easily in AI
@@ -7809,7 +7893,9 @@ class EvaluatorVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalAgentDefinition(AgentDefinition, discriminator="external"):
+class ExternalAgentDefinition(
+    AgentDefinition, discriminator="external"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The external agent definition. Represents a third-party agent hosted outside Foundry (for
     example, on GCP or AWS). Registration is metadata-only: Foundry records the agent definition to
     light up observability experiences (traces, evaluations) over customer-emitted OpenTelemetry
@@ -7857,7 +7943,7 @@ class ExternalAgentDefinition(AgentDefinition, discriminator="external"):
         self.kind = AgentKind.EXTERNAL  # type: ignore
 
 
-class FabricDataAgentToolParameters(_Model):
+class FabricDataAgentToolParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The fabric data agent tool parameters.
 
     :ivar project_connections: The project connections attached to this tool. There can be a
@@ -7889,7 +7975,9 @@ class FabricDataAgentToolParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricIQPreviewTool(Tool, discriminator="fabric_iq_preview"):
+class FabricIQPreviewTool(
+    Tool, discriminator="fabric_iq_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A FabricIQ server-side tool.
 
     :ivar type: The object type, which is always 'fabric_iq_preview'. Required. FABRIC_IQ_PREVIEW.
@@ -7943,7 +8031,9 @@ class FabricIQPreviewTool(Tool, discriminator="fabric_iq_preview"):
         self.type = ToolType.FABRIC_IQ_PREVIEW  # type: ignore
 
 
-class FabricIQPreviewToolboxTool(ToolboxTool, discriminator="fabric_iq_preview"):
+class FabricIQPreviewToolboxTool(
+    ToolboxTool, discriminator="fabric_iq_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A FabricIQ tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -8008,7 +8098,7 @@ class FabricIQPreviewToolboxTool(ToolboxTool, discriminator="fabric_iq_preview")
         self.type = ToolboxToolType.FABRIC_IQ_PREVIEW  # type: ignore
 
 
-class FieldMapping(_Model):
+class FieldMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Field mapping configuration class.
 
     :ivar content_fields: List of fields with text content. Required.
@@ -8096,7 +8186,9 @@ class FileDataGenerationJobOutput(DataGenerationJobOutput, discriminator="file")
         self.type = DataGenerationJobOutputType.FILE  # type: ignore
 
 
-class FileDataGenerationJobSource(DataGenerationJobSource, discriminator="file"):
+class FileDataGenerationJobSource(
+    DataGenerationJobSource, discriminator="file"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File source for data generation jobs — Azure OpenAI file input.
 
     :ivar description: Optional description of what this source represents — helps the pipeline
@@ -8135,7 +8227,9 @@ class FileDataGenerationJobSource(DataGenerationJobSource, discriminator="file")
         self.type = DataGenerationJobSourceType.FILE  # type: ignore
 
 
-class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
+class FileDatasetVersion(
+    DatasetVersion, discriminator="uri_file"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FileDatasetVersion Definition.
 
     :ivar data_uri: URI of the data (`example <https://go.microsoft.com/fwlink/?linkid=2202330>`_).
@@ -8187,7 +8281,7 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
         self.type = DatasetType.URI_FILE  # type: ignore
 
 
-class FileSearchTool(Tool, discriminator="file_search"):
+class FileSearchTool(Tool, discriminator="file_search"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File search.
 
     :ivar type: The type of the file search tool. Always ``file_search``. Required. FILE_SEARCH.
@@ -8258,7 +8352,9 @@ class FileSearchTool(Tool, discriminator="file_search"):
         self.type = ToolType.FILE_SEARCH  # type: ignore
 
 
-class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
+class FileSearchToolboxTool(
+    ToolboxTool, discriminator="file_search"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A file search tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -8321,7 +8417,7 @@ class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
         self.type = ToolboxToolType.FILE_SEARCH  # type: ignore
 
 
-class VersionSelectionRule(_Model):
+class VersionSelectionRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VersionSelectionRule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8358,7 +8454,9 @@ class VersionSelectionRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FixedRatioVersionSelectionRule(VersionSelectionRule, discriminator="FixedRatio"):
+class FixedRatioVersionSelectionRule(
+    VersionSelectionRule, discriminator="FixedRatio"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FixedRatioVersionSelectionRule.
 
     :ivar agent_version: The agent version to route traffic to. Required.
@@ -8395,7 +8493,9 @@ class FixedRatioVersionSelectionRule(VersionSelectionRule, discriminator="FixedR
         self.type = VersionSelectorType.FIXED_RATIO  # type: ignore
 
 
-class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
+class FolderDatasetVersion(
+    DatasetVersion, discriminator="uri_folder"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FileDatasetVersion Definition.
 
     :ivar data_uri: URI of the data (`example <https://go.microsoft.com/fwlink/?linkid=2202330>`_).
@@ -8447,7 +8547,7 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
         self.type = DatasetType.URI_FOLDER  # type: ignore
 
 
-class FoundryModelWarning(_Model):
+class FoundryModelWarning(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A warning associated with a model.
 
     :ivar code: The warning code. Known values are: "RuntimeDependentArtifact" and
@@ -8483,7 +8583,9 @@ class FoundryModelWarning(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionShellToolParam(Tool, discriminator="shell"):
+class FunctionShellToolParam(
+    Tool, discriminator="shell"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Shell tool.
 
     :ivar type: The type of the shell tool. Always ``shell``. Required. SHELL.
@@ -8544,7 +8646,7 @@ class FunctionShellToolParam(Tool, discriminator="shell"):
 
 class FunctionShellToolParamEnvironmentContainerReferenceParam(
     FunctionShellToolParamEnvironment, discriminator="container_reference"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """FunctionShellToolParamEnvironmentContainerReferenceParam.
 
     :ivar type: References a container created with the /v1/containers endpoint. Required.
@@ -8580,7 +8682,7 @@ class FunctionShellToolParamEnvironmentContainerReferenceParam(
 
 class FunctionShellToolParamEnvironmentLocalEnvironmentParam(
     FunctionShellToolParamEnvironment, discriminator="local"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """FunctionShellToolParamEnvironmentLocalEnvironmentParam.
 
     :ivar type: Use a local computer environment. Required. LOCAL.
@@ -8615,7 +8717,7 @@ class FunctionShellToolParamEnvironmentLocalEnvironmentParam(
         self.type = FunctionShellToolParamEnvironmentType.LOCAL  # type: ignore
 
 
-class FunctionTool(Tool, discriminator="function"):
+class FunctionTool(Tool, discriminator="function"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Function.
 
     :ivar type: The type of the function tool. Always ``function``. Required. FUNCTION.
@@ -8677,7 +8779,7 @@ class FunctionTool(Tool, discriminator="function"):
         self.type = ToolType.FUNCTION  # type: ignore
 
 
-class FunctionToolParam(_Model):
+class FunctionToolParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FunctionToolParam.
 
     :ivar name: Required.
@@ -8739,7 +8841,7 @@ class FunctionToolParam(_Model):
         self.type: Literal["function"] = "function"
 
 
-class GenerateVoiceAgentRequest(_Model):
+class GenerateVoiceAgentRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The inputs for generating a voice agent. Only ``kind`` and ``name`` are always required. The
     authoring service expands these inputs into a full, editable ``VoiceAgentDefinition``, which is
     then created through ``POST /agents``. The generated ``instructions`` and audio/voice settings
@@ -8832,7 +8934,9 @@ class GenerateVoiceAgentRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GitHubIssueRoutineTrigger(RoutineTrigger, discriminator="github_issue"):
+class GitHubIssueRoutineTrigger(
+    RoutineTrigger, discriminator="github_issue"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A GitHub issue routine trigger.
 
     :ivar type: The trigger type. Required. A GitHub issue trigger.
@@ -8888,7 +8992,7 @@ class GitHubIssueRoutineTrigger(RoutineTrigger, discriminator="github_issue"):
         self.type = RoutineTriggerType.GITHUB_ISSUE  # type: ignore
 
 
-class TelemetryEndpointAuth(_Model):
+class TelemetryEndpointAuth(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authentication configuration for a telemetry endpoint.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8920,7 +9024,9 @@ class TelemetryEndpointAuth(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HeaderTelemetryEndpointAuth(TelemetryEndpointAuth, discriminator="header"):
+class HeaderTelemetryEndpointAuth(
+    TelemetryEndpointAuth, discriminator="header"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Header-based secret authentication for a telemetry endpoint. The resolved secret value is
     injected as an HTTP header.
 
@@ -8966,7 +9072,9 @@ class HeaderTelemetryEndpointAuth(TelemetryEndpointAuth, discriminator="header")
         self.type = TelemetryEndpointAuthType.HEADER  # type: ignore
 
 
-class HostedAgentDefinition(AgentDefinition, discriminator="hosted"):
+class HostedAgentDefinition(
+    AgentDefinition, discriminator="hosted"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The hosted agent definition.
 
     :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
@@ -9086,7 +9194,9 @@ class HourlyRecurrenceSchedule(RecurrenceSchedule, discriminator="Hourly"):
         self.type = RecurrenceType.HOURLY  # type: ignore
 
 
-class HumanEvaluationPreviewRuleAction(EvaluationRuleAction, discriminator="humanEvaluationPreview"):
+class HumanEvaluationPreviewRuleAction(
+    EvaluationRuleAction, discriminator="humanEvaluationPreview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluation rule action for human evaluation.
 
     :ivar type: Required. Human evaluation preview.
@@ -9119,7 +9229,7 @@ class HumanEvaluationPreviewRuleAction(EvaluationRuleAction, discriminator="huma
         self.type = EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW  # type: ignore
 
 
-class HybridSearchOptions(_Model):
+class HybridSearchOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HybridSearchOptions.
 
     :ivar embedding_weight: The weight of the embedding in the reciprocal ranking fusion. Required.
@@ -9152,7 +9262,9 @@ class HybridSearchOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageGenTool(Tool, discriminator="image_generation"):
+class ImageGenTool(
+    Tool, discriminator="image_generation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Image generation tool.
 
     :ivar type: The type of the image generation tool. Always ``image_generation``. Required.
@@ -9316,7 +9428,7 @@ class ImageGenTool(Tool, discriminator="image_generation"):
         self.type = ToolType.IMAGE_GENERATION  # type: ignore
 
 
-class ImageGenToolInputImageMask(_Model):
+class ImageGenToolInputImageMask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ImageGenToolInputImageMask.
 
     :ivar image_url:
@@ -9347,7 +9459,9 @@ class ImageGenToolInputImageMask(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InlineSkillParam(ContainerSkill, discriminator="inline"):
+class InlineSkillParam(
+    ContainerSkill, discriminator="inline"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InlineSkillParam.
 
     :ivar type: Defines an inline skill for this request. Required. INLINE.
@@ -9390,7 +9504,7 @@ class InlineSkillParam(ContainerSkill, discriminator="inline"):
         self.type = ContainerSkillType.INLINE  # type: ignore
 
 
-class InlineSkillSourceParam(_Model):
+class InlineSkillSourceParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Inline skill payload.
 
     :ivar type: The type of the inline skill source. Must be ``base64``. Required. Default value is
@@ -9431,7 +9545,7 @@ class InlineSkillSourceParam(_Model):
         self.media_type: Literal["application/zip"] = "application/zip"
 
 
-class Insight(_Model):
+class Insight(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response body for cluster insights.
 
     :ivar insight_id: The unique identifier for the insights report. Required.
@@ -9482,7 +9596,7 @@ class Insight(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InsightCluster(_Model):
+class InsightCluster(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A cluster of analysis samples.
 
     :ivar id: The id of the analysis cluster. Required.
@@ -9553,7 +9667,7 @@ class InsightCluster(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InsightModelConfiguration(_Model):
+class InsightModelConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration of the model used in the insight generation.
 
     :ivar model_deployment_name: The model deployment to be evaluated. Accepts either the
@@ -9586,7 +9700,9 @@ class InsightModelConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InsightScheduleTask(ScheduleTask, discriminator="Insight"):
+class InsightScheduleTask(
+    ScheduleTask, discriminator="Insight"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Insight task for the schedule.
 
     :ivar configuration: Configuration for the task.
@@ -9622,7 +9738,7 @@ class InsightScheduleTask(ScheduleTask, discriminator="Insight"):
         self.type = ScheduleTaskType.INSIGHT  # type: ignore
 
 
-class InsightsMetadata(_Model):
+class InsightsMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata about the insights.
 
     :ivar created_at: The timestamp when the insights were created. Required.
@@ -9659,7 +9775,7 @@ class InsightsMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InsightSummary(_Model):
+class InsightSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Summary of the error cluster analysis.
 
     :ivar sample_count: Total number of samples analyzed. Required.
@@ -9719,7 +9835,7 @@ class InvocationsWsProtocolConfiguration(_Model):
     """Configuration specific to the WebSocket-based invocations protocol."""
 
 
-class RoutineDispatchPayload(_Model):
+class RoutineDispatchPayload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base model for a manual dispatch payload.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -9753,7 +9869,9 @@ class RoutineDispatchPayload(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InvokeAgentInvocationsApiDispatchPayload(RoutineDispatchPayload, discriminator="invoke_agent_invocations_api"):
+class InvokeAgentInvocationsApiDispatchPayload(
+    RoutineDispatchPayload, discriminator="invoke_agent_invocations_api"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A manual payload used to test an invocations API routine dispatch.
 
     :ivar type: The manual dispatch payload type. Required. A manual payload for an invocations API
@@ -9790,7 +9908,7 @@ class InvokeAgentInvocationsApiDispatchPayload(RoutineDispatchPayload, discrimin
         self.type = RoutineDispatchPayloadType.INVOKE_AGENT_INVOCATIONS_API  # type: ignore
 
 
-class RoutineAction(_Model):
+class RoutineAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base model for a routine action.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -9824,7 +9942,9 @@ class RoutineAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InvokeAgentInvocationsApiRoutineAction(RoutineAction, discriminator="invoke_agent_invocations_api"):
+class InvokeAgentInvocationsApiRoutineAction(
+    RoutineAction, discriminator="invoke_agent_invocations_api"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dispatches a routine through the raw invocations API. Exactly one of agent_name or
     agent_endpoint_id must be provided.
 
@@ -9877,7 +9997,9 @@ class InvokeAgentInvocationsApiRoutineAction(RoutineAction, discriminator="invok
         self.type = RoutineActionType.INVOKE_AGENT_INVOCATIONS_API  # type: ignore
 
 
-class InvokeAgentResponsesApiDispatchPayload(RoutineDispatchPayload, discriminator="invoke_agent_responses_api"):
+class InvokeAgentResponsesApiDispatchPayload(
+    RoutineDispatchPayload, discriminator="invoke_agent_responses_api"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A manual payload used to test a responses API routine dispatch.
 
     :ivar type: The manual dispatch payload type. Required. A manual payload for a responses API
@@ -9914,7 +10036,9 @@ class InvokeAgentResponsesApiDispatchPayload(RoutineDispatchPayload, discriminat
         self.type = RoutineDispatchPayloadType.INVOKE_AGENT_RESPONSES_API  # type: ignore
 
 
-class InvokeAgentResponsesApiRoutineAction(RoutineAction, discriminator="invoke_agent_responses_api"):
+class InvokeAgentResponsesApiRoutineAction(
+    RoutineAction, discriminator="invoke_agent_responses_api"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dispatches a routine through the responses API. Exactly one of agent_name or agent_endpoint_id
     must be provided.
 
@@ -9966,7 +10090,7 @@ class InvokeAgentResponsesApiRoutineAction(RoutineAction, discriminator="invoke_
         self.type = RoutineActionType.INVOKE_AGENT_RESPONSES_API  # type: ignore
 
 
-class VoiceGreetingConfig(_Model):
+class VoiceGreetingConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Session-start greeting configuration for a voice agent.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -9998,7 +10122,9 @@ class VoiceGreetingConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LlmGeneratedVoiceGreetingConfig(VoiceGreetingConfig, discriminator="llm_generated"):
+class LlmGeneratedVoiceGreetingConfig(
+    VoiceGreetingConfig, discriminator="llm_generated"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A greeting authored by the session model from a scoped opening-turn prompt.
 
     :ivar type: Required. Default value is "llm_generated".
@@ -10043,7 +10169,9 @@ class LlmGeneratedVoiceGreetingConfig(VoiceGreetingConfig, discriminator="llm_ge
         self.type = "llm_generated"  # type: ignore
 
 
-class LocalShellToolParam(Tool, discriminator="local_shell"):
+class LocalShellToolParam(
+    Tool, discriminator="local_shell"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Local shell tool.
 
     :ivar type: The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL.
@@ -10090,7 +10218,7 @@ class LocalShellToolParam(Tool, discriminator="local_shell"):
         self.type = ToolType.LOCAL_SHELL  # type: ignore
 
 
-class LocalSkillParam(_Model):
+class LocalSkillParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LocalSkillParam.
 
     :ivar name: The name of the skill. Required.
@@ -10128,7 +10256,7 @@ class LocalSkillParam(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogProbProperties(_Model):
+class LogProbProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A log probability object.
 
     :ivar token: The token that was used to generate the log probability. Required.
@@ -10166,7 +10294,7 @@ class LogProbProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoraConfig(_Model):
+class LoraConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Adapter-specific metadata for LoRA models. Drives serving engine configuration at deployment
     time.
 
@@ -10214,7 +10342,9 @@ class LoraConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedAgentIdentityBlueprintReference(AgentBlueprintReference, discriminator="ManagedAgentIdentityBlueprint"):
+class ManagedAgentIdentityBlueprintReference(
+    AgentBlueprintReference, discriminator="ManagedAgentIdentityBlueprint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedAgentIdentityBlueprintReference.
 
     :ivar type: Required. MANAGED_AGENT_IDENTITY_BLUEPRINT.
@@ -10247,7 +10377,9 @@ class ManagedAgentIdentityBlueprintReference(AgentBlueprintReference, discrimina
         self.type = AgentBlueprintReferenceType.MANAGED_AGENT_IDENTITY_BLUEPRINT  # type: ignore
 
 
-class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
+class ManagedAzureAISearchIndex(
+    Index, discriminator="ManagedAzureSearch"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed Azure AI Search Index Definition.
 
     :ivar id: Asset ID, a unique identifier for the asset.
@@ -10292,7 +10424,7 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
         self.type = IndexType.MANAGED_AZURE_SEARCH  # type: ignore
 
 
-class MCPListToolsTool(_Model):
+class MCPListToolsTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MCP list tools tool.
 
     :ivar name: The name of the tool. Required.
@@ -10349,7 +10481,7 @@ class McpProtocolConfiguration(_Model):
     """Configuration specific to the MCP protocol."""
 
 
-class MCPTool(Tool, discriminator="mcp"):
+class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MCP tool.
 
     :ivar type: The type of the MCP tool. Always ``mcp``. Required. MCP.
@@ -10514,7 +10646,7 @@ class MCPTool(Tool, discriminator="mcp"):
         self.type = ToolType.MCP  # type: ignore
 
 
-class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
+class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An MCP tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -10682,7 +10814,7 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
         self.type = ToolboxToolType.MCP  # type: ignore
 
 
-class MCPToolFilter(_Model):
+class MCPToolFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MCP tool filter.
 
     :ivar tool_names: MCP allowed tools.
@@ -10721,7 +10853,7 @@ class MCPToolFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MCPToolRequireApproval(_Model):
+class MCPToolRequireApproval(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MCPToolRequireApproval.
 
     :ivar always:
@@ -10752,7 +10884,7 @@ class MCPToolRequireApproval(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemoryOperation(_Model):
+class MemoryOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a single memory operation (create, update, or delete) performed on a memory item.
 
     :ivar kind: The type of memory operation being performed. Required. Known values are: "create",
@@ -10789,7 +10921,7 @@ class MemoryOperation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemorySearchItem(_Model):
+class MemorySearchItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A retrieved memory item from memory search.
 
     :ivar memory_item: Retrieved memory item. Required.
@@ -10817,7 +10949,7 @@ class MemorySearchItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemorySearchOptions(_Model):
+class MemorySearchOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Memory search options.
 
     :ivar max_memories: Maximum number of memory items to return.
@@ -10845,7 +10977,9 @@ class MemorySearchOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemorySearchPreviewTool(Tool, discriminator="memory_search_preview"):
+class MemorySearchPreviewTool(
+    Tool, discriminator="memory_search_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A tool for integrating memories into the agent.
 
     :ivar type: The type of the tool. Always ``memory_search_preview``. Required.
@@ -10901,7 +11035,7 @@ class MemorySearchPreviewTool(Tool, discriminator="memory_search_preview"):
         self.type = ToolType.MEMORY_SEARCH_PREVIEW  # type: ignore
 
 
-class MemoryStoreDefinition(_Model):
+class MemoryStoreDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base definition for memory store configurations.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -10933,7 +11067,9 @@ class MemoryStoreDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemoryStoreDefaultDefinition(MemoryStoreDefinition, discriminator="default"):
+class MemoryStoreDefaultDefinition(
+    MemoryStoreDefinition, discriminator="default"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Default memory store implementation.
 
     :ivar kind: The kind of the memory store. Required. The default memory store implementation.
@@ -10979,7 +11115,7 @@ class MemoryStoreDefaultDefinition(MemoryStoreDefinition, discriminator="default
         self.kind = MemoryStoreKind.DEFAULT  # type: ignore
 
 
-class MemoryStoreDefaultOptions(_Model):
+class MemoryStoreDefaultOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Default memory store configurations.
 
     :ivar user_profile_enabled: Whether to enable user profile extraction and storage. Default is
@@ -11036,7 +11172,7 @@ class MemoryStoreDefaultOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemoryStoreDeleteScopeResult(_Model):
+class MemoryStoreDeleteScopeResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for deleting memories from a scope.
 
     :ivar object: The object type. Always 'memory_store.scope.deleted'. Required.
@@ -11082,7 +11218,7 @@ class MemoryStoreDeleteScopeResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemoryStoreDetails(_Model):
+class MemoryStoreDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A memory store that can store and retrieve user memories.
 
     :ivar object: The object type, which is always 'memory_store'. Required. MEMORY_STORE.
@@ -11152,7 +11288,7 @@ class MemoryStoreDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemoryStoreOperationUsage(_Model):
+class MemoryStoreOperationUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Usage statistics of a memory store operation.
 
     :ivar embedding_tokens: The number of embedding tokens. Required.
@@ -11209,7 +11345,7 @@ class MemoryStoreOperationUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemoryStoreSearchResult(_Model):
+class MemoryStoreSearchResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Memory search response.
 
     :ivar search_id: The unique ID of this search request. Use this value as previous_search_id in
@@ -11249,7 +11385,7 @@ class MemoryStoreSearchResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemoryStoreUpdateCompletedResult(_Model):
+class MemoryStoreUpdateCompletedResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Memory update result.
 
     :ivar memory_operations: A list of individual memory operations that were performed during the
@@ -11285,7 +11421,7 @@ class MemoryStoreUpdateCompletedResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemoryStoreUpdateResult(_Model):
+class MemoryStoreUpdateResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provides the status of a memory store update operation.
 
     :ivar update_id: The unique ID of this update request. Use this value as previous_update_id in
@@ -11352,7 +11488,9 @@ class Metadata(_Model):
     """
 
 
-class MicrosoftFabricPreviewTool(Tool, discriminator="fabric_dataagent_preview"):
+class MicrosoftFabricPreviewTool(
+    Tool, discriminator="fabric_dataagent_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input definition information for a Microsoft Fabric tool as used to configure an agent.
 
     :ivar type: The object type, which is always 'fabric_dataagent_preview'. Required.
@@ -11389,7 +11527,7 @@ class MicrosoftFabricPreviewTool(Tool, discriminator="fabric_dataagent_preview")
         self.type = ToolType.FABRIC_DATAAGENT_PREVIEW  # type: ignore
 
 
-class ModelCredentialRequest(_Model):
+class ModelCredentialRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to fetch credentials for a model asset.
 
     :ivar blob_uri: Blob URI of the model asset to fetch credentials for. Required.
@@ -11470,7 +11608,7 @@ class ModelDeployment(Deployment, discriminator="ModelDeployment"):
         self.type = DeploymentType.MODEL_DEPLOYMENT  # type: ignore
 
 
-class ModelDeploymentSku(_Model):
+class ModelDeploymentSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sku information.
 
     :ivar capacity: Sku capacity. Required.
@@ -11518,7 +11656,7 @@ class ModelDeploymentSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelPendingUploadRequest(_Model):
+class ModelPendingUploadRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a request for a pending upload of a model version.
 
     :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
@@ -11565,7 +11703,7 @@ class ModelPendingUploadRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelPendingUploadResponse(_Model):
+class ModelPendingUploadResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the response for a model pending upload request.
 
     :ivar blob_reference: Container-level read, write, list SAS. Required.
@@ -11617,7 +11755,7 @@ class ModelPendingUploadResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelSamplingParams(_Model):
+class ModelSamplingParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a set of parameters used to control the sampling behavior of a language model during
     text generation.
 
@@ -11661,7 +11799,7 @@ class ModelSamplingParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelSourceData(_Model):
+class ModelSourceData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source information for the model.
 
     :ivar source_type: The source type of the model. Known values are: "LocalUpload" and
@@ -11697,7 +11835,7 @@ class ModelSourceData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelVersion(_Model):
+class ModelVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model Version Definition.
 
     :ivar blob_uri: URI of the model artifact in blob storage. Required.
@@ -11782,7 +11920,9 @@ class ModelVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonthlyRecurrenceSchedule(RecurrenceSchedule, discriminator="Monthly"):
+class MonthlyRecurrenceSchedule(
+    RecurrenceSchedule, discriminator="Monthly"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monthly recurrence schedule.
 
     :ivar type: Monthly recurrence type. Required. Monthly recurrence pattern.
@@ -11817,7 +11957,9 @@ class MonthlyRecurrenceSchedule(RecurrenceSchedule, discriminator="Monthly"):
         self.type = RecurrenceType.MONTHLY  # type: ignore
 
 
-class NamespaceToolParam(Tool, discriminator="namespace"):
+class NamespaceToolParam(
+    Tool, discriminator="namespace"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Namespace.
 
     :ivar type: The type of the tool. Always ``namespace``. Required. NAMESPACE.
@@ -11890,7 +12032,7 @@ class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
         self.type = CredentialType.NONE  # type: ignore
 
 
-class OmitPropertiesRealtimeResponse(_Model):
+class OmitPropertiesRealtimeResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The template for omitting properties.
 
     :ivar id: The unique ID of the response, will look like ``resp_1234``.
@@ -11991,7 +12133,7 @@ class OmitPropertiesRealtimeResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OmitPropertiesRealtimeResponse1(_Model):
+class OmitPropertiesRealtimeResponse1(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The template for omitting properties.
 
     :ivar id: The unique ID of the response, will look like ``resp_1234``.
@@ -12096,7 +12238,7 @@ class OmitPropertiesRealtimeResponse1(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OneTimeTrigger(Trigger, discriminator="OneTime"):
+class OneTimeTrigger(Trigger, discriminator="OneTime"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """One-time trigger.
 
     :ivar type: Required. One-time trigger.
@@ -12136,7 +12278,7 @@ class OneTimeTrigger(Trigger, discriminator="OneTime"):
         self.type = TriggerType.ONE_TIME  # type: ignore
 
 
-class OpenApiAuthDetails(_Model):
+class OpenApiAuthDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """authentication details for OpenApiFunctionDefinition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -12197,7 +12339,7 @@ class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous")
         self.type = OpenApiAuthType.ANONYMOUS  # type: ignore
 
 
-class OpenApiFunctionDefinition(_Model):
+class OpenApiFunctionDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input definition information for an openapi function.
 
     :ivar name: The name of the function to be called. Required.
@@ -12251,7 +12393,7 @@ class OpenApiFunctionDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenApiFunctionDefinitionFunction(_Model):
+class OpenApiFunctionDefinitionFunction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OpenApiFunctionDefinitionFunction.
 
     :ivar name: The name of the function to be called. Required.
@@ -12292,7 +12434,9 @@ class OpenApiFunctionDefinitionFunction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_identity"):
+class OpenApiManagedAuthDetails(
+    OpenApiAuthDetails, discriminator="managed_identity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security details for OpenApi managed_identity authentication.
 
     :ivar type: The object type, which is always 'managed_identity'. Required. MANAGED_IDENTITY.
@@ -12327,7 +12471,7 @@ class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_ident
         self.type = OpenApiAuthType.MANAGED_IDENTITY  # type: ignore
 
 
-class OpenApiManagedSecurityScheme(_Model):
+class OpenApiManagedSecurityScheme(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security scheme for OpenApi managed_identity authentication.
 
     :ivar audience: Authentication scope for managed_identity auth type. Required.
@@ -12355,7 +12499,9 @@ class OpenApiManagedSecurityScheme(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenApiProjectConnectionAuthDetails(OpenApiAuthDetails, discriminator="project_connection"):
+class OpenApiProjectConnectionAuthDetails(
+    OpenApiAuthDetails, discriminator="project_connection"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security details for OpenApi project connection authentication.
 
     :ivar type: The object type, which is always 'project_connection'. Required.
@@ -12391,7 +12537,7 @@ class OpenApiProjectConnectionAuthDetails(OpenApiAuthDetails, discriminator="pro
         self.type = OpenApiAuthType.PROJECT_CONNECTION  # type: ignore
 
 
-class OpenApiProjectConnectionSecurityScheme(_Model):
+class OpenApiProjectConnectionSecurityScheme(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security scheme for OpenApi managed_identity authentication.
 
     :ivar project_connection_id: Project connection id for Project Connection auth type. Required.
@@ -12419,7 +12565,7 @@ class OpenApiProjectConnectionSecurityScheme(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenApiTool(Tool, discriminator="openapi"):
+class OpenApiTool(Tool, discriminator="openapi"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input definition information for an OpenAPI tool as used to configure an agent.
 
     :ivar type: The object type, which is always 'openapi'. Required. OPENAPI.
@@ -12462,7 +12608,9 @@ class OpenApiTool(Tool, discriminator="openapi"):
         self.type = ToolType.OPENAPI  # type: ignore
 
 
-class OpenApiToolboxTool(ToolboxTool, discriminator="openapi"):
+class OpenApiToolboxTool(
+    ToolboxTool, discriminator="openapi"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An OpenAPI tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -12508,7 +12656,7 @@ class OpenApiToolboxTool(ToolboxTool, discriminator="openapi"):
         self.type = ToolboxToolType.OPENAPI  # type: ignore
 
 
-class OptimizedAgentIdentifier(_Model):
+class OptimizedAgentIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identifies the registered Foundry agent to optimize (request-only). Skills, tools, and
     system_prompt are specified in options.optimization_config.
 
@@ -12542,7 +12690,7 @@ class OptimizedAgentIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TelemetryEndpoint(_Model):
+class TelemetryEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A telemetry export endpoint configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -12589,7 +12737,9 @@ class TelemetryEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OtlpTelemetryEndpoint(TelemetryEndpoint, discriminator="OTLP"):
+class OtlpTelemetryEndpoint(
+    TelemetryEndpoint, discriminator="OTLP"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An OTLP (OpenTelemetry Protocol) telemetry export endpoint.
 
     :ivar data: Data types to export to this endpoint. Use an empty array to export no data.
@@ -12640,7 +12790,7 @@ class OtlpTelemetryEndpoint(TelemetryEndpoint, discriminator="OTLP"):
         self.kind = TelemetryEndpointKind.OTLP  # type: ignore
 
 
-class PendingUploadRequest(_Model):
+class PendingUploadRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a request for a pending upload.
 
     :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
@@ -12687,7 +12837,7 @@ class PendingUploadRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PendingUploadResponse(_Model):
+class PendingUploadResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the response for a pending upload request.
 
     :ivar blob_reference: Container-level read, write, list SAS. Required.
@@ -12739,7 +12889,7 @@ class PendingUploadResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PickPropertiesVoiceAudioConfig(_Model):
+class PickPropertiesVoiceAudioConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The template for picking properties.
 
     :ivar output: Output (agent speech) audio configuration.
@@ -12769,7 +12919,9 @@ class PickPropertiesVoiceAudioConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProceduralMemoryItem(MemoryItem, discriminator="procedural"):
+class ProceduralMemoryItem(
+    MemoryItem, discriminator="procedural"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A memory item containing a procedure extracted from conversations.
 
     :ivar memory_id: The unique ID of the memory item. Required.
@@ -12840,7 +12992,7 @@ class ProgrammaticToolCallingParam(Tool, discriminator="programmatic_tool_callin
         self.type = ToolType.PROGRAMMATIC_TOOL_CALLING  # type: ignore
 
 
-class PromotionInfo(_Model):
+class PromotionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Promotion metadata recorded when a candidate is deployed to a Foundry agent.
 
     :ivar promoted_at: Timestamp when promotion occurred, represented in Unix time. Required.
@@ -12880,7 +13032,9 @@ class PromotionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PromptAgentDefinition(AgentDefinition, discriminator="prompt"):
+class PromptAgentDefinition(
+    AgentDefinition, discriminator="prompt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The prompt agent definition.
 
     :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
@@ -12982,7 +13136,7 @@ class PromptAgentDefinition(AgentDefinition, discriminator="prompt"):
         self.kind = AgentKind.PROMPT  # type: ignore
 
 
-class PromptAgentDefinitionTextOptions(_Model):
+class PromptAgentDefinitionTextOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration options for a text response from the model. Can be plain text or structured JSON
     data.
 
@@ -13012,7 +13166,9 @@ class PromptAgentDefinitionTextOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PromptBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="prompt"):
+class PromptBasedEvaluatorDefinition(
+    EvaluatorDefinition, discriminator="prompt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Prompt-based evaluator.
 
     :ivar init_parameters: The JSON schema (Draft 2020-12) for the evaluator's input parameters.
@@ -13056,7 +13212,9 @@ class PromptBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="prompt"
         self.type = EvaluatorDefinitionType.PROMPT  # type: ignore
 
 
-class PromptDataGenerationJobSource(DataGenerationJobSource, discriminator="prompt"):
+class PromptDataGenerationJobSource(
+    DataGenerationJobSource, discriminator="prompt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Prompt source for data generation jobs — inline text provided by the user.
 
     :ivar description: Optional description of what this source represents — helps the pipeline
@@ -13097,7 +13255,9 @@ class PromptDataGenerationJobSource(DataGenerationJobSource, discriminator="prom
         self.type = DataGenerationJobSourceType.PROMPT  # type: ignore
 
 
-class PromptEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator="prompt"):
+class PromptEvaluatorGenerationJobSource(
+    EvaluatorGenerationJobSource, discriminator="prompt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Prompt source for evaluator generation jobs — inline text provided by the user.
 
     :ivar description: Optional description of what this source represents — helps the pipeline
@@ -13141,7 +13301,7 @@ class PromptEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discrimin
         self.type = EvaluatorGenerationJobSourceType.PROMPT  # type: ignore
 
 
-class ProtocolConfiguration(_Model):
+class ProtocolConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Per-protocol configuration for the agent endpoint.
 
     :ivar activity: Configuration for the activity protocol.
@@ -13206,7 +13366,7 @@ class ProtocolConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtocolVersionRecord(_Model):
+class ProtocolVersionRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A record mapping for a single protocol and its version.
 
     :ivar protocol: The protocol type. Required. Known values are: "activity", "responses", "a2a",
@@ -13243,7 +13403,7 @@ class ProtocolVersionRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiConfig(_Model):
+class RaiConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for Responsible AI (RAI) content filtering and safety features.
 
     :ivar rai_policy_name: The name of the RAI policy to apply. Required.
@@ -13271,7 +13431,7 @@ class RaiConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RankingOptions(_Model):
+class RankingOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RankingOptions.
 
     :ivar ranker: The ranker to use for the file search. Known values are: "auto" and
@@ -13319,7 +13479,7 @@ class RankingOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeAudioFormats(_Model):
+class RealtimeAudioFormats(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeAudioFormats.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -13351,7 +13511,9 @@ class RealtimeAudioFormats(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeAudioFormatsAudioPcm(RealtimeAudioFormats, discriminator="audio/pcm"):
+class RealtimeAudioFormatsAudioPcm(
+    RealtimeAudioFormats, discriminator="audio/pcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeAudioFormatsAudioPcm.
 
     :ivar type: Required. AUDIO_PCM.
@@ -13438,7 +13600,7 @@ class RealtimeAudioFormatsAudioPcmu(RealtimeAudioFormats, discriminator="audio/p
         self.type = RealtimeAudioFormatsType.AUDIO_PCMU  # type: ignore
 
 
-class RealtimeConversationItem(_Model):
+class RealtimeConversationItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single item within a Realtime conversation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -13474,7 +13636,9 @@ class RealtimeConversationItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeConversationItemFunctionCall(RealtimeConversationItem, discriminator="function_call"):
+class RealtimeConversationItemFunctionCall(
+    RealtimeConversationItem, discriminator="function_call"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime function call item.
 
     :ivar id: The unique ID of the item. This may be provided by the client or generated by the
@@ -13543,7 +13707,7 @@ class RealtimeConversationItemFunctionCall(RealtimeConversationItem, discriminat
 
 class RealtimeConversationItemFunctionCallOutput(
     RealtimeConversationItem, discriminator="function_call_output"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Realtime function call output item.
 
     :ivar id: The unique ID of the item. This may be provided by the client or generated by the
@@ -13606,7 +13770,7 @@ class RealtimeConversationItemFunctionCallOutput(
         self.type = RealtimeConversationItemType.FUNCTION_CALL_OUTPUT  # type: ignore
 
 
-class RealtimeConversationItemMessage(_Model):
+class RealtimeConversationItemMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeConversationItemMessage.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -13639,7 +13803,9 @@ class RealtimeConversationItemMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeConversationItemMessageAssistant(RealtimeConversationItemMessage, discriminator="assistant"):
+class RealtimeConversationItemMessageAssistant(
+    RealtimeConversationItemMessage, discriminator="assistant"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime assistant message item.
 
     :ivar id: The unique ID of the item. This may be provided by the client or generated by the
@@ -13702,7 +13868,9 @@ class RealtimeConversationItemMessageAssistant(RealtimeConversationItemMessage, 
         self.type: Literal["message"] = "message"
 
 
-class RealtimeConversationItemMessageAssistantContent(_Model):  # pylint: disable=name-too-long
+class RealtimeConversationItemMessageAssistantContent(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RealtimeConversationItemMessageAssistantContent.
 
     :ivar type: Is either a Literal["output_text"] type or a Literal["output_audio"] type.
@@ -13744,7 +13912,9 @@ class RealtimeConversationItemMessageAssistantContent(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class RealtimeConversationItemMessageSystem(RealtimeConversationItemMessage, discriminator="system"):
+class RealtimeConversationItemMessageSystem(
+    RealtimeConversationItemMessage, discriminator="system"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime system message item.
 
     :ivar id: The unique ID of the item. This may be provided by the client or generated by the
@@ -13806,7 +13976,9 @@ class RealtimeConversationItemMessageSystem(RealtimeConversationItemMessage, dis
         self.type: Literal["message"] = "message"
 
 
-class RealtimeConversationItemMessageSystemContent(_Model):  # pylint: disable=name-too-long
+class RealtimeConversationItemMessageSystemContent(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RealtimeConversationItemMessageSystemContent.
 
     :ivar type: Default value is "input_text".
@@ -13838,7 +14010,9 @@ class RealtimeConversationItemMessageSystemContent(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class RealtimeConversationItemMessageUser(RealtimeConversationItemMessage, discriminator="user"):
+class RealtimeConversationItemMessageUser(
+    RealtimeConversationItemMessage, discriminator="user"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime user message item.
 
     :ivar id: The unique ID of the item. This may be provided by the client or generated by the
@@ -13900,7 +14074,9 @@ class RealtimeConversationItemMessageUser(RealtimeConversationItemMessage, discr
         self.type: Literal["message"] = "message"
 
 
-class RealtimeConversationItemMessageUserContent(_Model):  # pylint: disable=name-too-long
+class RealtimeConversationItemMessageUserContent(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RealtimeConversationItemMessageUserContent.
 
     :ivar type: Is one of the following types: Literal["input_text"], Literal["input_audio"],
@@ -13955,7 +14131,7 @@ class RealtimeConversationItemMessageUserContent(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class RealtimeFunctionTool(_Model):
+class RealtimeFunctionTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Function tool.
 
     :ivar type: The type of the tool, i.e. ``function``. Default value is "function".
@@ -14006,7 +14182,9 @@ class RealtimeFunctionToolParameters(_Model):
     """RealtimeFunctionToolParameters."""
 
 
-class RealtimeMCPApprovalRequest(RealtimeConversationItem, discriminator="mcp_approval_request"):
+class RealtimeMCPApprovalRequest(
+    RealtimeConversationItem, discriminator="mcp_approval_request"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime MCP approval request.
 
     :ivar type: The type of the item. Always ``mcp_approval_request``. Required.
@@ -14055,7 +14233,9 @@ class RealtimeMCPApprovalRequest(RealtimeConversationItem, discriminator="mcp_ap
         self.type = RealtimeConversationItemType.MCP_APPROVAL_REQUEST  # type: ignore
 
 
-class RealtimeMCPApprovalResponse(RealtimeConversationItem, discriminator="mcp_approval_response"):
+class RealtimeMCPApprovalResponse(
+    RealtimeConversationItem, discriminator="mcp_approval_response"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime MCP approval response.
 
     :ivar type: The type of the item. Always ``mcp_approval_response``. Required.
@@ -14103,7 +14283,7 @@ class RealtimeMCPApprovalResponse(RealtimeConversationItem, discriminator="mcp_a
         self.type = RealtimeConversationItemType.MCP_APPROVAL_RESPONSE  # type: ignore
 
 
-class RealtimeMCPError(_Model):
+class RealtimeMCPError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeMCPError.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -14136,7 +14316,9 @@ class RealtimeMCPError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeMCPHTTPError(RealtimeMCPError, discriminator="http_error"):
+class RealtimeMCPHTTPError(
+    RealtimeMCPError, discriminator="http_error"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime MCP HTTP error.
 
     :ivar type: Required. HTTP_ERROR.
@@ -14174,7 +14356,9 @@ class RealtimeMCPHTTPError(RealtimeMCPError, discriminator="http_error"):
         self.type = RealtimeMcpErrorType.HTTP_ERROR  # type: ignore
 
 
-class RealtimeMCPListTools(RealtimeConversationItem, discriminator="mcp_list_tools"):
+class RealtimeMCPListTools(
+    RealtimeConversationItem, discriminator="mcp_list_tools"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime MCP list tools.
 
     :ivar type: The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS.
@@ -14217,7 +14401,9 @@ class RealtimeMCPListTools(RealtimeConversationItem, discriminator="mcp_list_too
         self.type = RealtimeConversationItemType.MCP_LIST_TOOLS  # type: ignore
 
 
-class RealtimeMCPProtocolError(RealtimeMCPError, discriminator="protocol_error"):
+class RealtimeMCPProtocolError(
+    RealtimeMCPError, discriminator="protocol_error"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime MCP protocol error.
 
     :ivar type: Required. PROTOCOL_ERROR.
@@ -14255,7 +14441,9 @@ class RealtimeMCPProtocolError(RealtimeMCPError, discriminator="protocol_error")
         self.type = RealtimeMcpErrorType.PROTOCOL_ERROR  # type: ignore
 
 
-class RealtimeMCPToolCall(RealtimeConversationItem, discriminator="mcp_call"):
+class RealtimeMCPToolCall(
+    RealtimeConversationItem, discriminator="mcp_call"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime MCP tool call.
 
     :ivar type: The type of the item. Always ``mcp_call``. Required. MCP_CALL.
@@ -14315,7 +14503,9 @@ class RealtimeMCPToolCall(RealtimeConversationItem, discriminator="mcp_call"):
         self.type = RealtimeConversationItemType.MCP_CALL  # type: ignore
 
 
-class RealtimeMCPToolExecutionError(RealtimeMCPError, discriminator="tool_execution_error"):
+class RealtimeMCPToolExecutionError(
+    RealtimeMCPError, discriminator="tool_execution_error"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime MCP tool execution error.
 
     :ivar type: Required. TOOL_EXECUTION_ERROR.
@@ -14348,7 +14538,7 @@ class RealtimeMCPToolExecutionError(RealtimeMCPError, discriminator="tool_execut
         self.type = RealtimeMcpErrorType.TOOL_EXECUTION_ERROR  # type: ignore
 
 
-class RealtimeReasoning(_Model):
+class RealtimeReasoning(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Realtime reasoning configuration.
 
     :ivar effort: Known values are: "minimal", "low", "medium", "high", and "xhigh".
@@ -14378,7 +14568,7 @@ class RealtimeReasoning(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeResponseStatusDetails(_Model):
+class RealtimeResponseStatusDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeResponseStatusDetails.
 
     :ivar type: Is one of the following types: Literal["completed"], Literal["cancelled"],
@@ -14425,7 +14615,7 @@ class RealtimeResponseStatusDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeResponseStatusDetailsError(_Model):
+class RealtimeResponseStatusDetailsError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeResponseStatusDetailsError.
 
     :ivar type:
@@ -14456,7 +14646,7 @@ class RealtimeResponseStatusDetailsError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeResponseUsage(_Model):
+class RealtimeResponseUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeResponseUsage.
 
     :ivar total_tokens:
@@ -14504,7 +14694,7 @@ class RealtimeResponseUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeResponseUsageInputTokenDetails(_Model):
+class RealtimeResponseUsageInputTokenDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeResponseUsageInputTokenDetails.
 
     :ivar cached_tokens:
@@ -14550,7 +14740,9 @@ class RealtimeResponseUsageInputTokenDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeResponseUsageInputTokenDetailsCachedTokensDetails(_Model):  # pylint: disable=name-too-long
+class RealtimeResponseUsageInputTokenDetailsCachedTokensDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RealtimeResponseUsageInputTokenDetailsCachedTokensDetails.
 
     :ivar text_tokens:
@@ -14585,7 +14777,7 @@ class RealtimeResponseUsageInputTokenDetailsCachedTokensDetails(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class RealtimeResponseUsageOutputTokenDetails(_Model):
+class RealtimeResponseUsageOutputTokenDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeResponseUsageOutputTokenDetails.
 
     :ivar text_tokens:
@@ -14616,7 +14808,7 @@ class RealtimeResponseUsageOutputTokenDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeServerEvent(_Model):
+class RealtimeServerEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A realtime server event.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -14686,7 +14878,9 @@ class RealtimeServerEvent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeServerEventConversationItemInputAudioTranscriptionFailedError(_Model):  # pylint: disable=name-too-long
+class RealtimeServerEventConversationItemInputAudioTranscriptionFailedError(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RealtimeServerEventConversationItemInputAudioTranscriptionFailedError.
 
     :ivar type:
@@ -14725,7 +14919,7 @@ class RealtimeServerEventConversationItemInputAudioTranscriptionFailedError(_Mod
         super().__init__(*args, **kwargs)
 
 
-class RealtimeServerEventError(_Model):
+class RealtimeServerEventError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Returned when an error occurs, which could be a client problem or a server problem. Most errors
     are recoverable and the session will stay open, we recommend to implementors to monitor and log
     error messages by default.
@@ -14767,7 +14961,7 @@ class RealtimeServerEventError(_Model):
         self.type: Literal["error"] = "error"
 
 
-class RealtimeServerEventErrorError(_Model):
+class RealtimeServerEventErrorError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeServerEventErrorError.
 
     :ivar type: Required.
@@ -14812,7 +15006,9 @@ class RealtimeServerEventErrorError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealtimeServerEventRateLimitsUpdatedRateLimits(_Model):  # pylint: disable=name-too-long
+class RealtimeServerEventRateLimitsUpdatedRateLimits(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RealtimeServerEventRateLimitsUpdatedRateLimits.
 
     :ivar name: Is either a Literal["requests"] type or a Literal["tokens"] type.
@@ -14856,7 +15052,7 @@ class RealtimeServerEventRateLimitsUpdatedRateLimits(_Model):  # pylint: disable
 
 class RealtimeServerEventResponseContentPartAdded(
     RealtimeServerEvent, discriminator="response.content_part.added"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Returned when a new content part is added to an assistant message item during response
     generation.
 
@@ -14918,7 +15114,9 @@ class RealtimeServerEventResponseContentPartAdded(
         self.type = RealtimeServerEventType.RESPONSE_CONTENT_PART_ADDED  # type: ignore
 
 
-class RealtimeServerEventResponseContentPartAddedPart(_Model):  # pylint: disable=name-too-long
+class RealtimeServerEventResponseContentPartAddedPart(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RealtimeServerEventResponseContentPartAddedPart.
 
     :ivar type: Is either a Literal["audio"] type or a Literal["text"] type.
@@ -14958,7 +15156,7 @@ class RealtimeServerEventResponseContentPartAddedPart(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class Reasoning(_Model):
+class Reasoning(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reasoning.
 
     :ivar mode: Controls the reasoning execution mode for the request. When returned on a response,
@@ -15022,7 +15220,9 @@ class Reasoning(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
+class RecurrenceTrigger(
+    Trigger, discriminator="Recurrence"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recurrence based trigger.
 
     :ivar type: Type of the trigger. Required. Recurrence based trigger.
@@ -15079,7 +15279,7 @@ class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
         self.type = TriggerType.RECURRENCE  # type: ignore
 
 
-class RedTeam(_Model):
+class RedTeam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Red team details.
 
     :ivar name: Identifier of the red team run. Required.
@@ -15171,7 +15371,9 @@ class RedTeam(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReminderPreviewToolboxTool(ToolboxTool, discriminator="reminder_preview"):
+class ReminderPreviewToolboxTool(
+    ToolboxTool, discriminator="reminder_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reminder tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -15214,7 +15416,7 @@ class ResponsesProtocolConfiguration(_Model):
     """Configuration specific to the responses protocol."""
 
 
-class ResponseUsageInputTokensDetails(_Model):
+class ResponseUsageInputTokensDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResponseUsageInputTokensDetails.
 
     :ivar cached_tokens: Required.
@@ -15247,7 +15449,7 @@ class ResponseUsageInputTokensDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResponseUsageOutputTokensDetails(_Model):
+class ResponseUsageOutputTokensDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResponseUsageOutputTokensDetails.
 
     :ivar reasoning_tokens: Required.
@@ -15275,7 +15477,7 @@ class ResponseUsageOutputTokensDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Routine(_Model):
+class Routine(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A routine definition returned by the service.
 
     :ivar name: The routine name.
@@ -15339,7 +15541,7 @@ class Routine(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutineRun(_Model):
+class RoutineRun(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single routine run returned from the run history API.
 
     :ivar id: The unique run identifier for the routine attempt. Required.
@@ -15508,7 +15710,9 @@ class RoutineRun(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RubricBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="rubric"):
+class RubricBasedEvaluatorDefinition(
+    EvaluatorDefinition, discriminator="rubric"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rubric-based evaluator definition — stores dimensions produced by the generate API. Used for
     both quality and safety evaluators.
 
@@ -15575,7 +15779,7 @@ class RubricBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="rubric"
         self.type = EvaluatorDefinitionType.RUBRIC  # type: ignore
 
 
-class RubricGenerationInputQualityWarning(_Model):
+class RubricGenerationInputQualityWarning(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A non-fatal advisory produced during rubric evaluator generation when resolved inputs are
     technically valid but likely too weak to produce a high-quality rubric. Read-only;
     service-generated. Persisted with the terminal EvaluatorGenerationJob.
@@ -15676,7 +15880,7 @@ class SASCredentials(BaseCredentials, discriminator="SAS"):
         self.type = CredentialType.SAS  # type: ignore
 
 
-class Schedule(_Model):
+class Schedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schedule model.
 
     :ivar schedule_id: Identifier of the schedule. Required.
@@ -15754,7 +15958,9 @@ class Schedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduleRoutineTrigger(RoutineTrigger, discriminator="schedule"):
+class ScheduleRoutineTrigger(
+    RoutineTrigger, discriminator="schedule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A recurring cron-based routine trigger.
 
     :ivar type: The trigger type. Required. A recurring cron-based trigger.
@@ -15794,7 +16000,7 @@ class ScheduleRoutineTrigger(RoutineTrigger, discriminator="schedule"):
         self.type = RoutineTriggerType.SCHEDULE  # type: ignore
 
 
-class ScheduleRun(_Model):
+class ScheduleRun(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schedule run model.
 
     :ivar run_id: Identifier of the schedule run. Required.
@@ -15845,7 +16051,7 @@ class ScheduleRun(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionConfiguration(_Model):
+class SessionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Session defaults applied to sessions created for a hosted agent version.
 
     :ivar idle_timeout_seconds: The idle duration, in seconds, before a session's sandbox is
@@ -15878,7 +16084,7 @@ class SessionConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionDirectoryEntry(_Model):
+class SessionDirectoryEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single entry in a directory listing.
 
     :ivar name: The name of the file or directory. Required.
@@ -15923,7 +16129,7 @@ class SessionDirectoryEntry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionFileWriteResult(_Model):
+class SessionFileWriteResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response from uploading a file to a session sandbox.
 
     :ivar path: The path where the file was written, relative to the session home directory.
@@ -15957,7 +16163,7 @@ class SessionFileWriteResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionLogEvent(_Model):
+class SessionLogEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single Server-Sent Event frame emitted by the hosted agent session log stream.
 
     Each frame contains an ``event`` field identifying the event type and a ``data``
@@ -16015,7 +16221,7 @@ class SessionLogEvent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharepointGroundingToolParameters(_Model):
+class SharepointGroundingToolParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The sharepoint grounding tool parameters.
 
     :ivar project_connections: The project connections attached to this tool. There can be a
@@ -16047,7 +16253,9 @@ class SharepointGroundingToolParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
+class SharepointPreviewTool(
+    Tool, discriminator="sharepoint_grounding_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input definition information for a sharepoint tool as used to configure an agent.
 
     :ivar type: The object type, which is always 'sharepoint_grounding_preview'. Required.
@@ -16085,7 +16293,9 @@ class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
         self.type = ToolType.SHAREPOINT_GROUNDING_PREVIEW  # type: ignore
 
 
-class SimpleQnADataGenerationJobOptions(DataGenerationJobOptions, discriminator="simple_qna"):
+class SimpleQnADataGenerationJobOptions(
+    DataGenerationJobOptions, discriminator="simple_qna"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The options for a data generation job with SimpleQnA type.
 
     :ivar max_samples: Maximum number of samples to generate. Required.
@@ -16132,8 +16342,10 @@ class SimpleQnADataGenerationJobOptions(DataGenerationJobOptions, discriminator=
         self.type = DataGenerationJobType.SIMPLE_QNA  # type: ignore
 
 
-class SimulationSeedDataGenerationJobOptions(DataGenerationJobOptions, discriminator="simulation_seed"):
-    """The options for a simulation seed data generation job. Use with multiturn evaluation scenarios
+class SimulationSeedDataGenerationJobOptions(
+    DataGenerationJobOptions, discriminator="simulation_seed"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The options for a task generation data generation job. Use with multiturn evaluation scenarios
     and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
     ``category``, ``test_case_description``, and ``desired_num_turns``.
 
@@ -16174,7 +16386,7 @@ class SimulationSeedDataGenerationJobOptions(DataGenerationJobOptions, discrimin
         self.type = DataGenerationJobType.SIMULATION_SEED  # type: ignore
 
 
-class SkillDetails(_Model):
+class SkillDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill resource.
 
     :ivar id: The unique identifier of the skill. Required.
@@ -16230,7 +16442,7 @@ class SkillDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkillInlineContent(_Model):
+class SkillInlineContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Inline content for defining a simple skill without uploading files. Follows the agentskills.io
     SKILL.md specification.
 
@@ -16287,7 +16499,9 @@ class SkillInlineContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkillReferenceParam(ContainerSkill, discriminator="skill_reference"):
+class SkillReferenceParam(
+    ContainerSkill, discriminator="skill_reference"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SkillReferenceParam.
 
     :ivar type: References a skill created with the /v1/skills endpoint. Required. SKILL_REFERENCE.
@@ -16325,7 +16539,7 @@ class SkillReferenceParam(ContainerSkill, discriminator="skill_reference"):
         self.type = ContainerSkillType.SKILL_REFERENCE  # type: ignore
 
 
-class SkillVersion(_Model):
+class SkillVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A specific version of a skill.
 
     :ivar id: The unique identifier of the skill version. Required.
@@ -16380,7 +16594,7 @@ class SkillVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ToolChoiceParam(_Model):
+class ToolChoiceParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """How the model should select which tool (or tools) to use when generating a response. See the
     ``tools`` parameter to see how to specify which tools the model can call.
 
@@ -16505,7 +16719,7 @@ class SpecificProgrammaticToolCallingParam(ToolChoiceParam, discriminator="progr
         self.type = ToolChoiceParamType.PROGRAMMATIC_TOOL_CALLING  # type: ignore
 
 
-class StructuredInputDefinition(_Model):
+class StructuredInputDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An structured input that can participate in prompt template substitutions and tool argument
     binding.
 
@@ -16551,7 +16765,7 @@ class StructuredInputDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StructuredOutputDefinition(_Model):
+class StructuredOutputDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A structured output that can be produced by the agent.
 
     :ivar name: The name of the structured output. Required.
@@ -16596,7 +16810,7 @@ class StructuredOutputDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaxonomyCategory(_Model):
+class TaxonomyCategory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Taxonomy category definition.
 
     :ivar id: Unique identifier of the taxonomy category. Required.
@@ -16659,7 +16873,7 @@ class TaxonomyCategory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaxonomySubCategory(_Model):
+class TaxonomySubCategory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Taxonomy sub-category definition.
 
     :ivar id: Unique identifier of the taxonomy sub-category. Required.
@@ -16707,7 +16921,7 @@ class TaxonomySubCategory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TelemetryConfig(_Model):
+class TelemetryConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customer-supplied telemetry configuration for exporting container logs, traces, and metrics.
 
     :ivar endpoints: Customer-supplied telemetry export endpoint configurations. Required.
@@ -16737,7 +16951,9 @@ class TelemetryConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TemplateVoiceGreetingConfig(VoiceGreetingConfig, discriminator="template"):
+class TemplateVoiceGreetingConfig(
+    VoiceGreetingConfig, discriminator="template"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A deterministic greeting rendered with the voice agent's structured inputs and synthesized
     without model-authored generation.
 
@@ -16771,7 +16987,7 @@ class TemplateVoiceGreetingConfig(VoiceGreetingConfig, discriminator="template")
         self.type = "template"  # type: ignore
 
 
-class TextResponseFormat(_Model):
+class TextResponseFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object specifying the format that the model must output. Configuring ``{ "type":
     "json_schema" }`` enables Structured Outputs, which ensures the model will match your supplied
     JSON schema. Learn more in the `Structured Outputs guide </docs/guides/structured-outputs>`_.
@@ -16837,7 +17053,9 @@ class TextResponseFormatJsonObject(TextResponseFormat, discriminator="json_objec
         self.type = TextResponseFormatConfigurationType.JSON_OBJECT  # type: ignore
 
 
-class TextResponseFormatJsonSchema(TextResponseFormat, discriminator="json_schema"):
+class TextResponseFormatJsonSchema(
+    TextResponseFormat, discriminator="json_schema"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JSON schema.
 
     :ivar type: The type of response format being defined. Always ``json_schema``. Required.
@@ -16916,7 +17134,9 @@ class TextResponseFormatText(TextResponseFormat, discriminator="text"):
         self.type = TextResponseFormatConfigurationType.TEXT  # type: ignore
 
 
-class TimerRoutineTrigger(RoutineTrigger, discriminator="timer"):
+class TimerRoutineTrigger(
+    RoutineTrigger, discriminator="timer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A one-shot timer routine trigger.
 
     :ivar type: The trigger type. Required. A one-shot timer trigger.
@@ -16951,7 +17171,7 @@ class TimerRoutineTrigger(RoutineTrigger, discriminator="timer"):
         self.type = RoutineTriggerType.TIMER  # type: ignore
 
 
-class ToolboxObject(_Model):
+class ToolboxObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A toolbox that stores reusable tool definitions for agents.
 
     :ivar id: The unique identifier of the toolbox. Required.
@@ -16991,7 +17211,7 @@ class ToolboxObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ToolboxPolicies(_Model):
+class ToolboxPolicies(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy configuration for a toolbox, including content safety and other governance settings.
 
     :ivar rai_config: Responsible AI content filtering configuration.
@@ -17019,7 +17239,9 @@ class ToolboxPolicies(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ToolboxSearchPreviewToolboxTool(ToolboxTool, discriminator="toolbox_search_preview"):
+class ToolboxSearchPreviewToolboxTool(
+    ToolboxTool, discriminator="toolbox_search_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A toolbox search tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -17059,7 +17281,7 @@ class ToolboxSearchPreviewToolboxTool(ToolboxTool, discriminator="toolbox_search
         self.type = ToolboxToolType.TOOLBOX_SEARCH_PREVIEW  # type: ignore
 
 
-class ToolboxSkill(_Model):
+class ToolboxSkill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill source included in a toolbox.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -17091,7 +17313,9 @@ class ToolboxSkill(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ToolboxSkillReference(ToolboxSkill, discriminator="skill_reference"):
+class ToolboxSkillReference(
+    ToolboxSkill, discriminator="skill_reference"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reference to an existing skill to include in a toolbox.
 
     :ivar type: The type of skill source. Required. Default value is "skill_reference".
@@ -17131,7 +17355,7 @@ class ToolboxSkillReference(ToolboxSkill, discriminator="skill_reference"):
         self.type = "skill_reference"  # type: ignore
 
 
-class ToolboxVersionObject(_Model):
+class ToolboxVersionObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A specific version of a toolbox.
 
     :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
@@ -17217,7 +17441,9 @@ class ToolboxVersionObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
+class ToolChoiceAllowed(
+    ToolChoiceParam, discriminator="allowed_tools"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Allowed tools.
 
     :ivar type: Allowed tool configuration type. Always ``allowed_tools``. Required. ALLOWED_TOOLS.
@@ -17391,7 +17617,9 @@ class ToolChoiceComputerUsePreview(ToolChoiceParam, discriminator="computer_use_
         self.type = ToolChoiceParamType.COMPUTER_USE_PREVIEW  # type: ignore
 
 
-class ToolChoiceCustom(ToolChoiceParam, discriminator="custom"):
+class ToolChoiceCustom(
+    ToolChoiceParam, discriminator="custom"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom tool.
 
     :ivar type: For custom tool calling, the type is always ``custom``. Required. CUSTOM.
@@ -17452,7 +17680,9 @@ class ToolChoiceFileSearch(ToolChoiceParam, discriminator="file_search"):
         self.type = ToolChoiceParamType.FILE_SEARCH  # type: ignore
 
 
-class ToolChoiceFunction(ToolChoiceParam, discriminator="function"):
+class ToolChoiceFunction(
+    ToolChoiceParam, discriminator="function"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Function tool.
 
     :ivar type: For function calling, the type is always ``function``. Required. FUNCTION.
@@ -17513,7 +17743,9 @@ class ToolChoiceImageGeneration(ToolChoiceParam, discriminator="image_generation
         self.type = ToolChoiceParamType.IMAGE_GENERATION  # type: ignore
 
 
-class ToolChoiceMCP(ToolChoiceParam, discriminator="mcp"):
+class ToolChoiceMCP(
+    ToolChoiceParam, discriminator="mcp"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MCP tool.
 
     :ivar type: For MCP tools, the type is always ``mcp``. Required. MCP.
@@ -17606,7 +17838,7 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
         self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11  # type: ignore
 
 
-class ToolConfig(_Model):
+class ToolConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Per-tool configuration that controls tool visibility and search behavior.
 
     :ivar pin: When true, the tool is always included in agent context and visible in
@@ -17645,7 +17877,7 @@ class ToolConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ToolDescription(_Model):
+class ToolDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a tool that can be used by an agent.
 
     :ivar name: The name of the tool.
@@ -17678,7 +17910,7 @@ class ToolDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ToolProjectConnection(_Model):
+class ToolProjectConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A project connection resource.
 
     :ivar project_connection_id: A project connection in a ToolProjectConnectionList attached to
@@ -17707,7 +17939,9 @@ class ToolProjectConnection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ToolSearchToolboxTool(ToolboxTool, discriminator="toolbox_search"):
+class ToolSearchToolboxTool(
+    ToolboxTool, discriminator="toolbox_search"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A toolbox search tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -17746,7 +17980,9 @@ class ToolSearchToolboxTool(ToolboxTool, discriminator="toolbox_search"):
         self.type = ToolboxToolType.TOOLBOX_SEARCH  # type: ignore
 
 
-class ToolSearchToolParam(Tool, discriminator="tool_search"):
+class ToolSearchToolParam(
+    Tool, discriminator="tool_search"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tool search tool.
 
     :ivar type: The type of the tool. Always ``tool_search``. Required. TOOL_SEARCH.
@@ -17795,7 +18031,7 @@ class ToolSearchToolParam(Tool, discriminator="tool_search"):
 
 class ToolUseFineTuningDataGenerationJobOptions(
     DataGenerationJobOptions, discriminator="tool_use"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The options for a data generation job with ToolUse type. Used only for fine-tuning scenarios.
 
     :ivar max_samples: Maximum number of samples to generate. Required.
@@ -17835,7 +18071,9 @@ class ToolUseFineTuningDataGenerationJobOptions(
         self.type = DataGenerationJobType.TOOL_USE  # type: ignore
 
 
-class TracesDataGenerationJobOptions(DataGenerationJobOptions, discriminator="traces"):
+class TracesDataGenerationJobOptions(
+    DataGenerationJobOptions, discriminator="traces"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The options for a data generation job with Traces type.
 
     :ivar max_samples: Maximum number of samples to generate. Required.
@@ -17882,7 +18120,9 @@ class TracesDataGenerationJobOptions(DataGenerationJobOptions, discriminator="tr
         self.type = DataGenerationJobType.TRACES  # type: ignore
 
 
-class TracesDataGenerationJobSource(DataGenerationJobSource, discriminator="traces"):
+class TracesDataGenerationJobSource(
+    DataGenerationJobSource, discriminator="traces"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Traces source for data generation jobs — conversation traces from Application Insights.
 
     :ivar description: Optional description of what this source represents — helps the pipeline
@@ -17953,7 +18193,9 @@ class TracesDataGenerationJobSource(DataGenerationJobSource, discriminator="trac
         self.type = DataGenerationJobSourceType.TRACES  # type: ignore
 
 
-class TracesEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator="traces"):
+class TracesEvaluatorGenerationJobSource(
+    EvaluatorGenerationJobSource, discriminator="traces"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Traces source for evaluator generation jobs — conversation traces from Application Insights.
 
     :ivar description: Optional description of what this source represents — helps the pipeline
@@ -18027,7 +18269,9 @@ class TracesEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discrimin
         self.type = EvaluatorGenerationJobSourceType.TRACES  # type: ignore
 
 
-class TranscriptTextUsageDuration(CreateTranscriptionResponseJsonUsage, discriminator="duration"):
+class TranscriptTextUsageDuration(
+    CreateTranscriptionResponseJsonUsage, discriminator="duration"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Duration Usage.
 
     :ivar type: The type of the usage object. Always ``duration`` for this variant. Required.
@@ -18063,7 +18307,9 @@ class TranscriptTextUsageDuration(CreateTranscriptionResponseJsonUsage, discrimi
         self.type = CreateTranscriptionResponseJsonUsageType.DURATION  # type: ignore
 
 
-class TranscriptTextUsageTokens(CreateTranscriptionResponseJsonUsage, discriminator="tokens"):
+class TranscriptTextUsageTokens(
+    CreateTranscriptionResponseJsonUsage, discriminator="tokens"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Token Usage.
 
     :ivar type: The type of the usage object. Always ``tokens`` for this variant. Required. TOKENS.
@@ -18114,7 +18360,9 @@ class TranscriptTextUsageTokens(CreateTranscriptionResponseJsonUsage, discrimina
         self.type = CreateTranscriptionResponseJsonUsageType.TOKENS  # type: ignore
 
 
-class TranscriptTextUsageTokensInputTokenDetails(_Model):  # pylint: disable=name-too-long
+class TranscriptTextUsageTokensInputTokenDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """TranscriptTextUsageTokensInputTokenDetails.
 
     :ivar text_tokens:
@@ -18145,7 +18393,7 @@ class TranscriptTextUsageTokensInputTokenDetails(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class UpdateModelVersionRequest(_Model):
+class UpdateModelVersionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for updating a model version. Only description and tags can be modified.
 
     :ivar description: The asset description text.
@@ -18178,7 +18426,7 @@ class UpdateModelVersionRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateToolboxRequest(_Model):
+class UpdateToolboxRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UpdateToolboxRequest.
 
     :ivar default_version: The version identifier that the toolbox should point to. When set, the
@@ -18208,7 +18456,9 @@ class UpdateToolboxRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserProfileMemoryItem(MemoryItem, discriminator="user_profile"):
+class UserProfileMemoryItem(
+    MemoryItem, discriminator="user_profile"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A memory item specifically containing user profile information extracted from conversations,
     such as preferences, interests, and personal details.
 
@@ -18251,7 +18501,7 @@ class UserProfileMemoryItem(MemoryItem, discriminator="user_profile"):
         self.kind = MemoryItemKind.USER_PROFILE  # type: ignore
 
 
-class VersionIndicator(_Model):
+class VersionIndicator(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Version indicator determining which agent version backs the session.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -18283,7 +18533,9 @@ class VersionIndicator(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VersionRefIndicator(VersionIndicator, discriminator="version_ref"):
+class VersionRefIndicator(
+    VersionIndicator, discriminator="version_ref"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Version indicator that references a specific agent version by name.
 
     :ivar type: Discriminator value for version_ref. Required. Direct reference to a specific agent
@@ -18317,7 +18569,7 @@ class VersionRefIndicator(VersionIndicator, discriminator="version_ref"):
         self.type = VersionIndicatorType.VERSION_REF  # type: ignore
 
 
-class VersionSelector(_Model):
+class VersionSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VersionSelector.
 
     :ivar version_selection_rules: Required.
@@ -18347,7 +18599,7 @@ class VersionSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentAnimationConfig(_Model):
+class VoiceAgentAnimationConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Animation settings for a voice-agent session.
 
     :ivar model_name: The animation model name.
@@ -18382,7 +18634,7 @@ class VoiceAgentAnimationConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentAvatarIceServer(_Model):
+class VoiceAgentAvatarIceServer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An ICE server used for avatar WebRTC negotiation.
 
     :ivar urls: Required.
@@ -18418,7 +18670,7 @@ class VoiceAgentAvatarIceServer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentAvatarScene(_Model):
+class VoiceAgentAvatarScene(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Avatar placement and motion settings.
 
     :ivar zoom:
@@ -18469,7 +18721,7 @@ class VoiceAgentAvatarScene(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentAvatarVideoBackground(_Model):
+class VoiceAgentAvatarVideoBackground(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The avatar video background.
 
     :ivar image_url:
@@ -18500,7 +18752,7 @@ class VoiceAgentAvatarVideoBackground(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentAvatarVideoCrop(_Model):
+class VoiceAgentAvatarVideoCrop(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The rectangular crop applied to avatar video.
 
     :ivar bottom_right: Required.
@@ -18533,7 +18785,7 @@ class VoiceAgentAvatarVideoCrop(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentAvatarVideoParams(_Model):
+class VoiceAgentAvatarVideoParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Avatar video encoder and presentation settings.
 
     :ivar bitrate:
@@ -18582,7 +18834,7 @@ class VoiceAgentAvatarVideoParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentAvatarVideoResolution(_Model):
+class VoiceAgentAvatarVideoResolution(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The avatar video resolution.
 
     :ivar width: Required.
@@ -18615,7 +18867,9 @@ class VoiceAgentAvatarVideoResolution(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentClientEventConversationItemCreate(_Model):  # pylint: disable=name-too-long
+class VoiceAgentClientEventConversationItemCreate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.create`` client event.
 
     :ivar event_id: Optional client-generated ID used to identify this event.
@@ -18682,7 +18936,9 @@ class VoiceAgentClientEventConversationItemCreate(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentClientEventConversationItemDelete(_Model):  # pylint: disable=name-too-long
+class VoiceAgentClientEventConversationItemDelete(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.delete`` client event.
 
     :ivar event_id: Optional client-generated ID used to identify this event.
@@ -18723,7 +18979,9 @@ class VoiceAgentClientEventConversationItemDelete(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentClientEventConversationItemRetrieve(_Model):  # pylint: disable=name-too-long
+class VoiceAgentClientEventConversationItemRetrieve(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.retrieve`` client event.
 
     :ivar event_id: Optional client-generated ID used to identify this event.
@@ -18764,7 +19022,9 @@ class VoiceAgentClientEventConversationItemRetrieve(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentClientEventConversationItemTruncate(_Model):  # pylint: disable=name-too-long
+class VoiceAgentClientEventConversationItemTruncate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.truncate`` client event.
 
     :ivar event_id: Optional client-generated ID used to identify this event.
@@ -18820,7 +19080,9 @@ class VoiceAgentClientEventConversationItemTruncate(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentClientEventInputAudioBufferAppend(_Model):  # pylint: disable=name-too-long
+class VoiceAgentClientEventInputAudioBufferAppend(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``input_audio_buffer.append`` client event.
 
     :ivar event_id: Optional client-generated ID used to identify this event.
@@ -18863,7 +19125,9 @@ class VoiceAgentClientEventInputAudioBufferAppend(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentClientEventInputAudioBufferClear(_Model):  # pylint: disable=name-too-long
+class VoiceAgentClientEventInputAudioBufferClear(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``input_audio_buffer.clear`` client event.
 
     :ivar event_id: Optional client-generated ID used to identify this event.
@@ -18899,7 +19163,9 @@ class VoiceAgentClientEventInputAudioBufferClear(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentClientEventInputAudioBufferCommit(_Model):  # pylint: disable=name-too-long
+class VoiceAgentClientEventInputAudioBufferCommit(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``input_audio_buffer.commit`` client event.
 
     :ivar event_id: Optional client-generated ID used to identify this event.
@@ -18935,7 +19201,9 @@ class VoiceAgentClientEventInputAudioBufferCommit(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentClientEventOutputAudioBufferClear(_Model):  # pylint: disable=name-too-long
+class VoiceAgentClientEventOutputAudioBufferClear(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``output_audio_buffer.clear`` client event.
 
     :ivar event_id: The unique ID of the client event used for error handling.
@@ -18971,7 +19239,7 @@ class VoiceAgentClientEventOutputAudioBufferClear(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentClientEventResponseCancel(_Model):
+class VoiceAgentClientEventResponseCancel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``response.cancel`` client event.
 
     :ivar event_id: Optional client-generated ID used to identify this event.
@@ -19013,7 +19281,7 @@ class VoiceAgentClientEventResponseCancel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentClientEventResponseCreate(_Model):
+class VoiceAgentClientEventResponseCreate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``response.create`` client event.
 
     :ivar event_id: Optional client-generated ID used to identify this event.
@@ -19055,7 +19323,9 @@ class VoiceAgentClientEventResponseCreate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentClientEventSessionAvatarConnect(_Model):  # pylint: disable=name-too-long
+class VoiceAgentClientEventSessionAvatarConnect(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``session.avatar.connect`` client event.
 
     :ivar type: The event type. Always ``session.avatar.connect``. Required. Default value is
@@ -19095,7 +19365,7 @@ class VoiceAgentClientEventSessionAvatarConnect(_Model):  # pylint: disable=name
         self.type: Literal["session.avatar.connect"] = "session.avatar.connect"
 
 
-class VoiceAgentClientEventSessionUpdate(_Model):
+class VoiceAgentClientEventSessionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``session.update`` client event.
 
     :ivar event_id: Optional client-generated ID used to identify this event. This is an arbitrary
@@ -19141,7 +19411,9 @@ class VoiceAgentClientEventSessionUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentDefinition(AgentDefinition, discriminator="voice"):
+class VoiceAgentDefinition(
+    AgentDefinition, discriminator="voice"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The voice agent definition. Its configuration (model, instructions, audio, tools, and optional
     avatar) drives a managed speech-to-speech experience. Establish realtime voice sessions through
     ``GET /agents/{agent_name}/endpoint/protocols/voice``. Every create or update produces a new
@@ -19332,7 +19604,7 @@ class VoiceAgentDefinition(AgentDefinition, discriminator="voice"):
         self.kind = AgentKind.VOICE  # type: ignore
 
 
-class VoiceAgentEchoCancellation(_Model):
+class VoiceAgentEchoCancellation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server-side echo cancellation settings for input audio.
 
     :ivar type: The echo cancellation implementation. Always ``server_echo_cancellation``.
@@ -19379,7 +19651,7 @@ class VoiceAgentEchoCancellation(_Model):
         self.type: Literal["server_echo_cancellation"] = "server_echo_cancellation"
 
 
-class VoiceAgentTool(_Model):
+class VoiceAgentTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A tool usable by a voice agent.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -19411,7 +19683,9 @@ class VoiceAgentTool(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentFunctionTool(VoiceAgentTool, discriminator="function"):
+class VoiceAgentFunctionTool(
+    VoiceAgentTool, discriminator="function"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A native function tool executed by the client.
 
     :ivar description: The description of the function, including guidance on when and how to call
@@ -19458,7 +19732,7 @@ class VoiceAgentFunctionTool(VoiceAgentTool, discriminator="function"):
         self.type = "function"  # type: ignore
 
 
-class VoiceAgentInterimResponseConfig(_Model):
+class VoiceAgentInterimResponseConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fields shared by interim-response configurations.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -19504,7 +19778,9 @@ class VoiceAgentInterimResponseConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentLlmInterimResponseConfig(VoiceAgentInterimResponseConfig, discriminator="llm_interim_response"):
+class VoiceAgentLlmInterimResponseConfig(
+    VoiceAgentInterimResponseConfig, discriminator="llm_interim_response"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An interim response generated by a language model.
 
     :ivar triggers: Conditions that may trigger one interim response.
@@ -19553,7 +19829,9 @@ class VoiceAgentLlmInterimResponseConfig(VoiceAgentInterimResponseConfig, discri
         self.type = "llm_interim_response"  # type: ignore
 
 
-class VoiceAgentMcpTool(VoiceAgentTool, discriminator="mcp"):
+class VoiceAgentMcpTool(
+    VoiceAgentTool, discriminator="mcp"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An MCP tool available to a voice agent.
 
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
@@ -19660,7 +19938,9 @@ class VoiceAgentMcpTool(VoiceAgentTool, discriminator="mcp"):
         self.type = "mcp"  # type: ignore
 
 
-class VoiceAgentRealtimeResponse(OmitPropertiesRealtimeResponse1):
+class VoiceAgentRealtimeResponse(
+    OmitPropertiesRealtimeResponse1
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A live realtime response returned by the voice-agent service in both ``response.created`` and
     ``response.done`` events.
 
@@ -19748,7 +20028,7 @@ class VoiceAgentRealtimeResponse(OmitPropertiesRealtimeResponse1):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentResponseCreateParams(_Model):
+class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters accepted by a voice-agent ``response.create`` event.
 
     :ivar instructions: The default system instructions (i.e. system message) prepended to model
@@ -19903,7 +20183,7 @@ class VoiceAgentResponseCreateParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentResponseEventContentPart(_Model):
+class VoiceAgentResponseEventContentPart(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A content part carried by a ``response.content_part.*`` server event.
 
     :ivar type: Is either a Literal["audio"] type or a Literal["text"] type.
@@ -19950,7 +20230,7 @@ class VoiceAgentResponseEventContentPart(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceTurnDetection(_Model):
+class VoiceTurnDetection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Turn-detection configuration for a voice agent.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -19993,7 +20273,9 @@ class VoiceTurnDetection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentSemanticVadTurnDetection(VoiceTurnDetection, discriminator="semantic_vad"):
+class VoiceAgentSemanticVadTurnDetection(
+    VoiceTurnDetection, discriminator="semantic_vad"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OpenAI semantic VAD turn-detection settings.
 
     :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
@@ -20042,7 +20324,9 @@ class VoiceAgentSemanticVadTurnDetection(VoiceTurnDetection, discriminator="sema
         self.type = VoiceTurnDetectionType.SEMANTIC_VAD  # type: ignore
 
 
-class VoiceAgentServerEventConversationItemAdded(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventConversationItemAdded(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.added`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20100,7 +20384,9 @@ class VoiceAgentServerEventConversationItemAdded(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventConversationItemCreated(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventConversationItemCreated(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.created`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20158,7 +20444,9 @@ class VoiceAgentServerEventConversationItemCreated(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventConversationItemDeleted(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventConversationItemDeleted(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.deleted`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20199,7 +20487,9 @@ class VoiceAgentServerEventConversationItemDeleted(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventConversationItemDone(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventConversationItemDone(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.done`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20257,7 +20547,9 @@ class VoiceAgentServerEventConversationItemDone(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.input_audio_transcription.completed`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20335,7 +20627,9 @@ class VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted(_Mod
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventConversationItemInputAudioTranscriptionDelta(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventConversationItemInputAudioTranscriptionDelta(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.input_audio_transcription.delta`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20394,7 +20688,9 @@ class VoiceAgentServerEventConversationItemInputAudioTranscriptionDelta(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventConversationItemInputAudioTranscriptionFailed(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventConversationItemInputAudioTranscriptionFailed(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.input_audio_transcription.failed`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20450,7 +20746,9 @@ class VoiceAgentServerEventConversationItemInputAudioTranscriptionFailed(_Model)
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventConversationItemInputAudioTranscriptionSegment(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventConversationItemInputAudioTranscriptionSegment(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.input_audio_transcription.segment`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20523,7 +20821,9 @@ class VoiceAgentServerEventConversationItemInputAudioTranscriptionSegment(_Model
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventConversationItemRetrieved(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventConversationItemRetrieved(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.retrieved`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20577,7 +20877,9 @@ class VoiceAgentServerEventConversationItemRetrieved(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventConversationItemTruncated(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventConversationItemTruncated(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``conversation.item.truncated`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20636,7 +20938,9 @@ class VoiceAgentServerEventConversationItemTruncated(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventInputAudioBufferCleared(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventInputAudioBufferCleared(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``input_audio_buffer.cleared`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20672,7 +20976,9 @@ class VoiceAgentServerEventInputAudioBufferCleared(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventInputAudioBufferCommitted(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventInputAudioBufferCommitted(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``input_audio_buffer.committed`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20718,7 +21024,9 @@ class VoiceAgentServerEventInputAudioBufferCommitted(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventInputAudioBufferSpeechStarted(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventInputAudioBufferSpeechStarted(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``input_audio_buffer.speech_started`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20770,7 +21078,9 @@ class VoiceAgentServerEventInputAudioBufferSpeechStarted(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventInputAudioBufferSpeechStopped(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventInputAudioBufferSpeechStopped(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``input_audio_buffer.speech_stopped`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20821,7 +21131,9 @@ class VoiceAgentServerEventInputAudioBufferSpeechStopped(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventInputAudioBufferTimeoutTriggered(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventInputAudioBufferTimeoutTriggered(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``input_audio_buffer.timeout_triggered`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20877,7 +21189,9 @@ class VoiceAgentServerEventInputAudioBufferTimeoutTriggered(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventMcpListToolsCompleted(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventMcpListToolsCompleted(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``mcp_list_tools.completed`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20918,7 +21232,7 @@ class VoiceAgentServerEventMcpListToolsCompleted(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventMcpListToolsFailed(_Model):
+class VoiceAgentServerEventMcpListToolsFailed(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``mcp_list_tools.failed`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20958,7 +21272,9 @@ class VoiceAgentServerEventMcpListToolsFailed(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventMcpListToolsInProgress(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventMcpListToolsInProgress(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``mcp_list_tools.in_progress`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20999,7 +21315,9 @@ class VoiceAgentServerEventMcpListToolsInProgress(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventOutputAudioBufferCleared(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventOutputAudioBufferCleared(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``output_audio_buffer.cleared`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21040,7 +21358,7 @@ class VoiceAgentServerEventOutputAudioBufferCleared(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventRateLimitsUpdated(_Model):
+class VoiceAgentServerEventRateLimitsUpdated(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``rate_limits.updated`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21083,7 +21401,9 @@ class VoiceAgentServerEventRateLimitsUpdated(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseAnimationBlendshapesDelta(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseAnimationBlendshapesDelta(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.animation_blendshapes.delta`` server event.
 
     :ivar type: Required. Default value is "response.animation_blendshapes.delta".
@@ -21148,7 +21468,9 @@ class VoiceAgentServerEventResponseAnimationBlendshapesDelta(_Model):  # pylint:
         self.type: Literal["response.animation_blendshapes.delta"] = "response.animation_blendshapes.delta"
 
 
-class VoiceAgentServerEventResponseAnimationBlendshapesDone(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseAnimationBlendshapesDone(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.animation_blendshapes.done`` server event.
 
     :ivar type: Required. Default value is "response.animation_blendshapes.done".
@@ -21198,7 +21520,9 @@ class VoiceAgentServerEventResponseAnimationBlendshapesDone(_Model):  # pylint: 
         self.type: Literal["response.animation_blendshapes.done"] = "response.animation_blendshapes.done"
 
 
-class VoiceAgentServerEventResponseAnimationVisemeDelta(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseAnimationVisemeDelta(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.animation_viseme.delta`` server event.
 
     :ivar type: Required. Default value is "response.animation_viseme.delta".
@@ -21265,7 +21589,9 @@ class VoiceAgentServerEventResponseAnimationVisemeDelta(_Model):  # pylint: disa
         self.type: Literal["response.animation_viseme.delta"] = "response.animation_viseme.delta"
 
 
-class VoiceAgentServerEventResponseAnimationVisemeDone(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseAnimationVisemeDone(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.animation_viseme.done`` server event.
 
     :ivar type: Required. Default value is "response.animation_viseme.done".
@@ -21320,7 +21646,7 @@ class VoiceAgentServerEventResponseAnimationVisemeDone(_Model):  # pylint: disab
         self.type: Literal["response.animation_viseme.done"] = "response.animation_viseme.done"
 
 
-class VoiceAgentServerEventResponseAudioDelta(_Model):
+class VoiceAgentServerEventResponseAudioDelta(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``response.output_audio.delta`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21337,7 +21663,7 @@ class VoiceAgentServerEventResponseAudioDelta(_Model):
     :ivar content_index: The index of the content part in the item's content array. Required.
     :vartype content_index: int
     :ivar delta: Base64-encoded audio data delta. Required.
-    :vartype delta: str
+    :vartype delta: bytes
     """
 
     event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -21354,7 +21680,7 @@ class VoiceAgentServerEventResponseAudioDelta(_Model):
     """The index of the output item in the response. Required."""
     content_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the content part in the item's content array. Required."""
-    delta: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    delta: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64")
     """Base64-encoded audio data delta. Required."""
 
     @overload
@@ -21367,7 +21693,7 @@ class VoiceAgentServerEventResponseAudioDelta(_Model):
         item_id: str,
         output_index: int,
         content_index: int,
-        delta: str,
+        delta: bytes,
     ) -> None: ...
 
     @overload
@@ -21381,7 +21707,7 @@ class VoiceAgentServerEventResponseAudioDelta(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseAudioDone(_Model):
+class VoiceAgentServerEventResponseAudioDone(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``response.output_audio.done`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21437,7 +21763,9 @@ class VoiceAgentServerEventResponseAudioDone(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseAudioTimestampDelta(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseAudioTimestampDelta(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.audio_timestamp.delta`` server event.
 
     :ivar type: Required. Default value is "response.audio_timestamp.delta".
@@ -21516,7 +21844,9 @@ class VoiceAgentServerEventResponseAudioTimestampDelta(_Model):  # pylint: disab
         self.timestamp_type: Literal["word"] = "word"
 
 
-class VoiceAgentServerEventResponseAudioTimestampDone(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseAudioTimestampDone(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.audio_timestamp.done`` server event.
 
     :ivar type: Required. Default value is "response.audio_timestamp.done".
@@ -21571,7 +21901,9 @@ class VoiceAgentServerEventResponseAudioTimestampDone(_Model):  # pylint: disabl
         self.type: Literal["response.audio_timestamp.done"] = "response.audio_timestamp.done"
 
 
-class VoiceAgentServerEventResponseAudioTranscriptDelta(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseAudioTranscriptDelta(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.output_audio_transcript.delta`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21633,7 +21965,9 @@ class VoiceAgentServerEventResponseAudioTranscriptDelta(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseAudioTranscriptDone(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseAudioTranscriptDone(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.output_audio_transcript.done`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21695,7 +22029,9 @@ class VoiceAgentServerEventResponseAudioTranscriptDone(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseContentPartDone(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseContentPartDone(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.content_part.done`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21758,7 +22094,7 @@ class VoiceAgentServerEventResponseContentPartDone(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseCreated(_Model):
+class VoiceAgentServerEventResponseCreated(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``response.created`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21800,7 +22136,7 @@ class VoiceAgentServerEventResponseCreated(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseDone(_Model):
+class VoiceAgentServerEventResponseDone(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``response.done`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21842,7 +22178,9 @@ class VoiceAgentServerEventResponseDone(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseFunctionCallArgumentsDelta(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseFunctionCallArgumentsDelta(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.function_call_arguments.delta`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21904,7 +22242,9 @@ class VoiceAgentServerEventResponseFunctionCallArgumentsDelta(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseFunctionCallArgumentsDone(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseFunctionCallArgumentsDone(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.function_call_arguments.done`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21971,7 +22311,9 @@ class VoiceAgentServerEventResponseFunctionCallArgumentsDone(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseMcpCallArgumentsDelta(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseMcpCallArgumentsDelta(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.mcp_call_arguments.delta`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -22032,7 +22374,9 @@ class VoiceAgentServerEventResponseMcpCallArgumentsDelta(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseMcpCallArgumentsDone(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseMcpCallArgumentsDone(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.mcp_call_arguments.done`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -22089,7 +22433,9 @@ class VoiceAgentServerEventResponseMcpCallArgumentsDone(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseMcpCallCompleted(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseMcpCallCompleted(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.mcp_call.completed`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -22135,7 +22481,9 @@ class VoiceAgentServerEventResponseMcpCallCompleted(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseMcpCallFailed(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseMcpCallFailed(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.mcp_call.failed`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -22181,7 +22529,9 @@ class VoiceAgentServerEventResponseMcpCallFailed(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseMcpCallInProgress(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseMcpCallInProgress(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.mcp_call.in_progress`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -22228,7 +22578,9 @@ class VoiceAgentServerEventResponseMcpCallInProgress(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseOutputItemAdded(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseOutputItemAdded(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.output_item.added`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -22292,7 +22644,9 @@ class VoiceAgentServerEventResponseOutputItemAdded(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseOutputItemDone(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventResponseOutputItemDone(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``response.output_item.done`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -22356,7 +22710,7 @@ class VoiceAgentServerEventResponseOutputItemDone(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseTextDelta(_Model):
+class VoiceAgentServerEventResponseTextDelta(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``response.output_text.delta`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -22417,7 +22771,7 @@ class VoiceAgentServerEventResponseTextDelta(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseTextDone(_Model):
+class VoiceAgentServerEventResponseTextDone(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``response.output_text.done`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -22478,7 +22832,7 @@ class VoiceAgentServerEventResponseTextDone(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventResponseVideoDelta(_Model):
+class VoiceAgentServerEventResponseVideoDelta(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``response.video.delta`` server event.
 
     :ivar type: Required. Default value is "response.video.delta".
@@ -22526,7 +22880,9 @@ class VoiceAgentServerEventResponseVideoDelta(_Model):
         self.type: Literal["response.video.delta"] = "response.video.delta"
 
 
-class VoiceAgentServerEventSessionAvatarConnecting(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventSessionAvatarConnecting(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``session.avatar.connecting`` server event.
 
     :ivar type: Required. Default value is "session.avatar.connecting".
@@ -22564,7 +22920,9 @@ class VoiceAgentServerEventSessionAvatarConnecting(_Model):  # pylint: disable=n
         self.type: Literal["session.avatar.connecting"] = "session.avatar.connecting"
 
 
-class VoiceAgentServerEventSessionAvatarSwitchToIdle(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventSessionAvatarSwitchToIdle(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``session.avatar.switch_to_idle`` server event.
 
     :ivar type: Required. Default value is "session.avatar.switch_to_idle".
@@ -22603,7 +22961,9 @@ class VoiceAgentServerEventSessionAvatarSwitchToIdle(_Model):  # pylint: disable
         self.type: Literal["session.avatar.switch_to_idle"] = "session.avatar.switch_to_idle"
 
 
-class VoiceAgentServerEventSessionAvatarSwitchToSpeaking(_Model):  # pylint: disable=name-too-long
+class VoiceAgentServerEventSessionAvatarSwitchToSpeaking(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ``session.avatar.switch_to_speaking`` server event.
 
     :ivar type: Required. Default value is "session.avatar.switch_to_speaking".
@@ -22642,7 +23002,7 @@ class VoiceAgentServerEventSessionAvatarSwitchToSpeaking(_Model):  # pylint: dis
         self.type: Literal["session.avatar.switch_to_speaking"] = "session.avatar.switch_to_speaking"
 
 
-class VoiceAgentServerEventSessionCreated(_Model):
+class VoiceAgentServerEventSessionCreated(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``session.created`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -22691,7 +23051,7 @@ class VoiceAgentServerEventSessionCreated(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventSessionUpdated(_Model):
+class VoiceAgentServerEventSessionUpdated(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``session.updated`` server event.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -22733,7 +23093,7 @@ class VoiceAgentServerEventSessionUpdated(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentServerEventWarning(_Model):
+class VoiceAgentServerEventWarning(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ``warning`` server event.
 
     :ivar type: Required. Default value is "warning".
@@ -22773,7 +23133,7 @@ class VoiceAgentServerEventWarning(_Model):
         self.type: Literal["warning"] = "warning"
 
 
-class VoiceAgentServerEventWarningDetails(_Model):
+class VoiceAgentServerEventWarningDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of a non-fatal warning.
 
     :ivar message: Required.
@@ -22809,7 +23169,7 @@ class VoiceAgentServerEventWarningDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAvatarConfig(_Model):
+class VoiceAvatarConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Avatar configuration for a voice agent. These values are session defaults and may be overridden
     when connecting.
 
@@ -22886,7 +23246,7 @@ class VoiceAvatarConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentSessionAvatarConfig(VoiceAvatarConfig):
+class VoiceAgentSessionAvatarConfig(VoiceAvatarConfig):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Avatar settings accepted by the stable voice-agent WebSocket contract.
 
     :ivar type: The avatar type. Required. Known values are: "video_avatar" and "photo_avatar".
@@ -22943,7 +23303,7 @@ class VoiceAgentSessionAvatarConfig(VoiceAvatarConfig):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentSessionResponseConfig(_Model):
+class VoiceAgentSessionResponseConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The effective stable realtime session settings returned by the voice-agent service.
 
     :ivar type: The session type. Always ``realtime``. Required. Default value is "realtime".
@@ -23097,7 +23457,7 @@ class VoiceAgentSessionResponseConfig(_Model):
         self.object: Literal["realtime.session"] = "realtime.session"
 
 
-class VoiceAgentSessionUpdateConfig(_Model):
+class VoiceAgentSessionUpdateConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The stable realtime session settings accepted in a ``session.update`` client event.
 
     :ivar type: The session type. Always ``realtime``. Required. Default value is "realtime".
@@ -23228,7 +23588,9 @@ class VoiceAgentSessionUpdateConfig(_Model):
         self.type: Literal["realtime"] = "realtime"
 
 
-class VoiceAgentStaticInterimResponseConfig(VoiceAgentInterimResponseConfig, discriminator="static_interim_response"):
+class VoiceAgentStaticInterimResponseConfig(
+    VoiceAgentInterimResponseConfig, discriminator="static_interim_response"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A static interim response selected from configured text.
 
     :ivar triggers: Conditions that may trigger one interim response.
@@ -23267,7 +23629,7 @@ class VoiceAgentStaticInterimResponseConfig(VoiceAgentInterimResponseConfig, dis
         self.type = "static_interim_response"  # type: ignore
 
 
-class VoiceAgentTranscriptionPhrase(_Model):
+class VoiceAgentTranscriptionPhrase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A transcribed phrase with timing information.
 
     :ivar offset_milliseconds: The phrase offset from the beginning of the audio, in milliseconds.
@@ -23327,7 +23689,7 @@ class VoiceAgentTranscriptionPhrase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentTranscriptionWord(_Model):
+class VoiceAgentTranscriptionWord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A time-stamped word in an input-audio transcription.
 
     :ivar text: The transcribed word text. Required.
@@ -23370,7 +23732,9 @@ class VoiceAgentTranscriptionWord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAssistantMessageItem(RealtimeConversationItemMessageAssistant):
+class VoiceAssistantMessageItem(
+    RealtimeConversationItemMessageAssistant
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An assistant message item. Only ``output_text`` and ``output_audio`` content are valid for
     assistant messages.
 
@@ -23422,7 +23786,7 @@ class VoiceAssistantMessageItem(RealtimeConversationItemMessageAssistant):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAudioConfig(_Model):
+class VoiceAudioConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The audio configuration for a voice agent. These values are session defaults and may be
     overridden when connecting.
 
@@ -23460,7 +23824,7 @@ class VoiceAudioConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAudioFormat(_Model):
+class VoiceAudioFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An audio format. Follows the OpenAI Realtime session schema; ``type`` carries the media
     subtype.
 
@@ -23502,7 +23866,7 @@ class VoiceAudioFormat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAudioInputConfig(_Model):
+class VoiceAudioInputConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input audio configuration for a voice agent.
 
     :ivar format: The input audio format.
@@ -23573,7 +23937,7 @@ class VoiceAudioInputConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAudioOutputConfig(_Model):
+class VoiceAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Output audio configuration for a voice agent.
     Provider-specific fields are selected by ``voice_type``:
 
@@ -23721,7 +24085,9 @@ class VoiceAudioOutputConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceAzureSemanticVadEnTurnDetection(VoiceTurnDetection, discriminator="azure_semantic_vad_en"):
+class VoiceAzureSemanticVadEnTurnDetection(
+    VoiceTurnDetection, discriminator="azure_semantic_vad_en"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """English-optimized Azure semantic voice activity detection.
 
     :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
@@ -23812,7 +24178,7 @@ class VoiceAzureSemanticVadEnTurnDetection(VoiceTurnDetection, discriminator="az
 
 class VoiceAzureSemanticVadMultilingualTurnDetection(
     VoiceTurnDetection, discriminator="azure_semantic_vad_multilingual"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Multilingual Azure semantic voice activity detection.
 
     :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
@@ -23906,7 +24272,9 @@ class VoiceAzureSemanticVadMultilingualTurnDetection(
         self.type = VoiceTurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL  # type: ignore
 
 
-class VoiceAzureSemanticVadTurnDetection(VoiceTurnDetection, discriminator="azure_semantic_vad"):
+class VoiceAzureSemanticVadTurnDetection(
+    VoiceTurnDetection, discriminator="azure_semantic_vad"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure semantic voice activity detection.
 
     :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
@@ -24000,7 +24368,7 @@ class VoiceAzureSemanticVadTurnDetection(VoiceTurnDetection, discriminator="azur
         self.type = VoiceTurnDetectionType.AZURE_SEMANTIC_VAD  # type: ignore
 
 
-class VoiceConversation(_Model):
+class VoiceConversation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A persisted voice conversation. The Foundry envelope that owns a voice agent's stored
     transcript, responses, per-turn metrics, and audio. It is the parent, retention, and delete
     boundary: deleting it cascades to its responses, items, metrics, and audio. When finalization
@@ -24089,7 +24457,7 @@ class VoiceConversation(_Model):
         self.object: Literal["voice.conversation"] = "voice.conversation"
 
 
-class VoiceEndOfUtteranceDetection(_Model):
+class VoiceEndOfUtteranceDetection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Semantic end-of-utterance detection configuration.
 
     :ivar model: The semantic detection model. Required. Known values are: "semantic_detection_v1",
@@ -24138,7 +24506,9 @@ class VoiceEndOfUtteranceDetection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceFunctionCallItem(RealtimeConversationItemFunctionCall):
+class VoiceFunctionCallItem(
+    RealtimeConversationItemFunctionCall
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A function call request item.
 
     :ivar id: The unique ID of the item. This may be provided by the client or generated by the
@@ -24193,7 +24563,9 @@ class VoiceFunctionCallItem(RealtimeConversationItemFunctionCall):
         super().__init__(*args, **kwargs)
 
 
-class VoiceFunctionCallOutputItem(RealtimeConversationItemFunctionCallOutput):
+class VoiceFunctionCallOutputItem(
+    RealtimeConversationItemFunctionCallOutput
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A function call output item.
 
     :ivar id: The unique ID of the item. This may be provided by the client or generated by the
@@ -24253,7 +24625,7 @@ class VoiceFunctionCallOutputItem(RealtimeConversationItemFunctionCallOutput):
         super().__init__(*args, **kwargs)
 
 
-class VoiceInputTranscription(_Model):
+class VoiceInputTranscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Asynchronous input-audio transcription configuration. Extends the OpenAI Realtime transcription
     options with the Azure and MAI transcription models, custom speech models, and phrase hints.
 
@@ -24335,7 +24707,7 @@ class VoiceInputTranscription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceItemAudioResponse(_Model):
+class VoiceItemAudioResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata for a single conversation item's audio segment. For bring-your-own-storage (BYOS), the
     response includes ``blob_uri``, a direct customer-storage URI without a SAS token, that the
     customer accesses with their own credentials. For Foundry-managed storage, ``blob_uri`` is
@@ -24427,7 +24799,9 @@ class VoiceItemAudioResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceMcpApprovalRequestItem(RealtimeMCPApprovalRequest):
+class VoiceMcpApprovalRequestItem(
+    RealtimeMCPApprovalRequest
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An MCP approval request item.
 
     :ivar type: The type of the item. Always ``mcp_approval_request``. Required.
@@ -24473,7 +24847,9 @@ class VoiceMcpApprovalRequestItem(RealtimeMCPApprovalRequest):
         super().__init__(*args, **kwargs)
 
 
-class VoiceMcpApprovalResponseItem(RealtimeMCPApprovalResponse):
+class VoiceMcpApprovalResponseItem(
+    RealtimeMCPApprovalResponse
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An MCP approval response item (client-created).
 
     :ivar type: The type of the item. Always ``mcp_approval_response``. Required.
@@ -24519,7 +24895,7 @@ class VoiceMcpApprovalResponseItem(RealtimeMCPApprovalResponse):
         super().__init__(*args, **kwargs)
 
 
-class VoiceMcpCallItem(RealtimeMCPToolCall):
+class VoiceMcpCallItem(RealtimeMCPToolCall):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An MCP call item.
 
     :ivar type: The type of the item. Always ``mcp_call``. Required. MCP_CALL.
@@ -24573,7 +24949,7 @@ class VoiceMcpCallItem(RealtimeMCPToolCall):
         super().__init__(*args, **kwargs)
 
 
-class VoiceMcpListToolsItem(RealtimeMCPListTools):
+class VoiceMcpListToolsItem(RealtimeMCPListTools):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An MCP list-tools item.
 
     :ivar type: The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS.
@@ -24615,7 +24991,7 @@ class VoiceMcpListToolsItem(RealtimeMCPListTools):
         super().__init__(*args, **kwargs)
 
 
-class VoiceNoiseReduction(_Model):
+class VoiceNoiseReduction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input audio noise reduction configuration.
 
     :ivar type: The noise reduction mode. Required. Known values are: "near_field", "far_field",
@@ -24647,7 +25023,7 @@ class VoiceNoiseReduction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceRecordingChannelLayout(_Model):
+class VoiceRecordingChannelLayout(_Model):  # pylint: disable=docstring-missing-param
     """The role assigned to each channel of a merged stereo voice recording.
 
     :ivar left: The role carried on the left channel. Always ``user``. Required. Default value is
@@ -24669,7 +25045,7 @@ class VoiceRecordingChannelLayout(_Model):
         self.right: Literal["agent"] = "agent"
 
 
-class VoiceRecordingResponse(_Model):
+class VoiceRecordingResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata for the merged, whole-call stereo recording of a voice conversation (user audio on the
     left channel, agent audio on the right). Built once from the per-turn segments after the
     session ends and durably cached. The common metadata (format, sample rate, channels, channel
@@ -24746,7 +25122,7 @@ class VoiceRecordingResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceResponse(OmitPropertiesRealtimeResponse):
+class VoiceResponse(OmitPropertiesRealtimeResponse):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A persisted voice response representing one model inference turn within a conversation. In list
     results the ``output`` projection may be omitted; retrieve the full response (``GET
     .../responses/{response_id}``) or the paged response-items route (``GET
@@ -24766,10 +25142,6 @@ class VoiceResponse(OmitPropertiesRealtimeResponse):
      session will maintain a conversation context and append new Items to the Conversation, thus
      output from previous turns (text and audio tokens) will become the input for later turns.
     :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
-    :ivar output_modalities: The set of modalities the model used to respond, currently the only
-     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
-     transcript. Setting the output to mode ``text`` will disable audio output from the model.
-    :vartype output_modalities: list[str or str]
     :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
      inclusive of tool calls, that was used in this response. Is either a int type or a
      Literal["inf"] type.
@@ -24795,6 +25167,9 @@ class VoiceResponse(OmitPropertiesRealtimeResponse):
     :vartype audio: ~azure.ai.projects.models.VoiceResponseAudio
     :ivar metadata: A set of key-value pairs attached to the response.
     :vartype metadata: dict[str, str]
+    :ivar output_modalities: The output modalities used for the response, e.g. ``["text",
+     "audio"]``. Audio output always includes a text transcript.
+    :vartype output_modalities: list[str or str]
     :ivar temperature: The sampling temperature used for the response.
     :vartype temperature: float
     :ivar created_at: The Unix timestamp (in seconds) for when the response was created.
@@ -24842,11 +25217,11 @@ class VoiceResponse(OmitPropertiesRealtimeResponse):
         status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
         status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
         usage: Optional["_models.RealtimeResponseUsage"] = None,
-        output_modalities: Optional[list[Literal["text", "audio"]]] = None,
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         output: Optional[list["_unions.VoiceConversationItem"]] = None,
         audio: Optional["_models.VoiceResponseAudio"] = None,
         metadata: Optional[dict[str, str]] = None,
+        output_modalities: Optional[list[Literal["text", "audio"]]] = None,
         temperature: Optional[float] = None,
         created_at: Optional[datetime.datetime] = None,
         completed_at: Optional[datetime.datetime] = None,
@@ -24863,7 +25238,7 @@ class VoiceResponse(OmitPropertiesRealtimeResponse):
         super().__init__(*args, **kwargs)
 
 
-class VoiceResponseAudio(_Model):
+class VoiceResponseAudio(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Audio configuration for a response. Follows the OpenAI Realtime GA ``audio`` object shape.
 
     :ivar output: The audio output configuration used for the response.
@@ -24893,7 +25268,7 @@ class VoiceResponseAudio(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceResponseAudioOutput(_Model):
+class VoiceResponseAudioOutput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The flat response audio-output projection, with optional ``voice``, ``voice_type``,
     ``voice_locale``, and ``format`` fields.
 
@@ -24945,7 +25320,9 @@ class VoiceResponseAudioOutput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VoiceServerVadTurnDetection(VoiceTurnDetection, discriminator="server_vad"):
+class VoiceServerVadTurnDetection(
+    VoiceTurnDetection, discriminator="server_vad"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server-side voice activity detection.
 
     :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
@@ -25017,7 +25394,9 @@ class VoiceServerVadTurnDetection(VoiceTurnDetection, discriminator="server_vad"
         self.type = VoiceTurnDetectionType.SERVER_VAD  # type: ignore
 
 
-class VoiceSystemMessageItem(RealtimeConversationItemMessageSystem):
+class VoiceSystemMessageItem(
+    RealtimeConversationItemMessageSystem
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A system message item. Only ``input_text`` content is valid for system messages.
 
     :ivar id: The unique ID of the item. This may be provided by the client or generated by the
@@ -25067,7 +25446,9 @@ class VoiceSystemMessageItem(RealtimeConversationItemMessageSystem):
         super().__init__(*args, **kwargs)
 
 
-class VoiceSystemTool(VoiceAgentTool, discriminator="system"):
+class VoiceSystemTool(
+    VoiceAgentTool, discriminator="system"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A service-managed control that acts on the active voice session without customer code or
     external authentication.
 
@@ -25110,7 +25491,9 @@ class VoiceSystemTool(VoiceAgentTool, discriminator="system"):
         self.type = "system"  # type: ignore
 
 
-class VoiceToolboxTool(VoiceAgentTool, discriminator="toolbox"):
+class VoiceToolboxTool(
+    VoiceAgentTool, discriminator="toolbox"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reference to a Foundry toolbox, which is a versioned bundle of tools executed through its MCP
     endpoint.
 
@@ -25158,7 +25541,9 @@ class VoiceToolboxTool(VoiceAgentTool, discriminator="toolbox"):
         self.type = "toolbox"  # type: ignore
 
 
-class VoiceUserMessageItem(RealtimeConversationItemMessageUser):
+class VoiceUserMessageItem(
+    RealtimeConversationItemMessageUser
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A user message item. ``input_text``, ``input_audio``, and ``input_image`` content are valid for
     user messages.
 
@@ -25209,7 +25594,9 @@ class VoiceUserMessageItem(RealtimeConversationItemMessageUser):
         super().__init__(*args, **kwargs)
 
 
-class WebIQPreviewTool(Tool, discriminator="web_iq_preview"):
+class WebIQPreviewTool(
+    Tool, discriminator="web_iq_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A WebIQ server-side tool.
 
     :ivar type: The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW.
@@ -25259,7 +25646,9 @@ class WebIQPreviewTool(Tool, discriminator="web_iq_preview"):
         self.type = ToolType.WEB_IQ_PREVIEW  # type: ignore
 
 
-class WebIQPreviewToolboxTool(ToolboxTool, discriminator="web_iq_preview"):
+class WebIQPreviewToolboxTool(
+    ToolboxTool, discriminator="web_iq_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A WebIQ tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -25320,7 +25709,7 @@ class WebIQPreviewToolboxTool(ToolboxTool, discriminator="web_iq_preview"):
         self.type = ToolboxToolType.WEB_IQ_PREVIEW  # type: ignore
 
 
-class WebSearchApproximateLocation(_Model):
+class WebSearchApproximateLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Web search approximate location.
 
     :ivar type: The type of location approximation. Always ``approximate``. Required. Default value
@@ -25366,7 +25755,7 @@ class WebSearchApproximateLocation(_Model):
         self.type: Literal["approximate"] = "approximate"
 
 
-class WebSearchConfiguration(_Model):
+class WebSearchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A web search configuration for bing custom search.
 
     :ivar project_connection_id: Project connection id for grounding with bing custom search.
@@ -25400,7 +25789,9 @@ class WebSearchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebSearchPreviewTool(Tool, discriminator="web_search_preview"):
+class WebSearchPreviewTool(
+    Tool, discriminator="web_search_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Web search preview.
 
     :ivar type: The type of the web search tool. One of ``web_search_preview`` or
@@ -25453,7 +25844,7 @@ class WebSearchPreviewTool(Tool, discriminator="web_search_preview"):
         self.type = ToolType.WEB_SEARCH_PREVIEW  # type: ignore
 
 
-class WebSearchTool(Tool, discriminator="web_search"):
+class WebSearchTool(Tool, discriminator="web_search"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Web search.
 
     :ivar type: The type of the web search tool. One of ``web_search`` or
@@ -25534,7 +25925,9 @@ class WebSearchTool(Tool, discriminator="web_search"):
         self.type = ToolType.WEB_SEARCH  # type: ignore
 
 
-class WebSearchToolboxTool(ToolboxTool, discriminator="web_search"):
+class WebSearchToolboxTool(
+    ToolboxTool, discriminator="web_search"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A web search tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -25605,7 +25998,7 @@ class WebSearchToolboxTool(ToolboxTool, discriminator="web_search"):
         self.type = ToolboxToolType.WEB_SEARCH  # type: ignore
 
 
-class WebSearchToolFilters(_Model):
+class WebSearchToolFilters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WebSearchToolFilters.
 
     :ivar allowed_domains:
@@ -25632,7 +26025,9 @@ class WebSearchToolFilters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WeeklyRecurrenceSchedule(RecurrenceSchedule, discriminator="Weekly"):
+class WeeklyRecurrenceSchedule(
+    RecurrenceSchedule, discriminator="Weekly"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Weekly recurrence schedule.
 
     :ivar type: Weekly recurrence type. Required. Weekly recurrence pattern.
@@ -25667,7 +26062,9 @@ class WeeklyRecurrenceSchedule(RecurrenceSchedule, discriminator="Weekly"):
         self.type = RecurrenceType.WEEKLY  # type: ignore
 
 
-class WorkflowAgentDefinition(AgentDefinition, discriminator="workflow"):
+class WorkflowAgentDefinition(
+    AgentDefinition, discriminator="workflow"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workflow agent definition. Microsoft Foundry is retiring workflows on December 1, 2026. If
     you're looking to build new workflows, use Microsoft Agent Framework. To migrate existing
     workflows, see the `Migration guide
@@ -25706,7 +26103,9 @@ class WorkflowAgentDefinition(AgentDefinition, discriminator="workflow"):
         self.kind = AgentKind.WORKFLOW  # type: ignore
 
 
-class WorkIQPreviewTool(Tool, discriminator="work_iq_preview"):
+class WorkIQPreviewTool(
+    Tool, discriminator="work_iq_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A WorkIQ server-side tool.
 
     :ivar type: The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW.
@@ -25739,7 +26138,9 @@ class WorkIQPreviewTool(Tool, discriminator="work_iq_preview"):
         self.type = ToolType.WORK_IQ_PREVIEW  # type: ignore
 
 
-class WorkIQPreviewToolboxTool(ToolboxTool, discriminator="work_iq_preview"):
+class WorkIQPreviewToolboxTool(
+    ToolboxTool, discriminator="work_iq_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A WorkIQ tool stored in a toolbox.
 
     :ivar name: Optional user-defined name for this tool or configuration.
