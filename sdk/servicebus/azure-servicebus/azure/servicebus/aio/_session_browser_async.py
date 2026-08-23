@@ -15,6 +15,7 @@ from .._common.constants import (
     REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
 )
 from .._common import mgmt_handlers
+from .._common.utils import get_link_ready_deadline, check_link_ready_deadline
 from .._session_browser import _to_last_updated_ms, _page_request_body, _PAGE_SIZE
 from ..exceptions import OperationTimeoutError
 from ._async_utils import create_authentication
@@ -49,7 +50,7 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             client_name=self._name,
         )
 
-    async def _open(self):
+    async def _open(self, timeout: Optional[float] = None):
         if self._running:
             return
         if self._handler:
@@ -58,7 +59,9 @@ class _SessionBrowserAsync(AsyncBaseHandler):
         self._create_handler(auth)
         try:
             await self._handler.open_async(connection=self._connection)
+            deadline = get_link_ready_deadline(timeout)
             while not await self._handler.client_ready_async():
+                check_link_ready_deadline(deadline)
                 await asyncio.sleep(0.05)
             self._running = True
         except:

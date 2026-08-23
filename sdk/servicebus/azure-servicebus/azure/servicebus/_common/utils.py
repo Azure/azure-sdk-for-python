@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import sys
+import time
 import datetime
 import logging
 import functools
@@ -42,6 +43,7 @@ from .constants import (
     MAX_SERVER_TIMEOUT_MS,
 )
 from ..amqp import AmqpAnnotatedMessage
+from ..exceptions import OperationTimeoutError
 
 if TYPE_CHECKING:
     try:
@@ -107,6 +109,42 @@ def get_server_timeout_ms(timeout: Optional[float]) -> int:
         return DEFAULT_SERVER_TIMEOUT_MS
     capped = min(timeout, MAX_SERVER_TIMEOUT_MS / 1000)
     return max(int(capped * 1000) - SERVER_TIMEOUT_BUFFER_MS, 0)
+
+
+def get_attempt_timeout(remaining_timeout: Optional[float], try_timeout: Optional[float]) -> Optional[float]:
+    """Return the timeout for a single attempt of a retryable operation.
+
+    Recomputed per attempt, so a slow attempt does not shrink later attempts' budgets.
+
+    :param float or None remaining_timeout: The caller's remaining timeout in seconds, or None.
+    :param float or None try_timeout: The per-attempt timeout in seconds. None or non-positive means off.
+    :rtype: float or None
+    :returns: The per-attempt timeout capped by the remaining timeout, or None if unbounded.
+    """
+    if try_timeout is None or try_timeout <= 0:
+        return remaining_timeout
+    if remaining_timeout is None:
+        return try_timeout
+    return min(try_timeout, remaining_timeout)
+
+
+def get_link_ready_deadline(timeout: Optional[float]) -> Optional[float]:
+    """Return the absolute time by which an AMQP link must report ready, or None if unbounded.
+
+    :param float or None timeout: The per-attempt timeout in seconds, or None.
+    :rtype: float or None
+    :returns: The absolute deadline, or None when the wait is unbounded.
+    """
+    return (time.time() + timeout) if timeout else None
+
+
+def check_link_ready_deadline(deadline: Optional[float]) -> None:
+    """Raise if an AMQP link has not reported ready by its deadline.
+
+    :param float or None deadline: The absolute deadline, or None when unbounded.
+    """
+    if deadline and time.time() > deadline:
+        raise OperationTimeoutError(message="Timed out waiting for the AMQP link to open.")
 
 
 def build_uri(address, entity):

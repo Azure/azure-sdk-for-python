@@ -26,7 +26,11 @@ from .._common.constants import (
     MAX_BATCH_SIZE_STANDARD,
 )
 from .._common import mgmt_handlers
-from .._common.utils import transform_outbound_messages
+from .._common.utils import (
+    transform_outbound_messages,
+    get_link_ready_deadline,
+    check_link_ready_deadline,
+)
 from .._common.tracing import (
     send_trace_context_manager,
     trace_message,
@@ -200,7 +204,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             client_name=self._name,
         )
 
-    async def _open(self):
+    async def _open(self, timeout: Optional[float] = None):
         if self._running:
             return
         if self._handler:
@@ -209,7 +213,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._create_handler(auth)
         try:
             await self._handler.open_async(connection=self._connection)
+            deadline = get_link_ready_deadline(timeout)
             while not await self._handler.client_ready_async():
+                check_link_ready_deadline(deadline)
                 await asyncio.sleep(0.05)
             self._running = True
             self._max_message_size_on_link = (
@@ -444,6 +450,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 message=obj_message,
                 timeout=timeout,
                 operation_requires_timeout=True,
+                apply_try_timeout=True,
                 require_last_exception=True,
             )
 

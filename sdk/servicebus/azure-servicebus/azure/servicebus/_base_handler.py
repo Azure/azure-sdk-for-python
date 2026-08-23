@@ -30,6 +30,7 @@ from ._common.utils import (
     strip_protocol_from_uri,
     parse_sas_credential,
     get_server_timeout_ms,
+    get_attempt_timeout,
 )
 from ._common.constants import (
     CONTAINER_PREFIX,
@@ -381,6 +382,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     ) -> Any:
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
+        # Opt-in per call site so long-poll operations (receive, streaming iteration)
+        # stay bounded only by the caller's timeout.
+        apply_try_timeout = kwargs.pop("apply_try_timeout", False)
+        try_timeout = self._config.try_timeout if apply_try_timeout else None
         retried_times = 0
         max_retries = self._config.retry_total
 
@@ -388,9 +393,11 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         while retried_times <= max_retries:
             try:
-                if operation_requires_timeout and abs_timeout_time:
-                    remaining_timeout = abs_timeout_time - time.time()
-                    kwargs["timeout"] = remaining_timeout
+                if operation_requires_timeout:
+                    remaining_timeout = (abs_timeout_time - time.time()) if abs_timeout_time else None
+                    attempt_timeout = get_attempt_timeout(remaining_timeout, try_timeout)
+                    if attempt_timeout is not None:
+                        kwargs["timeout"] = attempt_timeout
                 return operation(**kwargs)
             except StopIteration:
                 raise
@@ -547,14 +554,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             callback=callback,
             timeout=timeout,
             operation_requires_timeout=True,
+            apply_try_timeout=True,
             **kwargs,
         )
 
-    def _open(self):
+    def _open(self, timeout: Optional[float] = None):
         raise ValueError("Subclass should override the method.")
 
     def _open_with_retry(self):
-        return self._do_retryable_operation(self._open)
+        return self._do_retryable_operation(self._open, operation_requires_timeout=True, apply_try_timeout=True)
 
     def _close_handler(self):
         if self._handler:

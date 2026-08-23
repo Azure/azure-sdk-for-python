@@ -19,6 +19,7 @@ from .._common.message import ServiceBusReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
     CONSUMER_IDENTIFIER,
+    DEFAULT_RECEIVE_WAIT_TIME_SECS,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
@@ -41,7 +42,11 @@ from .._common.constants import (
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
 )
 from .._common import mgmt_handlers
-from .._common.utils import utc_from_timestamp
+from .._common.utils import (
+    utc_from_timestamp,
+    get_link_ready_deadline,
+    check_link_ready_deadline,
+)
 from .._common.tracing import (
     receive_trace_context_manager,
     settle_trace_context_manager,
@@ -344,7 +349,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         if self._prefetch_count == 0 and self._receive_mode == ServiceBusReceiveMode.PEEK_LOCK:
             self._amqp_transport.set_handler_message_received_async(self)
 
-    async def _open(self) -> None:
+    async def _open(self, timeout: Optional[float] = None) -> None:
         # pylint: disable=protected-access
         if self._running:
             return
@@ -354,7 +359,9 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self._create_handler(auth)
         try:
             await self._handler.open_async(connection=self._connection)
+            deadline = get_link_ready_deadline(timeout)
             while not await self._handler.client_ready_async():
+                check_link_ready_deadline(deadline)
                 await asyncio.sleep(0.05)
             self._running = True
         except:
@@ -375,14 +382,11 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             amqp_receive_client = self._handler
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
-            timeout_seconds = (
-                self._amqp_transport.TIMEOUT_FACTOR * (timeout or self._max_wait_time)
-                if (timeout or self._max_wait_time)
-                else 0
-            )
-            abs_timeout = (
-                self._amqp_transport.get_current_time(amqp_receive_client) + timeout_seconds if timeout_seconds else 0
-            )
+            # No wait from the call or the receiver: bound at a default rather than spin
+            # forever. An explicit wait always wins.
+            wait_time = timeout or self._max_wait_time or DEFAULT_RECEIVE_WAIT_TIME_SECS
+            timeout_seconds = self._amqp_transport.TIMEOUT_FACTOR * wait_time
+            abs_timeout = self._amqp_transport.get_current_time(amqp_receive_client) + timeout_seconds
 
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
 
@@ -620,8 +624,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          and returns an empty list without waiting, even when `max_wait_time` is set. The default
          value is 1.
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
-         If messages are requested, no messages arrive, and no timeout is specified, this call will not
-         return until the connection is closed. If specified, and no messages arrive within the
+         If messages are requested, no messages arrive, and no timeout is specified, this call will
+         return an empty list after 60 seconds. If specified, and no messages arrive within the
          timeout period, an empty list will be returned. NOTE: Setting max_wait_time on receive_messages
          when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session.
          Please use max_wait_time on the constructor to set the timeout for connecting to a session.

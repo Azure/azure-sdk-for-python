@@ -16,7 +16,12 @@ from ._common.message import (
     ServiceBusMessageBatch,
 )
 from .amqp import AmqpAnnotatedMessage
-from ._common.utils import create_authentication, transform_outbound_messages
+from ._common.utils import (
+    create_authentication,
+    transform_outbound_messages,
+    get_link_ready_deadline,
+    check_link_ready_deadline,
+)
 from ._common.tracing import (
     send_trace_context_manager,
     trace_message,
@@ -251,7 +256,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             client_name=self._name,
         )
 
-    def _open(self):
+    def _open(self, timeout: Optional[float] = None):
         if self._running:
             return
         if self._handler:
@@ -261,7 +266,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._create_handler(auth)
         try:
             self._handler.open(connection=self._connection)
+            deadline = get_link_ready_deadline(timeout)
             while not self._handler.client_ready():
+                check_link_ready_deadline(deadline)
                 time.sleep(0.05)
             self._running = True
             self._max_message_size_on_link = (
@@ -487,6 +494,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 message=obj_message,
                 timeout=timeout,
                 operation_requires_timeout=True,
+                apply_try_timeout=True,
                 require_last_exception=True,
             )
 

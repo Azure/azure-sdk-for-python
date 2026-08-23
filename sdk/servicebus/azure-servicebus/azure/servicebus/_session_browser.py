@@ -10,7 +10,11 @@ from typing import Any, Callable, Dict, Optional
 from azure.core.paging import ItemPaged
 
 from ._base_handler import BaseHandler
-from ._common.utils import create_authentication
+from ._common.utils import (
+    create_authentication,
+    get_link_ready_deadline,
+    check_link_ready_deadline,
+)
 from ._common.constants import (
     REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
 )
@@ -121,7 +125,7 @@ class _SessionBrowser(BaseHandler):
             client_name=self._name,
         )
 
-    def _open(self):
+    def _open(self, timeout: Optional[float] = None):
         if self._running:
             return
         if self._handler:
@@ -131,7 +135,9 @@ class _SessionBrowser(BaseHandler):
         self._create_handler(auth)
         try:
             self._handler.open(connection=self._connection)
+            deadline = get_link_ready_deadline(timeout)
             while not self._handler.client_ready():
+                check_link_ready_deadline(deadline)
                 time.sleep(0.05)
             self._running = True
         except:
