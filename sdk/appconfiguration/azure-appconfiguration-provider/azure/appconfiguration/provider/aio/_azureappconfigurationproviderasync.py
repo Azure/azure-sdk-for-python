@@ -271,7 +271,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._refresh_timer.reset()
             if self._feature_flag_refresh_enabled and feature_flag_refresh_attempted:
                 self._feature_flag_refresh_timer.reset()
-            if (settings_refreshed or feature_flags or enhanced_feature_flags) and self._on_refresh_success:
+            if (
+                settings_refreshed or feature_flags is not None or enhanced_feature_flags is not None
+            ) and self._on_refresh_success:
                 self._on_refresh_success()
         except AzureError as e:
             logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)

@@ -533,6 +533,20 @@ class TestProcessEnhancedFeatureFlag(unittest.TestCase):
 
         self.assertFalse(self.provider._tracing_context.uses_enhanced_feature_flags)
 
+    def test_uses_enhanced_feature_flags_tracing_not_reset_when_enhanced_flags_not_refreshed(self):
+        """Regression test: if a refresh only touches key-value feature flags (enhanced_feature_flags=None,
+        meaning the enhanced feature flag source was not refreshed this time), the tracing context must not be
+        reset to False when enhanced feature flags are already loaded from a previous refresh."""
+        feature_flag = FeatureFlag(name="MyFeature", enabled=True)
+        self.provider._process_and_merge_feature_flags({}, [], [], [feature_flag])
+        self.assertTrue(self.provider._tracing_context.uses_enhanced_feature_flags)
+
+        # Simulate a refresh where only key-value feature flags were refreshed; enhanced_feature_flags=None
+        # indicates that source wasn't touched this time.
+        self.provider._process_and_merge_feature_flags({}, [], [], None)
+
+        self.assertTrue(self.provider._tracing_context.uses_enhanced_feature_flags)
+
     def test_process_enhanced_feature_flag_with_label_and_description(self):
         """Test processing an enhanced feature flag with label and description."""
         feature_flag = FeatureFlag(name="MyFeature", enabled=False, label="prod", description="A test feature")

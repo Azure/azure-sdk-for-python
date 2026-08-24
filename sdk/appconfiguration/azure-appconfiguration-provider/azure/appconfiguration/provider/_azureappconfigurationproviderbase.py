@@ -519,7 +519,8 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             self._processed_enhanced_feature_flags = [
                 self._process_enhanced_feature_flag(ff) for ff in enhanced_feature_flags
             ]
-        self._tracing_context.uses_enhanced_feature_flags = bool(enhanced_feature_flags)
+
+        self._tracing_context.uses_enhanced_feature_flags = bool(self._processed_enhanced_feature_flags)
 
         if feature_flags is not None or enhanced_feature_flags is not None:
             processed_feature_flags = self._merge_feature_flags(

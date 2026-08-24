@@ -9,6 +9,25 @@ The tests for this package are under the `tests/` directory and are split into t
 * **Unit tests** (e.g. `tests/test_azureappconfigurationproviderbase.py`, `tests/test_configuration_client_manager.py`) — exercise internal logic in isolation using mocked clients. These do not require any App Configuration store, network access, or environment variables, and can be run at any time with no setup.
 * **Integration tests** (e.g. `tests/test_provider.py`, `tests/test_provider_enhanced_feature_flags.py`, and their `tests/aio/` async equivalents) — exercise the provider end-to-end against an Azure App Configuration store. These tests are built on [`devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils) and each test method is decorated with `@recorded_by_proxy` / `@recorded_by_proxy_async`, which route the test's HTTP traffic through the [test proxy](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy) tool.
 
+## Running tests locally (Windows)
+
+Run tests with the package's dedicated virtual environment, from the package directory
+(`sdk/appconfiguration/azure-appconfiguration-provider`), using the `-P` flag (isolates `sys.path` from the
+current working directory) so `azure.appconfiguration`/`azure.appconfiguration.provider` resolve correctly instead
+of colliding with other locally editable-installed `azure-*` packages:
+
+```powershell
+.\.venv\Scripts\python.exe -P -m pytest tests -v
+```
+
+Run a single file or test the same way, e.g.:
+
+```powershell
+.\.venv\Scripts\python.exe -P -m pytest tests\aio\test_async_provider_refresh.py -v
+```
+
+If `.venv` doesn't exist yet, create/set it up per [doc/dev/tests.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md) before running tests.
+
 ## Before opening a PR: what to run, and in what order
 
 If your change adds or modifies any integration tests, run through the following steps in order before opening or updating a PR:
