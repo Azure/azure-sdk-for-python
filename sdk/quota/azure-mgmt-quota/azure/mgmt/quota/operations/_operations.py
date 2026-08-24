@@ -1242,8 +1242,8 @@ def build_quota_create_or_update_request(resource_name: str, scope: str, **kwarg
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1270,8 +1270,8 @@ def build_quota_update_request(resource_name: str, scope: str, **kwargs: Any) ->
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1468,15 +1468,14 @@ class QuotaRequestStatusOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
         cls: ClsType[_models.QuotaRequestDetails] = kwargs.pop("cls", None)
 
         _request = build_quota_request_status_get_request(
             id=id,
             scope=scope,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -7170,15 +7169,14 @@ class UsagesOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
         cls: ClsType[_models.CurrentUsagesBase] = kwargs.pop("cls", None)
 
         _request = build_usages_get_request(
             resource_name=resource_name,
             scope=scope,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -7360,15 +7358,14 @@ class QuotaOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
         cls: ClsType[_models.CurrentQuotaLimitBase] = kwargs.pop("cls", None)
 
         _request = build_quota_get_request(
             resource_name=resource_name,
             scope=scope,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -7427,9 +7424,8 @@ class QuotaOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -7443,8 +7439,8 @@ class QuotaOperations:  # pylint: disable=docstring-missing-param
         _request = build_quota_create_or_update_request(
             resource_name=resource_name,
             scope=scope,
-            api_version=api_version,
             content_type=content_type,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -7635,9 +7631,8 @@ class QuotaOperations:  # pylint: disable=docstring-missing-param
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CurrentQuotaLimitBase] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -7648,7 +7643,6 @@ class QuotaOperations:  # pylint: disable=docstring-missing-param
                 resource_name=resource_name,
                 scope=scope,
                 create_quota_request=create_quota_request,
-                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -7704,9 +7698,8 @@ class QuotaOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -7720,8 +7713,8 @@ class QuotaOperations:  # pylint: disable=docstring-missing-param
         _request = build_quota_update_request(
             resource_name=resource_name,
             scope=scope,
-            api_version=api_version,
             content_type=content_type,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -7909,9 +7902,8 @@ class QuotaOperations:  # pylint: disable=docstring-missing-param
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CurrentQuotaLimitBase] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -7922,7 +7914,6 @@ class QuotaOperations:  # pylint: disable=docstring-missing-param
                 resource_name=resource_name,
                 scope=scope,
                 create_quota_request=create_quota_request,
-                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,

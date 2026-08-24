@@ -25,7 +25,6 @@ class TestQuotaMgmtQuotaRequestStatusOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.quota_request_status.get(
             id="str",
             scope="str",
-            api_version="2026-09-01-preview",
         )
 
         # please add some check logic here by yourself

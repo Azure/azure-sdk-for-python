@@ -170,5 +170,5 @@
         "azure.mgmt.quota.operations.QuotaOperations.list": "Microsoft.Quota.CurrentQuotaLimitBases.list",
         "azure.mgmt.quota.aio.operations.QuotaOperations.list": "Microsoft.Quota.CurrentQuotaLimitBases.list"
     },
-    "CrossLanguageVersion": "b8461288658e"
+    "CrossLanguageVersion": "93ae35503d14"
 }
