@@ -1,5 +1,47 @@
 # Release History
 
+## 41.6.0b2 (2026-08-24)
+
+### Features Added
+
+  - Model `AgentPoolNetworkInterface` added property `public_ip_address_configuration`
+  - Model `AgentPoolNetworkProfile` added property `dranet`
+  - Model `JWTAuthenticatorProperties` added property `certificate_authority_bundle`
+  - Model `KubeletConfig` added property `eviction_max_pod_grace_period_in_seconds`
+  - Model `KubeletConfig` added property `soft_eviction_grace_period`
+  - Model `KubeletConfig` added property `soft_eviction_threshold`
+  - Model `MachineProperties` added property `capacity_reservation`
+  - Model `ManagedClusterManagedOutboundIPProfile` added property `count_ipv6`
+  - Model `ManagedClusterNATGatewayProfile` added property `sku`
+  - Model `ManagedClusterProperties` added property `enable_node_hardening`
+  - Model `NvidiaGPUProfile` added property `driver_mode`
+  - Enum `OSSKU` added member `UBUNTU2604`
+  - Model `OperationStatusResult` added property `operation_type`
+  - Model `OperationStatusResult` added property `sub_operation_type`
+  - Added model `AgentPoolNICPublicIPAddressConfiguration`
+  - Added enum `AgentPoolNICPublicIPAddressVersion`
+  - Added model `AgentPoolUpdate`
+  - Added model `AgentPoolUpdateManualScaleProfile`
+  - Added model `AgentPoolUpdateProperties`
+  - Added model `AgentPoolUpdateScaleProfile`
+  - Added model `AgentPoolUpdateVirtualMachinesProfile`
+  - Added model `CapacityReservation`
+  - Added model `CapacityReservationGroup`
+  - Added enum `DRANETMode`
+  - Added model `DRANETProfile`
+  - Added enum `ManagedClusterNATGatewaySku`
+  - Added enum `NvidiaDriverMode`
+  - Added model `SoftEvictionGracePeriod`
+  - Added model `SoftEvictionThreshold`
+  - Model `AgentPoolsOperations` added method `begin_update`
+  - Model `OperationStatusResultOperations` added method `list_by_agent_pool`
+
+### Breaking Changes
+
+  - Model `ManagedClusterAzureMonitorProfileContainerInsights` deleted or renamed its instance variable `disable_custom_metrics`
+  - Model `ManagedClusterManagedOutboundIPProfile` deleted or renamed its instance variable `count_i_pv6`
+  - Deleted or renamed enum value `OutboundType.MANAGED_NAT_GATEWAY_V2`
+
 ## 41.6.0b1 (2026-07-24)
 
 ### Features Added
