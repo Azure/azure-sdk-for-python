@@ -362,11 +362,14 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         if self._handler and not self._handler._shutdown:
             self._handler.close()
 
+        # Start the budget before the blocking phases: the token fetch and handler.open()
+        # (socket, TLS, SASL, CBS) are link acquisition too, not just the ready poll.
+        deadline = get_link_ready_deadline(timeout)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
             self._handler.open(connection=self._connection)
-            deadline = get_link_ready_deadline(timeout)
+            check_link_ready_deadline(deadline)
             while not self._handler.client_ready():
                 check_link_ready_deadline(deadline)
                 time.sleep(0.05)
@@ -384,14 +387,16 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         # pylint: disable=protected-access
         try:
             self._receive_context.set()
-            self._open()
+            # No wait from the call or the receiver: bound at a default rather than spin
+            # forever. An explicit wait always wins.
+            wait_time = timeout or self._max_wait_time or DEFAULT_RECEIVE_WAIT_TIME_SECS
+            # Bound link acquisition by the same wait, otherwise the deadline below only
+            # covers waiting for messages and the open could still spin forever.
+            self._open(wait_time)
 
             amqp_receive_client = self._handler
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
-            # No wait from the call or the receiver: bound at a default rather than spin
-            # forever. An explicit wait always wins.
-            wait_time = timeout or self._max_wait_time or DEFAULT_RECEIVE_WAIT_TIME_SECS
             timeout_time = self._amqp_transport.TIMEOUT_FACTOR * wait_time
             abs_timeout = self._amqp_transport.get_current_time(amqp_receive_client) + timeout_time
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []

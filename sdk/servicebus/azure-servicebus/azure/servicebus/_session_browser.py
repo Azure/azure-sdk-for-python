@@ -5,7 +5,7 @@
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, TYPE_CHECKING, Union
 
 from azure.core.paging import ItemPaged
 
@@ -20,6 +20,13 @@ from ._common.constants import (
 )
 from ._common import mgmt_handlers
 from .exceptions import OperationTimeoutError
+
+if TYPE_CHECKING:
+    try:
+        from uamqp import AMQPClient as uamqp_AMQPClientSync
+    except ImportError:
+        pass
+    from ._pyamqp.client import AMQPClient as pyamqp_AMQPClientSync
 
 # The service checks `lastUpdatedTime != DateTime.MaxValue` (exact equality) to switch
 # between default listing mode and updated-since mode. Default listing mode returns sessions
@@ -115,6 +122,8 @@ class _SessionBrowser(BaseHandler):
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)
         self._name = f"SBSessionBrowser-{uuid.uuid4()}"
         self._connection = kwargs.get("connection")
+        # _create_handler always assigns it, so narrow away the base class's Optional.
+        self._handler: Union["uamqp_AMQPClientSync", "pyamqp_AMQPClientSync"]
 
     def _create_handler(self, auth):
         self._handler = self._amqp_transport.create_mgmt_client(
@@ -131,11 +140,14 @@ class _SessionBrowser(BaseHandler):
         if self._handler:
             self._handler.close()
 
+        # Start the budget before the blocking phases: the token fetch and handler.open()
+        # (socket, TLS, SASL, CBS) are link acquisition too, not just the ready poll.
+        deadline = get_link_ready_deadline(timeout)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
             self._handler.open(connection=self._connection)
-            deadline = get_link_ready_deadline(timeout)
+            check_link_ready_deadline(deadline)
             while not self._handler.client_ready():
                 check_link_ready_deadline(deadline)
                 time.sleep(0.05)

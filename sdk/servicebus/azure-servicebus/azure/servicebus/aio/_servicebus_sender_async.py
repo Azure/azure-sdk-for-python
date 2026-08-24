@@ -211,11 +211,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             return
         if self._handler:
             await self._handler.close_async()
+        # Start the budget before the blocking phases: the token fetch and open_async()
+        # (socket, TLS, SASL, CBS) are link acquisition too, not just the ready poll.
+        deadline = get_link_ready_deadline(timeout)
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         try:
             await self._handler.open_async(connection=self._connection)
-            deadline = get_link_ready_deadline(timeout)
+            check_link_ready_deadline(deadline)
             while not await self._handler.client_ready_async():
                 check_link_ready_deadline(deadline)
                 await asyncio.sleep(0.05)

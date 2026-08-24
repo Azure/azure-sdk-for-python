@@ -355,11 +355,14 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             return
         if self._handler and not self._handler._shutdown:
             await self._handler.close_async()
+        # Start the budget before the blocking phases: the token fetch and open_async()
+        # (socket, TLS, SASL, CBS) are link acquisition too, not just the ready poll.
+        deadline = get_link_ready_deadline(timeout)
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         try:
             await self._handler.open_async(connection=self._connection)
-            deadline = get_link_ready_deadline(timeout)
+            check_link_ready_deadline(deadline)
             while not await self._handler.client_ready_async():
                 check_link_ready_deadline(deadline)
                 await asyncio.sleep(0.05)
@@ -377,14 +380,16 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         # pylint: disable=protected-access
         try:
             self._receive_context.set()
-            await self._open()
+            # No wait from the call or the receiver: bound at a default rather than spin
+            # forever. An explicit wait always wins.
+            wait_time = timeout or self._max_wait_time or DEFAULT_RECEIVE_WAIT_TIME_SECS
+            # Bound link acquisition by the same wait, otherwise the deadline below only
+            # covers waiting for messages and the open could still spin forever.
+            await self._open(wait_time)
 
             amqp_receive_client = self._handler
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
-            # No wait from the call or the receiver: bound at a default rather than spin
-            # forever. An explicit wait always wins.
-            wait_time = timeout or self._max_wait_time or DEFAULT_RECEIVE_WAIT_TIME_SECS
             timeout_seconds = self._amqp_transport.TIMEOUT_FACTOR * wait_time
             abs_timeout = self._amqp_transport.get_current_time(amqp_receive_client) + timeout_seconds
 

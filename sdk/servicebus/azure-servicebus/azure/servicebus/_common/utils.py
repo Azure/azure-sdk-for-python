@@ -131,26 +131,34 @@ def get_attempt_timeout(remaining_timeout: Optional[float], try_timeout: Optiona
 def get_link_ready_deadline(timeout: Optional[float]) -> Optional[float]:
     """Return the absolute time by which an AMQP link must report ready, or None if unbounded.
 
+    Only None means unbounded. A zero or negative timeout is an expired budget, not a
+    missing one, so it yields a deadline that has already passed.
+
     :param float or None timeout: The per-attempt timeout in seconds, or None.
     :rtype: float or None
     :returns: The absolute deadline, or None when the wait is unbounded.
     """
-    return (time.time() + timeout) if timeout else None
+    return (time.time() + timeout) if timeout is not None else None
 
 
 def get_remaining_timeout(timeout: Optional[float], started: float) -> Optional[float]:
     """Return the timeout left for the rest of an attempt after link acquisition.
 
     Keeps one attempt bounded by a single budget rather than restarting it per phase.
+    Raises rather than returning zero, which both transports read as "wait forever".
 
     :param float or None timeout: The attempt's timeout in seconds, or None if unbounded.
     :param float started: The time the attempt began.
     :rtype: float or None
-    :returns: The remaining timeout, never negative, or None when unbounded.
+    :returns: The remaining timeout, or None when unbounded.
+    :raises ~azure.servicebus.exceptions.OperationTimeoutError: If no time is left.
     """
     if timeout is None:
         return None
-    return max(timeout - (time.time() - started), 0)
+    remaining = timeout - (time.time() - started)
+    if remaining <= 0:
+        raise OperationTimeoutError(message="Timed out acquiring the AMQP link.")
+    return remaining
 
 
 def check_link_ready_deadline(deadline: Optional[float]) -> None:
@@ -158,7 +166,7 @@ def check_link_ready_deadline(deadline: Optional[float]) -> None:
 
     :param float or None deadline: The absolute deadline, or None when unbounded.
     """
-    if deadline and time.time() > deadline:
+    if deadline is not None and time.time() > deadline:
         raise OperationTimeoutError(message="Timed out waiting for the AMQP link to open.")
 
 

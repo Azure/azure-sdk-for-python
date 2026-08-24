@@ -263,11 +263,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if self._handler:
             self._handler.close()
 
+        # Start the budget before the blocking phases: the token fetch and handler.open()
+        # (socket, TLS, SASL, CBS) are link acquisition too, not just the ready poll.
+        deadline = get_link_ready_deadline(timeout)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
             self._handler.open(connection=self._connection)
-            deadline = get_link_ready_deadline(timeout)
+            check_link_ready_deadline(deadline)
             while not self._handler.client_ready():
                 check_link_ready_deadline(deadline)
                 time.sleep(0.05)

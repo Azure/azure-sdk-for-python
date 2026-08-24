@@ -17,13 +17,20 @@ and off by default, and the same concept in the .NET (`ServiceBusRetryOptions.Tr
 Java (`AmqpRetryOptions.tryTimeout`) SDKs, which default it on at 60 seconds.
 """
 
+import time
+
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from azure.servicebus._common._configuration import Configuration
 from azure.servicebus._common.constants import DEFAULT_RECEIVE_WAIT_TIME_SECS
-from azure.servicebus._common.utils import get_attempt_timeout
+from azure.servicebus._common.utils import (
+    check_link_ready_deadline,
+    get_attempt_timeout,
+    get_link_ready_deadline,
+    get_remaining_timeout,
+)
 from azure.servicebus.exceptions import OperationTimeoutError
 
 
@@ -465,6 +472,7 @@ class TestLongPollIsNeverTruncated:
 
         assert seen == [300]
 
+
 class TestReceiveHasADefaultBound:
     """A receive with no wait must not spin forever.
 
@@ -479,7 +487,7 @@ class TestReceiveHasADefaultBound:
         client = ServiceBusClient("fake.servicebus.windows.net", MagicMock())
         receiver = client.get_queue_receiver("q", max_wait_time=max_wait_time)
         receiver._check_live = lambda: None
-        receiver._open = lambda: None
+        receiver._open = lambda timeout=None: None
         return receiver
 
     def _seconds_waited(self, receiver, **kwargs):
@@ -531,6 +539,7 @@ class TestReceiveHasADefaultBound:
         # The safety property: an explicit long poll must outlive the default.
         waited = self._seconds_waited(self._receiver(), timeout=300)
         assert waited == pytest.approx(300, abs=2)
+
 
 class TestAsyncReceiveHasADefaultBound:
     """Async `_receive` is a separate implementation, so it needs its own coverage."""
@@ -595,6 +604,7 @@ class TestAsyncReceiveHasADefaultBound:
         waited = await self._seconds_waited(self._receiver(), timeout=300)
         assert waited == pytest.approx(300, abs=2)
 
+
 class TestLinkAcquisitionIsBoundedInsideOperations:
     """Send and management calls open the link internally, before the timed operation.
 
@@ -639,5 +649,150 @@ class TestLinkAcquisitionIsBoundedInsideOperations:
         with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
             with pytest.raises(OperationTimeoutError) as exc:
                 receiver._mgmt_request_response_with_retry(b"op", {}, lambda *a: None, timeout=0.2)
+
+        assert "AMQP link" in str(exc.value)
+
+
+class TestExhaustedBudgetDoesNotBecomeUnbounded:
+    """A used-up attempt budget must raise, not fall through as "no timeout".
+
+    Both transports read a zero timeout as "wait forever": pyamqp's `send_message` documents
+    `timeout=0` as waiting until the message is sent, and the uamqp transport sets an
+    unlimited `_msg_timeout` on a falsy value. Returning 0 from the remaining-time helper
+    would therefore let an attempt run indefinitely past its own deadline.
+    """
+
+    def test_raises_when_no_time_is_left(self):
+        started = time.time() - 5  # the whole 5s budget already spent
+        with pytest.raises(OperationTimeoutError):
+            get_remaining_timeout(5, started)
+
+    def test_raises_when_the_budget_is_overrun(self):
+        started = time.time() - 30
+        with pytest.raises(OperationTimeoutError):
+            get_remaining_timeout(5, started)
+
+    def test_never_returns_zero(self):
+        # The dangerous value specifically: 0 means unbounded downstream.
+        for spent in (0.999999, 1.0, 1.000001):
+            try:
+                left = get_remaining_timeout(1.0, time.time() - spent)
+            except OperationTimeoutError:
+                continue
+            assert left > 0
+
+    def test_unbounded_stays_unbounded(self):
+        assert get_remaining_timeout(None, time.time() - 100) is None
+
+    def test_returns_what_is_left(self):
+        left = get_remaining_timeout(10, time.time() - 2)
+        assert left == pytest.approx(8, abs=0.5)
+
+
+class TestDeadlineSentinels:
+    """Only None may mean unbounded. Zero must not.
+
+    A falsy-instead-of-None check here would make an exhausted budget read as "no bound",
+    which is the same class of defect as a zero timeout reaching the transports.
+    """
+
+    def test_zero_timeout_is_an_expired_deadline_not_unbounded(self):
+        deadline = get_link_ready_deadline(0)
+        assert deadline is not None
+        with pytest.raises(OperationTimeoutError):
+            check_link_ready_deadline(deadline)
+
+    def test_negative_timeout_is_an_expired_deadline(self):
+        deadline = get_link_ready_deadline(-1)
+        assert deadline is not None
+        with pytest.raises(OperationTimeoutError):
+            check_link_ready_deadline(deadline)
+
+    def test_none_timeout_is_unbounded(self):
+        assert get_link_ready_deadline(None) is None
+        check_link_ready_deadline(None)  # must not raise
+
+    def test_future_deadline_does_not_raise(self):
+        check_link_ready_deadline(time.time() + 30)
+
+    def test_open_with_zero_timeout_raises(self):
+        from azure.servicebus import ServiceBusClient
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        receiver._create_handler = lambda auth: None
+        handler = MagicMock()
+        handler._shutdown = True
+        handler.client_ready.return_value = False
+        receiver._handler = handler
+
+        with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
+            with pytest.raises(OperationTimeoutError):
+                receiver._open(timeout=0)
+
+
+class TestSettlementIsNotBounded:
+    """Settlement is documented as excluded; pin it so opting it in fails loudly."""
+
+    def _receiver(self):
+        from azure.servicebus import ServiceBusClient
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock(), try_timeout=5)
+        receiver = client.get_queue_receiver("q")
+        receiver._check_live = lambda: None
+        return receiver
+
+    def test_settle_message_never_receives_a_timeout(self):
+        from azure.servicebus import ServiceBusReceivedMessage
+
+        receiver = self._receiver()
+        seen = []
+        receiver._settle_message = lambda **kwargs: seen.append(kwargs.get("timeout", "unset"))
+        receiver._check_message_alive = lambda m, op: None
+
+        message = MagicMock(spec=ServiceBusReceivedMessage)
+        message._settled = False
+        message._lock_expired = False
+        message.auto_renew_error = None
+        receiver._settle_message_with_retry(message, "completed")
+
+        assert seen == ["unset"]
+
+
+class TestAsyncLinkAcquisitionIsBounded:
+    """The async send path is a separate implementation from its sync twin."""
+
+    @pytest.mark.asyncio
+    async def test_async_send_bounds_link_acquisition(self):
+        from azure.servicebus import ServiceBusMessage
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock(), try_timeout=0.2)
+        sender = client.get_queue_sender("q")
+        sender._check_live = lambda: None
+
+        handler = MagicMock()
+
+        async def close_async():
+            return None
+
+        async def open_async(connection=None):
+            return None
+
+        async def client_ready_async():
+            return False
+
+        handler.close_async = close_async
+        handler.open_async = open_async
+        handler.client_ready_async = client_ready_async
+        sender._create_handler = lambda auth: setattr(sender, "_handler", handler)
+        sender._handler = handler
+
+        async def fake_auth(_c):
+            return None
+
+        with patch("azure.servicebus.aio._servicebus_sender_async.create_authentication", fake_auth):
+            with pytest.raises(OperationTimeoutError) as exc:
+                await sender.send_messages(ServiceBusMessage("m"))
 
         assert "AMQP link" in str(exc.value)
