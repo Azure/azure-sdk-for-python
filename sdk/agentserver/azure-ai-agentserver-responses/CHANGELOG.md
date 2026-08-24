@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Constrained runtime, development, and sample dependencies to compatible release lines.
+
 ## 2.1.0b2 (2026-08-21)
 
 ### Bugs Fixed
