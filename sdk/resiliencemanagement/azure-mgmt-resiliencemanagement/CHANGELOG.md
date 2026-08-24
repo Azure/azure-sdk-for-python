@@ -53,7 +53,6 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `DrillProperties` deleted or renamed its instance variable `managed_on_behalf_of_configuration`
   - Model `RegionalDrillProperties` deleted or renamed its instance variable `managed_on_behalf_of_configuration`
   - Model `ZonalDrillProperties` deleted or renamed its instance variable `managed_on_behalf_of_configuration`
