@@ -962,3 +962,53 @@ class TestAsyncReceiveUsesOneBudget:
     async def test_zero_budget_does_not_select_the_default(self):
         receiver = self._receiver(open_cost=0.0)
         assert await self._polled_seconds(receiver, timeout=0) == 0
+
+
+class TestExpiredBudgetStillDrainsPrefetched:
+    """An exhausted budget must not discard messages prefetch already queued.
+
+    `_open()` can queue messages while completing, so returning early on an expired budget
+    without checking the queue would drop messages the client already holds.
+    """
+
+    def _drive(self, queued, open_cost, max_wait_time=10):
+        from queue import Queue
+        from azure.servicebus import ServiceBusClient
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q", max_wait_time=max_wait_time)
+        receiver._check_live = lambda: None
+        receiver._build_received_message = lambda m: m
+
+        q = Queue()
+        handler = MagicMock()
+        handler._received_messages = q
+
+        def slow_open(timeout=None):
+            time.sleep(open_cost)
+            for m in queued:  # prefetch delivers while the link is coming up
+                q.put(m)
+
+        receiver._open = slow_open
+        receiver._handler = handler
+        clock = {"t": 0.0}
+
+        def do_work():
+            clock["t"] += 1.0
+            return True
+
+        handler.do_work = do_work
+        transport = MagicMock()
+        transport.TIMEOUT_FACTOR = 1
+        transport.get_current_time = lambda _c: clock["t"]
+        receiver._amqp_transport = transport
+        return receiver._receive(max_message_count=10)
+
+    def test_queued_messages_survive_an_expired_budget(self):
+        # Budget fully spent opening, but prefetch already delivered two messages.
+        got = self._drive(queued=["m1", "m2"], open_cost=1.2, max_wait_time=1)
+        assert got == ["m1", "m2"]
+
+    def test_empty_queue_at_expiry_still_returns_empty(self):
+        got = self._drive(queued=[], open_cost=1.2, max_wait_time=1)
+        assert got == []

@@ -409,7 +409,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             max_message_count = max_message_count or self._prefetch_count
             # Poll with what is left of the one budget, not a fresh copy of it.
             remaining = wait_time - (time.time() - receive_started)
-            if remaining <= 0:
+            if remaining <= 0 and received_messages_queue.empty():
                 return []
             timeout_time = self._amqp_transport.TIMEOUT_FACTOR * remaining
             abs_timeout = self._amqp_transport.get_current_time(amqp_receive_client) + timeout_time
