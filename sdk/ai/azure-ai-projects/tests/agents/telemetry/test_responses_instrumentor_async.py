@@ -4004,3 +4004,154 @@ trigger:
         await self._test_async_prompt_agent_with_responses_streaming_impl(
             False, use_simple_tool_call_format=True, **kwargs
         )
+
+    # --- with_raw_response + streaming tests ---
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_with_raw_response_streaming_with_content_recording(self, **kwargs):
+        """Test async with_raw_response.create(stream=True) with content recording enabled."""
+        self.cleanup()
+        os.environ.update(
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
+        )
+        self.setup_telemetry()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = kwargs.get("foundry_model_name")
+
+        async with project_client:
+            client = project_client.get_openai_client()
+
+            conversation = await client.conversations.create()
+
+            raw = await client.responses.with_raw_response.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input="Say hello in one word",
+                stream=True,
+            )
+
+            # Raw response interface must be preserved
+            assert hasattr(raw, "parse"), "Result should have .parse() method"
+            assert hasattr(raw, "headers"), "Result should have .headers attribute"
+
+            # Parse and consume the stream
+            stream = raw.parse()
+            if hasattr(stream, "__await__"):
+                stream = await stream
+
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+
+            full_content = "".join(accumulated_content)
+            assert len(full_content) > 0
+
+        # Check spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.input.messages", ""),
+            ("gen_ai.output.messages", ""),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_with_raw_response_streaming_without_content_recording(self, **kwargs):
+        """Test async with_raw_response.create(stream=True) with content recording disabled."""
+        self.cleanup()
+        os.environ.update(
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "False",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
+        )
+        self.setup_telemetry()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = kwargs.get("foundry_model_name")
+
+        async with project_client:
+            client = project_client.get_openai_client()
+
+            conversation = await client.conversations.create()
+
+            raw = await client.responses.with_raw_response.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input="Say hello in one word",
+                stream=True,
+            )
+
+            # Raw response interface must be preserved
+            assert hasattr(raw, "parse"), "Result should have .parse() method"
+            assert hasattr(raw, "headers"), "Result should have .headers attribute"
+
+            # Parse and consume the stream
+            stream = raw.parse()
+            if hasattr(stream, "__await__"):
+                stream = await stream
+
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+
+            full_content = "".join(accumulated_content)
+            assert len(full_content) > 0
+
+        # Check spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.input.messages", ""),
+            ("gen_ai.output.messages", ""),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        # Verify content is omitted when content recording is disabled
+        input_messages = json.loads(span.attributes["gen_ai.input.messages"])
+        assert len(input_messages) == 1
+        assert input_messages[0]["role"] == "user"
+        assert "content" not in input_messages[0]["parts"][0]
+
+        output_messages = json.loads(span.attributes["gen_ai.output.messages"])
+        assert len(output_messages) == 1
+        assert output_messages[0]["role"] == "assistant"
+        assert "content" not in output_messages[0]["parts"][0]

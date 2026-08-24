@@ -17,6 +17,7 @@ class Replacement:
     description: str
     generated: str
     patched: str
+    applies_when: str | None = None
 
 
 REPLACEMENTS = (
@@ -47,6 +48,7 @@ REPLACEMENTS = (
         "use the imported SemanticQueryRewritesResultType enum",
         '"@search.semanticQueryRewritesResultType": Union[str, "_enums.SemanticQueryRewritesResultType"],',
         '"@search.semanticQueryRewritesResultType": Union[str, "SemanticQueryRewritesResultType"],',
+        applies_when="@search.semanticQueryRewritesResultType",
     ),
     Replacement(
         "azure/search/documents/knowledgebases/types.py",
@@ -58,6 +60,7 @@ REPLACEMENTS = (
         """        KnowledgeSourceIngestionPermissionOption,
         KnowledgeSourceResultsProcessing,
 """,
+        applies_when="KnowledgeSourceIngestionPermissionOption",
     ),
     Replacement(
         "azure/search/documents/indexes/types.py",
@@ -121,24 +124,31 @@ REPLACEMENTS = (
         ),
     ),
     Replacement(
+        "azure/search/documents/indexes/types.py",
+        "import KnowledgeSourceIngestionParameters from the public models namespace",
+        "    from ..knowledgebases.types import KnowledgeRetrievalReasoningEffort, KnowledgeSourceIngestionParameters\n",
+        "    from ..knowledgebases.models import KnowledgeSourceIngestionParameters\n"
+        "    from ..knowledgebases.types import KnowledgeRetrievalReasoningEffort\n",
+    ),
+    Replacement(
         "azure/search/documents/indexes/_operations/_operations.py",
         "suppress protected access for the generated SearchIndexResponse type",
-        """list[_models1._models.SearchIndexResponse],
-            deserialized.get("value", []),
-    """,
-        """list[_models1._models.SearchIndexResponse],  # pylint: disable=protected-access
-            deserialized.get("value", []),
-    """,
+        "                list[_models1._models.SearchIndexResponse],\n"
+        '                deserialized.get("value", []),\n'
+        "            )",
+        "                list[_models1._models.SearchIndexResponse],  # pylint: disable=protected-access\n"
+        '                deserialized.get("value", []),\n'
+        "            )",
     ),
     Replacement(
         "azure/search/documents/indexes/aio/_operations/_operations.py",
         "suppress protected access for the generated async SearchIndexResponse type",
-        """list[_models2._models.SearchIndexResponse],
-            deserialized.get("value", []),
-    """,
-        """list[_models2._models.SearchIndexResponse],  # pylint: disable=protected-access
-            deserialized.get("value", []),
-    """,
+        "                list[_models2._models.SearchIndexResponse],\n"
+        '                deserialized.get("value", []),\n'
+        "            )",
+        "                list[_models2._models.SearchIndexResponse],  # pylint: disable=protected-access\n"
+        '                deserialized.get("value", []),\n'
+        "            )",
     ),
 )
 
@@ -157,6 +167,8 @@ def update_sources(*, check: bool) -> int:
             sources[path] = source.replace(replacement.generated, replacement.patched, 1)
             pending.append(replacement.description)
         elif generated_count == 0 and patched_count == 1:
+            continue
+        elif replacement.applies_when is not None and replacement.applies_when not in source:
             continue
         else:
             raise RuntimeError(

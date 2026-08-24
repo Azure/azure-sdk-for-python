@@ -193,9 +193,12 @@ class TestKnowledgeBaseRetrievalStream:
             stream = client.retrieve_stream(
                 KnowledgeBaseRetrievalRequest(),
                 query_source_authorization="query-token",
+                query_work_iq_source_authorization="work-iq-token",
             )
         assert isinstance(stream, KnowledgeBaseRetrievalStream)
         assert generated_kwargs["query_source_authorization"] == "query-token"
+        assert generated_kwargs["query_work_iq_source_authorization"] == "work-iq-token"
+        assert KnowledgeBaseRetrievalStream.__module__ == "azure.search.documents.knowledgebases"
         stream.close()
 
         observed = {}
