@@ -36,14 +36,12 @@ def my_callback_on_fail(_):
 import os
 from azure.appconfiguration.provider import load, WatchKey
 
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-
 config = load(
     endpoint=endpoint,
     credential=credential,
     refresh_on=[WatchKey("message")],
     refresh_on_feature_flags=True,
-    refresh_interval=60,
+    refresh_interval=30,
     feature_flag_enabled=True,
     feature_flag_refresh_enabled=True,
     **kwargs,
@@ -62,7 +60,7 @@ feature_flag_setting.enabled = False
 client.set_configuration_setting(configuration_setting=feature_flag_setting)
 
 # Waiting for the refresh interval to pass
-time.sleep(2)
+time.sleep(35)
 
 # Refreshing the configuration setting
 config.refresh()
@@ -73,7 +71,7 @@ print(config["my_json"]["key"])
 print(config["feature_management"]["feature_flags"][1])
 
 # Waiting for the refresh interval to pass
-time.sleep(2)
+time.sleep(35)
 
 # Refreshing the configuration setting with no changes
 config.refresh()

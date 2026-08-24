@@ -115,8 +115,10 @@ from azure.appconfiguration.provider import load
 
 
 def my_mapper(setting):
-    # Transform the setting as needed
-    setting.value = setting.value.strip()
+    # Transform the setting as needed. Some settings may have a None value, so guard against that
+    # before calling string methods on it.
+    if setting.value is not None:
+        setting.value = setting.value.strip()
 
 
 config = load(endpoint=endpoint, credential=credential, configuration_mapper=my_mapper, **kwargs)

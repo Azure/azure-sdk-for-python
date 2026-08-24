@@ -158,13 +158,11 @@ The provider can be configured to refresh configurations from the store on a set
 import os
 from azure.appconfiguration.provider import load, WatchKey
 
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-
 config = load(
     endpoint=endpoint,
     credential=credential,
     refresh_on=[WatchKey("Sentinel")],
-    refresh_interval=60,
+    refresh_interval=30,
     **kwargs,
 )
 ```
@@ -361,14 +359,12 @@ To enable refresh for feature flags you need to enable refresh. This will allow 
 import os
 from azure.appconfiguration.provider import load, WatchKey
 
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-
 config = load(
     endpoint=endpoint,
     credential=credential,
     refresh_on=[WatchKey("message")],
     refresh_on_feature_flags=True,
-    refresh_interval=60,
+    refresh_interval=30,
     feature_flag_enabled=True,
     feature_flag_refresh_enabled=True,
     **kwargs,
@@ -471,8 +467,10 @@ from azure.appconfiguration.provider import load
 
 
 def my_mapper(setting):
-    # Transform the setting as needed
-    setting.value = setting.value.strip()
+    # Transform the setting as needed. Some settings may have a None value, so guard against that
+    # before calling string methods on it.
+    if setting.value is not None:
+        setting.value = setting.value.strip()
 
 
 config = load(endpoint=endpoint, credential=credential, configuration_mapper=my_mapper, **kwargs)
