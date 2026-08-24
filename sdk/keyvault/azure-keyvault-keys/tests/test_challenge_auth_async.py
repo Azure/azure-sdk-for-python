@@ -92,6 +92,37 @@ def empty_challenge_cache(fn):
 
     return wrapper
 
+@pytest.mark.asyncio
+@empty_challenge_cache
+async def test_rejected_challenge_is_not_cached():
+    url = "https://example.net/keys/canary"
+    challenge = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'},
+    )
+
+    class Requests:
+        count = 0
+
+    async def send(request):
+        Requests.count += 1
+        assert "Authorization" not in request.headers
+        assert not request.body
+        assert request.headers["Content-Length"] == "0"
+        return challenge
+
+    credential = Mock(spec_set=["get_token"], get_token=Mock(side_effect=AssertionError("unexpected token request")))
+    pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+
+    for _ in range(2):
+        request = HttpRequest("POST", url)
+        request.set_bytes_body(b"secret")
+        with pytest.raises(ValueError):
+            await pipeline.run(request)
+
+    assert Requests.count == 2
+    assert not HttpChallengeCache.get_challenge_for_url(url)
+    assert credential.get_token.call_count == 0
 
 @pytest.mark.asyncio
 @empty_challenge_cache
@@ -103,7 +134,6 @@ async def test_enforces_tls():
     pipeline = AsyncPipeline(transport=Mock(), policies=[AsyncChallengeAuthPolicy(credential)])
     with pytest.raises(ServiceRequestError):
         await pipeline.run(HttpRequest("GET", url))
-
 
 @pytest.mark.asyncio
 @empty_challenge_cache
@@ -171,7 +201,6 @@ async def test_scope(token_type):
     await test_with_challenge(challenge_with_resource, scope)
     await test_with_challenge(challenge_with_scope, scope)
 
-
 @pytest.mark.asyncio
 @empty_challenge_cache
 @pytest.mark.parametrize("token_type", TOKEN_TYPES)
@@ -230,7 +259,6 @@ async def test_tenant(token_type):
     )
 
     await test_with_challenge(challenge, tenant)
-
 
 @pytest.mark.asyncio
 @empty_challenge_cache
@@ -295,7 +323,6 @@ async def test_adfs(token_type):
     )
 
     await test_with_challenge(challenge, tenant)
-
 
 @pytest.mark.asyncio
 @empty_challenge_cache
@@ -367,7 +394,6 @@ async def test_policy_updates_cache(token_type):
         else:
             assert credential.get_token_info.call_count == 2
 
-
 @pytest.mark.asyncio
 @empty_challenge_cache
 @pytest.mark.parametrize("token_type", TOKEN_TYPES)
@@ -420,7 +446,6 @@ async def test_token_expiration(token_type):
         assert credential.get_token.call_count == 2
     else:
         assert credential.get_token_info.call_count == 2
-
 
 @pytest.mark.asyncio
 @empty_challenge_cache
@@ -476,7 +501,6 @@ async def test_preserves_options_and_headers(token_type):
     # ensure the mock sans I/O policies were called
     assert adder.on_request.called, "mock policy wasn't invoked"
     assert verifier.on_request.called, "mock policy wasn't invoked"
-
 
 @pytest.mark.asyncio
 @empty_challenge_cache
@@ -571,7 +595,6 @@ async def test_verify_challenge_resource_valid(verify_challenge_resource, token_
     else:
         key = await client.get_key("key-name")
         assert key.name == "key-name"
-
 
 @pytest.mark.asyncio
 @empty_challenge_cache
@@ -668,7 +691,6 @@ async def test_cae(token_type):
 
     await test_with_challenge(CAE_CHALLENGE_RESPONSE, CAE_DECODED_CLAIM)
 
-
 @pytest.mark.asyncio
 @empty_challenge_cache
 @pytest.mark.parametrize("token_type", [AccessToken, AccessTokenInfo])
@@ -737,7 +759,6 @@ async def test_cae_consecutive_challenges(token_type):
             assert credential.get_token_info.call_count == 2
 
     await test_with_challenge(CAE_CHALLENGE_RESPONSE, CAE_DECODED_CLAIM)
-
 
 @pytest.mark.asyncio
 @empty_challenge_cache
@@ -818,7 +839,6 @@ async def test_cae_token_expiry(token_type):
             assert credential.get_token_info.call_count == 3
 
     await test_with_challenge(CAE_CHALLENGE_RESPONSE, CAE_DECODED_CLAIM)
-
 
 @pytest.mark.asyncio
 @empty_challenge_cache
