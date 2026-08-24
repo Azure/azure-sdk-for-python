@@ -93,6 +93,19 @@ class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Caching type:ReadWrite."""
 
 
+class CapacityRecommendationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle status of the capacity recommendation for an operation."""
+
+    NOT_INITIATED = "NotInitiated"
+    """The capacity recommendation has not been initiated."""
+    SUCCEEDED = "Succeeded"
+    """The capacity recommendation completed successfully."""
+    FAILED = "Failed"
+    """The capacity recommendation failed."""
+    SKIPPED = "Skipped"
+    """The capacity recommendation was skipped."""
+
+
 class CapacityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Capacity types for LaunchBulkInstancesOperation."""
 
@@ -487,6 +500,27 @@ class NotificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Notify through e-mail."""
 
 
+class OccurrenceResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of a scheduled-action resource within an occurrence."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    CREATED = "Created"
+    """The resource has been created."""
+    SCHEDULED = "Scheduled"
+    """The resource has been scheduled."""
+    CANCELLING = "Cancelling"
+    """The resource is going through cancellation."""
+    RESCHEDULING = "Rescheduling"
+    """The resource is being rescheduled."""
+    INVALID_STATE = "InvalidState"
+    """The resource is in an invalid state."""
+
+
 class OccurrenceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state the occurrence is at a given time."""
 
@@ -573,6 +607,29 @@ class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Linux operating system."""
 
 
+class PartialFulfillmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether the service may launch fewer instances than requested when the full capacity cannot be
+    satisfied.
+    """
+
+    ENABLED = "Enabled"
+    """Partial fulfillment is allowed."""
+    DISABLED = "Disabled"
+    """Partial fulfillment is not allowed."""
+
+
+class PartialFulfillmentReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason the requested capacity could only be partially fulfilled."""
+
+    INSUFFICIENT_CAPACITY = "InsufficientCapacity"
+    """The requested capacity could not be fully satisfied due to insufficient capacity in the region."""
+    INSUFFICIENT_QUOTA = "InsufficientQuota"
+    """The requested capacity could not be fully satisfied due to insufficient quota in the
+    subscription."""
+    NONE = "None"
+    """The requested capacity was successfully satisfied without any partial fulfillment."""
+
+
 class PriorityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The priority type for VM allocation."""
 
@@ -633,51 +690,6 @@ class PublicIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Static IP allocation."""
 
 
-class RecurringScheduledActionsDeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of deadline the scheduled action follows for its schedule."""
-
-    UNKNOWN = "Unknown"
-    """Default value of Unknown."""
-    INITIATE_AT = "InitiateAt"
-    """Initiate the operation at the given deadline."""
-    COMPLETE_BY = "CompleteBy"
-    """Complete the operation by the given deadline."""
-
-
-class RecurringScheduledActionsProvisioningState(  # pylint: disable=name-too-long
-    str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """Provisioning state of the scheduled action resource."""
-
-    SUCCEEDED = "Succeeded"
-    """Resource has been created."""
-    FAILED = "Failed"
-    """Resource creation failed."""
-    CANCELED = "Canceled"
-    """Resource creation was canceled."""
-    DELETING = "Deleting"
-    """Resource is being deleted."""
-
-
-class RecurringScheduledActionsResourceOperationType(  # pylint: disable=name-too-long
-    str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """The resource operation to take on a scheduled-action failure."""
-
-    UNKNOWN = "Unknown"
-    """The default value for this enum type."""
-    START = "Start"
-    """Start operations on the resources."""
-    DEALLOCATE = "Deallocate"
-    """Deallocate operations on the resources."""
-    HIBERNATE = "Hibernate"
-    """Hibernate operations on the resources."""
-    CREATE = "Create"
-    """Create operations on the resources."""
-    DELETE = "Delete"
-    """Delete operations on the resources."""
-
-
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the virtual machine scale set. The type 'SystemAssigned,
     UserAssigned' includes both an implicitly created identity and a set of user assigned
@@ -723,17 +735,6 @@ class ResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     verifyVmAgentHealth on a Start request."""
 
 
-class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of a resource type."""
-
-    SUCCEEDED = "Succeeded"
-    """Resource has been created."""
-    FAILED = "Failed"
-    """Resource creation failed."""
-    CANCELED = "Canceled"
-    """Resource creation was canceled."""
-
-
 class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of resource being targeted."""
 
@@ -741,6 +742,47 @@ class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resources defined are Virtual Machines."""
     VIRTUAL_MACHINE_SCALE_SET = "VirtualMachineScaleSet"
     """Resources defined are Virtual Machines Scale Sets."""
+
+
+class ScheduledActionsDeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of deadline the scheduled action follows for its schedule."""
+
+    UNKNOWN = "Unknown"
+    """Default value of Unknown."""
+    INITIATE_AT = "InitiateAt"
+    """Initiate the operation at the given deadline."""
+    COMPLETE_BY = "CompleteBy"
+    """Complete the operation by the given deadline."""
+
+
+class ScheduledActionsProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the scheduled action resource."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    DELETING = "Deleting"
+    """Resource is being deleted."""
+
+
+class ScheduledActionsResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource operation to take on a scheduled-action failure."""
+
+    UNKNOWN = "Unknown"
+    """The default value for this enum type."""
+    START = "Start"
+    """Start operations on the resources."""
+    DEALLOCATE = "Deallocate"
+    """Deallocate operations on the resources."""
+    HIBERNATE = "Hibernate"
+    """Hibernate operations on the resources."""
+    CREATE = "Create"
+    """Create operations on the resources."""
+    DELETE = "Delete"
+    """Delete operations on the resources."""
 
 
 class ScheduledActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

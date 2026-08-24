@@ -38,14 +38,6 @@ def main():
         scenario_configuration_name="config-5678-9012-3456-789012345678",
         resource={
             "properties": {
-                "exclusions": {
-                    "resources": [
-                        "/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.Compute/virtualMachines/protectedVM"
-                    ],
-                    "tags": [{"key": "environment", "value": "production"}],
-                    "types": ["Microsoft.Compute/virtualMachineScaleSets"],
-                },
-                "filters": {"locations": ["eastus"], "zones": ["1"]},
                 "parameters": [
                     {"key": "duration", "value": "PT10M"},
                     {
@@ -53,6 +45,16 @@ def main():
                         "value": '["/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.Compute/virtualMachines/vm1","/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.Compute/virtualMachines/vm2"]',
                     },
                 ],
+                "resourceTargeting": {
+                    "exclude": {
+                        "resources": [
+                            "/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.Compute/virtualMachines/protectedVM"
+                        ],
+                        "tags": [{"key": "environment", "value": "production"}],
+                        "types": ["Microsoft.Compute/virtualMachineScaleSets"],
+                    },
+                    "include": {"locations": ["eastus"], "zones": ["1"]},
+                },
                 "scenarioId": "/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.Chaos/workspaces/exampleWorkspace/scenarios/12345678-1234-1234-1234-123456789012",
             }
         },
@@ -60,6 +62,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/ScenarioConfigurations_CreateOrUpdate.json
+# x-ms-original-file: 2026-08-01-preview/ScenarioConfigurations_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
