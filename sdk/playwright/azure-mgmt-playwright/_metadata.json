@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2026-02-01-preview",
+  "apiVersion": "2026-08-01-preview",
   "apiVersions": {
-    "Playwright.Management": "2026-02-01-preview"
+    "Playwright.Management": "2026-08-01-preview"
   },
-  "commit": "dfc0b2356c41c538250f3309f1a35f4cb1bf4e34",
+  "commit": "8a3bdca1506f7634ba66bb0db53a54c1f4ab6785",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/loadtestservice/resource-manager/Microsoft.LoadTestService/playwright",
-  "emitterVersion": "0.61.2"
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }
