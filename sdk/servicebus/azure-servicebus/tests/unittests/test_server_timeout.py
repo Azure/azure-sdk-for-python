@@ -87,7 +87,7 @@ class TestManagementRequestSetsServerTimeout:
         handler._amqp_transport.get_handler_link_name = lambda h: "link-1"
         handler._amqp_transport.mgmt_client_request = lambda *args, **kwargs: "response"
         handler._amqp_transport.TIMEOUT_ERROR = TimeoutError
-        handler._open = lambda: None
+        handler._open = lambda timeout=None: None
         handler._handler = MagicMock()
         handler._config = MagicMock(encoding="UTF-8")
         handler._mgmt_target = "queue/$management"
@@ -102,7 +102,9 @@ class TestManagementRequestSetsServerTimeout:
     def test_remaining_time_less_buffer_sent(self):
         handler, captured = self._make_handler()
         handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=10)
-        assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 9000}
+        # Link acquisition is deducted from the attempt, so this is at most 9000.
+        assert captured[REQUEST_RESPONSE_TIMEOUT]["TYPE"] == "UINT"
+        assert 8900 <= captured[REQUEST_RESPONSE_TIMEOUT]["VALUE"] <= 9000
 
     def test_clamped_below_buffer(self):
         handler, captured = self._make_handler()
@@ -184,7 +186,7 @@ class TestUamqpValueType:
         handler._amqp_transport.get_handler_link_name = lambda h: "link-1"
         handler._amqp_transport.mgmt_client_request = lambda *args, **kwargs: "response"
         handler._amqp_transport.TIMEOUT_ERROR = TimeoutError
-        handler._open = lambda: None
+        handler._open = lambda timeout=None: None
         handler._handler = MagicMock()
         handler._config = MagicMock(encoding="UTF-8")
         handler._mgmt_target = "queue/$management"
@@ -226,7 +228,7 @@ class TestAsyncParity:
         async def fake_request(*args, **kwargs):
             return "response"
 
-        async def fake_open():
+        async def fake_open(timeout=None):
             return None
 
         handler = AsyncBaseHandler.__new__(AsyncBaseHandler)
@@ -245,4 +247,6 @@ class TestAsyncParity:
         assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 60000}
 
         await handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=10)
-        assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 9000}
+        # Link acquisition is deducted from the attempt, so this is at most 9000.
+        assert captured[REQUEST_RESPONSE_TIMEOUT]["TYPE"] == "UINT"
+        assert 8900 <= captured[REQUEST_RESPONSE_TIMEOUT]["VALUE"] <= 9000

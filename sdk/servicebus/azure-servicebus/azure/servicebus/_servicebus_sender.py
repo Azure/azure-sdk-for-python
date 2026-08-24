@@ -20,6 +20,7 @@ from ._common.utils import (
     create_authentication,
     transform_outbound_messages,
     get_link_ready_deadline,
+    get_remaining_timeout,
     check_link_ready_deadline,
 )
 from ._common.tracing import (
@@ -295,7 +296,17 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         timeout: Optional[float] = None,
         last_exception: Optional[Exception] = None,
     ) -> None:
-        self._amqp_transport.send_messages(self, message, _LOGGER, timeout=timeout, last_exception=last_exception)
+        # The transport opens the link before sending and that wait is otherwise unbounded,
+        # so bound it here and give the send only the time left.
+        attempt_started = time.time()
+        self._open(timeout)
+        self._amqp_transport.send_messages(
+            self,
+            message,
+            _LOGGER,
+            timeout=get_remaining_timeout(timeout, attempt_started),
+            last_exception=last_exception,
+        )
 
     def schedule_messages(
         self,

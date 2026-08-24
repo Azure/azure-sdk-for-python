@@ -31,6 +31,7 @@ from ._common.utils import (
     parse_sas_credential,
     get_server_timeout_ms,
     get_attempt_timeout,
+    get_remaining_timeout,
 )
 from ._common.constants import (
     CONTAINER_PREFIX,
@@ -416,8 +417,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         last_exception,
                     )
                     if isinstance(last_exception, OperationTimeoutError):
+                        # Keep the original message: it identifies which phase timed out.
+                        # The session hint only applies to NEXT_AVAILABLE_SESSION receivers.
                         description = (
-                            "If trying to receive from NEXT_AVAILABLE_SESSION, "
+                            f"{last_exception} If trying to receive from NEXT_AVAILABLE_SESSION, "
                             "use max_wait_time on the ServiceBusReceiver to control the"
                             " timeout."
                         )
@@ -462,8 +465,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 last_exception,
             )
             if isinstance(last_exception, OperationTimeoutError):
+                # Keep the original message: it identifies which phase timed out.
                 description = (
-                    "If trying to receive from NEXT_AVAILABLE_SESSION, "
+                    f"{last_exception} If trying to receive from NEXT_AVAILABLE_SESSION, "
                     "use max_wait_time on the ServiceBusReceiver to control the"
                     " timeout."
                 )
@@ -500,7 +504,11 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         :return: The message response.
         :rtype: Message
         """
-        self._open()
+        attempt_started = time.time()
+        self._open(timeout)
+        # Link acquisition and the request share one attempt budget, so the request gets
+        # only what is left rather than restarting the timeout.
+        timeout = get_remaining_timeout(timeout, attempt_started)
         application_properties = {}
 
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.

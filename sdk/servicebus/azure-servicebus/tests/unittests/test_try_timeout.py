@@ -531,3 +531,113 @@ class TestReceiveHasADefaultBound:
         # The safety property: an explicit long poll must outlive the default.
         waited = self._seconds_waited(self._receiver(), timeout=300)
         assert waited == pytest.approx(300, abs=2)
+
+class TestAsyncReceiveHasADefaultBound:
+    """Async `_receive` is a separate implementation, so it needs its own coverage."""
+
+    def _receiver(self, max_wait_time=None):
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q", max_wait_time=max_wait_time)
+        receiver._check_live = lambda: None
+
+        async def _open(timeout=None):
+            return None
+
+        receiver._open = _open
+        return receiver
+
+    async def _seconds_waited(self, receiver, **kwargs):
+        from queue import Queue
+
+        handler = MagicMock()
+        handler._received_messages = Queue()
+        clock = {"t": 0.0}
+
+        async def do_work_async():
+            clock["t"] += 1.0
+            return True
+
+        handler.do_work_async = do_work_async
+        receiver._handler = handler
+
+        transport = MagicMock()
+        transport.TIMEOUT_FACTOR = 1
+        transport.get_current_time = lambda _client: clock["t"]
+
+        async def reset_link_credit_async(_client, _credit):
+            return None
+
+        transport.reset_link_credit_async = reset_link_credit_async
+        receiver._amqp_transport = transport
+
+        assert await receiver._receive(max_message_count=1, **kwargs) == []
+        return clock["t"]
+
+    @pytest.mark.asyncio
+    async def test_no_wait_anywhere_falls_back_to_the_default(self):
+        waited = await self._seconds_waited(self._receiver())
+        assert waited == pytest.approx(DEFAULT_RECEIVE_WAIT_TIME_SECS, abs=2)
+
+    @pytest.mark.asyncio
+    async def test_explicit_call_wait_wins(self):
+        waited = await self._seconds_waited(self._receiver(), timeout=5)
+        assert waited == pytest.approx(5, abs=2)
+
+    @pytest.mark.asyncio
+    async def test_receiver_level_wait_wins(self):
+        waited = await self._seconds_waited(self._receiver(max_wait_time=8))
+        assert waited == pytest.approx(8, abs=2)
+
+    @pytest.mark.asyncio
+    async def test_a_long_explicit_wait_is_never_truncated(self):
+        waited = await self._seconds_waited(self._receiver(), timeout=300)
+        assert waited == pytest.approx(300, abs=2)
+
+class TestLinkAcquisitionIsBoundedInsideOperations:
+    """Send and management calls open the link internally, before the timed operation.
+
+    Without a deadline on that open, enabling `try_timeout` still allowed an unbounded
+    `while not client_ready()` spin, so the attempt was not actually bounded.
+    """
+
+    def _never_ready(self):
+        handler = MagicMock()
+        handler._shutdown = True
+        handler.client_ready.return_value = False
+        return handler
+
+    def test_send_bounds_link_acquisition(self):
+        from azure.servicebus import ServiceBusClient, ServiceBusMessage
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock(), try_timeout=0.2)
+        sender = client.get_queue_sender("q")
+        sender._check_live = lambda: None
+        handler = self._never_ready()
+        # _open closes any existing handler first, so re-supply it on create.
+        sender._create_handler = lambda auth: setattr(sender, "_handler", handler)
+        sender._handler = handler
+
+        with patch("azure.servicebus._servicebus_sender.create_authentication", lambda c: None):
+            with pytest.raises(OperationTimeoutError) as exc:
+                sender.send_messages(ServiceBusMessage("m"))
+
+        # The original link message must survive the retry wrapper rather than be replaced
+        # wholesale by the NEXT_AVAILABLE_SESSION guidance.
+        assert "AMQP link" in str(exc.value)
+
+    def test_management_bounds_link_acquisition(self):
+        from azure.servicebus import ServiceBusClient
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock(), try_timeout=0.2)
+        receiver = client.get_queue_receiver("q")
+        receiver._check_live = lambda: None
+        receiver._create_handler = lambda auth: None
+        receiver._handler = self._never_ready()
+
+        with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
+            with pytest.raises(OperationTimeoutError) as exc:
+                receiver._mgmt_request_response_with_retry(b"op", {}, lambda *a: None, timeout=0.2)
+
+        assert "AMQP link" in str(exc.value)

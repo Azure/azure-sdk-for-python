@@ -80,7 +80,7 @@ class ServiceBusClient(
     :keyword float try_timeout: The timeout in seconds bounding a single attempt of an operation,
      rather than the whole operation. Applies to sending, management operations, and AMQP link
      acquisition. Default is None, meaning no per-attempt bound. Does not apply to
-     `receive_messages` or to iterating a receiver.
+     `receive_messages`, iterating a receiver, or message settlement.
     :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Service Bus service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
@@ -234,7 +234,7 @@ class ServiceBusClient(
         :keyword float try_timeout: The timeout in seconds bounding a single attempt of an operation,
          rather than the whole operation. Applies to sending, management operations, and AMQP link
          acquisition. Default is None, meaning no per-attempt bound. Does not apply to
-         `receive_messages` or to iterating a receiver.
+         `receive_messages`, iterating a receiver, or message settlement.
         :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Service Bus service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
@@ -404,8 +404,8 @@ class ServiceBusClient(
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         messages to arrive. The default value is None: iterating the receiver then waits indefinitely,
+         while `receive_messages()` falls back to a 60 second bound. On a sessionful
          queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting.
          If connection errors are occurring due to write timing out,the connection timeout
          value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
@@ -605,8 +605,8 @@ class ServiceBusClient(
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         messages to arrive. The default value is None: iterating the receiver then waits indefinitely,
+         while `receive_messages()` falls back to a 60 second bound. On a sessionful
          queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting.
          If connection errors are occurring due to write timing out,the connection timeout
          value may need to be adjusted. See the `socket_timeout` optional parameter for more details.

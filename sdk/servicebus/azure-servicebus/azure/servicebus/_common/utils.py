@@ -138,6 +138,21 @@ def get_link_ready_deadline(timeout: Optional[float]) -> Optional[float]:
     return (time.time() + timeout) if timeout else None
 
 
+def get_remaining_timeout(timeout: Optional[float], started: float) -> Optional[float]:
+    """Return the timeout left for the rest of an attempt after link acquisition.
+
+    Keeps one attempt bounded by a single budget rather than restarting it per phase.
+
+    :param float or None timeout: The attempt's timeout in seconds, or None if unbounded.
+    :param float started: The time the attempt began.
+    :rtype: float or None
+    :returns: The remaining timeout, never negative, or None when unbounded.
+    """
+    if timeout is None:
+        return None
+    return max(timeout - (time.time() - started), 0)
+
+
 def check_link_ready_deadline(deadline: Optional[float]) -> None:
     """Raise if an AMQP link has not reported ready by its deadline.
 

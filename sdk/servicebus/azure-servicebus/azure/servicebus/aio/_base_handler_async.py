@@ -19,6 +19,7 @@ from .._common.utils import (
     parse_sas_credential,
     get_server_timeout_ms,
     get_attempt_timeout,
+    get_remaining_timeout,
 )
 from .._common.constants import (
     TOKEN_TYPE_SASTOKEN,
@@ -265,7 +266,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                     )
                     if isinstance(last_exception, OperationTimeoutError):
                         description = (
-                            "If trying to receive from NEXT_AVAILABLE_SESSION, "
+                            f"{last_exception} If trying to receive from NEXT_AVAILABLE_SESSION, "
                             "use max_wait_time on the ServiceBusReceiver to control the"
                             " timeout."
                         )
@@ -305,7 +306,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
             if isinstance(last_exception, OperationTimeoutError):
                 description = (
-                    "If trying to receive from NEXT_AVAILABLE_SESSION, "
+                    f"{last_exception} If trying to receive from NEXT_AVAILABLE_SESSION, "
                     "use max_wait_time on the ServiceBusReceiver to control the"
                     " timeout."
                 )
@@ -341,7 +342,11 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         :return: The message response.
         :rtype: Message
         """
-        await self._open()
+        attempt_started = time.time()
+        await self._open(timeout)
+        # Link acquisition and the request share one attempt budget, so the request gets
+        # only what is left rather than restarting the timeout.
+        timeout = get_remaining_timeout(timeout, attempt_started)
 
         application_properties = {}
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.

@@ -107,8 +107,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
     :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-     messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-     until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+     messages to arrive. The default value is None: iterating the receiver then waits indefinitely,
+     while `receive_messages()` falls back to a 60 second bound. On a sessionful
      queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
      to a session. If connection errors are occurring due to write timing out,the connection timeout
      value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
@@ -277,8 +277,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
          The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         messages to arrive. The default value is None: iterating the receiver then waits indefinitely,
+         while `receive_messages()` falls back to a 60 second bound. On a sessionful
          queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
          to a session. If connection errors are occurring due to write timing out,the connection timeout
          value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
