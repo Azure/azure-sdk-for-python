@@ -19,7 +19,7 @@ from .models._enums import (
 
 if TYPE_CHECKING:
     from ..indexes.types import SearchIndexKnowledgeSourceQueryHints
-    from ..indexesmodels import KnowledgeSourceResultsProcessing
+    from ..indexes.models import KnowledgeSourceResultsProcessing
     from .models import KnowledgeRetrievalOutputMode
 
 

@@ -25,7 +25,7 @@ from .models._enums import (
 if TYPE_CHECKING:
     from ..knowledgebases.models import KnowledgeSourceIngestionParameters
     from ..knowledgebases.types import KnowledgeRetrievalReasoningEffort
-    from ..knowledgebasesmodels import KnowledgeRetrievalOutputMode
+    from ..knowledgebases.models import KnowledgeRetrievalOutputMode
     from .models import (
         AIFoundryModelCatalogName,
         AzureOpenAIModelName,

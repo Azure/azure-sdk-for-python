@@ -15,6 +15,7 @@ The script is idempotent and applies exact replacements only. It exits with an e
 files if the emitter output no longer matches either the known generated or patched form. Remove the
 script and these instructions after the emitter produces all four corrected type surfaces and the
 package passes MyPy without the rewriter.
+Note: Occasionally, types.py might import packages incorrectly. Verify that the imports are valid and actually reference something valid.
 
 ---
 
