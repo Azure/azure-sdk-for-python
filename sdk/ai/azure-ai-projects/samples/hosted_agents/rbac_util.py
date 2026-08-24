@@ -7,7 +7,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.mgmt.authorization import AuthorizationManagementClient, models as authorization_models
 from azure.mgmt.authorization.aio import AuthorizationManagementClient as AsyncAuthorizationManagementClient
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 from azure.mgmt.resource.resources.aio import ResourceManagementClient as AsyncResourceManagementClient
 from azure.ai.projects.models import AgentVersionDetails
 
