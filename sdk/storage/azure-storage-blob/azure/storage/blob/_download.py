@@ -41,6 +41,7 @@ from ._encryption import (
     get_adjusted_download_range_and_offset,
     is_encryption_v2,
     parse_encryption_data,
+    _GCMRegionNonceValidator,
 )
 
 if TYPE_CHECKING:
@@ -92,6 +93,7 @@ def process_content(
                 end_offset,
                 data.response.headers,
                 expected_encryption_data,
+                encryption.get("gcm_nonce_validator"),
             )
         except Exception as error:
             raise HttpResponseError(message="Decryption failed.", response=data.response, error=error) from error
@@ -397,6 +399,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             self._get_encryption_data_request()
+            if is_encryption_v2(self._encryption_data):
+                self._encryption_options["gcm_nonce_validator"] = _GCMRegionNonceValidator()
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is using MD5, get only self.MAX_CHUNK_GET_SIZE for the first

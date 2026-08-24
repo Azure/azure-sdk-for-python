@@ -1,6 +1,17 @@
 # Release History
 
-## 2.5.0 (Unreleased)
+## 2.6.0 (Unreleased)
+
+### Bugs Fixed
+
+* Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
+
+## 2.5.0 (2026-08-20)
+
+### Dependency update
+
+* Dependency on `openai` has changed to `openai>=3.0.0`, which requires `httpx2` instead of `httpx`.
+* Support for Python 3.9 was dropped. The new minimum supported Python version is 3.10.
 
 ### Features Added
 
@@ -9,11 +20,15 @@
 * Method `.beta.datasets.begin_create_generation_job` now returns a custom LRO poller named `DatasetGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
 * Method `.beta.evaluators.begin_create_generation_job` now returns a custom LRO poller named `EvaluatorGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
 * Added the optional read-only `state_source` property to `AgentDetails` and the new `AgentStateSource` enum.
+* Added programmatic tool calling through `ProgrammaticToolCallingParam` and `SpecificProgrammaticToolCallingParam`, with new `ToolType.PROGRAMMATIC_TOOL_CALLING` and `ToolChoiceParamType.PROGRAMMATIC_TOOL_CALLING` enum members.
+* Added the optional `allowed_callers` property to `ApplyPatchToolParam`, `CodeInterpreterTool`, `CodeInterpreterToolboxTool`, `CustomToolParam`, `FunctionShellToolParam`, `FunctionTool`, `FunctionToolParam`, `MCPTool`, and `MCPToolboxTool`. Added the new `CallableToolAllowedCaller` enum values `direct` and `programmatic`.
+* Expanded `Reasoning` with optional `mode` and `context` properties. Added `ReasoningModeEnum` for `standard` and `pro`; `effort` now uses the new `ReasoningEffort` enum, including the new `max` effort.
 
 ### Breaking Changes
 
 All breaking changes are associated with beta features.
 
+* Methods `.beta.routines.list` and `.beta.routines.list_runs` replaced the `before` argument with `after` and now use the service-provided `next_link` for continuation.
 * Renamed class `TaskGenerationDataGenerationJobOptions` to `SimulationSeedDataGenerationJobOptions`. The corresponding `DataGenerationJobType.TASK_GENERATION` enum member was renamed to `DataGenerationJobType.SIMULATION_SEED`, and its wire value changed from `task_generation` to `simulation_seed`.
 * Renamed enum `OptimizationDatasetInputType` to `AgentOptimizationDatasetInputType`.
 * Renamed class `OptimizationAgentIdentifier` to `OptimizedAgentIdentifier`.

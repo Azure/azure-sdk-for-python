@@ -9,8 +9,8 @@ Azure-specific grader types in addition to the standard OpenAI graders.
 """
 
 from typing import Any, Iterable, List, Union, Optional
-import httpx
-from httpx import Timeout
+import httpx2
+from httpx2 import Timeout
 from openai import NotGiven, Omit, AsyncOpenAI as AsyncOpenAIClient
 from openai._types import Body, Query, Headers
 from openai.resources.evals.evals import AsyncEvals
@@ -109,7 +109,7 @@ class _OpenAILoggingTransport:
     def __init__(self, *, logging_enabled: bool) -> None: ...
     async def handle_async_request(self, request: Any) -> Any: ...
 
-class _LoggingAsyncByteStream(httpx.AsyncByteStream): ...
+class _LoggingAsyncByteStream(httpx2.AsyncByteStream): ...
 
 def _log_streaming_response_notice(logging_enabled: bool) -> bool: ...
 
