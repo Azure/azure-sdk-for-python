@@ -22,10 +22,19 @@ kwargs = get_client_modifications()
 client = AzureAppConfigurationClient(endpoint, credential)
 
 configuration_setting = ConfigurationSetting(key="message", value="Hello World!")
+json_setting = ConfigurationSetting(key="my_json", value='{"key": "value"}', content_type="application/json")
 feature_flag_setting = FeatureFlagConfigurationSetting("Beta", enabled=True)
 
 client.set_configuration_setting(configuration_setting=configuration_setting)
+client.set_configuration_setting(configuration_setting=json_setting)
 client.set_configuration_setting(configuration_setting=feature_flag_setting)
+
+
+def get_beta_flag(config):
+    for flag in config["feature_management"]["feature_flags"]:
+        if flag["id"] == "Beta":
+            return flag
+    raise KeyError("Beta")
 
 
 def my_callback_on_fail(_):
@@ -52,7 +61,7 @@ config = load(
 
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["feature_management"]["feature_flags"][1])
+print(get_beta_flag(config))
 
 # Updating the configuration setting
 feature_flag_setting.enabled = False
@@ -68,7 +77,7 @@ config.refresh()
 # Printing the updated value
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["feature_management"]["feature_flags"][1])
+print(get_beta_flag(config))
 
 # Waiting for the refresh interval to pass
 time.sleep(35)
@@ -79,4 +88,4 @@ config.refresh()
 # Printing the updated value
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["feature_management"]["feature_flags"][1])
+print(get_beta_flag(config))
