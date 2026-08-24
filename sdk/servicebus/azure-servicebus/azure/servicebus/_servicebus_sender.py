@@ -268,6 +268,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
+            # The token fetch can use the budget, and open() cannot be cancelled once entered.
+            check_link_ready_deadline(deadline)
             self._handler.open(connection=self._connection)
             check_link_ready_deadline(deadline)
             while not self._handler.client_ready():

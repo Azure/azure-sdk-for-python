@@ -802,3 +802,41 @@ class TestReadyReturningTrueLateStillTimesOut:
         with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
             receiver._open(timeout=30)
         assert receiver._running is True
+
+
+class TestExpiredAuthDoesNotEnterOpen:
+    """open() cannot be cancelled once entered, so an exhausted budget must stop before it."""
+
+    def _receiver(self, auth_cost):
+        from azure.servicebus import ServiceBusClient
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        handler = MagicMock()
+        handler._shutdown = True
+        handler.client_ready.return_value = True
+        receiver._create_handler = lambda auth: setattr(receiver, "_handler", handler)
+        receiver._handler = handler
+        self.handler = handler
+
+        def slow_auth(_c):
+            time.sleep(auth_cost)  # credential acquisition consumes the budget
+            return None
+
+        self.slow_auth = slow_auth
+        return receiver
+
+    def test_open_is_not_entered_when_auth_used_the_budget(self):
+        receiver = self._receiver(auth_cost=0.3)
+        with patch("azure.servicebus._servicebus_receiver.create_authentication", self.slow_auth):
+            with pytest.raises(OperationTimeoutError):
+                receiver._open(timeout=0.1)
+        self.handler.open.assert_not_called()
+        assert receiver._running is False
+
+    def test_open_is_entered_when_budget_remains(self):
+        receiver = self._receiver(auth_cost=0.0)
+        with patch("azure.servicebus._servicebus_receiver.create_authentication", self.slow_auth):
+            receiver._open(timeout=30)
+        self.handler.open.assert_called_once()
+        assert receiver._running is True
