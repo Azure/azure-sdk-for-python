@@ -30,6 +30,7 @@ def empty_challenge_cache(fn):
 
     return wrapper
 
+
 @pytest.mark.asyncio
 @empty_challenge_cache
 async def test_rejected_challenge_is_not_cached():
@@ -61,6 +62,7 @@ async def test_rejected_challenge_is_not_cached():
     assert Requests.count == 2
     assert not HttpChallengeCache.get_challenge_for_url(url)
     assert credential.get_token.call_count == 0
+
 
 @pytest.mark.asyncio
 @empty_challenge_cache
