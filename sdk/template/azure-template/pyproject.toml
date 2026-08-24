@@ -49,7 +49,7 @@ pyright = true
 pylint = true
 black = true
 generate = false
-apistub = false
+apistub = true
 
 [tool.azure-sdk-conda]
 in_bundle = false

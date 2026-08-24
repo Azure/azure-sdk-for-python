@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b2 (2026-08-17)
+## 1.1.0b2 (Unreleased)
 
 ### Features Added
 
@@ -21,6 +21,13 @@
   end-call, and transport outcomes, with bounded per-connection concurrency and
   retained model output. Unfinished turns now distinguish clean abandonment,
   application/server errors, and protocol or transport loss.
+
+- Updated the resilient LangGraph sample to current `langgraph`,
+  `langgraph-checkpoint-sqlite`, and `langchain-core` release lines.
+
+### Other Changes
+
+- Constrained runtime, development, and sample dependencies to compatible release lines.
 
 ## 1.1.0b1 (2026-08-11)
 
