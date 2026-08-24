@@ -47,12 +47,13 @@
   - Added enum `SliType`
   - Added enum `SliTypeMatchState`
   - Added model `UserConfirmationItem`
-  - Model `DrillRunsOperations` added parameter `content_type` in method `begin_reprotect`
-  - Model `DrillRunsOperations` added method `begin_generate_report`
-  - Model `DrillRunsOperations` added method `list_report_download_url`
+  - Operation group `DrillRunsOperations` added parameter `content_type` in method `begin_reprotect`
+  - Operation group `DrillRunsOperations` added method `begin_generate_report`
+  - Operation group `DrillRunsOperations` added method `list_report_download_url`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `DrillProperties` deleted or renamed its instance variable `managed_on_behalf_of_configuration`
   - Model `RegionalDrillProperties` deleted or renamed its instance variable `managed_on_behalf_of_configuration`
   - Model `ZonalDrillProperties` deleted or renamed its instance variable `managed_on_behalf_of_configuration`
