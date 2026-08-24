@@ -1,6 +1,6 @@
 # Release History
 
-## 4.8.0b3 (Unreleased)
+## 4.8.0b3 (2026-08-25)
 
 ### Features Added
 
