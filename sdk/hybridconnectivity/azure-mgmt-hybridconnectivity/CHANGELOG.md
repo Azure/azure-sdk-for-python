@@ -63,6 +63,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Method `HybridConnectivityMgmtClient.__init__` inserted a `positional_or_keyword` parameter `subscription_id`
   - Model `EndpointAccessResource` deleted or renamed its instance variable `access_key`
   - Model `EndpointAccessResource` deleted or renamed its instance variable `expires_on`
@@ -87,9 +88,9 @@
   - Deleted or renamed model `EndpointsList`
   - Deleted or renamed model `OperationListResult`
   - Deleted or renamed model `ServiceConfigurationList`
-  - Method `EndpointsOperations.list_credentials` parameter `expiresin` changed default value from `10800` to `none`
+  - Parameter `expiresin` of `EndpointsOperations.list_credentials` is now optional
   - Method `EndpointsOperations.list_credentials` changed its parameter `expiresin` from `positional_or_keyword` to `keyword_only`
-  - Method `EndpointsOperations.list_ingress_gateway_credentials` parameter `expiresin` changed default value from `10800` to `none`
+  - Parameter `expiresin` of `EndpointsOperations.list_ingress_gateway_credentials` is now optional
   - Method `EndpointsOperations.list_ingress_gateway_credentials` changed its parameter `expiresin` from `positional_or_keyword` to `keyword_only`
 
 ## 2.0.0b1 (2025-04-01)
