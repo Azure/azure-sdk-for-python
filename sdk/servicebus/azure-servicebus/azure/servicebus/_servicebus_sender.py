@@ -263,8 +263,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if self._handler:
             self._handler.close()
 
-        # Start the budget before the blocking phases: the token fetch and handler.open()
-        # (socket, TLS, SASL, CBS) are link acquisition too, not just the ready poll.
+        # The token fetch and handler.open() are link acquisition too, not just the ready poll.
         deadline = get_link_ready_deadline(timeout)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
@@ -274,6 +273,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             while not self._handler.client_ready():
                 check_link_ready_deadline(deadline)
                 time.sleep(0.05)
+            # client_ready() can block and then return true past the deadline.
+            check_link_ready_deadline(deadline)
             self._running = True
             self._max_message_size_on_link = (
                 self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
@@ -299,8 +300,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         timeout: Optional[float] = None,
         last_exception: Optional[Exception] = None,
     ) -> None:
-        # The transport opens the link before sending and that wait is otherwise unbounded,
-        # so bound it here and give the send only the time left.
+        # The transport opens the link before sending; bound it and give the send the rest.
         attempt_started = time.time()
         self._open(timeout)
         self._amqp_transport.send_messages(

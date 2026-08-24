@@ -140,8 +140,7 @@ class _SessionBrowser(BaseHandler):
         if self._handler:
             self._handler.close()
 
-        # Start the budget before the blocking phases: the token fetch and handler.open()
-        # (socket, TLS, SASL, CBS) are link acquisition too, not just the ready poll.
+        # The token fetch and handler.open() are link acquisition too, not just the ready poll.
         deadline = get_link_ready_deadline(timeout)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
@@ -151,6 +150,8 @@ class _SessionBrowser(BaseHandler):
             while not self._handler.client_ready():
                 check_link_ready_deadline(deadline)
                 time.sleep(0.05)
+            # client_ready() can block and then return true past the deadline.
+            check_link_ready_deadline(deadline)
             self._running = True
         except:
             self._close_handler()

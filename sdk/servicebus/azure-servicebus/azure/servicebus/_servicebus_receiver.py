@@ -362,8 +362,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         if self._handler and not self._handler._shutdown:
             self._handler.close()
 
-        # Start the budget before the blocking phases: the token fetch and handler.open()
-        # (socket, TLS, SASL, CBS) are link acquisition too, not just the ready poll.
+        # The token fetch and handler.open() are link acquisition too, not just the ready poll.
         deadline = get_link_ready_deadline(timeout)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
@@ -373,6 +372,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             while not self._handler.client_ready():
                 check_link_ready_deadline(deadline)
                 time.sleep(0.05)
+            # client_ready() can block and then return true past the deadline.
+            check_link_ready_deadline(deadline)
             self._running = True
         except:
             self._close_handler()
@@ -387,11 +388,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         # pylint: disable=protected-access
         try:
             self._receive_context.set()
-            # No wait from the call or the receiver: bound at a default rather than spin
-            # forever. An explicit wait always wins.
+            # No wait from the call or the receiver: bound at a default. Explicit wins.
             wait_time = timeout or self._max_wait_time or DEFAULT_RECEIVE_WAIT_TIME_SECS
-            # Bound link acquisition by the same wait, otherwise the deadline below only
-            # covers waiting for messages and the open could still spin forever.
+            # Bound link acquisition too; the deadline below only covers waiting for messages.
             self._open(wait_time)
 
             amqp_receive_client = self._handler

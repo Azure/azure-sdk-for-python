@@ -164,9 +164,12 @@ def get_remaining_timeout(timeout: Optional[float], started: float) -> Optional[
 def check_link_ready_deadline(deadline: Optional[float]) -> None:
     """Raise if an AMQP link has not reported ready by its deadline.
 
+    Reaching the deadline counts as expired. A strict comparison would also make a zero
+    budget depend on clock resolution, which is coarse on Windows.
+
     :param float or None deadline: The absolute deadline, or None when unbounded.
     """
-    if deadline is not None and time.time() > deadline:
+    if deadline is not None and time.time() >= deadline:
         raise OperationTimeoutError(message="Timed out waiting for the AMQP link to open.")
 
 

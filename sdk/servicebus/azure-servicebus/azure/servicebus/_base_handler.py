@@ -383,8 +383,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     ) -> Any:
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
-        # Opt-in per call site so long-poll operations (receive, streaming iteration)
-        # stay bounded only by the caller's timeout.
+        # Opt-in per call site so long-poll operations stay bounded only by the caller.
         apply_try_timeout = kwargs.pop("apply_try_timeout", False)
         try_timeout = self._config.try_timeout if apply_try_timeout else None
         retried_times = 0
@@ -506,8 +505,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         """
         attempt_started = time.time()
         self._open(timeout)
-        # Link acquisition and the request share one attempt budget, so the request gets
-        # only what is left rather than restarting the timeout.
+        # Open and request share one attempt budget, so the request gets what is left.
         timeout = get_remaining_timeout(timeout, attempt_started)
         application_properties = {}
 
