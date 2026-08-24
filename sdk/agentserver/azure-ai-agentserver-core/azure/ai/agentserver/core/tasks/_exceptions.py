@@ -9,10 +9,13 @@ ACCEPT legacy ``task_id`` positional args for back-compat during the
 transition, but discard them (the attribute is never set).
 """
 
-from typing import Any
 import inspect
+from typing import Any
+
+from azure.ai.agentserver.core._experimental import experimental
 
 
+@experimental
 class TaskFailed(Exception):
     """Raised when a resilient task function raises an unhandled exception.
 
@@ -46,6 +49,7 @@ TaskFailed.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
 )
 
 
+@experimental
 class TaskCancelled(Exception):
     """Raised when a resilient task is cancelled (: bare)."""
 
@@ -71,6 +75,7 @@ class TaskNotFound(Exception):
         super().__init__(f"Task {task_id!r} not found")
 
 
+@experimental
 class TaskConflictError(RuntimeError):
     """Raised when a task lifecycle conflict cannot be resolved.
 
@@ -101,6 +106,7 @@ TaskConflictError.__signature__ = inspect.Signature(  # type: ignore[attr-define
 )
 
 
+@experimental
 class TaskManagerNotInitialized(RuntimeError):
     """Raised when a resilient-task operation is attempted with no installed manager.
 
@@ -123,6 +129,7 @@ class EtagConflict(RuntimeError):
         super().__init__(msg)
 
 
+@experimental
 class SteeringQueueFull(RuntimeError):
     """Raised when the steering pending-input queue is at capacity (: bare)."""
 
@@ -143,6 +150,7 @@ class TaskPreconditionFailed(RuntimeError):
         super().__init__(message or "task precondition failed")
 
 
+@experimental
 class LastInputIdPreconditionFailed(TaskPreconditionFailed):
     """Raised when ``Task.start``'s ``if_last_input_id`` precondition is not met.
 
@@ -178,6 +186,7 @@ LastInputIdPreconditionFailed.__signature__ = inspect.Signature(  # type: ignore
 )
 
 
+@experimental
 class InputTooLarge(ValueError):
     """Raised when an input's serialized size exceeds the per-input cap (: bare)."""
 
@@ -254,6 +263,7 @@ except ImportError:  # pragma: no cover
     from typing_extensions import Literal, TypedDict  # type: ignore[assignment]
 
 
+@experimental
 class TaskDeferred(Exception):
     """Raised when handler called ``ctx.exit_for_recovery``.
 

@@ -182,7 +182,11 @@ async def handle_invoke(request: Request) -> Response:
     # ``_finish_turn`` discipline that makes this safe.
     await deep_research.start(
         task_id=task_id,
-        input={"topic": topic, "invocation_id": invocation_id},
+        input={
+            "topic": topic,
+            "invocation_id": invocation_id,
+            "session_id": session_id,
+        },
     )
 
     if "text/event-stream" in request.headers.get("accept", ""):
@@ -235,7 +239,10 @@ async def handle_get(request: Request) -> Response:
             stream = await streams.get(invocation_id)
         except EventStreamNotFoundError:
             return JSONResponse(
-                {"status": "not_found", "message": "No live stream for this invocation id."},
+                {
+                    "status": "not_found",
+                    "message": "No live stream for this invocation id.",
+                },
                 status_code=404,
             )
 
@@ -288,10 +295,14 @@ async def handle_cancel(request: Request) -> Response:
 
     run = await get_task_manager().get_active_run(task_id)
     if run is None:
-        return JSONResponse({"status": "not_found", "message": "No active task to cancel."})
+        return JSONResponse(
+            {"status": "not_found", "message": "No active task to cancel."}
+        )
 
     await run.cancel()
-    return JSONResponse({"status": "cancelled", "message": "Task cancellation requested."})
+    return JSONResponse(
+        {"status": "cancelled", "message": "Task cancellation requested."}
+    )
 
 
 if __name__ == "__main__":

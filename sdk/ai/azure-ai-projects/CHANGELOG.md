@@ -1,15 +1,62 @@
 # Release History
 
-## 2.5.0 
+## 2.6.0 (Unreleased)
+
+### Bugs Fixed
+
+* Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
+
+## 2.5.0 (2026-08-20)
+
+### Dependency update
+
+* Dependency on `openai` has changed to `openai>=3.0.0`, which requires `httpx2` instead of `httpx`.
+* Support for Python 3.9 was dropped. The new minimum supported Python version is 3.10.
 
 ### Features Added
 
-* Added Reinforcement Learning Environments (RLE) support:
-  * New generated models: `RLEnvironment`, `RLEnvironmentVersion`, `RLEInstanceGroup`, `RLEInstance`, `RLEErrorResponse`, `RLEInstanceGroupAtCapacityErrorResponse`, `CreateRLEnvironmentRequest`, `CreateRLEInstanceGroupRequest`, `RLEInstanceGroupResourceProfile`, `RLEResetRequest`, `RLEStepRequest`, `RLEStepResult`, `RLEnvironmentState`, `ListRLEnvironmentsResponse`, `ListRLEnvironmentVersionsResponse`, and `ListRLEInstanceGroupsResponse`, plus the `RLEnvironmentDiskImageConversionStatus`, `RLEnvironmentVersionBump`, `RLEPaginationOrder`, and `RLEInstanceStatus` enums.
-  * New root-client operation group `project_client.rle` (`RLEOperations`) exposing a single entry point, `get_openenv_client`. Environment, instance-group, and instance management operations are internal — customers interact only with the `OpenEnvClient` and the `OpenEnvInstance` objects it hands out.
-  * New OpenEnv client interface `project_client.rle.get_openenv_client(name, version=None, max_active_instances=1, instance_acquire_timeout=900, ...)` returning an `OpenEnvClient` / `AsyncOpenEnvClient` context manager. On both the sync and async surfaces `get_openenv_client(...)` is a plain (non-awaited) factory that performs no I/O. The environment is resolved by `name` (and `version` when supplied) on context entry, so a missing or invalid environment fails when the client is entered. Entering the client creates a single `RLEInstanceGroup` that reserves `max_active_instances` of concurrency on the service and fails fast if the quota cannot be granted. The service owns the pool and the reservation — the client keeps no local pool. `get_instance()` retries temporary `InstanceGroupAtCapacity` responses according to `Retry-After`, then waits for the instance to report `Running` and for its runtime health endpoint to become healthy, all within the configurable acquisition timeout (maximum 3600 seconds). Timeout failures raise `RLEInstanceAcquireTimeoutError` with the last status and typed capacity details when available. The returned `OpenEnvInstance` / `AsyncOpenEnvInstance` exposes resolved `environment_name` and `environment_version` properties in addition to `id`, `instance_group_id`, the underlying `instance`, and the `reset`/`step`/`state`/`health`/`metadata`/`schema` runtime operations. Every non-health runtime operation verifies runtime health before sending its request. Closing the client deletes the instance group, which releases any instances still leased on the service; the client keeps no local list of leased instances.
-  * Instance-group creation may omit the environment version to select the latest version. The response resolves the concrete environment name and version, which are then used for instance creation and all runtime operations (`reset`, `step`, `state`, `health`, `metadata`, `schema`) together with the instance-group and instance identifiers. Runtime requests flow through the `AIProjectClient` pipeline (auth, retries, tracing). The `reset`/`step` operations return the generated `RLEStepResult` model and `state` returns `RLEnvironmentState`; `health`, `metadata`, and `schema` return the raw JSON payload as a dictionary.
-  * RLE samples authenticate with `DefaultAzureCredential` for both sync and async clients.
+* Added stable Agent-to-Agent (A2A) tools `A2ATool` and `A2AToolboxTool`, with the new `A2AProtocolVersion` enum for selecting protocol version `1.0`.
+* Method `.beta.agents.begin_create_optimization_job` now returns a custom LRO poller named `AgentOptimizationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
+* Method `.beta.datasets.begin_create_generation_job` now returns a custom LRO poller named `DatasetGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
+* Method `.beta.evaluators.begin_create_generation_job` now returns a custom LRO poller named `EvaluatorGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
+* Added the optional read-only `state_source` property to `AgentDetails` and the new `AgentStateSource` enum.
+* Added programmatic tool calling through `ProgrammaticToolCallingParam` and `SpecificProgrammaticToolCallingParam`, with new `ToolType.PROGRAMMATIC_TOOL_CALLING` and `ToolChoiceParamType.PROGRAMMATIC_TOOL_CALLING` enum members.
+* Added the optional `allowed_callers` property to `ApplyPatchToolParam`, `CodeInterpreterTool`, `CodeInterpreterToolboxTool`, `CustomToolParam`, `FunctionShellToolParam`, `FunctionTool`, `FunctionToolParam`, `MCPTool`, and `MCPToolboxTool`. Added the new `CallableToolAllowedCaller` enum values `direct` and `programmatic`.
+* Expanded `Reasoning` with optional `mode` and `context` properties. Added `ReasoningModeEnum` for `standard` and `pro`; `effort` now uses the new `ReasoningEffort` enum, including the new `max` effort.
+
+### Breaking Changes
+
+All breaking changes are associated with beta features.
+
+* Methods `.beta.routines.list` and `.beta.routines.list_runs` replaced the `before` argument with `after` and now use the service-provided `next_link` for continuation.
+* Renamed class `TaskGenerationDataGenerationJobOptions` to `SimulationSeedDataGenerationJobOptions`. The corresponding `DataGenerationJobType.TASK_GENERATION` enum member was renamed to `DataGenerationJobType.SIMULATION_SEED`, and its wire value changed from `task_generation` to `simulation_seed`.
+* Renamed enum `OptimizationDatasetInputType` to `AgentOptimizationDatasetInputType`.
+* Renamed class `OptimizationAgentIdentifier` to `OptimizedAgentIdentifier`.
+* Renamed class `OptimizationCandidate` to `AgentOptimizationCandidate`.
+* Renamed class `OptimizationDatasetCriterion` to `AgentOptimizationDatasetCriterion`.
+* Renamed class `OptimizationDatasetInput` to `AgentOptimizationDatasetInput`.
+* Renamed class `OptimizationDatasetItem` to `AgentOptimizationDatasetItem`.
+* Renamed class `OptimizationEvaluatorRef` to `AgentOptimizationEvaluatorRef`.
+* Renamed class `OptimizationInlineDatasetInput` to `AgentOptimizationInlineDatasetInput`.
+* Renamed class `OptimizationJob` to `AgentOptimizationJob`.
+* Renamed class `OptimizationJobInputs` to `AgentOptimizationJobInputs`.
+* Renamed class `OptimizationJobListItem` to `AgentOptimizationJobListItem`.
+* Renamed class `OptimizationJobProgress` to `AgentOptimizationJobProgress`.
+* Renamed class `OptimizationJobResult` to `AgentOptimizationJobResult`.
+* Renamed class `OptimizationOptions` to `AgentOptimizationOptions`.
+* Renamed class `OptimizationReferenceDatasetInput` to `AgentOptimizationReferenceDatasetInput`.
+
+### Sample updates
+
+* Added `sample_dataset_generation_job_simpleqna_for_finetuning_async.py` under `samples/datasets/`, demonstrating asynchronous generation of a SimpleQnA dataset for fine-tuning.
+* Added `sample_dataset_generation_job_simpleqna_for_finetuning_with_app_polling.py` under `samples/datasets/`, demonstrating application-managed polling for a SimpleQnA fine-tuning data generation job.
+* Added logging samples under `samples/logs/`:
+  * `sample_log_all.py` demonstrating combined logging for Azure SDK and `.get_openai_client()` operations.
+  * `sample_log_from_openai_client.py` demonstrating logging for an OpenAI client created from `.get_openai_client()`.
+  * `sample_log_from_sdk.py` demonstrating logging for Azure AI Projects SDK client operations.
+  * `sample_log_to_console.py` demonstrating console logging configuration.
+  * `sample_log_with_logging_disabled.py` demonstrating redacted logging behavior when `logging_enable` is not enabled.
+* Renamed optimization polling samples `sample_optimization_job_basic_polling.py` and `sample_optimization_job_basic_polling_async.py` to `sample_optimization_job_advanced_app_polling.py` and `sample_optimization_job_advanced_app_polling_async.py`.
 
 ## 2.4.0 (2026-07-24)
 
@@ -132,6 +179,7 @@ all derived from `ToolboxTool`, have been defined.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 * New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
+
 
 ### Breaking Changes
 

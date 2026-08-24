@@ -348,7 +348,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived environments.
             Default: ACTIVE_ONLY.
-        :type list_view_type: Optional[ListViewType]
+        :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Environment objects.
         :rtype: ~azure.core.paging.ItemPaged[Environment]
 

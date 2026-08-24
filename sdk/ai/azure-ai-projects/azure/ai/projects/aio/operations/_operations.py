@@ -12,7 +12,7 @@ import json
 from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
-from azure.core import AsyncPipelineClient  
+from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -22,7 +22,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     StreamClosedError,
     StreamConsumedError,
-    map_error as _map_error,
+    map_error,
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -37,25 +37,6 @@ from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, 
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
-    build_rl_environments_create_environment_request,
-    build_rl_environments_list_environments_request,
-    build_rl_environments_get_environment_request,
-    build_rl_environments_get_environment_version_request,
-    build_rl_environments_delete_environment_version_request,
-    build_rl_environments_list_rl_environment_versions_request,
-    build_rle_instance_groups_create_instance_group_request,
-    build_rle_instance_groups_list_instance_groups_request,
-    build_rle_instance_groups_get_instance_group_request,
-    build_rle_instance_groups_delete_instance_group_request,
-    build_rle_instances_create_instance_request,
-    build_rle_instances_get_instance_request,
-    build_rle_instances_delete_instance_request,
-    build_rle_instance_runtime_reset_request,
-    build_rle_instance_runtime_step_request,
-    build_rle_instance_runtime_state_request,
-    build_rle_instance_runtime_health_request,
-    build_rle_instance_runtime_get_metadata_request,
-    build_rle_instance_runtime_schema_request,
     build_agents_create_session_request,
     build_agents_create_version_from_code_request,
     build_agents_create_version_from_manifest_request,
@@ -180,6 +161,25 @@ from ...operations._operations import (
     build_indexes_get_request,
     build_indexes_list_request,
     build_indexes_list_versions_request,
+    build_rl_environments_create_environment_request,
+    build_rl_environments_delete_environment_version_request,
+    build_rl_environments_get_environment_request,
+    build_rl_environments_get_environment_version_request,
+    build_rl_environments_list_environments_request,
+    build_rl_environments_list_rl_environment_versions_request,
+    build_rle_instance_groups_create_instance_group_request,
+    build_rle_instance_groups_delete_instance_group_request,
+    build_rle_instance_groups_get_instance_group_request,
+    build_rle_instance_groups_list_instance_groups_request,
+    build_rle_instance_runtime_get_metadata_request,
+    build_rle_instance_runtime_health_request,
+    build_rle_instance_runtime_reset_request,
+    build_rle_instance_runtime_schema_request,
+    build_rle_instance_runtime_state_request,
+    build_rle_instance_runtime_step_request,
+    build_rle_instances_create_instance_request,
+    build_rle_instances_delete_instance_request,
+    build_rle_instances_get_instance_request,
     build_toolboxes_create_version_request,
     build_toolboxes_delete_request,
     build_toolboxes_delete_version_request,
@@ -198,16 +198,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-def map_error(*, status_code: int, response: AsyncHttpResponse, error_map: MutableMapping) -> None:
-    request_url = str(getattr(getattr(response, "request", None), "url", ""))
-    error_type = error_map.get(status_code)
-    if "/rl_environments/" in request_url and error_type:
-        error = _failsafe_deserialize(_models.RLEErrorResponse, response)
-        raise error_type(response=response, model=error)
-    _map_error(status_code=status_code, response=response, error_map=error_map)
-
-
-class BetaOperations:  # pylint: disable=too-many-instance-attributes
+class BetaOperations:  # pylint: disable=docstring-missing-param,too-many-instance-attributes
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -239,7 +230,7 @@ class BetaOperations:  # pylint: disable=too-many-instance-attributes
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
-class AgentsOperations:  # pylint: disable=too-many-public-methods
+class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2215,9 +2206,16 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
+    @overload
     async def upload_session_file(
-        self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
+        self,
+        agent_name: str,
+        session_id: str,
+        content: bytes,
+        *,
+        path: str,
+        content_type: str = "application/octet-stream",
+        **kwargs: Any
     ) -> _models.SessionFileWriteResult:
         """Upload a session file.
 
@@ -2230,6 +2228,65 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type session_id: str
         :param content: Required.
         :type content: bytes
+        :keyword path: The destination file path within the sandbox, relative to the session home
+         directory. Required.
+        :paramtype path: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def upload_session_file(
+        self,
+        agent_name: str,
+        session_id: str,
+        content: IO[bytes],
+        *,
+        path: str,
+        content_type: str = "application/octet-stream",
+        **kwargs: Any
+    ) -> _models.SessionFileWriteResult:
+        """Upload a session file.
+
+        Uploads binary file content to the specified path in the session sandbox. The service stores
+        the file relative to the session home directory and rejects payloads larger than 50 MB.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :param content: Required.
+        :type content: IO[bytes]
+        :keyword path: The destination file path within the sandbox, relative to the session home
+         directory. Required.
+        :paramtype path: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def upload_session_file(
+        self, agent_name: str, session_id: str, content: Union[bytes, IO[bytes]], *, path: str, **kwargs: Any
+    ) -> _models.SessionFileWriteResult:
+        """Upload a session file.
+
+        Uploads binary file content to the specified path in the session sandbox. The service stores
+        the file relative to the session home directory and rejects payloads larger than 50 MB.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :param content: Is either a bytes type or a IO[bytes] type. Required.
+        :type content: bytes or IO[bytes]
         :keyword path: The destination file path within the sandbox, relative to the session home
          directory. Required.
         :paramtype path: str
@@ -2248,9 +2305,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SessionFileWriteResult] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = content
 
         _request = build_agents_upload_session_file_request(
@@ -2550,7 +2608,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class EvaluationRulesOperations:
+class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2927,7 +2985,7 @@ class EvaluationRulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ConnectionsOperations:
+class ConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3188,7 +3246,7 @@ class ConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatasetsOperations:
+class DatasetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3911,7 +3969,7 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
 
-class DeploymentsOperations:
+class DeploymentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4106,7 +4164,7 @@ class DeploymentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class IndexesOperations:
+class IndexesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4587,7 +4645,7 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
 
-class ToolboxesOperations:
+class ToolboxesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5389,7 +5447,7 @@ class ToolboxesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaEvaluationTaxonomiesOperations:
+class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5895,7 +5953,7 @@ class BetaEvaluationTaxonomiesOperations:
         return deserialized  # type: ignore
 
 
-class BetaEvaluatorsOperations:
+class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7428,7 +7486,7 @@ class BetaEvaluatorsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaInsightsOperations:
+class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7773,7 +7831,7 @@ class BetaInsightsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BetaMemoryStoresOperations:
+class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9573,7 +9631,7 @@ class BetaMemoryStoresOperations:
         return deserialized  # type: ignore
 
 
-class BetaModelsOperations:
+class BetaModelsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10576,7 +10634,7 @@ class BetaModelsOperations:
         return deserialized  # type: ignore
 
 
-class BetaRedTeamsOperations:
+class BetaRedTeamsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10876,7 +10934,7 @@ class BetaRedTeamsOperations:
         return deserialized  # type: ignore
 
 
-class BetaRoutinesOperations:
+class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11272,7 +11330,12 @@ class BetaRoutinesOperations:
 
     @distributed_trace
     def list(
-        self, *, limit: Optional[int] = None, before: Optional[str] = None, order: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        limit: Optional[int] = None,
+        after: Optional[str] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.Routine"]:
         """List routines.
 
@@ -11280,12 +11343,14 @@ class BetaRoutinesOperations:
 
         :keyword limit: The maximum number of routines to return. Default value is None.
         :paramtype limit: int
-        :keyword before: Unsupported. Reserved for future backward pagination support. Default value is
-         None.
-        :paramtype before: str
-        :keyword order: The ordering direction. Supported values are asc and desc. Default value is
-         None.
-        :paramtype order: str
+        :keyword after: An opaque continuation token identifying where to resume the list. Prefer
+         following the ``next_link`` returned by the previous response, which embeds this value. Default
+         value is None.
+        :paramtype after: str
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :return: An iterator like instance of Routine
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Routine]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11303,21 +11368,47 @@ class BetaRoutinesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(_continuation_token=None):
+        def prepare_request(next_link=None):
+            if not next_link:
 
-            _request = build_beta_routines_list_request(
-                limit=limit,
-                after=_continuation_token,
-                before=before,
-                order=order,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request = build_beta_routines_list_request(
+                    limit=limit,
+                    after=after,
+                    order=order,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
             return _request
 
         async def extract_data(pipeline_response):
@@ -11328,10 +11419,10 @@ class BetaRoutinesOperations:
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+            return deserialized.get("next_link") or None, AsyncList(list_of_elem)
 
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
@@ -11412,8 +11503,8 @@ class BetaRoutinesOperations:
         *,
         filter: Optional[str] = None,
         limit: Optional[int] = None,
-        before: Optional[str] = None,
-        order: Optional[str] = None,
+        after: Optional[str] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.RoutineRun"]:
         """List prior runs for a routine.
@@ -11427,12 +11518,14 @@ class BetaRoutinesOperations:
         :paramtype filter: str
         :keyword limit: The maximum number of runs to return. Default value is None.
         :paramtype limit: int
-        :keyword before: Unsupported. Reserved for future backward pagination support. Default value is
-         None.
-        :paramtype before: str
-        :keyword order: The ordering direction. Supported values are asc and desc. Default value is
-         None.
-        :paramtype order: str
+        :keyword after: An opaque continuation token identifying where to resume the list. Prefer
+         following the ``next_link`` returned by the previous response, which embeds this value. Default
+         value is None.
+        :paramtype after: str
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :return: An iterator like instance of RoutineRun
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RoutineRun]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11450,23 +11543,49 @@ class BetaRoutinesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(_continuation_token=None):
+        def prepare_request(next_link=None):
+            if not next_link:
 
-            _request = build_beta_routines_list_runs_request(
-                routine_name=routine_name,
-                filter=filter,
-                limit=limit,
-                after=_continuation_token,
-                before=before,
-                order=order,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request = build_beta_routines_list_runs_request(
+                    routine_name=routine_name,
+                    filter=filter,
+                    limit=limit,
+                    after=after,
+                    order=order,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
             return _request
 
         async def extract_data(pipeline_response):
@@ -11477,10 +11596,10 @@ class BetaRoutinesOperations:
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+            return deserialized.get("next_link") or None, AsyncList(list_of_elem)
 
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
@@ -11659,7 +11778,7 @@ class BetaRoutinesOperations:
         return deserialized  # type: ignore
 
 
-class BetaSchedulesOperations:
+class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12208,7 +12327,7 @@ class BetaSchedulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BetaSkillsOperations:
+class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13250,7 +13369,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
 
-class BetaDatasetsOperations:
+class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13780,15 +13899,7 @@ class BetaDatasetsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-# RLE (reinforcement learning) operations grafted from generated code
-
-
-
-
-
-
-
-class BetaAgentsOperations:
+class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13806,7 +13917,11 @@ class BetaAgentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     async def _create_optimization_job_initial(
-        self, job: Union[_models.OptimizationJob, JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any
+        self,
+        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -13876,35 +13991,36 @@ class BetaAgentsOperations:
     @overload
     async def begin_create_optimization_job(
         self,
-        job: _models.OptimizationJob,
+        job: _models.AgentOptimizationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.OptimizationJobResult]:
+    ) -> AsyncLROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
         retry.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob
+        :type job: ~azure.ai.projects.models.AgentOptimizationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OptimizationJobResult. The
-         OptimizationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of AsyncLROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_create_optimization_job(
         self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.OptimizationJobResult]:
+    ) -> AsyncLROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
@@ -13918,9 +14034,10 @@ class BetaAgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OptimizationJobResult. The
-         OptimizationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of AsyncLROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -13932,7 +14049,7 @@ class BetaAgentsOperations:
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.OptimizationJobResult]:
+    ) -> AsyncLROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
@@ -13946,37 +14063,43 @@ class BetaAgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OptimizationJobResult. The
-         OptimizationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of AsyncLROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def begin_create_optimization_job(
-        self, job: Union[_models.OptimizationJob, JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any
-    ) -> AsyncLROPoller[_models.OptimizationJobResult]:
+        self,
+        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
         retry.
 
-        :param job: The job to create. Is one of the following types: OptimizationJob, JSON, IO[bytes]
-         Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob or JSON or IO[bytes]
+        :param job: The job to create. Is one of the following types: AgentOptimizationJob, JSON,
+         IO[bytes] Required.
+        :type job: ~azure.ai.projects.models.AgentOptimizationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
-        :return: An instance of AsyncLROPoller that returns OptimizationJobResult. The
-         OptimizationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of AsyncLROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.OptimizationJobResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentOptimizationJobResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -14001,7 +14124,7 @@ class BetaAgentsOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-            deserialized = _deserialize(_models.OptimizationJobResult, response.json().get("result", {}))
+            deserialized = _deserialize(_models.AgentOptimizationJobResult, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -14020,26 +14143,26 @@ class BetaAgentsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.OptimizationJobResult].from_continuation_token(
+            return AsyncLROPoller[_models.AgentOptimizationJobResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.OptimizationJobResult](
+        return AsyncLROPoller[_models.AgentOptimizationJobResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace_async
-    async def get_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
+    async def get_optimization_job(self, job_id: str, **kwargs: Any) -> _models.AgentOptimizationJob:
         """Get an agent optimization job.
 
         Retrieves an optimization job by its identifier.
 
         :param job_id: The ID of the job. Required.
         :type job_id: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
+        :return: AgentOptimizationJob. The AgentOptimizationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -14053,7 +14176,7 @@ class BetaAgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OptimizationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentOptimizationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_agents_get_optimization_job_request(
             job_id=job_id,
@@ -14093,7 +14216,7 @@ class BetaAgentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.OptimizationJob, response.json())
+            deserialized = _deserialize(_models.AgentOptimizationJob, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14110,7 +14233,7 @@ class BetaAgentsOperations:
         status: Optional[Union[str, _models.JobStatus]] = None,
         agent_name: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.OptimizationJobListItem"]:
+    ) -> AsyncItemPaged["_models.AgentOptimizationJobListItem"]:
         """List agent optimization jobs.
 
         Lists optimization jobs with cursor pagination and optional status or agent name filters.
@@ -14134,15 +14257,15 @@ class BetaAgentsOperations:
         :paramtype status: str or ~azure.ai.projects.models.JobStatus
         :keyword agent_name: Filter to jobs targeting this agent name. Default value is None.
         :paramtype agent_name: str
-        :return: An iterator like instance of OptimizationJobListItem
+        :return: An iterator like instance of AgentOptimizationJobListItem
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.OptimizationJobListItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentOptimizationJobListItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OptimizationJobListItem]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AgentOptimizationJobListItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14174,7 +14297,7 @@ class BetaAgentsOperations:
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.OptimizationJobListItem],
+                List[_models.AgentOptimizationJobListItem],
                 deserialized.get("data", []),
             )
             if cls:
@@ -14203,7 +14326,7 @@ class BetaAgentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
+    async def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _models.AgentOptimizationJob:
         """Cancel an agent optimization job.
 
         Requests cancellation of a running or queued job and returns an error if the job is already in
@@ -14211,8 +14334,8 @@ class BetaAgentsOperations:
 
         :param job_id: The ID of the job to cancel. Required.
         :type job_id: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
+        :return: AgentOptimizationJob. The AgentOptimizationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -14226,7 +14349,7 @@ class BetaAgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OptimizationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentOptimizationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_agents_cancel_optimization_job_request(
             job_id=job_id,
@@ -14263,7 +14386,7 @@ class BetaAgentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.OptimizationJob, response.json())
+            deserialized = _deserialize(_models.AgentOptimizationJob, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14324,7 +14447,8 @@ class BetaAgentsOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-class RLEnvironmentsOperations:
+# RLE generated operations
+class RLEnvironmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14359,12 +14483,12 @@ class RLEnvironmentsOperations:
 
     @overload
     async def create_environment(
-        self, body: _models.CreateRLEnvironmentRequest, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RLEnvironment:
         """Create a new hosted RLE environment, or a new version of an existing one.
 
         :param body: The environment to create. Required.
-        :type body: ~azure.ai.projects.types.CreateRLEnvironmentRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14391,16 +14515,13 @@ class RLEnvironmentsOperations:
 
     @distributed_trace_async
     async def create_environment(
-        self,
-        body: Union[_models.CreateRLEnvironmentRequest, _models.CreateRLEnvironmentRequest, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.CreateRLEnvironmentRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RLEnvironment:
         """Create a new hosted RLE environment, or a new version of an existing one.
 
-        :param body: The environment to create. Is either a CreateRLEnvironmentRequest type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.ai.projects.models.CreateRLEnvironmentRequest or
-         ~azure.ai.projects.types.CreateRLEnvironmentRequest or IO[bytes]
+        :param body: The environment to create. Is one of the following types:
+         CreateRLEnvironmentRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.CreateRLEnvironmentRequest or JSON or IO[bytes]
         :return: RLEnvironment. The RLEnvironment is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14446,7 +14567,7 @@ class RLEnvironmentsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -14830,7 +14951,8 @@ class RLEnvironmentsOperations:
 
         return deserialized  # type: ignore
 
-class RLEInstanceGroupsOperations:
+
+class RLEInstanceGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14880,7 +15002,7 @@ class RLEInstanceGroupsOperations:
         self,
         environment_name: str,
         environment_version: str,
-        body: _models.CreateRLEInstanceGroupRequest,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14894,7 +15016,7 @@ class RLEInstanceGroupsOperations:
          Required.
         :type environment_version: str
         :param body: The instance group to create. Required.
-        :type body: ~azure.ai.projects.types.CreateRLEInstanceGroupRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14936,7 +15058,7 @@ class RLEInstanceGroupsOperations:
         self,
         environment_name: str,
         environment_version: str,
-        body: Union[_models.CreateRLEInstanceGroupRequest, _models.CreateRLEInstanceGroupRequest, IO[bytes]],
+        body: Union[_models.CreateRLEInstanceGroupRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.RLEInstanceGroup:
         """Create a new RLE instance group under the given environment version. The service mints ``id``.
@@ -14947,10 +15069,9 @@ class RLEInstanceGroupsOperations:
         :param environment_version: Version of the registered RLE environment to lease instances from.
          Required.
         :type environment_version: str
-        :param body: The instance group to create. Is either a CreateRLEInstanceGroupRequest type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.ai.projects.models.CreateRLEInstanceGroupRequest or
-         ~azure.ai.projects.types.CreateRLEInstanceGroupRequest or IO[bytes]
+        :param body: The instance group to create. Is one of the following types:
+         CreateRLEInstanceGroupRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.CreateRLEInstanceGroupRequest or JSON or IO[bytes]
         :return: RLEInstanceGroup. The RLEInstanceGroup is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RLEInstanceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14998,7 +15119,7 @@ class RLEInstanceGroupsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -15244,7 +15365,8 @@ class RLEInstanceGroupsOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-class RLEInstancesOperations:
+
+class RLEInstancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15312,7 +15434,7 @@ class RLEInstancesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -15474,7 +15596,8 @@ class RLEInstancesOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-class RLEInstanceRuntimeOperations:
+
+class RLEInstanceRuntimeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15530,7 +15653,7 @@ class RLEInstanceRuntimeOperations:
         environment_version: str,
         instance_group_id: str,
         instance_id: str,
-        body: _models.RLEResetRequest,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15546,7 +15669,7 @@ class RLEInstanceRuntimeOperations:
         :param instance_id: Instance identifier. Required.
         :type instance_id: str
         :param body: Reset request body. Required.
-        :type body: ~azure.ai.projects.types.RLEResetRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15594,7 +15717,7 @@ class RLEInstanceRuntimeOperations:
         environment_version: str,
         instance_group_id: str,
         instance_id: str,
-        body: Union[_models.RLEResetRequest, _models.RLEResetRequest, IO[bytes]],
+        body: Union[_models.RLEResetRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.RLEStepResult:
         """Start a new episode and return the initial observation.
@@ -15607,10 +15730,9 @@ class RLEInstanceRuntimeOperations:
         :type instance_group_id: str
         :param instance_id: Instance identifier. Required.
         :type instance_id: str
-        :param body: Reset request body. Is either a RLEResetRequest type or a IO[bytes] type.
-         Required.
-        :type body: ~azure.ai.projects.models.RLEResetRequest or
-         ~azure.ai.projects.types.RLEResetRequest or IO[bytes]
+        :param body: Reset request body. Is one of the following types: RLEResetRequest, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.RLEResetRequest or JSON or IO[bytes]
         :return: RLEStepResult. The RLEStepResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RLEStepResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15722,7 +15844,7 @@ class RLEInstanceRuntimeOperations:
         environment_version: str,
         instance_group_id: str,
         instance_id: str,
-        body: _models.RLEStepRequest,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15738,7 +15860,7 @@ class RLEInstanceRuntimeOperations:
         :param instance_id: Instance identifier. Required.
         :type instance_id: str
         :param body: Step request body. Required.
-        :type body: ~azure.ai.projects.types.RLEStepRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15786,7 +15908,7 @@ class RLEInstanceRuntimeOperations:
         environment_version: str,
         instance_group_id: str,
         instance_id: str,
-        body: Union[_models.RLEStepRequest, _models.RLEStepRequest, IO[bytes]],
+        body: Union[_models.RLEStepRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.RLEStepResult:
         """Apply an action and return the resulting transition.
@@ -15799,9 +15921,9 @@ class RLEInstanceRuntimeOperations:
         :type instance_group_id: str
         :param instance_id: Instance identifier. Required.
         :type instance_id: str
-        :param body: Step request body. Is either a RLEStepRequest type or a IO[bytes] type. Required.
-        :type body: ~azure.ai.projects.models.RLEStepRequest or ~azure.ai.projects.types.RLEStepRequest
-         or IO[bytes]
+        :param body: Step request body. Is one of the following types: RLEStepRequest, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.ai.projects.models.RLEStepRequest or JSON or IO[bytes]
         :return: RLEStepResult. The RLEStepResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RLEStepResult
         :raises ~azure.core.exceptions.HttpResponseError:

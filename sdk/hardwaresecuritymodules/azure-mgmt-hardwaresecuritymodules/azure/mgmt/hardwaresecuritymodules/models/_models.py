@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ApiEntityReference(_Model):
+class ApiEntityReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The API entity reference.
 
     :ivar resource_id: The Azure resource id in the form of
@@ -49,7 +49,7 @@ class ApiEntityReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupRestoreRequestBaseProperties(_Model):
+class BackupRestoreRequestBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup and Restore Common properties.
 
     :ivar azure_storage_blob_container_uri: The Azure blob storage container Uri which contains the
@@ -87,7 +87,9 @@ class BackupRestoreRequestBaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupRequestProperties(BackupRestoreRequestBaseProperties):
+class BackupRequestProperties(
+    BackupRestoreRequestBaseProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup properties.
 
     :ivar azure_storage_blob_container_uri: The Azure blob storage container Uri which contains the
@@ -117,7 +119,7 @@ class BackupRequestProperties(BackupRestoreRequestBaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class BackupRestoreBaseResultProperties(_Model):
+class BackupRestoreBaseResultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup and Restore operation common properties.
 
     :ivar status: Status of the backup/restore operation. Known values are: "InProgress",
@@ -171,7 +173,7 @@ class BackupRestoreBaseResultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupResult(_Model):
+class BackupResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup operation Result.
 
     :ivar properties: Properties of the Cloud HSM Cluster.
@@ -201,7 +203,9 @@ class BackupResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupResultProperties(BackupRestoreBaseResultProperties):
+class BackupResultProperties(
+    BackupRestoreBaseResultProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Cloud HSM Cluster.
 
     :ivar status: Status of the backup/restore operation. Known values are: "InProgress",
@@ -281,7 +285,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -301,7 +305,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -311,7 +315,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -325,7 +329,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class CloudHsmCluster(TrackedResource):
+class CloudHsmCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource information with extended details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -367,7 +371,7 @@ class CloudHsmCluster(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.CloudHsmClusterProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         sku: Optional["_models.CloudHsmClusterSku"] = None,
@@ -384,7 +388,7 @@ class CloudHsmCluster(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class CloudHsmClusterPatchParameters(_Model):
+class CloudHsmClusterPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patchable properties of the Cloud HSM Cluster.
 
     :ivar tags: The Cloud HSM Cluster's tags.
@@ -393,7 +397,7 @@ class CloudHsmClusterPatchParameters(_Model):
     :vartype identity: ~azure.mgmt.hardwaresecuritymodules.models.ManagedServiceIdentity
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Cloud HSM Cluster's tags."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -404,7 +408,7 @@ class CloudHsmClusterPatchParameters(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -419,7 +423,7 @@ class CloudHsmClusterPatchParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudHsmClusterProperties(_Model):
+class CloudHsmClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Cloud HSM Cluster.
 
     :ivar activation_state: State of security domain activation. Known values are: "NotDefined",
@@ -456,9 +460,9 @@ class CloudHsmClusterProperties(_Model):
     )
     """The Cloud HSM Cluster's auto-generated Domain Name Label Scope. Known values are:
      \"TenantReuse\", \"SubscriptionReuse\", \"ResourceGroupReuse\", and \"NoReuse\"."""
-    hsms: Optional[List["_models.CloudHsmProperties"]] = rest_field(visibility=["read"])
+    hsms: Optional[list["_models.CloudHsmProperties"]] = rest_field(visibility=["read"])
     """An array of Cloud HSM Cluster's HSMs."""
-    private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = rest_field(
+    private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         name="privateEndpointConnections", visibility=["read"]
     )
     """List of private endpoint connection resources."""
@@ -495,13 +499,14 @@ class CloudHsmClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudHsmClusterSku(_Model):
+class CloudHsmClusterSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cloud Hsm Cluster SKU information.
 
     :ivar family: Sku family of the Cloud HSM Cluster. Required. "B"
     :vartype family: str or ~azure.mgmt.hardwaresecuritymodules.models.CloudHsmClusterSkuFamily
-    :ivar name: Sku name of the Cloud HSM Cluster. Required. Known values are: "Standard_B1" and
-     "Standard B10".
+    :ivar name: Sku name of the Cloud HSM Cluster. Required. Known values are: "Standard_B1",
+     "Standard B10", "Standard_B1v2", "Standard_B5v2", "Standard_B10v2", "Standard_B15v2", and
+     "Standard_B20v2".
     :vartype name: str or ~azure.mgmt.hardwaresecuritymodules.models.CloudHsmClusterSkuName
     :ivar capacity: Sku capacity.
     :vartype capacity: int
@@ -514,8 +519,9 @@ class CloudHsmClusterSku(_Model):
     name: Union[str, "_models.CloudHsmClusterSkuName"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Sku name of the Cloud HSM Cluster. Required. Known values are: \"Standard_B1\" and \"Standard
-     B10\"."""
+    """Sku name of the Cloud HSM Cluster. Required. Known values are: \"Standard_B1\", \"Standard
+     B10\", \"Standard_B1v2\", \"Standard_B5v2\", \"Standard_B10v2\", \"Standard_B15v2\", and
+     \"Standard_B20v2\"."""
     capacity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Sku capacity."""
 
@@ -539,7 +545,7 @@ class CloudHsmClusterSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudHsmProperties(_Model):
+class CloudHsmProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Cloud HSM Properties.
 
     :ivar fqdn: FQDN of the Cloud HSM.
@@ -581,7 +587,7 @@ class CloudHsmProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHsm(TrackedResource):
+class DedicatedHsm(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource information with extended details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -599,32 +605,32 @@ class DedicatedHsm(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
+    :ivar properties: Properties of the dedicated HSM. Required.
+    :vartype properties: ~azure.mgmt.hardwaresecuritymodules.models.DedicatedHsmProperties
     :ivar sku: SKU details. Required.
     :vartype sku: ~azure.mgmt.hardwaresecuritymodules.models.Sku
     :ivar zones: The availability zones.
     :vartype zones: list[str]
-    :ivar properties: Properties of the dedicated HSM. Required.
-    :vartype properties: ~azure.mgmt.hardwaresecuritymodules.models.DedicatedHsmProperties
     """
 
-    sku: "_models.Sku" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """SKU details. Required."""
-    zones: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The availability zones."""
     properties: "_models.DedicatedHsmProperties" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Properties of the dedicated HSM. Required."""
+    sku: "_models.Sku" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """SKU details. Required."""
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The availability zones."""
 
     @overload
     def __init__(
         self,
         *,
         location: str,
-        sku: "_models.Sku",
         properties: "_models.DedicatedHsmProperties",
-        tags: Optional[Dict[str, str]] = None,
-        zones: Optional[List[str]] = None,
+        sku: "_models.Sku",
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -649,21 +655,21 @@ class DedicatedHsmError(_Model):
     """The error detail of the operation if any."""
 
 
-class DedicatedHsmPatchParameters(_Model):
+class DedicatedHsmPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patchable properties of the dedicated HSM.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -677,7 +683,7 @@ class DedicatedHsmPatchParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHsmProperties(_Model):
+class DedicatedHsmProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the dedicated hsm.
 
     :ivar network_profile: Specifies the network interfaces of the dedicated hsm.
@@ -732,7 +738,7 @@ class DedicatedHsmProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDependency(_Model):
+class EndpointDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A domain name that dedicated hsm services are reaching at.
 
     :ivar domain_name: The domain name of the dependency.
@@ -745,7 +751,7 @@ class EndpointDependency(_Model):
         name="domainName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The domain name of the dependency."""
-    endpoint_details: Optional[List["_models.EndpointDetail"]] = rest_field(
+    endpoint_details: Optional[list["_models.EndpointDetail"]] = rest_field(
         name="endpointDetails", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Ports and Protocols used when connecting to domainName."""
@@ -755,7 +761,7 @@ class EndpointDependency(_Model):
         self,
         *,
         domain_name: Optional[str] = None,
-        endpoint_details: Optional[List["_models.EndpointDetail"]] = None,
+        endpoint_details: Optional[list["_models.EndpointDetail"]] = None,
     ) -> None: ...
 
     @overload
@@ -769,7 +775,7 @@ class EndpointDependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDetail(_Model):
+class EndpointDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connect information from the dedicated hsm service to a single endpoint.
 
     :ivar ip_address: An IP Address that Domain Name currently resolves to.
@@ -867,15 +873,15 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -903,7 +909,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -931,7 +937,7 @@ class ManagedServiceIdentity(_Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -941,7 +947,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -955,7 +961,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterface(_Model):
+class NetworkInterface(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network interface definition.
 
     :ivar resource_id: The Azure resource id in the form of
@@ -991,7 +997,7 @@ class NetworkInterface(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkProfile(_Model):
+class NetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network profile definition.
 
     :ivar subnet: Specifies the identifier of the subnet.
@@ -1005,7 +1011,7 @@ class NetworkProfile(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the identifier of the subnet."""
-    network_interfaces: Optional[List["_models.NetworkInterface"]] = rest_field(
+    network_interfaces: Optional[list["_models.NetworkInterface"]] = rest_field(
         name="networkInterfaces", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the list of resource Ids for the network interfaces associated with the dedicated
@@ -1016,7 +1022,7 @@ class NetworkProfile(_Model):
         self,
         *,
         subnet: Optional["_models.ApiEntityReference"] = None,
-        network_interfaces: Optional[List["_models.NetworkInterface"]] = None,
+        network_interfaces: Optional[list["_models.NetworkInterface"]] = None,
     ) -> None: ...
 
     @overload
@@ -1030,7 +1036,7 @@ class NetworkProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1088,7 +1094,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -1118,7 +1124,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OutboundEnvironmentEndpoint(_Model):
+class OutboundEnvironmentEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Egress endpoints which dedicated hsm service connects to for common purpose.
 
     :ivar category: The category of endpoints accessed by the dedicated hsm service, e.g.
@@ -1131,7 +1137,7 @@ class OutboundEnvironmentEndpoint(_Model):
     category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The category of endpoints accessed by the dedicated hsm service, e.g.
      azure-resource-management, apiserver, etc."""
-    endpoints: Optional[List["_models.EndpointDependency"]] = rest_field(
+    endpoints: Optional[list["_models.EndpointDependency"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The endpoints that dedicated hsm service connects to."""
@@ -1141,7 +1147,7 @@ class OutboundEnvironmentEndpoint(_Model):
         self,
         *,
         category: Optional[str] = None,
-        endpoints: Optional[List["_models.EndpointDependency"]] = None,
+        endpoints: Optional[list["_models.EndpointDependency"]] = None,
     ) -> None: ...
 
     @overload
@@ -1155,15 +1161,84 @@ class OutboundEnvironmentEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpoint(_Model):
-    """The private endpoint resource.
+class PaymentHsmCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Resource information with extended details.
 
-    :ivar id: The resource identifier of the private endpoint.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hardwaresecuritymodules.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of the Payment HSM Cluster.
+    :vartype properties: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterProperties
+    :ivar sku: SKU details.
+    :vartype sku: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterSku
     """
 
-    id: Optional[str] = rest_field(visibility=["read"])
-    """The resource identifier of the private endpoint."""
+    properties: Optional["_models.PaymentHsmClusterProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the Payment HSM Cluster."""
+    sku: Optional["_models.PaymentHsmClusterSku"] = rest_field(visibility=["read", "create"])
+    """SKU details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.PaymentHsmClusterProperties"] = None,
+        sku: Optional["_models.PaymentHsmClusterSku"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PaymentHsmClusterPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Patchable properties of the Payment HSM Cluster.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ProxyResource(Resource):
@@ -1183,7 +1258,9 @@ class ProxyResource(Resource):
     """
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PaymentHsmClusterPrivateEndpointConnection(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1230,7 +1307,246 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PaymentHsmClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a Payment HSM Cluster.
+
+    :ivar activation_state: State of security domain activation. Known values are: "NotDefined",
+     "NotActivated", "Active", "Failed", and "Unknown".
+    :vartype activation_state: str or ~azure.mgmt.hardwaresecuritymodules.models.ActivationState
+    :ivar auto_generated_domain_name_label_scope: The Payment HSM Cluster's auto-generated Domain
+     Name Label Scope. Known values are: "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse",
+     and "NoReuse".
+    :vartype auto_generated_domain_name_label_scope: str or
+     ~azure.mgmt.hardwaresecuritymodules.models.AutoGeneratedDomainNameLabelScope
+    :ivar hsms: An array of Payment HSM Cluster's HSMs.
+    :vartype hsms: list[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmProperties]
+    :ivar private_endpoint_connections: List of private endpoint connection resources.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterPrivateEndpointConnection]
+    :ivar provisioning_state: The Payment HSM Cluster's provisioningState. Known values are:
+     "Provisioning", "Succeeded", "Updating", "Failed", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hardwaresecuritymodules.models.ProvisioningState
+    :ivar public_network_access: The Payment HSM Cluster public network access. "Disabled"
+    :vartype public_network_access: str or
+     ~azure.mgmt.hardwaresecuritymodules.models.PublicNetworkAccess
+    :ivar status_message: Payment HSM Cluster status message.
+    :vartype status_message: str
+    :ivar application_trusted_issuer: The application trusted issuer for the Payment HSM Cluster.
+     Required.
+    :vartype application_trusted_issuer: str
+    :ivar management_trusted_issuer: The management trusted issuer for the Payment HSM Cluster.
+     Required.
+    :vartype management_trusted_issuer: str
+    """
+
+    activation_state: Optional[Union[str, "_models.ActivationState"]] = rest_field(
+        name="activationState", visibility=["read"]
+    )
+    """State of security domain activation. Known values are: \"NotDefined\", \"NotActivated\",
+     \"Active\", \"Failed\", and \"Unknown\"."""
+    auto_generated_domain_name_label_scope: Optional[Union[str, "_models.AutoGeneratedDomainNameLabelScope"]] = (
+        rest_field(name="autoGeneratedDomainNameLabelScope", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """The Payment HSM Cluster's auto-generated Domain Name Label Scope. Known values are:
+     \"TenantReuse\", \"SubscriptionReuse\", \"ResourceGroupReuse\", and \"NoReuse\"."""
+    hsms: Optional[list["_models.PaymentHsmProperties"]] = rest_field(visibility=["read"])
+    """An array of Payment HSM Cluster's HSMs."""
+    private_endpoint_connections: Optional[list["_models.PaymentHsmClusterPrivateEndpointConnection"]] = rest_field(
+        name="privateEndpointConnections", visibility=["read"]
+    )
+    """List of private endpoint connection resources."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The Payment HSM Cluster's provisioningState. Known values are: \"Provisioning\", \"Succeeded\",
+     \"Updating\", \"Failed\", \"Deleting\", and \"Canceled\"."""
+    public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
+        name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Payment HSM Cluster public network access. \"Disabled\""""
+    status_message: Optional[str] = rest_field(name="statusMessage", visibility=["read"])
+    """Payment HSM Cluster status message."""
+    application_trusted_issuer: str = rest_field(name="applicationTrustedIssuer", visibility=["create"])
+    """The application trusted issuer for the Payment HSM Cluster. Required."""
+    management_trusted_issuer: str = rest_field(name="managementTrustedIssuer", visibility=["create"])
+    """The management trusted issuer for the Payment HSM Cluster. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        application_trusted_issuer: str,
+        management_trusted_issuer: str,
+        auto_generated_domain_name_label_scope: Optional[
+            Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
+        ] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PaymentHsmClusterSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Payment Hsm Cluster SKU information.
+
+    :ivar family: Sku family of the Payment HSM Cluster. Required. "B"
+    :vartype family: str or ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterSkuFamily
+    :ivar name: Sku name of the Payment HSM Cluster. Required. "Payments_v2"
+    :vartype name: str or ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterSkuName
+    :ivar capacity: Sku capacity.
+    :vartype capacity: int
+    """
+
+    family: Union[str, "_models.PaymentHsmClusterSkuFamily"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sku family of the Payment HSM Cluster. Required. \"B\""""
+    name: Union[str, "_models.PaymentHsmClusterSkuName"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sku name of the Payment HSM Cluster. Required. \"Payments_v2\""""
+    capacity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Sku capacity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        family: Union[str, "_models.PaymentHsmClusterSkuFamily"],
+        name: Union[str, "_models.PaymentHsmClusterSkuName"],
+        capacity: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PaymentHsmProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Payment HSM Properties.
+
+    :ivar app_fqdn: App FQDN of the Payment HSM.
+    :vartype app_fqdn: str
+    :ivar mgmt_fqdn: Mgmt FQDN of the Payment HSM.
+    :vartype mgmt_fqdn: str
+    :ivar state: The Payment HSM State. Known values are: "Unknown", "Deploying", "ConfiguringSlb",
+     "Starting", "Started", "Failed", "Relocating", "Deleting", "DeletingSlbEntry",
+     "InitialProvisioning", "Updating", "Degraded", and "DelayedDeletion".
+    :vartype state: str or ~azure.mgmt.hardwaresecuritymodules.models.HsmState
+    :ivar state_message: The Payment HSM State message.
+    :vartype state_message: str
+    """
+
+    app_fqdn: Optional[str] = rest_field(name="appFqdn", visibility=["read", "create", "update", "delete", "query"])
+    """App FQDN of the Payment HSM."""
+    mgmt_fqdn: Optional[str] = rest_field(name="mgmtFqdn", visibility=["read", "create", "update", "delete", "query"])
+    """Mgmt FQDN of the Payment HSM."""
+    state: Optional[Union[str, "_models.HsmState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Payment HSM State. Known values are: \"Unknown\", \"Deploying\", \"ConfiguringSlb\",
+     \"Starting\", \"Started\", \"Failed\", \"Relocating\", \"Deleting\", \"DeletingSlbEntry\",
+     \"InitialProvisioning\", \"Updating\", \"Degraded\", and \"DelayedDeletion\"."""
+    state_message: Optional[str] = rest_field(
+        name="stateMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Payment HSM State message."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_fqdn: Optional[str] = None,
+        mgmt_fqdn: Optional[str] = None,
+        state: Optional[Union[str, "_models.HsmState"]] = None,
+        state_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateEndpoint(_Model):
+    """The private endpoint resource.
+
+    :ivar id: The resource identifier of the private endpoint.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The resource identifier of the private endpoint."""
+
+
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The private endpoint connection resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hardwaresecuritymodules.models.SystemData
+    :ivar properties: Resource properties.
+    :vartype properties:
+     ~azure.mgmt.hardwaresecuritymodules.models.PrivateEndpointConnectionProperties
+    :ivar etag: Modified whenever there is a change in the state of private endpoint connection.
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.PrivateEndpointConnectionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource properties."""
+    etag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Modified whenever there is a change in the state of private endpoint connection."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PrivateEndpointConnectionProperties"] = None,
+        etag: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
     :ivar private_endpoint: The private endpoint resource.
@@ -1263,7 +1579,7 @@ class PrivateEndpointConnectionProperties(_Model):
     """The provisioning state of the private endpoint connection resource. Known values are:
      \"Succeeded\", \"Creating\", \"Deleting\", \"Failed\", \"Updating\", \"InternalError\", and
      \"Canceled\"."""
-    group_ids: Optional[List[str]] = rest_field(name="groupIds", visibility=["read"])
+    group_ids: Optional[list[str]] = rest_field(name="groupIds", visibility=["read"])
     """The group ids for the private endpoint resource."""
 
     @overload
@@ -1285,7 +1601,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1326,7 +1642,7 @@ class PrivateLinkResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -1339,9 +1655,9 @@ class PrivateLinkResourceProperties(_Model):
 
     group_id: Optional[str] = rest_field(name="groupId", visibility=["read"])
     """The private link resource group id."""
-    required_members: Optional[List[str]] = rest_field(name="requiredMembers", visibility=["read"])
+    required_members: Optional[list[str]] = rest_field(name="requiredMembers", visibility=["read"])
     """The private link resource required member names."""
-    required_zone_names: Optional[List[str]] = rest_field(
+    required_zone_names: Optional[list[str]] = rest_field(
         name="requiredZoneNames", visibility=["read", "create", "update", "delete", "query"]
     )
     """The private link resource private link DNS zone name."""
@@ -1350,7 +1666,7 @@ class PrivateLinkResourceProperties(_Model):
     def __init__(
         self,
         *,
-        required_zone_names: Optional[List[str]] = None,
+        required_zone_names: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1364,7 +1680,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -1411,7 +1727,9 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreRequestProperties(BackupRestoreRequestBaseProperties):
+class RestoreRequestProperties(
+    BackupRestoreRequestBaseProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cloud Hsm Cluster restore information.
 
     :ivar azure_storage_blob_container_uri: The Azure blob storage container Uri which contains the
@@ -1449,7 +1767,7 @@ class RestoreRequestProperties(BackupRestoreRequestBaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class RestoreResult(_Model):
+class RestoreResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore operation properties.
 
     :ivar properties: Backup and Restore operation common properties.
@@ -1480,7 +1798,7 @@ class RestoreResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU of the dedicated HSM.
 
     :ivar name: SKU of the dedicated HSM. Known values are: "SafeNet Luna Network HSM A790",
@@ -1514,7 +1832,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.

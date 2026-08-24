@@ -26,7 +26,10 @@ USAGE:
 import uuid
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from testpreparer_async import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBaseAsync,
+)
 from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyzerConfig
 
 
@@ -58,7 +61,7 @@ class TestSampleUpdateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
                 base_analyzer_id="prebuilt-document",
                 description="Initial description",
                 config=ContentAnalyzerConfig(return_details=True),
-                models={"completion": "gpt-4.1"},
+                models={"completion": "gpt-5.2"},
                 tags={"tag1": "tag1_initial_value"},
             )
 
