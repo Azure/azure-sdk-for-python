@@ -13,7 +13,6 @@
   - Client `HybridConnectivityMgmtClient` added operation group `public_cloud_connectors`
   - Client `HybridConnectivityMgmtClient` added operation group `solution_configurations`
   - Client `HybridConnectivityMgmtClient` added operation group `solution_types`
-  - Added model `AADProfileProperties`
   - Added model `AwsCloudProfile`
   - Added model `AwsCloudProfileUpdate`
   - Added enum `CloudNativeType`
@@ -29,7 +28,6 @@
   - Added model `GenerateGcpTemplateRequest`
   - Added model `GenerateGcpTemplateResponse`
   - Added enum `HostType`
-  - Added model `IngressProfileProperties`
   - Added model `InventoryProperties`
   - Added model `InventoryResource`
   - Added model `OperationStatusResult`
@@ -37,7 +35,6 @@
   - Added model `PublicCloudConnectorProperties`
   - Added model `PublicCloudConnectorPropertiesUpdate`
   - Added model `PublicCloudConnectorUpdate`
-  - Added model `RelayNamespaceAccessProperties`
   - Added enum `ResourceProvisioningState`
   - Added model `SolutionConfiguration`
   - Added model `SolutionConfigurationProperties`
@@ -60,32 +57,21 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Method `HybridConnectivityMgmtClient.__init__` inserted a `positional_or_keyword` parameter `subscription_id`
-  - Model `EndpointAccessResource` deleted or renamed its instance variable `access_key`
-  - Model `EndpointAccessResource` deleted or renamed its instance variable `expires_on`
-  - Model `EndpointAccessResource` deleted or renamed its instance variable `hybrid_connection_name`
-  - Model `EndpointAccessResource` deleted or renamed its instance variable `namespace_name`
-  - Model `EndpointAccessResource` deleted or renamed its instance variable `namespace_name_suffix`
-  - Model `EndpointAccessResource` deleted or renamed its instance variable `service_configuration_token`
-  - Model `IngressGatewayResource` deleted or renamed its instance variable `access_key`
-  - Model `IngressGatewayResource` deleted or renamed its instance variable `expires_on`
-  - Model `IngressGatewayResource` deleted or renamed its instance variable `hostname`
-  - Model `IngressGatewayResource` deleted or renamed its instance variable `hybrid_connection_name`
-  - Model `IngressGatewayResource` deleted or renamed its instance variable `namespace_name`
-  - Model `IngressGatewayResource` deleted or renamed its instance variable `namespace_name_suffix`
-  - Model `IngressGatewayResource` deleted or renamed its instance variable `server_id`
-  - Model `IngressGatewayResource` deleted or renamed its instance variable `service_configuration_token`
-  - Model `IngressGatewayResource` deleted or renamed its instance variable `tenant_id`
+  - Model `EndpointAccessResource` moved instance variable `access_key`, `expires_on`, `hybrid_connection_name`, `namespace_name`, `namespace_name_suffix` and `service_configuration_token` under property `relay` whose type is `RelayNamespaceAccessProperties`
+  - Model `IngressGatewayResource` moved instance variable `access_key`, `expires_on`, `hybrid_connection_name`, `namespace_name`, `namespace_name_suffix` and `service_configuration_token` under property `relay` whose type is `RelayNamespaceAccessProperties`
+  - Model `IngressGatewayResource` moved instance variable `hostname` under property `ingress` whose type is `IngressProfileProperties`
+  - Model `IngressGatewayResource` moved instance variable `server_id` and `tenant_id` under property `ingress.aad_profile` whose type is `AADProfileProperties`
   - Model `ServiceConfigurationResource` moved instance variable `port`, `provisioning_state`, `resource_id` and `service_name` under property `properties` whose type is `ServiceConfigurationProperties`
   - Model `ServiceConfigurationResourcePatch` moved instance variable `port` under property `properties` whose type is `ServiceConfigurationPropertiesPatch`
-  - Deleted or renamed model `EndpointsList`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `ServiceConfigurationList`
   - Parameter `expiresin` of `EndpointsOperations.list_credentials` is now optional
   - Method `EndpointsOperations.list_credentials` changed its parameter `expiresin` from `positional_or_keyword` to `keyword_only`
   - Parameter `expiresin` of `EndpointsOperations.list_ingress_gateway_credentials` is now optional
   - Method `EndpointsOperations.list_ingress_gateway_credentials` changed its parameter `expiresin` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `EndpointsList`/`OperationListResult`/`ServiceConfigurationList` which actually were not used by SDK users
 
 ## 2.0.0b1 (2025-04-01)
 
