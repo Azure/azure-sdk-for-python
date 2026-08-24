@@ -1,10 +1,11 @@
 # Release History
 
-## 2.1.0b3 (2026-08-24)
+## 2.1.0 (2026-08-24)
 
 ### Other Changes
 
 - Constrained runtime, development, and sample dependencies to compatible release lines.
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable `2.1.0` release.
 
 ## 2.1.0b2 (2026-08-21)
 
