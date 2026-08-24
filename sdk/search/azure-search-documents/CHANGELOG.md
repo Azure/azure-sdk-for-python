@@ -36,8 +36,8 @@
   - Knowledge base `tags` and persisted `retrieve_defaults`.
   - Per-source `never_query_source`, `results_processing`, and `query_hint_overrides`.
   - `KnowledgeRetrievalAutoReasoningEffort` for automatic reasoning-effort selection.
-  - Activity start/completion timestamps, model metadata, logical reasoning effort, query-hint
-    processing details, and served-image metadata.
+  - Activity start/completion timestamps, model metadata, query-hint processing details, and
+    served-image metadata.
   - Citation URLs on index-backed knowledge base references.
   - Private ingestion networking through `KnowledgeSourceNetworkAccessMode`.
 - Added Work IQ configuration through `EntraAppAuthentication` and
@@ -70,10 +70,16 @@
 
 ### Bugs Fixed
 
+- Normalized `SearchIndexClient.update_knowledge_source_file` and its asynchronous equivalent to
+  use the name-first signature `(name, file_id, body)`, consistent with the other File knowledge
+  source operations.
+- Published the synchronous and asynchronous knowledge base retrieval stream classes from their
+  respective public namespaces.
+
 ### Other Changes
 
 - Updated `tsp-location.yaml` to target spec commit
-  `84400eeb46c48ffe88d81e126449725508c17547` (`2026-08-01-preview`).
+  `c195a3fe73b28cd90bf8a302944b2c0ec3d80def` (`2026-08-01-preview`).
 - Added Python 3.14 support.
 
 ## 12.1.0b1 (2026-05-28)

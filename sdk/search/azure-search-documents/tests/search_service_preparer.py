@@ -18,6 +18,9 @@ FAKE_STORAGE_CONNECTION_STRING = (
     "DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net"
 )
 FAKE_STORAGE_CONTAINER_NAME = "fakestoragecontainer"
+FAKE_AZURE_OPENAI_ENDPOINT = "https://fake-openai.openai.azure.com"
+FAKE_AZURE_OPENAI_EMBEDDING_DEPLOYMENT = "fake-embedding-deployment"
+FAKE_AZURE_OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"
 SKILLSET_NOT_ENABLED_MESSAGE = "skillset related operations are not enabled in this region"
 
 SearchEnvVarPreparer = functools.partial(
@@ -27,6 +30,9 @@ SearchEnvVarPreparer = functools.partial(
     search_service_name=FAKE_SEARCH_SERVICE_NAME,
     search_storage_connection_string=FAKE_STORAGE_CONNECTION_STRING,
     search_storage_container_name=FAKE_STORAGE_CONTAINER_NAME,
+    search_azure_openai_endpoint=FAKE_AZURE_OPENAI_ENDPOINT,
+    search_azure_openai_embedding_deployment=FAKE_AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
+    search_azure_openai_embedding_model=FAKE_AZURE_OPENAI_EMBEDDING_MODEL,
 )
 
 

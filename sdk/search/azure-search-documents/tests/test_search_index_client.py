@@ -185,3 +185,55 @@ class TestKnowledgeSourceFileOperations:
         kwargs = mock_delete.call_args.kwargs
         assert kwargs["name"] == "files-source"
         assert kwargs["file_id"] == "file-1"
+
+    @mock.patch(
+        "azure.search.documents.indexes._operations._operations."
+        "_SearchIndexClientOperationsMixin.update_knowledge_source_file"
+    )
+    def test_update_knowledge_source_file_uses_name_first_and_forwards_by_keyword(self, mock_update):
+        require_capability("azure.search.documents.indexes.SearchIndexClient.update_knowledge_source_file")
+        from azure.search.documents.indexes.models import UpdateKnowledgeSourceFileRequest
+
+        body = UpdateKnowledgeSourceFileRequest({"metadata": {"fileName": "updated.txt"}, "content": b"updated"})
+
+        _client().update_knowledge_source_file("files-source", "file-1", body)
+
+        mock_update.assert_called_once_with(name="files-source", file_id="file-1", body=body)
+
+
+@pytest.mark.parametrize(
+    ("public_method", "generated_method"),
+    [
+        ("get_synonym_maps", "_get_synonym_maps"),
+        ("get_data_source_connections", "_get_data_source_connections"),
+        ("get_indexers", "_get_indexers"),
+        ("get_skillsets", "_get_skillsets"),
+    ],
+)
+def test_custom_list_wrappers_forward_search_paging(public_method, generated_method):
+    from azure.search.documents.indexes import SearchIndexerClient
+
+    client = _client() if public_method == "get_synonym_maps" else SearchIndexerClient(ENDPOINT, AzureKeyCredential(KEY))
+    generated_owner = (
+        "_SearchIndexClientOperationsMixin" if public_method == "get_synonym_maps" else "_SearchIndexerClientOperationsMixin"
+    )
+    patch_target = (
+        "azure.search.documents.indexes._operations._operations."
+        f"{generated_owner}.{generated_method}"
+    )
+
+    with mock.patch(patch_target, return_value=[]) as mock_list:
+        result = getattr(client, public_method)(
+            select=["name"],
+            search="hot",
+            page_size=2,
+            search_type="prefix",
+        )
+
+    assert result == []
+    mock_list.assert_called_once_with(
+        select=["name"],
+        search="hot",
+        page_size=2,
+        search_type="prefix",
+    )

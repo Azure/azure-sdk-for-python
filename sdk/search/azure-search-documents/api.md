@@ -864,6 +864,9 @@ namespace azure.search.documents.indexes
         def get_synonym_maps(
                 self, 
                 *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 select: Optional[List[str]] = ..., 
                 **kwargs: Any
             ) -> List[SynonymMap]: ...
@@ -957,21 +960,12 @@ namespace azure.search.documents.indexes
                 **kwargs: Any
             ) -> HttpResponse: ...
 
-        @overload
+        @distributed_trace
         def update_knowledge_source_file(
                 self, 
-                file_id: str, 
                 name: str, 
-                body: UpdateKnowledgeSourceFileRequest, 
-                **kwargs: Any
-            ) -> KnowledgeSourceFile: ...
-
-        @overload
-        def update_knowledge_source_file(
-                self, 
                 file_id: str, 
-                name: str, 
-                body: UpdateKnowledgeSourceFileRequest, 
+                body: Union[UpdateKnowledgeSourceFileRequest, UpdateKnowledgeSourceFileRequest], 
                 **kwargs: Any
             ) -> KnowledgeSourceFile: ...
 
@@ -1171,6 +1165,9 @@ namespace azure.search.documents.indexes
         def get_data_source_connections(
                 self, 
                 *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 select: Optional[List[str]] = ..., 
                 **kwargs: Any
             ) -> List[SearchIndexerDataSourceConnection]: ...
@@ -1196,6 +1193,9 @@ namespace azure.search.documents.indexes
         def get_indexers(
                 self, 
                 *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 select: Optional[List[str]] = ..., 
                 **kwargs: Any
             ) -> List[SearchIndexer]: ...
@@ -1214,6 +1214,9 @@ namespace azure.search.documents.indexes
         def get_skillsets(
                 self, 
                 *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 select: Optional[List[str]] = ..., 
                 **kwargs: Any
             ) -> List[SearchIndexerSkillset]: ...
@@ -1590,6 +1593,9 @@ namespace azure.search.documents.indexes.aio
         async def get_synonym_maps(
                 self, 
                 *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 select: Optional[List[str]] = ..., 
                 **kwargs: Any
             ) -> List[SynonymMap]: ...
@@ -1683,21 +1689,12 @@ namespace azure.search.documents.indexes.aio
                 **kwargs: Any
             ) -> Awaitable[AsyncHttpResponse]: ...
 
-        @overload
+        @distributed_trace_async
         async def update_knowledge_source_file(
                 self, 
-                file_id: str, 
                 name: str, 
-                body: UpdateKnowledgeSourceFileRequest, 
-                **kwargs: Any
-            ) -> KnowledgeSourceFile: ...
-
-        @overload
-        async def update_knowledge_source_file(
-                self, 
                 file_id: str, 
-                name: str, 
-                body: UpdateKnowledgeSourceFileRequest, 
+                body: Union[UpdateKnowledgeSourceFileRequest, UpdateKnowledgeSourceFileRequest], 
                 **kwargs: Any
             ) -> KnowledgeSourceFile: ...
 
@@ -1897,6 +1894,9 @@ namespace azure.search.documents.indexes.aio
         async def get_data_source_connections(
                 self, 
                 *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 select: Optional[List[str]] = ..., 
                 **kwargs: Any
             ) -> List[SearchIndexerDataSourceConnection]: ...
@@ -1922,6 +1922,9 @@ namespace azure.search.documents.indexes.aio
         async def get_indexers(
                 self, 
                 *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 select: Optional[List[str]] = ..., 
                 **kwargs: Any
             ) -> List[SearchIndexer]: ...
@@ -1940,6 +1943,9 @@ namespace azure.search.documents.indexes.aio
         async def get_skillsets(
                 self, 
                 *, 
+                page_size: Optional[int] = ..., 
+                search: Optional[str] = ..., 
+                search_type: Optional[Union[str, ListingSearchType]] = ..., 
                 select: Optional[List[str]] = ..., 
                 **kwargs: Any
             ) -> List[SearchIndexerSkillset]: ...
@@ -8144,7 +8150,7 @@ namespace azure.search.documents.indexes.types
         key "description": str
         key "identity": Optional[SearchIndexerDataIdentity]
         key "subdomainUrl": Required[str]
-        @odata.type: Literal[#AIServicesByIdentity]
+        ``@odata.type``: Literal[#AIServicesByIdentity]
         description: str
         identity: SearchIndexerDataIdentity
         subdomainUrl: str
@@ -8155,7 +8161,7 @@ namespace azure.search.documents.indexes.types
         key "description": str
         key "key": Required[str]
         key "subdomainUrl": Required[str]
-        @odata.type: Literal[#AIServicesByKey]
+        ``@odata.type``: Literal[#AIServicesByKey]
         description: str
         key: str
         subdomainUrl: str
@@ -8181,11 +8187,6 @@ namespace azure.search.documents.indexes.types
         name: str
 
 
-    class azure.search.documents.indexes.types.AnalyzeResult(TypedDict, total=False):
-        key "tokens": Required[list[AnalyzedTokenInfo]]
-        tokens: list[AnalyzedTokenInfo]
-
-
     class azure.search.documents.indexes.types.AnalyzeTextOptions(TypedDict, total=False):
         key "analyzer": Union[str, LexicalAnalyzerName]
         key "normalizer": Union[str, LexicalNormalizerName]
@@ -8199,22 +8200,11 @@ namespace azure.search.documents.indexes.types
         tokenizer: Union[str, LexicalTokenizerName]
 
 
-    class azure.search.documents.indexes.types.AnalyzedTokenInfo(TypedDict, total=False):
-        key "endOffset": Required[int]
-        key "position": Required[int]
-        key "startOffset": Required[int]
-        key "token": Required[str]
-        endOffset: int
-        position: int
-        startOffset: int
-        token: str
-
-
     class azure.search.documents.indexes.types.AsciiFoldingTokenFilter(TypedDict):
         key "@odata.type": Required[Literal["#AsciiFoldingTokenFilter"]]
         key "name": Required[str]
         key "preserveOriginal": bool
-        @odata.type: Literal[#AsciiFoldingTokenFilter]
+        ``@odata.type``: Literal[#AsciiFoldingTokenFilter]
         name: str
         preserveOriginal: bool
 
@@ -8234,7 +8224,7 @@ namespace azure.search.documents.indexes.types
         key "kind": Required[Literal[KnowledgeSourceKind.AZURE_BLOB]]
         key "name": Required[str]
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
-        @odata.etag: str
+        ``@odata.etag``: str
         azureBlobParameters: AzureBlobKnowledgeSourceParameters
         description: str
         encryptionKey: SearchResourceEncryptionKey
@@ -8288,7 +8278,7 @@ namespace azure.search.documents.indexes.types
         key "resourceId": Optional[str]
         key "timeout": Optional[str]
         key "uri": Optional[str]
-        @odata.type: Literal[#AmlSkill]
+        ``@odata.type``: Literal[#AmlSkill]
         context: str
         degreeOfParallelism: int
         description: str
@@ -8324,7 +8314,7 @@ namespace azure.search.documents.indexes.types
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
         key "resourceUri": str
-        @odata.type: Literal[#AzureOpenAIEmbeddingSkill]
+        ``@odata.type``: Literal[#AzureOpenAIEmbeddingSkill]
         apiKey: str
         authIdentity: SearchIndexerDataIdentity
         context: str
@@ -8370,7 +8360,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#BM25Similarity"]]
         key "b": Optional[float]
         key "k1": Optional[float]
-        @odata.type: Literal[#BM25Similarity]
+        ``@odata.type``: Literal[#BM25Similarity]
         b: float
         k1: float
 
@@ -8445,7 +8435,7 @@ namespace azure.search.documents.indexes.types
         key "outputs": Required[list[OutputFieldMappingEntry]]
         key "responseFormat": ForwardRef('ChatCompletionResponseFormat', module='types')
         key "uri": Required[str]
-        @odata.type: Literal[#ChatCompletionSkill]
+        ``@odata.type``: Literal[#ChatCompletionSkill]
         apiKey: str
         authIdentity: SearchIndexerDataIdentity
         commonModelParameters: ChatCompletionCommonModelParameters
@@ -8464,7 +8454,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#CjkBigramTokenFilter"]]
         key "name": Required[str]
         key "outputUnigrams": bool
-        @odata.type: Literal[#CjkBigramTokenFilter]
+        ``@odata.type``: Literal[#CjkBigramTokenFilter]
         ignoreScripts: list[Union[str, CjkBigramTokenFilterScripts]]
         name: str
         outputUnigrams: bool
@@ -8472,14 +8462,14 @@ namespace azure.search.documents.indexes.types
 
     class azure.search.documents.indexes.types.ClassicSimilarityAlgorithm(TypedDict):
         key "@odata.type": Required[Literal["#ClassicSimilarity"]]
-        @odata.type: Literal[#ClassicSimilarity]
+        ``@odata.type``: Literal[#ClassicSimilarity]
 
 
     class azure.search.documents.indexes.types.ClassicTokenizer(TypedDict):
         key "@odata.type": Required[Literal["#ClassicTokenizer"]]
         key "maxTokenLength": int
         key "name": Required[str]
-        @odata.type: Literal[#ClassicTokenizer]
+        ``@odata.type``: Literal[#ClassicTokenizer]
         maxTokenLength: int
         name: str
 
@@ -8488,7 +8478,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#CognitiveServicesByKey"]]
         key "description": str
         key "key": Required[str]
-        @odata.type: Literal[#CognitiveServicesByKey]
+        ``@odata.type``: Literal[#CognitiveServicesByKey]
         description: str
         key: str
 
@@ -8499,7 +8489,7 @@ namespace azure.search.documents.indexes.types
         key "ignoreCase": bool
         key "name": Required[str]
         key "queryMode": bool
-        @odata.type: Literal[#CommonGramTokenFilter]
+        ``@odata.type``: Literal[#CommonGramTokenFilter]
         commonWords: list[str]
         ignoreCase: bool
         name: str
@@ -8513,7 +8503,7 @@ namespace azure.search.documents.indexes.types
         key "inputs": Required[list[InputFieldMappingEntry]]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#ConditionalSkill]
+        ``@odata.type``: Literal[#ConditionalSkill]
         context: str
         description: str
         inputs: list[InputFieldMappingEntry]
@@ -8539,7 +8529,7 @@ namespace azure.search.documents.indexes.types
         key "inputs": Required[list[InputFieldMappingEntry]]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#ContentUnderstandingSkill]
+        ``@odata.type``: Literal[#ContentUnderstandingSkill]
         chunkingProperties: ContentUnderstandingSkillChunkingProperties
         context: str
         description: str
@@ -8574,7 +8564,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#CustomAnalyzer"]]
         key "name": Required[str]
         key "tokenizer": Required[Union[str, LexicalTokenizerName]]
-        @odata.type: Literal[#CustomAnalyzer]
+        ``@odata.type``: Literal[#CustomAnalyzer]
         charFilters: list[Union[str, CharFilterName]]
         name: str
         tokenFilters: list[Union[str, TokenFilterName]]
@@ -8632,7 +8622,7 @@ namespace azure.search.documents.indexes.types
         key "inputs": Required[list[InputFieldMappingEntry]]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#CustomEntityLookupSkill]
+        ``@odata.type``: Literal[#CustomEntityLookupSkill]
         context: str
         defaultLanguageCode: Union[str, CustomEntityLookupSkillLanguage]
         description: str
@@ -8649,7 +8639,7 @@ namespace azure.search.documents.indexes.types
     class azure.search.documents.indexes.types.CustomNormalizer(TypedDict):
         key "@odata.type": Required[Literal["#CustomNormalizer"]]
         key "name": Required[str]
-        @odata.type: Literal[#CustomNormalizer]
+        ``@odata.type``: Literal[#CustomNormalizer]
         charFilters: list[Union[str, CharFilterName]]
         name: str
         tokenFilters: list[Union[str, TokenFilterName]]
@@ -8663,7 +8653,7 @@ namespace azure.search.documents.indexes.types
     class azure.search.documents.indexes.types.DefaultCognitiveServicesAccount(TypedDict):
         key "@odata.type": Required[Literal["#DefaultCognitiveServices"]]
         key "description": str
-        @odata.type: Literal[#DefaultCognitiveServices]
+        ``@odata.type``: Literal[#DefaultCognitiveServices]
         description: str
 
 
@@ -8675,7 +8665,7 @@ namespace azure.search.documents.indexes.types
         key "name": Required[str]
         key "onlyLongestMatch": bool
         key "wordList": Required[list[str]]
-        @odata.type: Literal[#DictionaryDecompounderTokenFilter]
+        ``@odata.type``: Literal[#DictionaryDecompounderTokenFilter]
         maxSubwordSize: int
         minSubwordSize: int
         minWordSize: int
@@ -8714,7 +8704,7 @@ namespace azure.search.documents.indexes.types
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
         key "parsingMode": Optional[str]
-        @odata.type: Literal[#DocumentExtractionSkill]
+        ``@odata.type``: Literal[#DocumentExtractionSkill]
         configuration: dict[str, Any]
         context: str
         dataToExtract: str
@@ -8737,7 +8727,7 @@ namespace azure.search.documents.indexes.types
         key "outputFormat": Optional[Union[str, DocumentIntelligenceLayoutSkillOutputFormat]]
         key "outputMode": Optional[Union[str, DocumentIntelligenceLayoutSkillOutputMode]]
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#DocumentIntelligenceLayoutSkill]
+        ``@odata.type``: Literal[#DocumentIntelligenceLayoutSkill]
         chunkingProperties: DocumentIntelligenceLayoutSkillChunkingProperties
         context: str
         description: str
@@ -8770,7 +8760,7 @@ namespace azure.search.documents.indexes.types
         key "minGram": int
         key "name": Required[str]
         key "side": Union[str, EdgeNGramTokenFilterSide]
-        @odata.type: Literal[#EdgeNGramTokenFilter]
+        ``@odata.type``: Literal[#EdgeNGramTokenFilter]
         maxGram: int
         minGram: int
         name: str
@@ -8783,7 +8773,7 @@ namespace azure.search.documents.indexes.types
         key "minGram": int
         key "name": Required[str]
         key "side": Union[str, EdgeNGramTokenFilterSide]
-        @odata.type: Literal[#EdgeNGramTokenFilterV2]
+        ``@odata.type``: Literal[#EdgeNGramTokenFilterV2]
         maxGram: int
         minGram: int
         name: str
@@ -8795,7 +8785,7 @@ namespace azure.search.documents.indexes.types
         key "maxGram": int
         key "minGram": int
         key "name": Required[str]
-        @odata.type: Literal[#EdgeNGramTokenizer]
+        ``@odata.type``: Literal[#EdgeNGramTokenizer]
         maxGram: int
         minGram: int
         name: str
@@ -8805,7 +8795,7 @@ namespace azure.search.documents.indexes.types
     class azure.search.documents.indexes.types.ElisionTokenFilter(TypedDict):
         key "@odata.type": Required[Literal["#ElisionTokenFilter"]]
         key "name": Required[str]
-        @odata.type: Literal[#ElisionTokenFilter]
+        ``@odata.type``: Literal[#ElisionTokenFilter]
         articles: list[str]
         name: str
 
@@ -8827,7 +8817,7 @@ namespace azure.search.documents.indexes.types
         key "modelVersion": Optional[str]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#EntityLinkingSkill]
+        ``@odata.type``: Literal[#EntityLinkingSkill]
         context: str
         defaultLanguageCode: str
         description: str
@@ -8848,7 +8838,7 @@ namespace azure.search.documents.indexes.types
         key "modelVersion": Optional[str]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#EntityRecognitionSkill]
+        ``@odata.type``: Literal[#EntityRecognitionSkill]
         categories: list[Union[str, EntityCategory]]
         context: str
         defaultLanguageCode: Union[str, EntityRecognitionSkillLanguage]
@@ -8891,7 +8881,7 @@ namespace azure.search.documents.indexes.types
         key "kind": Required[Literal[KnowledgeSourceKind.FABRIC_DATA_AGENT]]
         key "name": Required[str]
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
-        @odata.etag: str
+        ``@odata.etag``: str
         description: str
         encryptionKey: SearchResourceEncryptionKey
         fabricDataAgentParameters: FabricDataAgentKnowledgeSourceParameters
@@ -8915,7 +8905,7 @@ namespace azure.search.documents.indexes.types
         key "kind": Required[Literal[KnowledgeSourceKind.FABRIC_ONTOLOGY]]
         key "name": Required[str]
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
-        @odata.etag: str
+        ``@odata.etag``: str
         description: str
         encryptionKey: SearchResourceEncryptionKey
         fabricOntologyParameters: FabricOntologyKnowledgeSourceParameters
@@ -8956,7 +8946,7 @@ namespace azure.search.documents.indexes.types
         key "kind": Required[Literal[KnowledgeSourceKind.FILE]]
         key "name": Required[str]
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
-        @odata.etag: str
+        ``@odata.etag``: str
         corsOptions: CorsOptions
         description: str
         encryptionKey: SearchResourceEncryptionKey
@@ -8999,19 +8989,10 @@ namespace azure.search.documents.indexes.types
         boostingDuration: str
 
 
-    class azure.search.documents.indexes.types.GetIndexStatisticsResult(TypedDict, total=False):
-        key "documentCount": Required[int]
-        key "storageSize": Required[int]
-        key "vectorIndexSize": Required[int]
-        documentCount: int
-        storageSize: int
-        vectorIndexSize: int
-
-
     class azure.search.documents.indexes.types.HighWaterMarkChangeDetectionPolicy(TypedDict):
         key "@odata.type": Required[Literal["#HighWaterMarkChangeDetectionPolicy"]]
         key "highWaterMarkColumnName": Required[str]
-        @odata.type: Literal[#HighWaterMarkChangeDetectionPolicy]
+        ``@odata.type``: Literal[#HighWaterMarkChangeDetectionPolicy]
         highWaterMarkColumnName: str
 
 
@@ -9043,7 +9024,7 @@ namespace azure.search.documents.indexes.types
         key "inputs": Required[list[InputFieldMappingEntry]]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#ImageAnalysisSkill]
+        ``@odata.type``: Literal[#ImageAnalysisSkill]
         context: str
         defaultLanguageCode: Union[str, ImageAnalysisSkillLanguage]
         description: str
@@ -9062,7 +9043,7 @@ namespace azure.search.documents.indexes.types
         key "kind": Required[Literal[KnowledgeSourceKind.INDEXED_ONELAKE]]
         key "name": Required[str]
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
-        @odata.etag: str
+        ``@odata.etag``: str
         description: str
         encryptionKey: SearchResourceEncryptionKey
         indexedOneLakeParameters: IndexedOneLakeKnowledgeSourceParameters
@@ -9094,7 +9075,7 @@ namespace azure.search.documents.indexes.types
         key "kind": Required[Literal[KnowledgeSourceKind.INDEXED_SHARE_POINT]]
         key "name": Required[str]
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
-        @odata.etag: str
+        ``@odata.etag``: str
         description: str
         encryptionKey: SearchResourceEncryptionKey
         indexedSharePointParameters: IndexedSharePointKnowledgeSourceParameters
@@ -9126,7 +9107,7 @@ namespace azure.search.documents.indexes.types
         key "kind": Required[Literal[KnowledgeSourceKind.INDEXED_SQL]]
         key "name": Required[str]
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
-        @odata.etag: str
+        ``@odata.etag``: str
         description: str
         encryptionKey: SearchResourceEncryptionKey
         indexedSqlParameters: IndexedSqlKnowledgeSourceParameters
@@ -9229,7 +9210,7 @@ namespace azure.search.documents.indexes.types
         key "keepWords": Required[list[str]]
         key "keepWordsCase": bool
         key "name": Required[str]
-        @odata.type: Literal[#KeepTokenFilter]
+        ``@odata.type``: Literal[#KeepTokenFilter]
         keepWords: list[str]
         keepWordsCase: bool
         name: str
@@ -9245,7 +9226,7 @@ namespace azure.search.documents.indexes.types
         key "modelVersion": Optional[str]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#KeyPhraseExtractionSkill]
+        ``@odata.type``: Literal[#KeyPhraseExtractionSkill]
         context: str
         defaultLanguageCode: Union[str, KeyPhraseExtractionSkillLanguage]
         description: str
@@ -9261,7 +9242,7 @@ namespace azure.search.documents.indexes.types
         key "ignoreCase": bool
         key "keywords": Required[list[str]]
         key "name": Required[str]
-        @odata.type: Literal[#KeywordMarkerTokenFilter]
+        ``@odata.type``: Literal[#KeywordMarkerTokenFilter]
         ignoreCase: bool
         keywords: list[str]
         name: str
@@ -9271,7 +9252,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#KeywordTokenizer"]]
         key "bufferSize": int
         key "name": Required[str]
-        @odata.type: Literal[#KeywordTokenizer]
+        ``@odata.type``: Literal[#KeywordTokenizer]
         bufferSize: int
         name: str
 
@@ -9280,7 +9261,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#KeywordTokenizerV2"]]
         key "maxTokenLength": int
         key "name": Required[str]
-        @odata.type: Literal[#KeywordTokenizerV2]
+        ``@odata.type``: Literal[#KeywordTokenizerV2]
         maxTokenLength: int
         name: str
 
@@ -9297,7 +9278,7 @@ namespace azure.search.documents.indexes.types
         key "retrievalInstructions": str
         key "retrievalReasoningEffort": ForwardRef('KnowledgeRetrievalReasoningEffort', module='types')
         key "retrieveDefaults": ForwardRef('KnowledgeBaseRetrieveDefaults', module='types')
-        @odata.etag: str
+        ``@odata.etag``: str
         answerInstructions: str
         corsOptions: CorsOptions
         description: str
@@ -9372,7 +9353,7 @@ namespace azure.search.documents.indexes.types
         key "modelVersion": Optional[str]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#LanguageDetectionSkill]
+        ``@odata.type``: Literal[#LanguageDetectionSkill]
         context: str
         defaultCountryHint: str
         description: str
@@ -9387,7 +9368,7 @@ namespace azure.search.documents.indexes.types
         key "max": int
         key "min": int
         key "name": Required[str]
-        @odata.type: Literal[#LengthTokenFilter]
+        ``@odata.type``: Literal[#LengthTokenFilter]
         max: int
         min: int
         name: str
@@ -9396,7 +9377,7 @@ namespace azure.search.documents.indexes.types
     class azure.search.documents.indexes.types.LexicalNormalizer(TypedDict):
         key "@odata.type": Required[Literal["#CustomNormalizer"]]
         key "name": Required[str]
-        @odata.type: Literal[#CustomNormalizer]
+        ``@odata.type``: Literal[#CustomNormalizer]
         charFilters: list[Union[str, CharFilterName]]
         name: str
         tokenFilters: list[Union[str, TokenFilterName]]
@@ -9407,7 +9388,7 @@ namespace azure.search.documents.indexes.types
         key "consumeAllTokens": bool
         key "maxTokenCount": int
         key "name": Required[str]
-        @odata.type: Literal[#LimitTokenFilter]
+        ``@odata.type``: Literal[#LimitTokenFilter]
         consumeAllTokens: bool
         maxTokenCount: int
         name: str
@@ -9417,7 +9398,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#StandardAnalyzer"]]
         key "maxTokenLength": int
         key "name": Required[str]
-        @odata.type: Literal[#StandardAnalyzer]
+        ``@odata.type``: Literal[#StandardAnalyzer]
         maxTokenLength: int
         name: str
         stopwords: list[str]
@@ -9427,7 +9408,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#StandardTokenizer"]]
         key "maxTokenLength": int
         key "name": Required[str]
-        @odata.type: Literal[#StandardTokenizer]
+        ``@odata.type``: Literal[#StandardTokenizer]
         maxTokenLength: int
         name: str
 
@@ -9436,7 +9417,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#StandardTokenizerV2"]]
         key "maxTokenLength": int
         key "name": Required[str]
-        @odata.type: Literal[#StandardTokenizerV2]
+        ``@odata.type``: Literal[#StandardTokenizerV2]
         maxTokenLength: int
         name: str
 
@@ -9467,7 +9448,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#MappingCharFilter"]]
         key "mappings": Required[list[str]]
         key "name": Required[str]
-        @odata.type: Literal[#MappingCharFilter]
+        ``@odata.type``: Literal[#MappingCharFilter]
         mappings: list[str]
         name: str
 
@@ -9512,7 +9493,7 @@ namespace azure.search.documents.indexes.types
         key "mcpServerParameters": Required[McpServerKnowledgeSourceParameters]
         key "name": Required[str]
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
-        @odata.etag: str
+        ``@odata.etag``: str
         description: str
         encryptionKey: SearchResourceEncryptionKey
         kind: Literal[KnowledgeSourceKind.MCP_SERVER]
@@ -9601,7 +9582,7 @@ namespace azure.search.documents.indexes.types
         key "insertPreTag": str
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#MergeSkill]
+        ``@odata.type``: Literal[#MergeSkill]
         context: str
         description: str
         inputs: list[InputFieldMappingEntry]
@@ -9617,7 +9598,7 @@ namespace azure.search.documents.indexes.types
         key "language": Union[str, MicrosoftStemmingTokenizerLanguage]
         key "maxTokenLength": int
         key "name": Required[str]
-        @odata.type: Literal[#MicrosoftLanguageStemmingTokenizer]
+        ``@odata.type``: Literal[#MicrosoftLanguageStemmingTokenizer]
         isSearchTokenizer: bool
         language: Union[str, MicrosoftStemmingTokenizerLanguage]
         maxTokenLength: int
@@ -9630,7 +9611,7 @@ namespace azure.search.documents.indexes.types
         key "language": Union[str, MicrosoftTokenizerLanguage]
         key "maxTokenLength": int
         key "name": Required[str]
-        @odata.type: Literal[#MicrosoftLanguageTokenizer]
+        ``@odata.type``: Literal[#MicrosoftLanguageTokenizer]
         isSearchTokenizer: bool
         language: Union[str, MicrosoftTokenizerLanguage]
         maxTokenLength: int
@@ -9642,7 +9623,7 @@ namespace azure.search.documents.indexes.types
         key "maxGram": int
         key "minGram": int
         key "name": Required[str]
-        @odata.type: Literal[#NGramTokenFilter]
+        ``@odata.type``: Literal[#NGramTokenFilter]
         maxGram: int
         minGram: int
         name: str
@@ -9653,7 +9634,7 @@ namespace azure.search.documents.indexes.types
         key "maxGram": int
         key "minGram": int
         key "name": Required[str]
-        @odata.type: Literal[#NGramTokenFilterV2]
+        ``@odata.type``: Literal[#NGramTokenFilterV2]
         maxGram: int
         minGram: int
         name: str
@@ -9664,7 +9645,7 @@ namespace azure.search.documents.indexes.types
         key "maxGram": int
         key "minGram": int
         key "name": Required[str]
-        @odata.type: Literal[#NGramTokenizer]
+        ``@odata.type``: Literal[#NGramTokenizer]
         maxGram: int
         minGram: int
         name: str
@@ -9673,7 +9654,7 @@ namespace azure.search.documents.indexes.types
 
     class azure.search.documents.indexes.types.NativeBlobSoftDeleteDeletionDetectionPolicy(TypedDict):
         key "@odata.type": Required[Literal["#NativeBlobSoftDeleteDeletionDetectionPolicy"]]
-        @odata.type: Literal[#NativeBlobSoftDeleteDeletionDetectionPolicy]
+        ``@odata.type``: Literal[#NativeBlobSoftDeleteDeletionDetectionPolicy]
 
 
     class azure.search.documents.indexes.types.OcrSkill(TypedDict):
@@ -9686,7 +9667,7 @@ namespace azure.search.documents.indexes.types
         key "lineEnding": Union[str, OcrLineEnding]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#OcrSkill]
+        ``@odata.type``: Literal[#OcrSkill]
         context: str
         defaultLanguageCode: Union[str, OcrSkillLanguage]
         description: str
@@ -9717,7 +9698,7 @@ namespace azure.search.documents.indexes.types
         key "modelVersion": Optional[str]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#PIIDetectionSkill]
+        ``@odata.type``: Literal[#PIIDetectionSkill]
         context: str
         defaultLanguageCode: str
         description: str
@@ -9740,7 +9721,7 @@ namespace azure.search.documents.indexes.types
         key "replacement": str
         key "reverse": bool
         key "skip": int
-        @odata.type: Literal[#PathHierarchyTokenizerV2]
+        ``@odata.type``: Literal[#PathHierarchyTokenizerV2]
         delimiter: str
         maxTokenLength: int
         name: str
@@ -9754,7 +9735,7 @@ namespace azure.search.documents.indexes.types
         key "lowercase": bool
         key "name": Required[str]
         key "pattern": str
-        @odata.type: Literal[#PatternAnalyzer]
+        ``@odata.type``: Literal[#PatternAnalyzer]
         flags: list[Union[str, RegexFlags]]
         lowercase: bool
         name: str
@@ -9767,7 +9748,7 @@ namespace azure.search.documents.indexes.types
         key "name": Required[str]
         key "patterns": Required[list[str]]
         key "preserveOriginal": bool
-        @odata.type: Literal[#PatternCaptureTokenFilter]
+        ``@odata.type``: Literal[#PatternCaptureTokenFilter]
         name: str
         patterns: list[str]
         preserveOriginal: bool
@@ -9778,7 +9759,7 @@ namespace azure.search.documents.indexes.types
         key "name": Required[str]
         key "pattern": Required[str]
         key "replacement": Required[str]
-        @odata.type: Literal[#PatternReplaceCharFilter]
+        ``@odata.type``: Literal[#PatternReplaceCharFilter]
         name: str
         pattern: str
         replacement: str
@@ -9789,7 +9770,7 @@ namespace azure.search.documents.indexes.types
         key "name": Required[str]
         key "pattern": Required[str]
         key "replacement": Required[str]
-        @odata.type: Literal[#PatternReplaceTokenFilter]
+        ``@odata.type``: Literal[#PatternReplaceTokenFilter]
         name: str
         pattern: str
         replacement: str
@@ -9800,7 +9781,7 @@ namespace azure.search.documents.indexes.types
         key "group": int
         key "name": Required[str]
         key "pattern": str
-        @odata.type: Literal[#PatternTokenizer]
+        ``@odata.type``: Literal[#PatternTokenizer]
         flags: list[Union[str, RegexFlags]]
         group: int
         name: str
@@ -9812,7 +9793,7 @@ namespace azure.search.documents.indexes.types
         key "encoder": Union[str, PhoneticEncoder]
         key "name": Required[str]
         key "replace": bool
-        @odata.type: Literal[#PhoneticTokenFilter]
+        ``@odata.type``: Literal[#PhoneticTokenFilter]
         encoder: Union[str, PhoneticEncoder]
         name: str
         replace: bool
@@ -9826,7 +9807,7 @@ namespace azure.search.documents.indexes.types
         key "name": Required[str]
         key "remoteSharePointParameters": ForwardRef('RemoteSharePointKnowledgeSourceParameters', module='types')
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
-        @odata.etag: str
+        ``@odata.etag``: str
         description: str
         encryptionKey: SearchResourceEncryptionKey
         kind: Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT]
@@ -9884,7 +9865,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.etag": str
         key "indexes": Required[list[str]]
         key "name": Required[str]
-        @odata.etag: str
+        ``@odata.etag``: str
         indexes: list[str]
         name: str
 
@@ -9950,7 +9931,7 @@ namespace azure.search.documents.indexes.types
         key "sharePointConnectorAppRegistration": ForwardRef('SharePointConnectorAppRegistration', module='types')
         key "similarity": ForwardRef('SimilarityAlgorithm', module='types')
         key "vectorSearch": Optional[VectorSearch]
-        @odata.etag: str
+        ``@odata.etag``: str
         analyzers: list[LexicalAnalyzer]
         charFilters: list[CharFilter]
         corsOptions: CorsOptions
@@ -9985,7 +9966,7 @@ namespace azure.search.documents.indexes.types
         key "name": Required[str]
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
         key "searchIndexParameters": Required[SearchIndexKnowledgeSourceParameters]
-        @odata.etag: str
+        ``@odata.etag``: str
         description: str
         encryptionKey: SearchResourceEncryptionKey
         kind: Literal[KnowledgeSourceKind.SEARCH_INDEX]
@@ -10060,7 +10041,7 @@ namespace azure.search.documents.indexes.types
         key "schedule": Optional[IndexingSchedule]
         key "skillsetName": str
         key "targetIndexName": Required[str]
-        @odata.etag: str
+        ``@odata.etag``: str
         cache: SearchIndexerCache
         dataSourceName: str
         description: str
@@ -10095,7 +10076,7 @@ namespace azure.search.documents.indexes.types
 
     class azure.search.documents.indexes.types.SearchIndexerDataNoneIdentity(TypedDict):
         key "@odata.type": Required[Literal["#DataNoneIdentity"]]
-        @odata.type: Literal[#DataNoneIdentity]
+        ``@odata.type``: Literal[#DataNoneIdentity]
 
 
     class azure.search.documents.indexes.types.SearchIndexerDataSourceConnection(TypedDict):
@@ -10111,7 +10092,7 @@ namespace azure.search.documents.indexes.types
         key "name": Required[str]
         key "subType": str
         key "type": Required[Union[str, SearchIndexerDataSourceType]]
-        @odata.etag: str
+        ``@odata.etag``: str
         container: SearchIndexerDataContainer
         credentials: DataSourceCredentials
         dataChangeDetectionPolicy: DataChangeDetectionPolicy
@@ -10129,7 +10110,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#DataUserAssignedIdentity"]]
         key "federatedIdentityClientId": str
         key "userAssignedIdentity": Required[str]
-        @odata.type: Literal[#DataUserAssignedIdentity]
+        ``@odata.type``: Literal[#DataUserAssignedIdentity]
         federatedIdentityClientId: str
         userAssignedIdentity: str
 
@@ -10256,7 +10237,7 @@ namespace azure.search.documents.indexes.types
         key "knowledgeStore": ForwardRef('SearchIndexerKnowledgeStore', module='types')
         key "name": Required[str]
         key "skills": Required[list[SearchIndexerSkill]]
-        @odata.etag: str
+        ``@odata.etag``: str
         cognitiveServices: CognitiveServicesAccount
         description: str
         encryptionKey: SearchResourceEncryptionKey
@@ -10329,7 +10310,7 @@ namespace azure.search.documents.indexes.types
         key "modelVersion": Optional[str]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#SentimentSkill]
+        ``@odata.type``: Literal[#SentimentSkill]
         context: str
         defaultLanguageCode: Union[str, SentimentSkillLanguage]
         description: str
@@ -10347,7 +10328,7 @@ namespace azure.search.documents.indexes.types
         key "inputs": Required[list[InputFieldMappingEntry]]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#ShaperSkill]
+        ``@odata.type``: Literal[#ShaperSkill]
         context: str
         description: str
         inputs: list[InputFieldMappingEntry]
@@ -10373,7 +10354,7 @@ namespace azure.search.documents.indexes.types
         key "outputUnigrams": bool
         key "outputUnigramsIfNoShingles": bool
         key "tokenSeparator": str
-        @odata.type: Literal[#ShingleTokenFilter]
+        ``@odata.type``: Literal[#ShingleTokenFilter]
         filterToken: str
         maxShingleSize: int
         minShingleSize: int
@@ -10391,7 +10372,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#SnowballTokenFilter"]]
         key "language": Required[Union[str, SnowballTokenFilterLanguage]]
         key "name": Required[str]
-        @odata.type: Literal[#SnowballTokenFilter]
+        ``@odata.type``: Literal[#SnowballTokenFilter]
         language: Union[str, SnowballTokenFilterLanguage]
         name: str
 
@@ -10400,7 +10381,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#SoftDeleteColumnDeletionDetectionPolicy"]]
         key "softDeleteColumnName": str
         key "softDeleteMarkerValue": str
-        @odata.type: Literal[#SoftDeleteColumnDeletionDetectionPolicy]
+        ``@odata.type``: Literal[#SoftDeleteColumnDeletionDetectionPolicy]
         softDeleteColumnName: str
         softDeleteMarkerValue: str
 
@@ -10419,7 +10400,7 @@ namespace azure.search.documents.indexes.types
         key "pageOverlapLength": Optional[int]
         key "textSplitMode": Union[str, TextSplitMode]
         key "unit": Optional[Union[str, SplitSkillUnit]]
-        @odata.type: Literal[#SplitSkill]
+        ``@odata.type``: Literal[#SplitSkill]
         azureOpenAITokenizerParameters: AzureOpenAITokenizerParameters
         context: str
         defaultLanguageCode: Union[str, SplitSkillLanguage]
@@ -10436,14 +10417,14 @@ namespace azure.search.documents.indexes.types
 
     class azure.search.documents.indexes.types.SqlIntegratedChangeTrackingPolicy(TypedDict):
         key "@odata.type": Required[Literal["#SqlIntegratedChangeTrackingPolicy"]]
-        @odata.type: Literal[#SqlIntegratedChangeTrackingPolicy]
+        ``@odata.type``: Literal[#SqlIntegratedChangeTrackingPolicy]
 
 
     class azure.search.documents.indexes.types.StemmerOverrideTokenFilter(TypedDict):
         key "@odata.type": Required[Literal["#StemmerOverrideTokenFilter"]]
         key "name": Required[str]
         key "rules": Required[list[str]]
-        @odata.type: Literal[#StemmerOverrideTokenFilter]
+        ``@odata.type``: Literal[#StemmerOverrideTokenFilter]
         name: str
         rules: list[str]
 
@@ -10452,7 +10433,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#StemmerTokenFilter"]]
         key "language": Required[Union[str, StemmerTokenFilterLanguage]]
         key "name": Required[str]
-        @odata.type: Literal[#StemmerTokenFilter]
+        ``@odata.type``: Literal[#StemmerTokenFilter]
         language: Union[str, StemmerTokenFilterLanguage]
         name: str
 
@@ -10460,7 +10441,7 @@ namespace azure.search.documents.indexes.types
     class azure.search.documents.indexes.types.StopAnalyzer(TypedDict):
         key "@odata.type": Required[Literal["#StopAnalyzer"]]
         key "name": Required[str]
-        @odata.type: Literal[#StopAnalyzer]
+        ``@odata.type``: Literal[#StopAnalyzer]
         name: str
         stopwords: list[str]
 
@@ -10471,7 +10452,7 @@ namespace azure.search.documents.indexes.types
         key "name": Required[str]
         key "removeTrailing": bool
         key "stopwordsList": Union[str, StopwordsList]
-        @odata.type: Literal[#StopwordsTokenFilter]
+        ``@odata.type``: Literal[#StopwordsTokenFilter]
         ignoreCase: bool
         name: str
         removeTrailing: bool
@@ -10485,7 +10466,7 @@ namespace azure.search.documents.indexes.types
         key "format": Required[Literal["solr"]]
         key "name": Required[str]
         key "synonyms": Required[list[str]]
-        @odata.etag: str
+        ``@odata.etag``: str
         encryptionKey: SearchResourceEncryptionKey
         format: Literal[solr]
         name: str
@@ -10498,7 +10479,7 @@ namespace azure.search.documents.indexes.types
         key "ignoreCase": bool
         key "name": Required[str]
         key "synonyms": Required[list[str]]
-        @odata.type: Literal[#SynonymTokenFilter]
+        ``@odata.type``: Literal[#SynonymTokenFilter]
         expand: bool
         ignoreCase: bool
         name: str
@@ -10533,7 +10514,7 @@ namespace azure.search.documents.indexes.types
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
         key "suggestedFrom": Optional[Union[str, TextTranslationSkillLanguage]]
-        @odata.type: Literal[#TranslationSkill]
+        ``@odata.type``: Literal[#TranslationSkill]
         context: str
         defaultFromLanguageCode: Union[str, TextTranslationSkillLanguage]
         defaultToLanguageCode: Union[str, TextTranslationSkillLanguage]
@@ -10553,7 +10534,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#TruncateTokenFilter"]]
         key "length": int
         key "name": Required[str]
-        @odata.type: Literal[#TruncateTokenFilter]
+        ``@odata.type``: Literal[#TruncateTokenFilter]
         length: int
         name: str
 
@@ -10562,7 +10543,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#UaxUrlEmailTokenizer"]]
         key "maxTokenLength": int
         key "name": Required[str]
-        @odata.type: Literal[#UaxUrlEmailTokenizer]
+        ``@odata.type``: Literal[#UaxUrlEmailTokenizer]
         maxTokenLength: int
         name: str
 
@@ -10571,7 +10552,7 @@ namespace azure.search.documents.indexes.types
         key "@odata.type": Required[Literal["#UniqueTokenFilter"]]
         key "name": Required[str]
         key "onlyOnSamePosition": bool
-        @odata.type: Literal[#UniqueTokenFilter]
+        ``@odata.type``: Literal[#UniqueTokenFilter]
         name: str
         onlyOnSamePosition: bool
 
@@ -10633,7 +10614,7 @@ namespace azure.search.documents.indexes.types
         key "modelVersion": Required[Optional[str]]
         key "name": str
         key "outputs": Required[list[OutputFieldMappingEntry]]
-        @odata.type: Literal[#VectorizeSkill]
+        ``@odata.type``: Literal[#VectorizeSkill]
         context: str
         description: str
         inputs: list[InputFieldMappingEntry]
@@ -10660,7 +10641,7 @@ namespace azure.search.documents.indexes.types
         key "outputs": Required[list[OutputFieldMappingEntry]]
         key "timeout": str
         key "uri": Required[str]
-        @odata.type: Literal[#WebApiSkill]
+        ``@odata.type``: Literal[#WebApiSkill]
         authIdentity: SearchIndexerDataIdentity
         authResourceId: str
         batchSize: int
@@ -10707,7 +10688,7 @@ namespace azure.search.documents.indexes.types
         key "name": Required[str]
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
         key "webParameters": ForwardRef('WebKnowledgeSourceParameters', module='types')
-        @odata.etag: str
+        ``@odata.etag``: str
         description: str
         encryptionKey: SearchResourceEncryptionKey
         kind: Literal[KnowledgeSourceKind.WEB]
@@ -10753,7 +10734,7 @@ namespace azure.search.documents.indexes.types
         key "splitOnCaseChange": bool
         key "splitOnNumerics": bool
         key "stemEnglishPossessive": bool
-        @odata.type: Literal[#WordDelimiterTokenFilter]
+        ``@odata.type``: Literal[#WordDelimiterTokenFilter]
         catenateAll: bool
         catenateNumbers: bool
         catenateWords: bool
@@ -10775,7 +10756,7 @@ namespace azure.search.documents.indexes.types
         key "name": Required[str]
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
         key "workIQParameters": Required[WorkIQKnowledgeSourceParameters]
-        @odata.etag: str
+        ``@odata.etag``: str
         description: str
         encryptionKey: SearchResourceEncryptionKey
         kind: Literal[KnowledgeSourceKind.WORK_IQ]
@@ -11338,14 +11319,14 @@ namespace azure.search.documents.knowledgebases.models
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordModel(_Model):
         deployment_id: Optional[str]
-        model_name: Optional[str]
+        model_name: str
 
         @overload
         def __init__(
                 self, 
                 *, 
                 deployment_id: Optional[str] = ..., 
-                model_name: Optional[str] = ...
+                model_name: str
             ) -> None: ...
 
         @overload
@@ -12545,14 +12526,14 @@ namespace azure.search.documents.knowledgebases.models
 
     class azure.search.documents.knowledgebases.models.KnowledgeBaseStreamErrorEvent(_Model):
         activity: Optional[list[KnowledgeBaseActivityRecord]]
-        error: Optional[KnowledgeBaseErrorDetail]
+        error: KnowledgeBaseErrorDetail
 
         @overload
         def __init__(
                 self, 
                 *, 
                 activity: Optional[list[KnowledgeBaseActivityRecord]] = ..., 
-                error: Optional[KnowledgeBaseErrorDetail] = ...
+                error: KnowledgeBaseErrorDetail
             ) -> None: ...
 
         @overload
@@ -13111,16 +13092,16 @@ namespace azure.search.documents.knowledgebases.models
 
     class azure.search.documents.knowledgebases.models.ServedImage(_Model):
         image_id: Optional[str]
-        image_path: Optional[str]
-        size_bytes: Optional[int]
+        image_path: str
+        size_bytes: int
 
         @overload
         def __init__(
                 self, 
                 *, 
                 image_id: Optional[str] = ..., 
-                image_path: Optional[str] = ..., 
-                size_bytes: Optional[int] = ...
+                image_path: str, 
+                size_bytes: int
             ) -> None: ...
 
         @overload
@@ -13225,20 +13206,6 @@ namespace azure.search.documents.knowledgebases.models
 
 namespace azure.search.documents.knowledgebases.types
 
-    class azure.search.documents.knowledgebases.types.AIServices(TypedDict, total=False):
-        key "apiKey": str
-        key "uri": Required[str]
-        apiKey: str
-        uri: str
-
-
-    class azure.search.documents.knowledgebases.types.AssetStore(TypedDict, total=False):
-        key "connectionString": Required[str]
-        key "containerName": Required[str]
-        connectionString: str
-        containerName: str
-
-
     class azure.search.documents.knowledgebases.types.AzureBlobKnowledgeSourceParams(TypedDict, total=False):
         key "alwaysQuerySource": bool
         key "enableImageServing": bool
@@ -13263,19 +13230,6 @@ namespace azure.search.documents.knowledgebases.types
         queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         rerankerThreshold: float
         resultsProcessing: Union[str, KnowledgeSourceResultsProcessing]
-
-
-    class azure.search.documents.knowledgebases.types.CompletedSynchronizationState(TypedDict, total=False):
-        key "endTime": Required[str]
-        key "itemsSkipped": Required[int]
-        key "itemsUpdatesFailed": Required[int]
-        key "itemsUpdatesProcessed": Required[int]
-        key "startTime": Required[str]
-        endTime: str
-        itemsSkipped: int
-        itemsUpdatesFailed: int
-        itemsUpdatesProcessed: int
-        startTime: str
 
 
     class azure.search.documents.knowledgebases.types.FabricDataAgentKnowledgeSourceParams(TypedDict, total=False):
@@ -13352,11 +13306,6 @@ namespace azure.search.documents.knowledgebases.types
         queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         rerankerThreshold: float
         resultsProcessing: Union[str, KnowledgeSourceResultsProcessing]
-
-
-    class azure.search.documents.knowledgebases.types.FreshnessPolicy(TypedDict, total=False):
-        key "boostingDuration": str
-        boostingDuration: str
 
 
     class azure.search.documents.knowledgebases.types.IndexedOneLakeKnowledgeSourceParams(TypedDict, total=False):
@@ -13533,37 +13482,6 @@ namespace azure.search.documents.knowledgebases.types
         type: Literal[KnowledgeRetrievalIntentType.SEMANTIC]
 
 
-    class azure.search.documents.knowledgebases.types.KnowledgeSourceAzureOpenAIVectorizer(TypedDict, total=False):
-        key "kind": Required[Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]]
-        azureOpenAIParameters: AzureOpenAIVectorizerParameters
-        kind: Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]
-
-
-    class azure.search.documents.knowledgebases.types.KnowledgeSourceIngestionParameters(TypedDict, total=False):
-        key "aiServices": Optional[AIServices]
-        key "assetStore": ForwardRef('AssetStore', module='types')
-        key "chatCompletionModel": Optional[KnowledgeBaseModel]
-        key "contentExtractionMode": Optional[Union[str, KnowledgeSourceContentExtractionMode]]
-        key "disableImageVerbalization": bool
-        key "embeddingModel": Optional[KnowledgeSourceVectorizer]
-        key "freshnessPolicy": ForwardRef('FreshnessPolicy', module='types')
-        key "identity": Optional[SearchIndexerDataIdentity]
-        key "ingestionPermissionOptions": Optional[list[Union[str, KnowledgeSourceIngestionPermissionOption]]]
-        key "ingestionSchedule": Optional[IndexingSchedule]
-        key "networkAccessMode": Union[str, KnowledgeSourceNetworkAccessMode]
-        aiServices: AIServices
-        assetStore: AssetStore
-        chatCompletionModel: KnowledgeBaseModel
-        contentExtractionMode: Union[str, KnowledgeSourceContentExtractionMode]
-        disableImageVerbalization: bool
-        embeddingModel: KnowledgeSourceVectorizer
-        freshnessPolicy: FreshnessPolicy
-        identity: SearchIndexerDataIdentity
-        ingestionPermissionOptions: list[Union[str, KnowledgeSourceIngestionPermissionOption]]
-        ingestionSchedule: IndexingSchedule
-        networkAccessMode: Union[str, KnowledgeSourceNetworkAccessMode]
-
-
     class azure.search.documents.knowledgebases.types.KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_BLOB = "azureBlob"
         FABRIC_DATA_AGENT = "fabricDataAgent"
@@ -13577,51 +13495,6 @@ namespace azure.search.documents.knowledgebases.types
         SEARCH_INDEX = "searchIndex"
         WEB = "web"
         WORK_IQ = "workIQ"
-
-
-    class azure.search.documents.knowledgebases.types.KnowledgeSourceStatistics(TypedDict, total=False):
-        key "averageItemsProcessedPerSynchronization": Required[int]
-        key "averageSynchronizationDuration": Required[str]
-        key "totalSynchronization": Required[int]
-        averageItemsProcessedPerSynchronization: int
-        averageSynchronizationDuration: str
-        totalSynchronization: int
-
-
-    class azure.search.documents.knowledgebases.types.KnowledgeSourceStatus(TypedDict, total=False):
-        key "currentSynchronizationState": Optional[SynchronizationState]
-        key "kind": Union[str, KnowledgeSourceKind]
-        key "lastSynchronizationState": Optional[CompletedSynchronizationState]
-        key "statistics": Optional[KnowledgeSourceStatistics]
-        key "synchronizationInterval": Optional[str]
-        key "synchronizationStatus": Required[Union[str, KnowledgeSourceSynchronizationStatus]]
-        currentSynchronizationState: SynchronizationState
-        kind: Union[str, KnowledgeSourceKind]
-        lastSynchronizationState: CompletedSynchronizationState
-        statistics: KnowledgeSourceStatistics
-        synchronizationInterval: str
-        synchronizationStatus: Union[str, KnowledgeSourceSynchronizationStatus]
-
-
-    class azure.search.documents.knowledgebases.types.KnowledgeSourceSynchronizationError(TypedDict, total=False):
-        key "details": str
-        key "docId": str
-        key "documentationLink": str
-        key "errorMessage": Required[str]
-        key "name": str
-        key "statusCode": int
-        details: str
-        docId: str
-        documentationLink: str
-        errorMessage: str
-        name: str
-        statusCode: int
-
-
-    class azure.search.documents.knowledgebases.types.KnowledgeSourceVectorizer(TypedDict, total=False):
-        key "kind": Required[Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]]
-        azureOpenAIParameters: AzureOpenAIVectorizerParameters
-        kind: Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI]
 
 
     class azure.search.documents.knowledgebases.types.McpServerKnowledgeSourceParams(TypedDict, total=False):
@@ -13702,25 +13575,6 @@ namespace azure.search.documents.knowledgebases.types
         queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         rerankerThreshold: float
         resultsProcessing: Union[str, KnowledgeSourceResultsProcessing]
-
-
-    class azure.search.documents.knowledgebases.types.SynchronizationState(TypedDict, total=False):
-        key "itemsSkipped": Required[int]
-        key "itemsUpdatesFailed": Required[int]
-        key "itemsUpdatesProcessed": Required[int]
-        key "startTime": Required[str]
-        errors: list[KnowledgeSourceSynchronizationError]
-        itemsSkipped: int
-        itemsUpdatesFailed: int
-        itemsUpdatesProcessed: int
-        startTime: str
-
-
-    class azure.search.documents.knowledgebases.types.VectorSearchVectorizerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        AI_SERVICES_VISION = "aiServicesVision"
-        AML = "aml"
-        AZURE_OPEN_AI = "azureOpenAI"
-        CUSTOM_WEB_API = "customWebApi"
 
 
     class azure.search.documents.knowledgebases.types.WebKnowledgeSourceParams(TypedDict, total=False):
@@ -14380,13 +14234,6 @@ namespace azure.search.documents.models
 
 namespace azure.search.documents.types
 
-    class azure.search.documents.types.AutocompleteItem(TypedDict, total=False):
-        key "queryPlusText": Required[str]
-        key "text": Required[str]
-        queryPlusText: str
-        text: str
-
-
     class azure.search.documents.types.AutocompletePostRequest(TypedDict, total=False):
         key "autocompleteMode": Union[str, AutocompleteMode]
         key "filter": str
@@ -14409,35 +14256,6 @@ namespace azure.search.documents.types
         top: int
 
 
-    class azure.search.documents.types.DebugInfo(TypedDict, total=False):
-        key "queryRewrites": ForwardRef('QueryRewritesDebugInfo', module='types')
-        queryRewrites: QueryRewritesDebugInfo
-
-
-    class azure.search.documents.types.DocumentDebugInfo(TypedDict, total=False):
-        key "semantic": ForwardRef('SemanticDebugInfo', module='types')
-        key "vectors": ForwardRef('VectorsDebugInfo', module='types')
-        innerHits: dict[str, list[QueryResultDocumentInnerHit]]
-        semantic: SemanticDebugInfo
-        vectors: VectorsDebugInfo
-
-
-    class azure.search.documents.types.FacetResult(TypedDict):
-        key "avg": float
-        key "cardinality": int
-        key "count": int
-        key "max": float
-        key "min": float
-        key "sum": float
-        @search.facets: dict[str, list[FacetResult]]
-        avg: float
-        cardinality: int
-        count: int
-        max: float
-        min: float
-        sum: float
-
-
     class azure.search.documents.types.HybridSearch(TypedDict, total=False):
         key "countAndFacetMode": Union[str, HybridCountAndFacetMode]
         key "maxTextRecallSize": int
@@ -14447,107 +14265,12 @@ namespace azure.search.documents.types
 
     class azure.search.documents.types.IndexAction(TypedDict):
         key "@search.action": Union[str, IndexActionType]
-        @search.action: Union[str, IndexActionType]
+        ``@search.action``: Union[str, IndexActionType]
 
 
     class azure.search.documents.types.IndexDocumentsBatch(TypedDict, total=False):
         key "value": Required[list[IndexAction]]
         value: list[IndexAction]
-
-
-    class azure.search.documents.types.IndexingResult(TypedDict, total=False):
-        key "errorMessage": str
-        key "key": Required[str]
-        key "status": Required[bool]
-        key "statusCode": Required[int]
-        errorMessage: str
-        key: str
-        status: bool
-        statusCode: int
-
-
-    class azure.search.documents.types.QueryAnswerResult(TypedDict, total=False):
-        key "highlights": Optional[str]
-        key "key": str
-        key "score": float
-        key "text": str
-        highlights: str
-        key: str
-        score: float
-        text: str
-
-
-    class azure.search.documents.types.QueryCaptionResult(TypedDict, total=False):
-        key "highlights": Optional[str]
-        key "text": str
-        highlights: str
-        text: str
-
-
-    class azure.search.documents.types.QueryResultDocumentInnerHit(TypedDict, total=False):
-        key "ordinal": int
-        ordinal: int
-        vectors: list[dict[str, SingleVectorFieldResult]]
-
-
-    class azure.search.documents.types.QueryResultDocumentRerankerInput(TypedDict, total=False):
-        key "content": str
-        key "keywords": str
-        key "title": str
-        content: str
-        keywords: str
-        title: str
-
-
-    class azure.search.documents.types.QueryResultDocumentSemanticField(TypedDict, total=False):
-        key "name": str
-        key "state": Union[str, SemanticFieldState]
-        name: str
-        state: Union[str, SemanticFieldState]
-
-
-    class azure.search.documents.types.QueryResultDocumentSubscores(TypedDict, total=False):
-        key "documentBoost": float
-        key "text": ForwardRef('TextResult', module='types')
-        documentBoost: float
-        text: TextResult
-        vectors: list[dict[str, SingleVectorFieldResult]]
-
-
-    class azure.search.documents.types.QueryRewritesDebugInfo(TypedDict, total=False):
-        key "text": ForwardRef('QueryRewritesValuesDebugInfo', module='types')
-        text: QueryRewritesValuesDebugInfo
-        vectors: list[QueryRewritesValuesDebugInfo]
-
-
-    class azure.search.documents.types.QueryRewritesValuesDebugInfo(TypedDict, total=False):
-        key "inputQuery": str
-        inputQuery: str
-        rewrites: list[str]
-
-
-    class azure.search.documents.types.SearchDocumentsResult(TypedDict):
-        key "@odata.count": int
-        key "@odata.nextLink": str
-        key "@search.answers": Optional[list[QueryAnswerResult]]
-        key "@search.coverage": float
-        key "@search.debug": Optional[DebugInfo]
-        key "@search.nextPageParameters": ForwardRef('SearchRequest', module='types')
-        key "@search.semanticPartialResponseReason": Union[str, SemanticErrorReason]
-        key "@search.semanticPartialResponseType": Union[str, SemanticSearchResultsType]
-        key "@search.semanticQueryRewritesResultType": Union[str, SemanticQueryRewritesResultType]
-        key "value": Required[list[SearchResult]]
-        @odata.count: int
-        @odata.nextLink: str
-        @search.answers: list[QueryAnswerResult]
-        @search.coverage: float
-        @search.debug: DebugInfo
-        @search.facets: dict[str, list[FacetResult]]
-        @search.nextPageParameters: SearchRequest
-        @search.semanticPartialResponseReason: Union[str, SemanticErrorReason]
-        @search.semanticPartialResponseType: Union[str, SemanticSearchResultsType]
-        @search.semanticQueryRewritesResultType: Union[str, SemanticQueryRewritesResultType]
-        value: list[SearchResult]
 
 
     class azure.search.documents.types.SearchPostRequest(TypedDict, total=False):
@@ -14611,102 +14334,11 @@ namespace azure.search.documents.types
         vectorQueries: list[VectorQuery]
 
 
-    class azure.search.documents.types.SearchRequest(TypedDict, total=False):
-        key "answers": Union[str, QueryAnswerType]
-        key "captions": Union[str, QueryCaptionType]
-        key "count": bool
-        key "debug": Union[str, QueryDebugMode]
-        key "filter": str
-        key "highlightPostTag": str
-        key "highlightPreTag": str
-        key "hybridSearch": ForwardRef('HybridSearch', module='types')
-        key "minimumCoverage": float
-        key "queryLanguage": Union[str, QueryLanguage]
-        key "queryRewrites": Union[str, QueryRewritesType]
-        key "queryType": Union[str, QueryType]
-        key "scoringProfile": str
-        key "scoringStatistics": Union[str, ScoringStatistics]
-        key "search": str
-        key "searchMode": Union[str, SearchMode]
-        key "semanticConfiguration": str
-        key "semanticErrorHandling": Union[str, SemanticErrorMode]
-        key "semanticMaxWaitInMilliseconds": int
-        key "semanticQuery": str
-        key "sessionId": str
-        key "skip": int
-        key "speller": Union[str, QuerySpellerType]
-        key "top": int
-        key "vectorFilterMode": Union[str, VectorFilterMode]
-        answers: Union[str, QueryAnswerType]
-        captions: Union[str, QueryCaptionType]
-        count: bool
-        debug: Union[str, QueryDebugMode]
-        facets: list[str]
-        filter: str
-        highlight: list[str]
-        highlightPostTag: str
-        highlightPreTag: str
-        hybridSearch: HybridSearch
-        minimumCoverage: float
-        orderby: list[str]
-        queryLanguage: Union[str, QueryLanguage]
-        queryRewrites: Union[str, QueryRewritesType]
-        queryType: Union[str, QueryType]
-        scoringParameters: list[str]
-        scoringProfile: str
-        scoringStatistics: Union[str, ScoringStatistics]
-        search: str
-        searchFields: list[str]
-        searchMode: Union[str, SearchMode]
-        select: list[str]
-        semanticConfiguration: str
-        semanticErrorHandling: Union[str, SemanticErrorMode]
-        semanticFields: list[str]
-        semanticMaxWaitInMilliseconds: int
-        semanticQuery: str
-        sessionId: str
-        skip: int
-        speller: Union[str, QuerySpellerType]
-        top: int
-        vectorFilterMode: Union[str, VectorFilterMode]
-        vectorQueries: list[VectorQuery]
-
-
-    class azure.search.documents.types.SearchResult(TypedDict):
-        key "@search.captions": Optional[list[QueryCaptionResult]]
-        key "@search.documentDebugInfo": Optional[DocumentDebugInfo]
-        key "@search.rerankerBoostedScore": Optional[float]
-        key "@search.rerankerScore": Optional[float]
-        key "@search.score": Required[float]
-        @search.captions: list[QueryCaptionResult]
-        @search.documentDebugInfo: DocumentDebugInfo
-        @search.highlights: dict[str, list[str]]
-        @search.rerankerBoostedScore: float
-        @search.rerankerScore: float
-        @search.score: float
-
-
     class azure.search.documents.types.SearchScoreThreshold(TypedDict, total=False):
         key "kind": Required[Literal[VectorThresholdKind.SEARCH_SCORE]]
         key "value": Required[float]
         kind: Literal[VectorThresholdKind.SEARCH_SCORE]
         value: float
-
-
-    class azure.search.documents.types.SemanticDebugInfo(TypedDict, total=False):
-        key "rerankerInput": ForwardRef('QueryResultDocumentRerankerInput', module='types')
-        key "titleField": ForwardRef('QueryResultDocumentSemanticField', module='types')
-        contentFields: list[QueryResultDocumentSemanticField]
-        keywordFields: list[QueryResultDocumentSemanticField]
-        rerankerInput: QueryResultDocumentRerankerInput
-        titleField: QueryResultDocumentSemanticField
-
-
-    class azure.search.documents.types.SingleVectorFieldResult(TypedDict, total=False):
-        key "searchScore": float
-        key "vectorSimilarity": float
-        searchScore: float
-        vectorSimilarity: float
 
 
     class azure.search.documents.types.SuggestPostRequest(TypedDict, total=False):
@@ -14729,16 +14361,6 @@ namespace azure.search.documents.types
         select: list[str]
         suggesterName: str
         top: int
-
-
-    class azure.search.documents.types.SuggestResult(TypedDict):
-        key "@search.text": Required[str]
-        @search.text: str
-
-
-    class azure.search.documents.types.TextResult(TypedDict, total=False):
-        key "searchScore": float
-        searchScore: float
 
 
     class azure.search.documents.types.VectorQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -14852,11 +14474,6 @@ namespace azure.search.documents.types
         threshold: VectorThreshold
         vector: list[float]
         weight: float
-
-
-    class azure.search.documents.types.VectorsDebugInfo(TypedDict, total=False):
-        key "subscores": ForwardRef('QueryResultDocumentSubscores', module='types')
-        subscores: QueryResultDocumentSubscores
 
 
 ```

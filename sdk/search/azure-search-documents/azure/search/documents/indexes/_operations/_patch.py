@@ -60,7 +60,9 @@ def _convert_index_response(response: _SearchIndexResponse) -> _models.SearchInd
     )
 
 
-class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerated):
+class _SearchIndexClientOperationsMixin(
+    _SearchIndexClientOperationsMixinGenerated
+):  # pylint: disable=too-many-public-methods
     """Custom operations mixin for SearchIndexClient."""
 
     @distributed_trace
@@ -432,6 +434,30 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._delete_knowledge_source_file(name=name, file_id=file_id, **kwargs)
+
+    @distributed_trace
+    # pylint: disable-next=arguments-renamed
+    def update_knowledge_source_file(  # type: ignore[override]
+        self,
+        name: str,
+        file_id: str,
+        body: Union[_models.UpdateKnowledgeSourceFileRequest, _types.UpdateKnowledgeSourceFileRequest],
+        **kwargs: Any,
+    ) -> _models.KnowledgeSourceFile:
+        """Updates an existing file in a File knowledge source in place.
+
+        :param name: The name of the File knowledge source. Required.
+        :type name: str
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
+        :param body: The multipart body containing replacement metadata and content. Required.
+        :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest or
+         ~azure.search.documents.indexes.types.UpdateKnowledgeSourceFileRequest
+        :return: The updated knowledge source file.
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return super().update_knowledge_source_file(name=name, file_id=file_id, body=body, **kwargs)
 
     @distributed_trace
     def list_indexes(

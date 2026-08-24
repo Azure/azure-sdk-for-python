@@ -76,6 +76,47 @@ class TestKnowledgeBaseRetrievalClientConstructorAsync:
 
 @pytest.mark.asyncio
 class TestKnowledgeBaseRetrievalStreamAsync:
+    async def test_stream_deserializes_all_known_event_types(self):
+        require_capability("AsyncKnowledgeBaseRetrievalStream", "KnowledgeBaseRetrievalEvent")
+        from azure.search.documents.knowledgebases.aio import AsyncKnowledgeBaseRetrievalStream
+        from azure.search.documents.knowledgebases.models import (
+            KnowledgeBaseActivityStartedEvent,
+            KnowledgeBaseAnswerCompletedEvent,
+            KnowledgeBaseRetrievalStartedEvent,
+            KnowledgeBaseSearchIndexActivityRecord,
+            KnowledgeBaseSearchIndexReference,
+            KnowledgeBaseStreamErrorEvent,
+        )
+
+        raw_stream = _AsyncRawStream(
+            [
+                _frame(
+                    "retrieval.started",
+                    {
+                        "requestId": "request-id",
+                        "knowledgeBaseName": KNOWLEDGE_BASE_NAME,
+                        "outputMode": "extractiveData",
+                        "reasoningEffort": {"kind": "minimal"},
+                    },
+                ),
+                _frame("activity.started", {"id": 1, "type": "searchIndex", "startedAt": "2026-08-10T00:00:00Z"}),
+                _frame("activity.completed", {"id": 1, "type": "searchIndex"}),
+                _frame("answer.completed", {"messageIndex": 0, "message": {"role": "assistant", "content": []}}),
+                _frame("references.completed", [{"type": "searchIndex", "id": "doc-1", "activitySource": 1}]),
+                _frame("error", {"error": {"code": "Failed", "message": "retrieval failed"}}),
+            ]
+        )
+        stream = AsyncKnowledgeBaseRetrievalStream(response=_AsyncResponse(), raw_stream=raw_stream)
+        events = [event async for event in stream]
+
+        assert isinstance(events[0].data, KnowledgeBaseRetrievalStartedEvent)
+        assert isinstance(events[1].data, KnowledgeBaseActivityStartedEvent)
+        assert isinstance(events[2].data, KnowledgeBaseSearchIndexActivityRecord)
+        assert isinstance(events[3].data, KnowledgeBaseAnswerCompletedEvent)
+        assert isinstance(events[4].data[0], KnowledgeBaseSearchIndexReference)
+        assert isinstance(events[5].data, KnowledgeBaseStreamErrorEvent)
+        assert AsyncKnowledgeBaseRetrievalStream.__module__ == "azure.search.documents.knowledgebases.aio"
+
     async def test_stream_handles_fragmented_events_and_terminal_cleanup(self):
         require_capability("AsyncKnowledgeBaseRetrievalStream", "KnowledgeBaseRetrievalEvent")
         from azure.search.documents.knowledgebases.aio import AsyncKnowledgeBaseRetrievalStream
@@ -154,9 +195,11 @@ class TestKnowledgeBaseRetrievalStreamAsync:
         ):
             stream = await client.retrieve_stream(
                 KnowledgeBaseRetrievalRequest(),
+                query_source_authorization="query-token",
                 query_work_iq_source_authorization="work-iq-token",
             )
         assert isinstance(stream, AsyncKnowledgeBaseRetrievalStream)
+        assert generated_kwargs["query_source_authorization"] == "query-token"
         assert generated_kwargs["query_work_iq_source_authorization"] == "work-iq-token"
         await stream.close()
 

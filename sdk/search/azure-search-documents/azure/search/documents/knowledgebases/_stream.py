@@ -302,6 +302,10 @@ class AsyncKnowledgeBaseRetrievalStream(AsyncIterator[KnowledgeBaseRetrievalEven
         await self.close()
 
 
+KnowledgeBaseRetrievalStream.__module__ = "azure.search.documents.knowledgebases"
+AsyncKnowledgeBaseRetrievalStream.__module__ = "azure.search.documents.knowledgebases.aio"
+
+
 __all__ = [
     "AsyncKnowledgeBaseRetrievalStream",
     "KnowledgeBaseRetrievalEvent",

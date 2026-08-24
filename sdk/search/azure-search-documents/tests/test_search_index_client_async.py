@@ -202,3 +202,56 @@ class TestKnowledgeSourceFileOperationsAsync:
         kwargs = mock_delete.call_args.kwargs
         assert kwargs["name"] == "files-source"
         assert kwargs["file_id"] == "file-1"
+
+    async def test_update_knowledge_source_file_uses_name_first_and_forwards_by_keyword(self):
+        require_capability("azure.search.documents.indexes.aio.SearchIndexClient.update_knowledge_source_file")
+        from azure.search.documents.indexes.models import UpdateKnowledgeSourceFileRequest
+
+        body = UpdateKnowledgeSourceFileRequest({"metadata": {"fileName": "updated.txt"}, "content": b"updated"})
+        with mock.patch(
+            "azure.search.documents.indexes.aio._operations._operations."
+            "_SearchIndexClientOperationsMixin.update_knowledge_source_file",
+            new_callable=mock.AsyncMock,
+        ) as mock_update:
+            await _client().update_knowledge_source_file("files-source", "file-1", body)
+
+        mock_update.assert_awaited_once_with(name="files-source", file_id="file-1", body=body)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("public_method", "generated_method"),
+    [
+        ("get_synonym_maps", "_get_synonym_maps"),
+        ("get_data_source_connections", "_get_data_source_connections"),
+        ("get_indexers", "_get_indexers"),
+        ("get_skillsets", "_get_skillsets"),
+    ],
+)
+async def test_custom_list_wrappers_forward_search_paging(public_method, generated_method):
+    from azure.search.documents.indexes.aio import SearchIndexerClient
+
+    client = _client() if public_method == "get_synonym_maps" else SearchIndexerClient(ENDPOINT, AzureKeyCredential(KEY))
+    generated_owner = (
+        "_SearchIndexClientOperationsMixin" if public_method == "get_synonym_maps" else "_SearchIndexerClientOperationsMixin"
+    )
+    patch_target = (
+        "azure.search.documents.indexes.aio._operations._operations."
+        f"{generated_owner}.{generated_method}"
+    )
+
+    with mock.patch(patch_target, side_effect=_empty_async_pager) as mock_list:
+        result = await getattr(client, public_method)(
+            select=["name"],
+            search="hot",
+            page_size=2,
+            search_type="prefix",
+        )
+
+    assert result == []
+    mock_list.assert_called_once_with(
+        select=["name"],
+        search="hot",
+        page_size=2,
+        search_type="prefix",
+    )
