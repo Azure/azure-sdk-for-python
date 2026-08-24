@@ -17,6 +17,7 @@ from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
 from ._common.utils import (
     create_authentication,
+    get_attempt_timeout,
     get_link_ready_deadline,
     check_link_ready_deadline,
 )
@@ -390,15 +391,27 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         # pylint: disable=protected-access
         try:
             self._receive_context.set()
-            # No wait from the call or the receiver: bound at a default. Explicit wins.
-            wait_time = timeout or self._max_wait_time or DEFAULT_RECEIVE_WAIT_TIME_SECS
-            # Bound link acquisition too; the deadline below only covers waiting for messages.
-            self._open(wait_time)
+            # Explicit None checks: a zero wait is an expired budget, not an absent one,
+            # so it must not fall through to the default.
+            if timeout is not None:
+                wait_time = timeout
+            elif self._max_wait_time is not None:
+                wait_time = self._max_wait_time
+            else:
+                wait_time = DEFAULT_RECEIVE_WAIT_TIME_SECS
+
+            receive_started = time.time()
+            # Acquisition is capped by try_timeout when enabled, and never exceeds the budget.
+            self._open(get_attempt_timeout(wait_time, self._config.try_timeout))
 
             amqp_receive_client = self._handler
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
-            timeout_time = self._amqp_transport.TIMEOUT_FACTOR * wait_time
+            # Poll with what is left of the one budget, not a fresh copy of it.
+            remaining = wait_time - (time.time() - receive_started)
+            if remaining <= 0:
+                return []
+            timeout_time = self._amqp_transport.TIMEOUT_FACTOR * remaining
             abs_timeout = self._amqp_transport.get_current_time(amqp_receive_client) + timeout_time
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
 
@@ -721,7 +734,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:
             return []  # no-op on empty list.
-        self._open()
         amqp_receive_mode = self._amqp_transport.ServiceBusToAMQPReceiveModeMap[self._receive_mode]
         try:
             receive_mode = cast(Enum, amqp_receive_mode).value
@@ -807,7 +819,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         if int(max_message_count) < 0:
             raise ValueError("max_message_count must be 1 or greater.")
 
-        self._open()
         message = {
             MGMT_REQUEST_FROM_SEQUENCE_NUMBER: self._amqp_transport.AMQP_LONG_VALUE(sequence_number),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,

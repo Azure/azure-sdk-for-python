@@ -840,3 +840,125 @@ class TestExpiredAuthDoesNotEnterOpen:
             receiver._open(timeout=30)
         self.handler.open.assert_called_once()
         assert receiver._running is True
+
+
+class TestReceiveUsesOneBudget:
+    """Acquisition and polling share the receive budget rather than each getting a full one."""
+
+    def _receiver(self, open_cost, max_wait_time=None, try_timeout=None):
+        from azure.servicebus import ServiceBusClient
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock(), try_timeout=try_timeout)
+        receiver = client.get_queue_receiver("q", max_wait_time=max_wait_time)
+        receiver._check_live = lambda: None
+        self.open_timeouts = []
+
+        def slow_open(timeout=None):
+            self.open_timeouts.append(timeout)
+            time.sleep(open_cost)
+
+        receiver._open = slow_open
+        return receiver
+
+    def _polled_seconds(self, receiver, **kwargs):
+        from queue import Queue
+
+        handler = MagicMock()
+        handler._received_messages = Queue()
+        clock = {"t": 0.0}
+
+        def do_work():
+            clock["t"] += 1.0
+            return True
+
+        handler.do_work = do_work
+        receiver._handler = handler
+        transport = MagicMock()
+        transport.TIMEOUT_FACTOR = 1
+        transport.get_current_time = lambda _c: clock["t"]
+        receiver._amqp_transport = transport
+        assert receiver._receive(max_message_count=1, **kwargs) == []
+        return clock["t"]
+
+    def test_open_time_is_deducted_from_the_poll_window(self):
+        # Budget 10s, acquisition spends 4s, so polling gets ~6s - not another full 10s.
+        receiver = self._receiver(open_cost=4.0, max_wait_time=10)
+        assert self._polled_seconds(receiver) == pytest.approx(6, abs=1.5)
+
+    def test_try_timeout_caps_acquisition_not_the_poll(self):
+        # try_timeout bounds only the open phase; the long poll keeps the caller's wait.
+        receiver = self._receiver(open_cost=0.0, max_wait_time=300, try_timeout=5)
+        polled = self._polled_seconds(receiver)
+        assert self.open_timeouts == [5]
+        assert polled == pytest.approx(300, abs=2)
+
+    def test_acquisition_gets_the_budget_when_try_timeout_is_off(self):
+        receiver = self._receiver(open_cost=0.0, max_wait_time=30)
+        self._polled_seconds(receiver)
+        assert self.open_timeouts == [30]
+
+    def test_zero_budget_does_not_select_the_default(self):
+        # A zero wait is expired, not absent: it must not fall through to the 60s default.
+        receiver = self._receiver(open_cost=0.0)
+        assert self._polled_seconds(receiver, timeout=0) == 0
+
+
+class TestAsyncReceiveUsesOneBudget:
+    """Async `_receive` is a separate implementation, so the single-budget rule needs its own test."""
+
+    def _receiver(self, open_cost, max_wait_time=None, try_timeout=None):
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock(), try_timeout=try_timeout)
+        receiver = client.get_queue_receiver("q", max_wait_time=max_wait_time)
+        receiver._check_live = lambda: None
+        self.open_timeouts = []
+
+        async def slow_open(timeout=None):
+            self.open_timeouts.append(timeout)
+            time.sleep(open_cost)
+
+        receiver._open = slow_open
+        return receiver
+
+    async def _polled_seconds(self, receiver, **kwargs):
+        from queue import Queue
+
+        handler = MagicMock()
+        handler._received_messages = Queue()
+        clock = {"t": 0.0}
+
+        async def do_work_async():
+            clock["t"] += 1.0
+            return True
+
+        handler.do_work_async = do_work_async
+        receiver._handler = handler
+        transport = MagicMock()
+        transport.TIMEOUT_FACTOR = 1
+        transport.get_current_time = lambda _c: clock["t"]
+
+        async def reset_link_credit_async(_c, _n):
+            return None
+
+        transport.reset_link_credit_async = reset_link_credit_async
+        receiver._amqp_transport = transport
+        assert await receiver._receive(max_message_count=1, **kwargs) == []
+        return clock["t"]
+
+    @pytest.mark.asyncio
+    async def test_open_time_is_deducted_from_the_poll_window(self):
+        receiver = self._receiver(open_cost=4.0, max_wait_time=10)
+        assert await self._polled_seconds(receiver) == pytest.approx(6, abs=1.5)
+
+    @pytest.mark.asyncio
+    async def test_try_timeout_caps_acquisition_not_the_poll(self):
+        receiver = self._receiver(open_cost=0.0, max_wait_time=300, try_timeout=5)
+        polled = await self._polled_seconds(receiver)
+        assert self.open_timeouts == [5]
+        assert polled == pytest.approx(300, abs=2)
+
+    @pytest.mark.asyncio
+    async def test_zero_budget_does_not_select_the_default(self):
+        receiver = self._receiver(open_cost=0.0)
+        assert await self._polled_seconds(receiver, timeout=0) == 0
