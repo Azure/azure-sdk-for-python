@@ -13,7 +13,6 @@
   - Client `HybridConnectivityMgmtClient` added operation group `public_cloud_connectors`
   - Client `HybridConnectivityMgmtClient` added operation group `solution_configurations`
   - Client `HybridConnectivityMgmtClient` added operation group `solution_types`
-  - Model `ServiceConfigurationResource` added property `properties`
   - Added model `AADProfileProperties`
   - Added model `AwsCloudProfile`
   - Added model `AwsCloudProfileUpdate`
@@ -40,8 +39,6 @@
   - Added model `PublicCloudConnectorUpdate`
   - Added model `RelayNamespaceAccessProperties`
   - Added enum `ResourceProvisioningState`
-  - Added model `ServiceConfigurationProperties`
-  - Added model `ServiceConfigurationPropertiesPatch`
   - Added model `SolutionConfiguration`
   - Added model `SolutionConfigurationProperties`
   - Added model `SolutionConfigurationPropertiesUpdate`
@@ -80,11 +77,8 @@
   - Model `IngressGatewayResource` deleted or renamed its instance variable `server_id`
   - Model `IngressGatewayResource` deleted or renamed its instance variable `service_configuration_token`
   - Model `IngressGatewayResource` deleted or renamed its instance variable `tenant_id`
-  - Model `ServiceConfigurationResource` deleted or renamed its instance variable `port`
-  - Model `ServiceConfigurationResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `ServiceConfigurationResource` deleted or renamed its instance variable `resource_id`
-  - Model `ServiceConfigurationResource` deleted or renamed its instance variable `service_name`
-  - Model `ServiceConfigurationResourcePatch` deleted or renamed its instance variable `port`
+  - Model `ServiceConfigurationResource` moved instance variable `port`, `provisioning_state`, `resource_id` and `service_name` under property `properties` whose type is `ServiceConfigurationProperties`
+  - Model `ServiceConfigurationResourcePatch` moved instance variable `port` under property `properties` whose type is `ServiceConfigurationPropertiesPatch`
   - Deleted or renamed model `EndpointsList`
   - Deleted or renamed model `OperationListResult`
   - Deleted or renamed model `ServiceConfigurationList`
