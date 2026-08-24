@@ -44,7 +44,6 @@ def _build_file_knowledge_source(name, endpoint, deployment, model):
         file_parameters=FileKnowledgeSourceParameters(
             ingestion_parameters=KnowledgeSourceIngestionParameters(
                 content_extraction_mode="minimal",
-                network_access_mode="public",
                 embedding_model=KnowledgeSourceAzureOpenAIVectorizer(
                     azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
                         resource_url=endpoint,

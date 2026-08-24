@@ -19,7 +19,7 @@ def add_sanitizers(test_proxy):
     # Ensure all search service endpoint names are mocked to "test-service"
     add_general_regex_sanitizer(
         value="://fakesearchendpoint.search.windows.net",
-        regex=r"://(.+).search.windows.net",
+        regex=r"://([^/\"]+)\.search\.windows\.net",
     )
     # Remove storage connection strings from recordings
     add_general_regex_sanitizer(value="AccountKey=FAKE;", regex=r"AccountKey=([^;]+);")

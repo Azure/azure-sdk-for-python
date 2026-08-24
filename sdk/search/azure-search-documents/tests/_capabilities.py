@@ -58,7 +58,11 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         # File
         f"{_IM}.FileKnowledgeSource",
         f"{_IM}.FileKnowledgeSourceParameters",
+        f"{_IM}.FileUploadMetadata",
+        f"{_IM}.UpdateKnowledgeSourceFileRequest",
+        f"{_IM}.UploadKnowledgeSourceFileMultipartRequest",
         f"{_KBM}.FileKnowledgeSourceParams",
+        f"{_KBM}.KnowledgeSourceAzureOpenAIVectorizer",
         # MCP server
         f"{_IM}.McpServerKnowledgeSource",
         f"{_IM}.McpServerKnowledgeSourceParameters",

@@ -18,8 +18,8 @@ FAKE_STORAGE_CONNECTION_STRING = (
     "DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net"
 )
 FAKE_STORAGE_CONTAINER_NAME = "fakestoragecontainer"
-FAKE_AZURE_OPENAI_ENDPOINT = "https://fake-openai.openai.azure.com"
-FAKE_AZURE_OPENAI_EMBEDDING_DEPLOYMENT = "fake-embedding-deployment"
+FAKE_AZURE_OPENAI_ENDPOINT = "https://fake-openai.openai.azure.com/"
+FAKE_AZURE_OPENAI_EMBEDDING_DEPLOYMENT = "text-embedding-3-small"
 FAKE_AZURE_OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"
 SKILLSET_NOT_ENABLED_MESSAGE = "skillset related operations are not enabled in this region"
 
