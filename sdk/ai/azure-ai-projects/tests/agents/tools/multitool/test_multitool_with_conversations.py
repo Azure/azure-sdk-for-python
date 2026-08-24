@@ -24,7 +24,7 @@ from azure.ai.projects.models import (
 class TestMultiToolWithConversations(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_file_search_and_function_with_conversation(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test using multiple tools (FileSearch + Function) within one conversation.
