@@ -120,7 +120,7 @@ async def main():
                 retrieve_defaults=KnowledgeBaseRetrieveDefaults(
                     max_runtime_in_seconds=60,
                     max_output_documents=20,
-                    max_output_size_in_tokens=4000,
+                    max_output_size_in_tokens=5000,
                 ),
             )
             created_knowledge_base = await index_client.create_or_update_knowledge_base(knowledge_base)
@@ -130,7 +130,7 @@ async def main():
             assert retrieved_knowledge_base.retrieval_reasoning_effort is not None
             assert retrieved_knowledge_base.retrieve_defaults is not None
             assert retrieved_knowledge_base.retrieval_reasoning_effort.kind == "auto"
-            assert retrieved_knowledge_base.retrieve_defaults.max_output_size_in_tokens == 4000
+            assert retrieved_knowledge_base.retrieve_defaults.max_output_size_in_tokens == 5000
 
             retrieval_client = KnowledgeBaseRetrievalClient(
                 service_endpoint, AzureKeyCredential(key), knowledge_base_name=knowledge_base_name

@@ -134,7 +134,7 @@ An Azure AI Search service contains one or more indexes that provide
 persistent storage of searchable data in the form of JSON documents.  _(If
 you're brand new to search, you can make a very rough analogy between
 indexes and database tables.)_  The Azure.Search.Documents client library
-exposes operations on these resources through three main client types.
+exposes operations on these resources through four main client types.
 
 * `SearchClient` helps with:
   * [Searching](https://learn.microsoft.com/azure/search/search-lucene-query-architecture)

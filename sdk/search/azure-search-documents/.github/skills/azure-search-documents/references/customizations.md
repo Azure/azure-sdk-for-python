@@ -4,8 +4,7 @@ File-by-file inventory of every non-empty `_patch.py` in `azure-search-documents
 
 ## Temporary Python emitter workarounds
 
-Until the issues in `GENERATOR-BUGS.md` are fixed upstream, run the package-owned rewriter after
-every regeneration:
+ Until the emitter issues encoded in the package-owned rewriter are fixed upstream, run it after
 
 ```bash
 python .github/skills/azure-search-documents/scripts/apply_generator_workarounds.py
