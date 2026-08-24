@@ -1,6 +1,10 @@
 # Release History
 
-## 1.1.0b2 (Unreleased)
+## 1.1.0 (2026-08-24)
+
+### Features Added
+
+- Added the typed Voice event relay API under `azure.ai.agentserver.invocations.voice`, including `VoiceAgentServerHost`, typed protocol messages, session lifecycle callbacks, response cancellation and timeout handling, and a basic Voice agent sample.
 
 ### Samples
 
@@ -10,6 +14,7 @@
 ### Other Changes
 
 - Constrained runtime, development, and sample dependencies to compatible release lines.
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable `2.1.0` release.
 
 ## 1.1.0b1 (2026-08-11)
 
