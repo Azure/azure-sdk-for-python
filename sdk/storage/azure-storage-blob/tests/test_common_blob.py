@@ -3905,6 +3905,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         content = identity_blob.download_blob().readall()
         assert content == data
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_smart_rehydrate(self, **kwargs):

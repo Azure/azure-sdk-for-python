@@ -1,10 +1,16 @@
 # Release History
 
-## 2.1.0b3 (Unreleased)
+## 2.1.1 (Unreleased)
 
 ### Bugs Fixed
 
 - Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
+
+## 2.1.0 (2026-08-24)
+
+### Other Changes
+
+- Added compatibility bounds to runtime and development dependencies so installation cannot silently resolve to incompatible releases.
 
 ## 2.1.0b2 (2026-08-18)
 
