@@ -26,6 +26,7 @@
         "azure.mgmt.resource.deployments.models.DeploymentParameter": "Microsoft.Resources.DeploymentParameter",
         "azure.mgmt.resource.deployments.models.DeploymentProperties": "Microsoft.Resources.DeploymentProperties",
         "azure.mgmt.resource.deployments.models.DeploymentPropertiesExtended": "Microsoft.Resources.DeploymentPropertiesExtended",
+        "azure.mgmt.resource.deployments.models.DeploymentResourceWhatIfPrediction": "Microsoft.Resources.DeploymentResourceWhatIfPrediction",
         "azure.mgmt.resource.deployments.models.DeploymentValidateResult": "Microsoft.Resources.DeploymentValidateResult",
         "azure.mgmt.resource.deployments.models.DeploymentWhatIf": "Microsoft.Resources.DeploymentWhatIf",
         "azure.mgmt.resource.deployments.models.DeploymentWhatIfProperties": "Microsoft.Resources.DeploymentWhatIfProperties",
@@ -63,7 +64,6 @@
         "azure.mgmt.resource.deployments.models.AliasPathAttributes": "Microsoft.Resources.AliasPathAttributes",
         "azure.mgmt.resource.deployments.models.AliasType": "Microsoft.Resources.AliasType",
         "azure.mgmt.resource.deployments.models.ProviderAuthorizationConsentState": "Microsoft.Resources.ProviderAuthorizationConsentState",
-        "azure.mgmt.resource.deployments.models.ExtensionConfigPropertyType": "Microsoft.Resources.ExtensionConfigPropertyType",
         "azure.mgmt.resource.deployments.models.DeploymentMode": "Microsoft.Resources.DeploymentMode",
         "azure.mgmt.resource.deployments.models.OnErrorDeploymentType": "Microsoft.Resources.OnErrorDeploymentType",
         "azure.mgmt.resource.deployments.models.Level": "Microsoft.Resources.Level",
@@ -185,5 +185,5 @@
         "azure.mgmt.resource.deployments.operations.DeploymentOperationsOperations.list": "Microsoft.Resources.DeploymentOperationsOperationGroup.list",
         "azure.mgmt.resource.deployments.aio.operations.DeploymentOperationsOperations.list": "Microsoft.Resources.DeploymentOperationsOperationGroup.list"
     },
-    "CrossLanguageVersion": "47d7264d8b4e"
+    "CrossLanguageVersion": "57eea271f52c"
 }

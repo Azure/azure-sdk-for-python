@@ -557,11 +557,8 @@ class DeploymentExtended(ExtensionResource):  # pylint: disable=docstring-keywor
 
 
 class DeploymentExtensionConfigItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """DeploymentExtensionConfigItem.
+    """Represents the value for an extension config property.
 
-    :ivar type: The value type of the extension config property. Known values are: "String", "Int",
-     "Bool", "Array", "Object", "SecureString", and "SecureObject".
-    :vartype type: str or ~azure.mgmt.resource.deployments.models.ExtensionConfigPropertyType
     :ivar value: The value of the extension config property.
     :vartype value: any
     :ivar key_vault_reference: The Azure Key Vault reference used to retrieve the secret value of
@@ -570,9 +567,6 @@ class DeploymentExtensionConfigItem(_Model):  # pylint: disable=docstring-keywor
      ~azure.mgmt.resource.deployments.models.KeyVaultParameterReference
     """
 
-    type: Optional[Union[str, "_models.ExtensionConfigPropertyType"]] = rest_field(visibility=["read"])
-    """The value type of the extension config property. Known values are: \"String\", \"Int\",
-     \"Bool\", \"Array\", \"Object\", \"SecureString\", and \"SecureObject\"."""
     value: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the extension config property."""
     key_vault_reference: Optional["_models.KeyVaultParameterReference"] = rest_field(
@@ -609,9 +603,12 @@ class DeploymentExtensionDefinition(_Model):
     :vartype name: str
     :ivar version: The extension version.
     :vartype version: str
-    :ivar config_id: The extension configuration ID. It uniquely identifies a deployment control
-     plane within an extension.
+    :ivar config_id: The extension configuration ID. It uniquely identifies a deployment target
+     within an extension.
     :vartype config_id: str
+    :ivar config_hash: The extension configuration hash. Can be used to distinguish different
+     configurations that have the same config ID.
+    :vartype config_hash: str
     :ivar config: The extension configuration.
     :vartype config: dict[str,
      ~azure.mgmt.resource.deployments.models.DeploymentExtensionConfigItem]
@@ -624,8 +621,10 @@ class DeploymentExtensionDefinition(_Model):
     version: Optional[str] = rest_field(visibility=["read"])
     """The extension version."""
     config_id: Optional[str] = rest_field(name="configId", visibility=["read"])
-    """The extension configuration ID. It uniquely identifies a deployment control plane within an
-     extension."""
+    """The extension configuration ID. It uniquely identifies a deployment target within an extension."""
+    config_hash: Optional[str] = rest_field(name="configHash", visibility=["read"])
+    """The extension configuration hash. Can be used to distinguish different configurations that have
+     the same config ID."""
     config: Optional[dict[str, "_models.DeploymentExtensionConfigItem"]] = rest_field(visibility=["read"])
     """The extension configuration."""
 
@@ -1132,6 +1131,71 @@ class DeploymentPropertiesExtended(_Model):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
+class DeploymentResourceWhatIfPrediction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A prediction for a deployment resource by its symbolic name path.
+
+    :ivar symbolic_name_path: The symbolic name path to the resource in the deployment template,
+     including nested deployment(s) and extension if applicable. Required.
+    :vartype symbolic_name_path: list[str]
+    :ivar resource_id: The predicted fully-qualified Azure resource ID.
+    :vartype resource_id: str
+    :ivar extension: The predicted extension usage.
+    :vartype extension: ~azure.mgmt.resource.deployments.models.DeploymentExtensionDefinition
+    :ivar resource_type: The predicted resource type.
+    :vartype resource_type: str
+    :ivar identifiers: The predicted extensible resource identifiers.
+    :vartype identifiers: any
+    :ivar api_version: The predicted API version.
+    :vartype api_version: str
+    """
+
+    symbolic_name_path: list[str] = rest_field(
+        name="symbolicNamePath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The symbolic name path to the resource in the deployment template, including nested
+     deployment(s) and extension if applicable. Required."""
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The predicted fully-qualified Azure resource ID."""
+    extension: Optional["_models.DeploymentExtensionDefinition"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The predicted extension usage."""
+    resource_type: Optional[str] = rest_field(
+        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The predicted resource type."""
+    identifiers: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The predicted extensible resource identifiers."""
+    api_version: Optional[str] = rest_field(
+        name="apiVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The predicted API version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        symbolic_name_path: list[str],
+        resource_id: Optional[str] = None,
+        extension: Optional["_models.DeploymentExtensionDefinition"] = None,
+        resource_type: Optional[str] = None,
+        identifiers: Optional[Any] = None,
+        api_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class DeploymentValidateResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information from validate template deployment response.
 
@@ -1266,12 +1330,20 @@ class DeploymentWhatIfProperties(DeploymentProperties):  # pylint: disable=docst
     :vartype validation_level: str or ~azure.mgmt.resource.deployments.models.ValidationLevel
     :ivar what_if_settings: Optional What-If operation settings.
     :vartype what_if_settings: ~azure.mgmt.resource.deployments.models.DeploymentWhatIfSettings
+    :ivar resource_predictions: Resource predictions that can be utilized by what-if to produce
+     potential modification changes.
+    :vartype resource_predictions:
+     list[~azure.mgmt.resource.deployments.models.DeploymentResourceWhatIfPrediction]
     """
 
     what_if_settings: Optional["_models.DeploymentWhatIfSettings"] = rest_field(
         name="whatIfSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional What-If operation settings."""
+    resource_predictions: Optional[list["_models.DeploymentResourceWhatIfPrediction"]] = rest_field(
+        name="resourcePredictions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource predictions that can be utilized by what-if to produce potential modification changes."""
 
     @overload
     def __init__(
@@ -1290,6 +1362,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):  # pylint: disable=docst
         expression_evaluation_options: Optional["_models.ExpressionEvaluationOptions"] = None,
         validation_level: Optional[Union[str, "_models.ValidationLevel"]] = None,
         what_if_settings: Optional["_models.DeploymentWhatIfSettings"] = None,
+        resource_predictions: Optional[list["_models.DeploymentResourceWhatIfPrediction"]] = None,
     ) -> None: ...
 
     @overload
@@ -1804,7 +1877,7 @@ class ProviderResourceType(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class ResourceReference(_Model):
+class ResourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource Id model.
 
     :ivar id: The fully qualified Azure resource ID.
@@ -1817,6 +1890,9 @@ class ResourceReference(_Model):
     :vartype identifiers: any
     :ivar api_version: The API version the resource was deployed with.
     :vartype api_version: str
+    :ivar symbolic_name_path: The symbolic name path to the resource in the deployment template,
+     including nested deployment(s) and extension if applicable.
+    :vartype symbolic_name_path: list[str]
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -1829,6 +1905,28 @@ class ResourceReference(_Model):
     """The extensible resource identifiers."""
     api_version: Optional[str] = rest_field(name="apiVersion", visibility=["read"])
     """The API version the resource was deployed with."""
+    symbolic_name_path: Optional[list[str]] = rest_field(
+        name="symbolicNamePath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The symbolic name path to the resource in the deployment template, including nested
+     deployment(s) and extension if applicable."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        symbolic_name_path: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ScopedDeployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -2021,6 +2119,9 @@ class TargetResource(_Model):  # pylint: disable=docstring-keyword-should-match-
     :vartype api_version: str
     :ivar symbolic_name: The symbolic name of the resource as defined in the deployment template.
     :vartype symbolic_name: str
+    :ivar symbolic_name_path: The symbolic name path to the resource in the deployment template,
+     including nested deployment(s) and extension if applicable.
+    :vartype symbolic_name_path: list[str]
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2047,6 +2148,11 @@ class TargetResource(_Model):  # pylint: disable=docstring-keyword-should-match-
         name="symbolicName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The symbolic name of the resource as defined in the deployment template."""
+    symbolic_name_path: Optional[list[str]] = rest_field(
+        name="symbolicNamePath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The symbolic name path to the resource in the deployment template, including nested
+     deployment(s) and extension if applicable."""
 
     @overload
     def __init__(
@@ -2059,6 +2165,7 @@ class TargetResource(_Model):  # pylint: disable=docstring-keyword-should-match-
         identifiers: Optional[Any] = None,
         api_version: Optional[str] = None,
         symbolic_name: Optional[str] = None,
+        symbolic_name_path: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -2189,12 +2296,14 @@ class UserAssignedIdentity(_Model):
 class WhatIfChange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a single resource change predicted by What-If operation.
 
-    :ivar resource_id: Resource ID.
+    :ivar resource_id: The fully-qualified ARM resource ID for this change.
     :vartype resource_id: str
     :ivar deployment_id: The resource id of the Deployment responsible for this change.
     :vartype deployment_id: str
     :ivar symbolic_name: The symbolic name of the resource responsible for this change.
     :vartype symbolic_name: str
+    :ivar resource_type: The resource type of the resource.
+    :vartype resource_type: str
     :ivar identifiers: A subset of properties that uniquely identify a Bicep extensible resource
      because it lacks a resource id like an Azure resource has.
     :vartype identifiers: any
@@ -2217,7 +2326,7 @@ class WhatIfChange(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     resource_id: Optional[str] = rest_field(
         name="resourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Resource ID."""
+    """The fully-qualified ARM resource ID for this change."""
     deployment_id: Optional[str] = rest_field(
         name="deploymentId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2226,6 +2335,10 @@ class WhatIfChange(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         name="symbolicName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The symbolic name of the resource responsible for this change."""
+    resource_type: Optional[str] = rest_field(
+        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource type of the resource."""
     identifiers: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A subset of properties that uniquely identify a Bicep extensible resource because it lacks a
      resource id like an Azure resource has."""
@@ -2260,6 +2373,7 @@ class WhatIfChange(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         resource_id: Optional[str] = None,
         deployment_id: Optional[str] = None,
         symbolic_name: Optional[str] = None,
+        resource_type: Optional[str] = None,
         identifiers: Optional[Any] = None,
         extension: Optional["_models.DeploymentExtensionDefinition"] = None,
         unsupported_reason: Optional[str] = None,

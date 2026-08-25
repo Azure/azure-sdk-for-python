@@ -1105,7 +1105,6 @@ namespace azure.mgmt.resource.deployments.models
 
     class azure.mgmt.resource.deployments.models.DeploymentExtensionConfigItem(_Model):
         key_vault_reference: Optional[KeyVaultParameterReference]
-        type: Optional[Union[str, ExtensionConfigPropertyType]]
         value: Optional[Any]
 
         @overload
@@ -1123,6 +1122,7 @@ namespace azure.mgmt.resource.deployments.models
     class azure.mgmt.resource.deployments.models.DeploymentExtensionDefinition(_Model):
         alias: Optional[str]
         config: Optional[dict[str, DeploymentExtensionConfigItem]]
+        config_hash: Optional[str]
         config_id: Optional[str]
         name: Optional[str]
         version: Optional[str]
@@ -1300,6 +1300,30 @@ namespace azure.mgmt.resource.deployments.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resource.deployments.models.DeploymentResourceWhatIfPrediction(_Model):
+        api_version: Optional[str]
+        extension: Optional[DeploymentExtensionDefinition]
+        identifiers: Optional[Any]
+        resource_id: Optional[str]
+        resource_type: Optional[str]
+        symbolic_name_path: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                api_version: Optional[str] = ..., 
+                extension: Optional[DeploymentExtensionDefinition] = ..., 
+                identifiers: Optional[Any] = ..., 
+                resource_id: Optional[str] = ..., 
+                resource_type: Optional[str] = ..., 
+                symbolic_name_path: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.resource.deployments.models.DeploymentValidateResult(_Model):
         error: Optional[ErrorResponse]
         id: Optional[str]
@@ -1344,6 +1368,7 @@ namespace azure.mgmt.resource.deployments.models
         on_error_deployment: OnErrorDeployment
         parameters: dict[str, DeploymentParameter]
         parameters_link: ParametersLink
+        resource_predictions: Optional[list[DeploymentResourceWhatIfPrediction]]
         template: any
         template_link: TemplateLink
         validation_level: Union[str, ValidationLevel]
@@ -1362,6 +1387,7 @@ namespace azure.mgmt.resource.deployments.models
                 on_error_deployment: Optional[OnErrorDeployment] = ..., 
                 parameters: Optional[dict[str, DeploymentParameter]] = ..., 
                 parameters_link: Optional[ParametersLink] = ..., 
+                resource_predictions: Optional[list[DeploymentResourceWhatIfPrediction]] = ..., 
                 template: Optional[Any] = ..., 
                 template_link: Optional[TemplateLink] = ..., 
                 validation_level: Optional[Union[str, ValidationLevel]] = ..., 
@@ -1417,16 +1443,6 @@ namespace azure.mgmt.resource.deployments.models
         INNER = "Inner"
         NOT_SPECIFIED = "NotSpecified"
         OUTER = "Outer"
-
-
-    class azure.mgmt.resource.deployments.models.ExtensionConfigPropertyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ARRAY = "Array"
-        BOOL = "Bool"
-        INT = "Int"
-        OBJECT = "Object"
-        SECURE_OBJECT = "SecureObject"
-        SECURE_STRING = "SecureString"
-        STRING = "String"
 
 
     class azure.mgmt.resource.deployments.models.ExtensionResource(Resource):
@@ -1666,6 +1682,17 @@ namespace azure.mgmt.resource.deployments.models
         id: Optional[str]
         identifiers: Optional[Any]
         resource_type: Optional[str]
+        symbolic_name_path: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                symbolic_name_path: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.resource.deployments.models.ScopedDeployment(_Model):
@@ -1750,6 +1777,7 @@ namespace azure.mgmt.resource.deployments.models
         resource_name: Optional[str]
         resource_type: Optional[str]
         symbolic_name: Optional[str]
+        symbolic_name_path: Optional[list[str]]
 
         @overload
         def __init__(
@@ -1761,7 +1789,8 @@ namespace azure.mgmt.resource.deployments.models
                 identifiers: Optional[Any] = ..., 
                 resource_name: Optional[str] = ..., 
                 resource_type: Optional[str] = ..., 
-                symbolic_name: Optional[str] = ...
+                symbolic_name: Optional[str] = ..., 
+                symbolic_name_path: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -1826,6 +1855,7 @@ namespace azure.mgmt.resource.deployments.models
         extension: Optional[DeploymentExtensionDefinition]
         identifiers: Optional[Any]
         resource_id: Optional[str]
+        resource_type: Optional[str]
         symbolic_name: Optional[str]
         unsupported_reason: Optional[str]
 
@@ -1841,6 +1871,7 @@ namespace azure.mgmt.resource.deployments.models
                 extension: Optional[DeploymentExtensionDefinition] = ..., 
                 identifiers: Optional[Any] = ..., 
                 resource_id: Optional[str] = ..., 
+                resource_type: Optional[str] = ..., 
                 symbolic_name: Optional[str] = ..., 
                 unsupported_reason: Optional[str] = ...
             ) -> None: ...
@@ -2754,11 +2785,23 @@ namespace azure.mgmt.resource.deployments.types
 
     class azure.mgmt.resource.deployments.types.DeploymentExtensionConfigItem(TypedDict, total=False):
         key "keyVaultReference": ForwardRef('KeyVaultParameterReference', module='types')
-        key "type": Union[str, ExtensionConfigPropertyType]
         key "value": Any
         keyVaultReference: KeyVaultParameterReference
-        type: Union[str, ExtensionConfigPropertyType]
         value: Any
+
+
+    class azure.mgmt.resource.deployments.types.DeploymentExtensionDefinition(TypedDict, total=False):
+        key "alias": str
+        key "configHash": str
+        key "configId": str
+        key "name": str
+        key "version": str
+        alias: str
+        config: dict[str, DeploymentExtensionConfigItem]
+        configHash: str
+        configId: str
+        name: str
+        version: str
 
 
     class azure.mgmt.resource.deployments.types.DeploymentExternalInput(TypedDict, total=False):
@@ -2811,6 +2854,21 @@ namespace azure.mgmt.resource.deployments.types
         validationLevel: Union[str, ValidationLevel]
 
 
+    class azure.mgmt.resource.deployments.types.DeploymentResourceWhatIfPrediction(TypedDict, total=False):
+        key "apiVersion": str
+        key "extension": ForwardRef('DeploymentExtensionDefinition', module='types')
+        key "identifiers": Any
+        key "resourceId": str
+        key "resourceType": str
+        key "symbolicNamePath": Required[list[str]]
+        apiVersion: str
+        extension: DeploymentExtensionDefinition
+        identifiers: Any
+        resourceId: str
+        resourceType: str
+        symbolicNamePath: list[str]
+
+
     class azure.mgmt.resource.deployments.types.DeploymentWhatIf(TypedDict, total=False):
         key "location": str
         key "properties": Required[DeploymentWhatIfProperties]
@@ -2837,6 +2895,7 @@ namespace azure.mgmt.resource.deployments.types
         onErrorDeployment: OnErrorDeployment
         parameters: dict[str, DeploymentParameter]
         parametersLink: ParametersLink
+        resourcePredictions: list[DeploymentResourceWhatIfPrediction]
         template: Any
         templateLink: TemplateLink
         validationLevel: Union[str, ValidationLevel]

@@ -1,5 +1,21 @@
 # Release History
 
+## 2.0.0 (2026-08-25)
+
+### Features Added
+
+  - Model `DeploymentExtensionDefinition` added property `config_hash`
+  - Model `DeploymentWhatIfProperties` added property `resource_predictions`
+  - Model `ResourceReference` added property `symbolic_name_path`
+  - Model `TargetResource` added property `symbolic_name_path`
+  - Model `WhatIfChange` added property `resource_type`
+  - Added model `DeploymentResourceWhatIfPrediction`
+
+### Breaking Changes
+
+  - Model `DeploymentExtensionConfigItem` deleted or renamed its instance variable `type`
+  - Deleted or renamed model `ExtensionConfigPropertyType`
+
 ## 1.1.0 (2026-08-25)
 
 tool can't generate changelog for this release, please update manually.

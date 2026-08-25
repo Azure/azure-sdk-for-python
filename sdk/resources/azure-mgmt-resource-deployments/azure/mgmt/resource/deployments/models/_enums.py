@@ -134,25 +134,6 @@ class ExpressionEvaluationOptionsScopeType(str, Enum, metaclass=CaseInsensitiveE
     """Inner."""
 
 
-class ExtensionConfigPropertyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ExtensionConfigPropertyType."""
-
-    STRING = "String"
-    """Property type representing a string value."""
-    INT = "Int"
-    """Property type representing an integer value."""
-    BOOL = "Bool"
-    """Property type representing a boolean value."""
-    ARRAY = "Array"
-    """Property type representing an array value."""
-    OBJECT = "Object"
-    """Property type representing an object value."""
-    SECURE_STRING = "SecureString"
-    """Property type representing a secure string value."""
-    SECURE_OBJECT = "SecureObject"
-    """Property type representing a secure object value."""
-
-
 class Level(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Denotes the additional response level."""
 

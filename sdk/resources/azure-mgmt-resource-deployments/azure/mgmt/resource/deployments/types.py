@@ -14,7 +14,6 @@ if TYPE_CHECKING:
         DeploymentIdentityType,
         DeploymentMode,
         ExpressionEvaluationOptionsScopeType,
-        ExtensionConfigPropertyType,
         OnErrorDeploymentType,
         ValidationLevel,
         WhatIfResultFormat,
@@ -65,11 +64,8 @@ class Deployment(TypedDict, total=False):
 
 
 class DeploymentExtensionConfigItem(TypedDict, total=False):
-    """DeploymentExtensionConfigItem.
+    """Represents the value for an extension config property.
 
-    :ivar type: The value type of the extension config property. Known values are: "String", "Int",
-     "Bool", "Array", "Object", "SecureString", and "SecureObject".
-    :vartype type: Union[str, "ExtensionConfigPropertyType"]
     :ivar value: The value of the extension config property.
     :vartype value: Any
     :ivar keyVaultReference: The Azure Key Vault reference used to retrieve the secret value of the
@@ -77,14 +73,45 @@ class DeploymentExtensionConfigItem(TypedDict, total=False):
     :vartype keyVaultReference: "KeyVaultParameterReference"
     """
 
-    type: Union[str, "ExtensionConfigPropertyType"]
-    """The value type of the extension config property. Known values are: \"String\", \"Int\",
-     \"Bool\", \"Array\", \"Object\", \"SecureString\", and \"SecureObject\"."""
     value: Any
     """The value of the extension config property."""
     keyVaultReference: "KeyVaultParameterReference"
     """The Azure Key Vault reference used to retrieve the secret value of the extension config
      property."""
+
+
+class DeploymentExtensionDefinition(TypedDict, total=False):
+    """DeploymentExtensionDefinition.
+
+    :ivar alias: The alias of the extension as defined in the deployment template.
+    :vartype alias: str
+    :ivar name: The extension name.
+    :vartype name: str
+    :ivar version: The extension version.
+    :vartype version: str
+    :ivar configId: The extension configuration ID. It uniquely identifies a deployment target
+     within an extension.
+    :vartype configId: str
+    :ivar configHash: The extension configuration hash. Can be used to distinguish different
+     configurations that have the same config ID.
+    :vartype configHash: str
+    :ivar config: The extension configuration.
+    :vartype config: dict[str, "DeploymentExtensionConfigItem"]
+    """
+
+    alias: str
+    """The alias of the extension as defined in the deployment template."""
+    name: str
+    """The extension name."""
+    version: str
+    """The extension version."""
+    configId: str
+    """The extension configuration ID. It uniquely identifies a deployment target within an extension."""
+    configHash: str
+    """The extension configuration hash. Can be used to distinguish different configurations that have
+     the same config ID."""
+    config: dict[str, "DeploymentExtensionConfigItem"]
+    """The extension configuration."""
 
 
 class DeploymentExternalInput(TypedDict, total=False):
@@ -236,6 +263,39 @@ class DeploymentProperties(TypedDict, total=False):
      \"ProviderNoRbac\"."""
 
 
+class DeploymentResourceWhatIfPrediction(TypedDict, total=False):
+    """A prediction for a deployment resource by its symbolic name path.
+
+    :ivar symbolicNamePath: The symbolic name path to the resource in the deployment template,
+     including nested deployment(s) and extension if applicable. Required.
+    :vartype symbolicNamePath: list[str]
+    :ivar resourceId: The predicted fully-qualified Azure resource ID.
+    :vartype resourceId: str
+    :ivar extension: The predicted extension usage.
+    :vartype extension: "DeploymentExtensionDefinition"
+    :ivar resourceType: The predicted resource type.
+    :vartype resourceType: str
+    :ivar identifiers: The predicted extensible resource identifiers.
+    :vartype identifiers: Any
+    :ivar apiVersion: The predicted API version.
+    :vartype apiVersion: str
+    """
+
+    symbolicNamePath: Required[list[str]]
+    """The symbolic name path to the resource in the deployment template, including nested
+     deployment(s) and extension if applicable. Required."""
+    resourceId: str
+    """The predicted fully-qualified Azure resource ID."""
+    extension: "DeploymentExtensionDefinition"
+    """The predicted extension usage."""
+    resourceType: str
+    """The predicted resource type."""
+    identifiers: Any
+    """The predicted extensible resource identifiers."""
+    apiVersion: str
+    """The predicted API version."""
+
+
 class DeploymentWhatIf(TypedDict, total=False):
     """Deployment What-if operation parameters.
 
@@ -299,10 +359,15 @@ class DeploymentWhatIfProperties(DeploymentProperties):
     :vartype validationLevel: Union[str, "ValidationLevel"]
     :ivar whatIfSettings: Optional What-If operation settings.
     :vartype whatIfSettings: "DeploymentWhatIfSettings"
+    :ivar resourcePredictions: Resource predictions that can be utilized by what-if to produce
+     potential modification changes.
+    :vartype resourcePredictions: list["DeploymentResourceWhatIfPrediction"]
     """
 
     whatIfSettings: "DeploymentWhatIfSettings"
     """Optional What-If operation settings."""
+    resourcePredictions: list["DeploymentResourceWhatIfPrediction"]
+    """Resource predictions that can be utilized by what-if to produce potential modification changes."""
 
 
 class DeploymentWhatIfSettings(TypedDict, total=False):
