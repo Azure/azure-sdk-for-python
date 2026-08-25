@@ -1,0 +1,105 @@
+# Updates the Python emitter package dependencies through the authenticated CFS feed,
+# regenerates the lock file, and opens a draft pull request when files change.
+trigger: none
+pr: none
+
+variables:
+  NodeVersion: '24.x'
+
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: UpdateEmitterPackage
+        displayName: Update emitter package
+        jobs:
+          - job: UpdateEmitterPackage
+            displayName: Update emitter package
+            timeoutInMinutes: 30
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+            steps:
+              - checkout: self
+
+              - task: NodeTool@0
+                displayName: Install Node.js $(NodeVersion)
+                inputs:
+                  versionSpec: $(NodeVersion)
+
+              - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
+
+              - script: npm install --global npm-check-updates @azure-tools/typespec-client-generator-cli
+                displayName: Install emitter update tools
+
+              - task: PowerShell@2
+                displayName: Update emitter package dependencies
+                inputs:
+                  pwsh: true
+                  targetType: inline
+                  script: |
+                    $ErrorActionPreference = 'Stop'
+                    $packageJsonPath = '$(Build.SourcesDirectory)/eng/emitter-package.json'
+                    $alignmentSources = [ordered]@{
+                      'azure-rest-api-specs' = @{
+                        packageJsonUrl = 'https://github.com/Azure/azure-rest-api-specs/blob/main/package.json'
+                        packages = @(
+                          '@azure-tools/openai-typespec'
+                          '@azure-tools/typespec-liftr-base'
+                        )
+                      }
+                    }
+
+                    Write-Host "Updating dependencies in $packageJsonPath"
+                    ncu --packageFile $packageJsonPath --upgrade
+                    if ($LASTEXITCODE) {
+                      throw "npm-check-updates failed with exit code $LASTEXITCODE"
+                    }
+
+                    $packageJson = Get-Content $packageJsonPath -Raw | ConvertFrom-Json -AsHashtable
+
+                    foreach ($sourceName in $alignmentSources.Keys | Sort-Object) {
+                      $source = $alignmentSources[$sourceName]
+                      $packageJsonUrl = $source.packageJsonUrl -replace '^https://github\.com/([^/]+)/([^/]+)/blob/([^/]+)/(.*)$', 'https://raw.githubusercontent.com/$1/$2/$3/$4'
+                      Write-Host "Reading aligned package versions from $sourceName ($packageJsonUrl)"
+                      $sourcePackageJson = Invoke-RestMethod -Uri $packageJsonUrl
+
+                      foreach ($packageName in $source.packages) {
+                        $alignedVersion = $sourcePackageJson.dependencies.$packageName
+                        if (-not $alignedVersion) {
+                          $alignedVersion = $sourcePackageJson.devDependencies.$packageName
+                        }
+                        if (-not $alignedVersion) {
+                          throw "Package '$packageName' was not found in dependencies or devDependencies at $packageJsonUrl"
+                        }
+
+                        $targetSection = @('dependencies', 'devDependencies') |
+                          Where-Object { $packageJson[$_].Contains($packageName) } |
+                          Select-Object -First 1
+                        if (-not $targetSection) {
+                          throw "Package '$packageName' from alignment source '$sourceName' was not found in $packageJsonPath"
+                        }
+
+                        Write-Host "Aligning $packageName to $alignedVersion"
+                        $packageJson[$targetSection][$packageName] = $alignedVersion
+                      }
+                    }
+
+                    $packageJson | ConvertTo-Json -Depth 100 | Set-Content $packageJsonPath
+
+              - script: tsp-client generate-lock-file
+                displayName: Regenerate emitter package lock file
+                workingDirectory: $(Build.SourcesDirectory)
+
+              - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+                parameters:
+                  BaseBranchName: refs/heads/main
+                  PRBranchName: automated/update-emitter-package-$(Build.BuildId)
+                  PROwner: Azure
+                  CommitMsg: '[Automation] Update emitter package dependencies'
+                  PRTitle: '[Automation] Update emitter package dependencies'
+                  PRBody: |
+                    This automated PR updates `eng/emitter-package.json` dependencies through the authenticated Azure SDK CFS feed and regenerates `eng/emitter-package-lock.json`.
+                  OpenAsDraft: true
+                  AuthToken: ''
