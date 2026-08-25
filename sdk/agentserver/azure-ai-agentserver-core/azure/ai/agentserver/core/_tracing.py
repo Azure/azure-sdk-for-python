@@ -490,13 +490,21 @@ class TraceContextMiddleware:
         # last-value behavior for single-value headers.
         raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
         headers: dict[str, str] = {}
+        duplicate_traceparent = False
         for raw_name, raw_value in raw_headers:
             name = raw_name.decode("latin-1").lower()
             value = raw_value.decode("latin-1")
-            if name in headers and name in ("baggage", "tracestate"):
-                headers[name] = f"{headers[name]},{value}"
+            if name in headers:
+                if name == "traceparent":
+                    duplicate_traceparent = True
+                elif name in ("baggage", "tracestate"):
+                    headers[name] = f"{headers[name]},{value}"
+                else:
+                    headers[name] = value
             else:
                 headers[name] = value
+        if duplicate_traceparent:
+            headers.pop("traceparent", None)
 
         try:
             # Use the global propagator to extract trace context + baggage

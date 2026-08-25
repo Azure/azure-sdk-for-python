@@ -8,7 +8,7 @@ from threading import Event, Thread
 from unittest import mock
 
 import pytest
-from opentelemetry import baggage as _otel_baggage, context as _otel_context
+from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
 from opentelemetry.sdk.resources import Resource
@@ -64,6 +64,26 @@ def test_trace_context_middleware_preserves_repeated_baggage_headers() -> None:
         "caller.first": "one",
         "caller.second": "two",
     }
+
+
+def test_trace_context_middleware_rejects_duplicate_traceparent_headers() -> None:
+    captured_trace_id = None
+
+    async def app(_scope, _receive, _send):
+        nonlocal captured_trace_id
+        captured_trace_id = trace.get_current_span().get_span_context().trace_id
+
+    scope = {
+        "type": "websocket",
+        "headers": [
+            (b"traceparent", b"00-11111111111111111111111111111111-2222222222222222-01"),
+            (b"TraceParent", b"00-33333333333333333333333333333333-4444444444444444-01"),
+        ],
+    }
+
+    asyncio.run(TraceContextMiddleware(app)(scope, None, None))
+
+    assert captured_trace_id == 0
 
 
 def test_trace_context_middleware_propagates_process_control_exceptions() -> None:

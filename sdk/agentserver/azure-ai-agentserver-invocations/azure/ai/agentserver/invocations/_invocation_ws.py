@@ -209,9 +209,9 @@ class _WSHandlerMixin(_MixinBase):
     async def _ws_endpoint(self, websocket: WebSocket) -> None:
         """ASGI endpoint for ``/invocations_ws``.
 
-        Wraps the user-registered handler with: accept, span lifecycle,
-        graceful close on success, 1011 close on failure, and a structured
-        close event log + span attributes.
+        Wraps the user-registered handler with caller-context propagation,
+        session baggage, accept, graceful close on success, 1011 close on
+        failure, and structured close-event logging.
 
         :param websocket: The incoming Starlette WebSocket.
         :type websocket: ~starlette.websockets.WebSocket
