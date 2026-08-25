@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Alias(_Model):
+class Alias(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The alias type.
 
     :ivar name: The alias name.
@@ -80,7 +80,7 @@ class Alias(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AliasPath(_Model):
+class AliasPath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the paths for alias.
 
     :ivar path: The path of an alias.
@@ -125,7 +125,7 @@ class AliasPath(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AliasPathMetadata(_Model):
+class AliasPathMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The alias path metadata.
 
     :ivar type: The type of the token that the alias path is referring to. Known values are:
@@ -166,7 +166,7 @@ class AliasPathMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AliasPattern(_Model):
+class AliasPattern(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the pattern for an alias path.
 
     :ivar phrase: The alias pattern phrase.
@@ -206,7 +206,7 @@ class AliasPattern(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataEffect(_Model):
+class DataEffect(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The data effect definition.
 
     :ivar name: The data effect name.
@@ -241,7 +241,9 @@ class DataEffect(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataManifestCustomResourceFunctionDefinition(_Model):  # pylint: disable=name-too-long
+class DataManifestCustomResourceFunctionDefinition(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The custom resource function definition.
 
     :ivar name: The function name as it will appear in the policy rule. eg - 'vault'.
@@ -297,7 +299,7 @@ class DataManifestCustomResourceFunctionDefinition(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class DataManifestResourceFunctionsDefinition(_Model):
+class DataManifestResourceFunctionsDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource functions supported by a manifest.
 
     :ivar standard: The standard resource functions (subscription and/or resourceGroup).
@@ -378,7 +380,7 @@ class ProxyResource(Resource):
     """
 
 
-class DataPolicyManifest(ProxyResource):
+class DataPolicyManifest(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The data policy manifest.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -419,7 +421,7 @@ class DataPolicyManifest(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DataPolicyManifestProperties(_Model):
+class DataPolicyManifestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the data policy manifest.
 
     :ivar namespaces: The list of namespaces for the data policy manifest.
@@ -555,7 +557,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -600,7 +602,9 @@ class ExtensionResource(Resource):
     """
 
 
-class ExternalEvaluationEndpointInvocationResult(_Model):  # pylint: disable=name-too-long
+class ExternalEvaluationEndpointInvocationResult(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The external evaluation endpoint invocation results.
 
     :ivar policy_info: The details of the policy requiring the external endpoint invocation.
@@ -626,6 +630,11 @@ class ExternalEvaluationEndpointInvocationResult(_Model):  # pylint: disable=nam
     :vartype policy_evaluation_details: any
     :ivar additional_info: The endpoint specific metadata.
     :vartype additional_info: any
+    :ivar compliance_state: The compliance state of the resource against the policy. Possible
+     values are NotSpecified, NonCompliant, Conflict, NotApplicable, Compliant, Error, Unknown, and
+     Exempt. Known values are: "NotSpecified", "NonCompliant", "Partial", "Conflict",
+     "NotApplicable", "Compliant", "Error", "Unknown", "Exempt", and "Protected".
+    :vartype compliance_state: str or ~azure.mgmt.resource.policy.models.ComplianceState
     :ivar expiration: The expiration of the results.
     :vartype expiration: ~datetime.datetime
     """
@@ -666,6 +675,13 @@ class ExternalEvaluationEndpointInvocationResult(_Model):  # pylint: disable=nam
         name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """The endpoint specific metadata."""
+    compliance_state: Optional[Union[str, "_models.ComplianceState"]] = rest_field(
+        name="complianceState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compliance state of the resource against the policy. Possible values are NotSpecified,
+     NonCompliant, Conflict, NotApplicable, Compliant, Error, Unknown, and Exempt. Known values are:
+     \"NotSpecified\", \"NonCompliant\", \"Partial\", \"Conflict\", \"NotApplicable\",
+     \"Compliant\", \"Error\", \"Unknown\", \"Exempt\", and \"Protected\"."""
     expiration: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
@@ -684,6 +700,7 @@ class ExternalEvaluationEndpointInvocationResult(_Model):  # pylint: disable=nam
         policy_action: Optional[Union[str, "_models.PolicyAction"]] = None,
         policy_evaluation_details: Optional[Any] = None,
         additional_info: Optional[Any] = None,
+        compliance_state: Optional[Union[str, "_models.ComplianceState"]] = None,
         expiration: Optional[datetime.datetime] = None,
     ) -> None: ...
 
@@ -698,7 +715,7 @@ class ExternalEvaluationEndpointInvocationResult(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ExternalEvaluationEndpointSettings(_Model):
+class ExternalEvaluationEndpointSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The settings of an external endpoint providing evaluation results.
 
     :ivar kind: The kind of the endpoint.
@@ -731,7 +748,7 @@ class ExternalEvaluationEndpointSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalEvaluationEnforcementSettings(_Model):
+class ExternalEvaluationEnforcementSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of the source of external evaluation results required by the policy during
     enforcement evaluation.
 
@@ -792,7 +809,7 @@ class ExternalEvaluationEnforcementSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
+class Identity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.  Policy assignments support a maximum of one identity.  That is
     either a system assigned identity or a single user assigned identity.
 
@@ -850,7 +867,7 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NonComplianceMessage(_Model):
+class NonComplianceMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A message that describes why a resource is non-compliant with the policy. This is shown in
     'deny' error messages and on resource's non-compliant compliance results.
 
@@ -893,7 +910,7 @@ class NonComplianceMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Override(_Model):
+class Override(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy property value override.
 
     :ivar kind: The override kind. Known values are: "policyEffect" and "definitionVersion".
@@ -935,7 +952,7 @@ class Override(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParameterDefinitionsValue(_Model):
+class ParameterDefinitionsValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a parameter that can be provided to the policy.
 
     :ivar type: The data type of the parameter. Known values are: "String", "Array", "Object",
@@ -1001,7 +1018,7 @@ class ParameterDefinitionsValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParameterDefinitionsValueMetadata(_Model):
+class ParameterDefinitionsValueMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """General metadata for the parameter.
 
     :ivar display_name: The display name for the parameter.
@@ -1056,7 +1073,7 @@ class ParameterDefinitionsValueMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParameterValuesValue(_Model):
+class ParameterValuesValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The value of a parameter.
 
     :ivar value: The value of the parameter.
@@ -1084,7 +1101,7 @@ class ParameterValuesValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyAssignment(ExtensionResource):
+class PolicyAssignment(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy assignment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1174,7 +1191,7 @@ class PolicyAssignment(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class PolicyAssignmentProperties(_Model):
+class PolicyAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy assignment properties.
 
     :ivar display_name: The display name of the policy assignment.
@@ -1319,7 +1336,7 @@ class PolicyAssignmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyAssignmentUpdate(_Model):
+class PolicyAssignmentUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy assignment for Patch request.
 
     :ivar properties: The policy assignment properties for Patch request.
@@ -1380,7 +1397,7 @@ class PolicyAssignmentUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class PolicyAssignmentUpdateProperties(_Model):
+class PolicyAssignmentUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy assignment properties for Patch request.
 
     :ivar resource_selectors: The resource selector list to filter policies by resource properties.
@@ -1426,7 +1443,7 @@ class PolicyAssignmentUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDefinition(ProxyResource):
+class PolicyDefinition(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1498,7 +1515,7 @@ class PolicyDefinition(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PolicyDefinitionGroup(_Model):
+class PolicyDefinitionGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy definition group.
 
     :ivar name: The name of the group. Required.
@@ -1551,7 +1568,7 @@ class PolicyDefinitionGroup(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDefinitionProperties(_Model):
+class PolicyDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy definition properties.
 
     :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
@@ -1644,7 +1661,7 @@ class PolicyDefinitionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDefinitionReference(_Model):
+class PolicyDefinitionReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy definition reference.
 
     :ivar policy_definition_id: The ID of the policy definition or policy set definition. Required.
@@ -1716,7 +1733,7 @@ class PolicyDefinitionReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDefinitionVersion(ProxyResource):
+class PolicyDefinitionVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ID of the policy definition version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1787,7 +1804,7 @@ class PolicyDefinitionVersion(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PolicyDefinitionVersionListResult(_Model):
+class PolicyDefinitionVersionListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of a PolicyDefinitionVersion list operation.
 
     :ivar value: The PolicyDefinitionVersion items on this page. Required.
@@ -1822,7 +1839,7 @@ class PolicyDefinitionVersionListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDefinitionVersionProperties(_Model):
+class PolicyDefinitionVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy definition properties.
 
     :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
@@ -1910,515 +1927,7 @@ class PolicyDefinitionVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyEnrollment(ExtensionResource):
-    """The policy enrollment.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.resource.policy.models.SystemData
-    :ivar properties: The properties of the policy enrollment.
-    :vartype properties: ~azure.mgmt.resource.policy.models.PolicyEnrollmentProperties
-    :ivar e_tag: The ETag for the policy enrollment.
-    :vartype e_tag: str
-    """
-
-    properties: Optional["_models.PolicyEnrollmentProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The properties of the policy enrollment."""
-    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
-    """The ETag for the policy enrollment."""
-
-    __flattened_items = [
-        "policy_assignment_id",
-        "policy_assignment_instance_id",
-        "policy_definition_reference_ids",
-        "display_name",
-        "description",
-        "metadata",
-        "assignment_scope_validation",
-        "resource_selectors",
-    ]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.PolicyEnrollmentProperties"] = None,
-        e_tag: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class PolicyEnrollmentProperties(_Model):
-    """The policy enrollment properties.
-
-    :ivar policy_assignment_id: The ID of the policy assignment that is being enrolled. Required.
-    :vartype policy_assignment_id: str
-    :ivar policy_assignment_instance_id: The policy assignment instance ID associated with this
-     enrollment. The value is set to the instance ID of the policy assignment the policyAssignmentId
-     references when the enrollment is created or updated. The format is a GUID string.
-    :vartype policy_assignment_instance_id: str
-    :ivar policy_definition_reference_ids: The policy definition reference IDs for policy
-     definitions in an assigned policy set definition. These IDs correspond to a subset of
-     ``policyDefinitions[*].policyDefinitionReferenceId`` in the policy set definition. When
-     specified and not empty, only the referenced policy definitions will be enrolled to. Otherwise,
-     the entire policy set is enrolled to.
-    :vartype policy_definition_reference_ids: list[str]
-    :ivar display_name: The display name of the policy enrollment.
-    :vartype display_name: str
-    :ivar description: The description of the policy enrollment.
-    :vartype description: str
-    :ivar metadata: The policy enrollment metadata. Metadata is an open ended object and is
-     typically a collection of key value pairs.
-    :vartype metadata: any
-    :ivar assignment_scope_validation: The option whether to validate the enrollment is at or under
-     the assignment scope. Known values are: "Default" and "DoNotValidate".
-    :vartype assignment_scope_validation: str or
-     ~azure.mgmt.resource.policy.models.AssignmentScopeValidation
-    :ivar resource_selectors: The resource selector list to filter policies by resource properties.
-    :vartype resource_selectors: list[~azure.mgmt.resource.policy.models.ResourceSelector]
-    """
-
-    policy_assignment_id: str = rest_field(
-        name="policyAssignmentId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The ID of the policy assignment that is being enrolled. Required."""
-    policy_assignment_instance_id: Optional[str] = rest_field(name="policyAssignmentInstanceId", visibility=["read"])
-    """The policy assignment instance ID associated with this enrollment. The value is set to the
-     instance ID of the policy assignment the policyAssignmentId references when the enrollment is
-     created or updated. The format is a GUID string."""
-    policy_definition_reference_ids: Optional[list[str]] = rest_field(
-        name="policyDefinitionReferenceIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The policy definition reference IDs for policy definitions in an assigned policy set
-     definition. These IDs correspond to a subset of
-     ``policyDefinitions[*].policyDefinitionReferenceId`` in the policy set definition. When
-     specified and not empty, only the referenced policy definitions will be enrolled to. Otherwise,
-     the entire policy set is enrolled to."""
-    display_name: Optional[str] = rest_field(
-        name="displayName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The display name of the policy enrollment."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The description of the policy enrollment."""
-    metadata: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The policy enrollment metadata. Metadata is an open ended object and is typically a collection
-     of key value pairs."""
-    assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = rest_field(
-        name="assignmentScopeValidation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The option whether to validate the enrollment is at or under the assignment scope. Known values
-     are: \"Default\" and \"DoNotValidate\"."""
-    resource_selectors: Optional[list["_models.ResourceSelector"]] = rest_field(
-        name="resourceSelectors", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource selector list to filter policies by resource properties."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        policy_assignment_id: str,
-        policy_definition_reference_ids: Optional[list[str]] = None,
-        display_name: Optional[str] = None,
-        description: Optional[str] = None,
-        metadata: Optional[Any] = None,
-        assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = None,
-        resource_selectors: Optional[list["_models.ResourceSelector"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PolicyEnrollmentUpdate(_Model):
-    """The policy enrollment for Patch request.
-
-    :ivar properties: The policy enrollment properties for Patch request.
-    :vartype properties: ~azure.mgmt.resource.policy.models.PolicyEnrollmentUpdateProperties
-    """
-
-    properties: Optional["_models.PolicyEnrollmentUpdateProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The policy enrollment properties for Patch request."""
-
-    __flattened_items = ["assignment_scope_validation", "resource_selectors"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.PolicyEnrollmentUpdateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class PolicyEnrollmentUpdateProperties(_Model):
-    """The policy enrollment properties for Patch request.
-
-    :ivar assignment_scope_validation: The option whether to validate the enrollment is at or under
-     the assignment scope. Known values are: "Default" and "DoNotValidate".
-    :vartype assignment_scope_validation: str or
-     ~azure.mgmt.resource.policy.models.AssignmentScopeValidation
-    :ivar resource_selectors: The resource selector list to filter policies by resource properties.
-    :vartype resource_selectors: list[~azure.mgmt.resource.policy.models.ResourceSelector]
-    """
-
-    assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = rest_field(
-        name="assignmentScopeValidation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The option whether to validate the enrollment is at or under the assignment scope. Known values
-     are: \"Default\" and \"DoNotValidate\"."""
-    resource_selectors: Optional[list["_models.ResourceSelector"]] = rest_field(
-        name="resourceSelectors", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource selector list to filter policies by resource properties."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = None,
-        resource_selectors: Optional[list["_models.ResourceSelector"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PolicyExemption(ExtensionResource):
-    """The policy exemption.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.resource.policy.models.SystemData
-    :ivar properties: Properties for the policy exemption.
-    :vartype properties: ~azure.mgmt.resource.policy.models.PolicyExemptionProperties
-    """
-
-    properties: Optional["_models.PolicyExemptionProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties for the policy exemption."""
-
-    __flattened_items = [
-        "policy_assignment_id",
-        "policy_definition_reference_ids",
-        "exemption_category",
-        "expires_on",
-        "display_name",
-        "description",
-        "metadata",
-        "resource_selectors",
-        "assignment_scope_validation",
-    ]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.PolicyExemptionProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class PolicyExemptionProperties(_Model):
-    """The policy exemption properties.
-
-    :ivar policy_assignment_id: The ID of the policy assignment that is being exempted. Required.
-    :vartype policy_assignment_id: str
-    :ivar policy_definition_reference_ids: The policy definition reference ID list when the
-     associated policy assignment is an assignment of a policy set definition.
-    :vartype policy_definition_reference_ids: list[str]
-    :ivar exemption_category: The policy exemption category. Possible values are Waiver and
-     Mitigated. Required. Known values are: "Waiver" and "Mitigated".
-    :vartype exemption_category: str or ~azure.mgmt.resource.policy.models.ExemptionCategory
-    :ivar expires_on: The expiration date and time (in UTC ISO 8601 format yyyy-MM-ddTHH:mm:ssZ) of
-     the policy exemption.
-    :vartype expires_on: ~datetime.datetime
-    :ivar display_name: The display name of the policy exemption.
-    :vartype display_name: str
-    :ivar description: The description of the policy exemption.
-    :vartype description: str
-    :ivar metadata: The policy exemption metadata. Metadata is an open ended object and is
-     typically a collection of key value pairs.
-    :vartype metadata: any
-    :ivar resource_selectors: The resource selector list to filter policies by resource properties.
-    :vartype resource_selectors: list[~azure.mgmt.resource.policy.models.ResourceSelector]
-    :ivar assignment_scope_validation: The option whether validate the exemption is at or under the
-     assignment scope. Known values are: "Default" and "DoNotValidate".
-    :vartype assignment_scope_validation: str or
-     ~azure.mgmt.resource.policy.models.AssignmentScopeValidation
-    """
-
-    policy_assignment_id: str = rest_field(
-        name="policyAssignmentId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The ID of the policy assignment that is being exempted. Required."""
-    policy_definition_reference_ids: Optional[list[str]] = rest_field(
-        name="policyDefinitionReferenceIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The policy definition reference ID list when the associated policy assignment is an assignment
-     of a policy set definition."""
-    exemption_category: Union[str, "_models.ExemptionCategory"] = rest_field(
-        name="exemptionCategory", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The policy exemption category. Possible values are Waiver and Mitigated. Required. Known values
-     are: \"Waiver\" and \"Mitigated\"."""
-    expires_on: Optional[datetime.datetime] = rest_field(
-        name="expiresOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date and time (in UTC ISO 8601 format yyyy-MM-ddTHH:mm:ssZ) of the policy
-     exemption."""
-    display_name: Optional[str] = rest_field(
-        name="displayName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The display name of the policy exemption."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The description of the policy exemption."""
-    metadata: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The policy exemption metadata. Metadata is an open ended object and is typically a collection
-     of key value pairs."""
-    resource_selectors: Optional[list["_models.ResourceSelector"]] = rest_field(
-        name="resourceSelectors", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource selector list to filter policies by resource properties."""
-    assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = rest_field(
-        name="assignmentScopeValidation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The option whether validate the exemption is at or under the assignment scope. Known values
-     are: \"Default\" and \"DoNotValidate\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        policy_assignment_id: str,
-        exemption_category: Union[str, "_models.ExemptionCategory"],
-        policy_definition_reference_ids: Optional[list[str]] = None,
-        expires_on: Optional[datetime.datetime] = None,
-        display_name: Optional[str] = None,
-        description: Optional[str] = None,
-        metadata: Optional[Any] = None,
-        resource_selectors: Optional[list["_models.ResourceSelector"]] = None,
-        assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PolicyExemptionUpdate(_Model):
-    """The policy exemption for Patch request.
-
-    :ivar properties: The policy exemption properties for Patch request.
-    :vartype properties: ~azure.mgmt.resource.policy.models.PolicyExemptionUpdateProperties
-    """
-
-    properties: Optional["_models.PolicyExemptionUpdateProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The policy exemption properties for Patch request."""
-
-    __flattened_items = ["resource_selectors", "assignment_scope_validation"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.PolicyExemptionUpdateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class PolicyExemptionUpdateProperties(_Model):
-    """The policy exemption properties for Patch request.
-
-    :ivar resource_selectors: The resource selector list to filter policies by resource properties.
-    :vartype resource_selectors: list[~azure.mgmt.resource.policy.models.ResourceSelector]
-    :ivar assignment_scope_validation: The option whether validate the exemption is at or under the
-     assignment scope. Known values are: "Default" and "DoNotValidate".
-    :vartype assignment_scope_validation: str or
-     ~azure.mgmt.resource.policy.models.AssignmentScopeValidation
-    """
-
-    resource_selectors: Optional[list["_models.ResourceSelector"]] = rest_field(
-        name="resourceSelectors", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource selector list to filter policies by resource properties."""
-    assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = rest_field(
-        name="assignmentScopeValidation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The option whether validate the exemption is at or under the assignment scope. Known values
-     are: \"Default\" and \"DoNotValidate\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_selectors: Optional[list["_models.ResourceSelector"]] = None,
-        assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PolicyLogInfo(_Model):
+class PolicyLogInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy log info.
 
     :ivar policy_definition_id: The policy definition Id.
@@ -2525,7 +2034,7 @@ class PolicyLogInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicySetDefinition(ProxyResource):
+class PolicySetDefinition(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy set definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2596,7 +2105,7 @@ class PolicySetDefinition(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PolicySetDefinitionProperties(_Model):
+class PolicySetDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy set definition properties.
 
     :ivar policy_type: The type of policy set definition. Possible values are NotSpecified,
@@ -2683,7 +2192,7 @@ class PolicySetDefinitionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicySetDefinitionVersion(ProxyResource):
+class PolicySetDefinitionVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy set definition version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2753,7 +2262,7 @@ class PolicySetDefinitionVersion(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PolicySetDefinitionVersionListResult(_Model):
+class PolicySetDefinitionVersionListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of a PolicySetDefinitionVersion list operation.
 
     :ivar value: The PolicySetDefinitionVersion items on this page. Required.
@@ -2788,7 +2297,7 @@ class PolicySetDefinitionVersionListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicySetDefinitionVersionProperties(_Model):
+class PolicySetDefinitionVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy set definition properties.
 
     :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
@@ -2869,7 +2378,7 @@ class PolicySetDefinitionVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyTokenEvaluatedRequestDetails(_Model):
+class PolicyTokenEvaluatedRequestDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy token evaluated request details.
 
     :ivar uri: The request URI of the resource operation that is targeted by the issued token.
@@ -2931,7 +2440,7 @@ class PolicyTokenEvaluatedRequestDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyTokenOperation(_Model):
+class PolicyTokenOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource operation to acquire a token for.
 
     :ivar uri: The request URI of the resource operation. Required.
@@ -2969,7 +2478,7 @@ class PolicyTokenOperation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyTokenRequest(_Model):
+class PolicyTokenRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy token request properties.
 
     :ivar operation: The resource operation to acquire a token for. Required.
@@ -3004,7 +2513,7 @@ class PolicyTokenRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyTokenResponse(_Model):
+class PolicyTokenResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy token response properties.
 
     :ivar result: The result of the completed token acquisition operation. Possible values are
@@ -3091,131 +2600,7 @@ class PolicyTokenResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyVariableColumn(_Model):
-    """The variable column.
-
-    :ivar column_name: The name of this policy variable column. Required.
-    :vartype column_name: str
-    """
-
-    column_name: str = rest_field(name="columnName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of this policy variable column. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        column_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PolicyVariableProperties(_Model):
-    """The variable properties.
-
-    :ivar columns: Variable column definitions. Required.
-    :vartype columns: list[~azure.mgmt.resource.policy.models.PolicyVariableColumn]
-    """
-
-    columns: list["_models.PolicyVariableColumn"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Variable column definitions. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        columns: list["_models.PolicyVariableColumn"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PolicyVariableValueColumnValue(_Model):
-    """The name value tuple for this variable value column.
-
-    :ivar column_name: Column name for the variable value. Required.
-    :vartype column_name: str
-    :ivar column_value: Column value for the variable value; this can be an integer, double,
-     boolean, null or a string. Required.
-    :vartype column_value: any
-    """
-
-    column_name: str = rest_field(name="columnName", visibility=["read", "create", "update", "delete", "query"])
-    """Column name for the variable value. Required."""
-    column_value: Any = rest_field(name="columnValue", visibility=["read", "create", "update", "delete", "query"])
-    """Column value for the variable value; this can be an integer, double, boolean, null or a string.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        column_name: str,
-        column_value: Any,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PolicyVariableValueProperties(_Model):
-    """The variable value properties.
-
-    :ivar values_property: Variable value column value array. Required.
-    :vartype values_property:
-     list[~azure.mgmt.resource.policy.models.PolicyVariableValueColumnValue]
-    """
-
-    values_property: list["_models.PolicyVariableValueColumnValue"] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
-    )
-    """Variable value column value array. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        values_property: list["_models.PolicyVariableValueColumnValue"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceSelector(_Model):
+class ResourceSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource selector to filter policies by resource properties.
 
     :ivar name: The name of the resource selector.
@@ -3250,7 +2635,7 @@ class ResourceSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeAliases(_Model):
+class ResourceTypeAliases(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource type aliases definition.
 
     :ivar resource_type: The resource type name.
@@ -3285,29 +2670,33 @@ class ResourceTypeAliases(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Selector(_Model):
+class Selector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The selector expression.
 
     :ivar kind: The selector kind. Known values are: "resourceLocation", "resourceType",
-     "resourceWithoutLocation", "policyDefinitionReferenceId", "userPrincipalId", and
-     "groupPrincipalId".
+     "resourceWithoutLocation", "policyDefinitionReferenceId", "resourceRolloutPercentage",
+     "userPrincipalId", and "groupPrincipalId".
     :vartype kind: str or ~azure.mgmt.resource.policy.models.SelectorKind
     :ivar in_property: The list of values to filter in.
     :vartype in_property: list[str]
     :ivar not_in: The list of values to filter out.
     :vartype not_in: list[str]
+    :ivar progress: The percent of total resources that will be governed by the policy.
+    :vartype progress: int
     """
 
     kind: Optional[Union[str, "_models.SelectorKind"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The selector kind. Known values are: \"resourceLocation\", \"resourceType\",
-     \"resourceWithoutLocation\", \"policyDefinitionReferenceId\", \"userPrincipalId\", and
-     \"groupPrincipalId\"."""
+     \"resourceWithoutLocation\", \"policyDefinitionReferenceId\", \"resourceRolloutPercentage\",
+     \"userPrincipalId\", and \"groupPrincipalId\"."""
     in_property: Optional[list[str]] = rest_field(name="in", visibility=["read", "create", "update", "delete", "query"])
     """The list of values to filter in."""
     not_in: Optional[list[str]] = rest_field(name="notIn", visibility=["read", "create", "update", "delete", "query"])
     """The list of values to filter out."""
+    progress: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The percent of total resources that will be governed by the policy."""
 
     @overload
     def __init__(
@@ -3316,6 +2705,7 @@ class Selector(_Model):
         kind: Optional[Union[str, "_models.SelectorKind"]] = None,
         in_property: Optional[list[str]] = None,
         not_in: Optional[list[str]] = None,
+        progress: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -3329,7 +2719,7 @@ class Selector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SelfServeExemptionSettings(_Model):
+class SelfServeExemptionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The self-serve exemption settings for a policy assignment.
 
     :ivar enabled: Indicates whether self-serve exemption is enabled.
@@ -3365,7 +2755,7 @@ class SelfServeExemptionSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3445,125 +2835,3 @@ class UserAssignedIdentitiesValue(_Model):
     """The principal id of user assigned identity."""
     client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
     """The client id of user assigned identity."""
-
-
-class Variable(ProxyResource):
-    """The variable.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.resource.policy.models.SystemData
-    :ivar properties: Properties for the variable.
-    :vartype properties: ~azure.mgmt.resource.policy.models.PolicyVariableProperties
-    """
-
-    properties: Optional["_models.PolicyVariableProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties for the variable."""
-
-    __flattened_items = ["columns"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.PolicyVariableProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class VariableValue(ProxyResource):
-    """The variable value.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.resource.policy.models.SystemData
-    :ivar properties: Properties for the variable value.
-    :vartype properties: ~azure.mgmt.resource.policy.models.PolicyVariableValueProperties
-    """
-
-    properties: Optional["_models.PolicyVariableValueProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties for the variable value."""
-
-    __flattened_items = ["values_property"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.PolicyVariableValueProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
