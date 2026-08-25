@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 import os
 import time
-import random
 from sample_utilities import get_authority, get_credential, get_client_modifications
 from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
@@ -30,20 +29,20 @@ def my_callback_on_fail(_):
     print("Refresh failed!")
 
 
-rand = random.random()
-watch_key = WatchKey("message" + str(rand))
+# Setting the sentinel key that will be watched for changes. Whenever any monitored configuration is
+# updated, the sentinel key should also be updated to signal that a refresh is needed.
+sentinel_setting = ConfigurationSetting(key="Sentinel", value="1")
+client.set_configuration_setting(configuration_setting=sentinel_setting)
 
 # [START refresh_provider]
 import os
 from azure.appconfiguration.provider import load, WatchKey
 
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-
 config = load(
     endpoint=endpoint,
     credential=credential,
     refresh_on=[WatchKey("Sentinel")],
-    refresh_interval=60,
+    refresh_interval=30,
     **kwargs,
 )
 # [END refresh_provider]
@@ -60,14 +59,14 @@ config.refresh()
 # Updating the configuration setting
 configuration_setting.value = "Hello World Updated!"
 
-configuration_setting2 = ConfigurationSetting(key="message" + str(rand), value="2")
-
-client.set_configuration_setting(configuration_setting=configuration_setting2)
-
 client.set_configuration_setting(configuration_setting=configuration_setting)
 
+# Updating the sentinel key so that the watched key change is detected on the next refresh
+sentinel_setting.value = "2"
+client.set_configuration_setting(configuration_setting=sentinel_setting)
+
 # Waiting for the refresh interval to pass
-time.sleep(2)
+time.sleep(35)
 
 # Refreshing the configuration setting
 config.refresh()
@@ -77,7 +76,7 @@ print(config["message"])
 print(config["my_json"]["key"])
 
 # Waiting for the refresh interval to pass
-time.sleep(2)
+time.sleep(35)
 
 # Refreshing the configuration setting with no changes
 config.refresh()

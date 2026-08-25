@@ -22,10 +22,19 @@ kwargs = get_client_modifications()
 client = AzureAppConfigurationClient(endpoint, credential)
 
 configuration_setting = ConfigurationSetting(key="message", value="Hello World!")
+json_setting = ConfigurationSetting(key="my_json", value='{"key": "value"}', content_type="application/json")
 feature_flag_setting = FeatureFlagConfigurationSetting("Beta", enabled=True)
 
 client.set_configuration_setting(configuration_setting=configuration_setting)
+client.set_configuration_setting(configuration_setting=json_setting)
 client.set_configuration_setting(configuration_setting=feature_flag_setting)
+
+
+def get_feature_flag(config, flag_id):
+    for flag in config["feature_management"]["feature_flags"]:
+        if flag["id"] == flag_id:
+            return flag
+    raise KeyError(flag_id)
 
 
 def my_callback_on_fail(_):
@@ -36,14 +45,12 @@ def my_callback_on_fail(_):
 import os
 from azure.appconfiguration.provider import load, WatchKey
 
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-
 config = load(
     endpoint=endpoint,
     credential=credential,
     refresh_on=[WatchKey("message")],
     refresh_on_feature_flags=True,
-    refresh_interval=60,
+    refresh_interval=30,
     feature_flag_enabled=True,
     feature_flag_refresh_enabled=True,
     **kwargs,
@@ -54,7 +61,7 @@ config = load(
 
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["feature_management"]["feature_flags"][1])
+print(get_feature_flag(config, "Beta"))
 
 # Updating the configuration setting
 feature_flag_setting.enabled = False
@@ -62,7 +69,7 @@ feature_flag_setting.enabled = False
 client.set_configuration_setting(configuration_setting=feature_flag_setting)
 
 # Waiting for the refresh interval to pass
-time.sleep(2)
+time.sleep(35)
 
 # Refreshing the configuration setting
 config.refresh()
@@ -70,10 +77,10 @@ config.refresh()
 # Printing the updated value
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["feature_management"]["feature_flags"][1])
+print(get_feature_flag(config, "Beta"))
 
 # Waiting for the refresh interval to pass
-time.sleep(2)
+time.sleep(35)
 
 # Refreshing the configuration setting with no changes
 config.refresh()
@@ -81,4 +88,4 @@ config.refresh()
 # Printing the updated value
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["feature_management"]["feature_flags"][1])
+print(get_feature_flag(config, "Beta"))

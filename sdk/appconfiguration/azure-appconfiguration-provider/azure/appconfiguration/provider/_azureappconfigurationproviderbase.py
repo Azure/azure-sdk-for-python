@@ -21,12 +21,14 @@ from typing import (
     ItemsView,
     ValuesView,
     TypeVar,
+    cast,
 )
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
+    FeatureFlag,
 )
-from ._models import SettingSelector
+from ._models import FeatureFlagSelector, SettingSelector
 from ._constants import (
     NULL_CHAR,
     TELEMETRY_KEY,
@@ -38,6 +40,10 @@ from ._constants import (
     APP_CONFIG_AICC_MIME_PROFILE,
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
+    FEATURE_FLAG_ID_FIELD,
+    FEATURE_FLAG_KV_REFERENCE_SEGMENT,
+    ENHANCED_FEATURE_FLAG_REFERENCE_SEGMENT,
+    REQUIRED_MIN_API_VERSION,
 )
 from ._refresh_timer import _RefreshTimer
 from ._request_tracing_context import _RequestTracingContext
@@ -82,6 +88,70 @@ def _build_watched_setting(setting: Union[str, Tuple[str, str]]) -> Tuple[str, s
     return key, label
 
 
+def _normalize_feature_flag_selectors(
+    selectors: Optional[Union[List[SettingSelector], List[FeatureFlagSelector]]]
+) -> Tuple[List[SettingSelector], List[FeatureFlagSelector]]:
+    """
+    Normalizes the customer-provided ``feature_flag_selectors``, which may be either a ``List[SettingSelector]``
+    or a ``List[FeatureFlagSelector]`` (the two types cannot be mixed in the same list), into the two selector
+    lists used internally to load both kinds of feature flags:
+
+    - kv_selectors: Used to load key-value based feature flags (``SettingSelector.key_filter`` is used as the key
+      filter).
+    - enhanced_selectors: Used to load enhanced feature flags from the dedicated feature flag resource endpoint
+      (``FeatureFlagSelector.name_filter`` is used as the name filter).
+
+    :param selectors: The customer-provided feature flag selectors, or None to use the default (all feature flags
+     without a label).
+    :type selectors: Optional[Union[List[SettingSelector], List[FeatureFlagSelector]]]
+    :return: A tuple of (kv_selectors, enhanced_selectors).
+    :rtype: Tuple[List[SettingSelector], List[FeatureFlagSelector]]
+    """
+    if selectors is None:
+        return [SettingSelector(key_filter="*")], [FeatureFlagSelector(name_filter="*")]
+    if not selectors:
+        # An explicitly empty collection of selectors means no feature flags should be loaded, unlike None
+        # which falls back to the default of loading all unlabeled feature flags.
+        return [], []
+
+    selectors_iter = iter(selectors)
+    first_selector = next(selectors_iter)
+    is_feature_flag_selector = isinstance(first_selector, FeatureFlagSelector)
+
+    kv_selectors = []
+    enhanced_selectors = []
+    for select in [first_selector, *selectors_iter]:
+        if isinstance(select, FeatureFlagSelector) != is_feature_flag_selector:
+            raise TypeError(
+                "feature_flag_selectors must be either a list of SettingSelector or a list of FeatureFlagSelector, "
+                "not a mix of both."
+            )
+        if is_feature_flag_selector:
+            feature_flag_select = cast(FeatureFlagSelector, select)
+            kv_selectors.append(
+                SettingSelector(
+                    key_filter=feature_flag_select.name_filter,
+                    label_filter=feature_flag_select.label_filter,
+                    tag_filters=feature_flag_select.tag_filters,
+                )
+            )
+            # FeatureFlagSelector has no snapshot_name, so every selector is used for enhanced feature flags.
+            enhanced_selectors.append(feature_flag_select)
+        else:
+            setting_select = cast(SettingSelector, select)
+            kv_selectors.append(setting_select)
+            if setting_select.snapshot_name is None:
+                enhanced_selectors.append(
+                    FeatureFlagSelector(
+                        name_filter=setting_select.key_filter,
+                        label_filter=setting_select.label_filter,
+                        tag_filters=setting_select.tag_filters,
+                    )
+                )
+
+    return kv_selectors, enhanced_selectors
+
+
 class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pylint: disable=too-many-instance-attributes
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
@@ -104,19 +174,27 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         }
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
-        self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", None)
-        if self._feature_flag_selectors is None:
-            self._feature_flag_selectors = [SettingSelector(key_filter="*")]
+        api_version = kwargs.get("api_version")
+        if api_version is not None and api_version < REQUIRED_MIN_API_VERSION:
+            raise ValueError(
+                f"Unsupported api_version '{api_version}'. This version of the provider requires api_version "
+                f"'{REQUIRED_MIN_API_VERSION}' or newer."
+            )
+        self._feature_flag_selectors, self._enhanced_feature_flag_selectors = _normalize_feature_flag_selectors(
+            kwargs.pop("feature_flag_selectors", None)
+        )
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
         refresh_enabled = kwargs.pop("refresh_enabled", None)
         if refresh_enabled is None and len(refresh_on) > 0:
             # If refresh_enabled is not explicitly set, enable refresh if there are settings to refresh on
-            # This make sure we don't break existing users.
             refresh_enabled = True
         self._refresh_enabled = refresh_enabled
         self._page_etags: List[List[str]] = []
         self._feature_flag_page_etags: List[List[str]] = []
+        self._enhanced_feature_flag_etags: List[List[str]] = []
+        self._processed_kv_feature_flags: List[Dict[str, Any]] = []
+        self._processed_enhanced_feature_flags: List[Dict[str, Any]] = []
         self._tracing_context = _RequestTracingContext(kwargs.pop("load_balancing_enabled", False))
         self._update_lock = Lock()
         self._refresh_lock = Lock()
@@ -134,7 +212,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self, endpoint: str, feature_flag: FeatureFlagConfigurationSetting, feature_flag_value: Dict
     ):
         """
-        Add telemetry metadata to feature flag values.
+        Add telemetry metadata to feature flag values loaded from the key-value store.
 
         :param endpoint: The App Configuration endpoint URL.
         :type endpoint: str
@@ -143,6 +221,64 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         :param feature_flag_value: The feature flag value dictionary to update.
         :type feature_flag_value: Dict[str, Any]
         """
+        self._update_ff_telemetry_metadata_common(
+            endpoint,
+            feature_flag.key,
+            feature_flag.label,
+            feature_flag.etag,
+            feature_flag_value,
+            FEATURE_FLAG_KV_REFERENCE_SEGMENT,
+        )
+
+    def _update_enhanced_feature_flag_telemetry_metadata(
+        self, endpoint: str, feature_flag: FeatureFlag, feature_flag_value: Dict
+    ):
+        """
+        Add telemetry metadata to enhanced feature flag values loaded from the enhanced feature flag endpoint.
+
+        :param endpoint: The App Configuration endpoint URL.
+        :type endpoint: str
+        :param feature_flag: The enhanced feature flag.
+        :type feature_flag: ~azure.appconfiguration.FeatureFlag
+        :param feature_flag_value: The feature flag value dictionary to update.
+        :type feature_flag_value: Dict[str, Any]
+        """
+        self._update_ff_telemetry_metadata_common(
+            endpoint,
+            feature_flag.name,
+            feature_flag.label,
+            feature_flag.etag,
+            feature_flag_value,
+            ENHANCED_FEATURE_FLAG_REFERENCE_SEGMENT,
+        )
+
+    def _update_ff_telemetry_metadata_common(  # pylint: disable=too-many-positional-arguments
+        self,
+        endpoint: str,
+        identifier: str,
+        label: Optional[str],
+        etag: Optional[str],
+        feature_flag_value: Dict,
+        reference_path_segment: str,
+    ):
+        """
+        Add telemetry metadata to a feature flag value dictionary, regardless of which endpoint it was loaded from.
+
+        :param endpoint: The App Configuration endpoint URL.
+        :type endpoint: str
+        :param identifier: The identifier of the feature flag (key for key-value based, name for enhanced feature
+            flags).
+        :type identifier: str
+        :param label: The label of the feature flag.
+        :type label: Optional[str]
+        :param etag: The etag of the feature flag.
+        :type etag: Optional[str]
+        :param feature_flag_value: The feature flag value dictionary to update.
+        :type feature_flag_value: Dict[str, Any]
+        :param reference_path_segment: The path segment to use when building the feature flag reference URL, e.g.
+            "kv" for key-value based feature flags or "ff" for enhanced feature flags.
+        :type reference_path_segment: str
+        """
         if TELEMETRY_KEY not in feature_flag_value:
             # Initialize telemetry dictionary if not present
             feature_flag_value[TELEMETRY_KEY] = {}
@@ -150,15 +286,15 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         # Update telemetry metadata for application insights/logging in feature management
         if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
             feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
-        feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
+        feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = etag
 
         if feature_flag_value[TELEMETRY_KEY].get("enabled"):
             self._tracing_context.uses_telemetry = True
             if not endpoint.endswith("/"):
                 endpoint += "/"
-            feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
-            if feature_flag.label and not feature_flag.label.isspace():
-                feature_flag_reference += f"?label={feature_flag.label}"
+            feature_flag_reference = f"{endpoint}{reference_path_segment}/{identifier}"
+            if label:
+                feature_flag_reference += f"?label={label}"
 
             feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
             allocation_id = self._generate_allocation_id(feature_flag_value)
@@ -242,10 +378,9 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
 
                 for v in sorted_variants:
                     allocation_id += f"{base64.b64encode(v.get('name', '').encode()).decode()},"
-                    if "configuration_value" in v:
-                        allocation_id += (
-                            f"{json.dumps(v.get('configuration_value', ''), separators=(',', ':'), sort_keys=True)}"
-                        )
+                    allocation_id += (
+                        f"{json.dumps(v.get('configuration_value', ''), separators=(',', ':'), sort_keys=True)}"
+                    )
                     allocation_id += ";"
                 if sorted_variants:
                     allocation_id = allocation_id[:-1]
@@ -366,23 +501,73 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                     return config.value
         return config.value
 
-    def _process_feature_flags(
+    def _process_and_merge_feature_flags(
         self,
         processed_settings: Dict[str, Any],
         processed_feature_flags: List[Dict[str, Any]],
         feature_flags: Optional[List[FeatureFlagConfigurationSetting]],
+        enhanced_feature_flags: Optional[List[FeatureFlag]] = None,
     ) -> Dict[str, Any]:
-        if feature_flags:
+        if feature_flags is not None or enhanced_feature_flags is not None:
             # Reset feature flag usage
             self._tracing_context.reset_feature_filter_usage()
-            processed_feature_flags = [self._process_feature_flag(ff) for ff in feature_flags]
+
+        if feature_flags is not None:
+            # Only overwrite the cached key-value feature flags when a refresh actually occurred. This preserves
+            # the previous state (including an intentional empty list) when this source wasn't refreshed.
+            self._processed_kv_feature_flags = [self._process_kv_feature_flag(ff) for ff in feature_flags]
+
+        if enhanced_feature_flags is not None:
+            # Only overwrite the cached enhanced feature flags when a refresh actually occurred, so the previous
+            # state is carried over when this source wasn't refreshed.
+            self._processed_enhanced_feature_flags = [
+                self._process_enhanced_feature_flag(ff) for ff in enhanced_feature_flags
+            ]
+
+        self._tracing_context.uses_enhanced_feature_flags = bool(self._processed_enhanced_feature_flags)
+
+        if feature_flags is not None or enhanced_feature_flags is not None:
+            processed_feature_flags = self._merge_feature_flags(
+                self._processed_kv_feature_flags, self._processed_enhanced_feature_flags
+            )
 
         if self._feature_flag_enabled:
             processed_settings[FEATURE_MANAGEMENT_KEY] = {}
             processed_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = processed_feature_flags
         return processed_settings
 
-    def _process_feature_flag(self, feature_flag: FeatureFlagConfigurationSetting) -> Dict[str, Any]:
+    @staticmethod
+    def _merge_feature_flags(
+        kv_feature_flags: List[Dict[str, Any]], enhanced_feature_flags: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """
+        Merge feature flags loaded from the key-value store with enhanced feature flags loaded from the
+        enhanced feature flag endpoint. Both sources populate the ``id`` field using the feature management
+        library's schema (for enhanced feature flags, the enhanced feature flag's name is used as the ``id``).
+        Feature flags are matched by their ``id`` field. When both sources contain a feature flag with the
+        same identifier, the enhanced feature flag takes precedence.
+
+        :param kv_feature_flags: The feature flags loaded from the key-value store.
+        :type kv_feature_flags: List[Dict[str, Any]]
+        :param enhanced_feature_flags: The enhanced feature flags loaded from the enhanced feature flag endpoint.
+        :type enhanced_feature_flags: List[Dict[str, Any]]
+        :return: The merged list of feature flags.
+        :rtype: List[Dict[str, Any]]
+        """
+        merged: Dict[str, Dict[str, Any]] = {}
+        for ff in kv_feature_flags:
+            identifier = ff.get(FEATURE_FLAG_ID_FIELD)
+            if identifier is None:
+                continue
+            merged[identifier] = ff
+        for ff in enhanced_feature_flags:
+            identifier = ff.get(FEATURE_FLAG_ID_FIELD)
+            if identifier is None:
+                continue
+            merged[identifier] = ff
+        return list(merged.values())
+
+    def _process_kv_feature_flag(self, feature_flag: FeatureFlagConfigurationSetting) -> Dict[str, Any]:
         try:
             feature_flag_value = json.loads(feature_flag.value)
             self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
@@ -391,6 +576,147 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         except json.JSONDecodeError:
             # Feature flag value is not a valid JSON
             return {}
+
+    @staticmethod
+    def _parse_variant_value(value: Optional[str], content_type: Optional[str]) -> Any:
+        """
+        Parses an enhanced feature flag variant's raw string value, similar to how a regular key-value setting's
+        value is processed. If the variant's content type indicates JSON, the value is parsed and returned as a
+        JSON object; otherwise the raw string value is returned unchanged.
+
+        :param value: The variant's raw value, as returned by the enhanced feature flag endpoint.
+        :type value: Optional[str]
+        :param content_type: The variant's content type.
+        :type content_type: Optional[str]
+        :return: The parsed JSON object if the content type is JSON, otherwise the original raw value.
+        :rtype: Any
+        :raises json.JSONDecodeError: If the content type indicates JSON but the value is not valid JSON.
+        """
+        if not isinstance(value, str) or not is_json_content_type(content_type or ""):
+            return value
+        return json.loads(value)
+
+    @staticmethod
+    def _parse_filter_parameter_value(value: Optional[str]) -> Any:
+        """
+        Parses a single enhanced feature flag filter parameter value as a best-effort attempt.
+
+        :param value: The filter parameter's raw string value.
+        :type value: Optional[str]
+        :return: The parsed JSON object/array if the value looks like JSON and parses successfully, otherwise
+            the original raw value.
+        :rtype: Any
+        """
+        if not isinstance(value, str):
+            return value
+        trimmed = value.strip()
+        if not trimmed or trimmed[0] not in "{[":
+            return value
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            # Not valid JSON after all: fall back to the original string, since the customer may have
+            # actually intended a literal string value.
+            return value
+
+    def _process_enhanced_feature_flag(self, feature_flag: FeatureFlag) -> Dict[str, Any]:
+        """
+        Convert an enhanced feature flag, loaded from the enhanced feature flag endpoint, into a dictionary that
+        matches the feature management library's schema.
+        Ref: https://github.com/microsoft/FeatureManagement/blob/main/Schema/FeatureFlag.v2.0.0.schema.json
+
+        :param feature_flag: The enhanced feature flag.
+        :type feature_flag: ~azure.appconfiguration.FeatureFlag
+        :return: The feature flag as a dictionary.
+        :rtype: Dict[str, Any]
+        """
+        feature_flag_value: Dict[str, Any] = {
+            FEATURE_FLAG_ID_FIELD: feature_flag.name,
+            "enabled": feature_flag.enabled,
+        }
+        if feature_flag.label:
+            feature_flag_value["label"] = feature_flag.label
+        if feature_flag.description:
+            feature_flag_value["description"] = feature_flag.description
+
+        filter_names: List[Optional[str]] = []
+        if feature_flag.conditions:
+            conditions_value: Dict[str, Any] = {}
+            if feature_flag.conditions.requirement_type:
+                conditions_value["requirement_type"] = feature_flag.conditions.requirement_type
+            if feature_flag.conditions.filters:
+                conditions_value["client_filters"] = [
+                    {
+                        "name": client_filter.name,
+                        "parameters": (
+                            {
+                                key: self._parse_filter_parameter_value(value)
+                                for key, value in client_filter.parameters.items()
+                            }
+                            if client_filter.parameters
+                            else client_filter.parameters
+                        ),
+                    }
+                    for client_filter in feature_flag.conditions.filters
+                ]
+                filter_names = [client_filter.name for client_filter in feature_flag.conditions.filters]
+            if conditions_value:
+                feature_flag_value["conditions"] = conditions_value
+
+        if feature_flag.variants:
+            try:
+                feature_flag_value["variants"] = [
+                    {
+                        "name": variant.name,
+                        "configuration_value": self._parse_variant_value(variant.value, variant.content_type),
+                        "content_type": variant.content_type,
+                        "status_override": variant.status_override,
+                    }
+                    for variant in feature_flag.variants
+                ]
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Enhanced feature flag '{feature_flag.name}' has an invalid variant value.") from e
+
+        if feature_flag.allocation:
+            allocation_value: Dict[str, Any] = {}
+            if feature_flag.allocation.default_when_disabled:
+                allocation_value["default_when_disabled"] = feature_flag.allocation.default_when_disabled
+            if feature_flag.allocation.default_when_enabled:
+                allocation_value["default_when_enabled"] = feature_flag.allocation.default_when_enabled
+            if feature_flag.allocation.percentile:
+                allocation_value["percentile"] = [
+                    {
+                        "variant": percentile.variant,
+                        "from": percentile.percentile_from,
+                        "to": percentile.percentile_to,
+                    }
+                    for percentile in feature_flag.allocation.percentile
+                ]
+            if feature_flag.allocation.user:
+                allocation_value["user"] = [
+                    {"variant": user.variant, "users": user.users} for user in feature_flag.allocation.user
+                ]
+            if feature_flag.allocation.group:
+                allocation_value["group"] = [
+                    {"variant": group.variant, "groups": group.groups} for group in feature_flag.allocation.group
+                ]
+            if feature_flag.allocation.seed:
+                allocation_value["seed"] = feature_flag.allocation.seed
+            if allocation_value:
+                feature_flag_value["allocation"] = allocation_value
+
+        if feature_flag.telemetry:
+            feature_flag_value["telemetry"] = {
+                "enabled": feature_flag.telemetry.enabled,
+                "metadata": dict(feature_flag.telemetry.metadata) if feature_flag.telemetry.metadata else {},
+            }
+
+        if feature_flag.tags:
+            feature_flag_value["tags"] = dict(feature_flag.tags)
+
+        self._update_enhanced_feature_flag_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
+        self._tracing_context.update_feature_filter_telemetry_by_names(filter_names)
+        return feature_flag_value
 
     def _update_watched_settings(
         self, configuration_settings: List[ConfigurationSetting]

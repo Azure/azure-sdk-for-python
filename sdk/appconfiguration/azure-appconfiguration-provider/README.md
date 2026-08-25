@@ -158,13 +158,11 @@ The provider can be configured to refresh configurations from the store on a set
 import os
 from azure.appconfiguration.provider import load, WatchKey
 
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-
 config = load(
     endpoint=endpoint,
     credential=credential,
     refresh_on=[WatchKey("Sentinel")],
-    refresh_interval=60,
+    refresh_interval=30,
     **kwargs,
 )
 ```
@@ -361,18 +359,57 @@ To enable refresh for feature flags you need to enable refresh. This will allow 
 import os
 from azure.appconfiguration.provider import load, WatchKey
 
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-
 config = load(
     endpoint=endpoint,
     credential=credential,
     refresh_on=[WatchKey("message")],
     refresh_on_feature_flags=True,
-    refresh_interval=60,
+    refresh_interval=30,
     feature_flag_enabled=True,
     feature_flag_refresh_enabled=True,
     **kwargs,
 )
+```
+
+<!-- END SNIPPET -->
+
+### Loading Enhanced Feature Flags
+
+Feature flags can also be created using the dedicated feature flag endpoint (via `FeatureFlagClient`/`FeatureFlag` in `azure-appconfiguration`), instead of as key-value configuration settings. These are referred to as enhanced feature flags. No additional `load()` options are required to load them — it happens automatically whenever `feature_flag_enabled=True`, and they are merged into the same `feature_management.feature_flags` list as key-value based feature flags, with enhanced feature flags taking precedence when both share the same name (`id` for feature flag).
+
+<!-- SNIPPET:enhanced_feature_flag_sample.enhanced_feature_flag_loading -->
+
+```python
+from azure.appconfiguration.provider import load
+
+# Feature flags loaded from the enhanced feature flag endpoint are merged into the same
+# feature_management.feature_flags list as key-value based feature flags.
+config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True, **kwargs)
+feature_flags = config["feature_management"]["feature_flags"]
+enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("id") == "EnhancedFeatureBeta")
+print(enhanced_flag_beta["enabled"])
+```
+
+<!-- END SNIPPET -->
+
+`FeatureFlagSelector` is the dedicated selector type for filtering enhanced feature flags by name, label, or tags, and is the recommended way to select enhanced feature flags.
+
+<!-- SNIPPET:enhanced_feature_flag_sample.enhanced_feature_flag_selector_with_feature_flag_selector -->
+
+```python
+from azure.appconfiguration.provider import load, FeatureFlagSelector
+
+# FeatureFlagSelector is the dedicated selector type for filtering enhanced feature flags.
+config = load(
+    endpoint=endpoint,
+    credential=credential,
+    feature_flag_enabled=True,
+    feature_flag_selectors=[FeatureFlagSelector(name_filter="Enhanced*")],
+    **kwargs,
+)
+feature_flags = config["feature_management"]["feature_flags"]
+enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("id") == "EnhancedFeatureBeta")
+print(enhanced_flag_beta["enabled"])
 ```
 
 <!-- END SNIPPET -->
@@ -405,8 +442,10 @@ from azure.appconfiguration.provider import load
 
 
 def my_mapper(setting):
-    # Transform the setting as needed
-    setting.value = setting.value.strip()
+    # Transform the setting as needed. Some settings may have a None value, so guard against that
+    # before calling string methods on it.
+    if setting.value is not None:
+        setting.value = setting.value.strip()
 
 
 config = load(endpoint=endpoint, credential=credential, configuration_mapper=my_mapper, **kwargs)
@@ -468,6 +507,12 @@ This library uses the standard [logging](https://docs.python.org/3/library/loggi
 * **Key Vault references not resolving** — Ensure you have provided credentials via `key_vault_options` or `keyvault_credential`. Key Vault resolution requires Entra ID authentication.
 * **Configuration not refreshing** — Make sure you are calling `config.refresh()` periodically (e.g., before each request in a web app). The provider does not auto-refresh in the background.
 * **Startup failures** — If the store is unreachable during startup, the provider will retry until `startup_timeout` (default 100 seconds) is exceeded. Increase this value if your store is expected to have high latency.
+
+## Testing
+
+(This content is for `azure-appconfiguration-provider` package developer only)
+
+See [tests/tests.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration-provider/tests/tests.md) for instructions on running unit and integration tests, working with recordings, and setting up environment variables for local testing.
 
 ## Next steps
 
