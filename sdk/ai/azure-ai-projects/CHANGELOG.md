@@ -67,6 +67,7 @@ Breaking changes in beta classes:
 
 * Fixed telemetry instrumentor to correctly call is_recording() as a method on spans, ensuring non-recording spans are properly skipped (e.g., when sampling is configured) ([GitHub issue 46544](https://github.com/Azure/azure-sdk-for-python/issues/46544)).
 * Fixed `load_job` dropping the `outputs` block of a job YAML file. Unlike `inputs`, outputs were not converted into `Output` instances, so a YAML file using the documented snake_case field names (for example `asset_name`) was serialized with those names verbatim instead of their wire names, and the values never reached the service. Outputs are now converted in the same way as inputs.
+* Fixed `ModuleNotFoundError: No module named 'httpx'` when installing the package into a clean environment. `httpx` is imported directly by the client but was only ever satisfied transitively through `openai`; `openai` 3.0.0 replaced that dependency with `httpx2`, so `httpx` stopped being installed. `httpx` is now declared explicitly, and `openai` is capped below 3.0.0 because the client still passes an `httpx.Client` to `OpenAI(http_client=...)`.
 
 ### Sample updates
 

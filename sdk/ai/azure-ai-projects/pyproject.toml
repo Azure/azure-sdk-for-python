@@ -36,7 +36,8 @@ dependencies = [
     "azure-core>=1.37.0",
     "typing-extensions>=4.11",
     "azure-identity>=1.15.0",
-    "openai>=2.8.0",
+    "openai>=2.8.0,<3",
+    "httpx>=0.27.2,<1",
     "azure-storage-blob>=12.15.0",
 ]
 dynamic = [
