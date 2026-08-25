@@ -128,7 +128,7 @@ safe-outputs:
           with:
             ref: ${{ github.event.inputs.ci_head_sha }}
             fetch-depth: 0
-        - name: Publish fix branch
+        - name: Prepare fix branch
           shell: bash
           env:
             CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
@@ -144,6 +144,11 @@ safe-outputs:
               echo "Expected exactly one staged fix patch, found ${#patches[@]}." >&2
               exit 1
             fi
+            patch_size=$(wc -c < "${patches[0]}")
+            if (( patch_size > 4096 * 1024 )); then
+              echo "The fix patch exceeds the 4096 KiB size limit." >&2
+              exit 1
+            fi
 
             git checkout -b "$FIX_BRANCH" "$CI_HEAD_SHA"
             git apply --3way --index "${patches[0]}"
@@ -152,15 +157,49 @@ safe-outputs:
               echo "The fix patch did not change any files." >&2
               exit 1
             fi
+            if (( ${#changed_files[@]} > 100 )); then
+              echo "The fix patch exceeds the 100-file limit." >&2
+              exit 1
+            fi
             for changed_file in "${changed_files[@]}"; do
-              case "$changed_file" in
-                .github/*|eng/*|scripts/*|*.lock|*requirements*.txt|*/pyproject.toml|setup.py|setup.cfg)
-                  echo "The fix changes a protected automation or dependency file: $changed_file" >&2
-                  exit 1
-                  ;;
-              esac
+              if [[ "$changed_file" == .github/* ||
+                    "$changed_file" == eng/* ||
+                    "$changed_file" == scripts/* ||
+                    "$changed_file" == *.lock ||
+                    "$changed_file" == *requirements*.txt ||
+                    "$changed_file" == */pyproject.toml ||
+                    "$changed_file" == setup.py ||
+                    "$changed_file" == */setup.py ||
+                    "$changed_file" == setup.cfg ||
+                    "$changed_file" == */setup.cfg ]]; then
+                echo "The fix changes a protected automation or dependency file: $changed_file" >&2
+                exit 1
+              fi
             done
             git commit -m "Fix pipeline failure for #$PR_NUMBER"
+        - name: Revalidate pull request
+          uses: actions/github-script@v9.0.0
+          env:
+            CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
+            PR_NUMBER: ${{ github.event.inputs.pr_number }}
+          with:
+            script: |
+              const { data: pull } = await github.rest.pulls.get({
+                ...context.repo,
+                pull_number: Number(process.env.PR_NUMBER),
+              });
+              if (
+                pull.state !== "open" ||
+                pull.head.sha !== process.env.CI_HEAD_SHA ||
+                pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`
+              ) {
+                core.setFailed("The pull request is closed, fork-owned, or no longer points to the failed commit.");
+              }
+        - name: Publish fix branch
+          shell: bash
+          env:
+            FIX_BRANCH: pipeline-fix/pr-${{ github.event.inputs.pr_number }}-${{ github.event.inputs.ci_head_sha }}/run-${{ github.run_id }}
+          run: |
             git push origin "HEAD:refs/heads/$FIX_BRANCH"
         - name: Update analysis comment
           uses: actions/github-script@v9.0.0
