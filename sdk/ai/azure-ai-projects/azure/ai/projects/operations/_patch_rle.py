@@ -718,6 +718,14 @@ class OpenEnvClient:
             if not group.instance_group_id:
                 raise RLEError("service did not return an instance group id")
             if not group.environment_name or not group.environment_version:
+                try:
+                    self._instance_groups.delete_instance_group(
+                        self._name,
+                        self._version,
+                        group.instance_group_id,
+                    )
+                except AzureError:
+                    pass
                 raise RLEError(
                     "service did not return the instance group's environment name and version"
                 )

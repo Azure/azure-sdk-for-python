@@ -19,7 +19,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.5.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.6.0" azure-identity python-dotenv
 
     Set these environment variables or pass the matching command-line arguments:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview

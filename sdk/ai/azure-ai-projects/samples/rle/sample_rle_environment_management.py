@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.5.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.6.0" azure-identity python-dotenv
 
     Set FOUNDRY_PROJECT_ENDPOINT, or pass --endpoint. Authenticate locally
     with az login or another credential supported by DefaultAzureCredential.

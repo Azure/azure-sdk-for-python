@@ -726,6 +726,24 @@ def test_openenv_ensure_group_preserves_non_quota_403(error_code):
         client._ensure_group()
 
 
+def test_openenv_ensure_group_deletes_incomplete_group():
+    class _IncompleteGroupResponse(_FakeInstanceGroups):
+        def create_instance_group(self, environment_name, environment_version, body):
+            group = super().create_instance_group(
+                environment_name, environment_version, body
+            )
+            group.environment_version = None
+            return group
+
+    groups = _IncompleteGroupResponse()
+    client, _groups, _instances = _make_openenv_client(groups=groups)
+
+    with pytest.raises(RLEError, match="environment name and version"):
+        client._ensure_group()
+
+    assert groups.deleted == ["grp-1"]
+
+
 def test_openenv_instance_context_releases_on_exit():
     client, _groups, instances = _make_openenv_client(max_active_instances=1)
     with client:
@@ -1836,6 +1854,27 @@ def test_async_openenv_ensure_group_preserves_non_quota_403(error_code):
         )
         with pytest.raises(HttpResponseError):
             await client._ensure_group()
+
+    asyncio.run(run())
+
+
+def test_async_openenv_ensure_group_deletes_incomplete_group():
+    class _IncompleteGroupResponse(_AsyncFakeInstanceGroups):
+        async def create_instance_group(self, environment_name, environment_version, body):
+            group = await super().create_instance_group(
+                environment_name, environment_version, body
+            )
+            group.environment_version = None
+            return group
+
+    async def run():
+        groups = _IncompleteGroupResponse()
+        client, _groups, _instances = _make_async_openenv_client(groups=groups)
+
+        with pytest.raises(RLEError, match="environment name and version"):
+            await client._ensure_group()
+
+        assert groups.deleted == ["grp-1"]
 
     asyncio.run(run())
 

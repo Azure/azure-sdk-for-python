@@ -368,7 +368,10 @@ class TestSamples(AzureRecordedTestCase):
     @pytest.mark.skip(reason="RLE samples require dedicated environments and recordings.")
     @pytest.mark.parametrize(
         "sample_path",
-        [os.path.join("samples", "rle", "sample_rle.py")],
+        [
+            os.path.join("samples", "rle", "sample_rle.py"),
+            os.path.join("samples", "rle", "sample_rle_environment_management.py"),
+        ],
     )
     def test_rle_samples(self, sample_path: str) -> None:
         """Register the RLE sample as explicitly skipped until recordings are available."""
