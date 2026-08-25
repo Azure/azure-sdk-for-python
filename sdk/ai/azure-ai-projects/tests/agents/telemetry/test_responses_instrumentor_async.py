@@ -134,14 +134,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_non_streaming_with_content_recording_events(self, **kwargs):
         """Test asynchronous non-streaming responses with content recording enabled (event-based messages)."""
         await self._test_async_non_streaming_with_content_recording_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_non_streaming_with_content_recording_attributes(self, **kwargs):
         """Test asynchronous non-streaming responses with content recording enabled (attribute-based messages)."""
         await self._test_async_non_streaming_with_content_recording_impl(False, **kwargs)
@@ -248,21 +248,21 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_streaming_with_content_recording_events(self, **kwargs):
         """Test asynchronous streaming responses with content recording enabled (event-based messages)."""
         await self._test_async_streaming_with_content_recording_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_streaming_with_content_recording_attributes(self, **kwargs):
         """Test asynchronous streaming responses with content recording enabled (attribute-based messages)."""
         await self._test_async_streaming_with_content_recording_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_conversations_create(self, **kwargs):
         """Test asynchronous conversations.create() method."""
         self.cleanup()
@@ -308,7 +308,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_list_conversation_items_with_content_recording(self, **kwargs):
         """Test asynchronous list_conversation_items with content recording enabled."""
         self.cleanup()
@@ -618,21 +618,21 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_with_content_recording_streaming_events(self, **kwargs):
         """Test asynchronous function tool usage with content recording enabled (streaming, event-based messages)."""
         await self._test_async_function_tool_with_content_recording_streaming_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_with_content_recording_streaming_attributes(self, **kwargs):
         """Test asynchronous function tool usage with content recording enabled (streaming, attribute-based messages)."""
         await self._test_async_function_tool_with_content_recording_streaming_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_with_content_recording_streaming_simple_format_events(self, **kwargs):
         """Test async function tool with content recording, streaming, simple OTEL format (event mode)."""
         await self._test_async_function_tool_with_content_recording_streaming_impl(
@@ -641,7 +641,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_with_content_recording_streaming_simple_format_attributes(self, **kwargs):
         """Test async function tool with content recording, streaming, simple OTEL format (attribute mode)."""
         await self._test_async_function_tool_with_content_recording_streaming_impl(
@@ -873,21 +873,21 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_without_content_recording_streaming_events(self, **kwargs):
         """Test asynchronous function tool usage without content recording (streaming, event-based messages)."""
         await self._test_async_function_tool_without_content_recording_streaming_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_without_content_recording_streaming_attributes(self, **kwargs):
         """Test asynchronous function tool usage without content recording (streaming, attribute-based messages)."""
         await self._test_async_function_tool_without_content_recording_streaming_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_without_content_recording_streaming_simple_format_events(self, **kwargs):
         """Test async function tool without content recording, streaming, simple OTEL format (event mode)."""
         await self._test_async_function_tool_without_content_recording_streaming_impl(
@@ -896,7 +896,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_without_content_recording_streaming_simple_format_attributes(self, **kwargs):
         """Test async function tool without content recording, streaming, simple OTEL format (attribute mode)."""
         await self._test_async_function_tool_without_content_recording_streaming_impl(
@@ -905,7 +905,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_multiple_text_inputs_with_content_recording_non_streaming(self, **kwargs):
         """Test asynchronous non-streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
@@ -1002,7 +1002,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_multiple_text_inputs_with_content_recording_streaming(self, **kwargs):
         """Test asynchronous streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
@@ -1107,7 +1107,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_multiple_text_inputs_without_content_recording_non_streaming(self, **kwargs):
         """Test asynchronous non-streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
@@ -1208,7 +1208,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_off_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -1280,7 +1280,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_off_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
@@ -1351,7 +1351,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_on_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -1422,7 +1422,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_on_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
@@ -1497,7 +1497,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_off_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -1573,7 +1573,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_off_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
@@ -1648,7 +1648,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_on_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -1723,7 +1723,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_on_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
@@ -1802,7 +1802,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_off_binary_off_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
@@ -1882,7 +1882,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_off_binary_on_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
@@ -1961,7 +1961,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_on_binary_off_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
@@ -2040,7 +2040,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_on_binary_on_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (streaming)."""
         self.cleanup()
@@ -2123,7 +2123,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_off_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
@@ -2206,7 +2206,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_off_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
@@ -2289,7 +2289,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_on_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
@@ -2372,7 +2372,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_on_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (streaming)."""
         self.cleanup()
@@ -2455,7 +2455,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_multiple_text_inputs_without_content_recording_streaming(self, **kwargs):
         """Test asynchronous streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
@@ -2564,7 +2564,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_content_recording(self, **kwargs):
         """Test async responses.stream() method with content recording enabled."""
         self.cleanup()
@@ -2645,7 +2645,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_without_content_recording(self, **kwargs):
         """Test async responses.stream() method without content recording."""
         self.cleanup()
@@ -2928,7 +2928,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
     )
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_with_content_recording_events(self, **kwargs):
         """Test async responses.stream() with tools and content recording (event-based messages)."""
         await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(True, **kwargs)
@@ -2939,7 +2939,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
     )
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_with_content_recording_attributes(self, **kwargs):
         """Test async responses.stream() with tools and content recording (attribute-based messages)."""
         await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(False, **kwargs)
@@ -2950,7 +2950,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
     )
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_with_content_recording_simple_format_events(self, **kwargs):
         """Test async responses.stream() with tools, content recording, simple OTEL format (event mode)."""
         await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(
@@ -2963,7 +2963,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
     )
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_with_content_recording_simple_format_attributes(
         self, **kwargs
     ):
@@ -3177,7 +3177,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
     )
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_without_content_recording_events(self, **kwargs):
         """Test async responses.stream() with tools, without content recording (event-based messages)."""
         await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(True, **kwargs)
@@ -3188,7 +3188,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
     )
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_without_content_recording_attributes(self, **kwargs):
         """Test async responses.stream() with tools, without content recording (attribute-based messages)."""
         await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(False, **kwargs)
@@ -3199,7 +3199,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
     )
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_events(
         self, **kwargs
     ):
@@ -3214,7 +3214,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
     )
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_attributes(
         self, **kwargs
     ):
@@ -3229,7 +3229,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_workflow_agent_non_streaming_with_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-statements
@@ -3347,7 +3347,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_workflow_agent_non_streaming_without_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-statements
@@ -3471,7 +3471,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_workflow_agent_streaming_with_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-statements
@@ -3593,7 +3593,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_workflow_agent_streaming_without_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-statements
@@ -3828,21 +3828,21 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_non_streaming_events(self, **kwargs):
         """Test async prompt agent with responses (non-streaming, event-based messages)."""
         await self._test_async_prompt_agent_with_responses_non_streaming_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_non_streaming_attributes(self, **kwargs):
         """Test async prompt agent with responses (non-streaming, attribute-based messages)."""
         await self._test_async_prompt_agent_with_responses_non_streaming_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_non_streaming_simple_format_events(self, **kwargs):
         """Test async prompt agent with responses (non-streaming, simple OTEL format, event mode)."""
         await self._test_async_prompt_agent_with_responses_non_streaming_impl(
@@ -3851,7 +3851,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_non_streaming_simple_format_attributes(self, **kwargs):
         """Test async prompt agent with responses (non-streaming, simple OTEL format, attribute mode)."""
         await self._test_async_prompt_agent_with_responses_non_streaming_impl(
@@ -3975,21 +3975,21 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_streaming_events(self, **kwargs):
         """Test async prompt agent with responses (streaming, event-based messages)."""
         await self._test_async_prompt_agent_with_responses_streaming_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_streaming_attributes(self, **kwargs):
         """Test async prompt agent with responses (streaming, attribute-based messages)."""
         await self._test_async_prompt_agent_with_responses_streaming_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_streaming_simple_format_events(self, **kwargs):
         """Test async prompt agent with responses (streaming, simple OTEL format, event mode)."""
         await self._test_async_prompt_agent_with_responses_streaming_impl(
@@ -3998,7 +3998,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_streaming_simple_format_attributes(self, **kwargs):
         """Test async prompt agent with responses (streaming, simple OTEL format, attribute mode)."""
         await self._test_async_prompt_agent_with_responses_streaming_impl(
@@ -4009,7 +4009,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_with_raw_response_streaming_with_content_recording(self, **kwargs):
         """Test async with_raw_response.create(stream=True) with content recording enabled."""
         self.cleanup()
@@ -4078,7 +4078,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_with_raw_response_streaming_without_content_recording(self, **kwargs):
         """Test async with_raw_response.create(stream=True) with content recording disabled."""
         self.cleanup()

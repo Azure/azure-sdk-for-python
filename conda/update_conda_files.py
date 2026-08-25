@@ -672,8 +672,14 @@ def add_new_mgmt_plane_packages(new_mgmt_plane_names: list[str]) -> list[str]:
         if not package_name:
             logger.warning("Skipping package with missing name")
             continue
-
-        imports = get_valid_package_imports(package_name)
+        try:
+            imports = get_valid_package_imports(package_name)
+        except Exception as e:
+            logger.error(
+                f"Failed to get valid imports for {package_name}, skipping addition: {e}"
+            )
+            result.append(package_name)
+            continue
         # Format imports for YAML with "- " prefix
         formatted = [f"- {imp}" for imp in imports]
         new_imports.extend(formatted)

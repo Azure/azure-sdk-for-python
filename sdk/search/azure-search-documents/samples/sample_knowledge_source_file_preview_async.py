@@ -29,7 +29,6 @@ from sample_utils import (
     print_retrieval_summary,
 )
 
-
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
 run_tag = get_sample_run_tag()
@@ -38,16 +37,19 @@ knowledge_base_name = f"hotels-file-kb-{run_tag}"
 upload_file_name = "hotels.txt"
 
 
-async def main():
+async def main():  # pylint: disable=too-many-locals
     # [START sample_knowledge_source_file_preview_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes.aio import SearchIndexClient
     from azure.search.documents.indexes.models import (
         AzureOpenAIVectorizerParameters,
+        FileUploadMetadata,
         FileKnowledgeSource,
         FileKnowledgeSourceParameters,
         KnowledgeBase,
         KnowledgeSourceReference,
+        UpdateKnowledgeSourceFileRequest,
+        UploadKnowledgeSourceFileMultipartRequest,
     )
     from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
     from azure.search.documents.knowledgebases.models import (
@@ -68,6 +70,7 @@ async def main():
                 file_parameters=FileKnowledgeSourceParameters(
                     ingestion_parameters=KnowledgeSourceIngestionParameters(
                         content_extraction_mode="minimal",
+                        network_access_mode="public",
                         embedding_model=KnowledgeSourceAzureOpenAIVectorizer(
                             azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
                                 resource_url=os.environ["AZURE_OPENAI_ENDPOINT"],
@@ -93,6 +96,65 @@ async def main():
             )
             await index_client.create_or_update_knowledge_base(knowledge_base)
 
+            file_content = b"Historic Harbor Hotel has free parking and a rooftop restaurant."
+            file_metadata = FileUploadMetadata(
+                file_name=f"hotels/{upload_file_name}",
+                metadata={"category": "hotel", "city": "Seattle"},
+            )
+            uploaded_file = await index_client.upload_knowledge_source_file_multipart(
+                name=knowledge_source_name,
+                body=UploadKnowledgeSourceFileMultipartRequest(
+                    metadata=file_metadata,
+                    content=(upload_file_name, file_content, "text/plain"),
+                ),
+            )
+            print(f"Uploaded: file '{uploaded_file.file_name}'")
+            assert uploaded_file.file_id is not None
+
+            annex_file = await index_client.upload_knowledge_source_file_multipart(
+                name=knowledge_source_name,
+                body=UploadKnowledgeSourceFileMultipartRequest(
+                    metadata=FileUploadMetadata(
+                        file_name="hotels/annex.txt",
+                        metadata={"category": "hotel", "city": "Portland"},
+                    ),
+                    content=("annex.txt", b"Harbor Hotel Annex has meeting rooms.", "text/plain"),
+                ),
+            )
+            assert annex_file.file_id is not None
+
+            updated_file = await index_client.update_knowledge_source_file(
+                file_id=uploaded_file.file_id,
+                name=knowledge_source_name,
+                body=UpdateKnowledgeSourceFileRequest(
+                    metadata=file_metadata,
+                    content=(
+                        upload_file_name,
+                        b"Historic Harbor Hotel has free parking, free Wi-Fi, and a rooftop restaurant.",
+                        "text/plain",
+                    ),
+                ),
+            )
+            print(f"Updated: file '{updated_file.file_name}'")
+            assert updated_file.metadata == {"category": "hotel", "city": "Seattle"}
+            assert updated_file.parsing_mode is not None
+            assert updated_file.extraction_mode in {"minimal", "standard"}
+
+            files = [
+                file
+                async for file in index_client.list_knowledge_source_files(
+                    knowledge_source_name,
+                    prefix="hotels/",
+                    search="hotels",
+                    page_size=1,
+                    search_type="prefix",
+                )
+            ]
+            file_ids = [file.file_id for file in files]
+            assert set(file_ids) == {uploaded_file.file_id, annex_file.file_id}
+            assert len(file_ids) == len(set(file_ids))
+            print(f"Paged through {len(files)} files without duplicates")
+
             retrieval_client = KnowledgeBaseRetrievalClient(
                 service_endpoint, AzureKeyCredential(key), knowledge_base_name=knowledge_base_name
             )
@@ -113,17 +175,9 @@ async def main():
             finally:
                 await retrieval_client.close()
 
-            file_content = b"Historic Harbor Hotel has free parking and a rooftop restaurant."
-            uploaded_file = await index_client.upload_knowledge_source_file(
-                knowledge_source_name,
-                file_content,
-                filename=upload_file_name,
-                content_type="application/octet-stream",
-            )
-            print(f"Uploaded: file '{uploaded_file.file_name}'")
-
-            files = [file async for file in index_client.list_knowledge_source_files(knowledge_source_name)]
-            print(f"Files: {len(files)}")
+            await index_client.delete_knowledge_source_file(knowledge_source_name, uploaded_file.file_id)
+            await index_client.delete_knowledge_source_file(knowledge_source_name, annex_file.file_id)
+            print("Deleted both uploaded files")
             # [END sample_knowledge_source_file_preview_async]
         finally:
             await cleanup_resources_async(
