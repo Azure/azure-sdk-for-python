@@ -781,6 +781,92 @@ def test_connection_termination_fact_is_visible_before_cleanup(spans, scenario, 
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("register_session_end_callback", [False, True])
+async def test_session_end_completion_wins_later_endpoint_cancellation(
+    monkeypatch,
+    spans,
+    register_session_end_callback,
+):
+    _, exporter = spans
+    app = VoiceAgentServerHost(configure_observability=None)
+    session_end_decoded = asyncio.Event()
+    probe_entered = asyncio.Event()
+    release_probe = asyncio.Event()
+    callback_count = 0
+    observed_terminations = []
+    sent_messages = []
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {
+            "type": "websocket.receive",
+            "text": json.dumps(
+                {
+                    "type": "session.end",
+                    "id": "m_end",
+                    "ts": "2026-08-17T00:00:01Z",
+                    "reason": "completed",
+                }
+            ),
+        },
+    ]
+    probe_gated = False
+    receive_voice_event = voice_host_module._receive_voice_event  # pylint: disable=protected-access
+    raise_pending_cancellation = voice_host_module._raise_pending_cancellation  # pylint: disable=protected-access
+
+    async def observe_session_end(websocket, session):
+        event = await receive_voice_event(websocket, session)
+        if event is not None and event.type == "session.end":
+            session_end_decoded.set()
+        return event
+
+    async def gate_post_callback_probe():
+        nonlocal probe_gated
+        if session_end_decoded.is_set() and not probe_gated:
+            probe_gated = True
+            probe_entered.set()
+            await release_probe.wait()
+            return
+        await raise_pending_cancellation()
+
+    monkeypatch.setattr(voice_host_module, "_receive_voice_event", observe_session_end)
+    monkeypatch.setattr(voice_host_module, "_raise_pending_cancellation", gate_post_callback_probe)
+
+    if register_session_end_callback:
+
+        @app.on_session_end
+        async def on_session_end(_session, _event):
+            nonlocal callback_count
+            callback_count += 1
+
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        observed_terminations.append(session.termination)
+
+    async def receive():
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+
+    endpoint = asyncio.create_task(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+    await asyncio.wait_for(probe_entered.wait(), timeout=1)
+    endpoint.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await endpoint
+
+    assert callback_count == int(register_session_end_callback)
+    assert observed_terminations == [SessionTermination.COMPLETED]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+    assert Session._current(websocket) is None  # pylint: disable=protected-access
+    connection = _span_by_name(exporter, "agentserver.connection")
+    assert connection.attributes["bridge.outcome"] == SessionTermination.COMPLETED.value
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("close_code", "expected_termination"),
     [
@@ -1311,6 +1397,46 @@ def test_connection_setup_failure_disables_semantic_descendants(
     ]
     expected_names = [] if failure_stage == "parent_attach" else ["agentserver.connection"]
     assert [span.name for span in semantic] == expected_names
+
+
+def test_context_attachment_uses_public_detach_for_opaque_token(monkeypatch):
+    previous_context = object()
+    attached_context = object()
+    opaque_token = object()
+    attach_calls = []
+    detach_calls = []
+
+    monkeypatch.setattr(tracing_module.otel_context, "get_current", lambda: previous_context)
+
+    def attach(context):
+        attach_calls.append(context)
+        return opaque_token
+
+    monkeypatch.setattr(tracing_module.otel_context, "attach", attach)
+    monkeypatch.setattr(tracing_module.otel_context, "detach", detach_calls.append)
+
+    attachment = tracing_module._attach_context(attached_context)  # pylint: disable=protected-access
+    scope = tracing_module._SpanScope(attachment=attachment)  # pylint: disable=protected-access
+    scope.close()
+    scope.close()
+
+    assert attach_calls == [attached_context]
+    assert detach_calls == [opaque_token]
+
+
+def test_context_detach_failure_is_best_effort(monkeypatch):
+    opaque_token = object()
+    detach_calls = []
+
+    def fail_detach(token):
+        detach_calls.append(token)
+        raise RuntimeError("private context detach failure")
+
+    monkeypatch.setattr(tracing_module.otel_context, "detach", fail_detach)
+
+    tracing_module._reset_context((opaque_token, object()))  # pylint: disable=protected-access
+
+    assert detach_calls == [opaque_token]
 
 
 def test_context_factory_failure_disables_telemetry_without_changing_wire(monkeypatch, spans):

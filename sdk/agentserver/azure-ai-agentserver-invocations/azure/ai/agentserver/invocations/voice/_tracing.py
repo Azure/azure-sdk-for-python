@@ -124,14 +124,9 @@ def _attach_context(context: Any) -> tuple[Any, Any] | None:
 def _reset_context(attachment: tuple[Any, Any] | None) -> None:
     if attachment is None:
         return
-    token, previous = attachment
+    token, _ = attachment
     try:
-        token.var.reset(token)
-        return
-    except BaseException:  # pylint: disable=broad-exception-caught
-        pass
-    try:
-        token.var.set(previous)
+        otel_context.detach(token)
     except BaseException:  # pylint: disable=broad-exception-caught
         pass
 

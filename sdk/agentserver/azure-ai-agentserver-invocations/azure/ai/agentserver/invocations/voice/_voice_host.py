@@ -394,8 +394,12 @@ def _task_cancellation_requests() -> int | None:
     return _session_transport._task_cancellation_requests()  # pylint: disable=protected-access
 
 
-def _begin_voice_termination(websocket: WebSocket, session: Session) -> float:
-    session._begin_termination()  # pylint: disable=protected-access
+def _begin_voice_termination(
+    websocket: WebSocket,
+    session: Session,
+    termination: SessionTermination | None = None,
+) -> float:
+    session._begin_termination(termination)  # pylint: disable=protected-access
     loop = asyncio.get_running_loop()
     scope = getattr(websocket, "scope", None)
     if isinstance(scope, MutableMapping):
@@ -927,7 +931,9 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
             await _await_with_cancellation_guard(
                 callback(session, event),
                 on_success=(
-                    (lambda: _begin_voice_termination(websocket, session)) if isinstance(event, SessionEnd) else None
+                    (lambda: _begin_voice_termination(websocket, session, SessionTermination.COMPLETED))
+                    if isinstance(event, SessionEnd)
+                    else None
                 ),
             )
         except asyncio.CancelledError:
@@ -1256,9 +1262,9 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                         cast(InboundVoiceMessage, event),
                         callback,
                     )
-                    if isinstance(event, SessionEnd):
-                        session._begin_termination(SessionTermination.COMPLETED)  # pylint: disable=protected-access
                 if isinstance(event, SessionEnd):
+                    if callback is None:
+                        _begin_voice_termination(websocket, session, SessionTermination.COMPLETED)
                     return
         finally:
             _begin_voice_termination(websocket, session)
