@@ -214,9 +214,7 @@ class AzureArtifactsClient:
         if response.status == 404:
             return []
         if not 200 <= response.status < 300:
-            raise HTTPError(
-                f"Azure Artifacts returned HTTP {response.status} for package {package_name!r}"
-            )
+            raise HTTPError(f"Azure Artifacts returned HTTP {response.status} for package {package_name!r}")
 
         parser = _SimpleIndexParser()
         parser.feed(response.data.decode("utf-8"))
