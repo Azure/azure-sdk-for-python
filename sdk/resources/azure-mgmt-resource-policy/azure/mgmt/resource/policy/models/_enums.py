@@ -207,7 +207,7 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_ASSIGNED = "SystemAssigned"
     """Indicates that a system assigned identity is associated with the resource."""
     USER_ASSIGNED = "UserAssigned"
-    """Indicates that a system assigned identity is associated with the resource."""
+    """Indicates that a user assigned identity is associated with the resource."""
     NONE = "None"
     """Indicates that no identity is associated with the resource or that the existing identity should
     be removed."""

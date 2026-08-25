@@ -272,5 +272,5 @@
         "azure.mgmt.resource.policy.operations.PolicyTokensOperations.acquire_at_management_group": "Microsoft.Authorization.PolicyTokensOperationGroup.acquireAtManagementGroup",
         "azure.mgmt.resource.policy.aio.operations.PolicyTokensOperations.acquire_at_management_group": "Microsoft.Authorization.PolicyTokensOperationGroup.acquireAtManagementGroup"
     },
-    "CrossLanguageVersion": "11055b5de797"
+    "CrossLanguageVersion": "e6f61f4356b1"
 }
