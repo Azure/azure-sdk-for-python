@@ -30,6 +30,13 @@ extends:
 
               - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
 
+              # @typespec/http-client-python installs its Python generator during npm install,
+              # so lock-file generation also requires authenticated access to the Python CFS feed.
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  EnableTwineAuth: false
+                  EnableUvAuth: false
+
               - script: npm install --global npm-check-updates @azure-tools/typespec-client-generator-cli
                 displayName: Install emitter update tools
 
