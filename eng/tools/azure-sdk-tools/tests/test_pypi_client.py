@@ -4,6 +4,8 @@ from unittest.mock import MagicMock, patch
 import os
 import pytest
 from packaging.version import Version
+from urllib3 import HTTPResponse
+from urllib3.exceptions import HTTPError
 
 
 # ---------------------------------------------------------------------------
@@ -298,8 +300,9 @@ class TestPyPIOnlyMethods:
 class TestAzureArtifactsCompatibility:
     def test_simple_index_filters_requires_python_yanked_and_invalid_files(self):
         client = AzureArtifactsClient(AzureArtifactsFeedConfig("org", "project", "feed"))
-        response = MagicMock()
-        response.data = b"""
+        response = HTTPResponse(
+            status=200,
+            body=b"""
         <html><body>
           <a href="example_pkg-1.0.0-py3-none-any.whl" data-requires-python=">=3.8">one</a>
           <a href="example_pkg-2.0.0-py3-none-any.whl" data-requires-python=">=99">two</a>
@@ -307,11 +310,31 @@ class TestAzureArtifactsCompatibility:
           <a href="example_pkg-4.0.0-py3-none-any.whl" data-yanked="">four</a>
           <a href="not-a-package.txt">invalid</a>
         </body></html>
-        """
+        """,
+        )
         with patch.object(client._http, "request", return_value=response):
             versions = client.get_python_compatible_versions("example-pkg")
 
         assert versions == [Version("1.0.0"), Version("3.0.0")]
+
+    def test_simple_index_returns_empty_for_missing_package(self):
+        client = AzureArtifactsClient(AzureArtifactsFeedConfig("org", "project", "feed"))
+        response = HTTPResponse(status=404, body=b"")
+
+        with patch.object(client._http, "request", return_value=response):
+            versions = client.get_python_compatible_versions("unpublished-package")
+
+        assert versions == []
+
+    @pytest.mark.parametrize("status", [401, 403, 500])
+    def test_simple_index_raises_for_other_http_errors(self, status):
+        client = AzureArtifactsClient(AzureArtifactsFeedConfig("org", "project", "feed"))
+        response = HTTPResponse(status=status, body=b"")
+
+        with patch.object(client._http, "request", return_value=response), pytest.raises(
+            HTTPError, match=f"HTTP {status}"
+        ):
+            client.get_python_compatible_versions("example-pkg")
 
 
 # ---------------------------------------------------------------------------
