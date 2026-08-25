@@ -8,7 +8,14 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from .._utils.model_base import Model, rest_field
+from . import _models
+
 __all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+
+
+def _copy_model(self: Model) -> Model:
+    return self.__class__(self._data.copy())  # pylint: disable=protected-access
 
 
 def patch_sdk():
@@ -18,3 +25,13 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    Model.copy = _copy_model
+
+    _models.ImportUpdateRequest.enable_scan = rest_field(
+        name="enableScan",
+        visibility=["read", "create", "update", "delete", "query"],
+        default=False,
+    )
+    Model._calculated.discard(
+        f"{_models.ImportUpdateRequest.__module__}.{_models.ImportUpdateRequest.__qualname__}"
+    )
