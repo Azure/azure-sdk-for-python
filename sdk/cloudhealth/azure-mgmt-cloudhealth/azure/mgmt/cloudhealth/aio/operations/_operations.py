@@ -80,7 +80,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -190,7 +190,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class HealthModelsOperations:
+class HealthModelsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1060,7 +1060,7 @@ class HealthModelsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SignalDefinitionsOperations:
+class SignalDefinitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1166,7 +1166,7 @@ class SignalDefinitionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -1357,7 +1357,7 @@ class SignalDefinitionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -1450,7 +1450,7 @@ class SignalDefinitionsOperations:
                 "signal_definition_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, health_model_name: str, signal_definition_name: str, **kwargs: Any
@@ -1526,7 +1526,7 @@ class SignalDefinitionsOperations:
                 "signal_definition_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, health_model_name: str, signal_definition_name: str, **kwargs: Any
@@ -1704,7 +1704,7 @@ class SignalDefinitionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AuthenticationSettingsOperations:
+class AuthenticationSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1810,7 +1810,7 @@ class AuthenticationSettingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -2004,7 +2004,7 @@ class AuthenticationSettingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -2098,7 +2098,7 @@ class AuthenticationSettingsOperations:
                 "authentication_setting_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, health_model_name: str, authentication_setting_name: str, **kwargs: Any
@@ -2174,7 +2174,7 @@ class AuthenticationSettingsOperations:
                 "authentication_setting_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, health_model_name: str, authentication_setting_name: str, **kwargs: Any
@@ -2342,7 +2342,7 @@ class AuthenticationSettingsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class EntitiesOperations:
+class EntitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2447,7 +2447,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -2635,7 +2635,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -2727,7 +2727,7 @@ class EntitiesOperations:
                 "entity_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, health_model_name: str, entity_name: str, **kwargs: Any
@@ -2803,7 +2803,7 @@ class EntitiesOperations:
                 "entity_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, health_model_name: str, entity_name: str, **kwargs: Any
@@ -3082,7 +3082,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def get_history(
         self,
@@ -3281,7 +3281,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def get_signal_history(
         self,
@@ -3479,7 +3479,7 @@ class EntitiesOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def ingest_health_report(
         self,
@@ -3665,7 +3665,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def add_data_annotation(
         self,
@@ -3867,7 +3867,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def get_data_annotations(
         self,
@@ -3976,7 +3976,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def get_signal_recommendations(
         self, resource_group_name: str, health_model_name: str, entity_name: str, **kwargs: Any
@@ -4055,7 +4055,7 @@ class EntitiesOperations:
         return deserialized  # type: ignore
 
 
-class RelationshipsOperations:
+class RelationshipsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4162,7 +4162,7 @@ class RelationshipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -4356,7 +4356,7 @@ class RelationshipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -4450,7 +4450,7 @@ class RelationshipsOperations:
                 "relationship_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, health_model_name: str, relationship_name: str, **kwargs: Any
@@ -4526,7 +4526,7 @@ class RelationshipsOperations:
                 "relationship_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, health_model_name: str, relationship_name: str, **kwargs: Any
@@ -4704,7 +4704,7 @@ class RelationshipsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DiscoveryRulesOperations:
+class DiscoveryRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4810,7 +4810,7 @@ class DiscoveryRulesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -5001,7 +5001,7 @@ class DiscoveryRulesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -5094,7 +5094,7 @@ class DiscoveryRulesOperations:
                 "discovery_rule_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, health_model_name: str, discovery_rule_name: str, **kwargs: Any
@@ -5170,7 +5170,7 @@ class DiscoveryRulesOperations:
                 "discovery_rule_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, health_model_name: str, discovery_rule_name: str, **kwargs: Any
