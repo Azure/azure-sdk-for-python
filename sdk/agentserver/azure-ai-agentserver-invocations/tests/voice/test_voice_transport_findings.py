@@ -1151,7 +1151,17 @@ async def test_voice_materializes_callback_self_cancellation_before_finalization
 
 
 @pytest.mark.asyncio
-async def test_voice_recovers_cancellation_wrapped_by_handler():
+@pytest.mark.parametrize(
+    "wrapper_type",
+    [
+        RuntimeError,
+        pytest.param(
+            _LoggingBaseException,
+            marks=pytest.mark.skipif(sys.version_info < (3, 11), reason="task cancellation provenance requires 3.11"),
+        ),
+    ],
+)
+async def test_voice_recovers_cancellation_wrapped_by_handler(wrapper_type):
     app = VoiceAgentServerHost(configure_observability=None)
     inbound_events = [
         {"type": "websocket.connect"},
@@ -1169,7 +1179,7 @@ async def test_voice_recovers_cancellation_wrapped_by_handler():
             await asyncio.Future()
         except asyncio.CancelledError as exc:
             captured_cancellations.append(exc)
-            raise RuntimeError("handler wrapped cancellation") from exc
+            raise wrapper_type("handler wrapped cancellation") from exc
 
     async def receive():
         return inbound_events.pop(0)

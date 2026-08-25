@@ -436,7 +436,7 @@ def _commit_voice_session_termination(
     elif isinstance(handler_error, asyncio.CancelledError):
         termination = SessionTermination.CANCELLED
     elif handler_error is not None:
-        termination = SessionTermination.CALLBACK_ERROR
+        termination = SessionTermination.INTERNAL_ERROR
     elif disconnect_event is not None:
         termination = SessionTermination(_classify_websocket_close_code(int(disconnect_event.code)))
     else:
@@ -927,9 +927,21 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         callback: _VoiceCallback,
     ) -> None:
         callback_trace = self._start_voice_callback_trace(websocket, event.type)
+        cancellation_requests = _task_cancellation_requests()
+
+        async def invoke_callback() -> None:
+            try:
+                await callback(session, event)
+            except asyncio.CancelledError:
+                raise
+            except BaseException as exc:  # pylint: disable=broad-exception-caught
+                _raise_wrapped_cancellation(exc, cancellation_requests)
+                _begin_voice_termination(websocket, session, SessionTermination.CALLBACK_ERROR)
+                raise
+
         try:
             await _await_with_cancellation_guard(
-                callback(session, event),
+                invoke_callback(),
                 on_success=(
                     (lambda: _begin_voice_termination(websocket, session, SessionTermination.COMPLETED))
                     if isinstance(event, SessionEnd)
@@ -940,9 +952,12 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
             callback_trace.record_callback_error("cancelled")
             raise
         except BaseException:  # pylint: disable=broad-exception-caught
-            error_type = (
-                "transport_error" if session.termination is SessionTermination.TRANSPORT_ERROR else "callback_error"
-            )
+            if session.termination is SessionTermination.TRANSPORT_ERROR:
+                error_type = "transport_error"
+            elif session.termination is SessionTermination.CALLBACK_ERROR:
+                error_type = "callback_error"
+            else:
+                error_type = "internal_error"
             callback_trace.record_callback_error(error_type)
             raise
         finally:
@@ -975,7 +990,11 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         except WebSocketDisconnect as exc:
             _raise_wrapped_cancellation(exc, cancellation_requests)
             session = Session._current(websocket)  # pylint: disable=protected-access
-            if session is None or (session.termination is None and _peek_voice_disconnect_event(websocket) is None):
+            if (
+                session is None
+                or session.termination is SessionTermination.CALLBACK_ERROR
+                or (session.termination is None and _peek_voice_disconnect_event(websocket) is None)
+            ):
                 return InvocationsWSConstants.CLOSE_INTERNAL_ERROR, exc
             return (int(exc.code) if exc.code else InvocationsWSConstants.CLOSE_NORMAL), None
         except Exception as exc:  # pylint: disable=broad-exception-caught

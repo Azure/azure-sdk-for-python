@@ -780,6 +780,46 @@ def test_connection_termination_fact_is_visible_before_cleanup(spans, scenario, 
     assert connection.attributes["bridge.outcome"] == expected.value
 
 
+@pytest.mark.parametrize(
+    ("failure_source", "expected"),
+    [
+        ("callback", SessionTermination.CALLBACK_ERROR),
+        ("sdk_decode", SessionTermination.INTERNAL_ERROR),
+    ],
+)
+def test_connection_termination_preserves_failure_source(monkeypatch, spans, failure_source, expected):
+    _, exporter = spans
+    app = VoiceAgentServerHost(configure_observability=None)
+    observed = []
+    callback_events = []
+
+    @app.on_session_start
+    async def on_session_start(_session, event):
+        callback_events.append(event.type)
+        if failure_source == "callback":
+            raise RuntimeError("private callback detail")
+
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        observed.append(session.termination)
+
+    if failure_source == "sdk_decode":
+
+        def fail_decode(_frame):
+            raise RuntimeError("private SDK decode detail")
+
+        monkeypatch.setattr(voice_host_module, "decode_inbound_message", fail_decode)
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        websocket.send_json(_session_start_frame())
+        assert websocket.receive()["type"] == "websocket.close"
+
+    assert observed == [expected]
+    assert callback_events == ([] if failure_source == "sdk_decode" else ["session.start"])
+    connection = _span_by_name(exporter, "agentserver.connection")
+    assert connection.attributes["bridge.outcome"] == expected.value
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("register_session_end_callback", [False, True])
 async def test_session_end_completion_wins_later_endpoint_cancellation(
