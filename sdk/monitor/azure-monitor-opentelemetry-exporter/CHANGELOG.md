@@ -3,6 +3,7 @@
 ## 1.0.0b57 (Unreleased)
 
 ### Features Added
+- Populate `measurements` on telemetry from the `microsoft.custom_measurements` attribute
 
 ### Breaking Changes
 

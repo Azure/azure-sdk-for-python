@@ -33,6 +33,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_AI_SDK_NAME,
     _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _INSTRUMENTATION_SUPPORTING_METRICS_LIST,
+    _MICROSOFT_CUSTOM_MEASUREMENTS,
     _SAMPLE_RATE_KEY,
     _METRIC_ENVELOPE_NAME,
     _MESSAGE_ENVELOPE_NAME,
@@ -115,6 +116,7 @@ _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES = [
 
 _STANDARD_AZURE_MONITOR_ATTRIBUTES = [
     _SAMPLE_RATE_KEY,
+    _MICROSOFT_CUSTOM_MEASUREMENTS,
 ]
 
 _GEN_AI_ATTRIBUTE_PREFIX = "GenAI | {}"
@@ -257,6 +259,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"
     if span.parent and span.parent.span_id:
         envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(span.parent.span_id)
+    measurements = _utils._filter_custom_measurements(span.attributes)
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = _REQUEST_ENVELOPE_NAME
         data = RequestData(
@@ -267,7 +270,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             response_code="0",
             success=span.status.is_ok,
             properties={},
-            measurements={},
+            measurements=measurements,
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
         envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = span.name
@@ -362,6 +365,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             duration=_utils.ns_to_duration(time),
             success=span.status.is_ok,  # Success depends only on span status
             properties={},
+            measurements=measurements,
         )
         envelope.data = MonitorBase(base_data=data, base_type="RemoteDependencyData")
         envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = span.name
