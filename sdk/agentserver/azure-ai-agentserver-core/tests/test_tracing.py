@@ -66,6 +66,37 @@ def test_trace_context_middleware_preserves_repeated_baggage_headers() -> None:
     }
 
 
+def test_trace_context_middleware_preserves_repeated_tracestate_headers() -> None:
+    captured = {}
+
+    async def app(_scope, _receive, _send):
+        span_context = trace.get_current_span().get_span_context()
+        captured.update(
+            {
+                "is_remote": span_context.is_remote,
+                "vendor1": span_context.trace_state.get("vendor1"),
+                "vendor2": span_context.trace_state.get("vendor2"),
+            }
+        )
+
+    scope = {
+        "type": "websocket",
+        "headers": [
+            (b"traceparent", b"00-11111111111111111111111111111111-2222222222222222-01"),
+            (b"tracestate", b"vendor1=value1"),
+            (b"TraceState", b"vendor2=value2"),
+        ],
+    }
+
+    asyncio.run(TraceContextMiddleware(app)(scope, None, None))
+
+    assert captured == {
+        "is_remote": True,
+        "vendor1": "value1",
+        "vendor2": "value2",
+    }
+
+
 def test_trace_context_middleware_rejects_duplicate_traceparent_headers() -> None:
     captured_trace_id = None
 
