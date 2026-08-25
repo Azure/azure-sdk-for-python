@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.1 (Unreleased)
+
+### Other Changes
+
+- Changed the default Azure Monitor trace sampling rate to 100%. Explicit OpenTelemetry sampler environment variables continue to take precedence.
+
 ## 2.1.0 (2026-08-24)
 
 ### Other Changes

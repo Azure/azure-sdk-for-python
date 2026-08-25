@@ -383,8 +383,8 @@ class TestSetupDistroExport:
 # ------------------------------------------------------------------ #
 
 
-class TestEntraAuthMode:
-    """Verify _setup_distro_export wires a managed identity credential for Entra auth."""
+class TestAzureMonitorDistroExport:
+    """Verify Azure Monitor sampling and authentication configuration."""
 
     def _run(self, env: dict) -> dict:
         from azure.ai.agentserver.core import _tracing
@@ -409,6 +409,27 @@ class TestEntraAuthMode:
             kwargs = self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "Entra"})
         assert kwargs["enable_azure_monitor"] is True
         assert kwargs["azure_monitor_exporter_credential"] is sentinel
+
+    def test_azure_monitor_uses_full_sampling(self) -> None:
+        kwargs = self._run({})
+        assert kwargs["sampling_ratio"] == 1.0
+
+    def test_no_sampling_ratio_without_azure_monitor(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+
+        with mock.patch(
+            "microsoft.opentelemetry.use_microsoft_opentelemetry"
+        ) as mock_use:
+            _tracing._setup_distro_export(
+                resource=Resource.create({}),
+                span_processors=[],
+                metric_readers=[],
+                log_record_processors=[],
+                connection_string=None,
+            )
+
+        mock_use.assert_called_once()
+        assert "sampling_ratio" not in mock_use.call_args.kwargs
 
     def test_entra_auth_mode_case_insensitive(self) -> None:
         sentinel = object()

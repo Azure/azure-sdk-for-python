@@ -176,6 +176,12 @@ export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
 python my_agent.py
 ```
 
+Azure Monitor uses 100% trace sampling by default. Standard OpenTelemetry
+sampling configuration through `OTEL_TRACES_SAMPLER` and
+`OTEL_TRACES_SAMPLER_ARG` takes precedence when explicitly set. This controls
+sampling only; exporter queues, process termination, and transport or ingestion
+failures can still prevent trace delivery.
+
 OTLP export is enabled when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. HTTP/protobuf
 is the default protocol. To use an OTLP/gRPC collector, install the optional
 gRPC extra and set `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`:
