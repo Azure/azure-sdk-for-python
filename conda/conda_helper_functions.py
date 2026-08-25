@@ -304,14 +304,7 @@ def get_valid_package_imports(package_name: str) -> list[str]:
         )
         return [package_name.replace("-", ".")]
     else:
-        try:
-            parsed = ParsedSetup.from_path(package_path)
-        except Exception as e:
-            # package is missing pyproject.toml or setup.py
-            logger.error(
-                f"Failed to parse setup for {package_name} at {package_path}: {e}"
-            )
-            raise
+        parsed = ParsedSetup.from_path(package_path)
         if not parsed or not parsed.namespace:
             logger.warning(
                 f"Could not parse namespace for {package_name}, using fallback"
