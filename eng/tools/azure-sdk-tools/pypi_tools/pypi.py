@@ -20,15 +20,19 @@ class PyPIClient:
     By default, reads ``PIP_INDEX_URL`` to decide the backend:
     * If the URL contains ``pkgs.dev.azure.com`` → Azure Artifacts REST API.
     * Otherwise → PyPI JSON API (``https://pypi.org``).
+
+    Pass ``force_pypi=True`` to ignore ``PIP_INDEX_URL`` and select the PyPI
+    JSON backend. Requests use ``host`` (public PyPI by default), so an
+    explicitly supplied host is still honored.
     """
 
-    def __init__(self, host="https://pypi.org"):
+    def __init__(self, host="https://pypi.org", force_pypi=False):
         index_url = os.environ.get("PIP_INDEX_URL", "")
 
         # Lazy import to avoid circular deps at module level.
         from pypi_tools.azdo import parse_pip_index_url, AzureArtifactsClient
 
-        azdo_cfg = parse_pip_index_url(index_url) if index_url else None
+        azdo_cfg = None if force_pypi else (parse_pip_index_url(index_url) if index_url else None)
 
         if azdo_cfg is not None:
             self._backend = "azdo"
@@ -128,6 +132,37 @@ class PyPIClient:
         versions = self.get_ordered_versions(package_name)
         stable_releases = [version for version in versions if not version.is_prerelease]
         return (versions[-1], stable_releases[-1])
+
+    def get_latest_download_uri(self, package_name, allow_prerelease=False):
+        """Return ``(version_str, sdist_download_uri)`` for the latest version.
+
+        Works against both backends:
+
+        * **AzDO Artifacts** — discovers the latest version via the Feed REST API
+          and resolves the sdist URL on ``pkgs.dev.azure.com``. The PEP 503 Simple
+          index is intentionally avoided because it only serves stale, locally
+          cached versions.
+        * **PyPI** — reads the JSON API and returns the latest version's sdist URL.
+        """
+        if self._backend == "azdo":
+            return self._azdo.get_latest_download_uri(package_name, allow_prerelease=allow_prerelease)
+
+        versions = self.get_ordered_versions(package_name)
+        if not versions:
+            return None, None
+
+        if allow_prerelease:
+            latest_version = str(versions[-1])
+        else:
+            stable = [version for version in versions if not version.is_prerelease]
+            latest_version = str(stable[-1] if stable else versions[-1])
+
+        data = self.project(package_name)
+        files = data.get("releases", {}).get(latest_version) or []
+        sdist = next((f for f in files if f.get("packagetype") == "sdist"), None)
+        if sdist:
+            return latest_version, sdist["url"]
+        return latest_version, None
 
 
 def retrieve_versions_from_pypi(package_name: str) -> List[str]:

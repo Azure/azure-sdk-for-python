@@ -17,6 +17,8 @@ import re
 import json
 import shlex
 import subprocess
+import sys
+import tempfile
 import urllib3
 
 from shutil import rmtree
@@ -267,7 +269,7 @@ def create_combined_sdist(
             environment_config,
         )
 
-    if conda_build.checkout[0].download_uri:
+    if conda_build.checkout[0].download_uri or conda_build.checkout[0].from_package_index:
         # if we have a single dependency that is downloadable, it will be placed in final sdist location
         # by the get_package_source function. In that case, we just need to find it and return it
         if singular_dependency:
@@ -292,7 +294,7 @@ def create_combined_sdist(
             [
                 os.path.join(config_assembled_folder, a)
                 for a in os.listdir(config_assembled_folder)
-                if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name.replace("-", "_") in a
+                if os.path.isfile(os.path.join(config_assembled_folder, a)) and tolerant_match(conda_build.name, a)
             ]
         )
     )
@@ -378,6 +380,60 @@ def download_pypi_source(target_folder: str, target_uri: str) -> str:
     return file_name
 
 
+def download_sdist_from_index(target_folder: str, package: str, version: str) -> str:
+    """
+    Downloads the source distribution for a package from the configured package index.
+
+    pip is used rather than a direct HTTP call so that PIP_INDEX_URL is honored. Under network
+    isolation that variable points at an authenticated Azure Artifacts (CFS) feed, and public
+    package hosts are unreachable.
+    """
+    os.makedirs(target_folder, exist_ok=True)
+
+    with tempfile.TemporaryDirectory() as download_staging:
+        check_call(
+            [
+                sys.executable,
+                "-m",
+                "pip",
+                "download",
+                f"{package}=={version}",
+                "--no-deps",
+                "--no-binary",
+                ":all:",
+                "--dest",
+                download_staging,
+            ]
+        )
+
+        downloaded = [f for f in os.listdir(download_staging) if os.path.isfile(os.path.join(download_staging, f))]
+
+        if not downloaded:
+            raise RuntimeError(f"pip did not produce a source distribution for {package}=={version}.")
+
+        if len(downloaded) > 1:
+            raise RuntimeError(
+                f"Expected exactly one source distribution for {package}=={version}, got: {sorted(downloaded)}."
+            )
+
+        file_name = os.path.join(target_folder, downloaded[0])
+
+        if not os.path.exists(file_name):
+            shutil.move(os.path.join(download_staging, downloaded[0]), file_name)
+
+    return file_name
+
+
+def resolve_package_source(checkout_config: CheckoutConfiguration, target_folder: str) -> str:
+    """
+    Places the source distribution for a checkout configuration into target_folder and returns its path.
+    """
+    if checkout_config.download_uri:
+        return download_pypi_source(target_folder, checkout_config.download_uri)
+
+    return download_sdist_from_index(target_folder, checkout_config.package, checkout_config.version)
+
+
 def get_package_source(
     checkout_config: CheckoutConfiguration,
     download_folder: str,
@@ -388,14 +444,14 @@ def get_package_source(
     """
     Retrieves the source code for a specific checkout_config.
     """
-    if checkout_config.download_uri or checkout_config.version:
+    if checkout_config.download_uri or checkout_config.from_package_index:
         # if we have a single package, we can simply use the source distribution _as is_ rather than
         # repackaging it. so we download and move it directly to assembled
         if len(conda_build.checkout) == 1:
-            return download_pypi_source(output_folder, checkout_config.download_uri)
+            return resolve_package_source(checkout_config, output_folder)
         # in case of multiple external packages, we need to unzip the code into the same format as we do for a git clone
         else:
-            downloaded_zip = download_pypi_source(download_folder, checkout_config.download_uri)
+            downloaded_zip = resolve_package_source(checkout_config, download_folder)
             unzip_staging_folder = prep_directory(os.path.join(download_folder, checkout_config.package))
             unzipped_staged = unzip_file_to_directory(downloaded_zip, unzip_staging_folder)
             assembly_location = prep_directory(
@@ -519,14 +575,31 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
             f.write(meta_yml_content)
 
 
+def run_conda_command(command: List[str], cwd: str) -> None:
+    """Run a conda command, surfacing stdout/stderr when the command fails."""
+    print(f"Running: {' '.join(command)}")
+    result = subprocess.run(command, cwd=cwd, capture_output=True, text=True)
+
+    if result.stdout:
+        print(result.stdout)
+
+    if result.returncode != 0:
+        print(f"Command '{' '.join(command)}' failed with exit code {result.returncode}.")
+        if result.stderr:
+            print("----- stderr -----")
+            print(result.stderr)
+            print("------------------")
+        raise subprocess.CalledProcessError(result.returncode, command, output=result.stdout, stderr=result.stderr)
+
+
 def prep_and_create_environment(environment_dir: str) -> None:
     environment_dir = prep_directory(environment_dir)
 
     with open(os.path.join(environment_dir, "environment.yml"), "w", encoding="utf-8") as f:
         f.write(CONDA_ENV_FILE)
 
-    subprocess.run(["conda", "env", "create", "--prefix", environment_dir], cwd=environment_dir, check=True)
-    subprocess.run(
+    run_conda_command(["conda", "env", "create", "--prefix", environment_dir], cwd=environment_dir)
+    run_conda_command(
         [
             "conda",
             "install",
@@ -540,9 +613,8 @@ def prep_and_create_environment(environment_dir: str) -> None:
             "typing_extensions",
         ],
         cwd=environment_dir,
-        check=True,
     )
-    subprocess.run(["conda", "run", "--prefix", environment_dir, "conda", "list"], cwd=environment_dir, check=True)
+    run_conda_command(["conda", "run", "--prefix", environment_dir, "conda", "list"], cwd=environment_dir)
 
 
 def copy_channel_files(coalescing_channel_dir: str, additional_channel_dir: str) -> None:

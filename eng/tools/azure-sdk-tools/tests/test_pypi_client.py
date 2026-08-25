@@ -1,4 +1,5 @@
 from pypi_tools.pypi import PyPIClient, retrieve_versions_from_pypi
+from pypi_tools.azdo import AzureArtifactsClient, AzureArtifactsFeedConfig
 from unittest.mock import patch
 import os
 import pytest
@@ -102,6 +103,142 @@ class TestRetrieveVersions:
         assert WELL_KNOWN_VERSION in versions
 
 
+class TestGetLatestDownloadUri:
+    """Covers latest sdist URL resolution without relying on live package indexes."""
+
+    def test_pypi_backend_uses_latest_stable_by_default(self):
+        project_data = {
+            "info": {"version": "2.0.0b1"},
+            "releases": {
+                "1.0.0": [
+                    {
+                        "packagetype": "sdist",
+                        "url": "https://example.test/pkg-1.0.0.tar.gz",
+                    }
+                ],
+                "2.0.0b1": [
+                    {
+                        "packagetype": "sdist",
+                        "url": "https://example.test/pkg-2.0.0b1.tar.gz",
+                    }
+                ],
+            },
+        }
+        client = _make_client(PYPI_HOST)
+
+        with patch.object(PyPIClient, "project", return_value=project_data):
+            version, url = client.get_latest_download_uri("example-pkg")
+
+        assert version == "1.0.0"
+        assert url == "https://example.test/pkg-1.0.0.tar.gz"
+
+    def test_pypi_backend_can_return_latest_prerelease(self):
+        project_data = {
+            "info": {"version": "2.0.0b1"},
+            "releases": {
+                "1.0.0": [
+                    {
+                        "packagetype": "sdist",
+                        "url": "https://example.test/pkg-1.0.0.tar.gz",
+                    }
+                ],
+                "2.0.0b1": [
+                    {
+                        "packagetype": "sdist",
+                        "url": "https://example.test/pkg-2.0.0b1.tar.gz",
+                    }
+                ],
+            },
+        }
+        client = _make_client(PYPI_HOST)
+
+        with patch.object(PyPIClient, "project", return_value=project_data):
+            version, url = client.get_latest_download_uri("example-pkg", allow_prerelease=True)
+
+        assert version == "2.0.0b1"
+        assert url == "https://example.test/pkg-2.0.0b1.tar.gz"
+
+    def test_pypi_backend_returns_none_when_latest_has_no_sdist(self):
+        project_data = {
+            "info": {"version": "1.0.0"},
+            "releases": {
+                "1.0.0": [
+                    {
+                        "packagetype": "bdist_wheel",
+                        "url": "https://example.test/pkg-1.0.0.whl",
+                    }
+                ],
+            },
+        }
+        client = _make_client(PYPI_HOST)
+
+        with patch.object(PyPIClient, "project", return_value=project_data):
+            version, url = client.get_latest_download_uri("example-pkg")
+
+        assert version == "1.0.0"
+        assert url is None
+
+    def test_azdo_backend_uses_latest_stable_by_default(self):
+        client = AzureArtifactsClient(AzureArtifactsFeedConfig("org", "project", "feed"))
+
+        with patch.object(
+            client,
+            "get_ordered_versions",
+            return_value=[Version("1.0.0"), Version("2.0.0b1")],
+        ), patch.object(
+            client,
+            "get_download_uri",
+            return_value="https://example.test/pkg-1.0.0.tar.gz",
+        ) as get_download_uri:
+            version, url = client.get_latest_download_uri("example-pkg")
+
+        assert version == "1.0.0"
+        assert url == "https://example.test/pkg-1.0.0.tar.gz"
+        get_download_uri.assert_called_once_with("example-pkg", "1.0.0")
+
+    def test_azdo_backend_can_return_latest_prerelease(self):
+        client = AzureArtifactsClient(AzureArtifactsFeedConfig("org", "project", "feed"))
+
+        with patch.object(
+            client,
+            "get_ordered_versions",
+            return_value=[Version("1.0.0"), Version("2.0.0b1")],
+        ), patch.object(
+            client,
+            "get_download_uri",
+            return_value="https://example.test/pkg-2.0.0b1.tar.gz",
+        ) as get_download_uri:
+            version, url = client.get_latest_download_uri("example-pkg", allow_prerelease=True)
+
+        assert version == "2.0.0b1"
+        assert url == "https://example.test/pkg-2.0.0b1.tar.gz"
+        get_download_uri.assert_called_once_with("example-pkg", "2.0.0b1")
+
+    def test_azdo_download_uri_probes_normalized_sdist_names(self):
+        client = AzureArtifactsClient(
+            AzureArtifactsFeedConfig("org", "project", "feed"),
+            pkgs_base_url="https://pkgs.example.test",
+        )
+
+        with patch.object(
+            client,
+            "_head_ok",
+            side_effect=lambda url: url.endswith("/azure_core-1.2.3.tar.gz"),
+        ):
+            url = client.get_download_uri("azure-core", "1.2.3")
+
+        assert (
+            url
+            == "https://pkgs.example.test/org/project/_packaging/feed/pypi/download/azure-core/1.2.3/azure_core-1.2.3.tar.gz"
+        )
+
+    def test_azdo_download_uri_returns_none_when_no_candidate_resolves(self):
+        client = AzureArtifactsClient(AzureArtifactsFeedConfig("org", "project", "feed"))
+
+        with patch.object(client, "_head_ok", return_value=False):
+            assert client.get_download_uri("example-pkg", "1.0.0") is None
+
+
 # ---------------------------------------------------------------------------
 # project_release — works on both backends (AzDO falls back to pypi.org)
 # ---------------------------------------------------------------------------
@@ -149,3 +286,55 @@ class TestPyPIOnlyMethods:
         filtered = client.get_ordered_versions(WELL_KNOWN_PACKAGE, True)
         unfiltered = client.get_ordered_versions(WELL_KNOWN_PACKAGE, False)
         assert len(filtered) < len(unfiltered)
+
+
+# ---------------------------------------------------------------------------
+# Backend selection — force_pypi bypasses the Azure Artifacts feed
+# ---------------------------------------------------------------------------
+
+
+class TestBackendSelection:
+    """The AzDO feed is curated and not a full PyPI mirror, so callers that need
+    public PyPI (e.g. the breaking-change checker) pass force_pypi=True.
+    """
+
+    def _with_index_url(self, index_url, **kwargs):
+        old = os.environ.get("PIP_INDEX_URL")
+        try:
+            os.environ["PIP_INDEX_URL"] = index_url
+            return PyPIClient(**kwargs)
+        finally:
+            if old is not None:
+                os.environ["PIP_INDEX_URL"] = old
+            elif "PIP_INDEX_URL" in os.environ:
+                del os.environ["PIP_INDEX_URL"]
+
+    def test_azdo_index_url_selects_azdo_backend_by_default(self):
+        client = self._with_index_url(AZDO_FEED_URL)
+        assert client._backend == "azdo"
+
+    def test_force_pypi_overrides_azdo_index_url(self):
+        client = self._with_index_url(AZDO_FEED_URL, force_pypi=True)
+        assert client._backend == "pypi"
+
+    def test_force_pypi_get_ordered_versions_queries_pypi_json(self):
+        # A package present on public PyPI but absent from the curated feed must
+        # still resolve when force_pypi=True, because get_ordered_versions goes
+        # through project() (pypi.org JSON API) rather than the AzDO feed.
+        project_data = {
+            "info": {"version": "1.0.0b1"},
+            "releases": {
+                "1.0.0b1": [
+                    {
+                        "packagetype": "sdist",
+                        "url": "https://example.test/pkg-1.0.0b1.tar.gz",
+                    }
+                ],
+            },
+        }
+        client = self._with_index_url(AZDO_FEED_URL, force_pypi=True)
+
+        with patch.object(PyPIClient, "project", return_value=project_data):
+            versions = client.get_ordered_versions("azure-mgmt-datatransfer")
+
+        assert versions == [Version("1.0.0b1")]
