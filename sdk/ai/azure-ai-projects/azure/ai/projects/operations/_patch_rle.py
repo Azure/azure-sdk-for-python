@@ -23,7 +23,7 @@ from __future__ import annotations
 import math
 import threading
 import time
-from typing import Any, Dict, Mapping, Optional, Union
+from typing import Any, Dict, Mapping, Optional, Tuple, Union
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
@@ -237,7 +237,7 @@ def coerce_action(action: Any, action_kwargs: Mapping[str, Any]) -> dict:
 
 
 def _acquire_instance(
-    instances: RLEInstancesOperations,
+    instances: Any,
     environment_name: str,
     environment_version: str,
     instance_group_id: str,
@@ -411,7 +411,7 @@ class OpenEnvInstance:
         *,
         environment_version: str,
         instance: RLEInstance,
-        instances: RLEInstancesOperations,
+        instances: Any,
     ) -> None:
         if not environment_name:
             raise ValueError("environment_name is required")
@@ -630,7 +630,7 @@ class OpenEnvClient:
         *,
         environments: _RLEnvironmentsOperationsGenerated,
         instance_groups: RLEInstanceGroupsOperations,
-        instances: RLEInstancesOperations,
+        instances: Any,
         name: str,
         version: Optional[str] = None,
         max_active_instances: int = 1,
@@ -794,6 +794,8 @@ class OpenEnvClient:
         if group_id is None:
             return
         self._instance_group_id = None
+        if self._version is None:
+            return
         try:
             self._instance_groups.delete_instance_group(
                 self._name,

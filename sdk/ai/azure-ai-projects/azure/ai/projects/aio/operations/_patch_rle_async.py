@@ -67,7 +67,7 @@ async def _sleep_before_deadline(delay: float, deadline: float) -> bool:
 
 
 async def _acquire_instance(
-    instances: RLEInstancesOperations,
+    instances: Any,
     environment_name: str,
     environment_version: str,
     instance_group_id: str,
@@ -234,7 +234,7 @@ class AsyncOpenEnvInstance:
         instance_group_id: str,
         *,
         environment_version: str,
-        instances: RLEInstancesOperations,
+        instances: Any,
         instance_acquire_timeout: float,
         poll_interval_s: float,
         is_client_closed: Callable[[], bool],
@@ -487,7 +487,7 @@ class AsyncOpenEnvClient:
         *,
         environments: _RLEnvironmentsOperationsGenerated,
         instance_groups: RLEInstanceGroupsOperations,
-        instances: RLEInstancesOperations,
+        instances: Any,
         name: str,
         version: Optional[str] = None,
         max_active_instances: int = 1,
@@ -639,6 +639,8 @@ class AsyncOpenEnvClient:
         if group_id is None:
             return
         self._instance_group_id = None
+        if self._version is None:
+            return
         try:
             await self._instance_groups.delete_instance_group(
                 self._name,
