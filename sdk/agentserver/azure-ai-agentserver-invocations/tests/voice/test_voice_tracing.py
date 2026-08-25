@@ -267,6 +267,74 @@ async def test_readme_user_message_commits_mapped_error_outcome_once(termination
     ]
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("termination", "expected"),
+    [
+        pytest.param(None, TargetTurnOutcome.CANCELLED, id="local-cancellation"),
+        pytest.param(SessionTermination.CANCELLED, TargetTurnOutcome.CANCELLED, id="connection-cancelled"),
+        pytest.param(SessionTermination.COMPLETED, TargetTurnOutcome.ABANDONED, id="clean-peer-close"),
+        pytest.param(SessionTermination.ACCEPT_ERROR, TargetTurnOutcome.ERROR, id="accept-error"),
+        pytest.param(SessionTermination.CALLBACK_ERROR, TargetTurnOutcome.ERROR, id="callback-error"),
+        pytest.param(SessionTermination.INTERNAL_ERROR, TargetTurnOutcome.ERROR, id="internal-error"),
+        pytest.param(
+            SessionTermination.PROTOCOL_ERROR,
+            TargetTurnOutcome.TRANSPORT_ERROR,
+            id="protocol-error",
+        ),
+        pytest.param(
+            SessionTermination.TRANSPORT_ERROR,
+            TargetTurnOutcome.TRANSPORT_ERROR,
+            id="transport-error",
+        ),
+    ],
+)
+async def test_readme_user_message_cancellation_preserves_committed_connection_fact(termination, expected):
+    completions = []
+
+    class Activation:
+        def __enter__(self):
+            return None
+
+        def __exit__(self, *_args):
+            return False
+
+    class Turn:
+        is_completed = False
+
+        @staticmethod
+        def activate():
+            return Activation()
+
+        def complete(self, **kwargs):
+            self.is_completed = True
+            completions.append(kwargs)
+
+    class CancelledSession:
+        def __init__(self):
+            self.termination = termination
+            self.turn = Turn()
+
+        def start_target_turn(self, **_kwargs):
+            return self.turn
+
+        @staticmethod
+        async def send(_message):
+            raise asyncio.CancelledError()
+
+    event = type("Event", (), {"item_id": "in_readme"})()
+    with pytest.raises(asyncio.CancelledError):
+        await _readme_on_user_message()(CancelledSession(), event)
+
+    assert completions == [
+        {
+            "outcome": expected,
+            "response_id": None,
+            "output_item_count": 0,
+        }
+    ]
+
+
 @pytest.mark.parametrize(
     "factory_setup",
     [

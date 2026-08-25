@@ -648,6 +648,143 @@ async def test_model_failure_cancels_started_response(sample_module, monkeypatch
 
 
 @pytest.mark.asyncio
+async def test_response_cancel_failure_preserves_generation_error(sample_module, monkeypatch):
+    async def failing_generation(_text):
+        yield "partial"
+        raise ValueError("model failed")
+
+    monkeypatch.setattr(sample_module, "generate_answer", failing_generation)
+    session = _CapturingSession()
+
+    async def fail_response_cancel(message):
+        session.messages.append(message)
+        if isinstance(message, ResponseCancel):
+            raise OSError("cancel send failed")
+
+    session.send = fail_response_cancel
+    await sample_module.on_user_message(
+        session,
+        UserMessage(
+            id="m_user",
+            ts="2026-08-12T00:00:00Z",
+            item_id="in_1",
+            content=(InputTextPart(text="hello"),),
+        ),
+    )
+    generation = next(iter(sample_module.generations.values()))
+
+    with pytest.raises(ValueError, match="model failed"):
+        await generation.task
+    await asyncio.sleep(0)
+
+    assert [type(message) for message in session.messages] == [
+        ResponseCreated,
+        ResponseOutputTextDelta,
+        ResponseCancel,
+    ]
+    assert generation.turn.completions == [
+        {
+            "outcome": TargetTurnOutcome.ERROR,
+            "response_id": generation.response_id,
+            "output_item_count": 0,
+        }
+    ]
+    assert not sample_module.generations
+    assert not sample_module.input_generations
+
+
+@pytest.mark.asyncio
+async def test_response_cancel_task_cancellation_remains_cancellation(sample_module, monkeypatch):
+    cancel_send_started = asyncio.Event()
+
+    async def failing_generation(_text):
+        yield "partial"
+        raise ValueError("model failed")
+
+    monkeypatch.setattr(sample_module, "generate_answer", failing_generation)
+    session = _CapturingSession()
+
+    async def block_response_cancel(message):
+        session.messages.append(message)
+        if isinstance(message, ResponseCancel):
+            cancel_send_started.set()
+            await asyncio.Future()
+
+    session.send = block_response_cancel
+    await sample_module.on_user_message(
+        session,
+        UserMessage(
+            id="m_user",
+            ts="2026-08-12T00:00:00Z",
+            item_id="in_1",
+            content=(InputTextPart(text="hello"),),
+        ),
+    )
+    generation = next(iter(sample_module.generations.values()))
+    await asyncio.wait_for(cancel_send_started.wait(), timeout=1)
+
+    sample_module.cancel_generation(session, generation.response_id, TargetTurnOutcome.CANCELLED)
+    with pytest.raises(asyncio.CancelledError):
+        await generation.task
+    await asyncio.sleep(0)
+
+    assert [type(message) for message in session.messages] == [
+        ResponseCreated,
+        ResponseOutputTextDelta,
+        ResponseCancel,
+    ]
+    assert generation.turn.completions == [
+        {
+            "outcome": TargetTurnOutcome.CANCELLED,
+            "response_id": generation.response_id,
+            "output_item_count": 0,
+        }
+    ]
+    assert not sample_module.generations
+    assert not sample_module.input_generations
+
+
+@pytest.mark.asyncio
+async def test_committed_connection_termination_prevents_response_cancel(sample_module, monkeypatch):
+    session = _CapturingSession()
+
+    async def terminated_generation(_text):
+        yield "partial"
+        session.termination = SessionTermination.TRANSPORT_ERROR
+        raise OSError("connection lost")
+
+    monkeypatch.setattr(sample_module, "generate_answer", terminated_generation)
+    await sample_module.on_user_message(
+        session,
+        UserMessage(
+            id="m_user",
+            ts="2026-08-12T00:00:00Z",
+            item_id="in_1",
+            content=(InputTextPart(text="hello"),),
+        ),
+    )
+    generation = next(iter(sample_module.generations.values()))
+
+    with pytest.raises(OSError, match="connection lost"):
+        await generation.task
+    await asyncio.sleep(0)
+
+    assert [type(message) for message in session.messages] == [
+        ResponseCreated,
+        ResponseOutputTextDelta,
+    ]
+    assert generation.turn.completions == [
+        {
+            "outcome": TargetTurnOutcome.TRANSPORT_ERROR,
+            "response_id": generation.response_id,
+            "output_item_count": 0,
+        }
+    ]
+    assert not sample_module.generations
+    assert not sample_module.input_generations
+
+
+@pytest.mark.asyncio
 async def test_bare_task_cancellation_only_records_local_outcome(
     sample_module,
     monkeypatch,

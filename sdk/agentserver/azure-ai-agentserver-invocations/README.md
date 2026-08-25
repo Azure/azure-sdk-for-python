@@ -338,6 +338,10 @@ app = VoiceAgentServerHost()
 def target_turn_error_outcome(
     termination: SessionTermination | None,
 ) -> TargetTurnOutcome:
+    if termination is SessionTermination.CANCELLED:
+        return TargetTurnOutcome.CANCELLED
+    if termination is SessionTermination.COMPLETED:
+        return TargetTurnOutcome.ABANDONED
     if termination in {
         SessionTermination.PROTOCOL_ERROR,
         SessionTermination.TRANSPORT_ERROR,
@@ -386,7 +390,11 @@ async def on_user_message(session: Session, event: UserMessage) -> None:
         )
     except asyncio.CancelledError:
         turn.complete(
-            outcome=TargetTurnOutcome.CANCELLED,
+            outcome=(
+                target_turn_error_outcome(session.termination)
+                if session.termination is not None
+                else TargetTurnOutcome.CANCELLED
+            ),
             response_id=response_id if response_started else None,
             output_item_count=output_item_count,
         )
