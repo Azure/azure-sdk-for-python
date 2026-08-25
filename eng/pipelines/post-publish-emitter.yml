@@ -107,6 +107,6 @@ extends:
                   CommitMsg: '[Automation] Update emitter package dependencies'
                   PRTitle: '[Automation] Update emitter package dependencies'
                   PRBody: |
-                    This automated PR updates `eng/emitter-package.json` dependencies through the authenticated Azure SDK CFS feed and regenerates `eng/emitter-package-lock.json`.
+                    This automated PR updates "eng/emitter-package.json" dependencies through the authenticated Azure SDK CFS feed and regenerates "eng/emitter-package-lock.json".
                   OpenAsDraft: true
                   AuthToken: ''
