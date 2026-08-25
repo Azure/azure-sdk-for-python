@@ -323,6 +323,7 @@ from azure.ai.agentserver.invocations.voice import (
     SessionReady,
     SessionRejected,
     SessionStart,
+    SessionTermination,
     TargetTurnOrigin,
     TargetTurnOutcome,
     UserMessage,
@@ -332,6 +333,17 @@ from azure.ai.agentserver.invocations.voice import (
 )
 
 app = VoiceAgentServerHost()
+
+
+def target_turn_error_outcome(
+    termination: SessionTermination | None,
+) -> TargetTurnOutcome:
+    if termination in {
+        SessionTermination.PROTOCOL_ERROR,
+        SessionTermination.TRANSPORT_ERROR,
+    }:
+        return TargetTurnOutcome.TRANSPORT_ERROR
+    return TargetTurnOutcome.ERROR
 
 
 @app.on_session_start
@@ -382,7 +394,7 @@ async def on_user_message(session: Session, event: UserMessage) -> None:
     except Exception:
         if not turn.is_completed:
             turn.complete(
-                outcome=TargetTurnOutcome.ERROR,
+                outcome=target_turn_error_outcome(session.termination),
                 response_id=response_id if response_started else None,
                 output_item_count=output_item_count,
             )

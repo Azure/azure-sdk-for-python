@@ -3,11 +3,13 @@
 # ---------------------------------------------------------
 """Tracing contract tests for the typed Voice relay."""
 
+import ast
 import asyncio
 import json
 import logging
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 from opentelemetry import baggage, metrics, trace
@@ -40,6 +42,61 @@ _PROVIDER = None
 _EXPORTER = None
 _METER_PROVIDER = None
 _METRIC_READER = None
+
+
+def _readme_target_turn_error_outcome():
+    readme = (Path(__file__).parents[2] / "README.md").read_text(encoding="utf-8")
+    voice_section = readme.split("## Typed Voice Live Bridge submodule (preview)", 1)[1]
+    example = voice_section.split("```python", 1)[1].split("```", 1)[0]
+    module = ast.parse(example)
+    functions = [
+        node for node in module.body if isinstance(node, ast.FunctionDef) and node.name == "target_turn_error_outcome"
+    ]
+    assert len(functions) == 1, "README Voice example must define target_turn_error_outcome"
+    namespace = {
+        "SessionTermination": SessionTermination,
+        "TargetTurnOutcome": TargetTurnOutcome,
+    }
+    exec(
+        compile(ast.Module(body=functions, type_ignores=[]), "README.md", "exec"), namespace
+    )  # pylint: disable=exec-used
+    return namespace["target_turn_error_outcome"]
+
+
+def _readme_on_user_message():
+    readme = (Path(__file__).parents[2] / "README.md").read_text(encoding="utf-8")
+    voice_section = readme.split("## Typed Voice Live Bridge submodule (preview)", 1)[1]
+    example = voice_section.split("```python", 1)[1].split("```", 1)[0]
+    module = ast.parse(example)
+    functions = {node.name: node for node in module.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))}
+    assert "target_turn_error_outcome" in functions
+    assert "on_user_message" in functions
+    functions["on_user_message"].decorator_list = []
+    namespace = {
+        "asyncio": asyncio,
+        "Session": object,
+        "SessionTermination": SessionTermination,
+        "TargetTurnOrigin": TargetTurnOrigin,
+        "TargetTurnOutcome": TargetTurnOutcome,
+        "UserMessage": object,
+        "ResponseCreated": lambda **_kwargs: object(),
+        "ResponseOutputTextDone": lambda **_kwargs: object(),
+        "ResponseDone": lambda **_kwargs: object(),
+        "new_response_id": lambda: "r_readme",
+        "new_item_id": lambda: "it_readme",
+    }
+    exec(  # pylint: disable=exec-used
+        compile(
+            ast.Module(
+                body=[functions["target_turn_error_outcome"], functions["on_user_message"]],
+                type_ignores=[],
+            ),
+            "README.md",
+            "exec",
+        ),
+        namespace,
+    )
+    return namespace["on_user_message"]
 
 
 @pytest.fixture
@@ -129,6 +186,85 @@ def _websocket_with_headers(headers: list[tuple[bytes, bytes]]) -> WebSocket:
         receive,
         send,
     )
+
+
+@pytest.mark.parametrize(
+    ("termination", "expected"),
+    [
+        pytest.param(None, TargetTurnOutcome.ERROR, id="no-connection-fact"),
+        pytest.param(SessionTermination.CALLBACK_ERROR, TargetTurnOutcome.ERROR, id="application-error"),
+        pytest.param(
+            SessionTermination.PROTOCOL_ERROR,
+            TargetTurnOutcome.TRANSPORT_ERROR,
+            id="protocol-error",
+        ),
+        pytest.param(
+            SessionTermination.TRANSPORT_ERROR,
+            TargetTurnOutcome.TRANSPORT_ERROR,
+            id="transport-error",
+        ),
+    ],
+)
+def test_readme_target_turn_error_outcome_preserves_committed_connection_fact(termination, expected):
+    assert _readme_target_turn_error_outcome()(termination) is expected
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("termination", "expected"),
+    [
+        pytest.param(None, TargetTurnOutcome.ERROR, id="application-error"),
+        pytest.param(
+            SessionTermination.TRANSPORT_ERROR,
+            TargetTurnOutcome.TRANSPORT_ERROR,
+            id="transport-error",
+        ),
+    ],
+)
+async def test_readme_user_message_commits_mapped_error_outcome_once(termination, expected):
+    completions = []
+
+    class Activation:
+        def __enter__(self):
+            return None
+
+        def __exit__(self, *_args):
+            return False
+
+    class Turn:
+        is_completed = False
+
+        @staticmethod
+        def activate():
+            return Activation()
+
+        def complete(self, **kwargs):
+            self.is_completed = True
+            completions.append(kwargs)
+
+    class FailingSession:
+        def __init__(self):
+            self.termination = termination
+            self.turn = Turn()
+
+        def start_target_turn(self, **_kwargs):
+            return self.turn
+
+        @staticmethod
+        async def send(_message):
+            raise RuntimeError("send failed")
+
+    event = type("Event", (), {"item_id": "in_readme"})()
+    with pytest.raises(RuntimeError, match="send failed"):
+        await _readme_on_user_message()(FailingSession(), event)
+
+    assert completions == [
+        {
+            "outcome": expected,
+            "response_id": None,
+            "output_item_count": 0,
+        }
+    ]
 
 
 @pytest.mark.parametrize(
@@ -926,6 +1062,36 @@ def test_voice_default_observability_requires_explicit_sensitive_opt_in(
 
     assert len(calls) == 1
     assert calls[0]["enable_sensitive_data"] is expected
+
+
+def test_voice_default_observability_rejects_invalid_log_level():
+    with pytest.raises(ValueError, match="Invalid log level"):
+        VoiceAgentServerHost(log_level="TRACE")
+
+
+def test_voice_disabled_observability_skips_log_level_validation():
+    app = VoiceAgentServerHost(log_level="TRACE", configure_observability=None)
+    assert isinstance(app, VoiceAgentServerHost)
+
+
+def test_voice_default_observability_configuration_failure_allows_retry(monkeypatch):
+    failure = ValueError("invalid observability configuration")
+    observed_log_levels = []
+
+    def configure_observability(**kwargs):
+        observed_log_levels.append(kwargs["log_level"])
+        if kwargs["log_level"] == "TRACE":
+            raise failure
+
+    monkeypatch.setattr(voice_host_module, "_CORE_CONFIGURE_OBSERVABILITY", configure_observability)
+
+    with pytest.raises(ValueError) as raised:
+        VoiceAgentServerHost(log_level="TRACE")
+
+    assert raised.value is failure
+    app = VoiceAgentServerHost(log_level="INFO")
+    assert isinstance(app, VoiceAgentServerHost)
+    assert observed_log_levels == ["TRACE", "INFO"]
 
 
 @pytest.mark.parametrize(

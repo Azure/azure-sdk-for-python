@@ -167,6 +167,8 @@ def _configure_voice_observability(
             log_level=log_level,
             enable_sensitive_data=configured.strip().lower() in {"1", "true"},
         )
+    except ValueError:
+        raise
     except BaseException:  # pylint: disable=broad-exception-caught
         pass
 
