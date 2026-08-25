@@ -804,6 +804,8 @@ class OpenEnvClient:
         if group_id is None:
             return
         self._instance_group_id = None
+        if self._version is None:
+            return
         try:
             self._instance_groups.delete_instance_group(
                 self._name,
