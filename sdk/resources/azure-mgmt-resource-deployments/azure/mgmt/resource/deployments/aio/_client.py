@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DeploymentsMgmtClient:
+class DeploymentsMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provides operations for working with deployments.
 
     :ivar deployments: DeploymentsOperations operations

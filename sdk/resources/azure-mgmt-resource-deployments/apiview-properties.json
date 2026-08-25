@@ -185,5 +185,5 @@
         "azure.mgmt.resource.deployments.operations.DeploymentOperationsOperations.list": "Microsoft.Resources.DeploymentOperationsOperationGroup.list",
         "azure.mgmt.resource.deployments.aio.operations.DeploymentOperationsOperations.list": "Microsoft.Resources.DeploymentOperationsOperationGroup.list"
     },
-    "CrossLanguageVersion": "f20a99e86859"
+    "CrossLanguageVersion": "47d7264d8b4e"
 }

@@ -3,9 +3,9 @@
   "apiVersions": {
     "Microsoft.Resources": "2025-04-01"
   },
-  "commit": "cf49df24bee763924bb4d9abceebe4fd1916a6ad",
+  "commit": "f8beca0ed7b433a34c234f776c06cc38bc799eac",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/resources/resource-manager/Microsoft.Resources/deployments",
-  "emitterVersion": "0.63.3",
-  "httpClientPythonVersion": "^0.34.2"
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }

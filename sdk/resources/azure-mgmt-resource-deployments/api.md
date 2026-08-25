@@ -2739,7 +2739,7 @@ namespace azure.mgmt.resource.deployments.types
 
     class azure.mgmt.resource.deployments.types.DebugSetting(TypedDict, total=False):
         key "detailLevel": str
-        detail_level: str
+        detailLevel: str
 
 
     class azure.mgmt.resource.deployments.types.Deployment(TypedDict, total=False):
@@ -2756,7 +2756,7 @@ namespace azure.mgmt.resource.deployments.types
         key "keyVaultReference": ForwardRef('KeyVaultParameterReference', module='types')
         key "type": Union[str, ExtensionConfigPropertyType]
         key "value": Any
-        key_vault_reference: KeyVaultParameterReference
+        keyVaultReference: KeyVaultParameterReference
         type: Union[str, ExtensionConfigPropertyType]
         value: Any
 
@@ -2777,7 +2777,6 @@ namespace azure.mgmt.resource.deployments.types
         key "type": Required[Union[str, DeploymentIdentityType]]
         type: Union[str, DeploymentIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.resource.deployments.types.DeploymentParameter(TypedDict, total=False):
@@ -2798,21 +2797,18 @@ namespace azure.mgmt.resource.deployments.types
         key "template": Any
         key "templateLink": ForwardRef('TemplateLink', module='types')
         key "validationLevel": Union[str, ValidationLevel]
-        debug_setting: DebugSetting
-        expression_evaluation_options: ExpressionEvaluationOptions
+        debugSetting: DebugSetting
+        expressionEvaluationOptions: ExpressionEvaluationOptions
         extensionConfigs: dict[str, dict[str, DeploymentExtensionConfigItem]]
-        extension_configs: dict[str, dict[str, DeploymentExtensionConfigItem]]
         externalInputDefinitions: dict[str, DeploymentExternalInputDefinition]
         externalInputs: dict[str, DeploymentExternalInput]
-        external_input_definitions: dict[str, DeploymentExternalInputDefinition]
-        external_inputs: dict[str, DeploymentExternalInput]
         mode: Union[str, DeploymentMode]
-        on_error_deployment: OnErrorDeployment
+        onErrorDeployment: OnErrorDeployment
         parameters: dict[str, DeploymentParameter]
-        parameters_link: ParametersLink
+        parametersLink: ParametersLink
         template: Any
-        template_link: TemplateLink
-        validation_level: Union[str, ValidationLevel]
+        templateLink: TemplateLink
+        validationLevel: Union[str, ValidationLevel]
 
 
     class azure.mgmt.resource.deployments.types.DeploymentWhatIf(TypedDict, total=False):
@@ -2832,27 +2828,24 @@ namespace azure.mgmt.resource.deployments.types
         key "templateLink": ForwardRef('TemplateLink', module='types')
         key "validationLevel": Union[str, ValidationLevel]
         key "whatIfSettings": ForwardRef('DeploymentWhatIfSettings', module='types')
-        debug_setting: DebugSetting
-        expression_evaluation_options: ExpressionEvaluationOptions
+        debugSetting: DebugSetting
+        expressionEvaluationOptions: ExpressionEvaluationOptions
         extensionConfigs: dict[str, dict[str, DeploymentExtensionConfigItem]]
-        extension_configs: dict[str, dict[str, DeploymentExtensionConfigItem]]
         externalInputDefinitions: dict[str, DeploymentExternalInputDefinition]
         externalInputs: dict[str, DeploymentExternalInput]
-        external_input_definitions: dict[str, DeploymentExternalInputDefinition]
-        external_inputs: dict[str, DeploymentExternalInput]
         mode: Union[str, DeploymentMode]
-        on_error_deployment: OnErrorDeployment
+        onErrorDeployment: OnErrorDeployment
         parameters: dict[str, DeploymentParameter]
-        parameters_link: ParametersLink
+        parametersLink: ParametersLink
         template: Any
-        template_link: TemplateLink
-        validation_level: Union[str, ValidationLevel]
-        what_if_settings: DeploymentWhatIfSettings
+        templateLink: TemplateLink
+        validationLevel: Union[str, ValidationLevel]
+        whatIfSettings: DeploymentWhatIfSettings
 
 
     class azure.mgmt.resource.deployments.types.DeploymentWhatIfSettings(TypedDict, total=False):
         key "resultFormat": Union[str, WhatIfResultFormat]
-        result_format: Union[str, WhatIfResultFormat]
+        resultFormat: Union[str, WhatIfResultFormat]
 
 
     class azure.mgmt.resource.deployments.types.ExpressionEvaluationOptions(TypedDict, total=False):
@@ -2864,9 +2857,9 @@ namespace azure.mgmt.resource.deployments.types
         key "keyVault": Required[KeyVaultReference]
         key "secretName": Required[str]
         key "secretVersion": str
-        key_vault: KeyVaultReference
-        secret_name: str
-        secret_version: str
+        keyVault: KeyVaultReference
+        secretName: str
+        secretVersion: str
 
 
     class azure.mgmt.resource.deployments.types.KeyVaultReference(TypedDict, total=False):
@@ -2877,14 +2870,14 @@ namespace azure.mgmt.resource.deployments.types
     class azure.mgmt.resource.deployments.types.OnErrorDeployment(TypedDict, total=False):
         key "deploymentName": str
         key "type": Union[str, OnErrorDeploymentType]
-        deployment_name: str
+        deploymentName: str
         type: Union[str, OnErrorDeploymentType]
 
 
     class azure.mgmt.resource.deployments.types.ParametersLink(TypedDict, total=False):
         key "contentVersion": str
         key "uri": Required[str]
-        content_version: str
+        contentVersion: str
         uri: str
 
 
@@ -2909,18 +2902,18 @@ namespace azure.mgmt.resource.deployments.types
         key "queryString": str
         key "relativePath": str
         key "uri": str
-        content_version: str
+        contentVersion: str
         id: str
-        query_string: str
-        relative_path: str
+        queryString: str
+        relativePath: str
         uri: str
 
 
     class azure.mgmt.resource.deployments.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
 ```

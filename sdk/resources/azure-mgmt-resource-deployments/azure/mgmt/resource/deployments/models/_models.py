@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Alias(_Model):
+class Alias(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The alias type.
 
     :ivar name: The alias name.
@@ -77,7 +77,7 @@ class Alias(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AliasPath(_Model):
+class AliasPath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the paths for alias.
 
     :ivar path: The path of an alias.
@@ -141,7 +141,7 @@ class AliasPathMetadata(_Model):
      \"Modifiable\"."""
 
 
-class AliasPattern(_Model):
+class AliasPattern(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the pattern for an alias path.
 
     :ivar phrase: The alias pattern phrase.
@@ -196,7 +196,7 @@ class ApiProfile(_Model):
     """The API version."""
 
 
-class BasicDependency(_Model):
+class BasicDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment dependency information.
 
     :ivar id: The ID of the dependency.
@@ -238,7 +238,7 @@ class BasicDependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response for a resource management request.
 
     :ivar error: Common error response for all Azure Resource Manager APIs to return error details
@@ -268,7 +268,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DebugSetting(_Model):
+class DebugSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The debug setting.
 
     :ivar detail_level: Specifies the type of information to log for debugging. The permitted
@@ -307,7 +307,7 @@ class DebugSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Dependency(_Model):
+class Dependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment dependency information.
 
     :ivar depends_on: The list of dependencies.
@@ -356,7 +356,7 @@ class Dependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Deployment(_Model):
+class Deployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment operation parameters.
 
     :ivar location: The location to store the deployment data.
@@ -432,7 +432,7 @@ class DeploymentDiagnosticsDefinition(_Model):
     """The error additional info."""
 
 
-class DeploymentExportResult(_Model):
+class DeploymentExportResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The deployment export result.
 
     :ivar template: The template content.
@@ -505,7 +505,7 @@ class ExtensionResource(Resource):
     """
 
 
-class DeploymentExtended(ExtensionResource):
+class DeploymentExtended(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -556,7 +556,7 @@ class DeploymentExtended(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentExtensionConfigItem(_Model):
+class DeploymentExtensionConfigItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DeploymentExtensionConfigItem.
 
     :ivar type: The value type of the extension config property. Known values are: "String", "Int",
@@ -630,7 +630,7 @@ class DeploymentExtensionDefinition(_Model):
     """The extension configuration."""
 
 
-class DeploymentExternalInput(_Model):
+class DeploymentExternalInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment external input for parameterization.
 
     :ivar value: External input value. Required.
@@ -658,7 +658,7 @@ class DeploymentExternalInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentExternalInputDefinition(_Model):
+class DeploymentExternalInputDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment external input definition for parameterization.
 
     :ivar kind: The kind of external input. Required.
@@ -691,7 +691,7 @@ class DeploymentExternalInputDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentIdentity(_Model):
+class DeploymentIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Managed Identity configuration for a deployment.
 
     :ivar type: The identity type. Required. Known values are: "None" and "UserAssigned".
@@ -730,7 +730,7 @@ class DeploymentIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentOperation(_Model):
+class DeploymentOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment operation information.
 
     :ivar id: Full deployment operation ID.
@@ -826,7 +826,7 @@ class DeploymentOperationProperties(_Model):
     """The HTTP response message."""
 
 
-class DeploymentParameter(_Model):
+class DeploymentParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment parameter for the template.
 
     :ivar value: Input value to the parameter .
@@ -866,7 +866,7 @@ class DeploymentParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentProperties(_Model):
+class DeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment properties.
 
     :ivar template: The template content. You use this element when you want to pass the template
@@ -1008,7 +1008,7 @@ class DeploymentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentPropertiesExtended(_Model):
+class DeploymentPropertiesExtended(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment properties with additional details.
 
     :ivar provisioning_state: Denotes the state of provisioning. Known values are: "NotSpecified",
@@ -1132,7 +1132,7 @@ class DeploymentPropertiesExtended(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentValidateResult(_Model):
+class DeploymentValidateResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information from validate template deployment response.
 
     :ivar error: The deployment validation error.
@@ -1178,7 +1178,7 @@ class DeploymentValidateResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentWhatIf(_Model):
+class DeploymentWhatIf(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment What-if operation parameters.
 
     :ivar location: The location to store the deployment data.
@@ -1213,7 +1213,7 @@ class DeploymentWhatIf(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentWhatIfProperties(DeploymentProperties):
+class DeploymentWhatIfProperties(DeploymentProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment What-if properties.
 
     :ivar template: The template content. You use this element when you want to pass the template
@@ -1303,7 +1303,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentWhatIfSettings(_Model):
+class DeploymentWhatIfSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment What-If operation settings.
 
     :ivar result_format: The format of the What-If results. Known values are: "ResourceIdOnly" and
@@ -1380,7 +1380,7 @@ class ErrorResponse(_Model):
     """The error additional info."""
 
 
-class ExpressionEvaluationOptions(_Model):
+class ExpressionEvaluationOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies whether template expressions are evaluated within the scope of the parent template or
     nested template.
 
@@ -1414,7 +1414,7 @@ class ExpressionEvaluationOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpMessage(_Model):
+class HttpMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HTTP message.
 
     :ivar content: HTTP message content.
@@ -1442,7 +1442,7 @@ class HttpMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultParameterReference(_Model):
+class KeyVaultParameterReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Key Vault parameter reference.
 
     :ivar key_vault: Azure Key Vault reference. Required.
@@ -1484,7 +1484,7 @@ class KeyVaultParameterReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultReference(_Model):
+class KeyVaultReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Key Vault reference.
 
     :ivar id: Azure Key Vault resource id. Required.
@@ -1512,7 +1512,7 @@ class KeyVaultReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OnErrorDeployment(_Model):
+class OnErrorDeployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment on error behavior.
 
     :ivar type: The deployment on error behavior type. Possible values are LastSuccessful and
@@ -1551,7 +1551,7 @@ class OnErrorDeployment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OnErrorDeploymentExtended(_Model):
+class OnErrorDeploymentExtended(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment on error behavior with additional details.
 
     :ivar provisioning_state: The state of the provisioning for the on error deployment.
@@ -1594,7 +1594,7 @@ class OnErrorDeploymentExtended(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParametersLink(_Model):
+class ParametersLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity representing the reference to the deployment parameters.
 
     :ivar uri: The URI of the parameters file. Required.
@@ -1629,7 +1629,7 @@ class ParametersLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Provider(_Model):
+class Provider(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource provider information.
 
     :ivar id: The provider ID.
@@ -1685,7 +1685,7 @@ class Provider(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProviderExtendedLocation(_Model):
+class ProviderExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The provider extended location.
 
     :ivar location: The azure location.
@@ -1725,7 +1725,7 @@ class ProviderExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProviderResourceType(_Model):
+class ProviderResourceType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource type managed by the resource provider.
 
     :ivar resource_type: The resource type.
@@ -1831,7 +1831,7 @@ class ResourceReference(_Model):
     """The API version the resource was deployed with."""
 
 
-class ScopedDeployment(_Model):
+class ScopedDeployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment operation parameters.
 
     :ivar location: The location to store the deployment data. Required.
@@ -1869,7 +1869,7 @@ class ScopedDeployment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScopedDeploymentWhatIf(_Model):
+class ScopedDeploymentWhatIf(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment What-if operation parameters.
 
     :ivar location: The location to store the deployment data. Required.
@@ -1904,7 +1904,7 @@ class ScopedDeploymentWhatIf(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StatusMessage(_Model):
+class StatusMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation status message object.
 
     :ivar status: Status of the deployment operation.
@@ -1937,7 +1937,7 @@ class StatusMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2004,7 +2004,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetResource(_Model):
+class TargetResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target resource.
 
     :ivar id: The Azure resource ID of the resource.
@@ -2072,7 +2072,7 @@ class TargetResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TemplateHashResult(_Model):
+class TemplateHashResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the request to calculate template hash. It contains a string of minified template and
     its hash.
 
@@ -2110,7 +2110,7 @@ class TemplateHashResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TemplateLink(_Model):
+class TemplateLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity representing the reference to the template.
 
     :ivar uri: The URI of the template to deploy. Use either the uri or id property, but not both.
@@ -2186,7 +2186,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class WhatIfChange(_Model):
+class WhatIfChange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a single resource change predicted by What-If operation.
 
     :ivar resource_id: Resource ID.
@@ -2279,7 +2279,7 @@ class WhatIfChange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WhatIfOperationProperties(_Model):
+class WhatIfOperationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment operation properties.
 
     :ivar changes: List of resource changes predicted by What-If operation.
@@ -2321,7 +2321,7 @@ class WhatIfOperationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WhatIfOperationResult(_Model):
+class WhatIfOperationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the What-If operation. Contains a list of predicted changes and a URL link to get to
     the next set of results.
 
@@ -2382,7 +2382,7 @@ class WhatIfOperationResult(_Model):
             super().__setattr__(key, value)
 
 
-class WhatIfPropertyChange(_Model):
+class WhatIfPropertyChange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The predicted change to the resource property.
 
     :ivar path: The path of the property. Required.
@@ -2437,7 +2437,7 @@ class WhatIfPropertyChange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ZoneMapping(_Model):
+class ZoneMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ZoneMapping.
 
     :ivar location: The location of the zone mapping.
