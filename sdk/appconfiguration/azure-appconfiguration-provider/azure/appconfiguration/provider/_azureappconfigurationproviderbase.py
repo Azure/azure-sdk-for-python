@@ -43,7 +43,7 @@ from ._constants import (
     FEATURE_FLAG_ID_FIELD,
     FEATURE_FLAG_KV_REFERENCE_SEGMENT,
     ENHANCED_FEATURE_FLAG_REFERENCE_SEGMENT,
-    REQUIRED_API_VERSION,
+    REQUIRED_MIN_API_VERSION,
 )
 from ._refresh_timer import _RefreshTimer
 from ._request_tracing_context import _RequestTracingContext
@@ -117,34 +117,38 @@ def _normalize_feature_flag_selectors(
     selectors_iter = iter(selectors)
     first_selector = next(selectors_iter)
     is_feature_flag_selector = isinstance(first_selector, FeatureFlagSelector)
-    for select in selectors_iter:
+
+    kv_selectors = []
+    enhanced_selectors = []
+    for select in [first_selector, *selectors_iter]:
         if isinstance(select, FeatureFlagSelector) != is_feature_flag_selector:
             raise TypeError(
                 "feature_flag_selectors must be either a list of SettingSelector or a list of FeatureFlagSelector, "
                 "not a mix of both."
             )
-
-    if is_feature_flag_selector:
-        feature_flag_selectors = cast(List[FeatureFlagSelector], selectors)
-        kv_selectors = [
-            SettingSelector(
-                key_filter=select.name_filter, label_filter=select.label_filter, tag_filters=select.tag_filters
+        if is_feature_flag_selector:
+            feature_flag_select = cast(FeatureFlagSelector, select)
+            kv_selectors.append(
+                SettingSelector(
+                    key_filter=feature_flag_select.name_filter,
+                    label_filter=feature_flag_select.label_filter,
+                    tag_filters=feature_flag_select.tag_filters,
+                )
             )
-            for select in feature_flag_selectors
-        ]
-        # FeatureFlagSelector has no snapshot_name, so every selector is used for enhanced feature flags.
-        enhanced_selectors = list(feature_flag_selectors)
-        return kv_selectors, enhanced_selectors
+            # FeatureFlagSelector has no snapshot_name, so every selector is used for enhanced feature flags.
+            enhanced_selectors.append(feature_flag_select)
+        else:
+            setting_select = cast(SettingSelector, select)
+            kv_selectors.append(setting_select)
+            if setting_select.snapshot_name is None:
+                enhanced_selectors.append(
+                    FeatureFlagSelector(
+                        name_filter=setting_select.key_filter,
+                        label_filter=setting_select.label_filter,
+                        tag_filters=setting_select.tag_filters,
+                    )
+                )
 
-    setting_selectors = cast(List[SettingSelector], selectors)
-    kv_selectors = list(setting_selectors)
-    enhanced_selectors = [
-        FeatureFlagSelector(
-            name_filter=select.key_filter, label_filter=select.label_filter, tag_filters=select.tag_filters
-        )
-        for select in setting_selectors
-        if select.snapshot_name is None
-    ]
     return kv_selectors, enhanced_selectors
 
 
@@ -171,10 +175,10 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
         api_version = kwargs.get("api_version")
-        if self._feature_flag_enabled and api_version is not None and api_version != REQUIRED_API_VERSION:
+        if api_version is not None and api_version < REQUIRED_MIN_API_VERSION:
             raise ValueError(
-                f"Unsupported api_version '{api_version}'. When feature_flag_enabled is True, api_version must be "
-                f"'{REQUIRED_API_VERSION}', as enhanced feature flags require this service API version."
+                f"Unsupported api_version '{api_version}'. This version of the provider requires api_version "
+                f"'{REQUIRED_MIN_API_VERSION}' or newer."
             )
         self._feature_flag_selectors, self._enhanced_feature_flag_selectors = _normalize_feature_flag_selectors(
             kwargs.pop("feature_flag_selectors", None)

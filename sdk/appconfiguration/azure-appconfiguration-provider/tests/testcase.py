@@ -19,7 +19,7 @@ from azure.appconfiguration import (
     SnapshotStatus,
 )
 from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions
-from azure.appconfiguration.provider._constants import NULL_CHAR
+from azure.appconfiguration.provider._constants import NULL_CHAR, FEATURE_FLAG_ID_FIELD
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
@@ -283,7 +283,7 @@ def create_snapshot(client, snapshot_name, key_filters, composition_type=None, r
 
 def get_feature_flag(client, feature_id):
     for feature_flag in client[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY]:
-        if feature_flag.get("id", feature_flag.get("name")) == feature_id:
+        if feature_flag[FEATURE_FLAG_ID_FIELD] == feature_id:
             return feature_flag
     return None
 

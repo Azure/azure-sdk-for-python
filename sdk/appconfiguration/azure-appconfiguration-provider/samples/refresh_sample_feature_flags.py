@@ -30,11 +30,11 @@ client.set_configuration_setting(configuration_setting=json_setting)
 client.set_configuration_setting(configuration_setting=feature_flag_setting)
 
 
-def get_beta_flag(config):
+def get_feature_flag(config, flag_id):
     for flag in config["feature_management"]["feature_flags"]:
-        if flag["id"] == "Beta":
+        if flag["id"] == flag_id:
             return flag
-    raise KeyError("Beta")
+    raise KeyError(flag_id)
 
 
 def my_callback_on_fail(_):
@@ -61,7 +61,7 @@ config = load(
 
 print(config["message"])
 print(config["my_json"]["key"])
-print(get_beta_flag(config))
+print(get_feature_flag(config, "Beta"))
 
 # Updating the configuration setting
 feature_flag_setting.enabled = False
@@ -77,7 +77,7 @@ config.refresh()
 # Printing the updated value
 print(config["message"])
 print(config["my_json"]["key"])
-print(get_beta_flag(config))
+print(get_feature_flag(config, "Beta"))
 
 # Waiting for the refresh interval to pass
 time.sleep(35)
@@ -88,4 +88,4 @@ config.refresh()
 # Printing the updated value
 print(config["message"])
 print(config["my_json"]["key"])
-print(get_beta_flag(config))
+print(get_feature_flag(config, "Beta"))

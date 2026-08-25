@@ -21,8 +21,12 @@ FEATURE_FLAG_ID_FIELD = "id"
 FEATURE_FLAG_KV_REFERENCE_SEGMENT = "kv"
 # Path segment used to build the feature flag reference URL for enhanced feature flags.
 ENHANCED_FEATURE_FLAG_REFERENCE_SEGMENT = "ff"
-# The minimum service API version required to use provider.
-REQUIRED_API_VERSION = "2026-05-01-preview"
+
+# ------------------------------------------------------------------------
+# API Version Constants
+# ------------------------------------------------------------------------
+# The minimum service API version required to use this version of the provider.
+REQUIRED_MIN_API_VERSION = "2026-05-01-preview"
 
 # ------------------------------------------------------------------------
 # Environment Variable Constants
