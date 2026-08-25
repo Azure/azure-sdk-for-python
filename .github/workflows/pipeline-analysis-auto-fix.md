@@ -289,8 +289,7 @@ safe-outputs:
               const compareUrl = `${process.env.GITHUB_SERVER_URL}/${context.repo.owner}/${context.repo.repo}/compare/${encodedSourceBranch}...${encodedBranch}`;
               const body = comment.body.replace(
                 requestedStatus,
-                "A proposed fix is available for review. " +
-                  `Review the changes against the original PR branch here: [view comparison](${compareUrl})`
+                `**Automated fix:** [Fix found, view and apply fix](${compareUrl})`
               );
               await github.rest.issues.updateComment({
                 ...context.repo,
