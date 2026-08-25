@@ -467,11 +467,17 @@ def _filter_custom_measurements(attributes: Attributes) -> Dict[str, float]:
     for key, val in value.items():
         if not key or not isinstance(key, str):
             continue
-        # Booleans are ints in Python, but are not valid measurements.
-        if isinstance(val, bool) or not isinstance(val, (int, float)) or not math.isfinite(val):
+        if isinstance(val, bool) or not isinstance(val, (int, float)):
+            continue
+        try:
+
+            measurement = float(val)
+        except OverflowError:
+            continue
+        if not math.isfinite(measurement):
             continue
         # Max key length is 150
-        processed_measurements[key[:150]] = float(val)
+        processed_measurements[key[:150]] = measurement
     return processed_measurements
 
 

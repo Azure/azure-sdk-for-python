@@ -148,6 +148,13 @@ class TestUtils(unittest.TestCase):
         )
         self.assertEqual(measurements, {"valid": 1.0})
 
+    def test_filter_custom_measurements_drops_int_outside_double_range(self):
+        # A JSON integer too large to convert to a double must be dropped, not raised
+        measurements = _utils._filter_custom_measurements(
+            {"microsoft.custom_measurements": '{{"huge": {}, "valid": 1.0}}'.format(14**600)}
+        )
+        self.assertEqual(measurements, {"valid": 1.0})
+
     def test_filter_custom_measurements_truncates_key(self):
         measurements = _utils._filter_custom_measurements({"microsoft.custom_measurements": {"k" * 151: 1.0}})
         self.assertEqual(measurements, {"k" * 150: 1.0})
