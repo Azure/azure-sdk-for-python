@@ -161,17 +161,62 @@ safe-outputs:
               echo "The fix patch exceeds the 100-file limit." >&2
               exit 1
             fi
+            declare -A protected_files=(
+              [AGENTS.md]=1
+              [bunfig.toml]=1
+              [bun.lockb]=1
+              [build.gradle]=1
+              [build.gradle.kts]=1
+              [CHANGELOG.md]=1
+              [CLAUDE.md]=1
+              [CODE_OF_CONDUCT.md]=1
+              [CODEOWNERS]=1
+              [CONTRIBUTING.md]=1
+              [deno.json]=1
+              [deno.jsonc]=1
+              [deno.lock]=1
+              [DESIGN.md]=1
+              [Directory.Packages.props]=1
+              [Gemfile]=1
+              [Gemfile.lock]=1
+              [GEMINI.md]=1
+              [global.json]=1
+              [go.mod]=1
+              [go.sum]=1
+              [gradle.properties]=1
+              [mix.exs]=1
+              [mix.lock]=1
+              [npm-shrinkwrap.json]=1
+              [NuGet.Config]=1
+              [package.json]=1
+              [package-lock.json]=1
+              [Pipfile]=1
+              [Pipfile.lock]=1
+              [pnpm-lock.yaml]=1
+              [pom.xml]=1
+              [pyproject.toml]=1
+              [README.md]=1
+              [requirements.txt]=1
+              [SECURITY.md]=1
+              [settings.gradle]=1
+              [settings.gradle.kts]=1
+              [setup.cfg]=1
+              [setup.py]=1
+              [stack.yaml]=1
+              [stack.yaml.lock]=1
+              [uv.lock]=1
+              [yarn.lock]=1
+            )
             for changed_file in "${changed_files[@]}"; do
-              if [[ "$changed_file" == .github/* ||
+              file_name=${changed_file##*/}
+              if [[ "$changed_file" == .*/* ||
+                    "$changed_file" == .github/* ||
                     "$changed_file" == eng/* ||
                     "$changed_file" == scripts/* ||
                     "$changed_file" == *.lock ||
                     "$changed_file" == *requirements*.txt ||
                     "$changed_file" == */pyproject.toml ||
-                    "$changed_file" == setup.py ||
-                    "$changed_file" == */setup.py ||
-                    "$changed_file" == setup.cfg ||
-                    "$changed_file" == */setup.cfg ]]; then
+                    -n "${protected_files[$file_name]+x}" ]]; then
                 echo "The fix changes a protected automation or dependency file: $changed_file" >&2
                 exit 1
               fi
