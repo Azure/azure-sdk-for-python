@@ -4,6 +4,7 @@
 
 ### Features Added
 - Populate `measurements` on telemetry from the `microsoft.custom_measurements` attribute
+  ([#48750](https://github.com/Azure/azure-sdk-for-python/pull/48750))
 
 ### Breaking Changes
 
