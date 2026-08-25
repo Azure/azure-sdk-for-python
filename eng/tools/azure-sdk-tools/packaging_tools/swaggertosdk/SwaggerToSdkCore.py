@@ -1,5 +1,4 @@
-"""SwaggerToSdk core tools.
-"""
+"""SwaggerToSdk core tools."""
 
 from enum import Enum, unique
 import json

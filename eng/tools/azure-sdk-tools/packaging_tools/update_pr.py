@@ -13,7 +13,6 @@ from github import Github
 
 from . import build_packaging_by_package_name
 
-
 _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 

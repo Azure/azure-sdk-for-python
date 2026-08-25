@@ -1,5 +1,4 @@
-"""Pure git tools for managing local folder Git.
-"""
+"""Pure git tools for managing local folder Git."""
 
 import logging
 
