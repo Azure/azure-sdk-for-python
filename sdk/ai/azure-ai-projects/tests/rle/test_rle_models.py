@@ -7,13 +7,15 @@ from types import SimpleNamespace
 
 import pytest
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.credentials import AccessToken
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
 
 from azure.ai.projects.aio.operations._patch_rle_async import (
     AsyncOpenEnvClient,
     AsyncOpenEnvInstance,
     RLEOperations as AsyncRLEOperations,
 )
+from azure.ai.projects.aio.operations import _patch_rle_async as async_rle_patch
 from azure.ai.projects.models import (
     CreateRLEInstanceGroupRequest,
     ListRLEInstanceGroupsResponse,
@@ -34,7 +36,6 @@ from azure.ai.projects.operations._patch_rle import (
     OpenEnvInstance,
     RLEError,
     RLEQuotaExceededError,
-    RLEAtCapacityError,
     RLEInstanceAcquireTimeoutError,
 )
 
@@ -54,6 +55,11 @@ class _FakeInstance:
         self.instance_id = instance_id
         self.status = status
         self.error = error
+
+
+class _StaticTokenCredential:
+    def get_token(self, *scopes, **kwargs):
+        return AccessToken("token", 2**31)
 
 
 def _pipeline_response(status_code=201, headers=None):
@@ -166,8 +172,16 @@ def test_rle_public_symbols_are_available():
     assert AsyncOpenEnvInstance
     assert RLEError
     assert RLEQuotaExceededError
-    assert RLEAtCapacityError
     assert RLEInstanceAcquireTimeoutError
+
+
+def test_rle_sync_and_async_modules_export_common_helpers():
+    assert {
+        "RLEError",
+        "RLEQuotaExceededError",
+        "RLEInstanceAcquireTimeoutError",
+        "coerce_action",
+    }.issubset(async_rle_patch.__all__)
 
 
 def test_rle_symbols_exported_from_public_namespace():
@@ -185,6 +199,12 @@ def test_rle_symbols_exported_from_public_namespace():
     assert getattr(operations, "RLEInstanceAcquireTimeoutError")
     assert getattr(aio_operations, "AsyncOpenEnvClient")
     assert getattr(aio_operations, "AsyncOpenEnvInstance")
+    assert getattr(aio_operations, "RLEError") is RLEError
+    assert getattr(aio_operations, "RLEQuotaExceededError") is RLEQuotaExceededError
+    assert (
+        getattr(aio_operations, "RLEInstanceAcquireTimeoutError")
+        is RLEInstanceAcquireTimeoutError
+    )
     assert getattr(models, "RLEStepResult")
     assert getattr(models, "RLEnvironmentState")
     assert getattr(models, "RLEInstance")
@@ -193,6 +213,44 @@ def test_rle_symbols_exported_from_public_namespace():
         getattr(models, "ListRLEnvironmentVersionsResponse")
         is ListRLEnvironmentVersionsResponse
     )
+
+
+def test_rle_requires_preview_opt_in():
+    from azure.ai.projects import AIProjectClient
+    from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
+
+    credential = _StaticTokenCredential()
+    with AIProjectClient(
+        endpoint="https://example.com/api/projects/test", credential=credential
+    ) as client:
+        assert not hasattr(client, "rle")
+    with AIProjectClient(
+        endpoint="https://example.com/api/projects/test",
+        credential=credential,
+        allow_preview=True,
+    ) as client:
+        assert isinstance(client.rle, RLEOperations)
+
+    async def run():
+        client = AsyncAIProjectClient(
+            endpoint="https://example.com/api/projects/test", credential=credential
+        )
+        try:
+            assert not hasattr(client, "rle")
+        finally:
+            await client.close()
+
+        client = AsyncAIProjectClient(
+            endpoint="https://example.com/api/projects/test",
+            credential=credential,
+            allow_preview=True,
+        )
+        try:
+            assert isinstance(client.rle, AsyncRLEOperations)
+        finally:
+            await client.close()
+
+    asyncio.run(run())
 
 
 def test_coerce_action_accepts_mapping_or_keyword_fields():
@@ -485,6 +543,7 @@ def _make_openenv_client(
         environments=environments or _FakeEnvironments(),
         instance_groups=groups,
         instances=instances,
+        runtime=instances,
         name="env-1",
         max_active_instances=max_active_instances,
         instance_acquire_timeout=instance_acquire_timeout,
@@ -676,6 +735,68 @@ def test_openenv_instance_context_releases_on_exit():
         assert instances.released == [first_id]
 
 
+def test_openenv_instance_release_is_idempotent_and_blocks_runtime_calls():
+    client, _groups, instances = _make_openenv_client(max_active_instances=1)
+    with client:
+        instance = client.get_instance()
+        instance.release()
+        instance.release()
+
+        assert instances.released == ["inst-0"]
+        with pytest.raises(RLEError, match="released"):
+            instance.reset()
+        with pytest.raises(RLEError, match="released"):
+            instance.health()
+
+
+def test_openenv_instance_release_ignores_transport_failures():
+    class _TransportFailingInstances(_FakeInstances):
+        def delete_instance(
+            self, environment_name, environment_version, instance_group_id, instance_id
+        ):
+            raise ServiceRequestError("connection lost")
+
+    client, _groups, _instances = _make_openenv_client(
+        instances=_TransportFailingInstances()
+    )
+    with client:
+        client.get_instance().release()
+
+
+def test_openenv_close_ignores_transport_failures():
+    class _TransportFailingGroups(_FakeInstanceGroups):
+        def delete_instance_group(
+            self, environment_name, environment_version, instance_group_id
+        ):
+            raise ServiceRequestError("connection lost")
+
+    client, _groups, _instances = _make_openenv_client(
+        groups=_TransportFailingGroups()
+    )
+    with client:
+        pass
+
+
+def test_openenv_pending_instance_honors_zero_retry_after(monkeypatch):
+    delays = []
+    monkeypatch.setattr(
+        "azure.ai.projects.operations._patch_rle.time.sleep", delays.append
+    )
+    instances = _FakeInstances202(running_after=1)
+    client = OpenEnvClient(
+        environments=_FakeEnvironments(),
+        instance_groups=_FakeInstanceGroups(),
+        instances=instances,
+        runtime=instances,
+        name="env-1",
+        poll_interval_s=5,
+    )
+    with client:
+        with client.get_instance():
+            pass
+    assert delays == [0.0]
+
+
 def test_openenv_instance_runtime_uses_resolved_environment_route():
     client, _groups, instances = _make_openenv_client(max_active_instances=1)
     with client:
@@ -714,6 +835,41 @@ def test_openenv_instance_runtime_uses_resolved_environment_route():
     )
     reset_call = instances.calls[2]
     assert reset_call[5].get("seed") == 42
+
+
+def test_openenv_runtime_calls_use_runtime_operations_group():
+    instances = _FakeInstances()
+    runtime = _FakeInstances()
+    client = OpenEnvClient(
+        environments=_FakeEnvironments(),
+        instance_groups=_FakeInstanceGroups(),
+        instances=instances,
+        runtime=runtime,
+        name="env-1",
+        poll_interval_s=0,
+    )
+    with client:
+        with client.get_instance() as instance:
+            instance.reset()
+            instance.step({"code": "x"})
+            instance.state()
+            instance.metadata()
+            instance.schema()
+
+    assert instances.calls == []
+    assert [call[0] for call in runtime.calls] == [
+        "health",
+        "health",
+        "reset",
+        "health",
+        "step",
+        "health",
+        "state",
+        "health",
+        "metadata",
+        "health",
+        "schema",
+    ]
 
 
 def test_openenv_instance_blocks_workload_when_health_check_fails():
@@ -757,6 +913,7 @@ def test_ensure_group_uses_versioned_environment_route():
         environments=environments,
         instance_groups=groups,
         instances=instances,
+        runtime=instances,
         name="wordle",
         version="1",
         poll_interval_s=0,
@@ -1250,6 +1407,7 @@ def _make_async_openenv_client(
         environments=environments or _AsyncFakeEnvironments(),
         instance_groups=groups,
         instances=instances,
+        runtime=instances,
         name="env-1",
         max_active_instances=max_active_instances,
         instance_acquire_timeout=instance_acquire_timeout,
@@ -1310,6 +1468,44 @@ def test_async_openenv_client_creates_group_and_runs():
     asyncio.run(run())
 
 
+def test_async_openenv_runtime_calls_use_runtime_operations_group():
+    async def run():
+        instances = _AsyncFakeInstances()
+        runtime = _AsyncFakeInstances()
+        client = AsyncOpenEnvClient(
+            environments=_AsyncFakeEnvironments(),
+            instance_groups=_AsyncFakeInstanceGroups(),
+            instances=instances,
+            runtime=runtime,
+            name="env-1",
+            poll_interval_s=0,
+        )
+        async with client:
+            async with client.get_instance() as instance:
+                await instance.reset()
+                await instance.step({"code": "x"})
+                await instance.state()
+                await instance.metadata()
+                await instance.schema()
+
+        assert instances.calls == []
+        assert [call[0] for call in runtime.calls] == [
+            "health",
+            "health",
+            "reset",
+            "health",
+            "step",
+            "health",
+            "state",
+            "health",
+            "metadata",
+            "health",
+            "schema",
+        ]
+
+    asyncio.run(run())
+
+
 def test_async_openenv_instance_blocks_workload_when_health_check_fails():
     async def run():
         instances = _AsyncFakeInstances(health_statuses=["ok", "starting"])
@@ -1321,6 +1517,88 @@ def test_async_openenv_instance_blocks_workload_when_health_check_fails():
         assert [call[0] for call in instances.calls] == ["health", "health"]
 
     asyncio.run(run())
+
+
+def test_async_openenv_instance_release_is_idempotent_and_blocks_runtime_calls():
+    async def run():
+        client, _groups, instances = _make_async_openenv_client(max_active_instances=1)
+        async with client:
+            instance = client.get_instance()
+            await instance.__aenter__()
+            await instance.release()
+            await instance.release()
+
+            assert instances.released == ["inst-0"]
+            with pytest.raises(RLEError, match="released"):
+                await instance.reset()
+            with pytest.raises(RLEError, match="released"):
+                await instance.health()
+
+    asyncio.run(run())
+
+
+def test_async_openenv_instance_release_ignores_transport_failures():
+    class _TransportFailingInstances(_AsyncFakeInstances):
+        async def delete_instance(
+            self, environment_name, environment_version, instance_group_id, instance_id
+        ):
+            raise ServiceRequestError("connection lost")
+
+    async def run():
+        client, _groups, _instances = _make_async_openenv_client(
+            instances=_TransportFailingInstances()
+        )
+        async with client:
+            instance = client.get_instance()
+            await instance.__aenter__()
+            await instance.release()
+
+    asyncio.run(run())
+
+
+def test_async_openenv_close_ignores_transport_failures():
+    class _TransportFailingGroups(_AsyncFakeInstanceGroups):
+        async def delete_instance_group(
+            self, environment_name, environment_version, instance_group_id
+        ):
+            raise ServiceRequestError("connection lost")
+
+    async def run():
+        client, _groups, _instances = _make_async_openenv_client(
+            groups=_TransportFailingGroups()
+        )
+        async with client:
+            pass
+
+    asyncio.run(run())
+
+
+def test_async_openenv_pending_instance_honors_zero_retry_after(monkeypatch):
+    delays = []
+
+    async def record_sleep(delay):
+        delays.append(delay)
+
+    monkeypatch.setattr(
+        "azure.ai.projects.aio.operations._patch_rle_async.asyncio.sleep", record_sleep
+    )
+
+    async def run():
+        instances = _AsyncFakeInstances202(running_after=1)
+        client = AsyncOpenEnvClient(
+            environments=_AsyncFakeEnvironments(),
+            instance_groups=_AsyncFakeInstanceGroups(),
+            instances=instances,
+            runtime=instances,
+            name="env-1",
+            poll_interval_s=5,
+        )
+        async with client:
+            async with client.get_instance():
+                pass
+
+    asyncio.run(run())
+    assert delays == [0.0]
 
 
 def test_async_openenv_get_instance_leases_on_demand():
@@ -1359,6 +1637,31 @@ def test_async_openenv_get_instance_retries_capacity_until_timeout():
         assert exc_info.value.last_status == "InstanceGroupAtCapacity"
         assert exc_info.value.details is not None
         assert exc_info.value.details.code == "InstanceGroupAtCapacity"
+
+    asyncio.run(run())
+
+
+def test_async_openenv_capacity_timeout_handles_nested_error_code():
+    class _NestedCapacityInstances(_AsyncFakeInstances):
+        async def create_instance(
+            self, environment_name, environment_version, instance_group_id, *, cls=None
+        ):
+            error = _capacity_error(retry_after=1)
+            error.model = SimpleNamespace(
+                error=SimpleNamespace(code="InstanceGroupAtCapacity")
+            )
+            raise error
+
+    async def run():
+        client, _groups, _instances = _make_async_openenv_client(
+            instances=_NestedCapacityInstances(),
+            instance_acquire_timeout=0.01,
+        )
+        async with client:
+            with pytest.raises(RLEInstanceAcquireTimeoutError) as exc_info:
+                async with client.get_instance():
+                    pass
+        assert exc_info.value.last_status == "InstanceGroupAtCapacity"
 
     asyncio.run(run())
 

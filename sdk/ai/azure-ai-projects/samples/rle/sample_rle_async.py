@@ -20,7 +20,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.5.0" azure-identity python-dotenv
 
     Set these environment variables or pass the matching command-line arguments:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview
@@ -58,7 +58,9 @@ def _summarize(observation: Mapping[str, Any]) -> str:
 
 async def run(args):
     async with DefaultAzureCredential() as credential:
-        async with AIProjectClient(endpoint=args.endpoint, credential=credential) as project_client:
+        async with AIProjectClient(
+            endpoint=args.endpoint, credential=credential, allow_preview=True
+        ) as project_client:
             # get_openenv_client is a plain (non-awaited) factory: it does no I/O. Entering the async
             # context creates the instance group that reserves quota (a missing environment fails on entry).
             async with project_client.rle.get_openenv_client(
@@ -86,8 +88,9 @@ async def run(args):
                         print(f"  feedback:  {_summarize(step_observation)}")
                         print(f"  greens:    {rewards.get('wordle.greens')}  yellows: {rewards.get('wordle.yellows')}")
                         print(f"  correct:   {rewards.get('wordle.correct')}  reward: {step_result.reward}")
-                        if rewards.get("wordle.correct") or step_result.done:
-                            print("  solved!")
+                        if step_result.terminated or step_result.truncated or step_result.done:
+                            if rewards.get("wordle.correct"):
+                                print("  solved!")
                             break
 
                     state = await instance.state()

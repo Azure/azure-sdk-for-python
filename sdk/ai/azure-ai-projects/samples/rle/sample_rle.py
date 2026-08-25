@@ -19,7 +19,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.5.0" azure-identity python-dotenv
 
     Set these environment variables or pass the matching command-line arguments:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview
@@ -89,7 +89,9 @@ def main() -> int:
         parser.error("provide --name or set RLE_ENV_NAME")
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=args.endpoint, credential=credential) as project_client:
+        with AIProjectClient(
+            endpoint=args.endpoint, credential=credential, allow_preview=True
+        ) as project_client:
             with project_client.rle.get_openenv_client(
                 name=args.name,
                 version=args.version,
@@ -113,8 +115,9 @@ def main() -> int:
                         print(f"  feedback:  {_summarize(step_observation)}")
                         print(f"  greens:    {rewards.get('wordle.greens')}  yellows: {rewards.get('wordle.yellows')}")
                         print(f"  correct:   {rewards.get('wordle.correct')}  reward: {step_result.reward}")
-                        if rewards.get("wordle.correct") or step_result.done:
-                            print("  solved!")
+                        if step_result.terminated or step_result.truncated or step_result.done:
+                            if rewards.get("wordle.correct"):
+                                print("  solved!")
                             break
 
                     state = instance.state()

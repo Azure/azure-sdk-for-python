@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.5.0" azure-identity python-dotenv
 
     Set FOUNDRY_PROJECT_ENDPOINT, or pass --endpoint. Authenticate locally
     with az login or another credential supported by DefaultAzureCredential.
@@ -50,7 +50,9 @@ def main() -> int:
         parser.error("provide --endpoint or set FOUNDRY_PROJECT_ENDPOINT")
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=args.endpoint, credential=credential) as project_client:
+        with AIProjectClient(
+            endpoint=args.endpoint, credential=credential, allow_preview=True
+        ) as project_client:
             environment = project_client.rle.create_environment(
                 name=args.name,
                 acr_image_path=args.acr_image_path,

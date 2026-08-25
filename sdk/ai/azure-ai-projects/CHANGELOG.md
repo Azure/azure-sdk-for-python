@@ -6,6 +6,10 @@
 
 * Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
 
+### Features Added
+
+* Added private-preview Reinforcement Learning Environments (RLE) support through `AIProjectClient.rle` when constructed with `allow_preview=True`, including OpenEnv instance lifecycle management and environment management operations.
+
 ## 2.5.0 (2026-08-20)
 
 ### Dependency update

@@ -19351,8 +19351,9 @@ class RLEInstancesOperations:  # pylint: disable=docstring-missing-param
     def create_instance(
         self, environment_name: str, environment_version: str, instance_group_id: str, **kwargs: Any
     ) -> _models.RLEInstance:
-        """Lease a new RLE instance under the instance group. Returns ``201`` with the new instance, or
-        ``429`` (with ``Retry-After``) when the group is at its active-instance limit.
+        """Lease a new RLE instance under the instance group. Returns ``201`` when the instance is ready,
+        ``202`` when it is still provisioning, or ``429`` (with ``Retry-After``) when the group is at its
+        active-instance limit.
 
         :param environment_name: Name of the registered RLE environment. Required.
         :type environment_name: str
@@ -19398,7 +19399,7 @@ class RLEInstancesOperations:  # pylint: disable=docstring-missing-param
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [201, 202]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket

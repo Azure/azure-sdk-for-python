@@ -16,7 +16,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import time
 from typing import Any, Callable, Dict, Optional, Union
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ...models import (
@@ -39,6 +39,7 @@ from ...operations._patch_rle import (
     _DEFAULT_POLL_INTERVAL_S,
     _TRANSIENT_HEALTH_STATUS_CODES,
     _capacity_retry,
+    _error_code,
     _is_healthy_response,
     _is_quota_exceeded_error,
     _parse_retry_after,
@@ -68,6 +69,7 @@ async def _sleep_before_deadline(delay: float, deadline: float) -> bool:
 
 async def _acquire_instance(
     instances: RLEInstancesOperations,
+    runtime: RLEInstanceRuntimeOperations,
     environment_name: str,
     environment_version: str,
     instance_group_id: str,
@@ -80,8 +82,9 @@ async def _acquire_instance(
     The service may answer the create request with ``202`` (accepted, still provisioning). The create
     operation is not idempotent, so the pending instance returned by the ``202`` is polled by its id
     (honoring any ``Retry-After`` hint on the first wait) until it reports ``Running`` -- the create is
-    never re-issued. A ``429`` ``InstanceGroupAtCapacity`` response is retried until the shared
-    acquisition deadline expires.
+    never re-issued. A ``429`` ``InstanceGroupAtCapacity`` response is retried using its
+    ``Retry-After`` hint until the shared acquisition deadline expires. Once control-plane status is
+    ``Running``, the runtime health endpoint is polled until it reports healthy.
 
     :param instances: Generated async instance operations bound to the project client.
     :type instances: ~azure.ai.projects.aio.operations.RLEInstancesOperations
@@ -91,7 +94,7 @@ async def _acquire_instance(
     :paramtype instance_acquire_timeout: float
     :keyword poll_interval_s: Interval between instance readiness polls, in seconds.
     :paramtype poll_interval_s: float
-    :return: The leased instance, once it reports ``Running``.
+    :return: The leased instance, once it reports ``Running`` and healthy.
     :rtype: ~azure.ai.projects.models.RLEInstance
     """
     deadline = time.monotonic() + instance_acquire_timeout
@@ -121,7 +124,7 @@ async def _acquire_instance(
                     f"instance group {instance_group_id} remained at capacity for "
                     f"{instance_acquire_timeout:.0f}s",
                     timeout=instance_acquire_timeout,
-                    last_status=details.code,
+                    last_status=_error_code(details),
                     details=details,
                 ) from exc
     if instance is None or not instance.instance_id:
@@ -129,7 +132,8 @@ async def _acquire_instance(
     instance_id = instance.instance_id
 
     # The initial (possibly 202) response may carry a Retry-After hint for the first poll.
-    next_wait = _parse_retry_after(captured.get("response")) or poll_interval_s
+    retry_after = _parse_retry_after(captured.get("response"))
+    next_wait = retry_after if retry_after is not None else poll_interval_s
     try:
         while not _status_matches(instance.status, RLEInstanceStatus.RUNNING):
             if any(
@@ -173,7 +177,7 @@ async def _acquire_instance(
 
         while True:
             try:
-                health = await instances.health(
+                health = await runtime.health(
                     environment_name,
                     environment_version,
                     instance_group_id,
@@ -224,8 +228,10 @@ class AsyncOpenEnvInstance:
     :type instance_group_id: str
     :keyword environment_version: Resolved environment version that owns the instance group.
     :paramtype environment_version: str
-    :keyword instances: Generated async instance operations bound to the project client. Required.
+    :keyword instances: Generated async instance lifecycle operations bound to the project client. Required.
     :paramtype instances: ~azure.ai.projects.aio.operations.RLEInstancesOperations
+    :keyword runtime: Generated async instance runtime operations bound to the project client. Required.
+    :paramtype runtime: ~azure.ai.projects.aio.operations.RLEInstanceRuntimeOperations
     """
 
     def __init__(
@@ -235,6 +241,7 @@ class AsyncOpenEnvInstance:
         *,
         environment_version: str,
         instances: RLEInstancesOperations,
+        runtime: RLEInstanceRuntimeOperations,
         instance_acquire_timeout: float,
         poll_interval_s: float,
         is_client_closed: Callable[[], bool],
@@ -249,16 +256,20 @@ class AsyncOpenEnvInstance:
         self._environment_version = environment_version
         self._instance_group_id = instance_group_id
         self._instances = instances
+        self._runtime = runtime
         self._instance_acquire_timeout = instance_acquire_timeout
         self._poll_interval_s = poll_interval_s
         self._is_client_closed = is_client_closed
         self._instance: Optional[RLEInstance] = None
         self._instance_id: Optional[str] = None
+        self._released = False
 
     @property
     def id(self) -> str:
         """Identifier of the leased instance that backs this object."""
         if self._instance_id is None:
+            if self._released:
+                raise RLEError("instance has been released")
             raise RLEError(
                 "enter the AsyncOpenEnvInstance context before accessing the instance"
             )
@@ -283,18 +294,23 @@ class AsyncOpenEnvInstance:
     def instance(self) -> RLEInstance:
         """The underlying leased instance model."""
         if self._instance is None:
+            if self._released:
+                raise RLEError("instance has been released")
             raise RLEError(
                 "enter the AsyncOpenEnvInstance context before accessing the instance"
             )
         return self._instance
 
     async def __aenter__(self) -> "AsyncOpenEnvInstance":
+        if self._released:
+            raise RLEError("instance has been released")
         if self._instance is not None:
             raise RLEError("AsyncOpenEnvInstance context is already entered")
         if self._is_client_closed():
             raise RLEError("OpenEnv client is closed")
         instance = await _acquire_instance(
             self._instances,
+            self._runtime,
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
@@ -337,7 +353,7 @@ class AsyncOpenEnvInstance:
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
         await self._ensure_healthy()
-        return await self._instances.reset(
+        return await self._runtime.reset(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
@@ -356,7 +372,7 @@ class AsyncOpenEnvInstance:
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
         await self._ensure_healthy()
-        return await self._instances.step(
+        return await self._runtime.step(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
@@ -372,7 +388,7 @@ class AsyncOpenEnvInstance:
         :rtype: ~azure.ai.projects.models.RLEnvironmentState
         """
         await self._ensure_healthy()
-        return await self._instances.state(
+        return await self._runtime.state(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
@@ -386,7 +402,7 @@ class AsyncOpenEnvInstance:
         :return: Instance health information.
         :rtype: dict[str, any]
         """
-        return await self._instances.health(
+        return await self._runtime.health(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
@@ -401,7 +417,7 @@ class AsyncOpenEnvInstance:
         :rtype: dict[str, any]
         """
         await self._ensure_healthy()
-        return await self._instances.get_metadata(
+        return await self._runtime.get_metadata(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
@@ -416,7 +432,7 @@ class AsyncOpenEnvInstance:
         :rtype: dict[str, any]
         """
         await self._ensure_healthy()
-        return await self._instances.schema(
+        return await self._runtime.schema(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
@@ -435,6 +451,7 @@ class AsyncOpenEnvInstance:
             return
         self._instance = None
         self._instance_id = None
+        self._released = True
         try:
             await self._instances.delete_instance(
                 self._environment_name,
@@ -442,7 +459,7 @@ class AsyncOpenEnvInstance:
                 self._instance_group_id,
                 instance_id,
             )
-        except HttpResponseError:
+        except AzureError:
             pass
 
 
@@ -467,8 +484,10 @@ class AsyncOpenEnvClient:
     :paramtype environments: ~azure.ai.projects.aio.operations.RLEnvironmentsOperations
     :keyword instance_groups: Generated async instance group operations bound to the project client. Required.
     :paramtype instance_groups: ~azure.ai.projects.aio.operations.RLEInstanceGroupsOperations
-    :keyword instances: Generated async instance operations bound to the project client. Required.
+    :keyword instances: Generated async instance lifecycle operations bound to the project client. Required.
     :paramtype instances: ~azure.ai.projects.aio.operations.RLEInstancesOperations
+    :keyword runtime: Generated async instance runtime operations bound to the project client. Required.
+    :paramtype runtime: ~azure.ai.projects.aio.operations.RLEInstanceRuntimeOperations
     :keyword name: The hosted RLE environment name to resolve. Required.
     :paramtype name: str
     :keyword version: Optional environment image version to resolve and lease against.
@@ -488,6 +507,7 @@ class AsyncOpenEnvClient:
         environments: _RLEnvironmentsOperationsGenerated,
         instance_groups: RLEInstanceGroupsOperations,
         instances: RLEInstancesOperations,
+        runtime: RLEInstanceRuntimeOperations,
         name: str,
         version: Optional[str] = None,
         max_active_instances: int = 1,
@@ -501,6 +521,7 @@ class AsyncOpenEnvClient:
         self._environments = environments
         self._instance_groups = instance_groups
         self._instances = instances
+        self._runtime = runtime
         self._name = name
         self._version = version
         self._max_active_instances = max_active_instances
@@ -617,6 +638,7 @@ class AsyncOpenEnvClient:
             group_id,
             environment_version=environment_version,
             instances=self._instances,
+            runtime=self._runtime,
             instance_acquire_timeout=self._acquire_settings[0],
             poll_interval_s=self._acquire_settings[1],
             is_client_closed=lambda: self._closed,
@@ -645,7 +667,7 @@ class AsyncOpenEnvClient:
                 self._version,
                 group_id,
             )
-        except HttpResponseError:
+        except AzureError:
             pass
 
 
@@ -664,9 +686,7 @@ class RLEOperations:
         self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
         self._instance_groups = RLEInstanceGroupsOperations(*args, **kwargs)
         self._instances = RLEInstancesOperations(*args, **kwargs)
-        runtime = RLEInstanceRuntimeOperations(*args, **kwargs)
-        for operation_name in ("reset", "step", "state", "health", "get_metadata", "schema"):
-            setattr(self._instances, operation_name, getattr(runtime, operation_name))
+        self._runtime = RLEInstanceRuntimeOperations(*args, **kwargs)
 
     @distributed_trace_async
     async def create_environment(
@@ -846,6 +866,7 @@ class RLEOperations:
             environments=self._environments,
             instance_groups=self._instance_groups,
             instances=self._instances,
+            runtime=self._runtime,
             name=name,
             version=version,
             max_active_instances=max_active_instances,
@@ -857,5 +878,9 @@ class RLEOperations:
 __all__ = [
     "AsyncOpenEnvClient",
     "AsyncOpenEnvInstance",
+    "RLEError",
+    "RLEQuotaExceededError",
+    "RLEInstanceAcquireTimeoutError",
     "RLEOperations",
+    "coerce_action",
 ]

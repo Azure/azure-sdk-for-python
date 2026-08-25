@@ -23,9 +23,9 @@ from __future__ import annotations
 import math
 import threading
 import time
-from typing import Any, Dict, Mapping, Optional, Union
+from typing import Any, Dict, Mapping, Optional, Tuple, Union
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
 from ..models import (
@@ -77,25 +77,6 @@ class RLEQuotaExceededError(RLEError):
     This is a terminal condition (the service returns ``403``): the request will not succeed until
     capacity is freed or quota is increased, so the client does not retry.
     """
-
-
-class RLEAtCapacityError(RLEError):
-    """Raised when an instance group is temporarily at capacity and no instance can be leased.
-
-    The service returns ``429`` with a ``Retry-After`` hint. :attr:`retry_after` carries that hint (in
-    seconds) when the service provided one, so callers may back off and retry.
-    """
-
-    def __init__(
-        self,
-        message: str,
-        *,
-        retry_after: Optional[float] = None,
-        details: Optional[Any] = None,
-    ) -> None:
-        super().__init__(message)
-        self.retry_after = retry_after
-        self.details = details
 
 
 class RLEInstanceAcquireTimeoutError(RLEError):
@@ -238,6 +219,7 @@ def coerce_action(action: Any, action_kwargs: Mapping[str, Any]) -> dict:
 
 def _acquire_instance(
     instances: RLEInstancesOperations,
+    runtime: RLEInstanceRuntimeOperations,
     environment_name: str,
     environment_version: str,
     instance_group_id: str,
@@ -302,7 +284,8 @@ def _acquire_instance(
     instance_id = instance.instance_id
 
     # The initial (possibly 202) response may carry a Retry-After hint for the first poll.
-    next_wait = _parse_retry_after(captured.get("response")) or poll_interval_s
+    retry_after = _parse_retry_after(captured.get("response"))
+    next_wait = retry_after if retry_after is not None else poll_interval_s
     try:
         while not _status_matches(instance.status, RLEInstanceStatus.RUNNING):
             if any(
@@ -346,7 +329,7 @@ def _acquire_instance(
 
         while True:
             try:
-                health = instances.health(
+                health = runtime.health(
                     environment_name,
                     environment_version,
                     instance_group_id,
@@ -400,8 +383,10 @@ class OpenEnvInstance:
     :paramtype environment_version: str
     :keyword instance: The leased, running instance that backs this object. Required.
     :paramtype instance: ~azure.ai.projects.models.RLEInstance
-    :keyword instances: Generated instance operations bound to the project client. Required.
+    :keyword instances: Generated instance lifecycle operations bound to the project client. Required.
     :paramtype instances: ~azure.ai.projects.operations.RLEInstancesOperations
+    :keyword runtime: Generated instance runtime operations bound to the project client. Required.
+    :paramtype runtime: ~azure.ai.projects.operations.RLEInstanceRuntimeOperations
     """
 
     def __init__(
@@ -412,6 +397,7 @@ class OpenEnvInstance:
         environment_version: str,
         instance: RLEInstance,
         instances: RLEInstancesOperations,
+        runtime: RLEInstanceRuntimeOperations,
     ) -> None:
         if not environment_name:
             raise ValueError("environment_name is required")
@@ -424,13 +410,16 @@ class OpenEnvInstance:
         self._environment_name = environment_name
         self._environment_version = environment_version
         self._instance_group_id = instance_group_id
-        self._instance = instance
-        self._instance_id: str = instance.instance_id
+        self._instance: Optional[RLEInstance] = instance
+        self._instance_id: Optional[str] = instance.instance_id
         self._instances = instances
+        self._runtime = runtime
 
     @property
     def id(self) -> str:
         """Identifier of the leased instance that backs this object."""
+        if self._instance_id is None:
+            raise RLEError("instance has been released")
         return self._instance_id
 
     @property
@@ -451,6 +440,8 @@ class OpenEnvInstance:
     @property
     def instance(self) -> RLEInstance:
         """The underlying leased instance model."""
+        if self._instance is None:
+            raise RLEError("instance has been released")
         return self._instance
 
     def __enter__(self) -> "OpenEnvInstance":
@@ -485,11 +476,11 @@ class OpenEnvInstance:
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
         self._ensure_healthy()
-        return self._instances.reset(
+        return self._runtime.reset(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
-            self._instance_id,
+            self.id,
             RLEResetRequest(seed=seed, episode_id=episode_id),
             **kwargs,
         )
@@ -504,11 +495,11 @@ class OpenEnvInstance:
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
         self._ensure_healthy()
-        return self._instances.step(
+        return self._runtime.step(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
-            self._instance_id,
+            self.id,
             RLEStepRequest(action=coerce_action(action, action_kwargs)),
         )
 
@@ -520,11 +511,11 @@ class OpenEnvInstance:
         :rtype: ~azure.ai.projects.models.RLEnvironmentState
         """
         self._ensure_healthy()
-        return self._instances.state(
+        return self._runtime.state(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
-            self._instance_id,
+            self.id,
         )
 
     @distributed_trace
@@ -534,11 +525,11 @@ class OpenEnvInstance:
         :return: Instance health information.
         :rtype: dict[str, any]
         """
-        return self._instances.health(
+        return self._runtime.health(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
-            self._instance_id,
+            self.id,
         )
 
     @distributed_trace
@@ -549,11 +540,11 @@ class OpenEnvInstance:
         :rtype: dict[str, any]
         """
         self._ensure_healthy()
-        return self._instances.get_metadata(
+        return self._runtime.get_metadata(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
-            self._instance_id,
+            self.id,
         )
 
     @distributed_trace
@@ -564,28 +555,33 @@ class OpenEnvInstance:
         :rtype: dict[str, any]
         """
         self._ensure_healthy()
-        return self._instances.schema(
+        return self._runtime.schema(
             self._environment_name,
             self._environment_version,
             self._instance_group_id,
-            self._instance_id,
+            self.id,
         )
 
     def _ensure_healthy(self) -> None:
         health = self.health()
         if not _is_healthy_response(health):
-            raise RLEError(f"instance {self._instance_id} is not healthy")
+            raise RLEError(f"instance {self.id} is not healthy")
 
     def _release(self) -> None:
         """Release the underlying instance, best effort."""
+        instance_id = self._instance_id
+        if instance_id is None:
+            return
+        self._instance = None
+        self._instance_id = None
         try:
             self._instances.delete_instance(
                 self._environment_name,
                 self._environment_version,
                 self._instance_group_id,
-                self._instance_id,
+                instance_id,
             )
-        except HttpResponseError:
+        except AzureError:
             pass
 
 
@@ -610,8 +606,10 @@ class OpenEnvClient:
     :paramtype environments: ~azure.ai.projects.operations.RLEnvironmentsOperations
     :keyword instance_groups: Generated instance group operations bound to the project client. Required.
     :paramtype instance_groups: ~azure.ai.projects.operations.RLEInstanceGroupsOperations
-    :keyword instances: Generated instance operations bound to the project client. Required.
+    :keyword instances: Generated instance lifecycle operations bound to the project client. Required.
     :paramtype instances: ~azure.ai.projects.operations.RLEInstancesOperations
+    :keyword runtime: Generated instance runtime operations bound to the project client. Required.
+    :paramtype runtime: ~azure.ai.projects.operations.RLEInstanceRuntimeOperations
     :keyword name: The hosted RLE environment name to resolve. Required.
     :paramtype name: str
     :keyword version: Optional environment image version to resolve and lease against.
@@ -631,6 +629,7 @@ class OpenEnvClient:
         environments: _RLEnvironmentsOperationsGenerated,
         instance_groups: RLEInstanceGroupsOperations,
         instances: RLEInstancesOperations,
+        runtime: RLEInstanceRuntimeOperations,
         name: str,
         version: Optional[str] = None,
         max_active_instances: int = 1,
@@ -644,6 +643,7 @@ class OpenEnvClient:
         self._environments = environments
         self._instance_groups = instance_groups
         self._instances = instances
+        self._runtime = runtime
         self._name = name
         self._version = version
         self._max_active_instances = max_active_instances
@@ -758,6 +758,7 @@ class OpenEnvClient:
             )
         instance = _acquire_instance(
             self._instances,
+            self._runtime,
             self._name,
             environment_version,
             group_id,
@@ -770,6 +771,7 @@ class OpenEnvClient:
             environment_version=environment_version,
             instance=instance,
             instances=self._instances,
+            runtime=self._runtime,
         )
         with self._lock:
             if self._closed:
@@ -800,7 +802,7 @@ class OpenEnvClient:
                 self._version,
                 group_id,
             )
-        except HttpResponseError:
+        except AzureError:
             pass
 
 
@@ -819,9 +821,7 @@ class RLEOperations:
         self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
         self._instance_groups = RLEInstanceGroupsOperations(*args, **kwargs)
         self._instances = RLEInstancesOperations(*args, **kwargs)
-        runtime = RLEInstanceRuntimeOperations(*args, **kwargs)
-        for operation_name in ("reset", "step", "state", "health", "get_metadata", "schema"):
-            setattr(self._instances, operation_name, getattr(runtime, operation_name))
+        self._runtime = RLEInstanceRuntimeOperations(*args, **kwargs)
 
     @distributed_trace
     def create_environment(
@@ -1002,6 +1002,7 @@ class RLEOperations:
             environments=self._environments,
             instance_groups=self._instance_groups,
             instances=self._instances,
+            runtime=self._runtime,
             name=name,
             version=version,
             max_active_instances=max_active_instances,
@@ -1014,7 +1015,6 @@ __all__ = [
     "OpenEnvClient",
     "RLEError",
     "RLEQuotaExceededError",
-    "RLEAtCapacityError",
     "RLEInstanceAcquireTimeoutError",
     "OpenEnvInstance",
     "RLEOperations",

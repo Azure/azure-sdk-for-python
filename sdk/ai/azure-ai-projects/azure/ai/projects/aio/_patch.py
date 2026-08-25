@@ -119,6 +119,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
 
+        if not allow_preview:
+            del self.rle
+
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     def _get_openai_api_key(self, kwargs: dict):

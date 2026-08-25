@@ -17210,7 +17210,7 @@ class RLEStepResult(_Model):
     :vartype done: bool
     :ivar info: Gymnasium info payload.
     :vartype info: dict[str, any]
-    :ivar metadata: Legacy metadata payload. The SDK maps it to ``info`` when ``info`` is absent.
+    :ivar metadata: Legacy metadata payload.
     :vartype metadata: dict[str, any]
     """
 
@@ -17241,7 +17241,7 @@ class RLEStepResult(_Model):
     metadata: Optional[dict[str, Any]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Legacy metadata payload. The SDK maps it to ``info`` when ``info`` is absent."""
+    """Legacy metadata payload."""
 
     @overload
     def __init__(
