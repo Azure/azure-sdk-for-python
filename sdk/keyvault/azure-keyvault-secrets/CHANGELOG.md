@@ -1,5 +1,11 @@
 # Release History
 
+## 4.11.2 (2026-08-25)
+
+### Bugs Fixed
+
+- Fixed the challenge authentication policy to cache the authentication challenge only after the challenge resource is verified, so that a rejected challenge is not cached and reused by subsequent requests.
+
 ## 4.11.1 (2026-08-12)
 
 ### Bugs Fixed
