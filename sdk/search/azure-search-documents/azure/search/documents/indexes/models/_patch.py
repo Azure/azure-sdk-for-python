@@ -19,6 +19,8 @@ from ._enums import (
 )
 
 if TYPE_CHECKING:
+    from enum import Enum
+
     from ._models import (
         AzureActiveDirectoryApplicationCredentials,
         DataChangeDetectionPolicy,
@@ -170,8 +172,39 @@ def _collection_helper(typ: Any) -> str:
 
 # Re-export SearchFieldDataType with Collection method
 # The Collection method is added at runtime via monkey-patching
-SearchFieldDataType = _SearchFieldDataType
-SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore[attr-defined]
+if TYPE_CHECKING:
+
+    class SearchFieldDataType(str, Enum):
+        STRING = "Edm.String"
+        INT32 = "Edm.Int32"
+        INT64 = "Edm.Int64"
+        DOUBLE = "Edm.Double"
+        BOOLEAN = "Edm.Boolean"
+        DATE_TIME_OFFSET = "Edm.DateTimeOffset"
+        GEOGRAPHY_POINT = "Edm.GeographyPoint"
+        COMPLEX = "Edm.ComplexType"
+        SINGLE = "Edm.Single"
+        HALF = "Edm.Half"
+        INT16 = "Edm.Int16"
+        S_BYTE = "Edm.SByte"
+        BYTE = "Edm.Byte"
+        String = "Edm.String"
+        Int32 = "Edm.Int32"
+        Int64 = "Edm.Int64"
+        Single = "Edm.Single"
+        Double = "Edm.Double"
+        Boolean = "Edm.Boolean"
+        DateTimeOffset = "Edm.DateTimeOffset"
+        GeographyPoint = "Edm.GeographyPoint"
+        ComplexType = "Edm.ComplexType"
+
+        @staticmethod
+        def Collection(typ: Union[str, "SearchFieldDataType"]) -> str:
+            return _collection_helper(typ)
+
+else:
+    SearchFieldDataType = _SearchFieldDataType
+    SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore[attr-defined]
 
 # Backward-compatible aliases (old camelCase names -> new UPPER_CASE names)
 SearchFieldDataType.String = SearchFieldDataType.STRING  # type: ignore[attr-defined]
@@ -257,7 +290,7 @@ def SimpleField(
     :rtype:  SearchField
     """
     # If type is an enum, get its value; otherwise use it as-is
-    field_type = type.value if hasattr(type, "value") else type
+    field_type = type.value if isinstance(type, SearchFieldDataType) else type
     result: Dict[str, Any] = {
         "name": name,
         "type": field_type,

@@ -70,6 +70,7 @@
 
 ### Bugs Fixed
 
+- Made `SearchFieldDataType.Collection` visible to static type checkers.
 - Normalized `SearchIndexClient.update_knowledge_source_file` and its asynchronous equivalent to
   use the name-first signature `(name, file_id, body)`, consistent with the other File knowledge
   source operations.
