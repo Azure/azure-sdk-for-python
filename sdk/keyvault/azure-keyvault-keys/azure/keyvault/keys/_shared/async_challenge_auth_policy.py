@@ -214,6 +214,8 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
                     "See https://aka.ms/azsdk/blog/vault-uri for more information."
                 )
 
+        ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
+
         # If we had created a request copy in on_request, use it now to send along the original body content
         if self._request_copy:
             request.http_request = self._request_copy
