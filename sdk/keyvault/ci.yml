@@ -33,15 +33,5 @@ extends:
     TestTimeoutInMinutes: 120
     TestProxy: true
     Artifacts:
-    - name: azure-keyvault-administration
-      safename: azurekeyvaultadministration
     - name: azure-keyvault-certificates
       safeName: azurekeyvaultcertificates
-    - name: azure-keyvault-keys
-      safeName: azurekeyvaultkeys
-    - name: azure-keyvault-secrets
-      safeName: azurekeyvaultsecrets
-    - name: azure-keyvault-securitydomain
-      safeName: azurekeyvaultsecuritydomain
-    - name: azure-mgmt-keyvault
-      safeName: azuremgmtkeyvault
