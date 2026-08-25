@@ -33,6 +33,7 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
 
 from .._constants import InvocationsWSConstants
 from .._invocation import InvocationAgentServerHost
+from .._invocation_ws import _attach_websocket_session_context
 from . import _session as _session_transport
 from ._codec import MAX_FRAME_BYTES, VoiceProtocolError, decode_inbound_message
 from ._models import (
@@ -311,7 +312,10 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         trace_token = None
         try:
             try:
-                trace_token = _otel_context.attach(_extract_voice_websocket_context(websocket))
+                trace_token = _attach_websocket_session_context(
+                    session_id,
+                    context=_extract_voice_websocket_context(websocket),
+                )
             except BaseException:  # pylint: disable=broad-exception-caught
                 trace_token = None
             platform_token = set_request_context(

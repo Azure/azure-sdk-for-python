@@ -11,12 +11,16 @@ import sys
 import pytest
 import opentelemetry.propagate as otel_propagate
 from opentelemetry import baggage, trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 from starlette.applications import Starlette
 from starlette.routing import Host, Mount, WebSocketRoute
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from azure.ai.agentserver.core import get_request_context
+from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
 from azure.ai.agentserver.invocations.voice import Session, SessionReady, VoiceAgentServerHost
 from azure.ai.agentserver.invocations.voice import _session as session_module
 from azure.ai.agentserver.invocations.voice import _voice_host as voice_host_module
@@ -293,6 +297,31 @@ def test_voice_upgrade_binds_context_and_returns_server_header(monkeypatch):
     ]
     platform_context = get_request_context()
     assert (platform_context.call_id, platform_context.user_id, platform_context.session_id) == (None, None, None)
+
+
+def test_voice_callback_span_is_exported_with_a365_session_context(monkeypatch):
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "voice-session-1")
+    exporter = InMemorySpanExporter()
+    provider = TracerProvider()
+    provider.add_span_processor(_FoundryEnrichmentSpanProcessor(project_id="project-123"))
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    customer_tracer = trace.get_tracer("customer.voice.agent", tracer_provider=provider)
+    app = VoiceAgentServerHost(configure_observability=None)
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        with customer_tracer.start_as_current_span("customer.voice.session_start"):
+            await session.send(SessionReady())
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        websocket.send_json(_session_start_frame())
+        assert websocket.receive_json()["type"] == "session.ready"
+
+    spans = exporter.get_finished_spans()
+    assert len(spans) == 1
+    assert spans[0].name == "customer.voice.session_start"
+    assert spans[0].attributes["microsoft.session.id"] == "voice-session-1"
+    assert spans[0].attributes["microsoft.foundry.project.id"] == "project-123"
 
 
 @pytest.mark.asyncio

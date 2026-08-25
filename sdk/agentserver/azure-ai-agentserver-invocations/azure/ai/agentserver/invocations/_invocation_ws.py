@@ -61,6 +61,18 @@ logger = logging.getLogger("azure.ai.agentserver")
 WSHandler = Callable[[WebSocket], Awaitable[None]]
 
 
+def _attach_websocket_session_context(session_id: str, *, context: Any = None) -> Any:
+    """Attach the WebSocket session baggage while preserving caller context."""
+    if context is None:
+        context = _otel_context.get_current()
+    context = _otel_baggage.set_baggage(
+        _BAGGAGE_SESSION_ID,
+        session_id,
+        context=context,
+    )
+    return _otel_context.attach(context)
+
+
 class _WSHandlerMixin(_MixinBase):
     """Pure mixin that adds the ``@app.ws_handler`` decorator and ``/invocations_ws`` route.
 
@@ -210,11 +222,7 @@ class _WSHandlerMixin(_MixinBase):
         # Preserve caller baggage extracted by TraceContextMiddleware and add
         # the session correlation key consumed by the A365 enrichment
         # processor for child spans and logs.
-        ctx = _otel_context.get_current()
-        ctx = _otel_baggage.set_baggage(
-            _BAGGAGE_SESSION_ID, session_id, context=ctx,
-        )
-        baggage_token = _otel_context.attach(ctx)
+        baggage_token = _attach_websocket_session_context(session_id)
         try:
             # NOTE: when no ``@ws_handler`` is registered, the route itself is
             # not registered (see ``_ensure_ws_route_registered``), so this
