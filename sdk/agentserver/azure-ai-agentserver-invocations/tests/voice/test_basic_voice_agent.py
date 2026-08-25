@@ -14,7 +14,11 @@ import yaml
 import azure.ai.agentserver.invocations.voice as voice
 from azure.ai.agentserver.invocations.voice import (
     InputTextPart,
+    ResponseCancel,
+    ResponseCreated,
+    ResponseDone,
     ResponseNone,
+    ResponseOutputTextDelta,
     ResponseTimeouts,
     SessionDisconnected,
     SessionEnd,
@@ -427,6 +431,8 @@ async def test_successful_generation_completes_declared_target_turn(sample_modul
             "output_item_count": 1,
         }
     ]
+    assert sum(isinstance(message, ResponseDone) for message in session.messages) == 1
+    assert not any(isinstance(message, ResponseCancel) for message in session.messages)
     assert not sample_module.generations
     assert not sample_module.input_generations
 
@@ -554,12 +560,95 @@ async def test_generation_output_retention_is_bounded(sample_module, monkeypatch
             "output_item_count": 0,
         }
     ]
+    cancellations = [message for message in session.messages if isinstance(message, ResponseCancel)]
+    assert len(cancellations) == 1
+    assert cancellations[0].response_id == generation.response_id
+    assert cancellations[0].reason == "output_limit_exceeded"
+    assert [type(message) for message in session.messages] == [
+        ResponseCreated,
+        ResponseOutputTextDelta,
+        ResponseCancel,
+    ]
+    assert not any(isinstance(message, ResponseDone) for message in session.messages)
+    assert not sample_module.generations
+    assert not sample_module.input_generations
+
+    async def bounded_generation(_text):
+        yield "ok"
+
+    monkeypatch.setattr(sample_module, "generate_answer", bounded_generation)
+    sent_count = len(session.messages)
+    await sample_module.on_user_message(
+        session,
+        UserMessage(
+            id="m_retry",
+            ts="2026-08-12T00:00:01Z",
+            item_id="in_2",
+            content=(InputTextPart(text="retry"),),
+        ),
+    )
+    retried_generation = next(iter(sample_module.generations.values()))
+    await retried_generation.task
+    await asyncio.sleep(0)
+
+    retried_messages = session.messages[sent_count:]
+    assert sum(isinstance(message, ResponseDone) for message in retried_messages) == 1
+    assert not any(isinstance(message, ResponseCancel) for message in retried_messages)
+    assert retried_generation.turn.completions == [
+        {
+            "outcome": TargetTurnOutcome.RESPONSE,
+            "response_id": retried_generation.response_id,
+            "output_item_count": 1,
+        }
+    ]
     assert not sample_module.generations
     assert not sample_module.input_generations
 
 
 @pytest.mark.asyncio
-async def test_ordinary_application_cancellation_is_not_transport_error(
+async def test_model_failure_cancels_started_response(sample_module, monkeypatch):
+    async def failing_generation(_text):
+        yield "partial"
+        raise ValueError("model failed")
+
+    monkeypatch.setattr(sample_module, "generate_answer", failing_generation)
+    session = _CapturingSession()
+    await sample_module.on_user_message(
+        session,
+        UserMessage(
+            id="m_user",
+            ts="2026-08-12T00:00:00Z",
+            item_id="in_1",
+            content=(InputTextPart(text="hello"),),
+        ),
+    )
+    generation = next(iter(sample_module.generations.values()))
+
+    with pytest.raises(ValueError, match="model failed"):
+        await generation.task
+    await asyncio.sleep(0)
+
+    assert [type(message) for message in session.messages] == [
+        ResponseCreated,
+        ResponseOutputTextDelta,
+        ResponseCancel,
+    ]
+    cancellation = session.messages[-1]
+    assert cancellation.response_id == generation.response_id
+    assert cancellation.reason == "generation_failed"
+    assert generation.turn.completions == [
+        {
+            "outcome": TargetTurnOutcome.ERROR,
+            "response_id": generation.response_id,
+            "output_item_count": 0,
+        }
+    ]
+    assert not sample_module.generations
+    assert not sample_module.input_generations
+
+
+@pytest.mark.asyncio
+async def test_bare_task_cancellation_only_records_local_outcome(
     sample_module,
     monkeypatch,
 ):
@@ -596,6 +685,7 @@ async def test_ordinary_application_cancellation_is_not_transport_error(
             "output_item_count": 0,
         }
     ]
+    assert not any(isinstance(message, ResponseCancel) for message in session.messages)
 
 
 @pytest.mark.asyncio

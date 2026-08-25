@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from azure.ai.agentserver.invocations.voice import (
     BargeIn,
     InputTextPart,
+    ResponseCancel,
     ResponseCancelled,
     ResponseCreated,
     ResponseDone,
@@ -82,30 +83,40 @@ async def stream_response(
     """Translate one model stream into explicit Bridge output events."""
     await generation.session.send(ResponseCreated(response_id=generation.response_id, in_reply_to=generation.input_ids))
     generation.response_started = True
-    chunks: list[str] = []
-    output_utf8_bytes = 0
-    async for delta in generate_answer(text):
-        delta_utf8_bytes = len(delta.encode("utf-8"))
-        if len(chunks) >= MAX_OUTPUT_CHUNKS or output_utf8_bytes + delta_utf8_bytes > MAX_OUTPUT_UTF8_BYTES:
-            raise RuntimeError("Voice model output exceeded sample limits")
-        output_utf8_bytes += delta_utf8_bytes
-        chunks.append(delta)
+    cancel_reason = "generation_failed"
+    try:
+        chunks: list[str] = []
+        output_utf8_bytes = 0
+        async for delta in generate_answer(text):
+            delta_utf8_bytes = len(delta.encode("utf-8"))
+            if len(chunks) >= MAX_OUTPUT_CHUNKS or output_utf8_bytes + delta_utf8_bytes > MAX_OUTPUT_UTF8_BYTES:
+                cancel_reason = "output_limit_exceeded"
+                raise RuntimeError("Voice model output exceeded sample limits")
+            output_utf8_bytes += delta_utf8_bytes
+            chunks.append(delta)
+            await generation.session.send(
+                ResponseOutputTextDelta(
+                    response_id=generation.response_id,
+                    item_id=item_id,
+                    delta=delta,
+                )
+            )
         await generation.session.send(
-            ResponseOutputTextDelta(
+            ResponseOutputTextDone(
                 response_id=generation.response_id,
                 item_id=item_id,
-                delta=delta,
+                text="".join(chunks),
             )
         )
-    await generation.session.send(
-        ResponseOutputTextDone(
-            response_id=generation.response_id,
-            item_id=item_id,
-            text="".join(chunks),
-        )
-    )
-    generation.output_item_count = 1
-    await generation.session.send(ResponseDone(response_id=generation.response_id))
+        generation.output_item_count = 1
+        await generation.session.send(ResponseDone(response_id=generation.response_id))
+    except Exception:  # pylint: disable=broad-exception-caught
+        if generation.outcome_hint is None and generation.session.termination is None:
+            try:
+                await generation.session.send(ResponseCancel(response_id=generation.response_id, reason=cancel_reason))
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.error("Voice response cancellation failed")
+        raise
 
 
 def completion_facts(generation: Generation) -> tuple[str | None, int]:

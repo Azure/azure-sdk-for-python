@@ -62,6 +62,17 @@ hint such as `end_call` or `timeout` remains the first winner.
 The sample also caps active generations per connection and bounds retained model
 output by both UTF-8 bytes and chunk count; excess input receives `response.none`.
 
+`Session` is intentionally send-only and does not track whether a response is
+open. After `response.created`, this sample sends `response.cancel` when local
+model generation fails. Applications that stop a response for another local
+reason must likewise coordinate `response.cancel` with task cancellation; a
+bare `Task.cancel()` only stops local work. Bridge-originated barge-in, timeout,
+response cancellation, session end, and connection termination already provide
+the stop signal, so their callbacks only cancel the local task. If a send fails
+or is cancelled after transport commitment, whether its frame was accepted is
+ambiguous; the application must choose its own close or reconciliation policy.
+The SDK does not infer that outcome or retry the frame.
+
 `on_connection_terminating` synchronously cancels the sample's generation tasks
 whenever the connection handler exits. The tasks remain responsible for their
 own asynchronous resource cleanup, while `on_session_end` provides the graceful
