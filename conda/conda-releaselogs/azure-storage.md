@@ -1,5 +1,14 @@
 # Azure Storage client library for Python (conda)
 
+## 2026.09.01
+
+### Packages included
+
+- azure-storage-blob-12.30.0
+- azure-storage-file-datalake-12.25.0
+- azure-storage-file-share-12.26.0
+- azure-storage-queue-12.17.0
+
 ## 2026.06.01
 
 ### Packages included
