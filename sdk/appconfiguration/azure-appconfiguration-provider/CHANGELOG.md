@@ -1,10 +1,10 @@
 # Release History
 
-## 2.6.0b1 (Unreleased)
+## 2.6.0b1 (2026-08-25)
 
 ### Features Added
 
-- Feature flags created via the dedicated feature flag resource endpoint (`FeatureFlagClient`/`FeatureFlag` in `azure-appconfiguration`) are now loaded automatically alongside key-value based feature flags whenever `feature_flag_enabled=True`. Both kinds are merged into the same `feature_management.feature_flags` list, with resource-based feature flags taking precedence over key-value based ones when they share the same name. No new `load()` options are required to opt in, and existing `feature_flag_selectors` filter both kinds.
+- Enhanced feature flags created via the dedicated feature flag resource endpoint (`FeatureFlagClient`/`FeatureFlag` in `azure-appconfiguration`) are now loaded automatically alongside key-value based feature flags whenever `feature_flag_enabled=True`. Both kinds are merged into the same `feature_management.feature_flags` list, with resource-based feature flags taking precedence over key-value based ones when they share the same name. No new `load()` options are required to opt in, and existing `feature_flag_selectors` filter both kinds.
 
 ### Breaking Changes
 
