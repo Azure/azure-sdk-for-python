@@ -167,7 +167,6 @@ __all__: List[str] = [
     "OpenEnvClient",
     "OpenEnvInstance",
     "RLEOperations",
-    "RLEError",
     "RLEQuotaExceededError",
     "RLEAtCapacityError",
     "RLEInstanceAcquireTimeoutError",

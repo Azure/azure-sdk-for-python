@@ -23,7 +23,7 @@ from __future__ import annotations
 import math
 import threading
 import time
-from typing import Any, Dict, Mapping, Optional, Union
+from typing import Any, Dict, Mapping, Optional, Tuple, Union
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
@@ -237,7 +237,7 @@ def coerce_action(action: Any, action_kwargs: Mapping[str, Any]) -> dict:
 
 
 def _acquire_instance(
-    instances: RLEInstancesOperations,
+    instances: Any,
     environment_name: str,
     environment_version: str,
     instance_group_id: str,
@@ -255,7 +255,11 @@ def _acquire_instance(
     ``Running``, the runtime health endpoint is polled until it reports healthy.
 
     :param instances: Generated instance operations bound to the project client.
-    :type instances: ~azure.ai.projects.operations.RLEInstancesOperations
+    :type instances: any
+    :param environment_name: Name of the registered RLE environment.
+    :type environment_name: str
+    :param environment_version: Version of the registered RLE environment.
+    :type environment_version: str
     :param instance_group_id: The instance group to lease an instance from.
     :type instance_group_id: str
     :keyword instance_acquire_timeout: Maximum time to acquire a healthy instance, in seconds.
@@ -411,7 +415,7 @@ class OpenEnvInstance:
         *,
         environment_version: str,
         instance: RLEInstance,
-        instances: RLEInstancesOperations,
+        instances: Any,
     ) -> None:
         if not environment_name:
             raise ValueError("environment_name is required")
@@ -430,7 +434,11 @@ class OpenEnvInstance:
 
     @property
     def id(self) -> str:
-        """Identifier of the leased instance that backs this object."""
+        """Identifier of the leased instance that backs this object.
+
+        :return: The instance identifier.
+        :rtype: str
+        """
         return self._instance_id
 
     @property
@@ -630,7 +638,7 @@ class OpenEnvClient:
         *,
         environments: _RLEnvironmentsOperationsGenerated,
         instance_groups: RLEInstanceGroupsOperations,
-        instances: RLEInstancesOperations,
+        instances: Any,
         name: str,
         version: Optional[str] = None,
         max_active_instances: int = 1,
@@ -793,11 +801,14 @@ class OpenEnvClient:
         group_id = self._instance_group_id
         if group_id is None:
             return
+        version = self._version
+        if version is None:
+            return
         self._instance_group_id = None
         try:
             self._instance_groups.delete_instance_group(
                 self._name,
-                self._version,
+                version,
                 group_id,
             )
         except HttpResponseError:

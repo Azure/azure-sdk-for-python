@@ -67,7 +67,7 @@ async def _sleep_before_deadline(delay: float, deadline: float) -> bool:
 
 
 async def _acquire_instance(
-    instances: RLEInstancesOperations,
+    instances: Any,
     environment_name: str,
     environment_version: str,
     instance_group_id: str,
@@ -84,7 +84,11 @@ async def _acquire_instance(
     acquisition deadline expires.
 
     :param instances: Generated async instance operations bound to the project client.
-    :type instances: ~azure.ai.projects.aio.operations.RLEInstancesOperations
+    :type instances: any
+    :param environment_name: Name of the registered RLE environment.
+    :type environment_name: str
+    :param environment_version: Version of the registered RLE environment.
+    :type environment_version: str
     :param instance_group_id: The instance group to lease an instance from.
     :type instance_group_id: str
     :keyword instance_acquire_timeout: Maximum time to acquire a healthy instance, in seconds.
@@ -234,7 +238,7 @@ class AsyncOpenEnvInstance:
         instance_group_id: str,
         *,
         environment_version: str,
-        instances: RLEInstancesOperations,
+        instances: Any,
         instance_acquire_timeout: float,
         poll_interval_s: float,
         is_client_closed: Callable[[], bool],
@@ -487,7 +491,7 @@ class AsyncOpenEnvClient:
         *,
         environments: _RLEnvironmentsOperationsGenerated,
         instance_groups: RLEInstanceGroupsOperations,
-        instances: RLEInstancesOperations,
+        instances: Any,
         name: str,
         version: Optional[str] = None,
         max_active_instances: int = 1,
@@ -638,11 +642,14 @@ class AsyncOpenEnvClient:
         group_id = self._instance_group_id
         if group_id is None:
             return
+        version = self._version
+        if version is None:
+            return
         self._instance_group_id = None
         try:
             await self._instance_groups.delete_instance_group(
                 self._name,
-                self._version,
+                version,
                 group_id,
             )
         except HttpResponseError:
