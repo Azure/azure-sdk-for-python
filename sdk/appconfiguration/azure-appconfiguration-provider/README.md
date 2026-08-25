@@ -382,8 +382,6 @@ Feature flags can also be created using the dedicated feature flag endpoint (via
 ```python
 from azure.appconfiguration.provider import load
 
-# Feature flags loaded from the enhanced feature flag endpoint are merged into the same
-# feature_management.feature_flags list as key-value based feature flags.
 config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True, **kwargs)
 feature_flags = config["feature_management"]["feature_flags"]
 enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("id") == "EnhancedFeatureBeta")
