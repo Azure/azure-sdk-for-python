@@ -2467,7 +2467,29 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
+        READ1_ON1_DEVELOPERS = "read.1on1.developers"
+        READ1_ON1_MANAGER = "read.1on1.manager"
+        READ1_ON1_TENANT = "read.1on1.tenant"
+        READ_GROUP_ALLOWLISTED = "read.group.allowlisted"
+        READ_GROUP_DEVELOPERS = "read.group.developers"
+        READ_GROUP_MANAGER_INVITED = "read.group.manager-invited"
+        READ_GROUP_MANAGER_PRESENT = "read.group.manager-present"
+        READ_GROUP_TENANT = "read.group.tenant"
+        WRITE1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
+        WRITE1_ON1_DEVELOPERS = "write.1on1.developers"
+        WRITE1_ON1_MANAGER = "write.1on1.manager"
+        WRITE1_ON1_TENANT = "write.1on1.tenant"
+        WRITE_GROUP_ALLOWLISTED = "write.group.allowlisted"
+        WRITE_GROUP_DEVELOPERS = "write.group.developers"
+        WRITE_GROUP_MANAGER_INVITED = "write.group.manager-invited"
+        WRITE_GROUP_MANAGER_PRESENT = "write.group.manager-present"
+        WRITE_GROUP_TENANT = "write.group.tenant"
+
+
     class azure.ai.projects.models.ActivityProtocolConfiguration(_Model):
+        access_boundaries: Optional[list[Union[str, ActivityProtocolAccessBoundary]]]
         enable_m365_public_endpoint: Optional[bool]
 
         @overload
@@ -6101,6 +6123,7 @@ namespace azure.ai.projects.models
         memory: str
         protocol_versions: Optional[list[ProtocolVersionRecord]]
         rai_config: RaiConfig
+        session_configuration: Optional[SessionConfiguration]
         telemetry_config: Optional[TelemetryConfig]
 
         @overload
@@ -6114,6 +6137,7 @@ namespace azure.ai.projects.models
                 memory: str, 
                 protocol_versions: Optional[list[ProtocolVersionRecord]] = ..., 
                 rai_config: Optional[RaiConfig] = ..., 
+                session_configuration: Optional[SessionConfiguration] = ..., 
                 telemetry_config: Optional[TelemetryConfig] = ...
             ) -> None: ...
 
@@ -8341,6 +8365,20 @@ namespace azure.ai.projects.models
         MEDIUM = "medium"
 
 
+    class azure.ai.projects.models.SessionConfiguration(_Model):
+        idle_timeout_seconds: Optional[timedelta]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                idle_timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.SessionDirectoryEntry(_Model):
         is_directory: bool
         modified_time: datetime
@@ -8420,6 +8458,29 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 sharepoint_grounding_preview: SharepointGroundingToolParameters
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ShellToolboxTool(ToolboxTool, discriminator='shell'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        description: str
+        environment: ToolboxShellEnvironment
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.SHELL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                description: Optional[str] = ..., 
+                environment: ToolboxShellEnvironment, 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -9146,6 +9207,7 @@ namespace azure.ai.projects.models
         SHELL = "shell"
         TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
         TOOL_SEARCH = "tool_search"
+        WEB_IQ_PREVIEW = "web_iq_preview"
         WEB_SEARCH = "web_search"
         WEB_SEARCH_PREVIEW = "web_search_preview"
         WORK_IQ_PREVIEW = "work_iq_preview"
@@ -9221,6 +9283,80 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ToolboxShellContainerAutoEnvironment(ToolboxShellEnvironment, discriminator='container_auto'):
+        file_ids: Optional[list[str]]
+        memory_limit: Optional[Union[str, ContainerMemoryLimit]]
+        network_policy: Optional[ToolboxShellNetworkPolicy]
+        skills: Optional[list[ContainerSkill]]
+        type: Literal["container_auto"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                file_ids: Optional[list[str]] = ..., 
+                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ..., 
+                network_policy: Optional[ToolboxShellNetworkPolicy] = ..., 
+                skills: Optional[list[ContainerSkill]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellContainerReferenceEnvironment(ToolboxShellEnvironment, discriminator='container_reference'):
+        container_id: str
+        type: Literal["container_reference"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                container_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellEnvironment(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellNetworkPolicy(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellNetworkPolicyDisabled(ToolboxShellNetworkPolicy, discriminator='disabled'):
+        type: Literal["disabled"]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ToolboxSkill(_Model):
         type: str
 
@@ -9283,8 +9419,10 @@ namespace azure.ai.projects.models
         MCP = "mcp"
         OPENAPI = "openapi"
         REMINDER_PREVIEW = "reminder_preview"
+        SHELL = "shell"
         TOOLBOX_SEARCH = "toolbox_search"
         TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+        WEB_IQ_PREVIEW = "web_iq_preview"
         WEB_SEARCH = "web_search"
         WORK_IQ_PREVIEW = "work_iq_preview"
 
@@ -9558,6 +9696,50 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FIXED_RATIO = "FixedRatio"
+
+
+    class azure.ai.projects.models.WebIQPreviewTool(Tool, discriminator='web_iq_preview'):
+        project_connection_id: str
+        require_approval: Optional[Union[MCPToolRequireApproval, str]]
+        server_label: Optional[str]
+        type: Literal[ToolType.WEB_IQ_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                project_connection_id: str, 
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
+                server_label: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.WebIQPreviewToolboxTool(ToolboxTool, discriminator='web_iq_preview'):
+        description: str
+        name: str
+        project_connection_id: str
+        require_approval: Optional[Union[MCPToolRequireApproval, str]]
+        server_label: Optional[str]
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.WEB_IQ_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                project_connection_id: str, 
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
+                server_label: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.WebSearchApproximateLocation(_Model):
