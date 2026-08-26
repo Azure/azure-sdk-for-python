@@ -69,6 +69,12 @@
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ChecksOverride": "mindependency"
+        },
+        "Emulator Tests Python 3.14 Dependency Checks": {
+            "PythonVersion": "3.14",
+            "CoverageArg": "--disablecov",
+            "TestSamples": "false",
+            "ChecksOverride": "mindependency"
         }
       }
     }
