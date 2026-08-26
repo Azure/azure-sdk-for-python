@@ -240,7 +240,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
 
         if not allow_preview:
-            del self.rle
+            if hasattr(self, "rle"):
+                del self.rle
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
