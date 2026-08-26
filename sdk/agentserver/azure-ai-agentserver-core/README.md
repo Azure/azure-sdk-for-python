@@ -182,9 +182,9 @@ sampling configuration through `OTEL_TRACES_SAMPLER` and
 sampling only; exporter queues, process termination, and transport or ingestion
 failures can still prevent trace delivery.
 
-HTTPX, Requests, urllib, and urllib3 instrumentation are disabled by default to
-avoid automatically tracing every outbound HTTP request. To enable selected
-instrumentations, configure the host's observability callback:
+Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation are disabled by
+default to avoid automatically tracing every outbound HTTP request. To enable
+selected instrumentations, configure the host's observability callback:
 
 ```python
 from functools import partial
@@ -195,6 +195,7 @@ app = AgentServerHost(
     configure_observability=partial(
         configure_observability,
         instrumentation_options={
+            "azure_sdk": {"enabled": True},
             "httpx": {"enabled": True},
             "requests": {"enabled": True},
         },

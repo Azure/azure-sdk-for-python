@@ -454,20 +454,25 @@ class TestAzureMonitorDistroExport:
         )
         assert "sampling_ratio" not in kwargs
 
-    def test_http_client_instrumentations_disabled_by_default(self) -> None:
+    def test_http_and_azure_sdk_instrumentations_disabled_by_default(self) -> None:
         kwargs = self._run({})
         assert kwargs["instrumentation_options"] == {
+            "azure_sdk": {"enabled": False},
             "httpx": {"enabled": False},
             "requests": {"enabled": False},
             "urllib": {"enabled": False},
             "urllib3": {"enabled": False},
         }
 
-    def test_customer_can_enable_disabled_instrumentation(self) -> None:
+    def test_customer_can_enable_disabled_instrumentations(self) -> None:
         kwargs = self._run(
             {},
-            instrumentation_options={"httpx": {"enabled": True}},
+            instrumentation_options={
+                "azure_sdk": {"enabled": True},
+                "httpx": {"enabled": True},
+            },
         )
+        assert kwargs["instrumentation_options"]["azure_sdk"]["enabled"] is True
         assert kwargs["instrumentation_options"]["httpx"]["enabled"] is True
         assert kwargs["instrumentation_options"]["requests"]["enabled"] is False
 

@@ -102,7 +102,7 @@ _OTLP_ENV_VARS = (
 )
 _DISTRO_OTLP_SUPPRESSION_LOCK = threading.RLock()
 _DISTRO_OTLP_SUPPRESSION_STATE = threading.local()
-_DISABLED_INSTRUMENTATIONS = ("httpx", "requests", "urllib", "urllib3")
+_DISABLED_INSTRUMENTATIONS = ("azure_sdk", "httpx", "requests", "urllib", "urllib3")
 
 
 # ======================================================================
@@ -147,8 +147,9 @@ def configure_observability(
         instrumentation. Defaults to False.
     :paramtype enable_sensitive_data: bool
     :keyword instrumentation_options: Per-library OpenTelemetry instrumentation
-        options. HTTPX, Requests, urllib, and urllib3 instrumentation are disabled
-        by default; set a library's ``enabled`` option to ``True`` to enable it.
+        options. Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation
+        are disabled by default; set a library's ``enabled`` option to ``True``
+        to enable it.
     :paramtype instrumentation_options: dict[str, dict[str, Any]] or None
     """
     # Console logging on the root logger so user logs are also visible.
