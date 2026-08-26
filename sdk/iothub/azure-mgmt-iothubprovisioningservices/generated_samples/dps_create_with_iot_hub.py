@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.iothubprovisioningservices import IotDpsClient
     pip install azure-identity
     pip install azure-mgmt-iothubprovisioningservices
 # USAGE
-    python dps_patch.py
+    python dps_create_with_iot_hub.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +31,37 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.iot_dps_resource.begin_update(
+    response = client.iot_dps_resource.begin_create_or_update(
         resource_group_name="myResourceGroup",
         provisioning_service_name="myFirstProvisioningService",
-        provisioning_service_tags={"tags": {"foo": "bar"}},
+        iot_dps_description={
+            "identity": {
+                "type": "SystemAssigned, UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/abcf2d55-764f-419f-974d-f77a55c2ce55/resourcegroups/my-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/my-mi-1": {}
+                },
+            },
+            "location": "East US",
+            "properties": {
+                "enableDataResidency": False,
+                "iotHubs": [
+                    {
+                        "allocationWeight": 1,
+                        "applyAllocationPolicy": True,
+                        "authenticationType": "UserAssigned",
+                        "hostName": "myFirstIoTHub.azure-devices.net",
+                        "location": "eastus",
+                        "selectedUserAssignedIdentityResourceId": "/subscriptions/abcf2d55-764f-419f-974d-f77a55c2ce55/resourcegroups/my-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/my-mi-1",
+                    }
+                ],
+            },
+            "sku": {"capacity": 1, "name": "S1"},
+            "tags": {},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-08-31/DPSPatch.json
+# x-ms-original-file: 2026-08-31/DPSCreateWithIotHub.json
 if __name__ == "__main__":
     main()

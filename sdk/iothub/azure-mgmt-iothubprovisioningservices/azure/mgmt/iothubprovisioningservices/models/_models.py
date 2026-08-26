@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AsyncOperationResult(_Model):
+class AsyncOperationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of a long running operation.
 
     :ivar status: current status of a long running operation.
@@ -50,7 +50,37 @@ class AsyncOperationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateProperties(_Model):
+class CertificateListDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The JSON-serialized array of Certificate objects.
+
+    :ivar value: The array of Certificate objects.
+    :vartype value: list[~azure.mgmt.iothubprovisioningservices.models.CertificateResponse]
+    """
+
+    value: Optional[list["_models.CertificateResponse"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The array of Certificate objects."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.CertificateResponse"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The description of an X509 CA Certificate.
 
     :ivar subject: The certificate's subject name.
@@ -153,7 +183,7 @@ class ProxyResource(Resource):
     """
 
 
-class CertificateResponse(ProxyResource):
+class CertificateResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The X509 Certificate.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -185,54 +215,6 @@ class CertificateResponse(ProxyResource):
         self,
         *,
         properties: Optional["_models.CertificateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeviceRegistryNamespaceDescription(_Model):
-    """Description of the Device Registry namespace that is linked to the provisioning service.
-
-    :ivar resource_id: The ARM resource ID of the Device Registry namespace. Required.
-    :vartype resource_id: str
-    :ivar authentication_type: Device Registry Namespace MI authentication type: UserAssigned,
-     SystemAssigned. Required. Known values are: "UserAssigned" and "SystemAssigned".
-    :vartype authentication_type: str or
-     ~azure.mgmt.iothubprovisioningservices.models.DeviceRegistryNamespaceAuthenticationType
-    :ivar selected_user_assigned_identity_resource_id: The selected user-assigned identity resource
-     Id associated with Device Registry namespace. This is required when authenticationType is
-     UserAssigned.
-    :vartype selected_user_assigned_identity_resource_id: str
-    """
-
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """The ARM resource ID of the Device Registry namespace. Required."""
-    authentication_type: Union[str, "_models.DeviceRegistryNamespaceAuthenticationType"] = rest_field(
-        name="authenticationType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Device Registry Namespace MI authentication type: UserAssigned, SystemAssigned. Required. Known
-     values are: \"UserAssigned\" and \"SystemAssigned\"."""
-    selected_user_assigned_identity_resource_id: Optional[str] = rest_field(
-        name="selectedUserAssignedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The selected user-assigned identity resource Id associated with Device Registry namespace. This
-     is required when authenticationType is UserAssigned."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        authentication_type: Union[str, "_models.DeviceRegistryNamespaceAuthenticationType"],
-        selected_user_assigned_identity_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -314,7 +296,7 @@ class ErrorDetails(_Model):
     """The error details."""
 
 
-class ErrorMessage(_Model):
+class ErrorMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response containing message and code.
 
     :ivar code: standard error code.
@@ -352,7 +334,7 @@ class ErrorMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -380,7 +362,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupIdInformation(ProxyResource):
+class GroupIdInformation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The group information for creating a private endpoint on a provisioning service.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -421,7 +403,7 @@ class GroupIdInformation(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GroupIdInformationProperties(_Model):
+class GroupIdInformationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties for a group information object.
 
     :ivar group_id: The group id.
@@ -463,7 +445,7 @@ class GroupIdInformationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IotDpsPropertiesDescription(_Model):
+class IotDpsPropertiesDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """the service specific properties of a provisioning service, including keys, linked iot hubs,
     current state, and system generated properties such as hostname and idScope.
 
@@ -485,10 +467,6 @@ class IotDpsPropertiesDescription(_Model):
     :ivar iot_hubs: List of IoT hubs associated with this provisioning service.
     :vartype iot_hubs:
      list[~azure.mgmt.iothubprovisioningservices.models.IotHubDefinitionDescription]
-    :ivar device_registry_namespace: The Device Registry namespace that is linked to the
-     provisioning service.
-    :vartype device_registry_namespace:
-     ~azure.mgmt.iothubprovisioningservices.models.DeviceRegistryNamespaceDescription
     :ivar allocation_policy: Allocation policy to be used by this provisioning service. Known
      values are: "Hashed", "GeoLatency", and "Static".
     :vartype allocation_policy: str or
@@ -502,13 +480,14 @@ class IotDpsPropertiesDescription(_Model):
     :ivar authorization_policies: List of authorization keys for a provisioning service.
     :vartype authorization_policies:
      list[~azure.mgmt.iothubprovisioningservices.models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription]
-    :ivar enable_data_residency: Optional.
-     Indicates if the DPS instance has Data Residency enabled, removing the cross geo-pair disaster
-     recovery.
+    :ivar enable_data_residency: Optional. Indicates if the DPS instance has Data Residency
+     enabled, removing the cross geo-pair disaster recovery.
     :vartype enable_data_residency: bool
     :ivar portal_operations_host_name: Portal endpoint to enable CORS for this provisioning
      service.
     :vartype portal_operations_host_name: str
+    :ivar disable_local_auth: Disables all authentication methods other than Azure RBAC.
+    :vartype disable_local_auth: bool
     """
 
     state: Optional[Union[str, "_models.State"]] = rest_field(
@@ -538,10 +517,6 @@ class IotDpsPropertiesDescription(_Model):
         name="iotHubs", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of IoT hubs associated with this provisioning service."""
-    device_registry_namespace: Optional["_models.DeviceRegistryNamespaceDescription"] = rest_field(
-        name="deviceRegistryNamespace", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Device Registry namespace that is linked to the provisioning service."""
     allocation_policy: Optional[Union[str, "_models.AllocationPolicy"]] = rest_field(
         name="allocationPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -560,13 +535,16 @@ class IotDpsPropertiesDescription(_Model):
     enable_data_residency: Optional[bool] = rest_field(
         name="enableDataResidency", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Optional.
-     Indicates if the DPS instance has Data Residency enabled, removing the cross geo-pair disaster
-     recovery."""
+    """Optional. Indicates if the DPS instance has Data Residency enabled, removing the cross geo-pair
+     disaster recovery."""
     portal_operations_host_name: Optional[str] = rest_field(
         name="portalOperationsHostName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Portal endpoint to enable CORS for this provisioning service."""
+    disable_local_auth: Optional[bool] = rest_field(
+        name="disableLocalAuth", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Disables all authentication methods other than Azure RBAC."""
 
     @overload
     def __init__(
@@ -578,13 +556,13 @@ class IotDpsPropertiesDescription(_Model):
         private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None,
         provisioning_state: Optional[str] = None,
         iot_hubs: Optional[list["_models.IotHubDefinitionDescription"]] = None,
-        device_registry_namespace: Optional["_models.DeviceRegistryNamespaceDescription"] = None,
         allocation_policy: Optional[Union[str, "_models.AllocationPolicy"]] = None,
         authorization_policies: Optional[
             list["_models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription"]
         ] = None,
         enable_data_residency: Optional[bool] = None,
         portal_operations_host_name: Optional[str] = None,
+        disable_local_auth: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -598,7 +576,7 @@ class IotDpsPropertiesDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IotDpsSkuDefinition(_Model):
+class IotDpsSkuDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Available SKUs of tier and units.
 
     :ivar name: Sku name. "S1"
@@ -628,7 +606,7 @@ class IotDpsSkuDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IotDpsSkuInfo(_Model):
+class IotDpsSkuInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of possible provisioning service SKUs.
 
     :ivar name: Sku name. "S1"
@@ -667,7 +645,7 @@ class IotDpsSkuInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IotHubDefinitionDescription(_Model):
+class IotHubDefinitionDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of the IoT hub.
 
     :ivar apply_allocation_policy: flag for applying allocationPolicy or not for a given iot hub.
@@ -676,7 +654,18 @@ class IotHubDefinitionDescription(_Model):
     :vartype allocation_weight: int
     :ivar name: Host name of the IoT hub.
     :vartype name: str
-    :ivar connection_string: Connection string of the IoT hub. Required.
+    :ivar host_name: Host name of the IoT hub. This is required when connectionString is not
+     provided.
+    :vartype host_name: str
+    :ivar authentication_type: IotHub MI authentication type: KeyBased, UserAssigned,
+     SystemAssigned. Known values are: "KeyBased", "UserAssigned", and "SystemAssigned".
+    :vartype authentication_type: str or
+     ~azure.mgmt.iothubprovisioningservices.models.IotHubAuthenticationType
+    :ivar selected_user_assigned_identity_resource_id: The selected user-assigned identity resource
+     Id associated with IoT hub. This is required when authenticationType is UserAssigned.
+    :vartype selected_user_assigned_identity_resource_id: str
+    :ivar connection_string: Connection string of the IoT hub. This is required when
+     authenticationType is KeyBased.
     :vartype connection_string: str
     :ivar location: ARM region of the IoT hub. Required.
     :vartype location: str
@@ -692,10 +681,22 @@ class IotHubDefinitionDescription(_Model):
     """weight to apply for a given iot h."""
     name: Optional[str] = rest_field(visibility=["read"])
     """Host name of the IoT hub."""
-    connection_string: str = rest_field(
+    host_name: Optional[str] = rest_field(name="hostName", visibility=["read", "create", "update", "delete", "query"])
+    """Host name of the IoT hub. This is required when connectionString is not provided."""
+    authentication_type: Optional[Union[str, "_models.IotHubAuthenticationType"]] = rest_field(
+        name="authenticationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IotHub MI authentication type: KeyBased, UserAssigned, SystemAssigned. Known values are:
+     \"KeyBased\", \"UserAssigned\", and \"SystemAssigned\"."""
+    selected_user_assigned_identity_resource_id: Optional[str] = rest_field(
+        name="selectedUserAssignedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The selected user-assigned identity resource Id associated with IoT hub. This is required when
+     authenticationType is UserAssigned."""
+    connection_string: Optional[str] = rest_field(
         name="connectionString", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Connection string of the IoT hub. Required."""
+    """Connection string of the IoT hub. This is required when authenticationType is KeyBased."""
     location: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """ARM region of the IoT hub. Required."""
 
@@ -703,10 +704,13 @@ class IotHubDefinitionDescription(_Model):
     def __init__(
         self,
         *,
-        connection_string: str,
         location: str,
         apply_allocation_policy: Optional[bool] = None,
         allocation_weight: Optional[int] = None,
+        host_name: Optional[str] = None,
+        authentication_type: Optional[Union[str, "_models.IotHubAuthenticationType"]] = None,
+        selected_user_assigned_identity_resource_id: Optional[str] = None,
+        connection_string: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -720,7 +724,7 @@ class IotHubDefinitionDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpFilterRule(_Model):
+class IpFilterRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IP filter rules for a provisioning Service.
 
     :ivar filter_name: The name of the IP filter rule. Required.
@@ -772,7 +776,7 @@ class IpFilterRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -824,7 +828,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NameAvailabilityInfo(_Model):
+class NameAvailabilityInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of name availability.
 
     :ivar name_available: specifies if a name is available or not.
@@ -868,7 +872,7 @@ class NameAvailabilityInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an operation.
 
     :ivar name: The name of the operation.
@@ -921,7 +925,7 @@ class OperationDisplay(_Model):
     """Name of the operation."""
 
 
-class OperationInputs(_Model):
+class OperationInputs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input values for operation results call.
 
     :ivar name: The name of the Provisioning Service to check. Required.
@@ -960,7 +964,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private endpoint connection of a provisioning service.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1002,7 +1006,7 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a private endpoint connection.
 
     :ivar private_endpoint: The private endpoint property of a private endpoint connection.
@@ -1041,7 +1045,37 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The available private link resources for a provisioning service.
+
+    :ivar value: The list of available private link resources for a provisioning service.
+    :vartype value: list[~azure.mgmt.iothubprovisioningservices.models.GroupIdInformation]
+    """
+
+    value: Optional[list["_models.GroupIdInformation"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of available private link resources for a provisioning service."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.GroupIdInformation"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current state of a private endpoint connection.
 
     :ivar status: The status of a private endpoint connection. Required. Known values are:
@@ -1087,7 +1121,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1131,7 +1165,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ProvisioningServiceDescription(TrackedResource):
+class ProvisioningServiceDescription(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The description of the provisioning service.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1207,7 +1241,9 @@ class ProvisioningServiceDescription(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class SharedAccessSignatureAuthorizationRuleAccessRightsDescription(_Model):  # pylint: disable=name-too-long
+class SharedAccessSignatureAuthorizationRuleAccessRightsDescription(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Description of the shared access key.
 
     :ivar key_name: Name of the key. Required.
@@ -1260,7 +1296,7 @@ class SharedAccessSignatureAuthorizationRuleAccessRightsDescription(_Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1328,7 +1364,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsResource(_Model):
+class TagsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A container holding only the Tags for a resource, allowing the user to update the tags on a
     Provisioning Service instance.
 
@@ -1372,7 +1408,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class VerificationCodeRequest(_Model):
+class VerificationCodeRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON-serialized leaf certificate.
 
     :ivar certificate: base-64 representation of X509 certificate .cer file or just .pem file
@@ -1401,7 +1437,7 @@ class VerificationCodeRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VerificationCodeResponse(_Model):
+class VerificationCodeResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of the response of the verification code.
 
     :ivar name: Name of certificate.
@@ -1447,7 +1483,7 @@ class VerificationCodeResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VerificationCodeResponseProperties(_Model):
+class VerificationCodeResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VerificationCodeResponseProperties.
 
     :ivar verification_code: Verification code.
