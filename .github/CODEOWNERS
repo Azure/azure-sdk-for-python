@@ -259,10 +259,10 @@
 /sdk/eventgrid/    @shankarsama @Nishanth-MS
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/    @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak
+/sdk/eventhub/    @axisc @hmlam @j7nw4r @meetamitbhatia @SwayGom @sagar0207 @sjkwak
 
 # ServiceLabel: %Event Hubs
-# ServiceOwners: @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak
+# ServiceOwners: @axisc @hmlam @j7nw4r @meetamitbhatia @SwayGom @sagar0207 @sjkwak
 
 # PRLabel: %Graph
 /sdk/graphrbac/    @xirzec
@@ -748,10 +748,10 @@
 # ServiceOwners: @antcp @AzureAppServiceCLI
 
 # PRLabel: %Service Bus
-/sdk/servicebus/    @EldertGrootenboer @skarri-microsoft @j7nw4r
+/sdk/servicebus/    @EldertGrootenboer @skarri-microsoft @j7nw4r @meetamitbhatia
 
 # ServiceLabel: %Service Bus
-# ServiceOwners: @EldertGrootenboer @skarri-microsoft @j7nw4r
+# ServiceOwners: @EldertGrootenboer @skarri-microsoft @j7nw4r @meetamitbhatia
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/    @QingChenmsft @samedder
@@ -858,7 +858,7 @@
 /sdk/**/ci.yml                                                       @msyyc @xirzec @danieljurek
 
 # Add Johnathan Walker as code owner for Event Hubs SDK
-/sdk/eventhub/azure-eventhub/* @j7nw4r @SwayGom @sagar0207
+/sdk/eventhub/azure-eventhub/* @j7nw4r @meetamitbhatia @SwayGom @sagar0207
 
 # Add Johnathan Walker as code owner for Service Bus SDK
-/sdk/servicebus/azure-servicebus/* @j7nw4r @SwayGom @sagar0207
+/sdk/servicebus/azure-servicebus/* @j7nw4r @meetamitbhatia @SwayGom @sagar0207
