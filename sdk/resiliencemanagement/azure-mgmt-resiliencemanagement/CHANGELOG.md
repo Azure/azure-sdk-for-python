@@ -47,9 +47,9 @@
   - Added enum `SliType`
   - Added enum `SliTypeMatchState`
   - Added model `UserConfirmationItem`
-  - Model `DrillRunsOperations` added parameter `content_type` in method `begin_reprotect`
-  - Model `DrillRunsOperations` added method `begin_generate_report`
-  - Model `DrillRunsOperations` added method `list_report_download_url`
+  - Operation group `DrillRunsOperations` added parameter `content_type` in method `begin_reprotect`
+  - Operation group `DrillRunsOperations` added method `begin_generate_report`
+  - Operation group `DrillRunsOperations` added method `list_report_download_url`
 
 ### Breaking Changes
 
