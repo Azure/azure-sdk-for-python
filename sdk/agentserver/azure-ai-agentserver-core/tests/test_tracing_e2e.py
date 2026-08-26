@@ -16,6 +16,7 @@ framework-created child spans are properly exported to App Insights.
 import time
 import uuid
 from datetime import timedelta
+from functools import partial
 
 import pytest
 from starlette.requests import Request
@@ -25,7 +26,7 @@ from starlette.testclient import TestClient
 
 from opentelemetry import trace
 
-from azure.ai.agentserver.core import AgentServerHost
+from azure.ai.agentserver.core import AgentServerHost, configure_observability
 
 pytestmark = pytest.mark.tracing_e2e
 
@@ -64,9 +65,30 @@ def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_P
     return []
 
 
+def _create_trace_with_azure_sdk_request(logs_client, resource_id):
+    """Create an exported control span containing a real Azure SDK request."""
+    suffix = uuid.uuid4().hex[:8]
+    control_name = f"AzureSdkControl-{suffix}"
+    tracer = trace.get_tracer("test.azure_sdk.instrumentation")
+
+    with tracer.start_as_current_span(control_name) as control_span:
+        trace_id = format(control_span.get_span_context().trace_id, "032x")
+        control_span_id = format(control_span.get_span_context().span_id, "016x")
+        response = logs_client.query_resource(
+            resource_id,
+            "print value = 1",
+            timespan=timedelta(minutes=30),
+        )
+        assert response.tables and response.tables[0].rows
+
+    _flush_provider()
+    return control_name, control_span_id, trace_id
+
+
 # ---------------------------------------------------------------------------
 # Warm-up fixture: initialize app and wait for App Insights to be ready
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(scope="module", autouse=True)
 def _warmup_appinsights():
@@ -102,9 +124,11 @@ def _warmup_appinsights():
 
     if os.environ.get("AZURESUBSCRIPTION_TENANT_ID"):
         from azure.identity import AzurePowerShellCredential
+
         credential = AzurePowerShellCredential(tenant_id=os.environ["AZURESUBSCRIPTION_TENANT_ID"])
     else:
         from azure.identity import DefaultAzureCredential
+
         credential = DefaultAzureCredential()
 
     client = LogsQueryClient(credential)
@@ -116,6 +140,7 @@ def _warmup_appinsights():
 # ---------------------------------------------------------------------------
 # Minimal echo app factories using core's AgentServerHost
 # ---------------------------------------------------------------------------
+
 
 def _make_echo_app():
     """Create an AgentServerHost with a POST /echo route.
@@ -212,6 +237,7 @@ def _make_failing_echo_app():
 # ---------------------------------------------------------------------------
 # E2E: Verify spans are ingested into Application Insights
 # ---------------------------------------------------------------------------
+
 
 class TestAppInsightsIngestionE2E:
     """Query Application Insights to confirm spans created inside handlers
@@ -340,4 +366,67 @@ class TestAppInsightsIngestionE2E:
             f"Framework span (id={span_id}, trace_id={trace_id}) not found in "
             f"App Insights dependencies table after {_APPINSIGHTS_POLL_TIMEOUT}s. "
             "Spans should be emitted even without incoming trace context."
+        )
+
+    def test_azure_sdk_dependency_span_disabled_by_default(
+        self,
+        appinsights_connection_string,
+        appinsights_resource_id,
+        logs_query_client,
+    ):
+        """Verify the default configuration exports the trace without an Azure SDK dependency."""
+        AgentServerHost()
+        control_name, control_span_id, trace_id = _create_trace_with_azure_sdk_request(
+            logs_query_client,
+            appinsights_resource_id,
+        )
+
+        control_query = f"dependencies | where operation_Id == '{trace_id}' | where name == '{control_name}' | take 1"
+        control_rows = _poll_appinsights(logs_query_client, appinsights_resource_id, control_query)
+        assert (
+            len(control_rows) > 0
+        ), f"Control span (trace_id={trace_id}) not found in App Insights after {_APPINSIGHTS_POLL_TIMEOUT}s"
+
+        dependency_query = (
+            "dependencies "
+            f"| where operation_Id == '{trace_id}' "
+            f"| where operation_ParentId == '{control_span_id}' "
+            "| take 1"
+        )
+        response = logs_query_client.query_resource(
+            appinsights_resource_id,
+            dependency_query,
+            timespan=timedelta(minutes=30),
+        )
+        dependency_rows = response.tables[0].rows if response.tables else []
+        assert dependency_rows == []
+
+    def test_azure_sdk_dependency_span_emitted_when_enabled(
+        self,
+        appinsights_connection_string,
+        appinsights_resource_id,
+        logs_query_client,
+    ):
+        """Verify customers can opt in and export Azure SDK dependency spans."""
+        AgentServerHost(
+            configure_observability=partial(
+                configure_observability,
+                instrumentation_options={"azure_sdk": {"enabled": True}},
+            )
+        )
+        _control_name, control_span_id, trace_id = _create_trace_with_azure_sdk_request(
+            logs_query_client,
+            appinsights_resource_id,
+        )
+
+        dependency_query = (
+            "dependencies "
+            f"| where operation_Id == '{trace_id}' "
+            f"| where operation_ParentId == '{control_span_id}' "
+            "| take 1"
+        )
+        dependency_rows = _poll_appinsights(logs_query_client, appinsights_resource_id, dependency_query)
+        assert len(dependency_rows) > 0, (
+            f"Azure SDK dependency span (trace_id={trace_id}) not found in "
+            f"App Insights after {_APPINSIGHTS_POLL_TIMEOUT}s"
         )
