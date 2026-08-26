@@ -25,7 +25,7 @@ of the published dependency:
 ```bash
 python -m pip install \
   /path/to/azure_ai_agentserver_core-2.1.0b1-py3-none-any.whl \
-  /path/to/azure_ai_agentserver_invocations-1.1.0b2-py3-none-any.whl
+  /path/to/azure_ai_agentserver_invocations-1.2.0b1-py3-none-any.whl
 ```
 
 ## Run

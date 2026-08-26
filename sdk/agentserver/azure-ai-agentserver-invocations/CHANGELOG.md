@@ -1,10 +1,6 @@
 # Release History
 
-## 1.1.0 (2026-08-24)
-
-### Features Added
-
-- Added the typed Voice event relay API under `azure.ai.agentserver.invocations.voice`, including `VoiceAgentServerHost`, typed protocol messages, session lifecycle callbacks, response cancellation and timeout handling, and a basic Voice agent sample.
+## 1.2.0b1 (Unreleased)
 
 ### Features Added
 
@@ -25,6 +21,18 @@
   end-call, and transport outcomes, with bounded per-connection concurrency and
   retained model output. Unfinished turns now distinguish clean abandonment,
   application/server errors, and protocol or transport loss.
+
+### Other Changes
+
+- Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
+
+## 1.1.0 (2026-08-24)
+
+### Features Added
+
+- Added the typed Voice event relay API under `azure.ai.agentserver.invocations.voice`, including `VoiceAgentServerHost`, typed protocol messages, session lifecycle callbacks, response cancellation and timeout handling, and a basic Voice agent sample.
+
+### Samples
 
 - Updated the resilient LangGraph sample to current `langgraph`,
   `langgraph-checkpoint-sqlite`, and `langchain-core` release lines.
