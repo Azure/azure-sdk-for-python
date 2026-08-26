@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0 (2026-07-25)
 
 General availability release of `azure-ai-discovery`. API version `2026-06-01` is now the default for both `WorkspaceClient` and `BookshelfClient`.
