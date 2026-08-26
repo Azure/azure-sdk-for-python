@@ -28,7 +28,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import TextAnalysisClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
@@ -48,7 +48,7 @@ def build_text_analysis_analyze_text_request(*, show_stats: Optional[bool] = Non
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -78,7 +78,7 @@ def build_text_analysis_get_job_status_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -109,7 +109,7 @@ def build_text_analysis_analyze_text_job_request(**kwargs: Any) -> HttpRequest: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     # Construct URL
     _url = "/analyze-text/jobs"
 
@@ -126,7 +126,7 @@ def build_text_analysis_analyze_text_job_request(**kwargs: Any) -> HttpRequest: 
 def build_text_analysis_cancel_job_request(job_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     # Construct URL
     _url = "/analyze-text/jobs/{jobId}:cancel"
     path_format_arguments = {
@@ -171,12 +171,17 @@ class _TextAnalysisClientOperationsMixin(
 
     @overload
     def analyze_text(
-        self, body: JSON, *, show_stats: Optional[bool] = None, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: _types.AnalyzeTextInput,
+        *,
+        show_stats: Optional[bool] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AnalyzeTextResult:
         """Request text analysis over a collection of documents.
 
         :param body: The input documents to analyze. Required.
-        :type body: JSON
+        :type body: ~azure.ai.textanalytics.types.AnalyzeTextInput
         :keyword show_stats: (Optional) if set to true, response will contain request and document
          level statistics. Default value is None.
         :paramtype show_stats: bool
@@ -215,16 +220,17 @@ class _TextAnalysisClientOperationsMixin(
     @distributed_trace
     def analyze_text(
         self,
-        body: Union[_models.AnalyzeTextInput, JSON, IO[bytes]],
+        body: Union[_models.AnalyzeTextInput, _types.AnalyzeTextInput, IO[bytes]],
         *,
         show_stats: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.AnalyzeTextResult:
         """Request text analysis over a collection of documents.
 
-        :param body: The input documents to analyze. Is one of the following types: AnalyzeTextInput,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.ai.textanalytics.models.AnalyzeTextInput or JSON or IO[bytes]
+        :param body: The input documents to analyze. Is either a AnalyzeTextInput type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.ai.textanalytics.models.AnalyzeTextInput or
+         ~azure.ai.textanalytics.types.AnalyzeTextInput or IO[bytes]
         :keyword show_stats: (Optional) if set to true, response will contain request and document
          level statistics. Default value is None.
         :paramtype show_stats: bool
@@ -266,6 +272,7 @@ class _TextAnalysisClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -287,7 +294,7 @@ class _TextAnalysisClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AnalyzeTextResult, response.json())
 
@@ -354,6 +361,7 @@ class _TextAnalysisClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -375,7 +383,7 @@ class _TextAnalysisClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AnalyzeTextOperationState, response.json())
 
@@ -386,7 +394,7 @@ class _TextAnalysisClientOperationsMixin(
 
     def _analyze_text_job_initial(
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.AnalyzeTextSubmitJobRequest, IO[bytes]] = _Unset,
         *,
         text_input: _models.MultiLanguageTextInput = _Unset,
         actions: list[_models.AnalyzeTextOperationAction] = _Unset,
@@ -441,6 +449,7 @@ class _TextAnalysisClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -463,7 +472,7 @@ class _TextAnalysisClientOperationsMixin(
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -507,13 +516,13 @@ class _TextAnalysisClientOperationsMixin(
 
     @overload
     def begin_analyze_text_job(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.AnalyzeTextSubmitJobRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.textanalytics.types.AnalyzeTextSubmitJobRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -542,7 +551,7 @@ class _TextAnalysisClientOperationsMixin(
     @distributed_trace
     def begin_analyze_text_job(
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.AnalyzeTextSubmitJobRequest, IO[bytes]] = _Unset,
         *,
         text_input: _models.MultiLanguageTextInput = _Unset,
         actions: list[_models.AnalyzeTextOperationAction] = _Unset,
@@ -554,8 +563,9 @@ class _TextAnalysisClientOperationsMixin(
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, AnalyzeTextSubmitJobRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.textanalytics.types.AnalyzeTextSubmitJobRequest or IO[bytes]
         :keyword text_input: Contains the input to be analyzed. Required.
         :paramtype text_input: ~azure.ai.textanalytics.models.MultiLanguageTextInput
         :keyword actions: List of tasks to be performed as part of the LRO. Required.
@@ -647,6 +657,7 @@ class _TextAnalysisClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -669,7 +680,7 @@ class _TextAnalysisClientOperationsMixin(
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
