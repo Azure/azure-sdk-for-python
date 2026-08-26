@@ -37,7 +37,6 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    RealtimeConversationItemMessageUserContent,
     RealtimeFunctionTool,
     RealtimeServerEventError,
     VoiceAgentDefinition,
@@ -78,11 +77,7 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
     :type prompt: str
     """
     with client.realtime.connect(agent_name=agent_name) as conn:
-        conn.conversation.item.create(
-            item=VoiceUserMessageItem(
-                content=[RealtimeConversationItemMessageUserContent(type="input_text", text=prompt)]
-            )
-        )
+        conn.conversation.item.create(item=VoiceUserMessageItem(content=[{"type": "input_text", "text": prompt}]))
         conn.response.create()
 
         for event in conn:

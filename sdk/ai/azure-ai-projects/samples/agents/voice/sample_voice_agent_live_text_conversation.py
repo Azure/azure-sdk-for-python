@@ -51,7 +51,6 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentKind,
     GenerateVoiceAgentRequest,
-    RealtimeConversationItemMessageUserContent,
     VoiceAgentDefinition,
     VoiceAgentServerEventResponseAudioDelta,
     VoiceAgentServerEventResponseAudioTranscriptDone,
@@ -174,9 +173,7 @@ def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Optional
 
                 # Send the turn and ask the agent to respond.
                 conn.conversation.item.create(
-                    item=VoiceUserMessageItem(
-                        content=[RealtimeConversationItemMessageUserContent(type="input_text", text=prompt)]
-                    )
+                    item=VoiceUserMessageItem(content=[{"type": "input_text", "text": prompt}])
                 )
                 conn.response.create()
                 pump()

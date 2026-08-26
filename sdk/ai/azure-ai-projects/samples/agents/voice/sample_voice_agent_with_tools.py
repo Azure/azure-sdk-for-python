@@ -40,22 +40,21 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     RealtimeFunctionTool,
+    RealtimeAudioFormatsAudioPcm,
     ToolType,
+    VoiceAgentAudioConfig,
+    VoiceAgentAudioInputConfig,
+    VoiceAgentAudioOutputConfig,
     VoiceAgentDefinition,
+    VoiceAgentInputTranscription,
+    VoiceAgentInputTranscriptionModel,
     VoiceAgentMcpTool,
-    VoiceAudioConfig,
-    VoiceAudioFormat,
-    VoiceAudioFormatType,
-    VoiceAudioInputConfig,
-    VoiceAudioOutputConfig,
-    VoiceInputTranscription,
-    VoiceInputTranscriptionModel,
+    VoiceAgentServerVadTurnDetection,
+    VoiceAgentSystemTool,
+    VoiceAgentSystemToolName,
+    VoiceAgentToolboxTool,
     VoiceModelType,
     VoiceOutputModality,
-    VoiceServerVadTurnDetection,
-    VoiceSystemTool,
-    VoiceSystemToolName,
-    VoiceToolboxTool,
     VoiceType,
 )
 
@@ -86,7 +85,7 @@ get_weather = RealtimeFunctionTool(
 )
 
 # A service-managed control tool: the platform can end the call on the agent's behalf.
-end_call = VoiceSystemTool(name=VoiceSystemToolName.END_CONVERSATION)
+end_call = VoiceAgentSystemTool(name=VoiceAgentSystemToolName.END_CONVERSATION)
 
 # An MCP tool is executed by the service against a remote MCP server you own.
 # It references an external server, so it is constructed here for illustration
@@ -100,27 +99,27 @@ _example_mcp_tool = VoiceAgentMcpTool(
 
 # A toolbox tool references a versioned Foundry toolbox you have created. It is
 # constructed here for illustration; attach it only if the toolbox exists.
-_example_toolbox_tool = VoiceToolboxTool(toolbox_name="my-toolbox", toolbox_version="1")
+_example_toolbox_tool = VoiceAgentToolboxTool(toolbox_name="my-toolbox", toolbox_version="1")
 
 definition = VoiceAgentDefinition(
     model_type=model_type,
     model=model,
     instructions="You are a helpful voice assistant. Use tools when they help answer the caller.",
-    audio=VoiceAudioConfig(
+    audio=VoiceAgentAudioConfig(
         # Input (microphone) side: 24 kHz PCM, server-side VAD so the agent
         # auto-responds when the caller stops speaking, plus input-audio
         # transcription so user speech is transcribed.
-        input=VoiceAudioInputConfig(
-            format=VoiceAudioFormat(type=VoiceAudioFormatType.PCM, rate=24000),
-            turn_detection=VoiceServerVadTurnDetection(
+        input=VoiceAgentAudioInputConfig(
+            format=RealtimeAudioFormatsAudioPcm(rate=24000),
+            turn_detection=VoiceAgentServerVadTurnDetection(
                 threshold=0.5,
                 prefix_padding_ms=300,
                 silence_duration_ms=500,
             ),
-            transcription=VoiceInputTranscription(model=VoiceInputTranscriptionModel.WHISPER1),
+            transcription=VoiceAgentInputTranscription(model=VoiceAgentInputTranscriptionModel.WHISPER1),
         ),
         # Output (agent speech) side: the voice the agent speaks with.
-        output=VoiceAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
+        output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
     ),
     output_modalities=[VoiceOutputModality.AUDIO],
     # Attach the self-contained tools. `_example_mcp_tool` and `_example_toolbox_tool`

@@ -8,7 +8,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from enum import Enum
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -32,7 +34,64 @@ from ._patch_evaluation_typeddicts import (
     ToolDescriptionParam,
     TracesPreviewEvalRunDataSource,
 )
-from ._models import CustomCredential as CustomCredentialGenerated
+from ._models import (
+    CustomCredential as CustomCredentialGenerated,
+    RealtimeClientEventConversationItemCreate as VoiceAgentClientEventConversationItemCreate,
+    RealtimeClientEventConversationItemDelete as VoiceAgentClientEventConversationItemDeleteGenerated,
+    RealtimeClientEventConversationItemRetrieve as VoiceAgentClientEventConversationItemRetrieveGenerated,
+    RealtimeClientEventConversationItemTruncate as VoiceAgentClientEventConversationItemTruncateGenerated,
+    RealtimeClientEventInputAudioBufferAppend as VoiceAgentClientEventInputAudioBufferAppendGenerated,
+    RealtimeClientEventInputAudioBufferClear as VoiceAgentClientEventInputAudioBufferClearGenerated,
+    RealtimeClientEventInputAudioBufferCommit as VoiceAgentClientEventInputAudioBufferCommitGenerated,
+    RealtimeClientEventOutputAudioBufferClear as VoiceAgentClientEventOutputAudioBufferClearGenerated,
+    RealtimeClientEventResponseCancel as VoiceAgentClientEventResponseCancelGenerated,
+    RealtimeClientEventResponseCreate as VoiceAgentClientEventResponseCreateGenerated,
+    RealtimeConversationItem,
+    RealtimeConversationItemFunctionCall as VoiceFunctionCallItem,
+    RealtimeConversationItemFunctionCallOutput as VoiceFunctionCallOutputItem,
+    RealtimeMCPApprovalResponse as VoiceMcpApprovalResponseItem,
+    RealtimeServerEventConversationItemAdded as VoiceAgentServerEventConversationItemAdded,
+    RealtimeServerEventConversationItemCreated as VoiceAgentServerEventConversationItemCreated,
+    RealtimeServerEventConversationItemDeleted as VoiceAgentServerEventConversationItemDeleted,
+    RealtimeServerEventConversationItemDone as VoiceAgentServerEventConversationItemDone,
+    RealtimeServerEventConversationItemInputAudioTranscriptionCompleted as VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted,
+    RealtimeServerEventConversationItemInputAudioTranscriptionDelta as VoiceAgentServerEventConversationItemInputAudioTranscriptionDelta,
+    RealtimeServerEventConversationItemInputAudioTranscriptionFailed as VoiceAgentServerEventConversationItemInputAudioTranscriptionFailed,
+    RealtimeServerEventConversationItemInputAudioTranscriptionSegment as VoiceAgentServerEventConversationItemInputAudioTranscriptionSegment,
+    RealtimeServerEventConversationItemRetrieved as VoiceAgentServerEventConversationItemRetrieved,
+    RealtimeServerEventConversationItemTruncated as VoiceAgentServerEventConversationItemTruncated,
+    RealtimeServerEventInputAudioBufferCleared as VoiceAgentServerEventInputAudioBufferCleared,
+    RealtimeServerEventInputAudioBufferCommitted as VoiceAgentServerEventInputAudioBufferCommitted,
+    RealtimeServerEventInputAudioBufferSpeechStarted as VoiceAgentServerEventInputAudioBufferSpeechStarted,
+    RealtimeServerEventInputAudioBufferSpeechStopped as VoiceAgentServerEventInputAudioBufferSpeechStopped,
+    RealtimeServerEventInputAudioBufferTimeoutTriggered as VoiceAgentServerEventInputAudioBufferTimeoutTriggered,
+    RealtimeServerEventMCPListToolsCompleted as VoiceAgentServerEventMcpListToolsCompleted,
+    RealtimeServerEventMCPListToolsFailed as VoiceAgentServerEventMcpListToolsFailed,
+    RealtimeServerEventMCPListToolsInProgress as VoiceAgentServerEventMcpListToolsInProgress,
+    RealtimeServerEventOutputAudioBufferCleared as VoiceAgentServerEventOutputAudioBufferCleared,
+    RealtimeServerEventRateLimitsUpdated as VoiceAgentServerEventRateLimitsUpdated,
+    RealtimeServerEventResponseAudioDelta as VoiceAgentServerEventResponseAudioDelta,
+    RealtimeServerEventResponseAudioDone as VoiceAgentServerEventResponseAudioDone,
+    RealtimeServerEventResponseAudioTranscriptDelta as VoiceAgentServerEventResponseAudioTranscriptDelta,
+    RealtimeServerEventResponseAudioTranscriptDone as VoiceAgentServerEventResponseAudioTranscriptDone,
+    RealtimeServerEventResponseContentPartDone as VoiceAgentServerEventResponseContentPartDone,
+    RealtimeServerEventResponseCreated as VoiceAgentServerEventResponseCreated,
+    RealtimeServerEventResponseDone as VoiceAgentServerEventResponseDone,
+    RealtimeServerEventResponseFunctionCallArgumentsDelta as VoiceAgentServerEventResponseFunctionCallArgumentsDelta,
+    RealtimeServerEventResponseFunctionCallArgumentsDone as VoiceAgentServerEventResponseFunctionCallArgumentsDone,
+    RealtimeServerEventResponseMCPCallArgumentsDelta as VoiceAgentServerEventResponseMcpCallArgumentsDelta,
+    RealtimeServerEventResponseMCPCallArgumentsDone as VoiceAgentServerEventResponseMcpCallArgumentsDone,
+    RealtimeServerEventResponseMCPCallCompleted as VoiceAgentServerEventResponseMcpCallCompleted,
+    RealtimeServerEventResponseMCPCallFailed as VoiceAgentServerEventResponseMcpCallFailed,
+    RealtimeServerEventResponseMCPCallInProgress as VoiceAgentServerEventResponseMcpCallInProgress,
+    RealtimeServerEventResponseOutputItemAdded as VoiceAgentServerEventResponseOutputItemAdded,
+    RealtimeServerEventResponseOutputItemDone as VoiceAgentServerEventResponseOutputItemDone,
+    RealtimeServerEventResponseTextDelta as VoiceAgentServerEventResponseTextDelta,
+    RealtimeServerEventResponseTextDone as VoiceAgentServerEventResponseTextDone,
+    RealtimeServerEventSessionCreated as VoiceAgentServerEventSessionCreated,
+    RealtimeServerEventSessionUpdated as VoiceAgentServerEventSessionUpdated,
+)
+
 from ..models import (
     AgentOptimizationJobResult,
     DataGenerationJobResult,
@@ -40,7 +99,149 @@ from ..models import (
     MemoryStoreUpdateCompletedResult,
     MemoryStoreUpdateResult,
 )
-from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
+from . import _enums
+from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys, VoiceAgentTurnDetectionType
+
+
+class RealtimeConversationItemMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Compatibility roles for realtime conversation message items."""
+
+    ASSISTANT = "assistant"
+    SYSTEM = "system"
+    USER = "user"
+
+
+VoiceTurnDetectionType = VoiceAgentTurnDetectionType
+setattr(_enums, "RealtimeConversationItemMessageType", RealtimeConversationItemMessageType)
+setattr(_enums, "VoiceTurnDetectionType", VoiceTurnDetectionType)
+
+
+def _compat_event_mapping(
+    positional_fields: Tuple[str, ...], args: Tuple[Any, ...], kwargs: Dict[str, Any]
+) -> Dict[str, Any]:
+    if len(args) == 1 and isinstance(args[0], Mapping):
+        if kwargs:
+            raise TypeError("A model mapping cannot be combined with keyword arguments")
+        return dict(args[0])
+    if len(args) > len(positional_fields):
+        raise TypeError(f"Expected at most {len(positional_fields)} positional arguments, got {len(args)}")
+
+    mapping = dict(kwargs)
+    for name, value in zip(positional_fields, args):
+        if name in mapping:
+            raise TypeError(f"Got multiple values for argument '{name}'")
+        mapping[name] = value
+    return mapping
+
+
+class VoiceAgentClientEventInputAudioBufferAppend(
+    VoiceAgentClientEventInputAudioBufferAppendGenerated
+):  # pylint: disable=name-too-long
+    """Compatibility model accepting the legacy positional constructor."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(_compat_event_mapping(("type", "audio", "event_id"), args, kwargs))
+
+
+class VoiceAgentClientEventInputAudioBufferClear(
+    VoiceAgentClientEventInputAudioBufferClearGenerated
+):  # pylint: disable=name-too-long
+    """Compatibility model accepting the legacy positional constructor."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(_compat_event_mapping(("type", "event_id"), args, kwargs))
+
+
+class VoiceAgentClientEventInputAudioBufferCommit(
+    VoiceAgentClientEventInputAudioBufferCommitGenerated
+):  # pylint: disable=name-too-long
+    """Compatibility model accepting the legacy positional constructor."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(_compat_event_mapping(("type", "event_id"), args, kwargs))
+
+
+class VoiceAgentClientEventOutputAudioBufferClear(
+    VoiceAgentClientEventOutputAudioBufferClearGenerated
+):  # pylint: disable=name-too-long
+    """Compatibility model accepting the legacy positional constructor."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(_compat_event_mapping(("type", "event_id"), args, kwargs))
+
+
+class VoiceAgentClientEventConversationItemDelete(
+    VoiceAgentClientEventConversationItemDeleteGenerated
+):  # pylint: disable=name-too-long
+    """Compatibility model accepting the legacy positional constructor."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(_compat_event_mapping(("type", "item_id", "event_id"), args, kwargs))
+
+
+class VoiceAgentClientEventConversationItemRetrieve(
+    VoiceAgentClientEventConversationItemRetrieveGenerated
+):  # pylint: disable=name-too-long
+    """Compatibility model accepting the legacy positional constructor."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(_compat_event_mapping(("type", "item_id", "event_id"), args, kwargs))
+
+
+class VoiceAgentClientEventConversationItemTruncate(
+    VoiceAgentClientEventConversationItemTruncateGenerated
+):  # pylint: disable=name-too-long
+    """Compatibility model accepting the legacy positional constructor."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(
+            _compat_event_mapping(("type", "item_id", "content_index", "audio_end_ms", "event_id"), args, kwargs)
+        )
+
+
+class VoiceAgentClientEventResponseCancel(VoiceAgentClientEventResponseCancelGenerated):
+    """Compatibility model accepting the legacy positional constructor."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(_compat_event_mapping(("type", "response_id", "event_id"), args, kwargs))
+
+
+class VoiceAgentClientEventResponseCreate(VoiceAgentClientEventResponseCreateGenerated):
+    """Compatibility model accepting the legacy positional constructor."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(_compat_event_mapping(("type", "response", "event_id"), args, kwargs))
+
+
+class _VoiceMessageItem(RealtimeConversationItem):
+    """Compatibility base for generated realtime message items."""
+
+    _role: str
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        mapping = dict(args[0]) if args else dict(kwargs)
+        mapping.setdefault("type", "message")
+        mapping.setdefault("role", self._role)
+        super().__init__(mapping)
+
+
+class VoiceSystemMessageItem(_VoiceMessageItem):
+    """A system message in a voice-agent conversation."""
+
+    _role = "system"
+
+
+class VoiceUserMessageItem(_VoiceMessageItem):
+    """A user message in a voice-agent conversation."""
+
+    _role = "user"
+
+
+class VoiceAssistantMessageItem(_VoiceMessageItem):
+    """An assistant message in a voice-agent conversation."""
+
+    _role = "assistant"
+
 
 _FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
 """The HTTP header name used to opt in to Foundry preview features."""
@@ -644,11 +845,69 @@ __all__: List[str] = [
     "TestingCriterionAzureAIEvaluator",
     "ModelSamplingConfigParam",
     "RedTeamEvalRunDataSource",
+    "RealtimeConversationItemMessageType",
     "ResponseRetrievalItemGenerationParams",
     "TargetCompletionEvalRunDataSource",
     "ToolDescriptionParam",
     "TracesPreviewEvalRunDataSource",
     "UpdateMemoriesLROPoller",
+    "VoiceAgentClientEventConversationItemCreate",
+    "VoiceAgentClientEventConversationItemDelete",
+    "VoiceAgentClientEventConversationItemRetrieve",
+    "VoiceAgentClientEventConversationItemTruncate",
+    "VoiceAgentClientEventInputAudioBufferAppend",
+    "VoiceAgentClientEventInputAudioBufferClear",
+    "VoiceAgentClientEventInputAudioBufferCommit",
+    "VoiceAgentClientEventOutputAudioBufferClear",
+    "VoiceAgentClientEventResponseCancel",
+    "VoiceAgentClientEventResponseCreate",
+    "VoiceAgentServerEventConversationItemAdded",
+    "VoiceAgentServerEventConversationItemCreated",
+    "VoiceAgentServerEventConversationItemDeleted",
+    "VoiceAgentServerEventConversationItemDone",
+    "VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted",
+    "VoiceAgentServerEventConversationItemInputAudioTranscriptionDelta",
+    "VoiceAgentServerEventConversationItemInputAudioTranscriptionFailed",
+    "VoiceAgentServerEventConversationItemInputAudioTranscriptionSegment",
+    "VoiceAgentServerEventConversationItemRetrieved",
+    "VoiceAgentServerEventConversationItemTruncated",
+    "VoiceAgentServerEventInputAudioBufferCleared",
+    "VoiceAgentServerEventInputAudioBufferCommitted",
+    "VoiceAgentServerEventInputAudioBufferSpeechStarted",
+    "VoiceAgentServerEventInputAudioBufferSpeechStopped",
+    "VoiceAgentServerEventInputAudioBufferTimeoutTriggered",
+    "VoiceAgentServerEventMcpListToolsCompleted",
+    "VoiceAgentServerEventMcpListToolsFailed",
+    "VoiceAgentServerEventMcpListToolsInProgress",
+    "VoiceAgentServerEventOutputAudioBufferCleared",
+    "VoiceAgentServerEventRateLimitsUpdated",
+    "VoiceAgentServerEventResponseAudioDelta",
+    "VoiceAgentServerEventResponseAudioDone",
+    "VoiceAgentServerEventResponseAudioTranscriptDelta",
+    "VoiceAgentServerEventResponseAudioTranscriptDone",
+    "VoiceAgentServerEventResponseContentPartDone",
+    "VoiceAgentServerEventResponseCreated",
+    "VoiceAgentServerEventResponseDone",
+    "VoiceAgentServerEventResponseFunctionCallArgumentsDelta",
+    "VoiceAgentServerEventResponseFunctionCallArgumentsDone",
+    "VoiceAgentServerEventResponseMcpCallArgumentsDelta",
+    "VoiceAgentServerEventResponseMcpCallArgumentsDone",
+    "VoiceAgentServerEventResponseMcpCallCompleted",
+    "VoiceAgentServerEventResponseMcpCallFailed",
+    "VoiceAgentServerEventResponseMcpCallInProgress",
+    "VoiceAgentServerEventResponseOutputItemAdded",
+    "VoiceAgentServerEventResponseOutputItemDone",
+    "VoiceAgentServerEventResponseTextDelta",
+    "VoiceAgentServerEventResponseTextDone",
+    "VoiceAgentServerEventSessionCreated",
+    "VoiceAgentServerEventSessionUpdated",
+    "VoiceAssistantMessageItem",
+    "VoiceFunctionCallItem",
+    "VoiceFunctionCallOutputItem",
+    "VoiceMcpApprovalResponseItem",
+    "VoiceSystemMessageItem",
+    "VoiceTurnDetectionType",
+    "VoiceUserMessageItem",
 ]  # Add all objects you want publicly available to users at this package level
 
 
